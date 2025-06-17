@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/lib/cart";
 import { useToast } from "@/hooks/use-toast";
 import { formatCurrency, formatWeight, calculateTotal } from "@/lib/currency";
-import { ShoppingCart, Plus, Minus } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Eye } from "lucide-react";
 import type { ProductWithCategory } from "@shared/schema";
 
 interface ProductCardProps {
@@ -15,7 +15,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const [selectedWeight, setSelectedWeight] = useState(1.0);
-  const { addItem } = useCartStore();
+  const { addItem, toggleCart } = useCartStore();
   const { toast } = useToast();
 
   const pricePerKg = parseFloat(product.pricePerKg);
@@ -32,6 +32,19 @@ export default function ProductCard({ product }: ProductCardProps) {
     toast({
       title: "Добавлено в корзину",
       description: `${product.name} (${formatWeight(selectedWeight)}) - ${formatCurrency(totalPrice)}`,
+      action: (
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            toggleCart();
+          }}
+          className="ml-2"
+        >
+          <Eye className="h-4 w-4 mr-1" />
+          Корзина
+        </Button>
+      ),
     });
   };
 
