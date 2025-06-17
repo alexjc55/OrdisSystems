@@ -136,10 +136,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Product routes
-  app.get('/api/products', async (req, res) => {
+  app.get('/api/products', async (req: any, res) => {
     try {
       const categoryId = req.query.categoryId ? parseInt(req.query.categoryId as string) : undefined;
-      const products = await storage.getProducts(categoryId);
+      let products = await storage.getProducts(categoryId);
+      
+      // Filter out unavailable products for non-admin users
+      const isAdmin = req.user?.claims?.sub && req.isAuthenticated?.() && 
+        (await storage.getUser(req.user.claims.sub))?.email === "alexjc55@gmail.com";
+      
+      if (!isAdmin) {
+        products = products.filter(product => product.isAvailable !== false);
+      }
+      
       res.json(products);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -147,17 +156,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/products/search', async (req, res) => {
+  app.get('/api/products/search', async (req: any, res) => {
     try {
       const query = req.query.q as string;
       if (!query) {
         return res.status(400).json({ message: "Search query is required" });
       }
-      const products = await storage.searchProducts(query);
+      let products = await storage.searchProducts(query);
+      
+      // Filter out unavailable products for non-admin users
+      const isAdmin = req.user?.claims?.sub && req.isAuthenticated?.() && 
+        (await storage.getUser(req.user.claims.sub))?.email === "alexjc55@gmail.com";
+      
+      if (!isAdmin) {
+        products = products.filter(product => product.isAvailable !== false);
+      }
+      
       res.json(products);
     } catch (error) {
       console.error("Error searching products:", error);
       res.status(500).json({ message: "Failed to search products" });
+    }
+  });
+
+  // Admin-only route to get all products including unavailable ones
+  app.get('/api/admin/products', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.email !== "alexjc55@gmail.com") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const categoryId = req.query.categoryId ? parseInt(req.query.categoryId as string) : undefined;
+      const products = await storage.getProducts(categoryId);
+      res.json(products);
+    } catch (error) {
+      console.error("Error fetching admin products:", error);
+      res.status(500).json({ message: "Failed to fetch products" });
     }
   });
 

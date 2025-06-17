@@ -100,7 +100,7 @@ export default function AdminDashboard() {
   });
 
   const { data: productsData = [], isLoading: productsLoading } = useQuery({
-    queryKey: ["/api/products"]
+    queryKey: ["/api/admin/products"]
   });
 
   const { data: orders = [], isLoading: ordersLoading } = useQuery({
@@ -136,7 +136,7 @@ export default function AdminDashboard() {
       return await response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
       setIsProductFormOpen(false);
       setEditingProduct(null);
       toast({ title: "Товар создан", description: "Товар успешно добавлен" });

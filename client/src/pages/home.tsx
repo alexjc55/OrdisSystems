@@ -70,11 +70,14 @@ export default function Home() {
   };
 
   const selectedCategory = categories?.find(cat => cat.id === selectedCategoryId);
-  const displayProducts = searchQuery.length > 2 ? searchResults : (selectedCategoryId === null ? allProducts : products);
+  
+  // Filter out unavailable products for customers
+  const availableProducts = (searchQuery.length > 2 ? searchResults : (selectedCategoryId === null ? allProducts : products))?.filter(product => product.isAvailable !== false) || [];
+  const displayProducts = availableProducts;
   const isLoading = searchQuery.length > 2 ? searchLoading : (selectedCategoryId === null ? allProductsLoading : productsLoading);
   
-  // Get popular products (top 6 products for home page)
-  const popularProducts = allProducts?.slice(0, 6) || [];
+  // Get popular products (top 6 available products for home page)
+  const popularProducts = allProducts?.filter(product => product.isAvailable !== false)?.slice(0, 6) || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
