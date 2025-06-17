@@ -22,7 +22,7 @@ import {
   type InsertStoreSettings,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, like, sql, not } from "drizzle-orm";
+import { eq, desc, and, like, sql, not, ne } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -124,11 +124,11 @@ export class DatabaseStorage implements IStorage {
       ? and(
           eq(products.isActive, true), 
           eq(products.categoryId, categoryId),
-          not(eq(products.stockStatus, 'out_of_stock'))
+          ne(products.stockStatus, 'out_of_stock')
         )
       : and(
           eq(products.isActive, true),
-          not(eq(products.stockStatus, 'out_of_stock'))
+          ne(products.stockStatus, 'out_of_stock')
         );
 
     return await db.query.products.findMany({
@@ -177,7 +177,7 @@ export class DatabaseStorage implements IStorage {
       },
       where: and(
         eq(products.isActive, true),
-        not(eq(products.stockStatus, 'out_of_stock')),
+        ne(products.stockStatus, 'out_of_stock'),
         like(products.name, `%${query}%`)
       ),
       orderBy: [products.name],

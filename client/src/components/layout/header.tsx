@@ -34,16 +34,12 @@ export default function Header() {
               </div>
             </Link>
             <nav className="hidden md:flex space-x-8">
-              <Link href="/">
-                <a className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
-                  Меню
-                </a>
+              <Link href="/" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+                Меню
               </Link>
               {(user?.role === 'admin' || user?.role === 'worker') && (
-                <Link href="/admin">
-                  <a className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
-                    Управление
-                  </a>
+                <Link href="/admin" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+                  Управление
                 </Link>
               )}
             </nav>
