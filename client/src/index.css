@@ -157,7 +157,7 @@
   }
 }
 
-/* Fix dropdown select visibility issues */
+/* Fix dropdown select visibility issues - Enhanced specificity */
 [data-radix-select-content] {
   background-color: white !important;
   border: 1px solid hsl(214.3, 31.8%, 91.4%) !important;
@@ -165,21 +165,36 @@
   z-index: 50 !important;
 }
 
-[data-radix-select-item] {
-  color: hsl(224, 71.4%, 4.1%) !important;
+/* Target all possible select item selectors with higher specificity */
+[data-radix-select-item],
+.radix-select-item,
+[role="option"] {
+  color: hsl(0, 0%, 10%) !important;
   cursor: pointer !important;
   padding: 0.5rem 0.75rem !important;
 }
 
+/* Enhanced hover/focus/highlighted selectors */
 [data-radix-select-item]:hover,
 [data-radix-select-item]:focus,
-[data-radix-select-item][data-highlighted] {
+[data-radix-select-item][data-highlighted],
+[data-radix-select-item][data-state="highlighted"],
+.radix-select-item:hover,
+.radix-select-item:focus,
+.radix-select-item[data-highlighted],
+[role="option"]:hover,
+[role="option"]:focus,
+[role="option"][data-highlighted],
+[role="option"][aria-selected="false"]:hover,
+[role="option"][aria-selected="false"]:focus {
   background-color: hsl(0, 0%, 94%) !important;
   color: hsl(0, 0%, 10%) !important;
   outline: none !important;
 }
 
-[data-radix-select-item][data-state="checked"] {
+/* Selected state styling */
+[data-radix-select-item][data-state="checked"],
+[role="option"][aria-selected="true"] {
   background-color: hsl(24.6, 95%, 53.1%) !important;
   color: white !important;
 }
@@ -196,7 +211,7 @@
 /* Ensure all dropdown menu items have consistent styling */
 [data-radix-dropdown-menu-item],
 [data-radix-context-menu-item] {
-  color: hsl(224, 71.4%, 4.1%) !important;
+  color: hsl(0, 0%, 10%) !important;
 }
 
 [data-radix-dropdown-menu-item]:hover,
@@ -208,6 +223,26 @@
   background-color: hsl(0, 0%, 94%) !important;
   color: hsl(0, 0%, 10%) !important;
   outline: none !important;
+}
+
+/* Universal dropdown item styling - catch all possible selectors */
+div[role="listbox"] > div,
+div[role="listbox"] > div:hover,
+div[role="listbox"] > div:focus,
+[data-radix-select-viewport] > [data-radix-select-item],
+[data-radix-select-viewport] > [data-radix-select-item]:hover,
+[data-radix-select-viewport] > [data-radix-select-item]:focus,
+.radix-themes *[role="option"],
+.radix-themes *[role="option"]:hover,
+.radix-themes *[role="option"]:focus {
+  background-color: hsl(0, 0%, 94%) !important;
+  color: hsl(0, 0%, 10%) !important;
+}
+
+/* Force override for any remaining dropdown styling */
+* {
+  --radix-select-item-background-color: hsl(0, 0%, 94%) !important;
+  --radix-select-item-text-color: hsl(0, 0%, 10%) !important;
 }
 
 /* Fix all link and interactive element visibility */
@@ -449,4 +484,36 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
   input, select, textarea {
     width: 100% !important;
   }
+}
+
+/* FINAL DROPDOWN OVERRIDE - Highest Priority */
+[data-radix-select-content] [data-radix-select-item] {
+  color: #1a1a1a !important;
+  background-color: transparent !important;
+}
+
+[data-radix-select-content] [data-radix-select-item]:hover,
+[data-radix-select-content] [data-radix-select-item]:focus,
+[data-radix-select-content] [data-radix-select-item][data-highlighted] {
+  background-color: #f0f0f0 !important;
+  color: #1a1a1a !important;
+}
+
+[data-radix-select-content] [data-radix-select-item][data-state="checked"] {
+  background-color: hsl(24.6, 95%, 53.1%) !important;
+  color: white !important;
+}
+
+/* Override any remaining Tailwind utilities that might interfere */
+.bg-white {
+  --tw-bg-opacity: 1;
+}
+
+[data-radix-select-item]:not([data-state="checked"]) {
+  color: #1a1a1a !important;
+}
+
+[data-radix-select-item]:not([data-state="checked"]):hover {
+  background-color: #f0f0f0 !important;
+  color: #1a1a1a !important;
 }
