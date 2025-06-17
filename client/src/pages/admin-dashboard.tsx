@@ -34,7 +34,12 @@ import {
   Filter,
   Menu,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  Store,
+  Upload,
+  Clock,
+  CreditCard,
+  Truck
 } from "lucide-react";
 
 // Validation schemas
@@ -52,6 +57,29 @@ const categorySchema = z.object({
   name: z.string().min(1, "Название обязательно"),
   description: z.string().optional(),
   icon: z.string().default("🍽️"),
+});
+
+const storeSettingsSchema = z.object({
+  storeName: z.string().min(1, "Название магазина обязательно"),
+  storeDescription: z.string().optional(),
+  logoUrl: z.string().optional(),
+  contactPhone: z.string().optional(),
+  contactEmail: z.string().email("Неверный формат email").optional().or(z.literal("")),
+  address: z.string().optional(),
+  workingHours: z.object({
+    monday: z.string().optional(),
+    tuesday: z.string().optional(),
+    wednesday: z.string().optional(),
+    thursday: z.string().optional(),
+    friday: z.string().optional(),
+    saturday: z.string().optional(),
+    sunday: z.string().optional(),
+  }).optional(),
+  deliveryInfo: z.string().optional(),
+  paymentInfo: z.string().optional(),
+  aboutUsPhotos: z.array(z.string()).optional(),
+  deliveryFee: z.string().optional(),
+  minOrderAmount: z.string().optional(),
 });
 
 export default function AdminDashboard() {
@@ -124,6 +152,10 @@ export default function AdminDashboard() {
 
   const { data: users = [], isLoading: usersLoading } = useQuery({
     queryKey: ["/api/users"]
+  });
+
+  const { data: storeSettings, isLoading: storeSettingsLoading } = useQuery({
+    queryKey: ["/api/settings"]
   });
 
   // Product mutations

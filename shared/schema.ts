@@ -99,10 +99,14 @@ export const storeSettings = pgTable("store_settings", {
   id: serial("id").primaryKey(),
   storeName: varchar("store_name", { length: 255 }).notNull(),
   storeDescription: text("store_description"),
+  logoUrl: varchar("logo_url", { length: 500 }),
   contactPhone: varchar("contact_phone", { length: 50 }),
   contactEmail: varchar("contact_email", { length: 255 }),
   address: text("address"),
   workingHours: jsonb("working_hours"), // Store as JSON object
+  deliveryInfo: text("delivery_info"),
+  paymentInfo: text("payment_info"),
+  aboutUsPhotos: jsonb("about_us_photos"), // Array of photo URLs
   deliveryFee: decimal("delivery_fee", { precision: 10, scale: 2 }).default("15.00"),
   minOrderAmount: decimal("min_order_amount", { precision: 10, scale: 2 }).default("50.00"),
   minDeliveryTimeHours: integer("min_delivery_time_hours").default(2), // Minimum hours for delivery
