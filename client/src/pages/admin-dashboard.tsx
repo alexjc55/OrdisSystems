@@ -149,25 +149,34 @@ export default function AdminDashboard() {
 
   const updateProductMutation = useMutation({
     mutationFn: async ({ id, ...productData }: any) => {
-      const formData = new FormData();
-      Object.keys(productData).forEach(key => {
-        if (productData[key] !== undefined && productData[key] !== null) {
-          formData.append(key, productData[key]);
+      // Ensure price and pricePerKg are properly set
+      const updateData = {
+        ...productData,
+        price: productData.price?.toString() || productData.pricePerKg?.toString(),
+        pricePerKg: productData.price?.toString() || productData.pricePerKg?.toString(),
+        categoryId: parseInt(productData.categoryId),
+        isAvailable: Boolean(productData.isAvailable)
+      };
+
+      // Remove undefined/null values
+      Object.keys(updateData).forEach(key => {
+        if (updateData[key] === undefined || updateData[key] === null) {
+          delete updateData[key];
         }
       });
       
-      // Convert price to pricePerKg for backward compatibility
-      if (productData.unit !== "kg") {
-        formData.append("pricePerKg", productData.price);
-      } else {
-        formData.append("pricePerKg", productData.price);
-      }
-      
       const response = await fetch(`/api/products/${id}`, {
         method: 'PATCH',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
       });
-      if (!response.ok) throw new Error('Failed to update product');
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Product update failed:', response.status, errorData);
+        throw new Error(`Failed to update product: ${response.status} ${errorData}`);
+      }
       return await response.json();
     },
     onSuccess: () => {
@@ -178,7 +187,11 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Product update error:", error);
-      toast({ title: "Ошибка", description: "Не удалось обновить товар", variant: "destructive" });
+      toast({ 
+        title: "Ошибка обновления товара", 
+        description: error.message || "Не удалось обновить товар", 
+        variant: "destructive" 
+      });
     }
   });
 
