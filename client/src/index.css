@@ -185,14 +185,14 @@
 }
 
 /* Fix all link and interactive element visibility */
-a, button:not(.bg-orange-500):not(.border-orange-500), [role="button"]:not(.bg-orange-500):not(.border-orange-500) {
+a, button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]), [role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]) {
   color: inherit !important;
   text-decoration: none !important;
 }
 
 a:hover, a:focus,
-button:not(.bg-orange-500):not(.border-orange-500):hover, button:not(.bg-orange-500):not(.border-orange-500):focus,
-[role="button"]:not(.bg-orange-500):not(.border-orange-500):hover, [role="button"]:not(.bg-orange-500):not(.border-orange-500):focus {
+button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):hover, button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):focus,
+[role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):hover, [role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):focus {
   color: hsl(24.6, 95%, 53.1%) !important;
   background-color: transparent !important;
 }
@@ -208,17 +208,7 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
   background-color: hsl(24.6, 95%, 96%) !important;
 }
 
-/* Tab triggers */
-[data-radix-tabs-trigger] {
-  color: hsl(224, 71.4%, 4.1%) !important;
-}
-
-[data-radix-tabs-trigger]:hover,
-[data-radix-tabs-trigger]:focus,
-[data-radix-tabs-trigger][data-state="active"] {
-  color: hsl(24.6, 95%, 53.1%) !important;
-  background-color: white !important;
-}
+/* Tab triggers - preserve original component styling */
 
 /* Custom scrollbar styles */
 ::-webkit-scrollbar {
