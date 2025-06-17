@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import ProductCard from "@/components/menu/product-card";
@@ -49,31 +50,7 @@ export default function Home() {
     },
   });
 
-  const { data: storeSettings } = useQuery({
-    queryKey: ["/api/settings"],
-    queryFn: async () => {
-      try {
-        const res = await fetch("/api/settings", { credentials: "include" });
-        if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
-        const data = await res.json();
-        
-        // Validate data structure to prevent runtime errors
-        if (data && typeof data === 'object') {
-          // Ensure workingHours is properly structured
-          if (data.workingHours && typeof data.workingHours !== 'object') {
-            data.workingHours = {};
-          }
-          return data;
-        }
-        return null;
-      } catch (error) {
-        console.error('Error fetching store settings:', error);
-        return null;
-      }
-    },
-    retry: 2,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
+  const { data: storeSettings } = useStoreSettings();
 
   const { data: searchResults, isLoading: searchLoading } = useQuery<ProductWithCategory[]>({
     queryKey: ["/api/products/search", searchQuery],
