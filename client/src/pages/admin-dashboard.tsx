@@ -1475,6 +1475,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       deliveryFee: storeSettings?.deliveryFee || "15.00",
       minOrderAmount: storeSettings?.minOrderAmount || "50.00",
       discountBadgeText: storeSettings?.discountBadgeText || "Скидка",
+      showBannerImage: storeSettings?.showBannerImage ?? true,
+      showTitleDescription: storeSettings?.showTitleDescription ?? true,
+      showInfoBlocks: storeSettings?.showInfoBlocks ?? true,
+      showSpecialOffers: storeSettings?.showSpecialOffers ?? true,
     },
   });
 
@@ -1745,6 +1749,97 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </FormItem>
           )}
         />
+
+        {/* Home Page Display Settings */}
+        <div className="space-y-4 pt-6 border-t">
+          <h3 className="text-lg font-medium">Настройки отображения главной страницы</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="showBannerImage"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-sm font-medium">Показывать баннер</FormLabel>
+                    <FormDescription className="text-xs">
+                      Картинка под шапкой сайта
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="showTitleDescription"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-sm font-medium">Показывать заголовок</FormLabel>
+                    <FormDescription className="text-xs">
+                      Заголовок и описание магазина
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="showInfoBlocks"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-sm font-medium">Показывать блоки информации</FormLabel>
+                    <FormDescription className="text-xs">
+                      Часы работы, контакты, оплата и доставка
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="showSpecialOffers"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-sm font-medium">Показывать спецпредложения</FormLabel>
+                    <FormDescription className="text-xs">
+                      Секция товаров со скидками
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
 
         <div className="flex justify-end">
           <Button 

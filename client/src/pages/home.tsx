@@ -85,7 +85,7 @@ export default function Home() {
       <Header />
       
       {/* Banner Image */}
-      {storeSettings?.bannerImage && (
+      {storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
         <div 
           className="w-full h-32 sm:h-40 lg:h-48 bg-cover bg-center"
           style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
@@ -104,48 +104,53 @@ export default function Home() {
           {/* Search Bar */}
           <div className="mb-8">
             <div className="mb-6">
-              <h1 className="text-3xl font-poppins font-bold text-gray-900 mb-4">
-                {(() => {
-                  try {
-                    if (searchQuery && searchQuery.length > 2) {
-                      return `Результаты поиска: "${searchQuery}"`;
-                    }
-                    if (selectedCategory?.name) {
-                      return selectedCategory.name;
-                    }
-                    if (storeSettings?.welcomeTitle) {
-                      return storeSettings.welcomeTitle;
-                    }
-                    return "eDAHouse - Домашняя еда на развес";
-                  } catch (error) {
-                    console.error('Error rendering title:', error);
-                    return "eDAHouse - Домашняя еда на развес";
-                  }
-                })()}
-              </h1>
-              
-              <p className="text-gray-600 text-lg mb-6">
-                {(() => {
-                  try {
-                    if (searchQuery && searchQuery.length > 2) {
-                      return `Найдено ${displayProducts.length} товаров`;
-                    }
-                    if (selectedCategory?.description) {
-                      return selectedCategory.description;
-                    }
-                    if (storeSettings?.storeDescription) {
-                      return storeSettings.storeDescription;
-                    }
-                    return "Свежая домашняя еда на развес - выбирайте по вкусу";
-                  } catch (error) {
-                    console.error('Error rendering description:', error);
-                    return "Свежая домашняя еда на развес - выбирайте по вкусу";
-                  }
-                })()}
-              </p>
+              {/* Title and Description */}
+              {storeSettings?.showTitleDescription !== false && (
+                <>
+                  <h1 className="text-3xl font-poppins font-bold text-gray-900 mb-4">
+                    {(() => {
+                      try {
+                        if (searchQuery && searchQuery.length > 2) {
+                          return `Результаты поиска: "${searchQuery}"`;
+                        }
+                        if (selectedCategory?.name) {
+                          return selectedCategory.name;
+                        }
+                        if (storeSettings?.welcomeTitle) {
+                          return storeSettings.welcomeTitle;
+                        }
+                        return "eDAHouse - Домашняя еда на развес";
+                      } catch (error) {
+                        console.error('Error rendering title:', error);
+                        return "eDAHouse - Домашняя еда на развес";
+                      }
+                    })()}
+                  </h1>
+                  
+                  <p className="text-gray-600 text-lg mb-6">
+                    {(() => {
+                      try {
+                        if (searchQuery && searchQuery.length > 2) {
+                          return `Найдено ${displayProducts.length} товаров`;
+                        }
+                        if (selectedCategory?.description) {
+                          return selectedCategory.description;
+                        }
+                        if (storeSettings?.storeDescription) {
+                          return storeSettings.storeDescription;
+                        }
+                        return "Свежая домашняя еда на развес - выбирайте по вкусу";
+                      } catch (error) {
+                        console.error('Error rendering description:', error);
+                        return "Свежая домашняя еда на развес - выбирайте по вкусу";
+                      }
+                    })()}
+                  </p>
+                </>
+              )}
 
               {/* Compact Store Information */}
-              {!selectedCategory && searchQuery.length <= 2 && storeSettings && (
+              {!selectedCategory && searchQuery.length <= 2 && storeSettings && storeSettings?.showInfoBlocks !== false && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-6">
                   {/* Working Hours */}
                   {storeSettings?.workingHours && (
@@ -301,30 +306,8 @@ export default function Home() {
                 </div>
               )}
 
-              {/* All Products Overview */}
-              {allProducts && allProducts.length > 0 && (
-                <div className="mb-8">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center">
-                      <TrendingUp className="mr-3 h-6 w-6 text-primary" />
-                      <h2 className="text-2xl font-poppins font-bold text-gray-900">Все блюда</h2>
-                    </div>
-                    <Button 
-                      onClick={() => handleCategorySelect(null)}
-                      variant="outline"
-                      className="flex items-center gap-2"
-                    >
-                      Посмотреть все
-                      <Badge variant="default" className="bg-primary">
-                        {allProducts?.length || 0} блюд
-                      </Badge>
-                    </Button>
-                  </div>
-                </div>
-              )}
-
               {/* Special Offers Section */}
-              {specialOffers.length > 0 && (
+              {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && (
                 <div className="mt-12">
                   <div className="flex items-center mb-6">
                     <span className="mr-3 text-2xl">🔥</span>
