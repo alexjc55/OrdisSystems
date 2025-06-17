@@ -298,7 +298,7 @@ export default function Home() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Working Hours */}
-                {storeSettings.workingHours && typeof storeSettings.workingHours === 'object' && (
+                {storeSettings?.workingHours && (
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-lg">
@@ -307,12 +307,14 @@ export default function Home() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                      {Object.entries(storeSettings.workingHours)
-                        .filter((entry): entry is [string, string] => {
-                          const [day, hours] = entry;
-                          return typeof hours === 'string' && hours.trim() !== '';
-                        })
-                        .map(([day, hours]) => {
+                      {(() => {
+                        try {
+                          const workingHours = storeSettings.workingHours;
+                          if (!workingHours || typeof workingHours !== 'object') {
+                            return <p className="text-gray-500 text-sm">Часы работы не указаны</p>;
+                          }
+
+                          const entries = Object.entries(workingHours);
                           const dayNames: Record<string, string> = {
                             monday: 'Понедельник',
                             tuesday: 'Вторник', 
@@ -322,13 +324,26 @@ export default function Home() {
                             saturday: 'Суббота',
                             sunday: 'Воскресенье'
                           };
-                          return (
+
+                          const validEntries = entries.filter(([day, hours]) => {
+                            return hours && typeof hours === 'string' && hours.trim();
+                          });
+
+                          if (validEntries.length === 0) {
+                            return <p className="text-gray-500 text-sm">Часы работы не указаны</p>;
+                          }
+
+                          return validEntries.map(([day, hours]) => (
                             <div key={day} className="flex justify-between text-sm">
                               <span className="font-medium">{dayNames[day] || day}</span>
-                              <span className="text-gray-600">{hours}</span>
+                              <span className="text-gray-600">{String(hours)}</span>
                             </div>
-                          );
-                        })}
+                          ));
+                        } catch (error) {
+                          console.error('Error rendering working hours:', error);
+                          return <p className="text-red-500 text-sm">Ошибка загрузки часов работы</p>;
+                        }
+                      })()}
                     </CardContent>
                   </Card>
                 )}
