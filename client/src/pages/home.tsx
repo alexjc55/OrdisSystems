@@ -298,7 +298,7 @@ export default function Home() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Working Hours */}
-                {storeSettings.workingHours && (
+                {storeSettings.workingHours && typeof storeSettings.workingHours === 'object' && (
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-lg">
@@ -307,23 +307,28 @@ export default function Home() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                      {Object.entries(storeSettings.workingHours).map(([day, hours]) => {
-                        const dayNames = {
-                          monday: 'Понедельник',
-                          tuesday: 'Вторник', 
-                          wednesday: 'Среда',
-                          thursday: 'Четверг',
-                          friday: 'Пятница',
-                          saturday: 'Суббота',
-                          sunday: 'Воскресенье'
-                        };
-                        return hours ? (
-                          <div key={day} className="flex justify-between text-sm">
-                            <span className="font-medium">{dayNames[day as keyof typeof dayNames]}</span>
-                            <span className="text-gray-600">{hours}</span>
-                          </div>
-                        ) : null;
-                      })}
+                      {Object.entries(storeSettings.workingHours)
+                        .filter((entry): entry is [string, string] => {
+                          const [day, hours] = entry;
+                          return typeof hours === 'string' && hours.trim() !== '';
+                        })
+                        .map(([day, hours]) => {
+                          const dayNames: Record<string, string> = {
+                            monday: 'Понедельник',
+                            tuesday: 'Вторник', 
+                            wednesday: 'Среда',
+                            thursday: 'Четверг',
+                            friday: 'Пятница',
+                            saturday: 'Суббота',
+                            sunday: 'Воскресенье'
+                          };
+                          return (
+                            <div key={day} className="flex justify-between text-sm">
+                              <span className="font-medium">{dayNames[day] || day}</span>
+                              <span className="text-gray-600">{hours}</span>
+                            </div>
+                          );
+                        })}
                     </CardContent>
                   </Card>
                 )}

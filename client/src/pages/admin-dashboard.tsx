@@ -1330,7 +1330,11 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
 }
 
 // Store Settings Form Component
-function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: any) {
+function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
+  storeSettings: any;
+  onSubmit: (data: any) => void;
+  isLoading: boolean;
+}) {
   const form = useForm({
     resolver: zodResolver(storeSettingsSchema),
     defaultValues: {
