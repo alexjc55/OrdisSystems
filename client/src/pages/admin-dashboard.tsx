@@ -503,7 +503,6 @@ export default function AdminDashboard() {
                               </button>
                             </TableHead>
                             <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm">Наличие</TableHead>
-                            <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm">Действия</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -554,45 +553,6 @@ export default function AdminDashboard() {
                                   <span className="text-xs hidden sm:inline">
                                     {product.isAvailable ? 'Доступен' : 'Нет в наличии'}
                                   </span>
-                                </div>
-                              </TableCell>
-                              <TableCell className="px-2 sm:px-4 py-2">
-                                <div className="flex items-center gap-1">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="h-8 w-8 p-0"
-                                    onClick={() => {
-                                      setEditingProduct(product);
-                                      setIsProductFormOpen(true);
-                                    }}
-                                  >
-                                    <Edit2 className="h-3 w-3" />
-                                  </Button>
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                      <Button variant="outline" size="sm" className="h-8 w-8 p-0 text-red-600">
-                                        <Trash2 className="h-3 w-3" />
-                                      </Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
-                                      <AlertDialogHeader>
-                                        <AlertDialogTitle className="text-sm sm:text-base">Удалить товар</AlertDialogTitle>
-                                        <AlertDialogDescription className="text-xs sm:text-sm">
-                                          Вы уверены, что хотите удалить товар "{product.name}"? Это действие нельзя будет отменить.
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                                        <AlertDialogCancel className="text-xs sm:text-sm">Отмена</AlertDialogCancel>
-                                        <AlertDialogAction
-                                          onClick={() => deleteProductMutation.mutate(product.id)}
-                                          className="bg-red-600 hover:bg-red-700 text-xs sm:text-sm"
-                                        >
-                                          Удалить
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
                                 </div>
                               </TableCell>
                             </TableRow>
@@ -911,7 +871,7 @@ export default function AdminDashboard() {
 }
 
 // Form Dialog Components
-function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any) {
+function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDelete }: any) {
   const form = useForm({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -1113,14 +1073,50 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any
               )}
             />
 
-            <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 pt-4">
-              <Button type="button" variant="outline" onClick={onClose} className="text-sm">
-                Отмена
-              </Button>
-              <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-sm">
-                <Save className="mr-2 h-4 w-4" />
-                {product ? "Обновить" : "Создать"}
-              </Button>
+            <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0 pt-4">
+              {product ? (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button type="button" variant="destructive" className="text-sm">
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Удалить товар
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="text-sm sm:text-base">Удалить товар</AlertDialogTitle>
+                      <AlertDialogDescription className="text-xs sm:text-sm">
+                        Вы уверены, что хотите удалить товар "{product.name}"? Это действие нельзя будет отменить.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                      <AlertDialogCancel className="text-xs sm:text-sm">Отмена</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => {
+                          // Call delete mutation here - we'll need to pass it as a prop
+                          if (onDelete) onDelete(product.id);
+                          onClose();
+                        }}
+                        className="bg-red-600 hover:bg-red-700 text-xs sm:text-sm"
+                      >
+                        Удалить
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              ) : (
+                <div></div>
+              )}
+              
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                <Button type="button" variant="outline" onClick={onClose} className="text-sm">
+                  Отмена
+                </Button>
+                <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-sm">
+                  <Save className="mr-2 h-4 w-4" />
+                  {product ? "Обновить" : "Создать"}
+                </Button>
+              </div>
             </div>
           </form>
         </Form>
