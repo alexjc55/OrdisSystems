@@ -119,6 +119,7 @@ export const storeSettings = pgTable("store_settings", {
   paymentMethods: jsonb("payment_methods"), // Array of payment methods
   isDeliveryEnabled: boolean("is_delivery_enabled").default(true),
   isPickupEnabled: boolean("is_pickup_enabled").default(true),
+  discountBadgeText: varchar("discount_badge_text", { length: 50 }).default("Скидка"),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
