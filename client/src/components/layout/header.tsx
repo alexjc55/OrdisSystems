@@ -22,10 +22,16 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
             <Link href="/">
-              <h1 className="text-2xl font-poppins font-bold text-primary cursor-pointer">
-                <Utensils className="inline-block mr-2" />
-                Ресторан Меню
-              </h1>
+              <div className="flex items-center cursor-pointer">
+                <img 
+                  src="/assets/Edahouse_sign__source_1750184330403.png" 
+                  alt="eDAHouse" 
+                  className="h-10 w-auto mr-3"
+                />
+                <h1 className="text-2xl font-poppins font-bold text-primary">
+                  eDAHouse
+                </h1>
+              </div>
             </Link>
             <nav className="hidden md:flex space-x-8">
               <Link href="/">
