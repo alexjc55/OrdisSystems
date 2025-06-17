@@ -108,7 +108,7 @@ export default function Home() {
                 <h1 className="text-3xl font-poppins font-bold text-gray-900">
                   {searchQuery.length > 2 
                     ? `Результаты поиска: "${searchQuery}"`
-                    : selectedCategory?.name || storeSettings?.storeName || "eDAHouse - טעים"
+                    : selectedCategory?.name || storeSettings?.welcomeTitle || "eDAHouse - טעים"
                   }
                 </h1>
                 <p className="text-gray-600 mt-1">

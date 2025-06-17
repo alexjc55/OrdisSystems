@@ -98,6 +98,7 @@ export const orderItems = pgTable("order_items", {
 export const storeSettings = pgTable("store_settings", {
   id: serial("id").primaryKey(),
   storeName: varchar("store_name", { length: 255 }).notNull(),
+  welcomeTitle: varchar("welcome_title", { length: 255 }),
   storeDescription: text("store_description"),
   logoUrl: varchar("logo_url", { length: 500 }),
   contactPhone: varchar("contact_phone", { length: 50 }),

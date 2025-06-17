@@ -61,6 +61,7 @@ const categorySchema = z.object({
 
 const storeSettingsSchema = z.object({
   storeName: z.string().min(1, "Название магазина обязательно"),
+  welcomeTitle: z.string().optional(),
   storeDescription: z.string().optional(),
   logoUrl: z.string().optional(),
   contactPhone: z.string().optional(),
@@ -1334,6 +1335,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: any) {
     resolver: zodResolver(storeSettingsSchema),
     defaultValues: {
       storeName: storeSettings?.storeName || "eDAHouse",
+      welcomeTitle: storeSettings?.welcomeTitle || "",
       storeDescription: storeSettings?.storeDescription || "",
       logoUrl: storeSettings?.logoUrl || "",
       contactPhone: storeSettings?.contactPhone || "",
@@ -1368,6 +1370,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: any) {
                 <FormLabel className="text-sm">Название магазина</FormLabel>
                 <FormControl>
                   <Input placeholder="eDAHouse" {...field} className="text-sm" />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="welcomeTitle"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">Заголовок на главной странице</FormLabel>
+                <FormControl>
+                  <Input placeholder="Добро пожаловать в наш магазин" {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
