@@ -221,7 +221,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Insufficient permissions" });
       }
 
-      const productData = insertProductSchema.parse(req.body);
+      const rawData = req.body;
+      
+      // Handle empty discount values - convert empty strings to null
+      if (rawData.discountValue === "") {
+        rawData.discountValue = null;
+      }
+      if (rawData.discountType === "") {
+        rawData.discountType = null;
+      }
+
+      const productData = insertProductSchema.parse(rawData);
       const product = await storage.createProduct(productData);
       res.json(product);
     } catch (error) {
@@ -265,7 +275,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const id = parseInt(req.params.id);
-      const productData = insertProductSchema.partial().parse(req.body);
+      const rawData = req.body;
+      
+      // Handle empty discount values - convert empty strings to null
+      if (rawData.discountValue === "") {
+        rawData.discountValue = null;
+      }
+      if (rawData.discountType === "") {
+        rawData.discountType = null;
+      }
+      
+      const productData = insertProductSchema.partial().parse(rawData);
       const product = await storage.updateProduct(id, productData);
       res.json(product);
     } catch (error) {

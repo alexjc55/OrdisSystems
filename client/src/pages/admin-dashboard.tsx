@@ -966,7 +966,9 @@ export default function AdminDashboard() {
 
 // Form Dialog Components
 function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDelete }: any) {
-  const form = useForm({
+  type ProductFormData = z.infer<typeof productSchema>;
+  
+  const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: "",
@@ -976,6 +978,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       unit: "100g" as ProductUnit,
       imageUrl: "",
       isAvailable: true,
+      isSpecialOffer: false,
+      discountType: undefined,
+      discountValue: "",
     },
   });
 
