@@ -1073,10 +1073,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               {product ? (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button type="button" variant="destructive" className="text-sm">
-                      <Trash2 className="mr-2 h-4 w-4" />
+                    <button type="button" className="text-sm text-red-600 hover:text-red-800 transition-colors underline">
                       Удалить товар
-                    </Button>
+                    </button>
                   </AlertDialogTrigger>
                   <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
                     <AlertDialogHeader>
@@ -1105,10 +1104,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               )}
               
               <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                <Button type="button" variant="outline" onClick={onClose} className="text-sm">
+                <Button type="button" variant="outline" onClick={onClose} className="text-sm hover:bg-gray-50">
                   Отмена
                 </Button>
-                <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-sm">
+                <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white text-sm">
                   <Save className="mr-2 h-4 w-4" />
                   {product ? "Обновить" : "Создать"}
                 </Button>
