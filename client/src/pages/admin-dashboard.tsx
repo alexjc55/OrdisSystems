@@ -20,7 +20,7 @@ import { ImageUpload } from "@/components/ui/image-upload";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { formatCurrency } from "@/lib/currency";
+import { formatCurrency, getUnitLabel, type ProductUnit } from "@/lib/currency";
 import { 
   Package, 
   Plus, 
@@ -31,7 +31,8 @@ import {
   Utensils,
   Save,
   Search,
-  Filter
+  Filter,
+  Menu
 } from "lucide-react";
 
 // Validation schemas
@@ -39,7 +40,8 @@ const productSchema = z.object({
   name: z.string().min(1, "Название обязательно"),
   description: z.string().optional(),
   categoryId: z.number().min(1, "Выберите категорию"),
-  pricePerKg: z.string().min(1, "Цена обязательна"),
+  price: z.string().min(1, "Цена обязательна"),
+  unit: z.enum(["100g", "100ml", "piece", "kg"]).default("100g"),
   imageUrl: z.string().optional(),
   isAvailable: z.boolean().default(true),
 });
@@ -50,13 +52,6 @@ const categorySchema = z.object({
   icon: z.string().default("🍽️"),
 });
 
-const userSchema = z.object({
-  email: z.string().email("Некорректный email"),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  role: z.enum(["admin", "worker", "customer"]),
-});
-
 export default function AdminDashboard() {
   const { user, isLoading, isAuthenticated } = useAuth();
   const { toast } = useToast();
@@ -65,12 +60,11 @@ export default function AdminDashboard() {
   // State for forms and filters
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
   const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
-  const [isUserFormOpen, setIsUserFormOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [editingCategory, setEditingCategory] = useState(null);
-  const [editingUser, setEditingUser] = useState(null);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [editingCategory, setEditingCategory] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -101,19 +95,19 @@ export default function AdminDashboard() {
   }, [user, toast]);
 
   // Data queries
-  const { data: categories, isLoading: categoriesLoading } = useQuery({
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["/api/categories"]
   });
 
-  const { data: productsData, isLoading: productsLoading } = useQuery({
+  const { data: productsData = [], isLoading: productsLoading } = useQuery({
     queryKey: ["/api/products"]
   });
 
-  const { data: orders, isLoading: ordersLoading } = useQuery({
+  const { data: orders = [], isLoading: ordersLoading } = useQuery({
     queryKey: ["/api/orders"]
   });
 
-  const { data: users, isLoading: usersLoading } = useQuery({
+  const { data: users = [], isLoading: usersLoading } = useQuery({
     queryKey: ["/api/users"]
   });
 
@@ -126,7 +120,15 @@ export default function AdminDashboard() {
           formData.append(key, productData[key]);
         }
       });
-      return apiRequest('/api/products', {
+      
+      // Convert price to pricePerKg for backward compatibility
+      if (productData.unit !== "kg") {
+        formData.append("pricePerKg", productData.price);
+      } else {
+        formData.append("pricePerKg", productData.price);
+      }
+      
+      return await apiRequest('/api/products', {
         method: 'POST',
         body: formData,
       });
@@ -134,9 +136,11 @@ export default function AdminDashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
       setIsProductFormOpen(false);
+      setEditingProduct(null);
       toast({ title: "Товар создан", description: "Товар успешно добавлен" });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Product creation error:", error);
       toast({ title: "Ошибка", description: "Не удалось создать товар", variant: "destructive" });
     }
   });
@@ -149,7 +153,15 @@ export default function AdminDashboard() {
           formData.append(key, productData[key]);
         }
       });
-      return apiRequest(`/api/products/${id}`, {
+      
+      // Convert price to pricePerKg for backward compatibility
+      if (productData.unit !== "kg") {
+        formData.append("pricePerKg", productData.price);
+      } else {
+        formData.append("pricePerKg", productData.price);
+      }
+      
+      return await apiRequest(`/api/products/${id}`, {
         method: 'PATCH',
         body: formData,
       });
@@ -160,27 +172,29 @@ export default function AdminDashboard() {
       setIsProductFormOpen(false);
       toast({ title: "Товар обновлен", description: "Изменения сохранены" });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Product update error:", error);
       toast({ title: "Ошибка", description: "Не удалось обновить товар", variant: "destructive" });
     }
   });
 
   const deleteProductMutation = useMutation({
     mutationFn: async (productId: number) => {
-      return apiRequest(`/api/products/${productId}`, { method: 'DELETE' });
+      return await apiRequest(`/api/products/${productId}`, { method: 'DELETE' });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
       toast({ title: "Товар удален", description: "Товар успешно удален" });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Product deletion error:", error);
       toast({ title: "Ошибка", description: "Не удалось удалить товар", variant: "destructive" });
     }
   });
 
   const toggleAvailabilityMutation = useMutation({
     mutationFn: async ({ id, isAvailable }: { id: number; isAvailable: boolean }) => {
-      return apiRequest(`/api/products/${id}`, {
+      return await apiRequest(`/api/products/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isAvailable }),
@@ -189,7 +203,8 @@ export default function AdminDashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Toggle availability error:", error);
       toast({ title: "Ошибка", description: "Не удалось обновить наличие", variant: "destructive" });
     }
   });
@@ -197,7 +212,7 @@ export default function AdminDashboard() {
   // Category mutations
   const createCategoryMutation = useMutation({
     mutationFn: async (categoryData: any) => {
-      return apiRequest('/api/categories', {
+      return await apiRequest('/api/categories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(categoryData),
@@ -206,16 +221,18 @@ export default function AdminDashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
       setIsCategoryFormOpen(false);
+      setEditingCategory(null);
       toast({ title: "Категория создана", description: "Категория успешно добавлена" });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Category creation error:", error);
       toast({ title: "Ошибка", description: "Не удалось создать категорию", variant: "destructive" });
     }
   });
 
   const updateCategoryMutation = useMutation({
     mutationFn: async ({ id, ...categoryData }: any) => {
-      return apiRequest(`/api/categories/${id}`, {
+      return await apiRequest(`/api/categories/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(categoryData),
@@ -227,20 +244,22 @@ export default function AdminDashboard() {
       setIsCategoryFormOpen(false);
       toast({ title: "Категория обновлена", description: "Изменения сохранены" });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Category update error:", error);
       toast({ title: "Ошибка", description: "Не удалось обновить категорию", variant: "destructive" });
     }
   });
 
   const deleteCategoryMutation = useMutation({
     mutationFn: async (categoryId: number) => {
-      return apiRequest(`/api/categories/${categoryId}`, { method: 'DELETE' });
+      return await apiRequest(`/api/categories/${categoryId}`, { method: 'DELETE' });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
       toast({ title: "Категория удалена", description: "Категория успешно удалена" });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Category deletion error:", error);
       toast({ title: "Ошибка", description: "Не удалось удалить категорию", variant: "destructive" });
     }
   });
@@ -260,7 +279,7 @@ export default function AdminDashboard() {
     return null;
   }
 
-  const filteredProducts = productsData?.filter((product: any) => {
+  const filteredProducts = productsData.filter((product: any) => {
     const matchesSearch = !searchQuery || 
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -269,37 +288,51 @@ export default function AdminDashboard() {
       product.categoryId === parseInt(selectedCategoryFilter);
     
     return matchesSearch && matchesCategory;
-  }) || [];
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Админ-панель</h1>
-          <p className="text-gray-600">Управление товарами, категориями и заказами</p>
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+        <div className="mb-4 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Админ-панель</h1>
+              <p className="text-gray-600 text-sm sm:text-base">Управление товарами, категориями и заказами</p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="sm:hidden"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              <Menu className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        <Tabs defaultValue="products" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="products">Товары</TabsTrigger>
-            <TabsTrigger value="categories">Категории</TabsTrigger>
-            <TabsTrigger value="orders">Заказы</TabsTrigger>
-            <TabsTrigger value="users">Пользователи</TabsTrigger>
-          </TabsList>
+        <Tabs defaultValue="products" className="space-y-4 sm:space-y-8">
+          <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1">
+              <TabsTrigger value="products" className="text-xs sm:text-sm">Товары</TabsTrigger>
+              <TabsTrigger value="categories" className="text-xs sm:text-sm">Категории</TabsTrigger>
+              <TabsTrigger value="orders" className="text-xs sm:text-sm">Заказы</TabsTrigger>
+              <TabsTrigger value="users" className="text-xs sm:text-sm">Пользователи</TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Products Management */}
-          <TabsContent value="products" className="space-y-6">
+          <TabsContent value="products" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Package className="h-5 w-5" />
+                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                      <Package className="h-4 w-4 sm:h-5 sm:w-5" />
                       Управление Товарами
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-sm">
                       Добавление, редактирование и управление товарами
                     </CardDescription>
                   </div>
@@ -308,34 +341,35 @@ export default function AdminDashboard() {
                       setEditingProduct(null);
                       setIsProductFormOpen(true);
                     }}
-                    className="bg-orange-500 hover:bg-orange-600"
+                    className="bg-orange-500 hover:bg-orange-600 w-full sm:w-auto"
+                    size="sm"
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     Добавить товар
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 {/* Search and Filter Controls */}
-                <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                  <div className="flex-1 relative">
+                <div className="flex flex-col gap-3">
+                  <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
                       placeholder="Поиск товаров..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 w-full"
+                      className="pl-10 text-sm"
                     />
                   </div>
                   <div className="relative">
                     <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
-                      <SelectTrigger className="w-full sm:w-[200px] pl-10">
+                      <SelectTrigger className="pl-10 text-sm">
                         <SelectValue placeholder="Все категории" />
                       </SelectTrigger>
                       <SelectContent className="bg-white">
                         <SelectItem value="all" className="hover:bg-orange-50 focus:bg-orange-50">Все категории</SelectItem>
-                        {categories?.map((category: any) => (
+                        {categories.map((category: any) => (
                           <SelectItem 
                             key={category.id} 
                             value={category.id.toString()}
@@ -351,98 +385,104 @@ export default function AdminDashboard() {
 
                 {/* Products Table */}
                 {filteredProducts.length > 0 ? (
-                  <div className="overflow-x-auto border rounded-lg bg-white">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="min-w-[150px]">Название</TableHead>
-                          <TableHead className="min-w-[120px]">Категория</TableHead>
-                          <TableHead className="min-w-[120px]">Цена за 100г</TableHead>
-                          <TableHead className="min-w-[140px]">Наличие</TableHead>
-                          <TableHead className="min-w-[120px]">Действия</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {filteredProducts.map((product: any) => (
-                          <TableRow key={product.id}>
-                            <TableCell>
-                              <div>
-                                <div className="font-medium">{product.name}</div>
-                                {product.description && (
-                                  <div className="text-sm text-gray-500 max-w-xs truncate">
-                                    {product.description}
-                                  </div>
-                                )}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="outline">
-                                {product.category.name}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {formatCurrency(product.pricePerKg)}
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Switch
-                                  checked={product.isAvailable}
-                                  onCheckedChange={(checked) => {
-                                    toggleAvailabilityMutation.mutate({
-                                      id: product.id,
-                                      isAvailable: checked
-                                    });
-                                  }}
-                                  disabled={toggleAvailabilityMutation.isPending}
-                                  className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-200"
-                                />
-                                <span className="text-sm hidden sm:inline">
-                                  {product.isAvailable ? 'Доступен' : 'Нет в наличии'}
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => {
-                                    setEditingProduct(product);
-                                    setIsProductFormOpen(true);
-                                  }}
-                                >
-                                  <Edit2 className="h-4 w-4" />
-                                </Button>
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <Button variant="outline" size="sm" className="text-red-600">
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>Удалить товар</AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        Вы уверены, что хотите удалить товар "{product.name}"? Это действие нельзя будет отменить.
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>Отмена</AlertDialogCancel>
-                                      <AlertDialogAction
-                                        onClick={() => deleteProductMutation.mutate(product.id)}
-                                        className="bg-red-600 hover:bg-red-700"
-                                      >
-                                        Удалить
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              </div>
-                            </TableCell>
+                  <div className="border rounded-lg bg-white overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm">Название</TableHead>
+                            <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm">Категория</TableHead>
+                            <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm">Цена</TableHead>
+                            <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm">Наличие</TableHead>
+                            <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm">Действия</TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredProducts.map((product: any) => (
+                            <TableRow key={product.id}>
+                              <TableCell className="px-2 sm:px-4 py-2">
+                                <div>
+                                  <div className="font-medium text-xs sm:text-sm">{product.name}</div>
+                                  {product.description && (
+                                    <div className="text-xs text-gray-500 max-w-[150px] sm:max-w-xs truncate">
+                                      {product.description}
+                                    </div>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell className="px-2 sm:px-4 py-2">
+                                <Badge variant="outline" className="text-xs">
+                                  {product.category?.name}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="px-2 sm:px-4 py-2">
+                                <div className="text-xs sm:text-sm">
+                                  <div className="font-medium">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                  <div className="text-gray-500 text-xs">{getUnitLabel(product.unit || "100g")}</div>
+                                </div>
+                              </TableCell>
+                              <TableCell className="px-2 sm:px-4 py-2">
+                                <div className="flex items-center gap-2">
+                                  <Switch
+                                    checked={product.isAvailable}
+                                    onCheckedChange={(checked) => {
+                                      toggleAvailabilityMutation.mutate({
+                                        id: product.id,
+                                        isAvailable: checked
+                                      });
+                                    }}
+                                    disabled={toggleAvailabilityMutation.isPending}
+                                    className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-200"
+                                  />
+                                  <span className="text-xs hidden sm:inline">
+                                    {product.isAvailable ? 'Доступен' : 'Нет в наличии'}
+                                  </span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="px-2 sm:px-4 py-2">
+                                <div className="flex items-center gap-1">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-8 w-8 p-0"
+                                    onClick={() => {
+                                      setEditingProduct(product);
+                                      setIsProductFormOpen(true);
+                                    }}
+                                  >
+                                    <Edit2 className="h-3 w-3" />
+                                  </Button>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button variant="outline" size="sm" className="h-8 w-8 p-0 text-red-600">
+                                        <Trash2 className="h-3 w-3" />
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle className="text-sm sm:text-base">Удалить товар</AlertDialogTitle>
+                                        <AlertDialogDescription className="text-xs sm:text-sm">
+                                          Вы уверены, что хотите удалить товар "{product.name}"? Это действие нельзя будет отменить.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                                        <AlertDialogCancel className="text-xs sm:text-sm">Отмена</AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() => deleteProductMutation.mutate(product.id)}
+                                          className="bg-red-600 hover:bg-red-700 text-xs sm:text-sm"
+                                        >
+                                          Удалить
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center py-8">
@@ -450,7 +490,7 @@ export default function AdminDashboard() {
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
                       {searchQuery || selectedCategoryFilter !== "all" ? "Товары не найдены" : "Нет товаров"}
                     </h3>
-                    <p className="text-gray-500">
+                    <p className="text-gray-500 text-sm">
                       {searchQuery || selectedCategoryFilter !== "all" 
                         ? "Попробуйте изменить критерии поиска или фильтрации"
                         : "Начните с добавления первого товара"
@@ -463,16 +503,16 @@ export default function AdminDashboard() {
           </TabsContent>
 
           {/* Categories Management */}
-          <TabsContent value="categories" className="space-y-6">
+          <TabsContent value="categories" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Utensils className="h-5 w-5" />
+                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                      <Utensils className="h-4 w-4 sm:h-5 sm:w-5" />
                       Управление Категориями
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-sm">
                       Добавление, редактирование и удаление категорий товаров
                     </CardDescription>
                   </div>
@@ -481,7 +521,8 @@ export default function AdminDashboard() {
                       setEditingCategory(null);
                       setIsCategoryFormOpen(true);
                     }}
-                    className="bg-orange-500 hover:bg-orange-600"
+                    className="bg-orange-500 hover:bg-orange-600 w-full sm:w-auto"
+                    size="sm"
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     Добавить категорию
@@ -490,76 +531,79 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 {categories && categories.length > 0 ? (
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Иконка</TableHead>
-                          <TableHead>Название</TableHead>
-                          <TableHead>Описание</TableHead>
-                          <TableHead>Товаров</TableHead>
-                          <TableHead>Действия</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {categories.map((category: any) => (
-                          <TableRow key={category.id}>
-                            <TableCell className="text-2xl">{category.icon}</TableCell>
-                            <TableCell className="font-medium">{category.name}</TableCell>
-                            <TableCell className="text-gray-500">{category.description || "—"}</TableCell>
-                            <TableCell>
-                              <Badge variant="secondary">
-                                {category.products?.length || 0}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => {
-                                    setEditingCategory(category);
-                                    setIsCategoryFormOpen(true);
-                                  }}
-                                >
-                                  <Edit2 className="h-4 w-4" />
-                                </Button>
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <Button variant="outline" size="sm" className="text-red-600">
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>Удалить категорию</AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        Вы уверены, что хотите удалить категорию "{category.name}"? Все товары этой категории также будут удалены.
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>Отмена</AlertDialogCancel>
-                                      <AlertDialogAction
-                                        onClick={() => deleteCategoryMutation.mutate(category.id)}
-                                        className="bg-red-600 hover:bg-red-700"
-                                      >
-                                        Удалить
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              </div>
-                            </TableCell>
+                  <div className="border rounded-lg bg-white overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="text-xs sm:text-sm">Иконка</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Название</TableHead>
+                            <TableHead className="text-xs sm:text-sm hidden sm:table-cell">Описание</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Товаров</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Действия</TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                        </TableHeader>
+                        <TableBody>
+                          {categories.map((category: any) => (
+                            <TableRow key={category.id}>
+                              <TableCell className="text-lg sm:text-2xl">{category.icon}</TableCell>
+                              <TableCell className="font-medium text-xs sm:text-sm">{category.name}</TableCell>
+                              <TableCell className="text-gray-500 text-xs sm:text-sm hidden sm:table-cell">{category.description || "—"}</TableCell>
+                              <TableCell>
+                                <Badge variant="secondary" className="text-xs">
+                                  {category.products?.length || 0}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-1">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-8 w-8 p-0"
+                                    onClick={() => {
+                                      setEditingCategory(category);
+                                      setIsCategoryFormOpen(true);
+                                    }}
+                                  >
+                                    <Edit2 className="h-3 w-3" />
+                                  </Button>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button variant="outline" size="sm" className="h-8 w-8 p-0 text-red-600">
+                                        <Trash2 className="h-3 w-3" />
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle className="text-sm sm:text-base">Удалить категорию</AlertDialogTitle>
+                                        <AlertDialogDescription className="text-xs sm:text-sm">
+                                          Вы уверены, что хотите удалить категорию "{category.name}"? Все товары этой категории также будут удалены.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                                        <AlertDialogCancel className="text-xs sm:text-sm">Отмена</AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() => deleteCategoryMutation.mutate(category.id)}
+                                          className="bg-red-600 hover:bg-red-700 text-xs sm:text-sm"
+                                        >
+                                          Удалить
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center py-8">
                     <Utensils className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Нет категорий</h3>
-                    <p className="text-gray-500">Начните с добавления первой категории</p>
+                    <p className="text-gray-500 text-sm">Начните с добавления первой категории</p>
                   </div>
                 )}
               </CardContent>
@@ -567,79 +611,82 @@ export default function AdminDashboard() {
           </TabsContent>
 
           {/* Orders Management */}
-          <TabsContent value="orders" className="space-y-6">
+          <TabsContent value="orders" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ShoppingCart className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                  <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
                   Управление Заказами
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm">
                   Просмотр и управление заказами клиентов
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {orders && orders.length > 0 ? (
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>№ Заказа</TableHead>
-                          <TableHead>Клиент</TableHead>
-                          <TableHead>Статус</TableHead>
-                          <TableHead>Сумма</TableHead>
-                          <TableHead>Дата</TableHead>
-                          <TableHead>Действия</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {orders.map((order: any) => (
-                          <TableRow key={order.id}>
-                            <TableCell className="font-medium">#{order.id}</TableCell>
-                            <TableCell>
-                              {order.user?.firstName && order.user?.lastName 
-                                ? `${order.user.firstName} ${order.user.lastName}`
-                                : order.user?.email || "—"
-                              }
-                            </TableCell>
-                            <TableCell>
-                              <Badge 
-                                variant={
-                                  order.status === "delivered" ? "default" :
-                                  order.status === "confirmed" ? "secondary" :
-                                  order.status === "cancelled" ? "destructive" :
-                                  "outline"
-                                }
-                              >
-                                {order.status === "pending" && "Ожидает"}
-                                {order.status === "confirmed" && "Подтвержден"}
-                                {order.status === "preparing" && "Готовится"}
-                                {order.status === "ready" && "Готов"}
-                                {order.status === "delivered" && "Доставлен"}
-                                {order.status === "cancelled" && "Отменен"}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {formatCurrency(order.totalAmount)}
-                            </TableCell>
-                            <TableCell>
-                              {new Date(order.createdAt).toLocaleDateString('ru-RU')}
-                            </TableCell>
-                            <TableCell>
-                              <Button variant="outline" size="sm">
-                                Подробнее
-                              </Button>
-                            </TableCell>
+                  <div className="border rounded-lg bg-white overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="text-xs sm:text-sm">№ Заказа</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Клиент</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Статус</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Сумма</TableHead>
+                            <TableHead className="text-xs sm:text-sm hidden sm:table-cell">Дата</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Действия</TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                        </TableHeader>
+                        <TableBody>
+                          {orders.map((order: any) => (
+                            <TableRow key={order.id}>
+                              <TableCell className="font-medium text-xs sm:text-sm">#{order.id}</TableCell>
+                              <TableCell className="text-xs sm:text-sm">
+                                {order.user?.firstName && order.user?.lastName 
+                                  ? `${order.user.firstName} ${order.user.lastName}`
+                                  : order.user?.email || "—"
+                                }
+                              </TableCell>
+                              <TableCell>
+                                <Badge 
+                                  variant={
+                                    order.status === "delivered" ? "default" :
+                                    order.status === "confirmed" ? "secondary" :
+                                    order.status === "cancelled" ? "destructive" :
+                                    "outline"
+                                  }
+                                  className="text-xs"
+                                >
+                                  {order.status === "pending" && "Ожидает"}
+                                  {order.status === "confirmed" && "Подтвержден"}
+                                  {order.status === "preparing" && "Готовится"}
+                                  {order.status === "ready" && "Готов"}
+                                  {order.status === "delivered" && "Доставлен"}
+                                  {order.status === "cancelled" && "Отменен"}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="font-medium text-xs sm:text-sm">
+                                {formatCurrency(order.totalAmount)}
+                              </TableCell>
+                              <TableCell className="text-xs sm:text-sm hidden sm:table-cell">
+                                {new Date(order.createdAt).toLocaleDateString('ru-RU')}
+                              </TableCell>
+                              <TableCell>
+                                <Button variant="outline" size="sm" className="text-xs">
+                                  Подробнее
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center py-8">
                     <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Нет заказов</h3>
-                    <p className="text-gray-500">Заказы будут отображаться здесь</p>
+                    <p className="text-gray-500 text-sm">Заказы будут отображаться здесь</p>
                   </div>
                 )}
               </CardContent>
@@ -647,57 +694,59 @@ export default function AdminDashboard() {
           </TabsContent>
 
           {/* Users Management */}
-          <TabsContent value="users" className="space-y-6">
+          <TabsContent value="users" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                  <Users className="h-4 w-4 sm:h-5 sm:w-5" />
                   Управление Пользователями
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm">
                   Просмотр и управление пользователями системы
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {users && users.length > 0 ? (
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Email</TableHead>
-                          <TableHead>Имя</TableHead>
-                          <TableHead>Роль</TableHead>
-                          <TableHead>Дата регистрации</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {users.map((user: any) => (
-                          <TableRow key={user.id}>
-                            <TableCell className="font-medium">{user.email}</TableCell>
-                            <TableCell>
-                              {user.firstName && user.lastName 
-                                ? `${user.firstName} ${user.lastName}`
-                                : "—"
-                              }
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant={user.email === "alexjc55@gmail.com" ? "default" : "secondary"}>
-                                {user.email === "alexjc55@gmail.com" ? "Admin" : "Customer"}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              {new Date(user.createdAt).toLocaleDateString('ru-RU')}
-                            </TableCell>
+                  <div className="border rounded-lg bg-white overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="text-xs sm:text-sm">Email</TableHead>
+                            <TableHead className="text-xs sm:text-sm hidden sm:table-cell">Имя</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Роль</TableHead>
+                            <TableHead className="text-xs sm:text-sm hidden sm:table-cell">Дата регистрации</TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                        </TableHeader>
+                        <TableBody>
+                          {users.map((user: any) => (
+                            <TableRow key={user.id}>
+                              <TableCell className="font-medium text-xs sm:text-sm">{user.email}</TableCell>
+                              <TableCell className="text-xs sm:text-sm hidden sm:table-cell">
+                                {user.firstName && user.lastName 
+                                  ? `${user.firstName} ${user.lastName}`
+                                  : "—"
+                                }
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant={user.email === "alexjc55@gmail.com" ? "default" : "secondary"} className="text-xs">
+                                  {user.email === "alexjc55@gmail.com" ? "Admin" : "Customer"}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-xs sm:text-sm hidden sm:table-cell">
+                                {new Date(user.createdAt).toLocaleDateString('ru-RU')}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center py-8">
                     <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Нет пользователей</h3>
-                    <p className="text-gray-500">Пользователи будут отображаться здесь</p>
+                    <p className="text-gray-500 text-sm">Пользователи будут отображаться здесь</p>
                   </div>
                 )}
               </CardContent>
@@ -752,7 +801,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any
       name: "",
       description: "",
       categoryId: 0,
-      pricePerKg: "",
+      price: "",
+      unit: "100g" as ProductUnit,
       imageUrl: "",
       isAvailable: true,
     },
@@ -766,7 +816,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any
           name: product.name || "",
           description: product.description || "",
           categoryId: product.categoryId || 0,
-          pricePerKg: product.pricePerKg?.toString() || "",
+          price: (product.price || product.pricePerKg)?.toString() || "",
+          unit: (product.unit || "100g") as ProductUnit,
           imageUrl: product.imageUrl || "",
           isAvailable: product.isAvailable ?? true,
         });
@@ -775,7 +826,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any
           name: "",
           description: "",
           categoryId: 0,
-          pricePerKg: "",
+          price: "",
+          unit: "100g" as ProductUnit,
           imageUrl: "",
           isAvailable: true,
         });
@@ -787,12 +839,12 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto mx-4">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-lg sm:text-xl">
             {product ? "Редактировать товар" : "Добавить товар"}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-sm">
             {product ? "Обновите информацию о товаре" : "Добавьте новый товар в каталог"}
           </DialogDescription>
         </DialogHeader>
@@ -804,11 +856,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Название товара</FormLabel>
+                  <FormLabel className="text-sm">Название товара</FormLabel>
                   <FormControl>
-                    <Input placeholder="Введите название товара" {...field} />
+                    <Input placeholder="Введите название товара" {...field} className="text-sm" />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -818,15 +870,15 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Описание</FormLabel>
+                  <FormLabel className="text-sm">Описание</FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="Введите описание товара"
-                      className="resize-none"
+                      className="resize-none text-sm"
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -836,61 +888,88 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Категория</FormLabel>
+                  <FormLabel className="text-sm">Категория</FormLabel>
                   <Select 
                     onValueChange={(value) => field.onChange(parseInt(value))}
                     value={field.value?.toString()}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="text-sm">
                         <SelectValue placeholder="Выберите категорию" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {categories?.map((category: any) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
+                        <SelectItem key={category.id} value={category.id.toString()} className="text-sm">
                           {category.icon} {category.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="pricePerKg"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Цена за 100г (₪)</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number"
-                      step="0.01"
-                      placeholder="0.00"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">Цена (₪)</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        {...field}
+                        className="text-sm"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="unit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">Единица измерения</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="text-sm">
+                          <SelectValue placeholder="Выберите единицу" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="100g" className="text-sm">За 100г</SelectItem>
+                        <SelectItem value="100ml" className="text-sm">За 100мл</SelectItem>
+                        <SelectItem value="piece" className="text-sm">За штуку</SelectItem>
+                        <SelectItem value="kg" className="text-sm">За кг</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}
               name="imageUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Изображение</FormLabel>
+                  <FormLabel className="text-sm">Изображение</FormLabel>
                   <FormControl>
                     <ImageUpload
                       value={field.value || ""}
                       onChange={field.onChange}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -899,10 +978,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any
               control={form.control}
               name="isAvailable"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 sm:p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">Товар доступен</FormLabel>
-                    <div className="text-sm text-gray-500">
+                    <FormLabel className="text-sm sm:text-base">Товар доступен</FormLabel>
+                    <div className="text-xs sm:text-sm text-gray-500">
                       Включите, если товар есть в наличии
                     </div>
                   </div>
@@ -916,11 +995,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any
               )}
             />
 
-            <div className="flex justify-end space-x-2 pt-4">
-              <Button type="button" variant="outline" onClick={onClose}>
+            <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 pt-4">
+              <Button type="button" variant="outline" onClick={onClose} className="text-sm">
                 Отмена
               </Button>
-              <Button type="submit" className="bg-orange-500 hover:bg-orange-600">
+              <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-sm">
                 <Save className="mr-2 h-4 w-4" />
                 {product ? "Обновить" : "Создать"}
               </Button>
@@ -936,22 +1015,40 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   const form = useForm({
     resolver: zodResolver(categorySchema),
     defaultValues: {
-      name: category?.name || "",
-      description: category?.description || "",
-      icon: category?.icon || "🍽️",
+      name: "",
+      description: "",
+      icon: "🍽️",
     },
   });
+
+  useEffect(() => {
+    if (open) {
+      if (category) {
+        form.reset({
+          name: category.name || "",
+          description: category.description || "",
+          icon: category.icon || "🍽️",
+        });
+      } else {
+        form.reset({
+          name: "",
+          description: "",
+          icon: "🍽️",
+        });
+      }
+    }
+  }, [open, category, form]);
 
   if (!open) return null;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] mx-4">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-lg sm:text-xl">
             {category ? "Редактировать категорию" : "Добавить категорию"}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-sm">
             {category ? "Обновите информацию о категории" : "Добавьте новую категорию товаров"}
           </DialogDescription>
         </DialogHeader>
@@ -963,11 +1060,11 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Название категории</FormLabel>
+                  <FormLabel className="text-sm">Название категории</FormLabel>
                   <FormControl>
-                    <Input placeholder="Введите название категории" {...field} />
+                    <Input placeholder="Введите название категории" {...field} className="text-sm" />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -977,15 +1074,15 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Описание</FormLabel>
+                  <FormLabel className="text-sm">Описание</FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="Введите описание категории"
-                      className="resize-none"
+                      className="resize-none text-sm"
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -995,20 +1092,20 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               name="icon"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Иконка (эмодзи)</FormLabel>
+                  <FormLabel className="text-sm">Иконка (эмодзи)</FormLabel>
                   <FormControl>
-                    <Input placeholder="🍽️" {...field} />
+                    <Input placeholder="🍽️" {...field} className="text-sm" />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
 
-            <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={onClose}>
+            <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
+              <Button type="button" variant="outline" onClick={onClose} className="text-sm">
                 Отмена
               </Button>
-              <Button type="submit" className="bg-orange-500 hover:bg-orange-600">
+              <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-sm">
                 <Save className="mr-2 h-4 w-4" />
                 {category ? "Обновить" : "Создать"}  
               </Button>
