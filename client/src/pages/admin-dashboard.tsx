@@ -1109,13 +1109,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   type="button" 
                   variant="outline" 
                   onClick={onClose} 
-                  className="text-sm border-gray-300 text-gray-700 hover:shadow-md hover:shadow-gray-300/50 transition-shadow duration-200"
+                  className="text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-gray-300/50 transition-shadow duration-200"
                 >
                   Отмена
                 </Button>
                 <Button 
                   type="submit" 
-                  className="text-sm bg-orange-500 text-white border-orange-500 hover:shadow-lg hover:shadow-orange-400/50 transition-shadow duration-200"
+                  className="text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-400/50 transition-shadow duration-200"
                 >
                   <Save className="mr-2 h-4 w-4" />
                   {product ? "Обновить" : "Создать"}
