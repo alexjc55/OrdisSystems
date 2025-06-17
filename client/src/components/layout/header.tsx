@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Utensils, ShoppingCart, Menu, Settings, LogOut, User } from "lucide-react";
 import { Link } from "wouter";
+import type { User as UserType } from "@shared/schema";
 
 export default function Header() {
   const { user } = useAuth();
@@ -14,6 +15,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
+  const typedUser = user as UserType | undefined;
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -32,7 +34,7 @@ export default function Header() {
                   Меню
                 </a>
               </Link>
-              {(user?.role === 'admin' || user?.role === 'worker') && (
+              {(typedUser?.role === 'admin' || typedUser?.role === 'worker') && (
                 <Link href="/admin">
                   <a className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                     Управление
@@ -61,59 +63,68 @@ export default function Header() {
               )}
             </Button>
 
-            {/* User Menu */}
-            <div className="hidden md:flex items-center space-x-3">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
-                      <AvatarFallback>
-                        {user?.firstName?.[0]}{user?.lastName?.[0]}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <div className="flex items-center justify-start gap-2 p-2">
-                    <div className="flex flex-col space-y-1 leading-none">
-                      {user?.firstName && (
-                        <p className="font-medium">{user.firstName} {user.lastName}</p>
-                      )}
-                      {user?.email && (
-                        <p className="w-[200px] truncate text-sm text-muted-foreground">
-                          {user.email}
-                        </p>
-                      )}
-                      <Badge variant="secondary" className="w-fit text-xs">
-                        {user?.role === 'admin' ? 'Администратор' : 
-                         user?.role === 'worker' ? 'Работник' : 'Клиент'}
-                      </Badge>
+            {/* User Menu or Login Button */}
+            {typedUser ? (
+              <div className="hidden md:flex items-center space-x-3">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={typedUser?.profileImageUrl || ""} alt={typedUser?.firstName || ""} />
+                        <AvatarFallback>
+                          {typedUser?.firstName?.[0]}{typedUser?.lastName?.[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <div className="flex flex-col space-y-1 leading-none">
+                        {user?.firstName && (
+                          <p className="font-medium">{user.firstName} {user.lastName}</p>
+                        )}
+                        {user?.email && (
+                          <p className="w-[200px] truncate text-sm text-muted-foreground">
+                            {user.email}
+                          </p>
+                        )}
+                        <Badge variant="secondary" className="w-fit text-xs">
+                          {user?.role === 'admin' ? 'Администратор' : 
+                           user?.role === 'worker' ? 'Работник' : 'Клиент'}
+                        </Badge>
+                      </div>
                     </div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Профиль</span>
-                  </DropdownMenuItem>
-                  {user?.role === 'admin' && (
-                    <DropdownMenuItem asChild>
-                      <Link href="/admin">
-                        <div className="flex items-center">
-                          <Settings className="mr-2 h-4 w-4" />
-                          <span>Панель управления</span>
-                        </div>
-                      </Link>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Профиль</span>
                     </DropdownMenuItem>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => window.location.href = '/api/logout'}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Выйти</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+                    {user?.role === 'admin' && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin">
+                          <div className="flex items-center">
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Панель управления</span>
+                          </div>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => window.location.href = '/api/logout'}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Выйти</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ) : (
+              <Button 
+                onClick={() => window.location.href = '/api/login'}
+                className="bg-primary hover:bg-primary/90 text-white hidden md:flex"
+              >
+                Войти
+              </Button>
+            )}
 
             {/* Mobile Menu Button */}
             <Button
@@ -144,20 +155,31 @@ export default function Header() {
                 </Link>
               )}
               <div className="border-t border-gray-200 pt-2 mt-2">
-                <div className="px-3 py-2">
-                  <p className="text-sm font-medium text-gray-900">
-                    {user?.firstName} {user?.lastName}
-                  </p>
-                  <p className="text-sm text-gray-600">{user?.email}</p>
-                </div>
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start px-3 py-2 text-sm"
-                  onClick={() => window.location.href = '/api/logout'}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Выйти
-                </Button>
+                {user ? (
+                  <>
+                    <div className="px-3 py-2">
+                      <p className="text-sm font-medium text-gray-900">
+                        {user?.firstName} {user?.lastName}
+                      </p>
+                      <p className="text-sm text-gray-600">{user?.email}</p>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start px-3 py-2 text-sm"
+                      onClick={() => window.location.href = '/api/logout'}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Выйти
+                    </Button>
+                  </>
+                ) : (
+                  <Button 
+                    className="w-full bg-primary hover:bg-primary/90 text-white mx-3 my-2"
+                    onClick={() => window.location.href = '/api/login'}
+                  >
+                    Войти
+                  </Button>
+                )}
               </div>
             </div>
           </div>

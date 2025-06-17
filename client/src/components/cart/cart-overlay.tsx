@@ -70,6 +70,19 @@ export default function CartOverlay() {
       return;
     }
 
+    // Проверяем авторизацию перед оформлением заказа
+    if (!user) {
+      toast({
+        title: "Требуется авторизация",
+        description: "Для оформления заказа необходимо войти в систему",
+        variant: "destructive",
+      });
+      setTimeout(() => {
+        window.location.href = "/api/login";
+      }, 1500);
+      return;
+    }
+
     const orderData = {
       totalAmount: total.toFixed(2),
       deliveryFee: DELIVERY_FEE.toFixed(2),
