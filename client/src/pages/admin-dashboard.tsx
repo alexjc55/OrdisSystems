@@ -733,7 +733,7 @@ export default function AdminDashboard() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {users.map((user: any) => (
+                          {(users as any[] || []).map((user: any) => (
                             <TableRow key={user.id}>
                               <TableCell className="font-medium text-xs sm:text-sm">{user.email}</TableCell>
                               <TableCell className="text-xs sm:text-sm hidden sm:table-cell">

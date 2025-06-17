@@ -222,12 +222,12 @@ export default function Profile() {
                         <TableRow key={order.id}>
                           <TableCell className="font-medium">#{order.id}</TableCell>
                           <TableCell>
-                            {new Date(order.createdAt).toLocaleDateString('ru-RU')}
+                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU') : '—'}
                             <div className="text-xs text-gray-500">
-                              {new Date(order.createdAt).toLocaleTimeString('ru-RU', { 
+                              {order.createdAt ? new Date(order.createdAt).toLocaleTimeString('ru-RU', { 
                                 hour: '2-digit', 
                                 minute: '2-digit' 
-                              })}
+                              }) : '—'}
                             </div>
                           </TableCell>
                           <TableCell>{getStatusBadge(order.status)}</TableCell>

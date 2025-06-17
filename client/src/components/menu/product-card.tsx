@@ -19,7 +19,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { toast } = useToast();
 
   const pricePer100g = parseFloat(product.pricePerKg); // будет переименовано в базе позже
-  const totalPrice = calculateTotal(pricePer100g, selectedWeight);
+  const totalPrice = calculateTotal(pricePer100g, selectedWeight, "kg");
 
   const handleWeightChange = (newWeight: number) => {
     if (newWeight >= 0.1 && newWeight <= 99) {
