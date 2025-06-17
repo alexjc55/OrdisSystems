@@ -128,10 +128,12 @@ export default function AdminDashboard() {
         formData.append("pricePerKg", productData.price);
       }
       
-      return await apiRequest('/api/products', {
+      const response = await fetch('/api/products', {
         method: 'POST',
         body: formData,
       });
+      if (!response.ok) throw new Error('Failed to create product');
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
@@ -161,10 +163,12 @@ export default function AdminDashboard() {
         formData.append("pricePerKg", productData.price);
       }
       
-      return await apiRequest(`/api/products/${id}`, {
+      const response = await fetch(`/api/products/${id}`, {
         method: 'PATCH',
         body: formData,
       });
+      if (!response.ok) throw new Error('Failed to update product');
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
@@ -180,7 +184,9 @@ export default function AdminDashboard() {
 
   const deleteProductMutation = useMutation({
     mutationFn: async (productId: number) => {
-      return await apiRequest(`/api/products/${productId}`, { method: 'DELETE' });
+      const response = await fetch(`/api/products/${productId}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Failed to delete product');
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
@@ -194,11 +200,13 @@ export default function AdminDashboard() {
 
   const toggleAvailabilityMutation = useMutation({
     mutationFn: async ({ id, isAvailable }: { id: number; isAvailable: boolean }) => {
-      return await apiRequest(`/api/products/${id}`, {
+      const response = await fetch(`/api/products/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isAvailable }),
       });
+      if (!response.ok) throw new Error('Failed to toggle availability');
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
@@ -212,11 +220,13 @@ export default function AdminDashboard() {
   // Category mutations
   const createCategoryMutation = useMutation({
     mutationFn: async (categoryData: any) => {
-      return await apiRequest('/api/categories', {
+      const response = await fetch('/api/categories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(categoryData),
       });
+      if (!response.ok) throw new Error('Failed to create category');
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
@@ -232,11 +242,13 @@ export default function AdminDashboard() {
 
   const updateCategoryMutation = useMutation({
     mutationFn: async ({ id, ...categoryData }: any) => {
-      return await apiRequest(`/api/categories/${id}`, {
+      const response = await fetch(`/api/categories/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(categoryData),
       });
+      if (!response.ok) throw new Error('Failed to update category');
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
