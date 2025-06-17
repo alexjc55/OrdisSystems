@@ -1,31 +1,39 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import ProductForm from "@/components/admin/product-form";
-import CategoryForm from "@/components/admin/category-form";
-import { formatCurrency } from "@/lib/currency";
-import { Plus, Package, Users, ShoppingCart, TrendingUp } from "lucide-react";
-import type { CategoryWithProducts, OrderWithItems, StoreSettings } from "@shared/schema";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { formatCurrency, formatWeight } from "@/lib/currency";
+import { Package, Utensils, ShoppingCart, AlertTriangle, CheckCircle, Clock, X, Edit2, Trash2, Plus, TrendingUp, Users } from "lucide-react";
+import type { CategoryWithProducts, OrderWithItems, ProductWithCategory, Product, Category } from "@shared/schema";
 
 export default function AdminDashboard() {
   const { user, isLoading, isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const [showProductForm, setShowProductForm] = useState(false);
-  const [showCategoryForm, setShowCategoryForm] = useState(false);
+  const queryClient = useQueryClient();
+  
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [showAddProduct, setShowAddProduct] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Redirect to home if not authenticated or not admin
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
+        title: "Требуется авторизация",
+        description: "Вход в систему...",
         variant: "destructive",
       });
       setTimeout(() => {
@@ -34,10 +42,10 @@ export default function AdminDashboard() {
       return;
     }
 
-    if (!isLoading && user && user.role !== 'admin') {
+    if (!isLoading && user && user.role !== 'admin' && user.role !== 'worker') {
       toast({
-        title: "Access Denied",
-        description: "Admin access required",
+        title: "Доступ запрещен",
+        description: "Требуются права администратора или работника",
         variant: "destructive",
       });
       setTimeout(() => {
@@ -49,14 +57,29 @@ export default function AdminDashboard() {
 
   const { data: categories } = useQuery<CategoryWithProducts[]>({
     queryKey: ["/api/categories"],
+    queryFn: async () => {
+      const res = await fetch("/api/categories", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+  });
+
+  const { data: allProducts } = useQuery<ProductWithCategory[]>({
+    queryKey: ["/api/products"],
+    queryFn: async () => {
+      const res = await fetch("/api/products", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
   });
 
   const { data: orders } = useQuery<OrderWithItems[]>({
     queryKey: ["/api/orders"],
-  });
-
-  const { data: settings } = useQuery<StoreSettings>({
-    queryKey: ["/api/settings"],
+    queryFn: async () => {
+      const res = await fetch("/api/orders", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
   });
 
   if (isLoading) {
