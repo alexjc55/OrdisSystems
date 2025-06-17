@@ -1482,6 +1482,41 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
     },
   });
 
+  // Reset form when storeSettings changes
+  useEffect(() => {
+    if (storeSettings) {
+      form.reset({
+        storeName: storeSettings?.storeName || "eDAHouse",
+        welcomeTitle: storeSettings?.welcomeTitle || "",
+        storeDescription: storeSettings?.storeDescription || "",
+        logoUrl: storeSettings?.logoUrl || "",
+        bannerImage: storeSettings?.bannerImage || "",
+        contactPhone: storeSettings?.contactPhone || "",
+        contactEmail: storeSettings?.contactEmail || "",
+        address: storeSettings?.address || "",
+        workingHours: {
+          monday: storeSettings?.workingHours?.monday || "",
+          tuesday: storeSettings?.workingHours?.tuesday || "",
+          wednesday: storeSettings?.workingHours?.wednesday || "",
+          thursday: storeSettings?.workingHours?.thursday || "",
+          friday: storeSettings?.workingHours?.friday || "",
+          saturday: storeSettings?.workingHours?.saturday || "",
+          sunday: storeSettings?.workingHours?.sunday || "",
+        },
+        deliveryInfo: storeSettings?.deliveryInfo || "",
+        paymentInfo: storeSettings?.paymentInfo || "",
+        aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
+        deliveryFee: storeSettings?.deliveryFee || "15.00",
+        minOrderAmount: storeSettings?.minOrderAmount || "50.00",
+        discountBadgeText: storeSettings?.discountBadgeText || "Скидка",
+        showBannerImage: storeSettings?.showBannerImage ?? true,
+        showTitleDescription: storeSettings?.showTitleDescription ?? true,
+        showInfoBlocks: storeSettings?.showInfoBlocks ?? true,
+        showSpecialOffers: storeSettings?.showSpecialOffers ?? true,
+      });
+    }
+  }, [storeSettings, form]);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -1770,7 +1805,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-300"
+                      className="switch-admin"
                     />
                   </FormControl>
                 </FormItem>
@@ -1792,7 +1827,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-300"
+                      className="switch-admin"
                     />
                   </FormControl>
                 </FormItem>
@@ -1814,7 +1849,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-300"
+                      className="switch-admin"
                     />
                   </FormControl>
                 </FormItem>

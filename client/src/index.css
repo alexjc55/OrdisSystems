@@ -147,6 +147,15 @@
   .text-success {
     color: hsl(var(--success));
   }
+
+  /* Custom Switch styling for admin toggles */
+  .switch-admin[data-state="checked"] {
+    background-color: #22c55e !important;
+  }
+  
+  .switch-admin[data-state="unchecked"] {
+    background-color: #9ca3af !important;
+  }
   
   .bg-warning {
     background-color: hsl(var(--warning));
