@@ -101,6 +101,7 @@ export const storeSettings = pgTable("store_settings", {
   welcomeTitle: varchar("welcome_title", { length: 255 }),
   storeDescription: text("store_description"),
   logoUrl: varchar("logo_url", { length: 500 }),
+  bannerImage: varchar("banner_image", { length: 500 }),
   contactPhone: varchar("contact_phone", { length: 50 }),
   contactEmail: varchar("contact_email", { length: 255 }),
   address: text("address"),

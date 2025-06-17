@@ -64,6 +64,7 @@ const storeSettingsSchema = z.object({
   welcomeTitle: z.string().optional(),
   storeDescription: z.string().optional(),
   logoUrl: z.string().optional(),
+  bannerImage: z.string().optional(),
   contactPhone: z.string().optional(),
   contactEmail: z.string().email("Неверный формат email").optional().or(z.literal("")),
   address: z.string().optional(),
@@ -1342,6 +1343,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       welcomeTitle: storeSettings?.welcomeTitle || "",
       storeDescription: storeSettings?.storeDescription || "",
       logoUrl: storeSettings?.logoUrl || "",
+      bannerImage: storeSettings?.bannerImage || "",
       contactPhone: storeSettings?.contactPhone || "",
       contactEmail: storeSettings?.contactEmail || "",
       address: storeSettings?.address || "",
@@ -1502,6 +1504,29 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   onChange={field.onChange}
                 />
               </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="bannerImage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm flex items-center gap-2">
+                <Upload className="h-4 w-4" />
+                Баннер на главной странице
+              </FormLabel>
+              <FormControl>
+                <ImageUpload
+                  value={field.value || ""}
+                  onChange={field.onChange}
+                />
+              </FormControl>
+              <FormDescription className="text-xs text-gray-500">
+                Изображение будет отображаться под шапкой на всю ширину страницы
+              </FormDescription>
               <FormMessage className="text-xs" />
             </FormItem>
           )}
