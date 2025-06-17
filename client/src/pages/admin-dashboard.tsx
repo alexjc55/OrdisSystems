@@ -506,7 +506,15 @@ export default function AdminDashboard() {
                             <TableRow key={product.id}>
                               <TableCell className="px-2 sm:px-4 py-2">
                                 <div>
-                                  <div className="font-medium text-xs sm:text-sm">{product.name}</div>
+                                  <button
+                                    onClick={() => {
+                                      setEditingProduct(product);
+                                      setIsProductFormOpen(true);
+                                    }}
+                                    className="font-medium text-xs sm:text-sm text-left hover:text-orange-600 transition-colors cursor-pointer"
+                                  >
+                                    {product.name}
+                                  </button>
                                   {product.description && (
                                     <div className="text-xs text-gray-500 max-w-[150px] sm:max-w-xs truncate">
                                       {product.description}
