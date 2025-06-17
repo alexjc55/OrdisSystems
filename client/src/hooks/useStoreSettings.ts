@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { StoreSettings } from "@shared/schema";
 
 export function useStoreSettings() {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["/api/settings"],
     queryFn: async () => {
       try {
@@ -48,4 +48,10 @@ export function useStoreSettings() {
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
+
+  return {
+    storeSettings: query.data,
+    isLoading: query.isLoading,
+    error: query.error,
+  };
 }

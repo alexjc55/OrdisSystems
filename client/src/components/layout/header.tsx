@@ -15,7 +15,7 @@ export default function Header() {
   const { items, toggleCart } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const { data: storeSettings } = useStoreSettings();
+  const { storeSettings } = useStoreSettings();
 
   const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
 

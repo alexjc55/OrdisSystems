@@ -601,8 +601,24 @@ export default function AdminDashboard() {
                                 </Badge>
                               </TableCell>
                               <TableCell className="px-2 sm:px-4 py-2">
-                                <div className="text-xs sm:text-sm">
-                                  <div className="font-medium">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer ? 'bg-orange-100 border border-orange-200' : ''}`}>
+                                  {product.isSpecialOffer && product.discountType && product.discountValue ? (
+                                    <div>
+                                      <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                      <div className="font-medium text-orange-600">
+                                        {formatCurrency(
+                                          product.discountType === "percentage"
+                                            ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
+                                            : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
+                                        )}
+                                      </div>
+                                      <div className="text-orange-600 text-xs font-medium">
+                                        -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="font-medium">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                  )}
                                   <div className="text-gray-500 text-xs">{getUnitLabel(product.unit || "100g")}</div>
                                 </div>
                               </TableCell>
@@ -1458,6 +1474,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
       deliveryFee: storeSettings?.deliveryFee || "15.00",
       minOrderAmount: storeSettings?.minOrderAmount || "50.00",
+      discountBadgeText: storeSettings?.discountBadgeText || "Скидка",
     },
   });
 
@@ -1703,6 +1720,27 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   {...field}
                 />
               </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="discountBadgeText"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm">Текст на значке скидки</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="Скидка"
+                  className="text-sm"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription className="text-xs">
+                Этот текст будет отображаться на оранжевом значке товаров со скидкой
+              </FormDescription>
               <FormMessage className="text-xs" />
             </FormItem>
           )}
