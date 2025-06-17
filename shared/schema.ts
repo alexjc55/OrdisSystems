@@ -58,6 +58,7 @@ export const products = pgTable("products", {
   pricePerKg: decimal("price_per_kg", { precision: 10, scale: 2 }).notNull(),
   imageUrl: varchar("image_url", { length: 500 }),
   isActive: boolean("is_active").default(true).notNull(),
+  isAvailable: boolean("is_available").default(true).notNull(),
   stockStatus: varchar("stock_status", { enum: ["in_stock", "low_stock", "out_of_stock"] }).default("in_stock").notNull(),
   sortOrder: integer("sort_order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
@@ -73,6 +74,8 @@ export const orders = pgTable("orders", {
   deliveryFee: decimal("delivery_fee", { precision: 10, scale: 2 }).default("0").notNull(),
   customerNotes: text("customer_notes"),
   deliveryAddress: text("delivery_address"),
+  customerPhone: varchar("customer_phone", { length: 20 }),
+  requestedDeliveryTime: timestamp("requested_delivery_time"),
   paymentMethod: varchar("payment_method", { length: 50 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -100,6 +103,8 @@ export const storeSettings = pgTable("store_settings", {
   workingHours: jsonb("working_hours"), // Store as JSON object
   deliveryFee: decimal("delivery_fee", { precision: 10, scale: 2 }).default("15.00"),
   minOrderAmount: decimal("min_order_amount", { precision: 10, scale: 2 }).default("50.00"),
+  minDeliveryTimeHours: integer("min_delivery_time_hours").default(2), // Minimum hours for delivery
+  maxDeliveryTimeDays: integer("max_delivery_time_days").default(4), // Maximum days for delivery
   paymentMethods: jsonb("payment_methods"), // Array of payment methods
   isDeliveryEnabled: boolean("is_delivery_enabled").default(true),
   isPickupEnabled: boolean("is_pickup_enabled").default(true),

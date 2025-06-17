@@ -15,10 +15,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { formatCurrency, formatWeight } from "@/lib/currency";
-import { Package, Utensils, ShoppingCart, AlertTriangle, CheckCircle, Clock, X, Edit2, Trash2, Plus, TrendingUp, Users, Eye, EyeOff, UserPlus } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { formatCurrency } from "@/lib/currency";
+import { Package, Utensils, ShoppingCart, AlertTriangle, TrendingUp, Users, Edit2, Trash2, Plus, UserPlus, ChevronDown, ChevronRight } from "lucide-react";
 import type { CategoryWithProducts, OrderWithItems, ProductWithCategory, Product, Category, User } from "@shared/schema";
 
 export default function AdminDashboard() {
@@ -32,6 +33,7 @@ export default function AdminDashboard() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<number>>(new Set());
 
   // Redirect if not authorized
   useEffect(() => {
@@ -237,6 +239,16 @@ export default function AdminDashboard() {
     },
   });
 
+  const toggleCategoryCollapse = (categoryId: number) => {
+    const newCollapsed = new Set(collapsedCategories);
+    if (newCollapsed.has(categoryId)) {
+      newCollapsed.delete(categoryId);
+    } else {
+      newCollapsed.add(categoryId);
+    }
+    setCollapsedCategories(newCollapsed);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -327,84 +339,111 @@ export default function AdminDashboard() {
           </Card>
         </div>
 
-        <Tabs defaultValue="availability" className="space-y-6">
+        <Tabs defaultValue="inventory" className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="availability">Наличие</TabsTrigger>
-            <TabsTrigger value="products">Товары</TabsTrigger>
+            <TabsTrigger value="inventory">Товары</TabsTrigger>
+            <TabsTrigger value="products">Управление</TabsTrigger>
             <TabsTrigger value="categories">Категории</TabsTrigger>
             <TabsTrigger value="orders">Заказы</TabsTrigger>
             {user.role === 'admin' && <TabsTrigger value="users">Пользователи</TabsTrigger>}
           </TabsList>
 
-          {/* Product Availability */}
-          <TabsContent value="availability" className="space-y-6">
+          {/* Compact Product Inventory */}
+          <TabsContent value="inventory" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Utensils className="h-5 w-5" />
-                  Контроль Наличия Блюд
+                  Быстрое Управление Товарами
                 </CardTitle>
                 <CardDescription>
-                  Управляйте доступностью блюд в меню. Недоступные блюда скрыты от клиентов
+                  Управление наличием товаров по категориям. Нажмите на категорию для сворачивания
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {categories?.map((category) => (
-                    <div key={category.id} className="border rounded-lg p-4">
-                      <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                        <span className="text-2xl">{category.icon}</span>
-                        {category.name}
-                        <Badge variant="secondary">{category.products.length} блюд</Badge>
-                      </h3>
-                      
-                      <div className="grid gap-3">
-                        {category.products.map((product) => {
-                          const productDetails = allProducts?.find(p => p.id === product.id);
-                          if (!productDetails) return null;
-                          
-                          return (
-                            <div key={product.id} className="flex items-center justify-between p-3 border rounded-lg bg-white">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-3">
-                                  <div className="font-medium">{product.name}</div>
-                                  <Badge variant={productDetails.isAvailable ? "default" : "destructive"}>
-                                    {productDetails.isAvailable ? "В наличии" : "Нет в наличии"}
-                                  </Badge>
-                                </div>
-                                <div className="text-sm text-gray-600 mt-1">
-                                  {formatCurrency(parseFloat(product.pricePerKg))} за кг
-                                </div>
-                              </div>
-                              
-                              <div className="flex items-center gap-2 ml-4">
-                                <Button
-                                  variant={productDetails.isAvailable ? "outline" : "default"}
-                                  size="sm"
-                                  onClick={() => toggleAvailabilityMutation.mutate({
-                                    productId: product.id,
-                                    isAvailable: !productDetails.isAvailable
-                                  })}
-                                  disabled={toggleAvailabilityMutation.isPending}
-                                >
-                                  {productDetails.isAvailable ? (
-                                    <>
-                                      <EyeOff className="h-4 w-4 mr-1" />
-                                      Скрыть
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Eye className="h-4 w-4 mr-1" />
-                                      Показать
-                                    </>
-                                  )}
-                                </Button>
-                              </div>
+                    <Collapsible
+                      key={category.id}
+                      open={!collapsedCategories.has(category.id)}
+                      onOpenChange={() => toggleCategoryCollapse(category.id)}
+                    >
+                      <div className="border rounded-lg">
+                        <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left hover:bg-gray-50">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">{category.icon}</span>
+                            <div>
+                              <h3 className="font-semibold text-lg">{category.name}</h3>
+                              <p className="text-sm text-gray-600">
+                                {category.products.length} товаров
+                              </p>
                             </div>
-                          );
-                        })}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary">
+                              {category.products.filter(p => {
+                                const productDetails = allProducts?.find(ap => ap.id === p.id);
+                                return productDetails?.isAvailable;
+                              }).length} доступно
+                            </Badge>
+                            {collapsedCategories.has(category.id) ? (
+                              <ChevronRight className="h-4 w-4" />
+                            ) : (
+                              <ChevronDown className="h-4 w-4" />
+                            )}
+                          </div>
+                        </CollapsibleTrigger>
+                        
+                        <CollapsibleContent>
+                          <div className="border-t p-4">
+                            <div className="grid gap-2">
+                              {category.products.map((product) => {
+                                const productDetails = allProducts?.find(p => p.id === product.id);
+                                if (!productDetails) return null;
+                                
+                                return (
+                                  <div key={product.id} className="flex items-center justify-between p-3 border rounded-lg bg-white">
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-3">
+                                        <div className="font-medium">{product.name}</div>
+                                        <div className="text-sm text-gray-600">
+                                          {formatCurrency(parseFloat(product.pricePerKg))} за кг
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-3">
+                                      <div className="flex items-center gap-2">
+                                        <Label htmlFor={`available-${product.id}`} className="text-sm">
+                                          {productDetails.isAvailable ? "В наличии" : "Нет в наличии"}
+                                        </Label>
+                                        <Switch
+                                          id={`available-${product.id}`}
+                                          checked={productDetails.isAvailable}
+                                          onCheckedChange={(checked) => toggleAvailabilityMutation.mutate({
+                                            productId: product.id,
+                                            isAvailable: checked
+                                          })}
+                                          disabled={toggleAvailabilityMutation.isPending}
+                                        />
+                                      </div>
+                                      
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setEditingProduct(productDetails)}
+                                      >
+                                        <Edit2 className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </CollapsibleContent>
                       </div>
-                    </div>
+                    </Collapsible>
                   ))}
                 </div>
               </CardContent>
