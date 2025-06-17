@@ -396,8 +396,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Admin access required" });
       }
 
+      console.log("Received settings data:", JSON.stringify(req.body, null, 2));
+      
       const settingsData = insertStoreSettingsSchema.parse(req.body);
+      console.log("Parsed settings data:", JSON.stringify(settingsData, null, 2));
+      
       const settings = await storage.updateStoreSettings(settingsData);
+      console.log("Updated settings in DB:", JSON.stringify(settings, null, 2));
+      
       res.json(settings);
     } catch (error) {
       console.error("Error updating store settings:", error);

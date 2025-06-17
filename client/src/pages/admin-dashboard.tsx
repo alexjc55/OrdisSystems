@@ -1475,10 +1475,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       deliveryFee: storeSettings?.deliveryFee || "15.00",
       minOrderAmount: storeSettings?.minOrderAmount || "50.00",
       discountBadgeText: storeSettings?.discountBadgeText || "Скидка",
-      showBannerImage: storeSettings?.showBannerImage ?? true,
-      showTitleDescription: storeSettings?.showTitleDescription ?? true,
-      showInfoBlocks: storeSettings?.showInfoBlocks ?? true,
-      showSpecialOffers: storeSettings?.showSpecialOffers ?? true,
+      showBannerImage: storeSettings?.showBannerImage !== false,
+      showTitleDescription: storeSettings?.showTitleDescription !== false,
+      showInfoBlocks: storeSettings?.showInfoBlocks !== false,
+      showSpecialOffers: storeSettings?.showSpecialOffers !== false,
     },
   });
 
@@ -1509,10 +1509,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         deliveryFee: storeSettings?.deliveryFee || "15.00",
         minOrderAmount: storeSettings?.minOrderAmount || "50.00",
         discountBadgeText: storeSettings?.discountBadgeText || "Скидка",
-        showBannerImage: storeSettings?.showBannerImage ?? true,
-        showTitleDescription: storeSettings?.showTitleDescription ?? true,
-        showInfoBlocks: storeSettings?.showInfoBlocks ?? true,
-        showSpecialOffers: storeSettings?.showSpecialOffers ?? true,
+        showBannerImage: storeSettings?.showBannerImage !== false,
+        showTitleDescription: storeSettings?.showTitleDescription !== false,
+        showInfoBlocks: storeSettings?.showInfoBlocks !== false,
+        showSpecialOffers: storeSettings?.showSpecialOffers !== false,
       });
     }
   }, [storeSettings, form]);
