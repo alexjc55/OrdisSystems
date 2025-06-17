@@ -69,7 +69,7 @@ export default function Sidebar({
               variant="ghost"
               onClick={() => onCategorySelect(null)}
               className={cn(
-                "w-full justify-start px-3 py-2 text-sm font-medium rounded-md",
+                "w-full justify-start px-3 py-1.5 text-sm font-medium rounded-md h-9",
                 selectedCategoryId === null
                   ? "text-primary bg-primary/10 border-r-2 border-primary"
                   : "text-gray-700 hover:bg-gray-50 hover:text-primary"
@@ -88,7 +88,7 @@ export default function Sidebar({
                 variant="ghost"
                 onClick={() => onCategorySelect(category.id)}
                 className={cn(
-                  "w-full justify-start px-3 py-2 text-sm font-medium rounded-md",
+                  "w-full justify-start px-3 py-1.5 text-sm font-medium rounded-md h-9",
                   selectedCategoryId === category.id
                     ? "text-primary bg-primary/10 border-r-2 border-primary"
                     : "text-gray-700 hover:bg-gray-50 hover:text-primary"

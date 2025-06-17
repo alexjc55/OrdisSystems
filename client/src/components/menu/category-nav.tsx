@@ -38,7 +38,7 @@ export default function CategoryNav({
           size="sm"
           onClick={() => onCategorySelect(null)}
           className={cn(
-            "flex-shrink-0 text-sm font-medium px-4 py-2 h-9",
+            "flex-shrink-0 text-sm font-medium px-3 py-1.5 h-8",
             selectedCategoryId === null
               ? "bg-primary text-white hover:bg-primary/90"
               : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -55,7 +55,7 @@ export default function CategoryNav({
             size="sm"
             onClick={() => onCategorySelect(category.id)}
             className={cn(
-              "flex-shrink-0 text-sm font-medium px-4 py-2 h-9",
+              "flex-shrink-0 text-sm font-medium px-3 py-1.5 h-8",
               selectedCategoryId === category.id
                 ? "bg-primary text-white hover:bg-primary/90"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
