@@ -32,7 +32,9 @@ import {
   Save,
   Search,
   Filter,
-  Menu
+  Menu,
+  ChevronUp,
+  ChevronDown
 } from "lucide-react";
 
 // Validation schemas
@@ -65,6 +67,18 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
+  // Sorting function
+  const handleSort = (field: "name" | "price" | "category") => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -306,16 +320,43 @@ export default function AdminDashboard() {
     return null;
   }
 
-  const filteredProducts = (productsData as any[] || []).filter((product: any) => {
-    const matchesSearch = !searchQuery || 
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    const matchesCategory = selectedCategoryFilter === "all" || 
-      product.categoryId === parseInt(selectedCategoryFilter);
-    
-    return matchesSearch && matchesCategory;
-  });
+  const filteredProducts = (productsData as any[] || [])
+    .filter((product: any) => {
+      const matchesSearch = !searchQuery || 
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+      const matchesCategory = selectedCategoryFilter === "all" || 
+        product.categoryId === parseInt(selectedCategoryFilter);
+      
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a: any, b: any) => {
+      let aValue, bValue;
+      
+      switch (sortField) {
+        case "name":
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case "price":
+          aValue = parseFloat(a.price || a.pricePerKg || "0");
+          bValue = parseFloat(b.price || b.pricePerKg || "0");
+          break;
+        case "category":
+          aValue = a.category?.name?.toLowerCase() || "";
+          bValue = b.category?.name?.toLowerCase() || "";
+          break;
+        default:
+          return 0;
+      }
+      
+      if (sortDirection === "asc") {
+        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      } else {
+        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+      }
+    });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -417,9 +458,45 @@ export default function AdminDashboard() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm">Название</TableHead>
-                            <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm">Категория</TableHead>
-                            <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm">Цена</TableHead>
+                            <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm">
+                              <button 
+                                onClick={() => handleSort("name")}
+                                className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                              >
+                                Название
+                                {sortField === "name" && (
+                                  sortDirection === "asc" ? 
+                                    <ChevronUp className="h-3 w-3" /> : 
+                                    <ChevronDown className="h-3 w-3" />
+                                )}
+                              </button>
+                            </TableHead>
+                            <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm">
+                              <button 
+                                onClick={() => handleSort("category")}
+                                className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                              >
+                                Категория
+                                {sortField === "category" && (
+                                  sortDirection === "asc" ? 
+                                    <ChevronUp className="h-3 w-3" /> : 
+                                    <ChevronDown className="h-3 w-3" />
+                                )}
+                              </button>
+                            </TableHead>
+                            <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm">
+                              <button 
+                                onClick={() => handleSort("price")}
+                                className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                              >
+                                Цена
+                                {sortField === "price" && (
+                                  sortDirection === "asc" ? 
+                                    <ChevronUp className="h-3 w-3" /> : 
+                                    <ChevronDown className="h-3 w-3" />
+                                )}
+                              </button>
+                            </TableHead>
                             <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm">Наличие</TableHead>
                             <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm">Действия</TableHead>
                           </TableRow>
