@@ -86,6 +86,17 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       <Header />
       
+      {/* Banner Image */}
+      {storeSettings?.bannerImage && (
+        <div className="w-full h-32 md:h-40 lg:h-48 overflow-hidden">
+          <img 
+            src={storeSettings.bannerImage} 
+            alt="Store Banner"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+      
       <div className="flex">
         <Sidebar 
           categories={categories || []} 
