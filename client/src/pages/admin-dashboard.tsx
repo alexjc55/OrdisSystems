@@ -1173,6 +1173,89 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="isSpecialOffer"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 sm:p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-sm sm:text-base">Специальное предложение</FormLabel>
+                    <div className="text-xs sm:text-sm text-gray-500">
+                      Товар будет отображаться в разделе "Специальные предложения"
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {form.watch("isSpecialOffer") && (
+              <div className="space-y-4 p-4 border rounded-lg bg-orange-50">
+                <h4 className="text-sm font-medium text-orange-800">Настройки скидки</h4>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="discountType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm">Тип скидки</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="text-sm">
+                              <SelectValue placeholder="Выберите тип скидки" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="percentage">Процент (%)</SelectItem>
+                            <SelectItem value="fixed">Фиксированная сумма (₪)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="discountValue"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm">
+                          Размер скидки {form.watch("discountType") === "percentage" ? "(%)" : "(₪)"}
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            step="0.01"
+                            placeholder={form.watch("discountType") === "percentage" ? "10" : "5.00"}
+                            {...field}
+                            className="text-sm"
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {form.watch("discountType") === "fixed" && (
+                  <div className="text-xs text-orange-700 bg-orange-100 p-2 rounded">
+                    Фиксированная скидка применяется за {form.watch("unit") === "piece" ? "штуку" : form.watch("unit") === "kg" ? "кг" : "100г/100мл"}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0 pt-4">
               {product ? (
                 <AlertDialog>

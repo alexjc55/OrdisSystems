@@ -79,8 +79,8 @@ export default function Home() {
   const displayProducts = availableProducts;
   const isLoading = searchQuery.length > 2 ? searchLoading : (selectedCategoryId === null ? allProductsLoading : productsLoading);
   
-  // Get popular products (top 6 available products for home page)
-  const popularProducts = allProducts?.filter(product => product.isAvailable !== false)?.slice(0, 6) || [];
+  // Get special offers (products marked as special offers)
+  const specialOffers = allProducts?.filter(product => product.isAvailable !== false && product.isSpecialOffer === true) || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -367,12 +367,12 @@ export default function Home() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {popularProducts.map((product) => (
+                    {specialOffers.map((product) => (
                       <div key={product.id} className="relative">
                         <ProductCard product={product} />
-                        <Badge className="absolute top-3 left-3 bg-primary text-white">
+                        <Badge className="absolute top-3 left-3 bg-orange-500 text-white">
                           <Star className="w-3 h-3 mr-1" />
-                          Популярное
+                          Акция
                         </Badge>
                       </div>
                     ))}

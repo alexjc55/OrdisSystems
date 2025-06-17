@@ -32,7 +32,23 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { toast } = useToast();
 
   const price = parseFloat(product.price || product.pricePerKg || "0");
-  const totalPrice = calculateTotal(price, selectedQuantity, unit);
+  
+  // Calculate discount if product is a special offer
+  const getDiscountedPrice = (originalPrice: number) => {
+    if (!product.isSpecialOffer || !product.discountType || !product.discountValue) {
+      return originalPrice;
+    }
+    
+    const discountValue = parseFloat(product.discountValue);
+    if (product.discountType === "percentage") {
+      return originalPrice * (1 - discountValue / 100);
+    } else {
+      return Math.max(0, originalPrice - discountValue);
+    }
+  };
+  
+  const discountedPrice = getDiscountedPrice(price);
+  const totalPrice = calculateTotal(discountedPrice, selectedQuantity, unit);
 
   const handleQuantityChange = (newQuantity: number) => {
     let minValue, maxValue, processedQuantity;
@@ -125,9 +141,27 @@ export default function ProductCard({ product }: ProductCardProps) {
             </p>
           )}
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-bold text-primary">
-              {formatCurrency(price)}
-            </span>
+            <div className="flex flex-col">
+              {product.isSpecialOffer && discountedPrice < price ? (
+                <>
+                  <span className="text-lg line-through text-gray-400">
+                    {formatCurrency(price)}
+                  </span>
+                  <span className="text-2xl font-bold text-orange-600">
+                    {formatCurrency(discountedPrice)}
+                  </span>
+                  <Badge className="bg-orange-500 text-white text-xs mt-1 w-fit">
+                    -{product.discountType === "percentage" 
+                      ? `${product.discountValue}%` 
+                      : formatCurrency(parseFloat(product.discountValue || "0"))}
+                  </Badge>
+                </>
+              ) : (
+                <span className="text-2xl font-bold text-primary">
+                  {formatCurrency(discountedPrice)}
+                </span>
+              )}
+            </div>
             <span className="text-sm text-gray-500">{getUnitLabel(unit)}</span>
           </div>
         </div>
