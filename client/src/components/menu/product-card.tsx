@@ -18,8 +18,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { addItem, toggleCart } = useCartStore();
   const { toast } = useToast();
 
-  const pricePerKg = parseFloat(product.pricePerKg);
-  const totalPrice = calculateTotal(pricePerKg, selectedWeight);
+  const pricePer100g = parseFloat(product.pricePerKg); // будет переименовано в базе позже
+  const totalPrice = calculateTotal(pricePer100g, selectedWeight);
 
   const handleWeightChange = (newWeight: number) => {
     if (newWeight >= 0.1 && newWeight <= 99) {
@@ -88,9 +88,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
           <div className="flex items-center justify-between">
             <span className="text-2xl font-bold text-primary">
-              {formatCurrency(pricePerKg)}
+              {formatCurrency(pricePer100g)}
             </span>
-            <span className="text-sm text-gray-500">за кг</span>
+            <span className="text-sm text-gray-500">за 100г</span>
           </div>
         </div>
 

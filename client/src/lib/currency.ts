@@ -7,10 +7,11 @@ export function parseCurrency(amount: string): number {
   return parseFloat(amount.replace('₪', ''));
 }
 
-export function calculateTotal(pricePerKg: number | string, weight: number | string): number {
-  const price = typeof pricePerKg === 'string' ? parseFloat(pricePerKg) : pricePerKg;
-  const qty = typeof weight === 'string' ? parseFloat(weight) : weight;
-  return price * qty;
+export function calculateTotal(pricePer100g: number | string, weight: number | string): number {
+  const price = typeof pricePer100g === 'string' ? parseFloat(pricePer100g) : pricePer100g;
+  const weightInKg = typeof weight === 'string' ? parseFloat(weight) : weight;
+  // Convert weight from kg to 100g units (1 kg = 10 units of 100g)
+  return price * (weightInKg * 10);
 }
 
 export function formatWeight(weight: number | string): string {
