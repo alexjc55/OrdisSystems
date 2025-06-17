@@ -294,7 +294,7 @@ export default function CartOverlay() {
               <Button
                 onClick={handleCheckout}
                 disabled={createOrderMutation.isPending || !deliveryAddress.trim() || !customerPhone.trim()}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-white font-medium py-3 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:shadow-none"
                 style={{ backgroundColor: 'hsl(16, 100%, 60%)', color: 'white' }}
               >
                 {createOrderMutation.isPending ? (

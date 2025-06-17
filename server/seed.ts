@@ -100,6 +100,8 @@ export async function seedDatabase() {
     {
       name: "Винегрет",
       description: "Традиционный русский салат со свеклой, морковью и квашеной капустой",
+      price: "3.55",
+      unit: "100g",
       pricePerKg: "35.50",
       categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
       isAvailable: true
@@ -107,6 +109,8 @@ export async function seedDatabase() {
     {
       name: "Мимоза",
       description: "Нежный слоеный салат с рыбой, яйцами и сыром",
+      price: "4.89",
+      unit: "100g",
       pricePerKg: "48.90",
       categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
       isAvailable: true
@@ -114,6 +118,8 @@ export async function seedDatabase() {
     {
       name: "Абжерка",
       description: "Острый грузинский салат с овощами и зеленью",
+      price: "4.50",
+      unit: "100g",
       pricePerKg: "45.00",
       categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
       isAvailable: true
@@ -121,6 +127,8 @@ export async function seedDatabase() {
     {
       name: "Аджика",
       description: "Острая закуска из помидоров, перца и специй",
+      price: "5.29",
+      unit: "100g",
       pricePerKg: "52.90",
       categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
       isAvailable: true
@@ -128,6 +136,8 @@ export async function seedDatabase() {
     {
       name: "Баклажаны по-азиатски",
       description: "Маринованные баклажаны с чесноком и кориандром",
+      price: "5.88",
+      unit: "100g",
       pricePerKg: "58.80",
       categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
       isAvailable: true
@@ -135,6 +145,8 @@ export async function seedDatabase() {
     {
       name: "Грибы по-азиатски",
       description: "Маринованные грибы с корейскими специями",
+      price: "6.25",
+      unit: "100g",
       pricePerKg: "62.50",
       categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
       isAvailable: true
