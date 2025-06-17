@@ -414,7 +414,7 @@ export default function AdminDashboard() {
                                     
                                     <div className="flex items-center gap-3">
                                       <div className="flex items-center gap-2">
-                                        <Label htmlFor={`available-${product.id}`} className="text-sm">
+                                        <Label htmlFor={`available-${product.id}`} className="text-sm font-medium">
                                           {productDetails.isAvailable ? "В наличии" : "Нет в наличии"}
                                         </Label>
                                         <Switch
@@ -425,6 +425,7 @@ export default function AdminDashboard() {
                                             isAvailable: checked
                                           })}
                                           disabled={toggleAvailabilityMutation.isPending}
+                                          className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-200"
                                         />
                                       </div>
                                       
