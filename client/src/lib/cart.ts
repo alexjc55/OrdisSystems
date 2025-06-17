@@ -47,7 +47,7 @@ export const useCartStore = create<CartStore>()(
           const newItem: CartItem = {
             product,
             quantity,
-            totalPrice: calculateTotal(parseFloat(product.price), quantity, product.unit)
+            totalPrice: calculateTotal(parseFloat(product.price), quantity, product.unit as ProductUnit)
           };
           set({ items: [...items, newItem] });
         }
@@ -70,7 +70,7 @@ export const useCartStore = create<CartStore>()(
             ? {
                 ...item,
                 quantity,
-                totalPrice: calculateTotal(parseFloat(item.product.price), quantity, item.product.unit)
+                totalPrice: calculateTotal(parseFloat(item.product.price), quantity, item.product.unit as ProductUnit)
               }
             : item
         );
@@ -88,7 +88,8 @@ export const useCartStore = create<CartStore>()(
       },
       
       getTotalPrice: () => {
-        return get().items.reduce((total, item) => total + item.totalPrice, 0);
+        const total = get().items.reduce((total, item) => total + item.totalPrice, 0);
+        return roundUpToNearestTenAgorot(total);
       }
     }),
     {
