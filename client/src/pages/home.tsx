@@ -292,6 +292,23 @@ export default function Home() {
                         onClick={() => handleCategorySelect(category.id)}
                       >
                         <CardContent className="p-4 text-center">
+                          <div className="text-4xl mb-3">
+                            {(() => {
+                              const categoryIcons: Record<string, string> = {
+                                'рыба': '🐟',
+                                'мясо': '🥩',
+                                'овощи': '🥕',
+                                'фрукты': '🍎',
+                                'хлебобулочные': '🍞',
+                                'молочные': '🥛',
+                                'готовые блюда': '🍽️',
+                                'салаты': '🥗',
+                                'default': '📦'
+                              };
+                              const key = category.name.toLowerCase();
+                              return categoryIcons[key] || categoryIcons.default;
+                            })()}
+                          </div>
                           <h3 className="font-semibold text-lg mb-2">{category.name}</h3>
                           <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                             {category.description || "Вкусные блюда"}
