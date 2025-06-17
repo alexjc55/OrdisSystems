@@ -28,15 +28,6 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   const handleAddToCart = () => {
-    if (product.stockStatus === 'out_of_stock') {
-      toast({
-        title: "Товар недоступен",
-        description: "Этот товар временно отсутствует в наличии",
-        variant: "destructive",
-      });
-      return;
-    }
-
     addItem(product, selectedWeight);
     toast({
       title: "Добавлено в корзину",
@@ -45,34 +36,18 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   const getStockBadge = () => {
-    switch (product.stockStatus) {
-      case 'in_stock':
-        return (
-          <Badge variant="default" className="bg-success text-success-foreground">
-            В наличии
-          </Badge>
-        );
-      case 'low_stock':
-        return (
-          <Badge variant="destructive" className="bg-warning text-warning-foreground">
-            Мало
-          </Badge>
-        );
-      case 'out_of_stock':
-        return (
-          <Badge variant="secondary" className="bg-gray-400 text-white">
-            Нет в наличии
-          </Badge>
-        );
-      default:
-        return null;
+    if (product.stockStatus === 'low_stock') {
+      return (
+        <Badge variant="destructive" className="bg-warning text-warning-foreground">
+          Мало
+        </Badge>
+      );
     }
+    return null;
   };
 
-  const isOutOfStock = product.stockStatus === 'out_of_stock';
-
   return (
-    <Card className={`overflow-hidden hover:shadow-lg transition-shadow ${isOutOfStock ? 'opacity-60' : ''}`}>
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative">
         <img
           src={product.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'}
@@ -106,74 +81,62 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        {!isOutOfStock && (
-          <div className="space-y-3">
-            {/* Weight Selector */}
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-gray-700">
-                Вес (кг):
-              </label>
-              <div className="flex items-center space-x-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="h-8 w-8 p-0"
-                  onClick={() => handleWeightChange(selectedWeight - 0.1)}
-                  disabled={selectedWeight <= 0.1}
-                >
-                  <Minus className="h-3 w-3" />
-                </Button>
-                <Input
-                  type="number"
-                  value={selectedWeight}
-                  onChange={(e) => handleWeightChange(parseFloat(e.target.value) || 0.1)}
-                  step="0.1"
-                  min="0.1"
-                  max="99"
-                  className="w-16 text-center text-sm h-8"
-                />
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="h-8 w-8 p-0"
-                  onClick={() => handleWeightChange(selectedWeight + 0.1)}
-                  disabled={selectedWeight >= 99}
-                >
-                  <Plus className="h-3 w-3" />
-                </Button>
-              </div>
+        <div className="space-y-3">
+          {/* Weight Selector */}
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium text-gray-700">
+              Вес (кг):
+            </label>
+            <div className="flex items-center space-x-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => handleWeightChange(selectedWeight - 0.1)}
+                disabled={selectedWeight <= 0.1}
+              >
+                <Minus className="h-3 w-3" />
+              </Button>
+              <Input
+                type="number"
+                value={selectedWeight}
+                onChange={(e) => handleWeightChange(parseFloat(e.target.value) || 0.1)}
+                step="0.1"
+                min="0.1"
+                max="99"
+                className="w-16 text-center text-sm h-8"
+              />
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => handleWeightChange(selectedWeight + 0.1)}
+                disabled={selectedWeight >= 99}
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
             </div>
-
-            {/* Total Price */}
-            <div className="bg-gray-50 rounded-lg p-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Итого:</span>
-                <span className="text-lg font-bold text-gray-900">
-                  {formatCurrency(totalPrice)}
-                </span>
-              </div>
-            </div>
-
-            {/* Add to Cart Button */}
-            <Button
-              onClick={handleAddToCart}
-              className="w-full bg-primary hover:bg-primary/90 text-white font-medium"
-            >
-              <ShoppingCart className="mr-2 h-4 w-4" />
-              В корзину
-            </Button>
           </div>
-        )}
 
-        {isOutOfStock && (
+          {/* Total Price */}
+          <div className="bg-gray-50 rounded-lg p-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Итого:</span>
+              <span className="text-lg font-bold text-gray-900">
+                {formatCurrency(totalPrice)}
+              </span>
+            </div>
+          </div>
+
+          {/* Add to Cart Button */}
           <Button
-            disabled
-            className="w-full bg-gray-300 text-gray-500 cursor-not-allowed font-medium"
+            onClick={handleAddToCart}
+            className="w-full bg-primary hover:bg-primary/90 text-white font-medium"
           >
-            <span className="mr-2">❌</span>
-            Нет в наличии
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            В корзину
           </Button>
-        )}
+        </div>
       </CardContent>
     </Card>
   );
