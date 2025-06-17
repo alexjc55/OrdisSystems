@@ -151,6 +151,7 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
       setIsProductFormOpen(false);
       setEditingProduct(null);
       toast({ title: "Товар создан", description: "Товар успешно добавлен" });
@@ -195,6 +196,8 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
       setEditingProduct(null);
       setIsProductFormOpen(false);
       toast({ title: "Товар обновлен", description: "Изменения сохранены" });
@@ -217,6 +220,7 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
       toast({ title: "Товар удален", description: "Товар успешно удален" });
     },
     onError: (error: any) => {
@@ -237,6 +241,7 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
     },
     onError: (error: any) => {
       console.error("Toggle availability error:", error);
