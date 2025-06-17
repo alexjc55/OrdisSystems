@@ -97,64 +97,166 @@ export default function Home() {
         <main className="flex-1 p-6">
           {/* Search Bar */}
           <div className="mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-3xl font-poppins font-bold text-gray-900">
-                  {(() => {
-                    try {
-                      if (searchQuery && searchQuery.length > 2) {
-                        return `Результаты поиска: "${searchQuery}"`;
-                      }
-                      if (selectedCategory?.name) {
-                        return selectedCategory.name;
-                      }
-                      if (storeSettings?.welcomeTitle) {
-                        return storeSettings.welcomeTitle;
-                      }
-                      return "eDAHouse - טעים";
-                    } catch (error) {
-                      console.error('Error rendering title:', error);
-                      return "eDAHouse - טעים";
+            <div className="mb-6">
+              <h1 className="text-3xl font-poppins font-bold text-gray-900 mb-4">
+                {(() => {
+                  try {
+                    if (searchQuery && searchQuery.length > 2) {
+                      return `Результаты поиска: "${searchQuery}"`;
                     }
-                  })()}
-                </h1>
-                <p className="text-gray-600 mt-1">
-                  {(() => {
-                    try {
-                      if (searchQuery && searchQuery.length > 2) {
-                        return `Найдено товаров: ${searchResults?.length || 0}`;
-                      }
-                      if (selectedCategory?.description) {
-                        return selectedCategory.description;
-                      }
-                      if (storeSettings?.storeDescription) {
-                        return storeSettings.storeDescription;
-                      }
-                      return "Свежая домашняя еда на развес - выбирайте по вкусу";
-                    } catch (error) {
-                      console.error('Error rendering description:', error);
-                      return "Свежая домашняя еда на развес - выбирайте по вкусу";
+                    if (selectedCategory?.name) {
+                      return selectedCategory.name;
                     }
-                  })()}
-                </p>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    if (storeSettings?.welcomeTitle) {
+                      return storeSettings.welcomeTitle;
+                    }
+                    return "eDAHouse - טעים";
+                  } catch (error) {
+                    console.error('Error rendering title:', error);
+                    return "eDAHouse - טעים";
+                  }
+                })()}
+              </h1>
+              <p className="text-gray-600 mb-6">
+                {(() => {
+                  try {
+                    if (searchQuery && searchQuery.length > 2) {
+                      return `Найдено товаров: ${searchResults?.length || 0}`;
+                    }
+                    if (selectedCategory?.description) {
+                      return selectedCategory.description;
+                    }
+                    if (storeSettings?.storeDescription) {
+                      return storeSettings.storeDescription;
+                    }
+                    return "Свежая домашняя еда на развес - выбирайте по вкусу";
+                  } catch (error) {
+                    console.error('Error rendering description:', error);
+                    return "Свежая домашняя еда на развес - выбирайте по вкусу";
+                  }
+                })()}
+              </p>
+
+              {/* Compact Store Information */}
+              {!selectedCategory && searchQuery.length <= 2 && storeSettings && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
+                  {/* Working Hours */}
+                  {storeSettings?.workingHours && (
+                    <Card className="p-3 sm:p-4">
+                      <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                        <Clock className="h-4 w-4 text-primary" />
+                        <span className="font-medium text-sm sm:text-base">Часы работы</span>
+                      </div>
+                      <div className="space-y-1">
+                        {(() => {
+                          try {
+                            const workingHours = storeSettings.workingHours;
+                            if (!workingHours || typeof workingHours !== 'object') {
+                              return <p className="text-gray-500 text-xs">Не указаны</p>;
+                            }
+
+                            const entries = Object.entries(workingHours);
+                            const dayNames: Record<string, string> = {
+                              monday: 'Пн',
+                              tuesday: 'Вт', 
+                              wednesday: 'Ср',
+                              thursday: 'Чт',
+                              friday: 'Пт',
+                              saturday: 'Сб',
+                              sunday: 'Вс'
+                            };
+
+                            const validEntries = entries.filter(([day, hours]) => {
+                              return hours && typeof hours === 'string' && hours.trim();
+                            });
+
+                            if (validEntries.length === 0) {
+                              return <p className="text-gray-500 text-xs">Не указаны</p>;
+                            }
+
+                            return validEntries.slice(0, 3).map(([day, hours]) => (
+                              <div key={day} className="flex justify-between text-xs">
+                                <span className="font-medium">{dayNames[day] || day}</span>
+                                <span className="text-gray-600">{String(hours)}</span>
+                              </div>
+                            ));
+                          } catch (error) {
+                            console.error('Error rendering working hours:', error);
+                            return <p className="text-red-500 text-xs">Ошибка загрузки</p>;
+                          }
+                        })()}
+                      </div>
+                    </Card>
+                  )}
+
+                  {/* Contact Information */}
+                  <Card className="p-3 sm:p-4">
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                      <Phone className="h-4 w-4 text-primary" />
+                      <span className="font-medium text-sm sm:text-base">Контакты</span>
+                    </div>
+                    <div className="space-y-2">
+                      {storeSettings?.contactPhone && (
+                        <div className="flex items-center gap-2">
+                          <Phone className="h-3 w-3 text-gray-400" />
+                          <span className="text-xs text-gray-600">{storeSettings.contactPhone}</span>
+                        </div>
+                      )}
+                      {storeSettings?.contactEmail && (
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-3 w-3 text-gray-400" />
+                          <span className="text-xs text-gray-600">{storeSettings.contactEmail}</span>
+                        </div>
+                      )}
+                      {storeSettings?.address && (
+                        <div className="flex items-start gap-2">
+                          <MapPin className="h-3 w-3 text-gray-400 mt-0.5" />
+                          <span className="text-xs text-gray-600 leading-tight">{storeSettings.address}</span>
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+
+                  {/* Delivery & Payment */}
+                  <Card className="p-3 sm:p-4">
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                      <Truck className="h-4 w-4 text-primary" />
+                      <span className="font-medium text-sm sm:text-base">Доставка</span>
+                    </div>
+                    <div className="space-y-2">
+                      {storeSettings?.deliveryFee && (
+                        <div className="text-xs text-gray-600">
+                          Доставка: {storeSettings.deliveryFee}₪
+                        </div>
+                      )}
+                      {storeSettings?.minOrderAmount && (
+                        <div className="text-xs text-gray-600">
+                          Мин. заказ: {storeSettings.minOrderAmount}₪
+                        </div>
+                      )}
+                      {storeSettings?.deliveryInfo && (
+                        <div className="text-xs text-gray-600 leading-tight">
+                          {storeSettings.deliveryInfo.slice(0, 60)}
+                          {storeSettings.deliveryInfo.length > 60 && '...'}
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                </div>
+              )}
+
+              {/* Search Bar */}
+              <div className="flex justify-center">
+                <div className="relative w-full max-w-md">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
+                    type="text"
                     placeholder="Поиск товаров..."
                     value={searchQuery}
                     onChange={(e) => handleSearch(e.target.value)}
-                    className="pl-10 pr-4 py-2 w-64"
+                    className="pl-10 pr-4 py-2 w-full"
                   />
                 </div>
-                {(user?.role === 'admin' || user?.role === 'worker') && (
-                  <Button className="bg-primary hover:bg-primary/90">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Добавить товар
-                  </Button>
-                )}
               </div>
             </div>
           </div>
