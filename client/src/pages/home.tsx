@@ -12,12 +12,15 @@ import CategoryNav from "@/components/menu/category-nav";
 import ProductCard from "@/components/menu/product-card";
 import CartOverlay from "@/components/cart/cart-overlay";
 import { useCartStore } from "@/lib/cart";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { 
   Search, 
   Clock, 
   Phone, 
   MapPin, 
   CreditCard,
+  ChevronLeft,
+  ChevronRight,
   TrendingUp,
   Star,
   Plus,
@@ -345,17 +348,31 @@ export default function Home() {
                       ))}
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {specialOffers.map((product) => (
-                        <div key={product.id} className="relative">
-                          <ProductCard product={product} />
-                          <Badge className="absolute top-3 left-3 bg-orange-500 text-white">
-                            <Star className="w-3 h-3 mr-1" />
-                            {storeSettings?.discountBadgeText || "Скидка"}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
+                    <Carousel
+                      opts={{
+                        align: "start",
+                      }}
+                      className="w-full"
+                    >
+                      <CarouselContent className="-ml-2 md:-ml-4">
+                        {specialOffers.map((product) => (
+                          <CarouselItem key={product.id} className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+                            <div className="relative">
+                              <ProductCard 
+                                product={product} 
+                                onCategoryClick={handleCategorySelect}
+                              />
+                              <Badge className="absolute top-3 left-3 bg-orange-500 text-white z-10">
+                                <Star className="w-3 h-3 mr-1" />
+                                {storeSettings?.discountBadgeText || "Скидка"}
+                              </Badge>
+                            </div>
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <CarouselPrevious className="hidden md:flex" />
+                      <CarouselNext className="hidden md:flex" />
+                    </Carousel>
                   )}
                 </div>
               )}
@@ -381,7 +398,11 @@ export default function Home() {
               ) : displayProducts.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {displayProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard 
+                      key={product.id} 
+                      product={product} 
+                      onCategoryClick={handleCategorySelect}
+                    />
                   ))}
                 </div>
               ) : (

@@ -12,9 +12,10 @@ import { useStoreSettings } from "@/hooks/useStoreSettings";
 
 interface ProductCardProps {
   product: ProductWithCategory;
+  onCategoryClick?: (categoryId: number) => void;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, onCategoryClick }: ProductCardProps) {
   const unit = (product.unit || "100g") as ProductUnit;
   const { storeSettings } = useStoreSettings();
   
@@ -145,6 +146,15 @@ export default function ProductCard({ product }: ProductCardProps) {
             <p className="text-sm text-gray-600 mb-2 line-clamp-2">
               {product.description}
             </p>
+          )}
+          {product.category && (
+            <Badge 
+              variant="secondary" 
+              className="mb-2 cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+              onClick={() => onCategoryClick?.(product.category.id)}
+            >
+              {product.category.name}
+            </Badge>
           )}
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
