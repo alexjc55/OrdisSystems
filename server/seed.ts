@@ -181,7 +181,7 @@ export async function seedDatabase() {
       description: "Домашние мясные котлеты из говядины и свинины",
       pricePerKg: "72.50",
       categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
-      imageUrl: "/assets/3_1750184360777.jpg",
+      imageUrl: "/@assets/3_1750184360777.jpg",
       isAvailable: true
     },
     {
@@ -189,6 +189,7 @@ export async function seedDatabase() {
       description: "Куриное филе в панировке, жаренное до золотистой корочки",
       pricePerKg: "68.90",
       categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      imageUrl: "/@assets/1_1750184360776.jpg",
       isAvailable: true
     },
     {
@@ -196,6 +197,7 @@ export async function seedDatabase() {
       description: "Сочные куриные крылышки в медово-горчичном соусе",
       pricePerKg: "65.80",
       categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      imageUrl: "/@assets/2_1750184360777.jpg",
       isAvailable: true
     },
     {
@@ -414,7 +416,6 @@ export async function seedDatabase() {
       description: "Сочная начинка из нежной куриной грудки, плавленого сыра, завернутая в тонкие и румяные блинчики. Прекрасный перекус и полноценное второе блюдо во время обеда.",
       pricePerKg: "62.90",
       categoryId: insertedCategories.find(c => c.name === "Выпечка и десерты")!.id,
-      imageUrl: "https://static.tildacdn.one/tild3530-3337-4239-a566-353637653535/6.webp",
       isAvailable: true
     },
     {
@@ -422,7 +423,6 @@ export async function seedDatabase() {
       description: "Традиционное русское лакомство – тонкие и румяные блинчики. Блинчики с богатой мясной начинкой станут прекрасным перекусом или полноценным вторым блюдом на завтрак или обед.",
       pricePerKg: "58.90",
       categoryId: insertedCategories.find(c => c.name === "Выпечка и десерты")!.id,
-      imageUrl: "https://static.tildacdn.one/tild3735-3732-4765-b735-363466396565/7.webp",
       isAvailable: true
     },
     {
@@ -437,7 +437,6 @@ export async function seedDatabase() {
       description: "Хрустящие чебуреки с сочной мясной начинкой, обжаренные до золотистой корочки",
       pricePerKg: "65.50",
       categoryId: insertedCategories.find(c => c.name === "Выпечка и десерты")!.id,
-      imageUrl: "https://static.tildacdn.one/tild6133-6136-4636-b732-346339396335/6.jpg",
       isAvailable: true
     },
 
@@ -447,7 +446,6 @@ export async function seedDatabase() {
       description: "Сытный пирожок с ароматной мясной начинкой, выпеченный по домашнему рецепту",
       pricePerKg: "45.80",
       categoryId: insertedCategories.find(c => c.name === "Пирожки")!.id,
-      imageUrl: "https://static.tildacdn.one/tild6435-3566-4662-b162-663634343837/3.webp",
       isAvailable: true
     },
     {
@@ -462,7 +460,6 @@ export async function seedDatabase() {
       description: "Домашний пирожок с нежной картофельной начинкой и зеленью",
       pricePerKg: "35.90",
       categoryId: insertedCategories.find(c => c.name === "Пирожки")!.id,
-      imageUrl: "https://static.tildacdn.one/tild6662-3364-4062-a135-633232363031/5.webp",
       isAvailable: true
     },
     {
@@ -470,7 +467,6 @@ export async function seedDatabase() {
       description: "Сладкий пирожок с ароматной яблочной начинкой и корицей",
       pricePerKg: "42.90",
       categoryId: insertedCategories.find(c => c.name === "Пирожки")!.id,
-      imageUrl: "https://static.tildacdn.one/tild3366-6562-4366-a634-663263333963/4.webp",
       isAvailable: true
     }
   ];

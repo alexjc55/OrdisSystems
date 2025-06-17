@@ -24,7 +24,7 @@ export default function Header() {
             <Link href="/">
               <div className="flex items-center cursor-pointer">
                 <img 
-                  src="/assets/Edahouse_sign__source_1750184330403.png" 
+                  src="/@assets/Edahouse_sign__source_1750184330403.png" 
                   alt="eDAHouse" 
                   className="h-10 w-auto mr-3"
                 />
