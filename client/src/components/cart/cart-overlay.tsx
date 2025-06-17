@@ -257,7 +257,8 @@ export default function CartOverlay() {
               <Button
                 onClick={handleCheckout}
                 disabled={createOrderMutation.isPending}
-                className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3"
+                style={{ backgroundColor: 'hsl(16, 100%, 60%)', color: 'white' }}
               >
                 {createOrderMutation.isPending ? (
                   <div className="flex items-center">

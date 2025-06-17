@@ -96,9 +96,13 @@ export default function Header() {
                       </div>
                     </div>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Профиль</span>
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile">
+                        <div className="flex items-center">
+                          <User className="mr-2 h-4 w-4" />
+                          <span>Профиль</span>
+                        </div>
+                      </Link>
                     </DropdownMenuItem>
                     {user?.role === 'admin' && (
                       <DropdownMenuItem asChild>
