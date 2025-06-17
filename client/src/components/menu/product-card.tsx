@@ -163,7 +163,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 step={unit === "piece" ? "1" : unit === "kg" ? "0.1" : "1"}
                 min={unit === "piece" ? "1" : unit === "kg" ? "0.1" : "1"}
                 max={unit === "100g" || unit === "100ml" ? "9999" : "99"}
-                className="w-16 text-center text-sm h-8"
+                className="w-20 text-center text-sm h-8"
               />
               <Button
                 size="sm"
