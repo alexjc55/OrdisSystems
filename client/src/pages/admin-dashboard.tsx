@@ -361,17 +361,18 @@ export default function AdminDashboard() {
                   }) || [];
 
                   return filteredProducts.length > 0 ? (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Название</TableHead>
-                          <TableHead>Категория</TableHead>
-                          <TableHead>Цена за 100г</TableHead>
-                          <TableHead>Наличие</TableHead>
-                          <TableHead>Действия</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
+                    <div className="overflow-x-auto border rounded-lg">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="min-w-[150px]">Название</TableHead>
+                            <TableHead className="min-w-[120px]">Категория</TableHead>
+                            <TableHead className="min-w-[120px]">Цена за 100г</TableHead>
+                            <TableHead className="min-w-[140px]">Наличие</TableHead>
+                            <TableHead className="min-w-[120px]">Действия</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
                         {filteredProducts.map((product) => (
                           <TableRow key={product.id}>
                             <TableCell>
@@ -444,8 +445,9 @@ export default function AdminDashboard() {
                             </TableCell>
                           </TableRow>
                         ))}
-                      </TableBody>
-                    </Table>
+                        </TableBody>
+                      </Table>
+                    </div>
                   ) : (
                     <div className="text-center py-8">
                       <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -802,14 +804,39 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any
   const form = useForm({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      name: product?.name || "",
-      description: product?.description || "",
-      categoryId: product?.categoryId || 0,
-      pricePerKg: product?.pricePerKg?.toString() || "",
-      imageUrl: product?.imageUrl || "",
-      isAvailable: product?.isAvailable ?? true,
+      name: "",
+      description: "",
+      categoryId: 0,
+      pricePerKg: "",
+      imageUrl: "",
+      isAvailable: true,
     },
   });
+
+  // Reset form when product or dialog state changes
+  useEffect(() => {
+    if (open) {
+      if (product) {
+        form.reset({
+          name: product.name || "",
+          description: product.description || "",
+          categoryId: product.categoryId || 0,
+          pricePerKg: product.pricePerKg?.toString() || "",
+          imageUrl: product.imageUrl || "",
+          isAvailable: product.isAvailable ?? true,
+        });
+      } else {
+        form.reset({
+          name: "",
+          description: "",
+          categoryId: 0,
+          pricePerKg: "",
+          imageUrl: "",
+          isAvailable: true,
+        });
+      }
+    }
+  }, [open, product, form]);
 
 
 
