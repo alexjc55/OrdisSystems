@@ -264,7 +264,9 @@ export default function AdminDashboard() {
 
   const deleteCategoryMutation = useMutation({
     mutationFn: async (categoryId: number) => {
-      return await apiRequest(`/api/categories/${categoryId}`, { method: 'DELETE' });
+      const response = await fetch(`/api/categories/${categoryId}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Failed to delete category');
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
@@ -291,7 +293,7 @@ export default function AdminDashboard() {
     return null;
   }
 
-  const filteredProducts = productsData.filter((product: any) => {
+  const filteredProducts = (productsData as any[] || []).filter((product: any) => {
     const matchesSearch = !searchQuery || 
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -381,7 +383,7 @@ export default function AdminDashboard() {
                       </SelectTrigger>
                       <SelectContent className="bg-white">
                         <SelectItem value="all" className="hover:bg-orange-50 focus:bg-orange-50">Все категории</SelectItem>
-                        {categories.map((category: any) => (
+                        {(categoriesData as any[] || []).map((category: any) => (
                           <SelectItem 
                             key={category.id} 
                             value={category.id.toString()}
@@ -542,7 +544,7 @@ export default function AdminDashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                {categories && categories.length > 0 ? (
+                {(categoriesData as any[] || []).length > 0 ? (
                   <div className="border rounded-lg bg-white overflow-hidden">
                     <div className="overflow-x-auto">
                       <Table>
@@ -556,7 +558,7 @@ export default function AdminDashboard() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {categories.map((category: any) => (
+                          {(categoriesData as any[] || []).map((category: any) => (
                             <TableRow key={category.id}>
                               <TableCell className="text-lg sm:text-2xl">{category.icon}</TableCell>
                               <TableCell className="font-medium text-xs sm:text-sm">{category.name}</TableCell>
