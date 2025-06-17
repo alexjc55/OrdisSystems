@@ -51,6 +51,9 @@ const productSchema = z.object({
   unit: z.enum(["100g", "100ml", "piece", "kg"]).default("100g"),
   imageUrl: z.string().optional(),
   isAvailable: z.boolean().default(true),
+  isSpecialOffer: z.boolean().default(false),
+  discountType: z.enum(["percentage", "fixed"]).optional(),
+  discountValue: z.string().optional(),
 });
 
 const categorySchema = z.object({
@@ -988,6 +991,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           unit: (product.unit || "100g") as ProductUnit,
           imageUrl: product.imageUrl || "",
           isAvailable: product.isAvailable ?? true,
+          isSpecialOffer: product.isSpecialOffer ?? false,
+          discountType: product.discountType || undefined,
+          discountValue: product.discountValue?.toString() || "",
         });
       } else {
         form.reset({
@@ -998,6 +1004,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           unit: "100g" as ProductUnit,
           imageUrl: "",
           isAvailable: true,
+          isSpecialOffer: false,
+          discountType: undefined,
+          discountValue: "",
         });
       }
     }

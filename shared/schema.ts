@@ -62,6 +62,9 @@ export const products = pgTable("products", {
   isActive: boolean("is_active").default(true).notNull(),
   isAvailable: boolean("is_available").default(true).notNull(),
   stockStatus: varchar("stock_status", { enum: ["in_stock", "low_stock", "out_of_stock"] }).default("in_stock").notNull(),
+  isSpecialOffer: boolean("is_special_offer").default(false).notNull(),
+  discountType: varchar("discount_type", { enum: ["percentage", "fixed"] }),
+  discountValue: decimal("discount_value", { precision: 10, scale: 2 }),
   sortOrder: integer("sort_order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -164,6 +167,8 @@ export const insertProductSchema = createInsertSchema(products).omit({
   updatedAt: true,
 }).extend({
   unit: z.enum(["100g", "100ml", "piece", "kg"]).default("100g"),
+  discountType: z.enum(["percentage", "fixed"]).optional(),
+  discountValue: z.string().optional(),
 });
 
 export const insertOrderSchema = createInsertSchema(orders).omit({
