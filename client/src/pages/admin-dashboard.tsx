@@ -66,6 +66,7 @@ export default function AdminDashboard() {
   const [editingCategory, setEditingCategory] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
+  const [selectedAvailabilityFilter, setSelectedAvailabilityFilter] = useState("all");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
@@ -334,7 +335,11 @@ export default function AdminDashboard() {
       const matchesCategory = selectedCategoryFilter === "all" || 
         product.categoryId === parseInt(selectedCategoryFilter);
       
-      return matchesSearch && matchesCategory;
+      const matchesAvailability = selectedAvailabilityFilter === "all" ||
+        (selectedAvailabilityFilter === "available" && product.isAvailable) ||
+        (selectedAvailabilityFilter === "unavailable" && !product.isAvailable);
+      
+      return matchesSearch && matchesCategory && matchesAvailability;
     })
     .sort((a: any, b: any) => {
       let aValue, bValue;
@@ -451,6 +456,19 @@ export default function AdminDashboard() {
                             {category.name}
                           </SelectItem>
                         ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="relative">
+                    <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Select value={selectedAvailabilityFilter} onValueChange={setSelectedAvailabilityFilter}>
+                      <SelectTrigger className="pl-10 text-sm">
+                        <SelectValue placeholder="Все товары" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        <SelectItem value="all" className="hover:bg-orange-50 focus:bg-orange-50">Все товары</SelectItem>
+                        <SelectItem value="available" className="hover:bg-orange-50 focus:bg-orange-50">Доступные</SelectItem>
+                        <SelectItem value="unavailable" className="hover:bg-orange-50 focus:bg-orange-50">Недоступные</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
