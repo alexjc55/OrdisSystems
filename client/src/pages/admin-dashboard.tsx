@@ -1062,7 +1062,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500 hover:bg-gray-200 data-[state=checked]:hover:bg-green-600"
+                      className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500 hover:shadow-md hover:shadow-gray-300/50 data-[state=checked]:hover:shadow-green-400/50 transition-shadow duration-200"
                     />
                   </FormControl>
                 </FormItem>
@@ -1109,13 +1109,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   type="button" 
                   variant="outline" 
                   onClick={onClose} 
-                  className="text-sm border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-400"
+                  className="text-sm border-gray-300 text-gray-700 hover:shadow-md hover:shadow-gray-300/50 transition-shadow duration-200"
                 >
                   Отмена
                 </Button>
                 <Button 
                   type="submit" 
-                  className="text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-600 hover:border-orange-600 focus:ring-orange-500"
+                  className="text-sm bg-orange-500 text-white border-orange-500 hover:shadow-lg hover:shadow-orange-400/50 transition-shadow duration-200"
                 >
                   <Save className="mr-2 h-4 w-4" />
                   {product ? "Обновить" : "Создать"}
