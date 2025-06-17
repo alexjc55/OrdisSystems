@@ -343,6 +343,27 @@ export default function AdminDashboard() {
     }
   });
 
+  // Store settings mutation
+  const updateStoreSettingsMutation = useMutation({
+    mutationFn: async (settingsData: any) => {
+      const response = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settingsData),
+      });
+      if (!response.ok) throw new Error('Failed to update store settings');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/settings'] });
+      toast({ title: "Настройки сохранены", description: "Настройки магазина успешно обновлены" });
+    },
+    onError: (error: any) => {
+      console.error("Store settings update error:", error);
+      toast({ title: "Ошибка", description: "Не удалось обновить настройки", variant: "destructive" });
+    }
+  });
+
   if (isLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -424,11 +445,12 @@ export default function AdminDashboard() {
 
         <Tabs defaultValue="products" className="space-y-4 sm:space-y-8">
           <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 gap-1">
               <TabsTrigger value="products" className="text-xs sm:text-sm">Товары</TabsTrigger>
               <TabsTrigger value="categories" className="text-xs sm:text-sm">Категории</TabsTrigger>
               <TabsTrigger value="orders" className="text-xs sm:text-sm">Заказы</TabsTrigger>
               <TabsTrigger value="users" className="text-xs sm:text-sm">Пользователи</TabsTrigger>
+              <TabsTrigger value="store" className="text-xs sm:text-sm">Магазин</TabsTrigger>
             </TabsList>
           </div>
 
@@ -867,6 +889,31 @@ export default function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Store Management */}
+          <TabsContent value="store" className="space-y-4 sm:space-y-6">
+            <div className="grid gap-6">
+              {/* Basic Store Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                    <Store className="h-4 w-4 sm:h-5 sm:w-5" />
+                    Основная информация
+                  </CardTitle>
+                  <CardDescription className="text-sm">
+                    Название магазина, описание и контактная информация
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <StoreSettingsForm
+                    storeSettings={storeSettings}
+                    onSubmit={(data) => updateStoreSettingsMutation.mutate(data)}
+                    isLoading={updateStoreSettingsMutation.isPending}
+                  />
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
