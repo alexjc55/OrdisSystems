@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useCartStore } from "@/lib/cart";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,14 +15,7 @@ export default function Header() {
   const { items, toggleCart } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const { data: storeSettings } = useQuery({
-    queryKey: ["/api/settings"],
-    queryFn: async () => {
-      const res = await fetch("/api/settings", { credentials: "include" });
-      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
-      return res.json();
-    },
-  });
+  const { data: storeSettings } = useStoreSettings();
 
   const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
 
