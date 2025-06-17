@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import Header from "@/components/layout/header";
@@ -18,8 +18,14 @@ import type { CategoryWithProducts, ProductWithCategory } from "@shared/schema";
 export default function Home() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
   const { isOpen: isCartOpen } = useCartStore();
+
+  // Clear any previous errors when component mounts
+  useEffect(() => {
+    setError(null);
+  }, []);
 
   const { data: categories, isLoading: categoriesLoading } = useQuery<CategoryWithProducts[]>({
     queryKey: ["/api/categories"],
