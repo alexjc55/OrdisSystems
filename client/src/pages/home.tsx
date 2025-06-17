@@ -17,6 +17,7 @@ import {
   Clock, 
   Phone, 
   MapPin, 
+  CreditCard,
   TrendingUp,
   Star,
   Plus,
@@ -86,7 +87,7 @@ export default function Home() {
       {/* Banner Image */}
       {storeSettings?.bannerImage && (
         <div 
-          className="w-full h-8 sm:h-10 lg:h-12 bg-cover bg-center"
+          className="w-full h-32 sm:h-40 lg:h-48 bg-cover bg-center"
           style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
         />
       )}
@@ -221,16 +222,29 @@ export default function Home() {
                     </Card>
                   )}
 
-                  {/* Location */}
-                  {storeSettings?.address && (
+                  {/* Delivery & Payment */}
+                  {(storeSettings?.deliveryInfo || storeSettings?.paymentInfo) && (
                     <Card className="p-3 sm:p-4">
                       <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                        <MapPin className="h-4 w-4 text-primary" />
-                        <span className="font-medium text-sm sm:text-base">Адрес</span>
+                        <CreditCard className="h-4 w-4 text-primary" />
+                        <span className="font-medium text-sm sm:text-base">Оплата и доставка</span>
                       </div>
-                      <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                        {storeSettings.address}
-                      </p>
+                      <div className="space-y-2">
+                        {storeSettings.deliveryInfo && (
+                          <div className="text-xs sm:text-sm">
+                            <span className="text-gray-600">Доставка:</span>
+                            <br />
+                            <span className="font-medium">{storeSettings.deliveryInfo}</span>
+                          </div>
+                        )}
+                        {storeSettings.paymentInfo && (
+                          <div className="text-xs sm:text-sm">
+                            <span className="text-gray-600">Оплата:</span>
+                            <br />
+                            <span className="font-medium">{storeSettings.paymentInfo}</span>
+                          </div>
+                        )}
+                      </div>
                     </Card>
                   )}
                 </div>
