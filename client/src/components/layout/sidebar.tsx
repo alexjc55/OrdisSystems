@@ -99,7 +99,7 @@ export default function Sidebar({
                 </span>
                 {category.name}
                 <Badge variant="secondary" className="ml-auto text-xs bg-gray-200 text-gray-700">
-                  {category.products.filter(p => p.isActive).length}
+                  {category.products.filter(p => p.isAvailable).length}
                 </Badge>
               </Button>
             ))}
