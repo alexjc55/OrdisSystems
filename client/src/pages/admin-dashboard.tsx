@@ -602,7 +602,7 @@ export default function AdminDashboard() {
                               </TableCell>
                               <TableCell className="px-2 sm:px-4 py-2">
                                 <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer ? 'bg-orange-100 border border-orange-200' : ''}`}>
-                                  {product.isSpecialOffer && product.discountType && product.discountValue ? (
+                                  {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
                                     <div>
                                       <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
                                       <div className="font-medium text-orange-600">

@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { formatCurrency, formatWeight, calculateTotal, getUnitLabel, formatQuantity, type ProductUnit } from "@/lib/currency";
 import { ShoppingCart, Plus, Minus, Eye } from "lucide-react";
 import type { ProductWithCategory } from "@shared/schema";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
 
 interface ProductCardProps {
   product: ProductWithCategory;
@@ -15,6 +16,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const unit = (product.unit || "100g") as ProductUnit;
+  const { storeSettings } = useStoreSettings();
   
   // Set default quantity based on unit type
   const getDefaultQuantity = () => {
@@ -40,6 +42,10 @@ export default function ProductCard({ product }: ProductCardProps) {
     }
     
     const discountValue = parseFloat(product.discountValue);
+    if (isNaN(discountValue)) {
+      return originalPrice;
+    }
+    
     if (product.discountType === "percentage") {
       return originalPrice * (1 - discountValue / 100);
     } else {
@@ -151,9 +157,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     {formatCurrency(discountedPrice)}
                   </span>
                   <Badge className="bg-orange-500 text-white text-xs mt-1 w-fit">
-                    -{product.discountType === "percentage" 
-                      ? `${product.discountValue}%` 
-                      : formatCurrency(parseFloat(product.discountValue || "0"))}
+                    {storeSettings?.discountBadgeText || "Скидка"}
                   </Badge>
                 </>
               ) : (
