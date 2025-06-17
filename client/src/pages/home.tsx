@@ -22,20 +22,41 @@ export default function Home() {
 
   const { data: categories, isLoading: categoriesLoading } = useQuery<CategoryWithProducts[]>({
     queryKey: ["/api/categories"],
+    queryFn: async () => {
+      const res = await fetch("/api/categories", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
   });
 
   const { data: allProducts, isLoading: allProductsLoading } = useQuery<ProductWithCategory[]>({
     queryKey: ["/api/products"],
+    queryFn: async () => {
+      const res = await fetch("/api/products", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
   });
 
   const { data: products, isLoading: productsLoading } = useQuery<ProductWithCategory[]>({
     queryKey: ["/api/products", selectedCategoryId],
     enabled: selectedCategoryId !== null,
+    queryFn: async () => {
+      const url = selectedCategoryId === -1 ? "/api/products" : `/api/products?categoryId=${selectedCategoryId}`;
+      const res = await fetch(url, { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
   });
 
   const { data: searchResults, isLoading: searchLoading } = useQuery<ProductWithCategory[]>({
     queryKey: ["/api/products/search", searchQuery],
     enabled: searchQuery.length > 2,
+    queryFn: async () => {
+      const res = await fetch(`/api/products/search?q=${encodeURIComponent(searchQuery)}`, { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
   });
 
   const handleCategorySelect = (categoryId: number | null) => {
@@ -106,8 +127,27 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Loading State */}
+          {categoriesLoading && (
+            <div className="mb-12">
+              <div className="flex items-center mb-6">
+                <Utensils className="mr-3 h-6 w-6 text-primary" />
+                <h2 className="text-2xl font-poppins font-bold text-gray-900">Загрузка меню...</h2>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-pulse">
+                    <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-3"></div>
+                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-3/4 mx-auto"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Categories Grid - Show when no category is selected and no search */}
-          {selectedCategoryId === null && searchQuery.length <= 2 && (
+          {selectedCategoryId === null && searchQuery.length <= 2 && !categoriesLoading && categories && categories.length > 0 && (
             <div className="mb-12">
               <div className="flex items-center mb-6">
                 <Utensils className="mr-3 h-6 w-6 text-primary" />
