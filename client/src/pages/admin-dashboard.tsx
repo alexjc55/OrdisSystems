@@ -90,6 +90,7 @@ const storeSettingsSchema = z.object({
   showTitleDescription: z.boolean().optional(),
   showInfoBlocks: z.boolean().optional(),
   showSpecialOffers: z.boolean().optional(),
+  showCategoryMenu: z.boolean().optional(),
 });
 
 export default function AdminDashboard() {
@@ -1484,6 +1485,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       showTitleDescription: storeSettings?.showTitleDescription !== false,
       showInfoBlocks: storeSettings?.showInfoBlocks !== false,
       showSpecialOffers: storeSettings?.showSpecialOffers !== false,
+      showCategoryMenu: storeSettings?.showCategoryMenu !== false,
     },
   });
 
@@ -1518,6 +1520,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         showTitleDescription: storeSettings?.showTitleDescription !== false,
         showInfoBlocks: storeSettings?.showInfoBlocks !== false,
         showSpecialOffers: storeSettings?.showSpecialOffers !== false,
+        showCategoryMenu: storeSettings?.showCategoryMenu !== false,
       });
     }
   }, [storeSettings, form]);
@@ -1870,6 +1873,28 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <FormLabel className="text-sm font-medium">Показывать спецпредложения</FormLabel>
                     <FormDescription className="text-xs">
                       Секция товаров со скидками
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className="switch-admin"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="showCategoryMenu"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-sm font-medium">Показывать меню категорий</FormLabel>
+                    <FormDescription className="text-xs">
+                      Нижнее фиксированное меню категорий на мобильных устройствах
                     </FormDescription>
                   </div>
                   <FormControl>

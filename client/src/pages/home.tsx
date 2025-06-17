@@ -100,7 +100,7 @@ export default function Home() {
           isLoading={categoriesLoading}
         />
 
-        <main className="flex-1 p-6 pb-24 lg:pb-6">
+        <main className={`flex-1 p-6 lg:pb-6 ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
           {/* Search Bar */}
           <div className="mb-8">
             <div className="mb-6">
@@ -406,11 +406,13 @@ export default function Home() {
       </div>
 
       {/* Mobile Category Navigation */}
-      <CategoryNav 
-        categories={categories || []}
-        selectedCategoryId={selectedCategoryId}
-        onCategorySelect={handleCategorySelect}
-      />
+      {storeSettings?.showCategoryMenu !== false && (
+        <CategoryNav 
+          categories={categories || []}
+          selectedCategoryId={selectedCategoryId}
+          onCategorySelect={handleCategorySelect}
+        />
+      )}
 
       {/* Cart Overlay */}
       {isCartOpen && <CartOverlay />}

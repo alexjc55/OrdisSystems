@@ -124,6 +124,7 @@ export const storeSettings = pgTable("store_settings", {
   showTitleDescription: boolean("show_title_description").default(true),
   showInfoBlocks: boolean("show_info_blocks").default(true),
   showSpecialOffers: boolean("show_special_offers").default(true),
+  showCategoryMenu: boolean("show_category_menu").default(true),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
