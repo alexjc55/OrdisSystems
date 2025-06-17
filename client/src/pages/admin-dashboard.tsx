@@ -651,10 +651,10 @@ export default function AdminDashboard() {
                                         </AlertDialogDescription>
                                       </AlertDialogHeader>
                                       <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                                        <AlertDialogCancel className="text-xs sm:text-sm">Отмена</AlertDialogCancel>
+                                        <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">Отмена</AlertDialogCancel>
                                         <AlertDialogAction
                                           onClick={() => deleteCategoryMutation.mutate(category.id)}
-                                          className="bg-red-600 hover:bg-red-700 text-xs sm:text-sm"
+                                          className="bg-red-600 text-white hover:bg-red-600 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-xs sm:text-sm"
                                         >
                                           Удалить
                                         </AlertDialogAction>
@@ -1086,14 +1086,14 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                      <AlertDialogCancel className="text-xs sm:text-sm">Отмена</AlertDialogCancel>
+                      <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">Отмена</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() => {
                           // Call delete mutation here - we'll need to pass it as a prop
                           if (onDelete) onDelete(product.id);
                           onClose();
                         }}
-                        className="bg-red-600 hover:bg-red-700 text-xs sm:text-sm"
+                        className="bg-red-600 text-white hover:bg-red-600 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-xs sm:text-sm"
                       >
                         Удалить
                       </AlertDialogAction>

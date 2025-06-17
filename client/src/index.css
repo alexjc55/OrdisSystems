@@ -185,16 +185,26 @@
 }
 
 /* Fix all link and interactive element visibility */
-a, button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]), [role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]) {
+a, button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]), [role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]) {
   color: inherit !important;
   text-decoration: none !important;
 }
 
 a:hover, a:focus,
-button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):hover, button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):focus,
-[role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):hover, [role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):focus {
+button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]):hover, button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]):focus,
+[role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]):hover, [role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]):focus {
   color: hsl(24.6, 95%, 53.1%) !important;
   background-color: transparent !important;
+}
+
+/* Preserve switch component styling */
+[role="switch"], [data-radix-switch-root] {
+  background-color: inherit !important;
+}
+
+[role="switch"]:hover, [role="switch"]:focus,
+[data-radix-switch-root]:hover, [data-radix-switch-root]:focus {
+  background-color: inherit !important;
 }
 
 /* Navigation menu items */
