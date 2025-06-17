@@ -52,10 +52,27 @@ export default function Home() {
   const { data: storeSettings } = useQuery({
     queryKey: ["/api/settings"],
     queryFn: async () => {
-      const res = await fetch("/api/settings", { credentials: "include" });
-      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
-      return res.json();
+      try {
+        const res = await fetch("/api/settings", { credentials: "include" });
+        if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+        const data = await res.json();
+        
+        // Validate data structure to prevent runtime errors
+        if (data && typeof data === 'object') {
+          // Ensure workingHours is properly structured
+          if (data.workingHours && typeof data.workingHours !== 'object') {
+            data.workingHours = {};
+          }
+          return data;
+        }
+        return null;
+      } catch (error) {
+        console.error('Error fetching store settings:', error);
+        return null;
+      }
     },
+    retry: 2,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const { data: searchResults, isLoading: searchLoading } = useQuery<ProductWithCategory[]>({
@@ -106,16 +123,42 @@ export default function Home() {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-3xl font-poppins font-bold text-gray-900">
-                  {searchQuery.length > 2 
-                    ? `Результаты поиска: "${searchQuery}"`
-                    : selectedCategory?.name || storeSettings?.welcomeTitle || "eDAHouse - טעים"
-                  }
+                  {(() => {
+                    try {
+                      if (searchQuery && searchQuery.length > 2) {
+                        return `Результаты поиска: "${searchQuery}"`;
+                      }
+                      if (selectedCategory?.name) {
+                        return selectedCategory.name;
+                      }
+                      if (storeSettings?.welcomeTitle) {
+                        return storeSettings.welcomeTitle;
+                      }
+                      return "eDAHouse - טעים";
+                    } catch (error) {
+                      console.error('Error rendering title:', error);
+                      return "eDAHouse - טעים";
+                    }
+                  })()}
                 </h1>
                 <p className="text-gray-600 mt-1">
-                  {searchQuery.length > 2 
-                    ? `Найдено товаров: ${searchResults?.length || 0}`
-                    : selectedCategory?.description || storeSettings?.storeDescription || "Свежая домашняя еда на развес - выбирайте по вкусу"
-                  }
+                  {(() => {
+                    try {
+                      if (searchQuery && searchQuery.length > 2) {
+                        return `Найдено товаров: ${searchResults?.length || 0}`;
+                      }
+                      if (selectedCategory?.description) {
+                        return selectedCategory.description;
+                      }
+                      if (storeSettings?.storeDescription) {
+                        return storeSettings.storeDescription;
+                      }
+                      return "Свежая домашняя еда на развес - выбирайте по вкусу";
+                    } catch (error) {
+                      console.error('Error rendering description:', error);
+                      return "Свежая домашняя еда на развес - выбирайте по вкусу";
+                    }
+                  })()}
                 </p>
               </div>
               
