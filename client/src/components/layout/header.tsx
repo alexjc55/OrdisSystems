@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useCartStore } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,15 @@ export default function Header() {
   const { items, toggleCart } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const { data: storeSettings } = useQuery({
+    queryKey: ["/api/settings"],
+    queryFn: async () => {
+      const res = await fetch("/api/settings", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+  });
+
   const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
 
   return (
@@ -23,13 +33,24 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             <Link href="/">
               <div className="flex items-center cursor-pointer">
-                <img 
-                  src="/@assets/Edahouse_sign__source_1750184330403.png" 
-                  alt="eDAHouse" 
-                  className="h-10 w-auto mr-3"
-                />
+                {storeSettings?.logoUrl ? (
+                  <img 
+                    src={storeSettings.logoUrl} 
+                    alt={storeSettings.storeName || "eDAHouse"} 
+                    className="h-10 w-auto mr-3"
+                    onError={(e) => {
+                      e.currentTarget.src = "/@assets/Edahouse_sign__source_1750184330403.png";
+                    }}
+                  />
+                ) : (
+                  <img 
+                    src="/@assets/Edahouse_sign__source_1750184330403.png" 
+                    alt="eDAHouse" 
+                    className="h-10 w-auto mr-3"
+                  />
+                )}
                 <h1 className="text-2xl font-poppins font-bold text-primary">
-                  eDAHouse
+                  {storeSettings?.storeName || "eDAHouse"}
                 </h1>
               </div>
             </Link>

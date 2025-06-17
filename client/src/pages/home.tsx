@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Star, TrendingUp, Utensils } from "lucide-react";
+import { Search, Plus, Star, TrendingUp, Utensils, Clock, Phone, Mail, MapPin, Truck, CreditCard } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import type { CategoryWithProducts, ProductWithCategory } from "@shared/schema";
 
@@ -44,6 +44,15 @@ export default function Home() {
     queryFn: async () => {
       const url = selectedCategoryId === -1 ? "/api/products" : `/api/products?categoryId=${selectedCategoryId}`;
       const res = await fetch(url, { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+  });
+
+  const { data: storeSettings } = useQuery({
+    queryKey: ["/api/settings"],
+    queryFn: async () => {
+      const res = await fetch("/api/settings", { credentials: "include" });
       if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
       return res.json();
     },
@@ -99,13 +108,13 @@ export default function Home() {
                 <h1 className="text-3xl font-poppins font-bold text-gray-900">
                   {searchQuery.length > 2 
                     ? `Результаты поиска: "${searchQuery}"`
-                    : selectedCategory?.name || "eDAHouse - טעים"
+                    : selectedCategory?.name || storeSettings?.storeName || "eDAHouse - טעים"
                   }
                 </h1>
                 <p className="text-gray-600 mt-1">
                   {searchQuery.length > 2 
                     ? `Найдено товаров: ${searchResults?.length || 0}`
-                    : selectedCategory?.description || "Свежая домашняя еда на развес - выбирайте по вкусу"
+                    : selectedCategory?.description || storeSettings?.storeDescription || "Свежая домашняя еда на развес - выбирайте по вкусу"
                   }
                 </p>
               </div>
@@ -275,6 +284,165 @@ export default function Home() {
                     }
                   </p>
                 </div>
+              )}
+            </div>
+          )}
+
+          {/* Store Information Section */}
+          {storeSettings && selectedCategoryId === null && searchQuery.length <= 2 && (
+            <div className="mb-12 space-y-8">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-poppins font-bold text-gray-900 mb-2">О нашем магазине</h2>
+                <p className="text-gray-600">Узнайте больше о {storeSettings.storeName}</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Working Hours */}
+                {storeSettings.workingHours && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        <Clock className="h-5 w-5 text-primary" />
+                        Часы работы
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      {Object.entries(storeSettings.workingHours).map(([day, hours]) => {
+                        const dayNames = {
+                          monday: 'Понедельник',
+                          tuesday: 'Вторник', 
+                          wednesday: 'Среда',
+                          thursday: 'Четверг',
+                          friday: 'Пятница',
+                          saturday: 'Суббота',
+                          sunday: 'Воскресенье'
+                        };
+                        return hours ? (
+                          <div key={day} className="flex justify-between text-sm">
+                            <span className="font-medium">{dayNames[day as keyof typeof dayNames]}</span>
+                            <span className="text-gray-600">{hours}</span>
+                          </div>
+                        ) : null;
+                      })}
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Contact Information */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Phone className="h-5 w-5 text-primary" />
+                      Контакты
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {storeSettings.contactPhone && (
+                      <div className="flex items-center gap-3">
+                        <Phone className="h-4 w-4 text-gray-400" />
+                        <a href={`tel:${storeSettings.contactPhone}`} className="text-sm text-primary hover:underline">
+                          {storeSettings.contactPhone}
+                        </a>
+                      </div>
+                    )}
+                    {storeSettings.contactEmail && (
+                      <div className="flex items-center gap-3">
+                        <Mail className="h-4 w-4 text-gray-400" />
+                        <a href={`mailto:${storeSettings.contactEmail}`} className="text-sm text-primary hover:underline">
+                          {storeSettings.contactEmail}
+                        </a>
+                      </div>
+                    )}
+                    {storeSettings.address && (
+                      <div className="flex items-start gap-3">
+                        <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
+                        <span className="text-sm text-gray-600">{storeSettings.address}</span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Delivery & Payment Info */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Truck className="h-5 w-5 text-primary" />
+                      Доставка и оплата
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {storeSettings.deliveryFee && (
+                      <div className="text-sm">
+                        <span className="font-medium">Стоимость доставки:</span>
+                        <span className="text-primary ml-1">₪{storeSettings.deliveryFee}</span>
+                      </div>
+                    )}
+                    {storeSettings.minOrderAmount && (
+                      <div className="text-sm">
+                        <span className="font-medium">Минимальный заказ:</span>
+                        <span className="text-primary ml-1">₪{storeSettings.minOrderAmount}</span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Detailed Information */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {storeSettings.deliveryInfo && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        <Truck className="h-5 w-5 text-primary" />
+                        Условия доставки
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+                        {storeSettings.deliveryInfo}
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {storeSettings.paymentInfo && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        <CreditCard className="h-5 w-5 text-primary" />
+                        Способы оплаты
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+                        {storeSettings.paymentInfo}
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+
+              {/* About Us Photos */}
+              {storeSettings.aboutUsPhotos && storeSettings.aboutUsPhotos.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Фотогалерея</CardTitle>
+                    <CardDescription>Наши блюда и атмосфера</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {storeSettings.aboutUsPhotos.map((photo: string, index: number) => (
+                        <div key={index} className="aspect-square rounded-lg overflow-hidden bg-gray-100">
+                          <img 
+                            src={photo} 
+                            alt={`Фото ${index + 1}`}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               )}
             </div>
           )}
