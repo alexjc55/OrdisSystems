@@ -55,7 +55,9 @@ export const products = pgTable("products", {
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   categoryId: integer("category_id").references(() => categories.id).notNull(),
-  pricePerKg: decimal("price_per_kg", { precision: 10, scale: 2 }).notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  unit: varchar("unit", { length: 20 }).default("100g").notNull(), // "100g", "100ml", "piece", "kg"
+  pricePerKg: decimal("price_per_kg", { precision: 10, scale: 2 }).notNull(), // For backward compatibility
   imageUrl: varchar("image_url", { length: 500 }),
   isActive: boolean("is_active").default(true).notNull(),
   isAvailable: boolean("is_available").default(true).notNull(),
@@ -154,6 +156,8 @@ export const insertProductSchema = createInsertSchema(products).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  unit: z.enum(["100g", "100ml", "piece", "kg"]).default("100g"),
 });
 
 export const insertOrderSchema = createInsertSchema(orders).omit({
