@@ -15,7 +15,19 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const unit = (product.unit || "100g") as ProductUnit;
-  const [selectedQuantity, setSelectedQuantity] = useState(unit === "piece" ? 1 : 1.0);
+  
+  // Set default quantity based on unit type
+  const getDefaultQuantity = () => {
+    switch (unit) {
+      case "piece": return 1;
+      case "kg": return 1.0;
+      case "100g":
+      case "100ml": return 100; // 100 grams by default
+      default: return 1.0;
+    }
+  };
+  
+  const [selectedQuantity, setSelectedQuantity] = useState(getDefaultQuantity());
   const { addItem, toggleCart } = useCartStore();
   const { toast } = useToast();
 
@@ -23,12 +35,33 @@ export default function ProductCard({ product }: ProductCardProps) {
   const totalPrice = calculateTotal(price, selectedQuantity, unit);
 
   const handleQuantityChange = (newQuantity: number) => {
-    const minValue = unit === "piece" ? 1 : 0.1;
-    const maxValue = unit === "piece" ? 99 : 99;
-    const step = unit === "piece" ? 1 : 0.1;
+    let minValue, maxValue, processedQuantity;
+    
+    switch (unit) {
+      case "piece":
+        minValue = 1;
+        maxValue = 99;
+        processedQuantity = Math.round(newQuantity);
+        break;
+      case "kg":
+        minValue = 0.1;
+        maxValue = 99;
+        processedQuantity = Number(newQuantity.toFixed(1));
+        break;
+      case "100g":
+      case "100ml":
+        minValue = 1; // 1 gram minimum
+        maxValue = 9999; // up to 9999 grams
+        processedQuantity = Math.round(newQuantity);
+        break;
+      default:
+        minValue = 0.1;
+        maxValue = 99;
+        processedQuantity = Number(newQuantity.toFixed(1));
+    }
     
     if (newQuantity >= minValue && newQuantity <= maxValue) {
-      setSelectedQuantity(unit === "piece" ? Math.round(newQuantity) : Number(newQuantity.toFixed(1)));
+      setSelectedQuantity(processedQuantity);
     }
   };
 
@@ -103,33 +136,44 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Quantity Selector */}
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium text-gray-700">
-              {unit === "piece" ? "Количество:" : unit === "kg" ? "Вес (кг):" : "Количество:"}
+              {unit === "piece" ? "Количество:" : 
+               unit === "kg" ? "Вес (кг):" : 
+               unit === "100g" || unit === "100ml" ? "Граммы:" : "Количество:"}
             </label>
             <div className="flex items-center space-x-2">
               <Button
                 size="sm"
                 variant="outline"
                 className="h-8 w-8 p-0"
-                onClick={() => handleQuantityChange(selectedQuantity - (unit === "piece" ? 1 : 0.1))}
-                disabled={selectedQuantity <= (unit === "piece" ? 1 : 0.1)}
+                onClick={() => {
+                  const step = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1;
+                  handleQuantityChange(selectedQuantity - step);
+                }}
+                disabled={selectedQuantity <= (unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1)}
               >
                 <Minus className="h-3 w-3" />
               </Button>
               <Input
                 type="number"
                 value={selectedQuantity}
-                onChange={(e) => handleQuantityChange(parseFloat(e.target.value) || (unit === "piece" ? 1 : 0.1))}
-                step={unit === "piece" ? "1" : "0.1"}
-                min={unit === "piece" ? "1" : "0.1"}
-                max="99"
+                onChange={(e) => {
+                  const defaultValue = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 100;
+                  handleQuantityChange(parseFloat(e.target.value) || defaultValue);
+                }}
+                step={unit === "piece" ? "1" : unit === "kg" ? "0.1" : "1"}
+                min={unit === "piece" ? "1" : unit === "kg" ? "0.1" : "1"}
+                max={unit === "100g" || unit === "100ml" ? "9999" : "99"}
                 className="w-16 text-center text-sm h-8"
               />
               <Button
                 size="sm"
                 variant="outline"
                 className="h-8 w-8 p-0"
-                onClick={() => handleQuantityChange(selectedQuantity + (unit === "piece" ? 1 : 0.1))}
-                disabled={selectedQuantity >= 99}
+                onClick={() => {
+                  const step = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1;
+                  handleQuantityChange(selectedQuantity + step);
+                }}
+                disabled={selectedQuantity >= (unit === "100g" || unit === "100ml" ? 9999 : 99)}
               >
                 <Plus className="h-3 w-3" />
               </Button>

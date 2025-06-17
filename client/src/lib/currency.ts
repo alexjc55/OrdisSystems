@@ -48,8 +48,8 @@ export function calculateTotal(price: number | string, quantity: number | string
   switch (unit) {
     case "100g":
     case "100ml":
-      // Convert quantity from kg/l to 100g/100ml units (multiply by 10)
-      return priceNum * quantityNum * 10;
+      // Price is per 100g/100ml, quantity is in grams/ml, so divide by 100
+      return priceNum * (quantityNum / 100);
     case "piece":
       return priceNum * quantityNum;
     case "kg":
