@@ -85,6 +85,11 @@ const storeSettingsSchema = z.object({
   aboutUsPhotos: z.array(z.string()).optional(),
   deliveryFee: z.string().optional(),
   minOrderAmount: z.string().optional(),
+  discountBadgeText: z.string().optional(),
+  showBannerImage: z.boolean().optional(),
+  showTitleDescription: z.boolean().optional(),
+  showInfoBlocks: z.boolean().optional(),
+  showSpecialOffers: z.boolean().optional(),
 });
 
 export default function AdminDashboard() {
