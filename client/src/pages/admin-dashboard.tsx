@@ -414,7 +414,7 @@ export default function AdminDashboard() {
                       setEditingProduct(null);
                       setIsProductFormOpen(true);
                     }}
-                    className="bg-orange-500 hover:bg-orange-600 w-full sm:w-auto"
+                    className="bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto"
                     size="sm"
                   >
                     <Plus className="mr-2 h-4 w-4" />
@@ -1109,13 +1109,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   type="button" 
                   variant="outline" 
                   onClick={onClose} 
-                  className="text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-gray-300/50 transition-shadow duration-200"
+                  className="text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200"
                 >
                   Отмена
                 </Button>
                 <Button 
                   type="submit" 
-                  className="text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-400/50 transition-shadow duration-200"
+                  className="text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200"
                 >
                   <Save className="mr-2 h-4 w-4" />
                   {product ? "Обновить" : "Создать"}
@@ -1220,10 +1220,10 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
             />
 
             <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
-              <Button type="button" variant="outline" onClick={onClose} className="text-sm">
+              <Button type="button" variant="outline" onClick={onClose} className="text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">
                 Отмена
               </Button>
-              <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-sm">
+              <Button type="submit" className="text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200">
                 <Save className="mr-2 h-4 w-4" />
                 {category ? "Обновить" : "Создать"}  
               </Button>
