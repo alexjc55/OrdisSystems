@@ -35,6 +35,10 @@ export default function AdminDashboard() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [collapsedCategories, setCollapsedCategories] = useState<Set<number>>(new Set());
+  
+  // Product filtering and search states
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Redirect if not authorized
   useEffect(() => {
@@ -340,120 +344,195 @@ export default function AdminDashboard() {
           </Card>
         </div>
 
-        <Tabs defaultValue="inventory" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="inventory">Товары</TabsTrigger>
-            <TabsTrigger value="products">Управление</TabsTrigger>
+        <Tabs defaultValue="products" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="products">Товары</TabsTrigger>
             <TabsTrigger value="categories">Категории</TabsTrigger>
             <TabsTrigger value="orders">Заказы</TabsTrigger>
             {user.role === 'admin' && <TabsTrigger value="users">Пользователи</TabsTrigger>}
           </TabsList>
 
-          {/* Compact Product Inventory */}
-          <TabsContent value="inventory" className="space-y-6">
+          {/* Enhanced Products Management */}
+          <TabsContent value="products" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Utensils className="h-5 w-5" />
-                  Быстрое Управление Товарами
-                </CardTitle>
-                <CardDescription>
-                  Управление наличием товаров по категориям. Нажмите на категорию для сворачивания
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Package className="h-5 w-5" />
+                      Управление Товарами
+                    </CardTitle>
+                    <CardDescription>
+                      Добавление, редактирование товаров и управление наличием с фильтрацией и поиском
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => setShowAddProduct(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Добавить товар
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {categories?.map((category) => (
-                    <Collapsible
-                      key={category.id}
-                      open={!collapsedCategories.has(category.id)}
-                      onOpenChange={() => toggleCategoryCollapse(category.id)}
-                    >
-                      <div className="border rounded-lg">
-                        <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left hover:bg-gray-50">
-                          <div className="flex items-center gap-3">
-                            <span className="text-2xl">{category.icon}</span>
-                            <div>
-                              <h3 className="font-semibold text-lg">{category.name}</h3>
-                              <p className="text-sm text-gray-600">
-                                {category.products.length} товаров
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary">
-                              {category.products.filter(p => {
-                                const productDetails = allProducts?.find(ap => ap.id === p.id);
-                                return productDetails?.isAvailable;
-                              }).length} доступно
-                            </Badge>
-                            {collapsedCategories.has(category.id) ? (
-                              <ChevronRight className="h-4 w-4" />
-                            ) : (
-                              <ChevronDown className="h-4 w-4" />
-                            )}
-                          </div>
-                        </CollapsibleTrigger>
-                        
-                        <CollapsibleContent>
-                          <div className="border-t p-4">
-                            <div className="grid gap-2">
-                              {category.products.map((product) => {
-                                const productDetails = allProducts?.find(p => p.id === product.id);
-                                if (!productDetails) return null;
-                                
-                                return (
-                                  <div key={product.id} className="flex items-center justify-between p-3 border rounded-lg bg-white">
-                                    <div className="flex-1">
-                                      <div className="flex items-center gap-3">
-                                        <div className="font-medium">{product.name}</div>
-                                        <div className="text-sm text-gray-600">
-                                          {formatCurrency(parseFloat(product.pricePerKg))} за кг
-                                        </div>
-                                      </div>
-                                    </div>
-                                    
-                                    <div className="flex items-center gap-3">
-                                      <div className="flex items-center gap-2">
-                                        <Label htmlFor={`available-${product.id}`} className="text-sm font-medium">
-                                          {productDetails.isAvailable ? "В наличии" : "Нет в наличии"}
-                                        </Label>
-                                        <Switch
-                                          id={`available-${product.id}`}
-                                          checked={productDetails.isAvailable}
-                                          onCheckedChange={(checked) => toggleAvailabilityMutation.mutate({
-                                            productId: product.id,
-                                            isAvailable: checked
-                                          })}
-                                          disabled={toggleAvailabilityMutation.isPending}
-                                          className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-200"
-                                        />
-                                      </div>
-                                      
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => setEditingProduct(productDetails)}
-                                      >
-                                        <Edit2 className="h-4 w-4" />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        </CollapsibleContent>
-                      </div>
-                    </Collapsible>
-                  ))}
+                {/* Search and Filter Controls */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                  <div className="flex-1">
+                    <Input
+                      placeholder="Поиск товаров..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+                  <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
+                    <SelectTrigger className="w-full sm:w-[200px]">
+                      <SelectValue placeholder="Все категории" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Все категории</SelectItem>
+                      {categories?.map((category) => (
+                        <SelectItem key={category.id} value={category.id.toString()}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
+
+                {/* Products Table */}
+                {(() => {
+                  // Filter products based on search query and selected category
+                  const filteredProducts = allProducts?.filter(product => {
+                    const matchesSearch = searchQuery === "" || 
+                      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      product.description?.toLowerCase().includes(searchQuery.toLowerCase());
+                    
+                    const matchesCategory = selectedCategoryFilter === "all" ||
+                      product.categoryId.toString() === selectedCategoryFilter;
+                    
+                    return matchesSearch && matchesCategory;
+                  }) || [];
+
+                  return filteredProducts.length > 0 ? (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Изображение</TableHead>
+                          <TableHead>Название</TableHead>
+                          <TableHead>Категория</TableHead>
+                          <TableHead>Цена за 100г</TableHead>
+                          <TableHead>Наличие</TableHead>
+                          <TableHead>Действия</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredProducts.map((product) => (
+                          <TableRow key={product.id}>
+                            <TableCell>
+                              {product.imageUrl ? (
+                                <img 
+                                  src={product.imageUrl} 
+                                  alt={product.name}
+                                  className="w-12 h-12 object-cover rounded-lg"
+                                />
+                              ) : (
+                                <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                                  <Package className="h-6 w-6 text-gray-400" />
+                                </div>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <div className="font-medium">{product.name}</div>
+                                {product.description && (
+                                  <div className="text-sm text-gray-500 max-w-xs truncate">
+                                    {product.description}
+                                  </div>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline">
+                                {product.category.name}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {formatCurrency(product.pricePerKg)}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Switch
+                                  checked={product.isAvailable}
+                                  onCheckedChange={(checked) => {
+                                    toggleAvailabilityMutation.mutate({
+                                      id: product.id,
+                                      isAvailable: checked
+                                    });
+                                  }}
+                                  disabled={toggleAvailabilityMutation.isPending}
+                                  className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-200"
+                                />
+                                <span className="text-sm">
+                                  {product.isAvailable ? 'Доступен' : 'Нет в наличии'}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setEditingProduct(product)}
+                                >
+                                  <Edit2 className="h-4 w-4" />
+                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button variant="outline" size="sm" className="text-red-600">
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Удалить товар?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Это действие нельзя отменить. Товар "{product.name}" будет удален навсегда.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Отмена</AlertDialogCancel>
+                                      <AlertDialogAction onClick={() => deleteProductMutation.mutate(product.id)}>
+                                        Удалить
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        {searchQuery || selectedCategoryFilter !== "all" ? "Товары не найдены" : "Нет товаров"}
+                      </h3>
+                      <p className="text-gray-500">
+                        {searchQuery || selectedCategoryFilter !== "all" 
+                          ? "Попробуйте изменить критерии поиска или фильтрации"
+                          : "Начните с добавления первого товара"
+                        }
+                      </p>
+                    </div>
+                  );
+                })()}
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Products Management */}
-          <TabsContent value="products" className="space-y-6">
+          {/* Categories Management */}
+          <TabsContent value="categories" className="space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
