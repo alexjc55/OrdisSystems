@@ -1327,3 +1327,256 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
     </Dialog>
   );
 }
+
+// Store Settings Form Component
+function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: any) {
+  const form = useForm({
+    resolver: zodResolver(storeSettingsSchema),
+    defaultValues: {
+      storeName: storeSettings?.storeName || "eDAHouse",
+      storeDescription: storeSettings?.storeDescription || "",
+      logoUrl: storeSettings?.logoUrl || "",
+      contactPhone: storeSettings?.contactPhone || "",
+      contactEmail: storeSettings?.contactEmail || "",
+      address: storeSettings?.address || "",
+      workingHours: {
+        monday: storeSettings?.workingHours?.monday || "",
+        tuesday: storeSettings?.workingHours?.tuesday || "",
+        wednesday: storeSettings?.workingHours?.wednesday || "",
+        thursday: storeSettings?.workingHours?.thursday || "",
+        friday: storeSettings?.workingHours?.friday || "",
+        saturday: storeSettings?.workingHours?.saturday || "",
+        sunday: storeSettings?.workingHours?.sunday || "",
+      },
+      deliveryInfo: storeSettings?.deliveryInfo || "",
+      paymentInfo: storeSettings?.paymentInfo || "",
+      aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
+      deliveryFee: storeSettings?.deliveryFee || "15.00",
+      minOrderAmount: storeSettings?.minOrderAmount || "50.00",
+    },
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="storeName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">Название магазина</FormLabel>
+                <FormControl>
+                  <Input placeholder="eDAHouse" {...field} className="text-sm" />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="contactPhone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">Телефон</FormLabel>
+                <FormControl>
+                  <Input placeholder="+972-XX-XXX-XXXX" {...field} className="text-sm" />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="contactEmail"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="info@edahouse.com" type="email" {...field} className="text-sm" />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="deliveryFee"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">Стоимость доставки (₪)</FormLabel>
+                <FormControl>
+                  <Input placeholder="15.00" {...field} className="text-sm" />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="minOrderAmount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">Минимальная сумма заказа (₪)</FormLabel>
+                <FormControl>
+                  <Input placeholder="50.00" {...field} className="text-sm" />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <FormField
+          control={form.control}
+          name="storeDescription"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm">Описание магазина</FormLabel>
+              <FormControl>
+                <Textarea 
+                  placeholder="Расскажите о вашем магазине готовой еды..."
+                  className="resize-none text-sm min-h-[100px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="address"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm">Адрес</FormLabel>
+              <FormControl>
+                <Textarea 
+                  placeholder="Введите полный адрес магазина"
+                  className="resize-none text-sm"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="logoUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm flex items-center gap-2">
+                <Upload className="h-4 w-4" />
+                Логотип магазина
+              </FormLabel>
+              <FormControl>
+                <ImageUpload
+                  value={field.value || ""}
+                  onChange={field.onChange}
+                />
+              </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium flex items-center gap-2">
+            <Clock className="h-4 w-4" />
+            Часы работы
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { key: "monday", label: "Понедельник" },
+              { key: "tuesday", label: "Вторник" },
+              { key: "wednesday", label: "Среда" },
+              { key: "thursday", label: "Четверг" },
+              { key: "friday", label: "Пятница" },
+              { key: "saturday", label: "Суббота" },
+              { key: "sunday", label: "Воскресенье" },
+            ].map(({ key, label }) => (
+              <FormField
+                key={key}
+                control={form.control}
+                name={`workingHours.${key}` as any}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">{label}</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="09:00-18:00 или Выходной" 
+                        {...field} 
+                        className="text-xs" 
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            ))}
+          </div>
+        </div>
+
+        <FormField
+          control={form.control}
+          name="deliveryInfo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm flex items-center gap-2">
+                <Truck className="h-4 w-4" />
+                Информация о доставке
+              </FormLabel>
+              <FormControl>
+                <Textarea 
+                  placeholder="Условия доставки, время доставки, зоны обслуживания..."
+                  className="resize-none text-sm min-h-[100px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="paymentInfo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm flex items-center gap-2">
+                <CreditCard className="h-4 w-4" />
+                Информация об оплате
+              </FormLabel>
+              <FormControl>
+                <Textarea 
+                  placeholder="Принимаемые способы оплаты, условия оплаты..."
+                  className="resize-none text-sm min-h-[100px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex justify-end">
+          <Button 
+            type="submit" 
+            disabled={isLoading}
+            className="bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200"
+          >
+            <Save className="mr-2 h-4 w-4" />
+            {isLoading ? "Сохранение..." : "Сохранить настройки"}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+}
