@@ -1062,7 +1062,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500 hover:shadow-md hover:shadow-gray-300/50 data-[state=checked]:hover:shadow-green-400/50 transition-shadow duration-200"
+                      className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                   </FormControl>
                 </FormItem>
