@@ -155,4 +155,108 @@
   .text-warning {
     color: hsl(var(--warning));
   }
+
+/* Fix dropdown select visibility issues */
+[data-radix-select-content] {
+  background-color: white !important;
+  border: 1px solid hsl(214.3, 31.8%, 91.4%) !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+  z-index: 50 !important;
+}
+
+[data-radix-select-item] {
+  color: hsl(224, 71.4%, 4.1%) !important;
+  cursor: pointer !important;
+  padding: 0.5rem 0.75rem !important;
+}
+
+[data-radix-select-item]:hover,
+[data-radix-select-item]:focus,
+[data-radix-select-item][data-highlighted] {
+  background-color: hsl(24.6, 95%, 53.1%) !important;
+  color: white !important;
+  outline: none !important;
+}
+
+[data-radix-select-item][data-state="checked"] {
+  background-color: hsl(24.6, 95%, 53.1%) !important;
+  color: white !important;
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Mobile responsive improvements */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Hide text labels on mobile for switches */
+  .mobile-hide-text {
+    display: none !important;
+  }
+  
+  /* Ensure tables are scrollable on mobile */
+  .overflow-x-auto {
+    scrollbar-width: thin !important;
+    scrollbar-color: #c1c1c1 #f1f1f1 !important;
+  }
+  
+  /* Make action buttons touch-friendly on mobile */
+  .mobile-friendly-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+  
+  /* Responsive table improvements */
+  .table-responsive {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+  }
+  
+  .table-responsive th,
+  .table-responsive td {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Stack form elements on very small screens */
+  .sm\:flex-row {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+  
+  /* Make tables more mobile-friendly */
+  .min-w-\[150px\] {
+    min-width: 120px !important;
+  }
+  
+  .min-w-\[120px\] {
+    min-width: 100px !important;
+  }
+  
+  .min-w-\[140px\] {
+    min-width: 110px !important;
+  }
+}
 }
