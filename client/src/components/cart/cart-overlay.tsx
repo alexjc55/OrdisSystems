@@ -23,6 +23,7 @@ export default function CartOverlay() {
   const queryClient = useQueryClient();
   const [customerNotes, setCustomerNotes] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
 
   const subtotal = items.reduce((total, item) => total + item.totalPrice, 0);
   const total = subtotal + DELIVERY_FEE;
@@ -83,11 +84,31 @@ export default function CartOverlay() {
       return;
     }
 
+    // Проверяем обязательные поля
+    if (!deliveryAddress.trim()) {
+      toast({
+        title: "Заполните адрес доставки",
+        description: "Адрес доставки обязателен для оформления заказа",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!customerPhone.trim()) {
+      toast({
+        title: "Заполните номер телефона",
+        description: "Номер телефона обязателен для оформления заказа",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const orderData = {
       totalAmount: total.toFixed(2),
       deliveryFee: DELIVERY_FEE.toFixed(2),
       customerNotes: customerNotes.trim() || null,
-      deliveryAddress: deliveryAddress.trim() || null,
+      deliveryAddress: deliveryAddress.trim(),
+      customerPhone: customerPhone.trim(),
       paymentMethod: "cash",
       items: items.map(item => ({
         productId: item.product.id,
@@ -222,13 +243,29 @@ export default function CartOverlay() {
                 {/* Delivery Address */}
                 <div className="space-y-3">
                   <label className="text-sm font-medium text-gray-700">
-                    Адрес доставки (необязательно)
+                    Адрес доставки *
                   </label>
                   <Textarea
-                    placeholder="Введите адрес доставки..."
+                    placeholder="Введите адрес доставки... (обязательно)"
                     value={deliveryAddress}
                     onChange={(e) => setDeliveryAddress(e.target.value)}
-                    className="min-h-[60px]"
+                    className={`min-h-[60px] ${!deliveryAddress.trim() ? 'border-red-300 focus:border-red-500' : ''}`}
+                    required
+                  />
+                </div>
+
+                {/* Customer Phone */}
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-gray-700">
+                    Номер телефона *
+                  </label>
+                  <Input
+                    type="tel"
+                    placeholder="+972-XX-XXX-XXXX (обязательно)"
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    className={`${!customerPhone.trim() ? 'border-red-300 focus:border-red-500' : ''}`}
+                    required
                   />
                 </div>
               </div>
@@ -256,8 +293,8 @@ export default function CartOverlay() {
               
               <Button
                 onClick={handleCheckout}
-                disabled={createOrderMutation.isPending}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3"
+                disabled={createOrderMutation.isPending || !deliveryAddress.trim() || !customerPhone.trim()}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 style={{ backgroundColor: 'hsl(16, 100%, 60%)', color: 'white' }}
               >
                 {createOrderMutation.isPending ? (
