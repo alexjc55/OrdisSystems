@@ -180,7 +180,7 @@ export default function AdminDashboard() {
       return await response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
       setEditingProduct(null);
       setIsProductFormOpen(false);
       toast({ title: "Товар обновлен", description: "Изменения сохранены" });
@@ -202,7 +202,7 @@ export default function AdminDashboard() {
       return await response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
       toast({ title: "Товар удален", description: "Товар успешно удален" });
     },
     onError: (error: any) => {
