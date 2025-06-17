@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { formatCurrency } from "@/lib/currency";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { Package, Utensils, ShoppingCart, AlertTriangle, TrendingUp, Users, Edit2, Trash2, Plus, UserPlus, ChevronDown, ChevronRight } from "lucide-react";
 import type { CategoryWithProducts, OrderWithItems, ProductWithCategory, Product, Category, User } from "@shared/schema";
 
@@ -965,20 +966,16 @@ function ProductFormDialog({
               placeholder="0.00"
             />
           </div>
-          <div>
-            <Label htmlFor="imageUrl">URL изображения</Label>
-            <Input
-              id="imageUrl"
-              value={formData.imageUrl}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              placeholder="https://example.com/image.jpg"
-            />
-          </div>
+          <ImageUpload
+            value={formData.imageUrl}
+            onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+          />
           <div className="flex items-center space-x-2">
             <Switch
               id="isAvailable"
               checked={formData.isAvailable}
               onCheckedChange={(checked) => setFormData({ ...formData, isAvailable: checked })}
+              className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-200"
             />
             <Label htmlFor="isAvailable">Доступен в меню</Label>
           </div>

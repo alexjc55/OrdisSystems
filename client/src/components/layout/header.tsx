@@ -51,13 +51,16 @@ export default function Header() {
               variant="ghost" 
               size="sm"
               onClick={toggleCart}
-              className="relative p-2 text-gray-600 hover:text-primary"
+              className={`relative p-2 transition-all duration-200 ${
+                cartItemsCount > 0 
+                  ? "text-orange-600 hover:text-orange-700 scale-105" 
+                  : "text-gray-600 hover:text-primary"
+              }`}
             >
               <ShoppingCart className="h-5 w-5" />
               {cartItemsCount > 0 && (
                 <Badge 
-                  variant="destructive" 
-                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0 bg-primary"
+                  className="absolute -top-1 -right-1 h-6 w-6 flex items-center justify-center text-xs p-0 bg-orange-500 hover:bg-orange-600 text-white border-2 border-white animate-pulse"
                 >
                   {Math.round(cartItemsCount)}
                 </Badge>
