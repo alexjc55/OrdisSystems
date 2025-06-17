@@ -197,15 +197,12 @@ button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root])
   background-color: transparent !important;
 }
 
-/* Preserve switch component styling */
-[role="switch"], [data-radix-switch-root] {
-  background-color: inherit !important;
+/* Preserve switch component styling - override the custom green class */
+.data-\[state\=checked\]\:bg-green-500[data-state="checked"] {
+  background-color: rgb(34 197 94) !important; /* green-500 */
 }
 
-[role="switch"]:hover, [role="switch"]:focus,
-[data-radix-switch-root]:hover, [data-radix-switch-root]:focus {
-  background-color: inherit !important;
-}
+/* Let the switch component handle its own styling without interference */
 
 /* Navigation menu items */
 nav a, nav button:not(.bg-orange-500):not(.border-orange-500) {
