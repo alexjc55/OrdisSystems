@@ -174,8 +174,8 @@
 [data-radix-select-item]:hover,
 [data-radix-select-item]:focus,
 [data-radix-select-item][data-highlighted] {
-  background-color: hsl(24.6, 95%, 53.1%) !important;
-  color: white !important;
+  background-color: hsl(0, 0%, 96%) !important;
+  color: hsl(224, 71.4%, 4.1%) !important;
   outline: none !important;
 }
 
