@@ -17,14 +17,11 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { formatCurrency } from "@/lib/currency";
 import { ImageUpload } from "@/components/ui/image-upload";
-import { Package, Utensils, ShoppingCart, AlertTriangle, TrendingUp, Users, Edit2, Trash2, Plus, UserPlus, Save } from "lucide-react";
+import { Package, Utensils, ShoppingCart, AlertTriangle, TrendingUp, Users, Edit2, Trash2, Plus, UserPlus, ChevronDown, ChevronRight } from "lucide-react";
 import type { CategoryWithProducts, OrderWithItems, ProductWithCategory, Product, Category, User } from "@shared/schema";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 export default function AdminDashboard() {
   const { user, isLoading, isAuthenticated } = useAuth();
@@ -37,6 +34,7 @@ export default function AdminDashboard() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<number>>(new Set());
   
   // Product filtering and search states
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>("all");
@@ -64,33 +62,69 @@ export default function AdminDashboard() {
       });
       setTimeout(() => {
         window.location.href = "/";
-      }, 500);
+      }, 1000);
       return;
     }
-  }, [isLoading, isAuthenticated, user, toast]);
+  }, [isAuthenticated, isLoading, user, toast]);
 
-  // Fetch data
-  const { data: categories } = useQuery<CategoryWithProducts[]>({ queryKey: ["/api/categories"] });
-  const { data: allProducts } = useQuery<ProductWithCategory[]>({ queryKey: ["/api/products"] });
-  const { data: orders } = useQuery<OrderWithItems[]>({ queryKey: ["/api/orders"] });
-  const { data: allUsers } = useQuery<User[]>({ queryKey: ["/api/users"] });
+  // Data queries
+  const { data: categories } = useQuery<CategoryWithProducts[]>({
+    queryKey: ["/api/categories"],
+    queryFn: async () => {
+      const res = await fetch("/api/categories", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+  });
 
-  // Mutations for product management
+  const { data: allProducts } = useQuery<ProductWithCategory[]>({
+    queryKey: ["/api/products"],
+    queryFn: async () => {
+      const res = await fetch("/api/products", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+  });
+
+  const { data: orders } = useQuery<OrderWithItems[]>({
+    queryKey: ["/api/orders"],
+    queryFn: async () => {
+      const res = await fetch("/api/orders", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+  });
+
+  const { data: allUsers } = useQuery<User[]>({
+    queryKey: ["/api/users"],
+    queryFn: async () => {
+      const res = await fetch("/api/users", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+    enabled: user?.role === 'admin',
+  });
+
+  // Product availability toggle mutation
   const toggleAvailabilityMutation = useMutation({
-    mutationFn: async ({ id, isAvailable }: { id: number; isAvailable: boolean }) => {
-      const response = await apiRequest("PATCH", `/api/products/${id}`, { isAvailable });
+    mutationFn: async ({ productId, isAvailable }: { productId: number; isAvailable: boolean }) => {
+      const response = await apiRequest("PATCH", `/api/products/${productId}`, { isAvailable });
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
       queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
-      toast({ title: "Товар обновлен", description: "Статус наличия изменен" });
+      toast({
+        title: "Обновлено",
+        description: "Наличие товара изменено",
+      });
     },
   });
 
+  // Product CRUD mutations
   const createProductMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await apiRequest("POST", "/api/products", data);
+    mutationFn: async (productData: any) => {
+      const response = await apiRequest("POST", "/api/products", productData);
       return response.json();
     },
     onSuccess: () => {
@@ -126,10 +160,10 @@ export default function AdminDashboard() {
     },
   });
 
-  // Category mutations
+  // Category CRUD mutations
   const createCategoryMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await apiRequest("POST", "/api/categories", data);
+    mutationFn: async (categoryData: any) => {
+      const response = await apiRequest("POST", "/api/categories", categoryData);
       return response.json();
     },
     onSuccess: () => {
@@ -162,10 +196,10 @@ export default function AdminDashboard() {
     },
   });
 
-  // User mutations
+  // User CRUD mutations (admin only)
   const createUserMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await apiRequest("POST", "/api/users", data);
+    mutationFn: async (userData: any) => {
+      const response = await apiRequest("POST", "/api/users", userData);
       return response.json();
     },
     onSuccess: () => {
@@ -210,13 +244,20 @@ export default function AdminDashboard() {
     },
   });
 
+  const toggleCategoryCollapse = (categoryId: number) => {
+    const newCollapsed = new Set(collapsedCategories);
+    if (newCollapsed.has(categoryId)) {
+      newCollapsed.delete(categoryId);
+    } else {
+      newCollapsed.add(categoryId);
+    }
+    setCollapsedCategories(newCollapsed);
+  };
+
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p>Загрузка...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -225,28 +266,35 @@ export default function AdminDashboard() {
     return null;
   }
 
-  // Calculate stats
+  // Calculate statistics
   const totalProducts = allProducts?.length || 0;
   const availableProducts = allProducts?.filter(p => p.isAvailable).length || 0;
+  const outOfStockProducts = totalProducts - availableProducts;
   const totalOrders = orders?.length || 0;
-  const pendingOrders = orders?.filter(o => o.status === 'pending').length || 0;
-  const totalRevenue = orders?.reduce((sum, order) => sum + parseFloat(order.totalAmount), 0) || 0;
+  const pendingOrders = orders?.filter(order => order.status === 'pending').length || 0;
+  const totalRevenue = orders?.reduce((acc, order) => acc + parseFloat(order.totalAmount), 0) || 0;
+  const totalUsers = allUsers?.length || 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="container mx-auto px-4 py-8 space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Панель Администратора</h1>
-          <p className="text-gray-600">Управление товарами, заказами и пользователями</p>
+      
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="mb-8">
+          <h1 className="text-3xl font-poppins font-bold text-gray-900 mb-2">
+            Панель Управления eDAHouse
+          </h1>
+          <p className="text-gray-600">
+            Полное управление рестораном готовой еды на развес
+          </p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Товары</CardTitle>
-              <Package className="h-4 w-4 text-blue-500" />
+              <CardTitle className="text-sm font-medium">Всего Блюд</CardTitle>
+              <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalProducts}</div>
@@ -255,30 +303,33 @@ export default function AdminDashboard() {
               </p>
             </CardContent>
           </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Нет в Наличии</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-red-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-600">{outOfStockProducts}</div>
+              <p className="text-xs text-muted-foreground">
+                Требует внимания
+              </p>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Заказы</CardTitle>
-              <ShoppingCart className="h-4 w-4 text-orange-500" />
+              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalOrders}</div>
               <p className="text-xs text-muted-foreground">
-                {pendingOrders} ожидают
+                {pendingOrders} в ожидании
               </p>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Пользователи</CardTitle>
-              <Users className="h-4 w-4 text-purple-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{allUsers?.length || 0}</div>
-              <p className="text-xs text-muted-foreground">
-                Зарегистрированных
-              </p>
-            </CardContent>
-          </Card>
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Выручка</CardTitle>
@@ -487,11 +538,97 @@ export default function AdminDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="flex items-center gap-2">
+                      <Package className="h-5 w-5" />
+                      Управление Товарами
+                    </CardTitle>
+                    <CardDescription>
+                      Добавление, редактирование и удаление товаров
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => setShowAddProduct(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Добавить товар
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {allProducts && allProducts.length > 0 ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Название</TableHead>
+                        <TableHead>Категория</TableHead>
+                        <TableHead>Цена/кг</TableHead>
+                        <TableHead>Статус</TableHead>
+                        <TableHead>Действия</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {allProducts.map((product) => (
+                        <TableRow key={product.id}>
+                          <TableCell className="font-medium">{product.name}</TableCell>
+                          <TableCell>{product.category.name}</TableCell>
+                          <TableCell>{formatCurrency(parseFloat(product.pricePerKg))}</TableCell>
+                          <TableCell>
+                            <Badge variant={product.isAvailable ? "default" : "destructive"}>
+                              {product.isAvailable ? "Доступен" : "Недоступен"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button variant="outline" size="sm" onClick={() => setEditingProduct(product)}>
+                                <Edit2 className="h-4 w-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="outline" size="sm">
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Удалить товар</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Вы уверены, что хотите удалить "{product.name}"? Это действие нельзя отменить.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Отмена</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => deleteProductMutation.mutate(product.id)}>
+                                      Удалить
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <div className="text-center py-8">
+                    <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет товаров</h3>
+                    <p className="text-gray-500">Начните с добавления первого товара</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Categories Management */}
+          <TabsContent value="categories" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
                       <Utensils className="h-5 w-5" />
                       Управление Категориями
                     </CardTitle>
                     <CardDescription>
-                      Добавление, редактирование и удаление категорий товаров
+                      Добавление, редактирование и удаление категорий
                     </CardDescription>
                   </div>
                   <Button onClick={() => setShowAddCategory(true)}>
@@ -505,37 +642,30 @@ export default function AdminDashboard() {
                   <div className="grid gap-4">
                     {categories.map((category) => (
                       <div key={category.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3">
                           <span className="text-2xl">{category.icon}</span>
                           <div>
                             <h3 className="font-semibold">{category.name}</h3>
-                            <p className="text-sm text-gray-600">
-                              {category.description}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {category.products.length} товаров
-                            </p>
+                            <p className="text-sm text-gray-600">{category.description}</p>
+                            <Badge variant="secondary">{category.products.length} товаров</Badge>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setEditingCategory(category)}
-                          >
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" onClick={() => setEditingCategory(category)}>
                             <Edit2 className="h-4 w-4" />
                           </Button>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button variant="outline" size="sm" className="text-red-600">
+                              <Button variant="outline" size="sm">
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Удалить категорию?</AlertDialogTitle>
+                                <AlertDialogTitle>Удалить категорию</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Это действие нельзя отменить. Категория "{category.name}" будет удалена навсегда.
+                                  Вы уверены, что хотите удалить категорию "{category.name}"? 
+                                  Все товары в этой категории также будут удалены.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
@@ -570,7 +700,7 @@ export default function AdminDashboard() {
                   Управление Заказами
                 </CardTitle>
                 <CardDescription>
-                  Просмотр и обновление статуса заказов
+                  Обработка и отслеживание заказов клиентов
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -578,27 +708,52 @@ export default function AdminDashboard() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>ID</TableHead>
+                        <TableHead>Заказ</TableHead>
                         <TableHead>Клиент</TableHead>
-                        <TableHead>Сумма</TableHead>
                         <TableHead>Статус</TableHead>
+                        <TableHead>Сумма</TableHead>
                         <TableHead>Дата</TableHead>
+                        <TableHead>Действия</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {orders.map((order) => (
                         <TableRow key={order.id}>
                           <TableCell className="font-medium">#{order.id}</TableCell>
-                          <TableCell>{order.user.email}</TableCell>
+                          <TableCell>
+                            {order.user?.firstName} {order.user?.lastName}
+                            <div className="text-sm text-gray-500">{order.user?.email}</div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={
+                              order.status === 'pending' ? 'destructive' :
+                              order.status === 'confirmed' ? 'default' :
+                              order.status === 'preparing' ? 'secondary' :
+                              order.status === 'ready' ? 'outline' :
+                              order.status === 'delivered' ? 'default' : 'destructive'
+                            }>
+                              {order.status === 'pending' ? 'Ожидает' :
+                               order.status === 'confirmed' ? 'Подтвержден' :
+                               order.status === 'preparing' ? 'Готовится' :
+                               order.status === 'ready' ? 'Готов' :
+                               order.status === 'delivered' ? 'Выдан' : 'Отменен'}
+                            </Badge>
+                          </TableCell>
                           <TableCell>{formatCurrency(parseFloat(order.totalAmount))}</TableCell>
+                          <TableCell>
+                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU') : 'Неизвестно'}
+                          </TableCell>
                           <TableCell>
                             <Select
                               value={order.status}
-                              onValueChange={(status) => 
-                                updateOrderStatusMutation.mutate({ orderId: order.id, status })
+                              onValueChange={(newStatus) => 
+                                updateOrderStatusMutation.mutate({
+                                  orderId: order.id,
+                                  status: newStatus
+                                })
                               }
                             >
-                              <SelectTrigger className="w-32">
+                              <SelectTrigger className="w-[140px]">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -610,9 +765,6 @@ export default function AdminDashboard() {
                                 <SelectItem value="cancelled">Отменен</SelectItem>
                               </SelectContent>
                             </Select>
-                          </TableCell>
-                          <TableCell>
-                            {new Date(order.createdAt).toLocaleDateString('ru-RU')}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -641,7 +793,7 @@ export default function AdminDashboard() {
                         Управление Пользователями
                       </CardTitle>
                       <CardDescription>
-                        Управление пользователями и их ролями
+                        Управление учетными записями и ролями пользователей
                       </CardDescription>
                     </div>
                     <Button onClick={() => setShowAddUser(true)}>
@@ -655,8 +807,8 @@ export default function AdminDashboard() {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Email</TableHead>
                           <TableHead>Имя</TableHead>
+                          <TableHead>Email</TableHead>
                           <TableHead>Роль</TableHead>
                           <TableHead>Дата регистрации</TableHead>
                           <TableHead>Действия</TableHead>
@@ -665,42 +817,39 @@ export default function AdminDashboard() {
                       <TableBody>
                         {allUsers.map((userItem) => (
                           <TableRow key={userItem.id}>
-                            <TableCell className="font-medium">{userItem.email}</TableCell>
-                            <TableCell>
-                              {userItem.firstName && userItem.lastName 
-                                ? `${userItem.firstName} ${userItem.lastName}`
-                                : '-'
-                              }
+                            <TableCell className="font-medium">
+                              {userItem.firstName} {userItem.lastName}
                             </TableCell>
+                            <TableCell>{userItem.email}</TableCell>
                             <TableCell>
-                              <Badge variant={userItem.role === 'admin' ? 'default' : userItem.role === 'worker' ? 'secondary' : 'outline'}>
-                                {userItem.role}
+                              <Badge variant={
+                                userItem.role === 'admin' ? 'default' :
+                                userItem.role === 'worker' ? 'secondary' : 'outline'
+                              }>
+                                {userItem.role === 'admin' ? 'Администратор' :
+                                 userItem.role === 'worker' ? 'Работник' : 'Клиент'}
                               </Badge>
                             </TableCell>
                             <TableCell>
-                              {userItem.createdAt ? new Date(userItem.createdAt).toLocaleDateString('ru-RU') : '-'}
+                              {userItem.createdAt ? new Date(userItem.createdAt).toLocaleDateString('ru-RU') : 'Неизвестно'}
                             </TableCell>
                             <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => setEditingUser(userItem)}
-                                >
+                              <div className="flex gap-2">
+                                <Button variant="outline" size="sm" onClick={() => setEditingUser(userItem)}>
                                   <Edit2 className="h-4 w-4" />
                                 </Button>
                                 {userItem.id !== user.id && (
                                   <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                      <Button variant="outline" size="sm" className="text-red-600">
+                                      <Button variant="outline" size="sm">
                                         <Trash2 className="h-4 w-4" />
                                       </Button>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
                                       <AlertDialogHeader>
-                                        <AlertDialogTitle>Удалить пользователя?</AlertDialogTitle>
+                                        <AlertDialogTitle>Удалить пользователя</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                          Это действие нельзя отменить. Пользователь "{userItem.email}" будет удален навсегда.
+                                          Вы уверены, что хотите удалить пользователя "{userItem.firstName} {userItem.lastName}"?
                                         </AlertDialogDescription>
                                       </AlertDialogHeader>
                                       <AlertDialogFooter>
@@ -730,405 +879,412 @@ export default function AdminDashboard() {
             </TabsContent>
           )}
         </Tabs>
-
-        {/* Product Form Dialog */}
-        <ProductFormDialog 
-          open={showAddProduct || editingProduct !== null}
-          onClose={() => {
-            setShowAddProduct(false);
-            setEditingProduct(null);
-          }}
-          categories={categories || []}
-          product={editingProduct}
-          onSubmit={(data) => {
-            if (editingProduct) {
-              updateProductMutation.mutate({ id: editingProduct.id, data });
-            } else {
-              createProductMutation.mutate(data);
-            }
-          }}
-        />
-
-        {/* Category Form Dialog */}
-        <CategoryFormDialog 
-          open={showAddCategory || editingCategory !== null}
-          onClose={() => {
-            setShowAddCategory(false);
-            setEditingCategory(null);
-          }}
-          category={editingCategory}
-          onSubmit={(data) => {
-            if (editingCategory) {
-              updateCategoryMutation.mutate({ id: editingCategory.id, data });
-            } else {
-              createCategoryMutation.mutate(data);
-            }
-          }}
-        />
-
-        {/* User Form Dialog */}
-        {user.role === 'admin' && (
-          <UserFormDialog 
-            open={showAddUser || editingUser !== null}
-            onClose={() => {
-              setShowAddUser(false);
-              setEditingUser(null);
-            }}
-            user={editingUser}
-            onSubmit={(data) => {
-              if (editingUser) {
-                updateUserMutation.mutate({ id: editingUser.id, data });
-              } else {
-                createUserMutation.mutate(data);
-              }
-            }}
-          />
-        )}
       </div>
+
+      {/* Add/Edit Product Dialog */}
+      <ProductFormDialog
+        open={showAddProduct || !!editingProduct}
+        onClose={() => {
+          setShowAddProduct(false);
+          setEditingProduct(null);
+        }}
+        categories={categories || []}
+        product={editingProduct}
+        onSubmit={(data) => {
+          if (editingProduct) {
+            updateProductMutation.mutate({ id: editingProduct.id, data });
+          } else {
+            createProductMutation.mutate(data);
+          }
+        }}
+      />
+
+      {/* Add/Edit Category Dialog */}
+      <CategoryFormDialog
+        open={showAddCategory || !!editingCategory}
+        onClose={() => {
+          setShowAddCategory(false);
+          setEditingCategory(null);
+        }}
+        category={editingCategory}
+        onSubmit={(data) => {
+          if (editingCategory) {
+            updateCategoryMutation.mutate({ id: editingCategory.id, data });
+          } else {
+            createCategoryMutation.mutate(data);
+          }
+        }}
+      />
+
+      {/* Add/Edit User Dialog */}
+      {user.role === 'admin' && (
+        <UserFormDialog
+          open={showAddUser || !!editingUser}
+          onClose={() => {
+            setShowAddUser(false);
+            setEditingUser(null);
+          }}
+          user={editingUser}
+          onSubmit={(data) => {
+            if (editingUser) {
+              updateUserMutation.mutate({ id: editingUser.id, data });
+            } else {
+              createUserMutation.mutate(data);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
 
-// Product schema for validation
-const productSchema = z.object({
-  name: z.string().min(1, "Название обязательно"),
-  description: z.string().optional(),
-  categoryId: z.number().min(1, "Выберите категорию"),
-  pricePerKg: z.string().min(1, "Цена обязательна"),
-  imageUrl: z.string().optional(),
-  isAvailable: z.boolean().default(true),
-});
-
-const categorySchema = z.object({
-  name: z.string().min(1, "Название обязательно"),
-  description: z.string().optional(),
-  icon: z.string().min(1, "Иконка обязательна"),
-});
-
-const userSchema = z.object({
-  email: z.string().email("Неверный email"),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  role: z.enum(["admin", "worker", "customer"]),
-});
-
-// Form Dialog Components
-function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any) {
-  const form = useForm({
-    resolver: zodResolver(productSchema),
-    defaultValues: {
-      name: product?.name || "",
-      description: product?.description || "",
-      categoryId: product?.categoryId || 0,
-      pricePerKg: product?.pricePerKg?.toString() || "",
-      imageUrl: product?.imageUrl || "",
-      isAvailable: product?.isAvailable ?? true,
-    },
+// Product Form Dialog Component
+function ProductFormDialog({ 
+  open, 
+  onClose, 
+  categories, 
+  product, 
+  onSubmit 
+}: {
+  open: boolean;
+  onClose: () => void;
+  categories: CategoryWithProducts[];
+  product?: Product | null;
+  onSubmit: (data: any) => void;
+}) {
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    pricePerKg: '',
+    categoryId: '',
+    imageUrl: '',
+    isAvailable: true,
   });
 
-  if (!open) return null;
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        name: product.name,
+        description: product.description || '',
+        pricePerKg: product.pricePerKg,
+        categoryId: product.categoryId.toString(),
+        imageUrl: product.imageUrl || '',
+        isAvailable: product.isAvailable,
+      });
+    } else {
+      setFormData({
+        name: '',
+        description: '',
+        pricePerKg: '',
+        categoryId: '',
+        imageUrl: '',
+        isAvailable: true,
+      });
+    }
+  }, [product, open]);
+
+  const handleSubmit = () => {
+    onSubmit({
+      ...formData,
+      categoryId: parseInt(formData.categoryId),
+      pricePerKg: formData.pricePerKg,
+    });
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>
-            {product ? "Редактировать товар" : "Добавить товар"}
-          </DialogTitle>
+          <DialogTitle>{product ? 'Редактировать товар' : 'Добавить товар'}</DialogTitle>
           <DialogDescription>
-            {product ? "Обновите информацию о товаре" : "Добавьте новый товар в каталог"}
+            {product ? 'Изменить информацию о товаре' : 'Создать новый товар в меню'}
           </DialogDescription>
         </DialogHeader>
-        
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Название товара</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Название товара" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="name">Название</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Название блюда"
             />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Описание</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Описание товара" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+          </div>
+          <div>
+            <Label htmlFor="description">Описание</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Описание блюда"
             />
-
-            <FormField
-              control={form.control}
-              name="categoryId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Категория</FormLabel>
-                  <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString()}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Выберите категорию" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories?.map((category: any) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
+          </div>
+          <div>
+            <Label htmlFor="categoryId">Категория</Label>
+            <Select value={formData.categoryId} onValueChange={(value) => setFormData({ ...formData, categoryId: value })}>
+              <SelectTrigger>
+                <SelectValue placeholder="Выберите категорию" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id.toString()}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="pricePerKg">Цена за кг (₪)</Label>
+            <Input
+              id="pricePerKg"
+              type="number"
+              step="0.01"
+              value={formData.pricePerKg}
+              onChange={(e) => setFormData({ ...formData, pricePerKg: e.target.value })}
+              placeholder="0.00"
             />
-
-            <FormField
-              control={form.control}
-              name="pricePerKg"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Цена за 100г (₪)</FormLabel>
-                  <FormControl>
-                    <Input type="number" step="0.01" placeholder="0.00" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+          </div>
+          <ImageUpload
+            value={formData.imageUrl}
+            onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+          />
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="isAvailable"
+              checked={formData.isAvailable}
+              onCheckedChange={(checked) => setFormData({ ...formData, isAvailable: checked })}
+              className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-200"
             />
-
-            <FormField
-              control={form.control}
-              name="imageUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Изображение</FormLabel>
-                  <FormControl>
-                    <ImageUpload
-                      value={field.value || ""}
-                      onChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Отмена
-              </Button>
-              <Button type="submit">
-                <Save className="mr-2 h-4 w-4" />
-                {product ? "Обновить" : "Создать"}
-              </Button>
-            </div>
-          </form>
-        </Form>
+            <Label htmlFor="isAvailable">Доступен в меню</Label>
+          </div>
+        </div>
+        <div className="flex justify-end space-x-2 pt-4">
+          <Button variant="outline" onClick={onClose}>
+            Отмена
+          </Button>
+          <Button 
+            onClick={handleSubmit}
+            disabled={!formData.name || !formData.pricePerKg || !formData.categoryId}
+          >
+            {product ? 'Сохранить' : 'Создать'}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
 }
 
-function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
-  const form = useForm({
-    resolver: zodResolver(categorySchema),
-    defaultValues: {
-      name: category?.name || "",
-      description: category?.description || "",
-      icon: category?.icon || "🍽️",
-    },
+// Category Form Dialog Component
+function CategoryFormDialog({ 
+  open, 
+  onClose, 
+  category, 
+  onSubmit 
+}: {
+  open: boolean;
+  onClose: () => void;
+  category?: Category | null;
+  onSubmit: (data: any) => void;
+}) {
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    icon: '🍽️',
   });
 
-  if (!open) return null;
+  useEffect(() => {
+    if (category) {
+      setFormData({
+        name: category.name,
+        description: category.description || '',
+        icon: category.icon || '🍽️',
+      });
+    } else {
+      setFormData({
+        name: '',
+        description: '',
+        icon: '🍽️',
+      });
+    }
+  }, [category, open]);
+
+  const iconOptions = ['🥗', '🍖', '🍚', '🍲', '🥧', '🍰', '🍽️', '🥘', '🍱', '🥙'];
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>
-            {category ? "Редактировать категорию" : "Добавить категорию"}
-          </DialogTitle>
+          <DialogTitle>{category ? 'Редактировать категорию' : 'Добавить категорию'}</DialogTitle>
           <DialogDescription>
-            {category ? "Обновите информацию о категории" : "Создайте новую категорию товаров"}
+            {category ? 'Изменить информацию о категории' : 'Создать новую категорию меню'}
           </DialogDescription>
         </DialogHeader>
-        
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Название категории</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Название категории" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="name">Название</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Название категории"
             />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Описание</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Описание категории" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+          </div>
+          <div>
+            <Label htmlFor="description">Описание</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Описание категории"
             />
-
-            <FormField
-              control={form.control}
-              name="icon"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Иконка (эмодзи)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="🍽️" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Отмена
-              </Button>
-              <Button type="submit">
-                <Save className="mr-2 h-4 w-4" />
-                {category ? "Обновить" : "Создать"}
-              </Button>
+          </div>
+          <div>
+            <Label>Иконка</Label>
+            <div className="grid grid-cols-5 gap-2 mt-2">
+              {iconOptions.map((icon) => (
+                <Button
+                  key={icon}
+                  variant={formData.icon === icon ? "default" : "outline"}
+                  className="h-12 text-2xl"
+                  onClick={() => setFormData({ ...formData, icon })}
+                >
+                  {icon}
+                </Button>
+              ))}
             </div>
-          </form>
-        </Form>
+          </div>
+        </div>
+        <div className="flex justify-end space-x-2 pt-4">
+          <Button variant="outline" onClick={onClose}>
+            Отмена
+          </Button>
+          <Button 
+            onClick={() => onSubmit(formData)}
+            disabled={!formData.name}
+          >
+            {category ? 'Сохранить' : 'Создать'}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
 }
 
-function UserFormDialog({ open, onClose, user, onSubmit }: any) {
-  const form = useForm({
-    resolver: zodResolver(userSchema),
-    defaultValues: {
-      email: user?.email || "",
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
-      role: user?.role || "customer",
-    },
+// User Form Dialog Component
+function UserFormDialog({ 
+  open, 
+  onClose, 
+  user, 
+  onSubmit 
+}: {
+  open: boolean;
+  onClose: () => void;
+  user?: User | null;
+  onSubmit: (data: any) => void;
+}) {
+  const [formData, setFormData] = useState({
+    id: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+    role: 'customer' as 'admin' | 'worker' | 'customer',
   });
 
-  if (!open) return null;
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        id: user.id,
+        email: user.email || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        role: user.role as 'admin' | 'worker' | 'customer',
+      });
+    } else {
+      setFormData({
+        id: '',
+        email: '',
+        firstName: '',
+        lastName: '',
+        role: 'customer',
+      });
+    }
+  }, [user, open]);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>
-            {user ? "Редактировать пользователя" : "Добавить пользователя"}
-          </DialogTitle>
+          <DialogTitle>{user ? 'Редактировать пользователя' : 'Добавить пользователя'}</DialogTitle>
           <DialogDescription>
-            {user ? "Обновите информацию о пользователе" : "Создайте нового пользователя"}
+            {user ? 'Изменить информацию о пользователе' : 'Создать новую учетную запись'}
           </DialogDescription>
         </DialogHeader>
-        
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="user@example.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="firstName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Имя</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Имя" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Фамилия</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Фамилия" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Роль</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Выберите роль" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="customer">Клиент</SelectItem>
-                      <SelectItem value="worker">Сотрудник</SelectItem>
-                      <SelectItem value="admin">Администратор</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Отмена
-              </Button>
-              <Button type="submit">
-                <Save className="mr-2 h-4 w-4" />
-                {user ? "Обновить" : "Создать"}
-              </Button>
+        <div className="space-y-4">
+          {!user && (
+            <div>
+              <Label htmlFor="id">ID пользователя</Label>
+              <Input
+                id="id"
+                value={formData.id}
+                onChange={(e) => setFormData({ ...formData, id: e.target.value })}
+                placeholder="Уникальный ID"
+              />
             </div>
-          </form>
-        </Form>
+          )}
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              placeholder="email@example.com"
+            />
+          </div>
+          <div>
+            <Label htmlFor="firstName">Имя</Label>
+            <Input
+              id="firstName"
+              value={formData.firstName}
+              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+              placeholder="Имя"
+            />
+          </div>
+          <div>
+            <Label htmlFor="lastName">Фамилия</Label>
+            <Input
+              id="lastName"
+              value={formData.lastName}
+              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+              placeholder="Фамилия"
+            />
+          </div>
+          <div>
+            <Label htmlFor="role">Роль</Label>
+            <Select value={formData.role} onValueChange={(value: 'admin' | 'worker' | 'customer') => setFormData({ ...formData, role: value })}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="customer">Клиент</SelectItem>
+                <SelectItem value="worker">Работник</SelectItem>
+                <SelectItem value="admin">Администратор</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="flex justify-end space-x-2 pt-4">
+          <Button variant="outline" onClick={onClose}>
+            Отмена
+          </Button>
+          <Button 
+            onClick={() => onSubmit(formData)}
+            disabled={!formData.email || (!user && !formData.id)}
+          >
+            {user ? 'Сохранить' : 'Создать'}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
