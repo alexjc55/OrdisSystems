@@ -383,7 +383,7 @@ export default function AdminDashboard() {
                       </SelectTrigger>
                       <SelectContent className="bg-white">
                         <SelectItem value="all" className="hover:bg-orange-50 focus:bg-orange-50">Все категории</SelectItem>
-                        {(categoriesData as any[] || []).map((category: any) => (
+                        {(categories as any[] || []).map((category: any) => (
                           <SelectItem 
                             key={category.id} 
                             value={category.id.toString()}
@@ -544,7 +544,7 @@ export default function AdminDashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                {(categoriesData as any[] || []).length > 0 ? (
+                {(categories as any[] || []).length > 0 ? (
                   <div className="border rounded-lg bg-white overflow-hidden">
                     <div className="overflow-x-auto">
                       <Table>
@@ -558,7 +558,7 @@ export default function AdminDashboard() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {(categoriesData as any[] || []).map((category: any) => (
+                          {(categories as any[] || []).map((category: any) => (
                             <TableRow key={category.id}>
                               <TableCell className="text-lg sm:text-2xl">{category.icon}</TableCell>
                               <TableCell className="font-medium text-xs sm:text-sm">{category.name}</TableCell>
@@ -637,7 +637,7 @@ export default function AdminDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {orders && orders.length > 0 ? (
+                {(orders as any[] || []).length > 0 ? (
                   <div className="border rounded-lg bg-white overflow-hidden">
                     <div className="overflow-x-auto">
                       <Table>
@@ -652,7 +652,7 @@ export default function AdminDashboard() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {orders.map((order: any) => (
+                          {(orders as any[] || []).map((order: any) => (
                             <TableRow key={order.id}>
                               <TableCell className="font-medium text-xs sm:text-sm">#{order.id}</TableCell>
                               <TableCell className="text-xs sm:text-sm">
@@ -720,7 +720,7 @@ export default function AdminDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {users && users.length > 0 ? (
+                {(users as any[] || []).length > 0 ? (
                   <div className="border rounded-lg bg-white overflow-hidden">
                     <div className="overflow-x-auto">
                       <Table>
