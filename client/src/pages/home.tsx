@@ -75,13 +75,13 @@ export default function Home() {
                 <h1 className="text-3xl font-poppins font-bold text-gray-900">
                   {searchQuery.length > 2 
                     ? `Результаты поиска: "${searchQuery}"`
-                    : selectedCategory?.name || "Меню ресторана"
+                    : selectedCategory?.name || "eDAHouse - טעים"
                   }
                 </h1>
                 <p className="text-gray-600 mt-1">
                   {searchQuery.length > 2 
                     ? `Найдено товаров: ${searchResults?.length || 0}`
-                    : selectedCategory?.description || "Свежая еда на развес - выбирайте по вкусу"
+                    : selectedCategory?.description || "Свежая домашняя еда на развес - выбирайте по вкусу"
                   }
                 </p>
               </div>

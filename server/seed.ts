@@ -88,6 +88,7 @@ export async function seedDatabase() {
       description: "Классический салат с мясом, картофелем, морковью, яйцами и горошком",
       pricePerKg: "42.00",
       categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
+      imageUrl: "/assets/1_1750184360776.jpg",
       isAvailable: true
     },
     {
@@ -174,6 +175,7 @@ export async function seedDatabase() {
       description: "Домашние мясные котлеты из говядины и свинины",
       pricePerKg: "72.50",
       categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      imageUrl: "/assets/3_1750184360777.jpg",
       isAvailable: true
     },
     {
@@ -209,6 +211,7 @@ export async function seedDatabase() {
       description: "Тушеное мясо с овощами в пряном соусе",
       pricePerKg: "78.50",
       categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      imageUrl: "/assets/3_1750184360777.jpg",
       isAvailable: true
     },
     {
@@ -216,6 +219,7 @@ export async function seedDatabase() {
       description: "Классический узбекский плов с мясом и морковью",
       pricePerKg: "52.90",
       categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      imageUrl: "/assets/3_1750184360777.jpg",
       isAvailable: true
     },
     {
