@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { categories, products } from "@shared/schema";
+import { categories, products, users } from "@shared/schema";
 
 export async function seedDatabase() {
   console.log("🌱 Seeding database...");
@@ -7,6 +7,41 @@ export async function seedDatabase() {
   // Clear existing data
   await db.delete(products);
   await db.delete(categories);
+
+  // Insert test users
+  const testUsers = [
+    {
+      id: "admin",
+      email: "admin@restaurant.com",
+      firstName: "Администратор",
+      lastName: "Системы",
+      role: "admin" as const,
+      profileImageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      id: "worker",
+      email: "worker@restaurant.com", 
+      firstName: "Работник",
+      lastName: "Кухни",
+      role: "worker" as const,
+      profileImageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      id: "customer",
+      email: "customer@example.com",
+      firstName: "Клиент",
+      lastName: "Тестовый", 
+      role: "customer" as const,
+      profileImageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
+    }
+  ];
+
+  try {
+    await db.insert(users).values(testUsers);
+    console.log(`✅ Created ${testUsers.length} test users`);
+  } catch (error) {
+    console.log("Test users may already exist, skipping...");
+  }
 
   // Insert categories
   const categoryData = [
@@ -24,7 +59,7 @@ export async function seedDatabase() {
     },
     {
       name: "Гарниры",
-      description: "Каши, макароны, овощи",
+      description: "Каши, картофель, овощи",
       icon: "🍚",
       sortOrder: 3
     },
@@ -35,9 +70,9 @@ export async function seedDatabase() {
       sortOrder: 4
     },
     {
-      name: "Выпечка",
-      description: "Хлеб и кондитерские изделия",
-      icon: "🥐",
+      name: "Выпечка и десерты",
+      description: "Блинчики, сырники, корндоги",
+      icon: "🥞",
       sortOrder: 5
     }
   ];
@@ -49,78 +84,281 @@ export async function seedDatabase() {
   const productData = [
     // Салаты
     {
+      name: "Оливье",
+      description: "Классический салат с мясом, картофелем, морковью, яйцами и горошком",
+      pricePerKg: "42.00",
+      categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Винегрет",
+      description: "Традиционный русский салат со свеклой, морковью и квашеной капустой",
+      pricePerKg: "35.50",
+      categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Мимоза",
+      description: "Нежный слоеный салат с рыбой, яйцами и сыром",
+      pricePerKg: "48.90",
+      categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Абжерка",
+      description: "Острый грузинский салат с овощами и зеленью",
+      pricePerKg: "45.00",
+      categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Аджика",
+      description: "Острая закуска из помидоров, перца и специй",
+      pricePerKg: "52.90",
+      categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Баклажаны по-азиатски",
+      description: "Маринованные баклажаны с чесноком и кориандром",
+      pricePerKg: "58.80",
+      categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Грибы по-азиатски",
+      description: "Маринованные грибы с корейскими специями",
+      pricePerKg: "62.50",
+      categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Салат из капусты",
+      description: "Свежая капуста с морковью и зеленью",
+      pricePerKg: "25.90",
+      categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Салат свежий с редиской",
+      description: "Хрустящий салат из огурцов, редиски и зелени",
+      pricePerKg: "32.50",
+      categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Салат из свеклы",
+      description: "Вареная свекла с чесноком и майонезом",
+      pricePerKg: "28.90",
+      categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Салат из моркови",
+      description: "Корейская морковка с пряными специями",
+      pricePerKg: "35.80",
+      categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
+      isAvailable: true
+    },
+    {
       name: "Салат Цезарь",
       description: "Классический салат с курицей, пармезаном и соусом цезарь",
-      pricePerKg: "45.90",
-      categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
-      isAvailable: true
-    },
-    {
-      name: "Салат Греческий",
-      description: "Свежие овощи с сыром фета и оливками",
-      pricePerKg: "38.50",
-      categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
-      isAvailable: true
-    },
-    {
-      name: "Салат Оливье",
-      description: "Традиционный русский салат с мясом и овощами",
-      pricePerKg: "42.00",
+      pricePerKg: "65.90",
       categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
       isAvailable: true
     },
     
     // Горячие блюда
     {
-      name: "Курица по-домашнему",
-      description: "Тушеная курица с овощами в сливочном соусе",
+      name: "Котлеты",
+      description: "Домашние мясные котлеты из говядины и свинины",
+      pricePerKg: "72.50",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Паргит",
+      description: "Куриное филе в панировке, жаренное до золотистой корочки",
+      pricePerKg: "68.90",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Крылышки",
+      description: "Сочные куриные крылышки в медово-горчичном соусе",
       pricePerKg: "65.80",
       categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
       isAvailable: true
     },
     {
-      name: "Говядина в соусе",
-      description: "Нежная говядина в грибном соусе",
-      pricePerKg: "89.90",
+      name: "Окорочка",
+      description: "Запеченные куриные окорочка с травами и специями",
+      pricePerKg: "58.50",
       categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
       isAvailable: true
     },
     {
-      name: "Рыба запеченная",
-      description: "Филе рыбы запеченное с лимоном и специями",
+      name: "Тефтели",
+      description: "Нежные мясные шарики в томатном соусе",
+      pricePerKg: "69.90",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Гуляш",
+      description: "Тушеное мясо с овощами в пряном соусе",
       pricePerKg: "78.50",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Плов",
+      description: "Классический узбекский плов с мясом и морковью",
+      pricePerKg: "52.90",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Плов зеленый",
+      description: "Плов с зеленью, изюмом и специальными специями",
+      pricePerKg: "56.80",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Перцы фаршированные",
+      description: "Болгарский перец, фаршированный мясом и рисом",
+      pricePerKg: "62.50",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Голубцы",
+      description: "Капустные листья с мясной начинкой в томатном соусе",
+      pricePerKg: "58.90",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Запеченные овощи",
+      description: "Ассорти из сезонных овощей, запеченных с травами",
+      pricePerKg: "38.50",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Отбивные",
+      description: "Свиные отбивные в золотистой панировке",
+      pricePerKg: "82.90",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Шницель",
+      description: "Куриный шницель в хрустящей панировке",
+      pricePerKg: "75.80",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Фасоль тушеная",
+      description: "Белая фасоль тушеная с овощами и томатами",
+      pricePerKg: "35.50",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Жаркое",
+      description: "Мясо тушеное с картофелем и овощами по-домашнему",
+      pricePerKg: "68.90",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Капуста тушеная",
+      description: "Белокочанная капуста тушеная с морковью и луком",
+      pricePerKg: "28.50",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Курица по-китайски",
+      description: "Кусочки курицы в кисло-сладком соусе с овощами",
+      pricePerKg: "72.80",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Чебуреки",
+      description: "Хрустящие чебуреки с сочной мясной начинкой",
+      pricePerKg: "58.90",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Душпара",
+      description: "Маленькие пельмени в ароматном бульоне",
+      pricePerKg: "48.50",
+      categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Равиоли",
+      description: "Итальянские равиоли с сырной начинкой",
+      pricePerKg: "65.90",
       categoryId: insertedCategories.find(c => c.name === "Горячие блюда")!.id,
       isAvailable: true
     },
     
     // Гарниры
     {
-      name: "Рис отварной",
-      description: "Рассыпчатый рис с маслом и зеленью",
-      pricePerKg: "25.00",
+      name: "Картошка жареная",
+      description: "Золотистая жареная картошка с луком и зеленью",
+      pricePerKg: "32.50",
       categoryId: insertedCategories.find(c => c.name === "Гарниры")!.id,
       isAvailable: true
     },
     {
-      name: "Картофель отварной",
-      description: "Молодой картофель с укропом и маслом",
-      pricePerKg: "28.90",
+      name: "Рис отварной",
+      description: "Рассыпчатый белый рис с маслом",
+      pricePerKg: "25.80",
       categoryId: insertedCategories.find(c => c.name === "Гарниры")!.id,
       isAvailable: true
     },
     {
       name: "Гречка",
-      description: "Рассыпчатая гречневая каша",
-      pricePerKg: "32.50",
+      description: "Рассыпчатая гречневая каша с маслом",
+      pricePerKg: "28.90",
+      categoryId: insertedCategories.find(c => c.name === "Гарниры")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Картофель отварной",
+      description: "Молодой картофель отварной с укропом",
+      pricePerKg: "26.50",
+      categoryId: insertedCategories.find(c => c.name === "Гарниры")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Макароны",
+      description: "Отварные макароны с маслом и сыром",
+      pricePerKg: "22.90",
+      categoryId: insertedCategories.find(c => c.name === "Гарниры")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Пюре картофельное",
+      description: "Нежное картофельное пюре на молоке с маслом",
+      pricePerKg: "35.80",
       categoryId: insertedCategories.find(c => c.name === "Гарниры")!.id,
       isAvailable: true
     },
     
     // Супы
     {
-      name: "Борщ украинский",
-      description: "Традиционный борщ со сметаной",
-      pricePerKg: "35.80",
+      name: "Борщ",
+      description: "Традиционный украинский борщ со сметаной",
+      pricePerKg: "38.50",
       categoryId: insertedCategories.find(c => c.name === "Супы")!.id,
       isAvailable: true
     },
@@ -131,20 +369,62 @@ export async function seedDatabase() {
       categoryId: insertedCategories.find(c => c.name === "Супы")!.id,
       isAvailable: true
     },
-    
-    // Выпечка
     {
-      name: "Хлеб белый",
-      description: "Свежий белый хлеб",
-      pricePerKg: "15.50",
-      categoryId: insertedCategories.find(c => c.name === "Выпечка")!.id,
+      name: "Щи",
+      description: "Кислые щи из квашеной капусты с мясом",
+      pricePerKg: "35.80",
+      categoryId: insertedCategories.find(c => c.name === "Супы")!.id,
       isAvailable: true
     },
     {
-      name: "Булочки с маком",
-      description: "Сдобные булочки с маковой начинкой",
-      pricePerKg: "35.00",
-      categoryId: insertedCategories.find(c => c.name === "Выпечка")!.id,
+      name: "Суп гороховый",
+      description: "Наваристый гороховый суп с копченостями",
+      pricePerKg: "32.50",
+      categoryId: insertedCategories.find(c => c.name === "Супы")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Харчо",
+      description: "Острый грузинский суп с мясом и рисом",
+      pricePerKg: "42.90",
+      categoryId: insertedCategories.find(c => c.name === "Супы")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Лагман",
+      description: "Узбекский суп с лапшой и мясом",
+      pricePerKg: "45.80",
+      categoryId: insertedCategories.find(c => c.name === "Супы")!.id,
+      isAvailable: true
+    },
+    
+    // Выпечка и десерты
+    {
+      name: "Сырники",
+      description: "Нежные творожные сырники со сметаной",
+      pricePerKg: "52.90",
+      categoryId: insertedCategories.find(c => c.name === "Выпечка и десерты")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Блинчики",
+      description: "Тонкие блинчики с различными начинками",
+      pricePerKg: "45.80",
+      categoryId: insertedCategories.find(c => c.name === "Выпечка и десерты")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Корндоги",
+      description: "Сосиски в кукурузном тесте с сыром",
+      pricePerKg: "68.50",
+      categoryId: insertedCategories.find(c => c.name === "Выпечка и десерты")!.id,
+      isAvailable: true
+    },
+    {
+      name: "Драники",
+      description: "Картофельные оладьи со сметаной",
+      pricePerKg: "38.90",
+      categoryId: insertedCategories.find(c => c.name === "Выпечка и десерты")!.id,
       isAvailable: true
     }
   ];

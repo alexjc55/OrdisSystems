@@ -8,7 +8,9 @@ import CartOverlay from "@/components/cart/cart-overlay";
 import { useCartStore } from "@/lib/cart";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Plus } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Search, Plus, Star, TrendingUp, Utensils } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import type { CategoryWithProducts, ProductWithCategory } from "@shared/schema";
 
@@ -20,6 +22,10 @@ export default function Home() {
 
   const { data: categories, isLoading: categoriesLoading } = useQuery<CategoryWithProducts[]>({
     queryKey: ["/api/categories"],
+  });
+
+  const { data: allProducts, isLoading: allProductsLoading } = useQuery<ProductWithCategory[]>({
+    queryKey: ["/api/products"],
   });
 
   const { data: products, isLoading: productsLoading } = useQuery<ProductWithCategory[]>({
@@ -43,8 +49,11 @@ export default function Home() {
   };
 
   const selectedCategory = categories?.find(cat => cat.id === selectedCategoryId);
-  const displayProducts = searchQuery.length > 2 ? searchResults : products;
-  const isLoading = searchQuery.length > 2 ? searchLoading : productsLoading;
+  const displayProducts = searchQuery.length > 2 ? searchResults : (selectedCategoryId === null ? allProducts : products);
+  const isLoading = searchQuery.length > 2 ? searchLoading : (selectedCategoryId === null ? allProductsLoading : productsLoading);
+  
+  // Get popular products (top 6 products for home page)
+  const popularProducts = allProducts?.slice(0, 6) || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -59,19 +68,20 @@ export default function Home() {
         />
 
         <main className="flex-1 p-6">
+          {/* Search Bar */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-3xl font-poppins font-bold text-gray-900">
                   {searchQuery.length > 2 
                     ? `Результаты поиска: "${searchQuery}"`
-                    : selectedCategory?.name || "Все продукты"
+                    : selectedCategory?.name || "Меню ресторана"
                   }
                 </h1>
                 <p className="text-gray-600 mt-1">
                   {searchQuery.length > 2 
                     ? `Найдено товаров: ${searchResults?.length || 0}`
-                    : selectedCategory?.description || "Выберите категорию для просмотра товаров"
+                    : selectedCategory?.description || "Свежая еда на развес - выбирайте по вкусу"
                   }
                 </p>
               </div>
@@ -94,51 +104,137 @@ export default function Home() {
                 )}
               </div>
             </div>
-
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {[...Array(8)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
-                    <div className="w-full h-48 bg-gray-200"></div>
-                    <div className="p-4 space-y-3">
-                      <div className="h-4 bg-gray-200 rounded"></div>
-                      <div className="h-3 bg-gray-200 rounded w-3/4"></div>
-                      <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : displayProducts && displayProducts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {displayProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            ) : selectedCategoryId === null && searchQuery.length <= 2 ? (
-              <div className="text-center py-12">
-                <div className="text-gray-400 text-6xl mb-4">🛍️</div>
-                <h3 className="text-lg font-poppins font-semibold text-gray-900 mb-2">
-                  Выберите категорию
-                </h3>
-                <p className="text-gray-600">
-                  Выберите категорию из левого меню для просмотра товаров
-                </p>
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="text-gray-400 text-6xl mb-4">📦</div>
-                <h3 className="text-lg font-poppins font-semibold text-gray-900 mb-2">
-                  Товары не найдены
-                </h3>
-                <p className="text-gray-600">
-                  {searchQuery.length > 2 
-                    ? "Попробуйте изменить поисковый запрос"
-                    : "В данной категории пока нет товаров"
-                  }
-                </p>
-              </div>
-            )}
           </div>
+
+          {/* Categories Grid - Show when no category is selected and no search */}
+          {selectedCategoryId === null && searchQuery.length <= 2 && (
+            <div className="mb-12">
+              <div className="flex items-center mb-6">
+                <Utensils className="mr-3 h-6 w-6 text-primary" />
+                <h2 className="text-2xl font-poppins font-bold text-gray-900">Категории меню</h2>
+              </div>
+              
+              {categoriesLoading ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-pulse">
+                      <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-3"></div>
+                      <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-3/4 mx-auto"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+                  {categories?.map((category) => (
+                    <Card 
+                      key={category.id} 
+                      className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105 bg-white border-2 hover:border-primary/20"
+                      onClick={() => handleCategorySelect(category.id)}
+                    >
+                      <CardContent className="p-6 text-center">
+                        <div className="text-4xl mb-3">{category.icon}</div>
+                        <h3 className="font-poppins font-semibold text-gray-900 mb-1">{category.name}</h3>
+                        <p className="text-sm text-gray-600">{category.description}</p>
+                        <Badge variant="secondary" className="mt-2">
+                          {category.products?.length || 0} блюд
+                        </Badge>
+                      </CardContent>
+                    </Card>
+                  ))}
+                  
+                  {/* Show All Products Card */}
+                  <Card 
+                    className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105 bg-gradient-to-br from-primary/5 to-primary/10 border-2 hover:border-primary/30"
+                    onClick={() => handleCategorySelect(-1)}
+                  >
+                    <CardContent className="p-6 text-center">
+                      <div className="text-4xl mb-3">🍽️</div>
+                      <h3 className="font-poppins font-semibold text-gray-900 mb-1">Все блюда</h3>
+                      <p className="text-sm text-gray-600">Полное меню</p>
+                      <Badge variant="default" className="mt-2 bg-primary">
+                        {allProducts?.length || 0} блюд
+                      </Badge>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
+              {/* Popular Products Section */}
+              <div className="mt-12">
+                <div className="flex items-center mb-6">
+                  <TrendingUp className="mr-3 h-6 w-6 text-primary" />
+                  <h2 className="text-2xl font-poppins font-bold text-gray-900">Популярные блюда</h2>
+                </div>
+                
+                {allProductsLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[...Array(6)].map((_, i) => (
+                      <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
+                        <div className="w-full h-48 bg-gray-200"></div>
+                        <div className="p-4 space-y-3">
+                          <div className="h-4 bg-gray-200 rounded"></div>
+                          <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                          <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {popularProducts.map((product) => (
+                      <div key={product.id} className="relative">
+                        <ProductCard product={product} />
+                        <Badge className="absolute top-3 left-3 bg-primary text-white">
+                          <Star className="w-3 h-3 mr-1" />
+                          Популярное
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Products Grid - Show when category is selected or showing all */}
+          {(selectedCategoryId !== null || searchQuery.length > 2) && (
+            <div className="mb-8">
+              {isLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
+                      <div className="w-full h-48 bg-gray-200"></div>
+                      <div className="p-4 space-y-3">
+                        <div className="h-4 bg-gray-200 rounded"></div>
+                        <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                        <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : displayProducts && displayProducts.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {displayProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-gray-400 text-6xl mb-4">📦</div>
+                  <h3 className="text-lg font-poppins font-semibold text-gray-900 mb-2">
+                    Товары не найдены
+                  </h3>
+                  <p className="text-gray-600">
+                    {searchQuery.length > 2 
+                      ? "Попробуйте изменить поисковый запрос"
+                      : "В данной категории пока нет товаров"
+                    }
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </main>
       </div>
 
