@@ -1871,7 +1871,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-300"
+                      className="switch-admin"
                     />
                   </FormControl>
                 </FormItem>
