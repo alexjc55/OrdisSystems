@@ -15,7 +15,6 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
-  const typedUser = user as UserType | undefined;
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -34,7 +33,7 @@ export default function Header() {
                   Меню
                 </a>
               </Link>
-              {(typedUser?.role === 'admin' || typedUser?.role === 'worker') && (
+              {(user?.role === 'admin' || user?.role === 'worker') && (
                 <Link href="/admin">
                   <a className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                     Управление
@@ -64,7 +63,7 @@ export default function Header() {
             </Button>
 
             {/* User Menu or Login Button */}
-            {typedUser ? (
+            {user ? (
               <div className="hidden md:flex items-center space-x-3">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -80,17 +79,17 @@ export default function Header() {
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <div className="flex items-center justify-start gap-2 p-2">
                       <div className="flex flex-col space-y-1 leading-none">
-                        {user?.firstName && (
-                          <p className="font-medium">{user.firstName} {user.lastName}</p>
+                        {typedUser?.firstName && (
+                          <p className="font-medium">{typedUser.firstName} {typedUser.lastName}</p>
                         )}
-                        {user?.email && (
+                        {typedUser?.email && (
                           <p className="w-[200px] truncate text-sm text-muted-foreground">
-                            {user.email}
+                            {typedUser.email}
                           </p>
                         )}
                         <Badge variant="secondary" className="w-fit text-xs">
-                          {user?.role === 'admin' ? 'Администратор' : 
-                           user?.role === 'worker' ? 'Работник' : 'Клиент'}
+                          {typedUser?.role === 'admin' ? 'Администратор' : 
+                           typedUser?.role === 'worker' ? 'Работник' : 'Клиент'}
                         </Badge>
                       </div>
                     </div>
@@ -99,7 +98,7 @@ export default function Header() {
                       <User className="mr-2 h-4 w-4" />
                       <span>Профиль</span>
                     </DropdownMenuItem>
-                    {user?.role === 'admin' && (
+                    {typedUser?.role === 'admin' && (
                       <DropdownMenuItem asChild>
                         <Link href="/admin">
                           <div className="flex items-center">
@@ -147,7 +146,7 @@ export default function Header() {
                   Меню
                 </a>
               </Link>
-              {(user?.role === 'admin' || user?.role === 'worker') && (
+              {(typedUser?.role === 'admin' || typedUser?.role === 'worker') && (
                 <Link href="/admin">
                   <a className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium block">
                     Управление
@@ -155,13 +154,13 @@ export default function Header() {
                 </Link>
               )}
               <div className="border-t border-gray-200 pt-2 mt-2">
-                {user ? (
+                {typedUser ? (
                   <>
                     <div className="px-3 py-2">
                       <p className="text-sm font-medium text-gray-900">
-                        {user?.firstName} {user?.lastName}
+                        {typedUser?.firstName} {typedUser?.lastName}
                       </p>
-                      <p className="text-sm text-gray-600">{user?.email}</p>
+                      <p className="text-sm text-gray-600">{typedUser?.email}</p>
                     </div>
                     <Button 
                       variant="ghost" 
