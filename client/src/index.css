@@ -88,27 +88,31 @@
   }
 
   .rtl .ml-auto {
-    @apply mr-auto ml-0;
+    margin-left: 0;
+    margin-right: auto;
   }
 
   .rtl .mr-auto {
-    @apply ml-auto mr-0;
+    margin-right: 0;
+    margin-left: auto;
   }
 
   .rtl .pl-10 {
-    @apply pr-10 pl-0;
+    padding-left: 0;
+    padding-right: 2.5rem;
   }
 
   .rtl .pr-4 {
-    @apply pl-4 pr-0;
+    padding-right: 0;
+    padding-left: 1rem;
   }
 
   .rtl .text-left {
-    @apply text-right;
+    text-align: right;
   }
 
   .rtl .text-right {
-    @apply text-left;
+    text-align: left;
   }
 
   /* Restaurant theme colors */

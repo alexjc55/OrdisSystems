@@ -49,7 +49,7 @@ export interface IStorage {
   getOrders(userId?: string): Promise<OrderWithItems[]>;
   getOrderById(id: number): Promise<OrderWithItems | undefined>;
   createOrder(order: InsertOrder, items: InsertOrderItem[]): Promise<Order>;
-  updateOrderStatus(id: number, status: string): Promise<Order>;
+  updateOrderStatus(id: number, status: "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "cancelled"): Promise<Order>;
 
   // Store settings
   getStoreSettings(): Promise<StoreSettings | undefined>;
@@ -226,7 +226,7 @@ export class DatabaseStorage implements IStorage {
     });
   }
 
-  async updateOrderStatus(id: number, status: string): Promise<Order> {
+  async updateOrderStatus(id: number, status: "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "cancelled"): Promise<Order> {
     const [updatedOrder] = await db
       .update(orders)
       .set({ status, updatedAt: new Date() })

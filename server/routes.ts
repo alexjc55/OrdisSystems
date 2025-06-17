@@ -204,7 +204,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const order = await storage.createOrder(
         { ...validatedData, userId },
-        validatedData.items
+        validatedData.items.map(item => ({ ...item, orderId: 0 }))
       );
       
       res.json(order);
