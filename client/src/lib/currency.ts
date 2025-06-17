@@ -19,6 +19,11 @@ export function parseCurrency(amount: string): number {
   return isNaN(parsed) ? 0 : parsed;
 }
 
+export function roundUpToNearestTenAgorot(amount: number): number {
+  // Round up to the nearest 0.10 ₪ (10 agorot)
+  return Math.ceil(amount * 10) / 10;
+}
+
 export function getUnitLabel(unit: ProductUnit): string {
   const labels = {
     "100g": "за 100г",
@@ -45,18 +50,25 @@ export function calculateTotal(price: number | string, quantity: number | string
   
   if (isNaN(priceNum) || isNaN(quantityNum)) return 0;
   
+  let total;
   switch (unit) {
     case "100g":
     case "100ml":
       // Price is per 100g/100ml, quantity is in grams/ml, so divide by 100
-      return priceNum * (quantityNum / 100);
+      total = priceNum * (quantityNum / 100);
+      break;
     case "piece":
-      return priceNum * quantityNum;
+      total = priceNum * quantityNum;
+      break;
     case "kg":
-      return priceNum * quantityNum;
+      total = priceNum * quantityNum;
+      break;
     default:
-      return priceNum * quantityNum;
+      total = priceNum * quantityNum;
   }
+  
+  // Round up to nearest 10 agorot (0.10 ₪)
+  return roundUpToNearestTenAgorot(total);
 }
 
 export function formatQuantity(quantity: number | string, unit: ProductUnit): string {

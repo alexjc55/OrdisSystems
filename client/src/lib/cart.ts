@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Product } from '@shared/schema';
-import { calculateTotal } from './currency';
+import { calculateTotal, roundUpToNearestTenAgorot, type ProductUnit } from './currency';
 
 export interface CartItem {
   product: Product;
-  quantity: number; // weight in kg
+  quantity: number; // quantity based on unit (pieces, kg, grams)
   totalPrice: number;
 }
 
@@ -35,10 +35,11 @@ export const useCartStore = create<CartStore>()(
         if (existingItemIndex >= 0) {
           // Update existing item
           const updatedItems = [...items];
+          const newQuantity = updatedItems[existingItemIndex].quantity + quantity;
           updatedItems[existingItemIndex] = {
             ...updatedItems[existingItemIndex],
-            quantity: updatedItems[existingItemIndex].quantity + quantity,
-            totalPrice: calculateTotal(parseFloat(product.pricePerKg), updatedItems[existingItemIndex].quantity + quantity)
+            quantity: newQuantity,
+            totalPrice: calculateTotal(parseFloat(product.price), newQuantity, product.unit as ProductUnit)
           };
           set({ items: updatedItems });
         } else {
@@ -46,7 +47,7 @@ export const useCartStore = create<CartStore>()(
           const newItem: CartItem = {
             product,
             quantity,
-            totalPrice: calculateTotal(parseFloat(product.pricePerKg), quantity)
+            totalPrice: calculateTotal(parseFloat(product.price), quantity, product.unit)
           };
           set({ items: [...items, newItem] });
         }
@@ -69,7 +70,7 @@ export const useCartStore = create<CartStore>()(
             ? {
                 ...item,
                 quantity,
-                totalPrice: calculateTotal(parseFloat(item.product.pricePerKg), quantity)
+                totalPrice: calculateTotal(parseFloat(item.product.price), quantity, item.product.unit)
               }
             : item
         );
