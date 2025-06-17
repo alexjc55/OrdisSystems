@@ -184,6 +184,32 @@
   color: white !important;
 }
 
+/* Override any custom orange hover classes for dropdowns */
+.hover\:bg-orange-50:hover,
+.focus\:bg-orange-50:focus,
+[class*="hover:bg-orange"]:hover,
+[class*="focus:bg-orange"]:focus {
+  background-color: hsl(0, 0%, 96%) !important;
+  color: hsl(224, 71.4%, 4.1%) !important;
+}
+
+/* Ensure all dropdown menu items have consistent styling */
+[data-radix-dropdown-menu-item],
+[data-radix-context-menu-item] {
+  color: hsl(224, 71.4%, 4.1%) !important;
+}
+
+[data-radix-dropdown-menu-item]:hover,
+[data-radix-dropdown-menu-item]:focus,
+[data-radix-dropdown-menu-item][data-highlighted],
+[data-radix-context-menu-item]:hover,
+[data-radix-context-menu-item]:focus,
+[data-radix-context-menu-item][data-highlighted] {
+  background-color: hsl(0, 0%, 96%) !important;
+  color: hsl(224, 71.4%, 4.1%) !important;
+  outline: none !important;
+}
+
 /* Fix all link and interactive element visibility */
 a, button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]), [role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]) {
   color: inherit !important;

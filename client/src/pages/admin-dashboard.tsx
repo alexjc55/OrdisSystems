@@ -446,12 +446,11 @@ export default function AdminDashboard() {
                         <SelectValue placeholder="Все категории" />
                       </SelectTrigger>
                       <SelectContent className="bg-white">
-                        <SelectItem value="all" className="hover:bg-orange-50 focus:bg-orange-50">Все категории</SelectItem>
+                        <SelectItem value="all">Все категории</SelectItem>
                         {(categories as any[] || []).map((category: any) => (
                           <SelectItem 
                             key={category.id} 
                             value={category.id.toString()}
-                            className="hover:bg-orange-50 focus:bg-orange-50"
                           >
                             {category.name}
                           </SelectItem>
@@ -466,9 +465,9 @@ export default function AdminDashboard() {
                         <SelectValue placeholder="Все товары" />
                       </SelectTrigger>
                       <SelectContent className="bg-white">
-                        <SelectItem value="all" className="hover:bg-orange-50 focus:bg-orange-50">Все товары</SelectItem>
-                        <SelectItem value="available" className="hover:bg-orange-50 focus:bg-orange-50">Доступные</SelectItem>
-                        <SelectItem value="unavailable" className="hover:bg-orange-50 focus:bg-orange-50">Недоступные</SelectItem>
+                        <SelectItem value="all">Все товары</SelectItem>
+                        <SelectItem value="available">Доступные</SelectItem>
+                        <SelectItem value="unavailable">Недоступные</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
