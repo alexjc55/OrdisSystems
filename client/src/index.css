@@ -225,25 +225,18 @@
   outline: none !important;
 }
 
-/* Universal dropdown item styling - catch all possible selectors */
-div[role="listbox"] > div,
+/* Universal dropdown item styling - only hover states */
 div[role="listbox"] > div:hover,
 div[role="listbox"] > div:focus,
-[data-radix-select-viewport] > [data-radix-select-item],
 [data-radix-select-viewport] > [data-radix-select-item]:hover,
 [data-radix-select-viewport] > [data-radix-select-item]:focus,
-.radix-themes *[role="option"],
 .radix-themes *[role="option"]:hover,
 .radix-themes *[role="option"]:focus {
   background-color: hsl(0, 0%, 94%) !important;
   color: hsl(0, 0%, 10%) !important;
 }
 
-/* Force override for any remaining dropdown styling */
-* {
-  --radix-select-item-background-color: hsl(0, 0%, 94%) !important;
-  --radix-select-item-text-color: hsl(0, 0%, 10%) !important;
-}
+
 
 /* Fix all link and interactive element visibility */
 a, button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]), [role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]) {
@@ -502,18 +495,4 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
 [data-radix-select-content] [data-radix-select-item][data-state="checked"] {
   background-color: hsl(24.6, 95%, 53.1%) !important;
   color: white !important;
-}
-
-/* Override any remaining Tailwind utilities that might interfere */
-.bg-white {
-  --tw-bg-opacity: 1;
-}
-
-[data-radix-select-item]:not([data-state="checked"]) {
-  color: #1a1a1a !important;
-}
-
-[data-radix-select-item]:not([data-state="checked"]):hover {
-  background-color: #f0f0f0 !important;
-  color: #1a1a1a !important;
 }
