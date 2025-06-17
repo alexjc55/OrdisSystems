@@ -11,21 +11,8 @@ interface SidebarProps {
   isLoading?: boolean;
 }
 
-const categoryIcons: Record<string, string> = {
-  'рыба': '🐟',
-  'мясо': '🥩',
-  'овощи': '🥕',
-  'фрукты': '🍎',
-  'хлебобулочные': '🍞',
-  'молочные': '🥛',
-  'готовые блюда': '🍽️',
-  'салаты': '🥗',
-  'default': '📦'
-};
-
-function getIconForCategory(name: string): string {
-  const key = name.toLowerCase();
-  return categoryIcons[key] || categoryIcons.default;
+function getIconForCategory(category: CategoryWithProducts): string {
+  return category.icon || '📦';
 }
 
 export default function Sidebar({
@@ -94,9 +81,7 @@ export default function Sidebar({
                     : "text-gray-700 hover:bg-gray-50 hover:text-primary"
                 )}
               >
-                <span className="mr-3">
-                  {category.icon || getIconForCategory(category.name)}
-                </span>
+                <span className="mr-3">{category.icon || '📦'}</span>
                 {category.name}
                 <Badge variant="secondary" className="ml-auto text-xs bg-gray-200 text-gray-700">
                   {category.products.filter(p => p.isAvailable).length}

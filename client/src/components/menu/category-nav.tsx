@@ -8,21 +8,8 @@ interface CategoryNavProps {
   onCategorySelect: (categoryId: number | null) => void;
 }
 
-const categoryIcons: Record<string, string> = {
-  'рыба': '🐟',
-  'мясо': '🥩',
-  'овощи': '🥕',
-  'фрукты': '🍎',
-  'хлебобулочные': '🍞',
-  'молочные': '🥛',
-  'готовые блюда': '🍽️',
-  'салаты': '🥗',
-  'default': '📦'
-};
-
-function getIconForCategory(name: string): string {
-  const key = name.toLowerCase();
-  return categoryIcons[key] || categoryIcons.default;
+function getIconForCategory(category: CategoryWithProducts): string {
+  return category.icon || '📦';
 }
 
 export default function CategoryNav({
@@ -61,9 +48,7 @@ export default function CategoryNav({
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             )}
           >
-            <span className="mr-2">
-              {category.icon || getIconForCategory(category.name)}
-            </span>
+            <span className="mr-2">{category.icon || '📦'}</span>
             {category.name}
           </Button>
         ))}
