@@ -69,9 +69,9 @@ export default function Header() {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={typedUser?.profileImageUrl || ""} alt={typedUser?.firstName || ""} />
+                        <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
                         <AvatarFallback>
-                          {typedUser?.firstName?.[0]}{typedUser?.lastName?.[0]}
+                          {user?.firstName?.[0]}{user?.lastName?.[0]}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
@@ -79,17 +79,17 @@ export default function Header() {
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <div className="flex items-center justify-start gap-2 p-2">
                       <div className="flex flex-col space-y-1 leading-none">
-                        {typedUser?.firstName && (
-                          <p className="font-medium">{typedUser.firstName} {typedUser.lastName}</p>
+                        {user?.firstName && (
+                          <p className="font-medium">{user.firstName} {user.lastName}</p>
                         )}
-                        {typedUser?.email && (
+                        {user?.email && (
                           <p className="w-[200px] truncate text-sm text-muted-foreground">
-                            {typedUser.email}
+                            {user.email}
                           </p>
                         )}
                         <Badge variant="secondary" className="w-fit text-xs">
-                          {typedUser?.role === 'admin' ? 'Администратор' : 
-                           typedUser?.role === 'worker' ? 'Работник' : 'Клиент'}
+                          {user?.role === 'admin' ? 'Администратор' : 
+                           user?.role === 'worker' ? 'Работник' : 'Клиент'}
                         </Badge>
                       </div>
                     </div>
@@ -98,7 +98,7 @@ export default function Header() {
                       <User className="mr-2 h-4 w-4" />
                       <span>Профиль</span>
                     </DropdownMenuItem>
-                    {typedUser?.role === 'admin' && (
+                    {user?.role === 'admin' && (
                       <DropdownMenuItem asChild>
                         <Link href="/admin">
                           <div className="flex items-center">
@@ -146,7 +146,7 @@ export default function Header() {
                   Меню
                 </a>
               </Link>
-              {(typedUser?.role === 'admin' || typedUser?.role === 'worker') && (
+              {(user?.role === 'admin' || user?.role === 'worker') && (
                 <Link href="/admin">
                   <a className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium block">
                     Управление
@@ -154,13 +154,13 @@ export default function Header() {
                 </Link>
               )}
               <div className="border-t border-gray-200 pt-2 mt-2">
-                {typedUser ? (
+                {user ? (
                   <>
                     <div className="px-3 py-2">
                       <p className="text-sm font-medium text-gray-900">
-                        {typedUser?.firstName} {typedUser?.lastName}
+                        {user?.firstName} {user?.lastName}
                       </p>
-                      <p className="text-sm text-gray-600">{typedUser?.email}</p>
+                      <p className="text-sm text-gray-600">{user?.email}</p>
                     </div>
                     <Button 
                       variant="ghost" 
