@@ -1062,7 +1062,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+                      className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500 hover:bg-gray-200 data-[state=checked]:hover:bg-green-600"
                     />
                   </FormControl>
                 </FormItem>
@@ -1073,7 +1073,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               {product ? (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <button type="button" className="text-sm text-red-600 hover:text-red-800 transition-colors underline">
+                    <button type="button" className="text-sm text-red-600 hover:text-red-800 transition-colors underline flex items-center gap-1">
+                      <Trash2 className="h-3 w-3" />
                       Удалить товар
                     </button>
                   </AlertDialogTrigger>
@@ -1104,10 +1105,18 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               )}
               
               <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                <Button type="button" variant="outline" onClick={onClose} className="text-sm hover:bg-gray-50">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={onClose} 
+                  className="text-sm border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-400"
+                >
                   Отмена
                 </Button>
-                <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white text-sm">
+                <Button 
+                  type="submit" 
+                  className="text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-600 hover:border-orange-600 focus:ring-orange-500"
+                >
                   <Save className="mr-2 h-4 w-4" />
                   {product ? "Обновить" : "Создать"}
                 </Button>
