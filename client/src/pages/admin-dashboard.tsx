@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
@@ -365,7 +364,6 @@ export default function AdminDashboard() {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Изображение</TableHead>
                           <TableHead>Название</TableHead>
                           <TableHead>Категория</TableHead>
                           <TableHead>Цена за 100г</TableHead>
@@ -376,19 +374,6 @@ export default function AdminDashboard() {
                       <TableBody>
                         {filteredProducts.map((product) => (
                           <TableRow key={product.id}>
-                            <TableCell>
-                              {product.imageUrl ? (
-                                <img 
-                                  src={product.imageUrl} 
-                                  alt={product.name}
-                                  className="w-12 h-12 object-cover rounded-lg"
-                                />
-                              ) : (
-                                <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                                  <Package className="h-6 w-6 text-gray-400" />
-                                </div>
-                              )}
-                            </TableCell>
                             <TableCell>
                               <div>
                                 <div className="font-medium">{product.name}</div>
@@ -825,6 +810,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any
       isAvailable: product?.isAvailable ?? true,
     },
   });
+
+
 
   if (!open) return null;
 
