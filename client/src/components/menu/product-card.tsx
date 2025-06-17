@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/lib/cart";
 import { useToast } from "@/hooks/use-toast";
-import { formatCurrency, formatWeight, calculateTotal } from "@/lib/currency";
+import { formatCurrency, formatWeight, calculateTotal, getUnitLabel, formatQuantity, type ProductUnit } from "@/lib/currency";
 import { ShoppingCart, Plus, Minus, Eye } from "lucide-react";
 import type { ProductWithCategory } from "@shared/schema";
 
@@ -14,24 +14,29 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const [selectedWeight, setSelectedWeight] = useState(1.0);
+  const unit = (product.unit || "100g") as ProductUnit;
+  const [selectedQuantity, setSelectedQuantity] = useState(unit === "piece" ? 1 : 1.0);
   const { addItem, toggleCart } = useCartStore();
   const { toast } = useToast();
 
-  const pricePer100g = parseFloat(product.pricePerKg); // будет переименовано в базе позже
-  const totalPrice = calculateTotal(pricePer100g, selectedWeight, "kg");
+  const price = parseFloat(product.price || product.pricePerKg || "0");
+  const totalPrice = calculateTotal(price, selectedQuantity, unit);
 
-  const handleWeightChange = (newWeight: number) => {
-    if (newWeight >= 0.1 && newWeight <= 99) {
-      setSelectedWeight(Number(newWeight.toFixed(1)));
+  const handleQuantityChange = (newQuantity: number) => {
+    const minValue = unit === "piece" ? 1 : 0.1;
+    const maxValue = unit === "piece" ? 99 : 99;
+    const step = unit === "piece" ? 1 : 0.1;
+    
+    if (newQuantity >= minValue && newQuantity <= maxValue) {
+      setSelectedQuantity(unit === "piece" ? Math.round(newQuantity) : Number(newQuantity.toFixed(1)));
     }
   };
 
   const handleAddToCart = () => {
-    addItem(product, selectedWeight);
+    addItem(product, selectedQuantity);
     toast({
       title: "Добавлено в корзину",
-      description: `${product.name} (${formatWeight(selectedWeight)}) - ${formatCurrency(totalPrice)}`,
+      description: `${product.name} (${formatQuantity(selectedQuantity, unit)}) - ${formatCurrency(totalPrice)}`,
       action: (
         <Button
           size="sm"
@@ -88,34 +93,34 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
           <div className="flex items-center justify-between">
             <span className="text-2xl font-bold text-primary">
-              {formatCurrency(pricePer100g)}
+              {formatCurrency(price)}
             </span>
-            <span className="text-sm text-gray-500">за 100г</span>
+            <span className="text-sm text-gray-500">{getUnitLabel(unit)}</span>
           </div>
         </div>
 
         <div className="space-y-3">
-          {/* Weight Selector */}
+          {/* Quantity Selector */}
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium text-gray-700">
-              Вес (кг):
+              {unit === "piece" ? "Количество:" : unit === "kg" ? "Вес (кг):" : "Количество:"}
             </label>
             <div className="flex items-center space-x-2">
               <Button
                 size="sm"
                 variant="outline"
                 className="h-8 w-8 p-0"
-                onClick={() => handleWeightChange(selectedWeight - 0.1)}
-                disabled={selectedWeight <= 0.1}
+                onClick={() => handleQuantityChange(selectedQuantity - (unit === "piece" ? 1 : 0.1))}
+                disabled={selectedQuantity <= (unit === "piece" ? 1 : 0.1)}
               >
                 <Minus className="h-3 w-3" />
               </Button>
               <Input
                 type="number"
-                value={selectedWeight}
-                onChange={(e) => handleWeightChange(parseFloat(e.target.value) || 0.1)}
-                step="0.1"
-                min="0.1"
+                value={selectedQuantity}
+                onChange={(e) => handleQuantityChange(parseFloat(e.target.value) || (unit === "piece" ? 1 : 0.1))}
+                step={unit === "piece" ? "1" : "0.1"}
+                min={unit === "piece" ? "1" : "0.1"}
                 max="99"
                 className="w-16 text-center text-sm h-8"
               />
@@ -123,8 +128,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                 size="sm"
                 variant="outline"
                 className="h-8 w-8 p-0"
-                onClick={() => handleWeightChange(selectedWeight + 0.1)}
-                disabled={selectedWeight >= 99}
+                onClick={() => handleQuantityChange(selectedQuantity + (unit === "piece" ? 1 : 0.1))}
+                disabled={selectedQuantity >= 99}
               >
                 <Plus className="h-3 w-3" />
               </Button>
