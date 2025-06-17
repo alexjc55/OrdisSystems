@@ -154,6 +154,8 @@ export async function seedDatabase() {
     {
       name: "Салат из капусты",
       description: "Свежая капуста с морковью и зеленью",
+      price: "2.59",
+      unit: "100g",
       pricePerKg: "25.90",
       categoryId: insertedCategories.find(c => c.name === "Салаты")!.id,
       isAvailable: true

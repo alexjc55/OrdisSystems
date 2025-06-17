@@ -185,25 +185,25 @@
 }
 
 /* Fix all link and interactive element visibility */
-a, button, [role="button"] {
+a, button:not(.bg-orange-500):not(.border-orange-500), [role="button"]:not(.bg-orange-500):not(.border-orange-500) {
   color: inherit !important;
   text-decoration: none !important;
 }
 
 a:hover, a:focus,
-button:hover, button:focus,
-[role="button"]:hover, [role="button"]:focus {
+button:not(.bg-orange-500):not(.border-orange-500):hover, button:not(.bg-orange-500):not(.border-orange-500):focus,
+[role="button"]:not(.bg-orange-500):not(.border-orange-500):hover, [role="button"]:not(.bg-orange-500):not(.border-orange-500):focus {
   color: hsl(24.6, 95%, 53.1%) !important;
   background-color: transparent !important;
 }
 
 /* Navigation menu items */
-nav a, nav button {
+nav a, nav button:not(.bg-orange-500):not(.border-orange-500) {
   color: hsl(224, 71.4%, 4.1%) !important;
 }
 
 nav a:hover, nav a:focus,
-nav button:hover, nav button:focus {
+nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg-orange-500):not(.border-orange-500):focus {
   color: hsl(24.6, 95%, 53.1%) !important;
   background-color: hsl(24.6, 95%, 96%) !important;
 }
