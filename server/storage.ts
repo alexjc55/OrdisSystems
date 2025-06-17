@@ -22,7 +22,7 @@ import {
   type InsertStoreSettings,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, like, sql } from "drizzle-orm";
+import { eq, desc, and, like, sql, not } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -121,8 +121,15 @@ export class DatabaseStorage implements IStorage {
   // Product operations
   async getProducts(categoryId?: number): Promise<ProductWithCategory[]> {
     const whereClause = categoryId 
-      ? and(eq(products.isActive, true), eq(products.categoryId, categoryId))
-      : eq(products.isActive, true);
+      ? and(
+          eq(products.isActive, true), 
+          eq(products.categoryId, categoryId),
+          not(eq(products.stockStatus, 'out_of_stock'))
+        )
+      : and(
+          eq(products.isActive, true),
+          not(eq(products.stockStatus, 'out_of_stock'))
+        );
 
     return await db.query.products.findMany({
       with: {
@@ -170,6 +177,7 @@ export class DatabaseStorage implements IStorage {
       },
       where: and(
         eq(products.isActive, true),
+        not(eq(products.stockStatus, 'out_of_stock')),
         like(products.name, `%${query}%`)
       ),
       orderBy: [products.name],
