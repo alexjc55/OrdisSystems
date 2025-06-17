@@ -222,7 +222,7 @@ export default function AdminDashboard() {
       return await response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
     },
     onError: (error: any) => {
       console.error("Toggle availability error:", error);
@@ -459,7 +459,7 @@ export default function AdminDashboard() {
                                       });
                                     }}
                                     disabled={toggleAvailabilityMutation.isPending}
-                                    className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-200"
+                                    className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                                   />
                                   <span className="text-xs hidden sm:inline">
                                     {product.isAvailable ? 'Доступен' : 'Нет в наличии'}
@@ -1016,6 +1016,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit }: any
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
+                      className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                   </FormControl>
                 </FormItem>
