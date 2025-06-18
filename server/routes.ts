@@ -425,13 +425,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/orders', isAuthenticated, async (req: any, res) => {
+  app.post('/api/orders', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
+      let userId = null;
+      let user = null;
       
-      if (!user) {
-        return res.status(401).json({ message: "User not found" });
+      // Check if user is authenticated
+      if (req.isAuthenticated && req.isAuthenticated() && req.user?.claims?.sub) {
+        userId = req.user.claims.sub;
+        user = await storage.getUser(userId);
       }
 
       const { items, ...orderData } = req.body;
@@ -451,7 +453,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Process delivery date and time from form data
       const { requestedDeliveryDate, requestedDeliveryTime, items: _, ...orderDataWithoutTemp } = validatedData;
-      let processedOrderData = { ...orderDataWithoutTemp, userId };
+      let processedOrderData = { ...orderDataWithoutTemp };
+      
+      // Only set userId if user is authenticated
+      if (userId) {
+        processedOrderData.userId = userId;
+      }
       
       if (requestedDeliveryTime && requestedDeliveryDate) {
         // Store the date and time range separately
