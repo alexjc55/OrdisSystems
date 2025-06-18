@@ -307,7 +307,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     deliveryDate: order.deliveryDate || '',
     deliveryTime: order.deliveryTime || '',
     status: order.status || 'pending',
-    notes: cleanNotes(order.notes || ''),
+    notes: cleanNotes(order.customerNotes || ''),
   });
 
   // Extract discount information from order notes
@@ -327,8 +327,8 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     return { orderDiscount: null, itemDiscounts: null };
   };
 
-  const savedDiscounts = extractDiscountsFromNotes(order.notes || '');
-  console.log('Order notes:', order.notes);
+  const savedDiscounts = extractDiscountsFromNotes(order.customerNotes || '');
+  console.log('Order customerNotes:', order.customerNotes);
   console.log('Saved discounts:', savedDiscounts);
 
   // Discount state
@@ -517,7 +517,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     
     updateOrderMutation.mutate({
       ...editedOrder,
-      notes: notesWithDiscounts,
+      customerNotes: notesWithDiscounts,
       items: editedOrderItems,
       totalAmount: finalTotal
     });
