@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useCallback, memo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useParams, useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -32,6 +33,8 @@ import {
 import type { CategoryWithProducts, ProductWithCategory } from "@shared/schema";
 
 export default function Home() {
+  const params = useParams();
+  const [location, navigate] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -73,19 +76,43 @@ export default function Home() {
   const handleCategorySelect = useCallback((categoryId: number | null) => {
     setSelectedCategoryId(categoryId);
     setSearchQuery("");
-  }, []);
+    
+    // Navigate to appropriate URL
+    if (categoryId === 0) {
+      navigate('/all-products');
+    } else if (categoryId !== null) {
+      navigate(`/category/${categoryId}`);
+    } else {
+      navigate('/');
+    }
+  }, [navigate]);
 
   const handleResetView = useCallback(() => {
     setSelectedCategoryId(null);
     setSearchQuery("");
     setCategoryFilter("all");
     setDiscountFilter("all");
-  }, []);
+    navigate('/');
+  }, [navigate]);
 
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
     setSelectedCategoryId(null);
   }, []);
+
+  // Handle URL parameters for direct category navigation
+  useEffect(() => {
+    if (params.categoryId) {
+      const categoryId = parseInt(params.categoryId);
+      if (!isNaN(categoryId)) {
+        setSelectedCategoryId(categoryId);
+        setSearchQuery("");
+      }
+    } else if (location === '/all-products') {
+      setSelectedCategoryId(0);
+      setSearchQuery("");
+    }
+  }, [params.categoryId, location]);
 
   // Filter and prepare products for display with memoization
   const displayProducts = useMemo(() => {
