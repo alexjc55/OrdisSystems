@@ -282,8 +282,8 @@ button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root])
 
 /* Protect switch components from carousel dot styling */
 button[role="switch"], 
-button[data-state],
-.peer {
+button[role="switch"][data-state],
+.peer[role="switch"] {
   width: 44px !important;
   height: 24px !important;
   border-radius: 12px !important;
@@ -303,12 +303,12 @@ button[data-state],
 }
 
 button[role="switch"][data-state="checked"],
-button[data-state="checked"].peer {
+.peer[role="switch"][data-state="checked"] {
   background-color: rgb(34 197 94) !important;
 }
 
 button[role="switch"] > span,
-.peer > span {
+.peer[role="switch"] > span {
   width: 20px !important;
   height: 20px !important;
   border-radius: 50% !important;
@@ -321,7 +321,7 @@ button[role="switch"] > span,
 }
 
 button[role="switch"][data-state="checked"] > span,
-button[data-state="checked"].peer > span {
+.peer[role="switch"][data-state="checked"] > span {
   transform: translateX(22px) !important;
 }
 
@@ -340,7 +340,7 @@ button[role="switch"]:not(.carousel-dot),
 /* Mobile specific switch fixes */
 @media (max-width: 768px) {
   button[role="switch"], 
-  .peer {
+  .peer[role="switch"] {
     width: 44px !important;
     height: 24px !important;
     border-radius: 12px !important;
@@ -348,7 +348,7 @@ button[role="switch"]:not(.carousel-dot),
   }
   
   button[role="switch"] > span,
-  .peer > span {
+  .peer[role="switch"] > span {
     width: 20px !important;
     height: 20px !important;
     border-radius: 50% !important;
