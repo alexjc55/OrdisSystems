@@ -842,8 +842,7 @@ export default function AdminDashboard() {
                                 <Select
                                   value={order.status}
                                   onValueChange={(newStatus) => {
-                                    // TODO: Implement status update
-                                    console.log("Update status:", order.id, newStatus);
+                                    updateOrderStatusMutation.mutate({ orderId: order.id, status: newStatus });
                                   }}
                                 >
                                   <SelectTrigger className="w-full h-8 text-xs">
