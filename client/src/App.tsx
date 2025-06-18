@@ -39,6 +39,9 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/admin" component={AdminDashboard} />
         <Route path="/profile" component={Profile} />
+        <Route path="/change-password" component={ChangePasswordPage} />
+        <Route path="/forgot-password" component={ForgotPasswordPage} />
+        <Route path="/reset-password" component={ResetPasswordPage} />
         <Route path="/landing" component={Landing} />
         <Route component={NotFound} />
       </Switch>

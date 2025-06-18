@@ -15,7 +15,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { formatCurrency, formatQuantity, getUnitShortLabel, type ProductUnit } from "@/lib/currency";
-import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin } from "lucide-react";
+import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin, Lock, Shield } from "lucide-react";
+import { Link } from "wouter";
 import type { OrderWithItems, UserAddress } from "@shared/schema";
 
 export default function Profile() {
@@ -307,6 +308,7 @@ export default function Profile() {
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground w-fit">
             <TabsTrigger value="profile" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">Профиль</TabsTrigger>
+            <TabsTrigger value="security" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">Безопасность</TabsTrigger>
             <TabsTrigger value="addresses" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">Адреса</TabsTrigger>
             <TabsTrigger value="orders" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">История Заказов</TabsTrigger>
           </TabsList>
@@ -414,6 +416,79 @@ export default function Profile() {
                     <Button variant="outline" onClick={() => window.location.href = '/api/logout'}>
                       Выйти из аккаунта
                     </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Security Tab */}
+          <TabsContent value="security" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="h-5 w-5" />
+                  Безопасность аккаунта
+                </CardTitle>
+                <CardDescription>
+                  Управление паролем и настройками безопасности
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Password Management */}
+                  <div className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Lock className="h-5 w-5 text-blue-600" />
+                      <div>
+                        <h3 className="font-medium">Пароль</h3>
+                        <p className="text-sm text-gray-600">
+                          {user.password 
+                            ? "Пароль установлен. Последнее изменение неизвестно." 
+                            : "Пароль не установлен. Рекомендуется установить пароль для дополнительной безопасности."
+                          }
+                        </p>
+                      </div>
+                    </div>
+                    <Link href="/change-password">
+                      <Button variant="outline">
+                        <Lock className="h-4 w-4 mr-2" />
+                        {user.password ? "Изменить пароль" : "Установить пароль"}
+                      </Button>
+                    </Link>
+                  </div>
+
+                  {/* Account Information */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 border rounded-lg">
+                      <h4 className="font-medium mb-2">Email адрес</h4>
+                      <p className="text-sm text-gray-600 mb-1">{user.email}</p>
+                      <p className="text-xs text-gray-500">
+                        Используется для входа в систему и восстановления пароля
+                      </p>
+                    </div>
+                    
+                    <div className="p-4 border rounded-lg">
+                      <h4 className="font-medium mb-2">Тип аккаунта</h4>
+                      <Badge variant="secondary" className="mb-1">
+                        {user.role === 'admin' ? 'Администратор' : 
+                         user.role === 'worker' ? 'Сотрудник' : 'Клиент'}
+                      </Badge>
+                      <p className="text-xs text-gray-500">
+                        Определяет ваши права в системе
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Security Tips */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 className="font-medium text-blue-900 mb-2">Советы по безопасности</h4>
+                    <ul className="text-sm text-blue-800 space-y-1">
+                      <li>• Используйте уникальный пароль длиной не менее 6 символов</li>
+                      <li>• Не сообщайте свой пароль третьим лицам</li>
+                      <li>• Регулярно обновляйте пароль</li>
+                      <li>• При подозрении на компрометацию немедленно смените пароль</li>
+                    </ul>
                   </div>
                 </div>
               </CardContent>
