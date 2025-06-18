@@ -304,25 +304,103 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     notes: order.notes || '',
   });
 
+  // Discount state
+  const [orderDiscount, setOrderDiscount] = useState({
+    type: 'percentage' as 'percentage' | 'amount',
+    value: 0,
+    reason: ''
+  });
+
+  const [itemDiscounts, setItemDiscounts] = useState<{[key: number]: {type: 'percentage' | 'amount', value: number, reason: string}}>({});
+
   // Helper functions for order items editing
-  const getUnitDisplay = (unit: string) => {
+  const getUnitDisplay = (unit: string, quantity: number) => {
+    const qty = Math.round(quantity * 10) / 10; // Round to 1 decimal place
     switch (unit) {
-      case 'piece': return 'шт.';
-      case 'kg': return 'кг';
-      case '100g': return 'по 100г';
-      case '100ml': return 'по 100мл';
-      default: return '';
+      case 'piece': return `${qty} шт.`;
+      case 'kg': return `${qty} кг`;
+      case '100g': 
+        if (qty >= 10) {
+          return `${(qty / 10).toFixed(1)} кг`;
+        }
+        return `${qty * 100} грамм`;
+      case '100ml': return `${qty * 100} мл`;
+      default: return `${qty}`;
+    }
+  };
+
+  const getUnitPrice = (product: any) => {
+    switch (product.unit) {
+      case 'piece': return `${formatCurrency(product.price)} за шт.`;
+      case 'kg': return `${formatCurrency(product.price)} за кг`;
+      case '100g': return `${formatCurrency(product.price)} за 100г`;
+      case '100ml': return `${formatCurrency(product.price)} за 100мл`;
+      default: return formatCurrency(product.price);
     }
   };
 
   const updateItemQuantity = (index: number, newQuantity: number) => {
     const updatedItems = [...editedOrderItems];
+    const item = updatedItems[index];
+    const basePrice = newQuantity * item.pricePerUnit;
+    const discount = itemDiscounts[index];
+    let finalPrice = basePrice;
+    
+    if (discount) {
+      if (discount.type === 'percentage') {
+        finalPrice = basePrice * (1 - discount.value / 100);
+      } else {
+        finalPrice = Math.max(0, basePrice - discount.value);
+      }
+    }
+    
     updatedItems[index] = {
-      ...updatedItems[index],
+      ...item,
       quantity: newQuantity,
-      totalPrice: newQuantity * updatedItems[index].pricePerUnit
+      totalPrice: finalPrice
     };
     setEditedOrderItems(updatedItems);
+  };
+
+  const applyItemDiscount = (index: number, discountType: 'percentage' | 'amount', discountValue: number, reason: string) => {
+    const updatedDiscounts = { ...itemDiscounts };
+    updatedDiscounts[index] = { type: discountType, value: discountValue, reason };
+    setItemDiscounts(updatedDiscounts);
+    
+    // Recalculate item price
+    const updatedItems = [...editedOrderItems];
+    const item = updatedItems[index];
+    const basePrice = item.quantity * item.pricePerUnit;
+    let finalPrice = basePrice;
+    
+    if (discountType === 'percentage') {
+      finalPrice = basePrice * (1 - discountValue / 100);
+    } else {
+      finalPrice = Math.max(0, basePrice - discountValue);
+    }
+    
+    updatedItems[index] = { ...item, totalPrice: finalPrice };
+    setEditedOrderItems(updatedItems);
+  };
+
+  const calculateSubtotal = () => {
+    return editedOrderItems.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
+  };
+
+  const calculateOrderDiscount = (subtotal: number) => {
+    if (orderDiscount.value === 0) return 0;
+    
+    if (orderDiscount.type === 'percentage') {
+      return subtotal * (orderDiscount.value / 100);
+    } else {
+      return Math.min(orderDiscount.value, subtotal);
+    }
+  };
+
+  const calculateFinalTotal = () => {
+    const subtotal = calculateSubtotal();
+    const discount = calculateOrderDiscount(subtotal);
+    return subtotal - discount;
   };
 
   const removeItem = (index: number) => {
@@ -461,6 +539,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
                 <TableHead className="text-xs w-32">Количество</TableHead>
                 <TableHead className="text-xs w-20">Цена</TableHead>
                 <TableHead className="text-xs w-24">Сумма</TableHead>
+                <TableHead className="text-xs w-20">Скидка</TableHead>
                 <TableHead className="text-xs w-16">Действия</TableHead>
               </TableRow>
             </TableHeader>
@@ -486,12 +565,19 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
                         className="w-16 h-7 text-xs"
                       />
                       <span className="text-xs text-gray-500">
-                        {getUnitDisplay(item.product?.unit)}
+                        {getUnitDisplay(item.product?.unit, item.quantity)}
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm">{formatCurrency(item.pricePerUnit)}</TableCell>
+                  <TableCell className="text-sm">{getUnitPrice(item.product)}</TableCell>
                   <TableCell className="text-sm font-medium">{formatCurrency(item.totalPrice)}</TableCell>
+                  <TableCell className="text-sm">
+                    <ItemDiscountControl 
+                      index={index} 
+                      discount={itemDiscounts[index]} 
+                      onApplyDiscount={applyItemDiscount} 
+                    />
+                  </TableCell>
                   <TableCell>
                     <Button
                       size="sm"

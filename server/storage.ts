@@ -426,7 +426,7 @@ export class DatabaseStorage implements IStorage {
           orderId,
           productId: item.product?.id || item.productId,
           quantity: item.quantity.toString(),
-          pricePerUnit: item.pricePerUnit.toString(),
+          pricePerKg: item.pricePerUnit.toString(),
           totalPrice: item.totalPrice.toString()
         }));
         
