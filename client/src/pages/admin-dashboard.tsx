@@ -89,6 +89,7 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   footerHtml: z.string().optional(),
   showWhatsAppChat: z.boolean().default(false),
   whatsappPhoneNumber: z.string().optional(),
+  whatsappDefaultMessage: z.string().optional(),
 });
 
 
@@ -3641,6 +3642,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       footerHtml: storeSettings?.footerHtml || "",
       showWhatsAppChat: storeSettings?.showWhatsAppChat !== false,
       whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
+      whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || "Здравствуйте! Я хотел бы узнать больше о ваших товарах.",
     } as any,
   });
 
@@ -3687,6 +3689,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         footerHtml: storeSettings?.footerHtml || "",
         showWhatsAppChat: storeSettings?.showWhatsAppChat !== false,
         whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
+        whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || "Здравствуйте! Я хотел бы узнать больше о ваших товарах.",
       } as any);
     }
   }, [storeSettings, form]);
@@ -4353,29 +4356,55 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             />
 
             {form.watch("showWhatsAppChat") && (
-              <FormField
-                control={form.control}
-                name="whatsappPhoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm flex items-center gap-2">
-                      <Phone className="h-4 w-4" />
-                      Номер телефона WhatsApp
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="+972501234567"
-                        {...field} 
-                        className="text-sm" 
-                      />
-                    </FormControl>
-                    <FormDescription className="text-xs">
-                      Номер телефона в международном формате (включая код страны)
-                    </FormDescription>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
+              <>
+                <FormField
+                  control={form.control}
+                  name="whatsappPhoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        Номер телефона WhatsApp
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="+972501234567"
+                          {...field} 
+                          className="text-sm" 
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs">
+                        Номер телефона в международном формате (включая код страны)
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="whatsappDefaultMessage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm flex items-center gap-2">
+                        <MessageCircle className="h-4 w-4" />
+                        Сообщение по умолчанию
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Здравствуйте! Я хотел бы узнать больше о ваших товарах."
+                          {...field} 
+                          className="text-sm min-h-[80px]" 
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs">
+                        Текст сообщения, который автоматически появится в WhatsApp при нажатии на кнопку
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </>
             )}
           </div>
         </div>

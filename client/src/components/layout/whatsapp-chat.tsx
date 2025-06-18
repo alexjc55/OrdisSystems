@@ -17,7 +17,8 @@ export function WhatsAppChat() {
 
   const handleWhatsAppClick = () => {
     const phoneNumber = storeSettings.whatsappPhoneNumber?.replace(/[^\d+]/g, ''); // Clean phone number
-    const message = encodeURIComponent("Здравствуйте! Я хотел бы узнать больше о ваших товарах.");
+    const defaultMessage = storeSettings.whatsappDefaultMessage || "Здравствуйте! Я хотел бы узнать больше о ваших товарах.";
+    const message = encodeURIComponent(defaultMessage);
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
     window.open(whatsappUrl, '_blank');
   };
