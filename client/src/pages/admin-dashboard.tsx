@@ -1787,7 +1787,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             )}
           />
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-4">
             {[
               { key: "monday", label: "Понедельник" },
               { key: "tuesday", label: "Вторник" },
@@ -1796,26 +1796,92 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               { key: "friday", label: "Пятница" },
               { key: "saturday", label: "Суббота" },
               { key: "sunday", label: "Воскресенье" },
-            ].map(({ key, label }) => (
-              <FormField
-                key={key}
-                control={form.control}
-                name={`workingHours.${key}` as any}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs">{label}</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="09:00-18:00 или Выходной" 
-                        {...field} 
-                        className="text-xs" 
+            ].map(({ key, label }) => {
+              const currentHours = form.watch(`workingHours.${key}` as any) || "";
+              const isWorking = currentHours && currentHours !== "Выходной";
+              const [openTime, closeTime] = isWorking ? currentHours.split("-") : ["09:00", "18:00"];
+
+              return (
+                <div key={key} className="border rounded-lg p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <FormLabel className="text-sm font-medium">{label}</FormLabel>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        checked={isWorking}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            form.setValue(`workingHours.${key}` as any, "09:00-18:00");
+                          } else {
+                            form.setValue(`workingHours.${key}` as any, "");
+                          }
+                        }}
                       />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-            ))}
+                      <span className="text-xs text-gray-600">
+                        {isWorking ? "Рабочий день" : "Выходной"}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {isWorking && (
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <FormLabel className="text-xs text-gray-600">Открытие</FormLabel>
+                        <Select
+                          value={openTime}
+                          onValueChange={(value) => {
+                            const currentClose = closeTime || "18:00";
+                            form.setValue(`workingHours.${key}` as any, `${value}-${currentClose}`);
+                          }}
+                        >
+                          <SelectTrigger className="text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: 48 }, (_, i) => {
+                              const hour = Math.floor(i / 2);
+                              const minute = i % 2 === 0 ? "00" : "30";
+                              const time = `${hour.toString().padStart(2, "0")}:${minute}`;
+                              return (
+                                <SelectItem key={time} value={time}>
+                                  {time}
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <FormLabel className="text-xs text-gray-600">Закрытие</FormLabel>
+                        <Select
+                          value={closeTime}
+                          onValueChange={(value) => {
+                            const currentOpen = openTime || "09:00";
+                            form.setValue(`workingHours.${key}` as any, `${currentOpen}-${value}`);
+                          }}
+                        >
+                          <SelectTrigger className="text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: 48 }, (_, i) => {
+                              const hour = Math.floor(i / 2);
+                              const minute = i % 2 === 0 ? "00" : "30";
+                              const time = `${hour.toString().padStart(2, "0")}:${minute}`;
+                              return (
+                                <SelectItem key={time} value={time}>
+                                  {time}
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
