@@ -17,7 +17,8 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { formatCurrency } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft } from "lucide-react";
+import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar } from "lucide-react";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
 
 const guestOrderSchema = z.object({
   firstName: z.string().min(2, "Имя должно содержать минимум 2 символа"),
@@ -25,6 +26,8 @@ const guestOrderSchema = z.object({
   email: z.string().email("Введите корректный email"),
   phone: z.string().min(10, "Введите корректный номер телефона"),
   address: z.string().min(10, "Введите полный адрес доставки"),
+  deliveryDate: z.string().min(1, "Выберите дату доставки"),
+  deliveryTime: z.string().min(1, "Выберите время доставки"),
 });
 
 const registrationSchema = guestOrderSchema.extend({
@@ -43,6 +46,8 @@ const authSchema = z.object({
 const authenticatedOrderSchema = z.object({
   address: z.string().min(10, "Введите полный адрес доставки"),
   phone: z.string().min(10, "Введите корректный номер телефона"),
+  deliveryDate: z.string().min(1, "Выберите дату доставки"),
+  deliveryTime: z.string().min(1, "Выберите время доставки"),
 });
 
 type GuestOrderData = z.infer<typeof guestOrderSchema>;
@@ -50,12 +55,85 @@ type RegistrationData = z.infer<typeof registrationSchema>;
 type AuthData = z.infer<typeof authSchema>;
 type AuthenticatedOrderData = z.infer<typeof authenticatedOrderSchema>;
 
+// Utility functions for delivery date/time generation
+const generateDeliveryDates = (minDeliveryTimeHours: number = 2, maxDeliveryTimeDays: number = 7) => {
+  const dates = [];
+  const now = new Date();
+  const minTime = new Date(now.getTime() + minDeliveryTimeHours * 60 * 60 * 1000);
+  
+  for (let i = 0; i <= maxDeliveryTimeDays; i++) {
+    const date = new Date(minTime.getTime() + i * 24 * 60 * 60 * 1000);
+    dates.push({
+      value: date.toISOString().split('T')[0],
+      label: date.toLocaleDateString('ru-RU', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      })
+    });
+  }
+  
+  return dates;
+};
+
+const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStartDay: string = 'monday') => {
+  if (!workingHours || !selectedDate) return [];
+  
+  const date = new Date(selectedDate + 'T00:00:00');
+  const dayNames = weekStartDay === 'sunday' 
+    ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+    : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  
+  const dayName = dayNames[date.getDay()];
+  const daySchedule = workingHours[dayName];
+  
+  if (!daySchedule || daySchedule.trim() === '') {
+    return [];
+  }
+  
+  // Parse working hours (e.g., "09:00-18:00" or "09:00-14:00, 16:00-20:00")
+  const timeSlots = [];
+  const scheduleRanges = daySchedule.split(',').map((range: string) => range.trim());
+  
+  scheduleRanges.forEach((range: string) => {
+    const [start, end] = range.split('-').map((time: string) => time.trim());
+    if (start && end) {
+      const [startHour, startMin] = start.split(':').map(Number);
+      const [endHour, endMin] = end.split(':').map(Number);
+      
+      // Generate 30-minute intervals
+      for (let hour = startHour; hour < endHour || (hour === endHour && startMin < endMin); hour++) {
+        for (let min = (hour === startHour ? startMin : 0); min < 60; min += 30) {
+          if (hour === endHour && min >= endMin) break;
+          
+          const timeStr = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+          const endTimeHour = min === 30 ? hour + 1 : hour;
+          const endTimeMin = min === 30 ? 0 : min + 30;
+          const endTimeStr = `${endTimeHour.toString().padStart(2, '0')}:${endTimeMin.toString().padStart(2, '0')}`;
+          
+          timeSlots.push({
+            value: timeStr,
+            label: `${timeStr} - ${endTimeStr}`
+          });
+        }
+      }
+    }
+  });
+  
+  return timeSlots;
+};
+
 export default function Checkout() {
   const { user, isAuthenticated } = useAuth();
   const { items, getTotalPrice, clearCart } = useCartStore();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [orderType, setOrderType] = useState<"guest" | "register" | "login">("register");
+  const { storeSettings } = useStoreSettings();
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedGuestDate, setSelectedGuestDate] = useState<string>("");
+  const [selectedRegisterDate, setSelectedRegisterDate] = useState<string>("");
 
   const guestForm = useForm<GuestOrderData>({
     resolver: zodResolver(guestOrderSchema),
@@ -191,6 +269,8 @@ export default function Checkout() {
         totalAmount: getTotalPrice().toString(),
         deliveryAddress: formData.address,
         customerPhone: formData.phone,
+        deliveryDate: formData.deliveryDate,
+        deliveryTime: formData.deliveryTime,
         status: "pending"
       };
       
@@ -299,7 +379,9 @@ export default function Checkout() {
                   const formData = new FormData(e.target as HTMLFormElement);
                   const address = formData.get("address") as string;
                   const phone = formData.get("phone") as string;
-                  createAuthenticatedOrderMutation.mutate({ address, phone });
+                  const deliveryDate = formData.get("deliveryDate") as string;
+                  const deliveryTime = formData.get("deliveryTime") as string;
+                  createAuthenticatedOrderMutation.mutate({ address, phone, deliveryDate, deliveryTime });
                 }}>
                   <div className="space-y-4">
                     <div>
