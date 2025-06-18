@@ -271,6 +271,8 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
 function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => void, onSave: () => void }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [showAddItem, setShowAddItem] = useState(false);
+  const [editedOrderItems, setEditedOrderItems] = useState(order.items || []);
 
   const updateOrderMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -301,6 +303,43 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     status: order.status || 'pending',
     notes: order.notes || '',
   });
+
+  // Helper functions for order items editing
+  const getUnitDisplay = (unit: string) => {
+    switch (unit) {
+      case 'piece': return 'шт.';
+      case 'kg': return 'кг';
+      case '100g': return 'по 100г';
+      case '100ml': return 'по 100мл';
+      default: return '';
+    }
+  };
+
+  const updateItemQuantity = (index: number, newQuantity: number) => {
+    const updatedItems = [...editedOrderItems];
+    updatedItems[index] = {
+      ...updatedItems[index],
+      quantity: newQuantity,
+      totalPrice: newQuantity * updatedItems[index].pricePerUnit
+    };
+    setEditedOrderItems(updatedItems);
+  };
+
+  const removeItem = (index: number) => {
+    const updatedItems = editedOrderItems.filter((_: any, i: number) => i !== index);
+    setEditedOrderItems(updatedItems);
+  };
+
+  const addItem = (product: any, quantity: number) => {
+    const newItem = {
+      product,
+      quantity,
+      pricePerUnit: product.price || product.pricePerKg,
+      totalPrice: quantity * (product.price || product.pricePerKg)
+    };
+    setEditedOrderItems([...editedOrderItems, newItem]);
+    setShowAddItem(false);
+  };
 
   const handleSave = () => {
     updateOrderMutation.mutate(editedOrder);
@@ -397,19 +436,31 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
 
       {/* Order Items */}
       <div>
-        <h3 className="font-semibold mb-3">Товары в заказе</h3>
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="font-semibold">Товары в заказе</h3>
+          <Button 
+            size="sm" 
+            variant="outline"
+            onClick={() => setShowAddItem(true)}
+            className="text-xs"
+          >
+            <Plus className="h-3 w-3 mr-1" />
+            Добавить товар
+          </Button>
+        </div>
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead className="text-xs">Товар</TableHead>
-                <TableHead className="text-xs w-20">Кол-во</TableHead>
+                <TableHead className="text-xs w-32">Количество</TableHead>
                 <TableHead className="text-xs w-20">Цена</TableHead>
                 <TableHead className="text-xs w-24">Сумма</TableHead>
+                <TableHead className="text-xs w-16">Действия</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {order.items?.map((item: any, index: number) => (
+              {editedOrderItems.map((item: any, index: number) => (
                 <TableRow key={index}>
                   <TableCell className="text-sm">
                     <div>
@@ -419,9 +470,33 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm">{item.quantity}</TableCell>
+                  <TableCell className="text-sm">
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        step="0.1"
+                        min="0.1"
+                        value={item.quantity}
+                        onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
+                        className="w-16 h-7 text-xs"
+                      />
+                      <span className="text-xs text-gray-500">
+                        {getUnitDisplay(item.product?.unit)}
+                      </span>
+                    </div>
+                  </TableCell>
                   <TableCell className="text-sm">{formatCurrency(item.pricePerUnit)}</TableCell>
                   <TableCell className="text-sm font-medium">{formatCurrency(item.totalPrice)}</TableCell>
+                  <TableCell>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => removeItem(index)}
+                      className="h-7 w-7 p-0 text-red-600 hover:text-red-800"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -1555,13 +1630,16 @@ export default function AdminDashboard() {
                           {/* Pending Column */}
                           <div 
                             className="bg-yellow-50 rounded-lg p-4 min-w-80"
-                            onDragOver={(e) => {
-                              e.preventDefault();
-                              e.dataTransfer.setData("newStatus", "pending");
-                            }}
+                            onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => {
                               e.preventDefault();
-                              e.dataTransfer.setData("newStatus", "pending");
+                              const orderId = e.dataTransfer.getData("orderId");
+                              if (orderId) {
+                                updateOrderStatusMutation.mutate({
+                                  orderId: parseInt(orderId),
+                                  status: "pending"
+                                });
+                              }
                             }}
                           >
                             <h3 className="font-semibold text-sm mb-3 text-yellow-800 flex items-center gap-2">
@@ -1587,13 +1665,16 @@ export default function AdminDashboard() {
                           {/* Confirmed Column */}
                           <div 
                             className="bg-blue-50 rounded-lg p-4 min-w-80"
-                            onDragOver={(e) => {
-                              e.preventDefault();
-                              e.dataTransfer.setData("newStatus", "confirmed");
-                            }}
+                            onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => {
                               e.preventDefault();
-                              e.dataTransfer.setData("newStatus", "confirmed");
+                              const orderId = e.dataTransfer.getData("orderId");
+                              if (orderId) {
+                                updateOrderStatusMutation.mutate({
+                                  orderId: parseInt(orderId),
+                                  status: "confirmed"
+                                });
+                              }
                             }}
                           >
                             <h3 className="font-semibold text-sm mb-3 text-blue-800 flex items-center gap-2">
@@ -1619,13 +1700,16 @@ export default function AdminDashboard() {
                           {/* Preparing Column */}
                           <div 
                             className="bg-orange-50 rounded-lg p-4 min-w-80"
-                            onDragOver={(e) => {
-                              e.preventDefault();
-                              e.dataTransfer.setData("newStatus", "preparing");
-                            }}
+                            onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => {
                               e.preventDefault();
-                              e.dataTransfer.setData("newStatus", "preparing");
+                              const orderId = e.dataTransfer.getData("orderId");
+                              if (orderId) {
+                                updateOrderStatusMutation.mutate({
+                                  orderId: parseInt(orderId),
+                                  status: "preparing"
+                                });
+                              }
                             }}
                           >
                             <h3 className="font-semibold text-sm mb-3 text-orange-800 flex items-center gap-2">
@@ -1651,13 +1735,16 @@ export default function AdminDashboard() {
                           {/* Ready Column */}
                           <div 
                             className="bg-green-50 rounded-lg p-4 min-w-80"
-                            onDragOver={(e) => {
-                              e.preventDefault();
-                              e.dataTransfer.setData("newStatus", "ready");
-                            }}
+                            onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => {
                               e.preventDefault();
-                              e.dataTransfer.setData("newStatus", "ready");
+                              const orderId = e.dataTransfer.getData("orderId");
+                              if (orderId) {
+                                updateOrderStatusMutation.mutate({
+                                  orderId: parseInt(orderId),
+                                  status: "ready"
+                                });
+                              }
                             }}
                           >
                             <h3 className="font-semibold text-sm mb-3 text-green-800 flex items-center gap-2">
@@ -1684,13 +1771,16 @@ export default function AdminDashboard() {
                           {(ordersStatusFilter === "delivered" || ordersStatusFilter === "all") && (
                             <div 
                               className="bg-gray-50 rounded-lg p-4 min-w-80"
-                              onDragOver={(e) => {
-                                e.preventDefault();
-                                e.dataTransfer.setData("newStatus", "delivered");
-                              }}
+                              onDragOver={(e) => e.preventDefault()}
                               onDrop={(e) => {
                                 e.preventDefault();
-                                e.dataTransfer.setData("newStatus", "delivered");
+                                const orderId = e.dataTransfer.getData("orderId");
+                                if (orderId) {
+                                  updateOrderStatusMutation.mutate({
+                                    orderId: parseInt(orderId),
+                                    status: "delivered"
+                                  });
+                                }
                               }}
                             >
                               <h3 className="font-semibold text-sm mb-3 text-gray-800 flex items-center gap-2">
@@ -1718,13 +1808,13 @@ export default function AdminDashboard() {
                           {(ordersStatusFilter === "cancelled" || ordersStatusFilter === "all") && (
                             <div 
                               className="bg-red-50 rounded-lg p-4 min-w-80"
-                              onDragOver={(e) => {
-                                e.preventDefault();
-                                e.dataTransfer.setData("newStatus", "cancelled");
-                              }}
+                              onDragOver={(e) => e.preventDefault()}
                               onDrop={(e) => {
                                 e.preventDefault();
-                                e.dataTransfer.setData("newStatus", "cancelled");
+                                const orderId = e.dataTransfer.getData("orderId");
+                                if (orderId) {
+                                  handleOrderCancellation(parseInt(orderId));
+                                }
                               }}
                             >
                               <h3 className="font-semibold text-sm mb-3 text-red-800 flex items-center gap-2">
