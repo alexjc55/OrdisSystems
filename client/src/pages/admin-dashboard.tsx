@@ -3588,6 +3588,22 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   onSubmit: (data: any) => void;
   isLoading: boolean;
 }) {
+  const [expandedSections, setExpandedSections] = useState({
+    basic: true,
+    contact: false,
+    appearance: false,
+    delivery: false,
+    banners: false,
+    tracking: false,
+  });
+
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
   const form = useForm({
     resolver: zodResolver(storeSettingsSchema),
     defaultValues: {
@@ -3676,11 +3692,56 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
     }
   }, [storeSettings, form]);
 
+  // Component for collapsible section
+  const CollapsibleSection = ({ 
+    title, 
+    isExpanded, 
+    onToggle, 
+    children, 
+    icon 
+  }: { 
+    title: string; 
+    isExpanded: boolean; 
+    onToggle: () => void; 
+    children: React.ReactNode; 
+    icon: React.ReactNode;
+  }) => (
+    <div className="border rounded-lg bg-white">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          {icon}
+          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        </div>
+        {isExpanded ? (
+          <ChevronUp className="h-5 w-5 text-gray-500" />
+        ) : (
+          <ChevronDown className="h-5 w-5 text-gray-500" />
+        )}
+      </button>
+      {isExpanded && (
+        <div className="px-4 pb-4 space-y-4 border-t bg-gray-50/50">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField
+        {/* Основная информация */}
+        <CollapsibleSection
+          title="Основная информация"
+          isExpanded={expandedSections.basic}
+          onToggle={() => toggleSection('basic')}
+          icon={<Store className="h-5 w-5 text-orange-500" />}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
             control={form.control}
             name="storeName"
             render={({ field }) => (
