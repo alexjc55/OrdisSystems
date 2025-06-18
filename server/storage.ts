@@ -53,6 +53,12 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
   updateUserProfile(id: string, updates: Partial<UpsertUser>): Promise<User>;
+  
+  // Admin user management
+  createUser(user: Omit<UpsertUser, 'id'> & { password?: string }): Promise<User>;
+  updateUser(id: string, updates: Partial<UpsertUser>): Promise<User>;
+  deleteUser(id: string): Promise<void>;
+  updateUserRole(id: string, role: "admin" | "worker" | "customer"): Promise<User>;
 
   // User address operations
   getUserAddresses(userId: string): Promise<UserAddress[]>;
@@ -589,6 +595,59 @@ export class DatabaseStorage implements IStorage {
       limit,
       totalPages: Math.ceil(total / limit),
     };
+  }
+
+  // Admin user management methods
+  async createUser(userData: Omit<UpsertUser, 'id'> & { password?: string }): Promise<User> {
+    // Generate a unique ID for manual user creation
+    const userId = `manual_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    const [user] = await db
+      .insert(users)
+      .values({
+        ...userData,
+        id: userId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+    return user;
+  }
+
+  async updateUser(id: string, updates: Partial<UpsertUser>): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({
+        ...updates,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id))
+      .returning();
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await db.delete(users).where(eq(users.id, id));
+  }
+
+  async updateUserRole(id: string, role: "admin" | "worker" | "customer"): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({
+        role,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id))
+      .returning();
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
   }
 }
 
