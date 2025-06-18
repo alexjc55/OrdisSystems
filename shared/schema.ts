@@ -128,6 +128,11 @@ export const storeSettings = pgTable("store_settings", {
   showSpecialOffers: boolean("show_special_offers").default(true),
   showCategoryMenu: boolean("show_category_menu").default(true),
   weekStartDay: varchar("week_start_day", { length: 10 }).default("monday"), // "monday" or "sunday"
+  bottomBanner1Url: varchar("bottom_banner1_url", { length: 500 }),
+  bottomBanner1Link: varchar("bottom_banner1_link", { length: 500 }),
+  bottomBanner2Url: varchar("bottom_banner2_url", { length: 500 }),
+  bottomBanner2Link: varchar("bottom_banner2_link", { length: 500 }),
+  showBottomBanners: boolean("show_bottom_banners").default(false),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

@@ -92,6 +92,11 @@ const storeSettingsSchema = z.object({
   showSpecialOffers: z.boolean().optional(),
   showCategoryMenu: z.boolean().optional(),
   weekStartDay: z.enum(["monday", "sunday"]).default("monday"),
+  bottomBanner1Url: z.string().optional(),
+  bottomBanner1Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
+  bottomBanner2Url: z.string().optional(),
+  bottomBanner2Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
+  showBottomBanners: z.boolean().optional(),
 });
 
 export default function AdminDashboard() {
@@ -1548,6 +1553,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       showSpecialOffers: storeSettings?.showSpecialOffers !== false,
       showCategoryMenu: storeSettings?.showCategoryMenu !== false,
       weekStartDay: storeSettings?.weekStartDay || "monday",
+      bottomBanner1Url: storeSettings?.bottomBanner1Url || "",
+      bottomBanner1Link: storeSettings?.bottomBanner1Link || "",
+      bottomBanner2Url: storeSettings?.bottomBanner2Url || "",
+      bottomBanner2Link: storeSettings?.bottomBanner2Link || "",
+      showBottomBanners: storeSettings?.showBottomBanners !== false,
     },
   });
 
@@ -1584,6 +1594,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         showSpecialOffers: storeSettings?.showSpecialOffers !== false,
         showCategoryMenu: storeSettings?.showCategoryMenu !== false,
         weekStartDay: storeSettings?.weekStartDay || "monday",
+        bottomBanner1Url: storeSettings?.bottomBanner1Url || "",
+        bottomBanner1Link: storeSettings?.bottomBanner1Link || "",
+        bottomBanner2Url: storeSettings?.bottomBanner2Url || "",
+        bottomBanner2Link: storeSettings?.bottomBanner2Link || "",
+        showBottomBanners: storeSettings?.showBottomBanners !== false,
       });
     }
   }, [storeSettings, form]);
@@ -2064,6 +2079,129 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               )}
             />
           </div>
+        </div>
+
+        {/* Bottom Banners Settings */}
+        <div className="space-y-4 pt-6 border-t">
+          <h3 className="text-lg font-medium">Нижние баннеры</h3>
+          
+          <FormField
+            control={form.control}
+            name="showBottomBanners"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-sm font-medium">Показывать нижние баннеры</FormLabel>
+                  <FormDescription className="text-xs">
+                    Два баннера в самом низу главной страницы
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    className="switch-green"
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          {form.watch("showBottomBanners") && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Banner 1 */}
+              <div className="space-y-4 border rounded-lg p-4">
+                <h4 className="text-md font-medium">Баннер 1 (левый)</h4>
+                
+                <FormField
+                  control={form.control}
+                  name="bottomBanner1Url"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm flex items-center gap-2">
+                        <Upload className="h-4 w-4" />
+                        Изображение баннера 1
+                      </FormLabel>
+                      <FormControl>
+                        <ImageUpload
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="bottomBanner1Link"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Ссылка при клике на баннер 1</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="https://example.com"
+                          {...field} 
+                          className="text-sm" 
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs">
+                        Необязательно. Оставьте пустым, если переход не нужен
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Banner 2 */}
+              <div className="space-y-4 border rounded-lg p-4">
+                <h4 className="text-md font-medium">Баннер 2 (правый)</h4>
+                
+                <FormField
+                  control={form.control}
+                  name="bottomBanner2Url"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm flex items-center gap-2">
+                        <Upload className="h-4 w-4" />
+                        Изображение баннера 2
+                      </FormLabel>
+                      <FormControl>
+                        <ImageUpload
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="bottomBanner2Link"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Ссылка при клике на баннер 2</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="https://example.com"
+                          {...field} 
+                          className="text-sm" 
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs">
+                        Необязательно. Оставьте пустым, если переход не нужен
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end">
