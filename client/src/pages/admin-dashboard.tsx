@@ -3884,13 +3884,29 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </FormItem>
           )}
         />
+          </CollapsibleContent>
+        </Collapsible>
 
         {/* Визуальное оформление */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <Upload className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Визуальное оформление</h3>
-          </div>
+        <Collapsible open={isVisualsOpen} onOpenChange={setIsVisualsOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+                <Upload className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">Визуальное оформление</h3>
+                {isVisualsOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="space-y-6">
 
         <FormField
           control={form.control}
@@ -3937,14 +3953,29 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </FormItem>
           )}
         />
-        </div>
+          </CollapsibleContent>
+        </Collapsible>
 
         {/* Часы работы */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <Clock className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Часы работы</h3>
-          </div>
+        <Collapsible open={isWorkingHoursOpen} onOpenChange={setIsWorkingHoursOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+                <Clock className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">Часы работы</h3>
+                {isWorkingHoursOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="space-y-6">
           
           <FormField
             control={form.control}
@@ -4068,14 +4099,29 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               );
             })}
           </div>
-        </div>
+          </CollapsibleContent>
+        </Collapsible>
 
         {/* Доставка и оплата */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <Truck className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Доставка и оплата</h3>
-          </div>
+        <Collapsible open={isDeliveryPaymentOpen} onOpenChange={setIsDeliveryPaymentOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+                <Truck className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">Доставка и оплата</h3>
+                {isDeliveryPaymentOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="space-y-6">
 
         <FormField
           control={form.control}
@@ -4118,7 +4164,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </FormItem>
           )}
         />
-        </div>
+          </CollapsibleContent>
+        </Collapsible>
 
         {/* Настройки отображения */}
         <Collapsible open={isDisplaySettingsOpen} onOpenChange={setIsDisplaySettingsOpen} className="space-y-6">
@@ -4411,6 +4458,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </div>
           )}
         </div>
+          </CollapsibleContent>
+        </Collapsible>
 
         <div className="flex justify-end">
           <Button 
