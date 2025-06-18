@@ -284,14 +284,31 @@ export default function CartOverlay() {
                             <div>
                               <p className="text-sm font-medium text-gray-900 mb-1">Часы работы</p>
                               <div className="text-xs text-gray-600 space-y-0.5">
-                                {Object.entries(storeSettings.workingHours)
-                                  .filter(([_, hours]) => hours)
-                                  .map(([day, hours]) => (
-                                    <div key={day} className="flex justify-between">
-                                      <span className="capitalize">{day}:</span>
-                                      <span>{hours as string}</span>
-                                    </div>
-                                  ))}
+                                {(() => {
+                                  const dayTranslations: Record<string, string> = {
+                                    monday: 'Пн',
+                                    tuesday: 'Вт',
+                                    wednesday: 'Ср',
+                                    thursday: 'Чт',
+                                    friday: 'Пт',
+                                    saturday: 'Сб',
+                                    sunday: 'Вс'
+                                  };
+
+                                  // Define day order (starting with Monday by default, can be changed based on store settings)
+                                  const dayOrder = storeSettings?.weekStartDay === 'sunday' 
+                                    ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+                                    : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+                                  return dayOrder
+                                    .filter(day => storeSettings.workingHours[day])
+                                    .map(day => (
+                                      <div key={day} className="flex justify-between">
+                                        <span>{dayTranslations[day]}:</span>
+                                        <span>{storeSettings.workingHours[day] as string}</span>
+                                      </div>
+                                    ));
+                                })()}
                               </div>
                             </div>
                           </div>

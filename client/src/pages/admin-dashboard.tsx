@@ -1546,6 +1546,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       showInfoBlocks: storeSettings?.showInfoBlocks !== false,
       showSpecialOffers: storeSettings?.showSpecialOffers !== false,
       showCategoryMenu: storeSettings?.showCategoryMenu !== false,
+      weekStartDay: storeSettings?.weekStartDay || "monday",
     },
   });
 
@@ -1581,6 +1582,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         showInfoBlocks: storeSettings?.showInfoBlocks !== false,
         showSpecialOffers: storeSettings?.showSpecialOffers !== false,
         showCategoryMenu: storeSettings?.showCategoryMenu !== false,
+        weekStartDay: storeSettings?.weekStartDay || "monday",
       });
     }
   }, [storeSettings, form]);
@@ -1758,6 +1760,32 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             <Clock className="h-4 w-4" />
             Часы работы
           </h3>
+          
+          <FormField
+            control={form.control}
+            name="weekStartDay"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">Первый день недели</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="text-sm">
+                      <SelectValue placeholder="Выберите первый день недели" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="monday">Понедельник</SelectItem>
+                    <SelectItem value="sunday">Воскресенье</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription className="text-xs">
+                  Выберите с какого дня недели начинается неделя в вашем регионе
+                </FormDescription>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               { key: "monday", label: "Понедельник" },

@@ -127,6 +127,7 @@ export const storeSettings = pgTable("store_settings", {
   showInfoBlocks: boolean("show_info_blocks").default(true),
   showSpecialOffers: boolean("show_special_offers").default(true),
   showCategoryMenu: boolean("show_category_menu").default(true),
+  weekStartDay: varchar("week_start_day", { length: 10 }).default("monday"), // "monday" or "sunday"
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
