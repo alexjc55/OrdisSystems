@@ -3678,9 +3678,16 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* Основная информация */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 pb-2 border-b">
+            <Store className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Основная информация</h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
             control={form.control}
             name="storeName"
             render={({ field }) => (
@@ -3795,7 +3802,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               </FormItem>
             )}
           />
+          </div>
         </div>
+
+        {/* Описание и контакты */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 pb-2 border-b">
+            <MapPin className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Описание и контакты</h3>
+          </div>
 
         <FormField
           control={form.control}
@@ -3832,6 +3847,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </FormItem>
           )}
         />
+        </div>
+
+        {/* Визуальное оформление */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 pb-2 border-b">
+            <Upload className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Визуальное оформление</h3>
+          </div>
 
         <FormField
           control={form.control}
