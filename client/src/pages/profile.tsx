@@ -33,6 +33,8 @@ export default function Profile() {
     phone: user?.phone || ""
   });
   const [isPhoneEditing, setIsPhoneEditing] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
+  const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -175,6 +177,23 @@ export default function Profile() {
     } else {
       createAddressMutation.mutate(addressForm);
     }
+  };
+
+  const handleViewOrderDetails = (order: OrderWithItems) => {
+    setSelectedOrder(order);
+    setIsOrderDetailsOpen(true);
+  };
+
+  const parseOrderDiscounts = (customerNotes: string) => {
+    try {
+      const discountMatch = customerNotes.match(/\[DISCOUNTS:(.*?)\]/);
+      if (discountMatch) {
+        return JSON.parse(discountMatch[1]);
+      }
+    } catch (error) {
+      console.error('Error parsing discounts:', error);
+    }
+    return null;
   };
 
   if (isLoading) {
@@ -584,16 +603,24 @@ export default function Profile() {
                           <TableCell>{getStatusBadge(order.status)}</TableCell>
                           <TableCell>
                             <div className="max-w-xs">
-                              {order.items.slice(0, 2).map((item, index) => (
-                                <div key={index} className="text-sm">
-                                  {item.product.name} ({formatWeight(parseFloat(item.quantity))})
+                              <button
+                                onClick={() => handleViewOrderDetails(order)}
+                                className="text-left hover:text-orange-600 transition-colors"
+                              >
+                                {order.items.slice(0, 2).map((item, index) => (
+                                  <div key={index} className="text-sm">
+                                    {item.product.name} ({formatQuantity(parseFloat(item.quantity), item.product.unit)})
+                                  </div>
+                                ))}
+                                {order.items.length > 2 && (
+                                  <div className="text-xs text-gray-500">
+                                    +{order.items.length - 2} еще...
+                                  </div>
+                                )}
+                                <div className="text-xs text-orange-600 mt-1">
+                                  Подробнее →
                                 </div>
-                              ))}
-                              {order.items.length > 2 && (
-                                <div className="text-xs text-gray-500">
-                                  +{order.items.length - 2} еще...
-                                </div>
-                              )}
+                              </button>
                             </div>
                           </TableCell>
                           <TableCell className="font-medium">
