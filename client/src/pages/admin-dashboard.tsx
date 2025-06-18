@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
@@ -50,7 +51,8 @@ import {
   Phone,
   User,
   Eye,
-  X
+  X,
+  MessageCircle
 } from "lucide-react";
 
 // Validation schemas
@@ -158,10 +160,33 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
               </span>
             </div>
             {order.customerPhone && (
-              <div className="flex items-center gap-2 text-xs text-gray-500">
-                <Phone className="h-3 w-3" />
-                {order.customerPhone}
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="text-blue-600 text-xs hover:text-blue-800 flex items-center gap-1 cursor-pointer">
+                    <Phone className="h-3 w-3" />
+                    {order.customerPhone}
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-40">
+                  <DropdownMenuItem 
+                    onClick={() => window.location.href = `tel:${order.customerPhone}`}
+                    className="cursor-pointer"
+                  >
+                    <Phone className="h-4 w-4 mr-2" />
+                    Позвонить
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
+                      window.open(`https://wa.me/${cleanPhone}`, '_blank');
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    WhatsApp
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
 
@@ -2078,9 +2103,33 @@ export default function AdminDashboard() {
                                         }
                                       </div>
                                       {order.customerPhone && (
-                                        <div className="text-gray-500 text-xs">
-                                          {order.customerPhone}
-                                        </div>
+                                        <DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                            <button className="text-blue-600 text-xs hover:text-blue-800 flex items-center gap-1 cursor-pointer">
+                                              <Phone className="h-3 w-3" />
+                                              {order.customerPhone}
+                                            </button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent align="start" className="w-40">
+                                            <DropdownMenuItem 
+                                              onClick={() => window.location.href = `tel:${order.customerPhone}`}
+                                              className="cursor-pointer"
+                                            >
+                                              <Phone className="h-4 w-4 mr-2" />
+                                              Позвонить
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem 
+                                              onClick={() => {
+                                                const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
+                                                window.open(`https://wa.me/${cleanPhone}`, '_blank');
+                                              }}
+                                              className="cursor-pointer"
+                                            >
+                                              <MessageCircle className="h-4 w-4 mr-2" />
+                                              WhatsApp
+                                            </DropdownMenuItem>
+                                          </DropdownMenuContent>
+                                        </DropdownMenu>
                                       )}
                                     </div>
                                   </TableCell>
