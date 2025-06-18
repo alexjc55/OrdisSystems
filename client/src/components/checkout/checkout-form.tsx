@@ -53,6 +53,8 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
     onSuccess: () => {
       clearCart();
       queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/orders/my"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
       toast({
         title: "Заказ создан!",
         description: "Ваш заказ успешно оформлен и принят в обработку",

@@ -420,7 +420,12 @@ export default function CartOverlay() {
                         type="date"
                         value={deliveryDate}
                         onChange={(e) => setDeliveryDate(e.target.value)}
-                        min={new Date().toISOString().split('T')[0]}
+                        min={(() => {
+                          const now = new Date();
+                          const minHours = storeSettings?.minDeliveryTimeHours || 2;
+                          const minDate = new Date(now.getTime() + minHours * 60 * 60 * 1000);
+                          return minDate.toISOString().split('T')[0];
+                        })()}
                         className="text-sm"
                       />
                     </div>
@@ -475,6 +480,12 @@ export default function CartOverlay() {
                             const startHour = parseInt(hoursMatch[1]);
                             const endHour = parseInt(hoursMatch[3]);
                             
+                            // Check if it's today and apply minimum delivery time
+                            const now = new Date();
+                            const isToday = selectedDate.toDateString() === now.toDateString();
+                            const minHours = storeSettings?.minDeliveryTimeHours || 2;
+                            const minDeliveryTime = isToday ? now.getHours() + minHours : startHour;
+                            
                             const timeSlots = [
                               { value: "asap", label: "Как можно скорее", start: 0, end: 24 },
                               { value: "10:00-12:00", label: "10:00 - 12:00", start: 10, end: 12 },
@@ -488,7 +499,7 @@ export default function CartOverlay() {
                             return timeSlots
                               .filter(slot => {
                                 if (slot.value === "asap") return true;
-                                return slot.start >= startHour && slot.end <= endHour;
+                                return slot.start >= Math.max(startHour, minDeliveryTime) && slot.end <= endHour;
                               })
                               .map(slot => (
                                 <SelectItem key={slot.value} value={slot.value}>
