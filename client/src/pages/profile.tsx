@@ -1,20 +1,38 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { formatCurrency, formatWeight } from "@/lib/currency";
-import { User, ShoppingCart, Clock, Package, CheckCircle } from "lucide-react";
-import type { OrderWithItems } from "@shared/schema";
+import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin } from "lucide-react";
+import type { OrderWithItems, UserAddress } from "@shared/schema";
 
 export default function Profile() {
   const { user, isLoading, isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
+  const [addressForm, setAddressForm] = useState({
+    label: "",
+    address: "",
+    isDefault: false
+  });
+  const [phoneForm, setPhoneForm] = useState({
+    phone: user?.phone || ""
+  });
+  const [isPhoneEditing, setIsPhoneEditing] = useState(false);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -40,6 +58,108 @@ export default function Profile() {
     },
     enabled: !!user,
   });
+
+  const { data: userAddresses = [] } = useQuery<UserAddress[]>({
+    queryKey: ["/api/addresses"],
+    enabled: !!user,
+  });
+
+  // Address mutations
+  const createAddressMutation = useMutation({
+    mutationFn: async (addressData: typeof addressForm) => {
+      await apiRequest("POST", "/api/addresses", addressData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
+      setIsAddressDialogOpen(false);
+      setAddressForm({ label: "", address: "", isDefault: false });
+      toast({
+        title: "Успешно",
+        description: "Адрес добавлен",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось добавить адрес",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateAddressMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: typeof addressForm }) => {
+      await apiRequest("PATCH", `/api/addresses/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
+      setIsAddressDialogOpen(false);
+      setEditingAddress(null);
+      setAddressForm({ label: "", address: "", isDefault: false });
+      toast({
+        title: "Успешно",
+        description: "Адрес обновлен",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось обновить адрес",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteAddressMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/addresses/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
+      toast({
+        title: "Успешно",
+        description: "Адрес удален",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось удалить адрес",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const setDefaultAddressMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("POST", `/api/addresses/${id}/set-default`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
+      toast({
+        title: "Успешно",
+        description: "Адрес по умолчанию изменен",
+      });
+    },
+  });
+
+  const handleEditAddress = (address: UserAddress) => {
+    setEditingAddress(address);
+    setAddressForm({
+      label: address.label,
+      address: address.address,
+      isDefault: Boolean(address.isDefault),
+    });
+    setIsAddressDialogOpen(true);
+  };
+
+  const handleSaveAddress = () => {
+    if (editingAddress) {
+      updateAddressMutation.mutate({ id: editingAddress.id, data: addressForm });
+    } else {
+      createAddressMutation.mutate(addressForm);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -130,8 +250,9 @@ export default function Profile() {
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile">Профиль</TabsTrigger>
+            <TabsTrigger value="addresses">Адреса</TabsTrigger>
             <TabsTrigger value="orders">История Заказов</TabsTrigger>
           </TabsList>
 
@@ -189,6 +310,148 @@ export default function Profile() {
                     </Button>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Address Management */}
+          <TabsContent value="addresses" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  Управление Адресами
+                </CardTitle>
+                <CardDescription>
+                  Добавляйте и управляйте адресами доставки
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-4">
+                  <Dialog open={isAddressDialogOpen} onOpenChange={setIsAddressDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        onClick={() => {
+                          setEditingAddress(null);
+                          setAddressForm({ label: "", address: "", isDefault: false });
+                        }}
+                        className="bg-orange-500 hover:bg-orange-600 text-white"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Добавить адрес
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[500px]">
+                      <DialogHeader>
+                        <DialogTitle>
+                          {editingAddress ? "Редактировать адрес" : "Добавить новый адрес"}
+                        </DialogTitle>
+                        <DialogDescription>
+                          Введите информацию об адресе доставки
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                          <Label htmlFor="label">Название адреса</Label>
+                          <Input
+                            id="label"
+                            placeholder="Дом, Работа, Офис..."
+                            value={addressForm.label}
+                            onChange={(e) => setAddressForm({ ...addressForm, label: e.target.value })}
+                          />
+                        </div>
+                        <div className="grid gap-2">
+                          <Label htmlFor="address">Полный адрес</Label>
+                          <Textarea
+                            id="address"
+                            placeholder="Улица, дом, квартира, этаж..."
+                            value={addressForm.address}
+                            onChange={(e) => setAddressForm({ ...addressForm, address: e.target.value })}
+                            className="min-h-[80px]"
+                          />
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            id="default"
+                            checked={addressForm.isDefault}
+                            onCheckedChange={(checked) => setAddressForm({ ...addressForm, isDefault: checked })}
+                          />
+                          <Label htmlFor="default">Сделать адресом по умолчанию</Label>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsAddressDialogOpen(false)}>
+                          Отмена
+                        </Button>
+                        <Button 
+                          onClick={handleSaveAddress}
+                          disabled={!addressForm.label.trim() || !addressForm.address.trim()}
+                          className="bg-orange-500 hover:bg-orange-600 text-white"
+                        >
+                          {editingAddress ? "Сохранить" : "Добавить"}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                {userAddresses.length > 0 ? (
+                  <div className="space-y-4">
+                    {userAddresses.map((address) => (
+                      <Card key={address.id} className={`${address.isDefault ? 'border-orange-200 bg-orange-50' : ''}`}>
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <h4 className="font-medium text-gray-900">{address.label}</h4>
+                                {address.isDefault && (
+                                  <Badge variant="outline" className="text-orange-600 border-orange-300">
+                                    По умолчанию
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-sm text-gray-600">{address.address}</p>
+                            </div>
+                            <div className="flex items-center gap-2 ml-4">
+                              {!address.isDefault && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setDefaultAddressMutation.mutate(address.id)}
+                                  disabled={setDefaultAddressMutation.isPending}
+                                >
+                                  Сделать основным
+                                </Button>
+                              )}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditAddress(address)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => deleteAddressMutation.mutate(address.id)}
+                                disabled={deleteAddressMutation.isPending}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет сохраненных адресов</h3>
+                    <p className="text-gray-600 mb-4">Добавьте адрес доставки для быстрого оформления заказов</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
