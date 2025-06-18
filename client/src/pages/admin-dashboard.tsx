@@ -485,9 +485,13 @@ export default function AdminDashboard() {
   });
 
   // Store settings data
-  const { data: storeSettings } = useQuery({
+  const { data: storeSettings, isLoading: storeSettingsLoading, error: storeSettingsError } = useQuery({
     queryKey: ["/api/store-settings"],
   });
+
+  console.log("Store Settings:", storeSettings);
+  console.log("Store Settings Loading:", storeSettingsLoading);
+  console.log("Store Settings Error:", storeSettingsError);
 
   const statusChangeMutation = useStatusChangeHandler();
 
@@ -678,12 +682,24 @@ export default function AdminDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {storeSettings && (
+                {storeSettingsLoading ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : storeSettingsError ? (
+                  <div className="text-center py-8 text-red-500">
+                    Ошибка загрузки настроек: {storeSettingsError.message}
+                  </div>
+                ) : storeSettings ? (
                   <OrganizedStoreSettings
                     storeSettings={storeSettings}
                     onSubmit={(data) => updateStoreSettingsMutation.mutate(data)}
                     isLoading={updateStoreSettingsMutation.isPending}
                   />
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    Настройки магазина не найдены
+                  </div>
                 )}
               </CardContent>
             </Card>
