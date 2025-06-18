@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 
 export function CustomHeaderScripts() {
-  const { data: storeSettings } = useStoreSettings();
+  const { storeSettings } = useStoreSettings();
 
   useEffect(() => {
     if (storeSettings?.headerHtml) {
@@ -55,7 +55,7 @@ export function CustomHeaderScripts() {
 }
 
 export function CustomFooterScripts() {
-  const { data: storeSettings } = useStoreSettings();
+  const { storeSettings } = useStoreSettings();
 
   useEffect(() => {
     if (storeSettings?.footerHtml) {

@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ErrorBoundary from "@/components/error-boundary";
+import { CustomHeaderScripts, CustomFooterScripts } from "@/components/layout/custom-scripts";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
@@ -39,8 +40,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <CustomHeaderScripts />
         <Toaster />
         <Router />
+        <CustomFooterScripts />
       </TooltipProvider>
     </QueryClientProvider>
   );
