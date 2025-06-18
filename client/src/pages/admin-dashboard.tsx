@@ -4103,11 +4103,25 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         </Collapsible>
 
         {/* Доставка и оплата */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <Truck className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Доставка и оплата</h3>
-          </div>
+        <Collapsible open={isDeliveryPaymentOpen} onOpenChange={setIsDeliveryPaymentOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+                <Truck className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">Доставка и оплата</h3>
+                {isDeliveryPaymentOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="space-y-6">
 
         <FormField
           control={form.control}
@@ -4150,14 +4164,29 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </FormItem>
           )}
         />
-        </div>
+          </CollapsibleContent>
+        </Collapsible>
 
         {/* Настройки отображения */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <Eye className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Настройки отображения</h3>
-          </div>
+        <Collapsible open={isDisplaySettingsOpen} onOpenChange={setIsDisplaySettingsOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+                <Eye className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">Настройки отображения</h3>
+                {isDisplaySettingsOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="space-y-6">
 
         <FormField
           control={form.control}
@@ -4296,9 +4325,29 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             />
           </div>
         </div>
+          </CollapsibleContent>
+        </Collapsible>
 
-        {/* Баннеры */}
-        <div className="space-y-4">
+        {/* Код отслеживания */}
+        <Collapsible open={isTrackingCodeOpen} onOpenChange={setIsTrackingCodeOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+                <MessageCircle className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">Код отслеживания</h3>
+                {isTrackingCodeOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="space-y-6">
           <h4 className="text-sm font-medium text-gray-700">Нижние баннеры</h4>
           
           <FormField
@@ -4424,69 +4473,59 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               </div>
             </div>
           )}
-        </div>
-        </div>
-
-        {/* HTML/JS Code Injection Section */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <MessageCircle className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Код отслеживания</h3>
-            <span className="text-sm text-gray-500">(Facebook Pixel, Google Analytics, и т.д.)</span>
-          </div>
-
-          <FormField
-            control={form.control}
-            name="headerHtml"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm">HTML/JS код для &lt;head&gt;</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder={`<!-- Вставьте код для <head> здесь -->
+            <FormField
+              control={form.control}
+              name="headerHtml"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">HTML/JS код для &lt;head&gt;</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder={`<!-- Вставьте код для <head> здесь -->
 <!-- Например, Facebook Pixel, Google Analytics, и другие скрипты отслеживания -->
 <script>
   // Ваш код здесь
 </script>`}
-                    {...field}
-                    className="text-sm font-mono min-h-[120px] resize-y"
-                  />
-                </FormControl>
-                <FormDescription className="text-xs text-gray-500">
-                  Этот код будет добавлен в секцию &lt;head&gt; всех страниц сайта. 
-                  Используйте для Facebook Pixel, Google Analytics, и других счетчиков.
-                </FormDescription>
-                <FormMessage className="text-xs" />
-              </FormItem>
-            )}
-          />
+                      {...field}
+                      className="text-sm font-mono min-h-[120px] resize-y"
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs text-gray-500">
+                    Этот код будет добавлен в секцию &lt;head&gt; всех страниц сайта. 
+                    Используйте для Facebook Pixel, Google Analytics, и других счетчиков.
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="footerHtml"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm">HTML/JS код для футера</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder={`<!-- Вставьте код для футера здесь -->
+            <FormField
+              control={form.control}
+              name="footerHtml"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">HTML/JS код для футера</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder={`<!-- Вставьте код для футера здесь -->
 <!-- Например, чаты поддержки, дополнительные скрипты -->
 <script>
   // Ваш код здесь
 </script>`}
-                    {...field}
-                    className="text-sm font-mono min-h-[120px] resize-y"
-                  />
-                </FormControl>
-                <FormDescription className="text-xs text-gray-500">
-                  Этот код будет добавлен в конец страницы перед закрывающим тегом &lt;/body&gt;. 
-                  Используйте для чатов поддержки и других скрипты.
-                </FormDescription>
-                <FormMessage className="text-xs" />
-              </FormItem>
-            )}
-          />
-        </div>
+                      {...field}
+                      className="text-sm font-mono min-h-[120px] resize-y"
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs text-gray-500">
+                    Этот код будет добавлен в конец страницы перед закрывающим тегом &lt;/body&gt;. 
+                    Используйте для чатов поддержки и других скрипты.
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+          </CollapsibleContent>
+        </Collapsible>
 
         <div className="flex justify-end">
           <Button 
