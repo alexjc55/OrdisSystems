@@ -281,49 +281,74 @@ button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root])
 }
 
 /* Protect switch components from carousel dot styling */
-[data-radix-switch-root] {
+button[role="switch"], 
+button[data-state],
+.peer {
   width: 44px !important;
   height: 24px !important;
-  border-radius: 9999px !important;
+  border-radius: 12px !important;
   min-width: 44px !important;
   min-height: 24px !important;
-  max-width: none !important;
-  max-height: none !important;
+  max-width: 44px !important;
+  max-height: 24px !important;
   padding: 0 !important;
   margin: 0 !important;
   border: 2px solid transparent !important;
   background-color: hsl(0, 0%, 75%) !important;
   transition: background-color 0.2s ease !important;
+  flex-shrink: 0 !important;
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
 }
 
-[data-radix-switch-root][data-state="checked"] {
+button[role="switch"][data-state="checked"],
+button[data-state="checked"].peer {
   background-color: rgb(34 197 94) !important;
 }
 
-[data-radix-switch-thumb] {
+button[role="switch"] > span,
+.peer > span {
   width: 20px !important;
   height: 20px !important;
   border-radius: 50% !important;
   background-color: white !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
   transition: transform 0.2s ease !important;
-  transform: translateX(0px) !important;
+  transform: translateX(2px) !important;
+  display: block !important;
+  position: relative !important;
 }
 
-[data-radix-switch-root][data-state="checked"] [data-radix-switch-thumb] {
-  transform: translateX(20px) !important;
+button[role="switch"][data-state="checked"] > span,
+button[data-state="checked"].peer > span {
+  transform: translateX(22px) !important;
+}
+
+/* Override any circular styling from carousel dots */
+.carousel-dot {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+/* Ensure switches don't inherit carousel dot styles */
+button[role="switch"]:not(.carousel-dot),
+.peer:not(.carousel-dot) {
+  border-radius: 12px !important;
 }
 
 /* Mobile specific switch fixes */
 @media (max-width: 768px) {
-  [data-radix-switch-root] {
+  button[role="switch"], 
+  .peer {
     width: 44px !important;
     height: 24px !important;
-    border-radius: 9999px !important;
+    border-radius: 12px !important;
     flex-shrink: 0 !important;
   }
   
-  [data-radix-switch-thumb] {
+  button[role="switch"] > span,
+  .peer > span {
     width: 20px !important;
     height: 20px !important;
     border-radius: 50% !important;

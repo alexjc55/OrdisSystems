@@ -474,37 +474,21 @@ export default function Home() {
                         {/* Mobile carousel dots fix */}
                         <style dangerouslySetInnerHTML={{
                           __html: `
-                            .carousel-dot {
-                              display: block;
-                              width: 10px;
-                              height: 10px;
-                              border-radius: 50%;
-                              border: none;
-                              outline: none;
-                              padding: 0;
-                              margin: 0;
-                              flex: none;
-                              min-width: 10px;
-                              min-height: 10px;
-                              max-width: 10px;
-                              max-height: 10px;
-                              box-sizing: border-box;
-                            }
-                            @media (max-width: 768px) {
-                              .carousel-dot {
-                                width: 10px !important;
-                                height: 10px !important;
-                                min-width: 10px !important;
-                                min-height: 10px !important;
-                                max-width: 10px !important;
-                                max-height: 10px !important;
-                                border-radius: 50% !important;
-                                flex-shrink: 0 !important;
-                                padding: 0 !important;
-                                margin: 0 !important;
-                                border: none !important;
-                                outline: none !important;
-                              }
+                            button.carousel-dot:not([role="switch"]):not([data-state]) {
+                              display: block !important;
+                              width: 10px !important;
+                              height: 10px !important;
+                              border-radius: 50% !important;
+                              border: none !important;
+                              outline: none !important;
+                              padding: 0 !important;
+                              margin: 0 !important;
+                              flex: none !important;
+                              min-width: 10px !important;
+                              min-height: 10px !important;
+                              max-width: 10px !important;
+                              max-height: 10px !important;
+                              box-sizing: border-box !important;
                             }
                           `
                         }} />
