@@ -314,7 +314,7 @@ export default function Home() {
 
               {/* Special Offers Section */}
               {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && (
-                <div className="mt-12">
+                <div className="mt-12 overflow-hidden">
                   <div className="flex items-center mb-6">
                     <span className="mr-3 text-2xl">🔥</span>
                     <h2 className="text-2xl font-poppins font-bold text-gray-900">Специальные предложения</h2>
@@ -334,31 +334,34 @@ export default function Home() {
                       ))}
                     </div>
                   ) : (
-                    <Carousel
-                      opts={{
-                        align: "start",
-                      }}
-                      className="w-full"
-                    >
-                      <CarouselContent className="-ml-2 md:-ml-4">
-                        {specialOffers.map((product) => (
-                          <CarouselItem key={product.id} className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3">
-                            <div className="relative">
-                              <ProductCard 
-                                product={product} 
-                                onCategoryClick={handleCategorySelect}
-                              />
-                              <Badge className="absolute top-3 left-3 bg-orange-500 text-white z-10">
-                                <Star className="w-3 h-3 mr-1" />
-                                {storeSettings?.discountBadgeText || "Скидка"}
-                              </Badge>
-                            </div>
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      <CarouselPrevious className="hidden md:flex" />
-                      <CarouselNext className="hidden md:flex" />
-                    </Carousel>
+                    <div className="w-full overflow-hidden">
+                      <Carousel
+                        opts={{
+                          align: "start",
+                          containScroll: "trimSnaps",
+                        }}
+                        className="w-full"
+                      >
+                        <CarouselContent className="ml-0 mr-0">
+                          {specialOffers.map((product) => (
+                            <CarouselItem key={product.id} className="pl-0 pr-4 basis-full md:basis-1/2 lg:basis-1/3">
+                              <div className="relative">
+                                <ProductCard 
+                                  product={product} 
+                                  onCategoryClick={handleCategorySelect}
+                                />
+                                <Badge className="absolute top-3 left-3 bg-orange-500 text-white z-10">
+                                  <Star className="w-3 h-3 mr-1" />
+                                  {storeSettings?.discountBadgeText || "Скидка"}
+                                </Badge>
+                              </div>
+                            </CarouselItem>
+                          ))}
+                        </CarouselContent>
+                        <CarouselPrevious className="hidden md:flex" />
+                        <CarouselNext className="hidden md:flex" />
+                      </Carousel>
+                    </div>
                   )}
                 </div>
               )}
