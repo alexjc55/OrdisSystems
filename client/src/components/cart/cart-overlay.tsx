@@ -343,7 +343,7 @@ export default function CartOverlay() {
                         <SelectContent>
                           {(() => {
                             if (!deliveryDate) {
-                              return <SelectItem key="select-date" value="" disabled>Сначала выберите дату</SelectItem>;
+                              return <SelectItem key="select-date" value="select-date" disabled>Сначала выберите дату</SelectItem>;
                             }
 
                             if (!storeSettings?.workingHours) {
@@ -371,13 +371,13 @@ export default function CartOverlay() {
                                 todayHours.toLowerCase().includes('закрыто') ||
                                 todayHours.trim() === '' ||
                                 todayHours.toLowerCase() === 'closed') {
-                              return <SelectItem key="closed" value="" disabled>Выходной день - магазин закрыт</SelectItem>;
+                              return <SelectItem key="closed" value="closed" disabled>Выходной день - магазин закрыт</SelectItem>;
                             }
 
                             // Parse working hours (e.g., "10:00-22:00")
                             const hoursMatch = todayHours.match(/(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})/);
                             if (!hoursMatch) {
-                              return <SelectItem key="invalid-hours" value="" disabled>Часы работы не указаны</SelectItem>;
+                              return <SelectItem key="invalid-hours" value="invalid-hours" disabled>Часы работы не указаны</SelectItem>;
                             }
 
                             const startHour = parseInt(hoursMatch[1]);

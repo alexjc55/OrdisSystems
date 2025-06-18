@@ -7,10 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Utensils, ShoppingCart, Menu, Settings, LogOut, User } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import type { User as UserType } from "@shared/schema";
 
-export default function Header() {
+interface HeaderProps {
+  onResetView?: () => void;
+}
+
+export default function Header({ onResetView }: HeaderProps) {
   const { user } = useAuth();
   const { items, toggleCart } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -24,7 +28,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
-            <Link href="/">
+            <Link href="/" onClick={() => onResetView?.()}>
               <div className="flex items-center cursor-pointer">
                 {storeSettings?.logoUrl ? (
                   <img 
@@ -48,7 +52,7 @@ export default function Header() {
               </div>
             </Link>
             <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+              <Link href="/" onClick={() => onResetView?.()} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                 Меню
               </Link>
               {(user?.role === 'admin' || user?.role === 'worker') && (

@@ -75,6 +75,13 @@ export default function Home() {
     setSearchQuery("");
   };
 
+  const handleResetView = () => {
+    setSelectedCategoryId(null);
+    setSearchQuery("");
+    setCategoryFilter("all");
+    setDiscountFilter("all");
+  };
+
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     setSelectedCategoryId(null);
@@ -137,7 +144,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
-      <Header />
+      <Header onResetView={handleResetView} />
       
       {/* Banner Image */}
       {storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
