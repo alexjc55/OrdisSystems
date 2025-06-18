@@ -722,94 +722,87 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 {(categories as any[] || []).length > 0 ? (
-                  <div className="border rounded-lg bg-white overflow-hidden">
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="text-xs sm:text-sm w-16">Иконка</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Название</TableHead>
-                            <TableHead className="text-xs sm:text-sm w-24 text-center">Товаров</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {(categories as any[] || []).map((category: any) => (
-                            <TableRow key={category.id} className="group hover:bg-gray-50">
-                              <TableCell className="text-xl sm:text-2xl text-center">{category.icon}</TableCell>
-                              <TableCell>
-                                <div className="flex items-center justify-between">
-                                  <button
-                                    onClick={() => {
-                                      setEditingCategory(category);
-                                      setIsCategoryFormOpen(true);
-                                    }}
-                                    className="font-medium text-sm sm:text-base hover:text-blue-600 cursor-pointer text-left flex-1"
-                                  >
-                                    {category.name}
-                                    {category.description && (
-                                      <div className="text-xs text-gray-500 mt-1">{category.description}</div>
-                                    )}
-                                  </button>
-                                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      className="h-8 w-8 p-0 hover:bg-blue-50 hover:border-blue-300"
-                                      onClick={() => {
-                                        setEditingCategory(category);
-                                        setIsCategoryFormOpen(true);
-                                      }}
-                                    >
-                                      <Edit2 className="h-3 w-3 text-blue-600" />
-                                    </Button>
-                                    <AlertDialog>
-                                      <AlertDialogTrigger asChild>
-                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0 hover:bg-red-50 hover:border-red-300">
-                                          <Trash2 className="h-3 w-3 text-red-600" />
-                                        </Button>
-                                      </AlertDialogTrigger>
-                                      <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
-                                        <AlertDialogHeader>
-                                          <AlertDialogTitle className="text-sm sm:text-base">Удалить категорию</AlertDialogTitle>
-                                          <AlertDialogDescription className="text-xs sm:text-sm">
-                                            Вы уверены, что хотите удалить категорию "{category.name}"? Все товары этой категории также будут удалены.
-                                          </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                                          <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">Отмена</AlertDialogCancel>
-                                          <AlertDialogAction
-                                            onClick={() => deleteCategoryMutation.mutate(category.id)}
-                                            className="bg-red-600 text-white hover:bg-red-600 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-xs sm:text-sm"
-                                          >
-                                            Удалить
-                                          </AlertDialogAction>
-                                        </AlertDialogFooter>
-                                      </AlertDialogContent>
-                                    </AlertDialog>
-                                  </div>
-                                </div>
-                              </TableCell>
-                              <TableCell className="text-center">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {(categories as any[] || []).map((category: any) => (
+                      <Card key={category.id} className="group hover:shadow-md transition-shadow duration-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-center gap-3 flex-1">
+                              <div className="text-2xl">{category.icon}</div>
+                              <div className="flex-1 min-w-0">
+                                <button
                                   onClick={() => {
-                                    setSelectedCategoryFilter(category.id.toString());
-                                    const productsTab = document.querySelector('[value="products"]') as HTMLElement;
-                                    if (productsTab) productsTab.click();
+                                    setEditingCategory(category);
+                                    setIsCategoryFormOpen(true);
                                   }}
-                                  className="h-auto p-1 hover:bg-blue-50"
+                                  className="font-medium text-sm hover:text-blue-600 cursor-pointer text-left block w-full truncate"
                                 >
-                                  <Badge variant="secondary" className="text-xs hover:bg-blue-100">
-                                    {category.products?.length || 0}
-                                  </Badge>
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
+                                  {category.name}
+                                </button>
+                                {category.description && (
+                                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">{category.description}</p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 hover:bg-blue-50"
+                                onClick={() => {
+                                  setEditingCategory(category);
+                                  setIsCategoryFormOpen(true);
+                                }}
+                              >
+                                <Edit2 className="h-3 w-3 text-blue-600" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-50">
+                                    <Trash2 className="h-3 w-3 text-red-600" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle className="text-sm sm:text-base">Удалить категорию</AlertDialogTitle>
+                                    <AlertDialogDescription className="text-xs sm:text-sm">
+                                      Вы уверены, что хотите удалить категорию "{category.name}"? Все товары этой категории также будут удалены.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                                    <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">Отмена</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => deleteCategoryMutation.mutate(category.id)}
+                                      className="bg-red-600 text-white hover:bg-red-600 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-xs sm:text-sm"
+                                    >
+                                      Удалить
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedCategoryFilter(category.id.toString());
+                                const productsTab = document.querySelector('[value="products"]') as HTMLElement;
+                                if (productsTab) productsTab.click();
+                              }}
+                              className="text-xs hover:bg-blue-50 hover:border-blue-300"
+                            >
+                              <Package className="h-3 w-3 mr-1" />
+                              {category.products?.length || 0} товаров
+                            </Button>
+                            <div className="text-xs text-gray-500">
+                              ID: {category.id}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
                 ) : (
                   <div className="text-center py-8">
@@ -1572,26 +1565,19 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                       {/* Image upload option */}
                       <div>
                         <div className="text-xs text-gray-600 mb-2">Или загрузите изображение:</div>
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-orange-300 transition-colors">
-                          <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                          <div className="text-xs text-gray-500">
-                            Перетащите файл сюда или нажмите для выбора
-                          </div>
-                          <div className="text-xs text-gray-400 mt-1">
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-orange-300 transition-colors">
+                          <ImageUpload
+                            value=""
+                            onChange={(url) => {
+                              if (url) {
+                                field.onChange(url);
+                              }
+                            }}
+                            className="w-full"
+                          />
+                          <div className="text-xs text-gray-400 mt-2 text-center">
                             Рекомендуемый размер: 64×64 пикселей
                           </div>
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            size="sm" 
-                            className="mt-2 text-xs"
-                            onClick={() => {
-                              // TODO: Implement image upload functionality
-                              alert("Функция загрузки изображений будет добавлена в следующем обновлении");
-                            }}
-                          >
-                            Выбрать файл
-                          </Button>
                         </div>
                       </div>
                     </div>
