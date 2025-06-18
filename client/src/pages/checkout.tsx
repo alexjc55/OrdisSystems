@@ -303,16 +303,6 @@ export default function Checkout() {
                 }}>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="address">Адрес доставки *</Label>
-                      <Input
-                        id="address"
-                        name="address"
-                        placeholder="Введите адрес доставки"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
                       <Label htmlFor="phone">Номер телефона *</Label>
                       <Input
                         id="phone"
@@ -320,6 +310,16 @@ export default function Checkout() {
                         type="tel"
                         placeholder="+972-XX-XXX-XXXX"
                         defaultValue={user?.phone || ""}
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="address">Адрес доставки *</Label>
+                      <Input
+                        id="address"
+                        name="address"
+                        placeholder="Введите адрес доставки"
                         required
                       />
                     </div>
@@ -423,11 +423,12 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="phone">Телефон</Label>
+                        <Label htmlFor="phone">Номер телефона *</Label>
                         <Input
                           id="phone"
+                          type="tel"
                           {...registerForm.register("phone")}
-                          placeholder="+972..."
+                          placeholder="+972-XX-XXX-XXXX"
                         />
                         {registerForm.formState.errors.phone && (
                           <p className="text-sm text-red-600">{registerForm.formState.errors.phone.message}</p>
@@ -435,7 +436,7 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="address">Адрес доставки</Label>
+                        <Label htmlFor="address">Адрес доставки *</Label>
                         <Input
                           id="address"
                           {...registerForm.register("address")}
@@ -580,11 +581,12 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="guestPhone">Телефон</Label>
+                        <Label htmlFor="guestPhone">Номер телефона *</Label>
                         <Input
                           id="guestPhone"
+                          type="tel"
                           {...guestForm.register("phone")}
-                          placeholder="+972..."
+                          placeholder="+972-XX-XXX-XXXX"
                         />
                         {guestForm.formState.errors.phone && (
                           <p className="text-sm text-red-600">{guestForm.formState.errors.phone.message}</p>
@@ -592,7 +594,7 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="guestAddress">Адрес доставки</Label>
+                        <Label htmlFor="guestAddress">Адрес доставки *</Label>
                         <Input
                           id="guestAddress"
                           {...guestForm.register("address")}
