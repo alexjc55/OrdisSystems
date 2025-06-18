@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { formatCurrency, formatWeight } from "@/lib/currency";
+import { formatCurrency, formatQuantity, getUnitShortLabel, type ProductUnit } from "@/lib/currency";
 import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin } from "lucide-react";
 import type { OrderWithItems, UserAddress } from "@shared/schema";
 
@@ -609,7 +609,7 @@ export default function Profile() {
                               >
                                 {order.items.slice(0, 2).map((item, index) => (
                                   <div key={index} className="text-sm">
-                                    {item.product.name} ({formatQuantity(parseFloat(item.quantity), item.product.unit)})
+                                    {item.product.name} ({formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit)})
                                   </div>
                                 ))}
                                 {order.items.length > 2 && (
@@ -648,6 +648,219 @@ export default function Profile() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Order Details Modal */}
+        <Dialog open={isOrderDetailsOpen} onOpenChange={setIsOrderDetailsOpen}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Детали заказа #{selectedOrder?.id}</DialogTitle>
+              <DialogDescription>
+                Полная информация о заказе от {selectedOrder?.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString('ru-RU', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                }) : ''}
+              </DialogDescription>
+            </DialogHeader>
+
+            {selectedOrder && (
+              <div className="space-y-6">
+                {/* Order Status and Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm">Информация о заказе</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Статус:</span>
+                        {getStatusBadge(selectedOrder.status)}
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Дата создания:</span>
+                        <span className="text-sm">{selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString('ru-RU') : '—'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Способ оплаты:</span>
+                        <span className="text-sm">{selectedOrder.paymentMethod === 'cash' ? 'Наличные' : 'Карта'}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm">Доставка</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Телефон:</span>
+                        <span className="text-sm">{selectedOrder.customerPhone}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Адрес:</span>
+                        <span className="text-sm max-w-48 text-right">{selectedOrder.deliveryAddress}</span>
+                      </div>
+                      {selectedOrder.deliveryDate && selectedOrder.deliveryTime && (
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Время доставки:</span>
+                          <span className="text-sm">{selectedOrder.deliveryDate} {selectedOrder.deliveryTime}</span>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Order Items */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">Товары в заказе</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Товар</TableHead>
+                          <TableHead>Количество</TableHead>
+                          <TableHead>Цена за единицу</TableHead>
+                          <TableHead>Скидка</TableHead>
+                          <TableHead className="text-right">Итого</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {selectedOrder.items.map((item, index) => {
+                          const discounts = parseOrderDiscounts(selectedOrder.customerNotes || '');
+                          const itemDiscount = discounts?.itemDiscounts?.[String(index + 1)];
+                          const originalPrice = parseFloat(item.totalPrice);
+                          let finalPrice = originalPrice;
+                          
+                          if (itemDiscount) {
+                            if (itemDiscount.type === 'percentage') {
+                              finalPrice = originalPrice * (1 - itemDiscount.value / 100);
+                            } else if (itemDiscount.type === 'amount') {
+                              finalPrice = Math.max(0, originalPrice - itemDiscount.value);
+                            }
+                          }
+
+                          return (
+                            <TableRow key={item.id}>
+                              <TableCell>
+                                <div>
+                                  <div className="font-medium">{item.product.name}</div>
+                                  <div className="text-sm text-gray-500">{item.product.description}</div>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                {formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit)}
+                              </TableCell>
+                              <TableCell>
+                                {formatCurrency(item.product.price)} {getUnitShortLabel((item.product.unit || "100g") as ProductUnit)}
+                              </TableCell>
+                              <TableCell>
+                                {itemDiscount ? (
+                                  <span className="text-red-600">
+                                    -{itemDiscount.type === 'percentage' ? `${itemDiscount.value}%` : formatCurrency(itemDiscount.value)}
+                                  </span>
+                                ) : '—'}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <div className="flex flex-col items-end">
+                                  {itemDiscount && (
+                                    <span className="text-xs text-gray-500 line-through">
+                                      {formatCurrency(originalPrice)}
+                                    </span>
+                                  )}
+                                  <span className={itemDiscount ? 'text-red-600 font-medium' : ''}>
+                                    {formatCurrency(finalPrice)}
+                                  </span>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+
+                {/* Order Total */}
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="space-y-2">
+                      {(() => {
+                        const discounts = parseOrderDiscounts(selectedOrder.customerNotes || '');
+                        const subtotal = selectedOrder.items.reduce((sum, item, index) => {
+                          let itemPrice = parseFloat(item.totalPrice);
+                          const itemDiscount = discounts?.itemDiscounts?.[String(index + 1)];
+                          
+                          if (itemDiscount) {
+                            if (itemDiscount.type === 'percentage') {
+                              itemPrice = itemPrice * (1 - itemDiscount.value / 100);
+                            } else if (itemDiscount.type === 'amount') {
+                              itemPrice = Math.max(0, itemPrice - itemDiscount.value);
+                            }
+                          }
+                          return sum + itemPrice;
+                        }, 0);
+                        
+                        const deliveryFee = parseFloat(selectedOrder.deliveryFee);
+                        const orderDiscount = discounts?.orderDiscount;
+                        let finalSubtotal = subtotal;
+                        
+                        if (orderDiscount) {
+                          if (orderDiscount.type === 'percentage') {
+                            finalSubtotal = subtotal * (1 - orderDiscount.value / 100);
+                          } else if (orderDiscount.type === 'amount') {
+                            finalSubtotal = Math.max(0, subtotal - orderDiscount.value);
+                          }
+                        }
+
+                        return (
+                          <>
+                            <div className="flex justify-between">
+                              <span>Подытог:</span>
+                              <span>{formatCurrency(subtotal)}</span>
+                            </div>
+                            {orderDiscount && (
+                              <div className="flex justify-between text-red-600">
+                                <span>Скидка на заказ:</span>
+                                <span>
+                                  -{orderDiscount.type === 'percentage' ? `${orderDiscount.value}%` : formatCurrency(orderDiscount.value)}
+                                  {orderDiscount.type === 'percentage' && ` (${formatCurrency(subtotal - finalSubtotal)})`}
+                                </span>
+                              </div>
+                            )}
+                            <div className="flex justify-between">
+                              <span>Доставка:</span>
+                              <span>{formatCurrency(deliveryFee)}</span>
+                            </div>
+                            <div className="flex justify-between text-lg font-bold border-t pt-2">
+                              <span>Итого:</span>
+                              <span>{formatCurrency(parseFloat(selectedOrder.totalAmount))}</span>
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Customer Notes */}
+                {selectedOrder.customerNotes && !selectedOrder.customerNotes.includes('[DISCOUNTS:') && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm">Комментарии к заказу</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm">{selectedOrder.customerNotes}</p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
