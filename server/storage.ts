@@ -1,5 +1,6 @@
 import {
   users,
+  userAddresses,
   categories,
   products,
   orders,
@@ -7,6 +8,8 @@ import {
   storeSettings,
   type User,
   type UpsertUser,
+  type UserAddress,
+  type InsertUserAddress,
   type Category,
   type InsertCategory,
   type Product,
@@ -49,6 +52,14 @@ export interface IStorage {
   // User operations (required for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  updateUserProfile(id: string, updates: Partial<UpsertUser>): Promise<User>;
+
+  // User address operations
+  getUserAddresses(userId: string): Promise<UserAddress[]>;
+  createUserAddress(address: InsertUserAddress): Promise<UserAddress>;
+  updateUserAddress(id: number, address: Partial<InsertUserAddress>): Promise<UserAddress>;
+  deleteUserAddress(id: number): Promise<void>;
+  setDefaultAddress(userId: string, addressId: number): Promise<void>;
 
   // Category operations
   getCategories(): Promise<CategoryWithProducts[]>;

@@ -32,7 +32,20 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
+  phone: varchar("phone"),
+  defaultAddress: text("default_address"),
   role: varchar("role", { enum: ["admin", "worker", "customer"] }).default("customer").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// User addresses table for multiple addresses
+export const userAddresses = pgTable("user_addresses", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  label: varchar("label", { length: 100 }).notNull(), // "Дом", "Работа", etc.
+  address: text("address").notNull(),
+  isDefault: boolean("is_default").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -152,6 +165,18 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   orderItems: many(orderItems),
 }));
 
+export const usersRelations = relations(users, ({ many }) => ({
+  orders: many(orders),
+  addresses: many(userAddresses),
+}));
+
+export const userAddressesRelations = relations(userAddresses, ({ one }) => ({
+  user: one(users, {
+    fields: [userAddresses.userId],
+    references: [users.id],
+  }),
+}));
+
 export const ordersRelations = relations(orders, ({ one, many }) => ({
   user: one(users, {
     fields: [orders.userId],
@@ -206,6 +231,12 @@ export const insertStoreSettingsSchema = createInsertSchema(storeSettings).omit(
   defaultItemsPerPage: z.number().int().min(1).max(1000).default(10),
 });
 
+export const insertUserAddressSchema = createInsertSchema(userAddresses).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -219,6 +250,8 @@ export type InsertOrderItem = z.infer<typeof insertOrderItemSchema>;
 export type OrderItem = typeof orderItems.$inferSelect;
 export type InsertStoreSettings = z.infer<typeof insertStoreSettingsSchema>;
 export type StoreSettings = typeof storeSettings.$inferSelect;
+export type InsertUserAddress = z.infer<typeof insertUserAddressSchema>;
+export type UserAddress = typeof userAddresses.$inferSelect;
 
 // Extended types with relations
 export type ProductWithCategory = Product & {
