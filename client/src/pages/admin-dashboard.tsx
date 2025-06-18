@@ -418,11 +418,14 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
   };
 
   const addItem = (product: any, quantity: number) => {
+    const unitPrice = product.price || product.pricePerKg || 0;
     const newItem = {
       product,
+      productId: product.id,
       quantity,
-      pricePerUnit: product.price || product.pricePerKg,
-      totalPrice: quantity * (product.price || product.pricePerKg)
+      pricePerUnit: unitPrice,
+      pricePerKg: unitPrice,
+      totalPrice: quantity * unitPrice
     };
     setEditedOrderItems([...editedOrderItems, newItem]);
     setShowAddItem(false);

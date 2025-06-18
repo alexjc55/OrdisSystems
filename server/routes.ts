@@ -404,6 +404,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // If items are provided, this is a comprehensive update
       if (items) {
+        console.log("Updating order items:", JSON.stringify(items, null, 2));
+        
         // Update order items in database
         await storage.updateOrderItems(id, items);
         

@@ -426,8 +426,8 @@ export class DatabaseStorage implements IStorage {
           orderId,
           productId: item.product?.id || item.productId,
           quantity: item.quantity.toString(),
-          pricePerKg: item.pricePerUnit.toString(),
-          totalPrice: item.totalPrice.toString()
+          pricePerKg: (item.pricePerUnit || item.pricePerKg || item.price || 0).toString(),
+          totalPrice: (item.totalPrice || 0).toString()
         }));
         
         await tx.insert(orderItems).values(orderItemsData);
