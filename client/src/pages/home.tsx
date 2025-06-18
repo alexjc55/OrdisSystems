@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import Header from "@/components/layout/header";
@@ -34,6 +35,8 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [discountFilter, setDiscountFilter] = useState("all");
   const carouselApiRef = useRef<any>(null);
   const { user } = useAuth();
   const { isOpen: isCartOpen } = useCartStore();
@@ -78,8 +81,44 @@ export default function Home() {
   };
 
   // Filter and prepare products for display
-  const availableProducts = (searchQuery.length > 2 ? searchResults : (selectedCategoryId === null ? allProducts : products))?.filter(product => product.isAvailable !== false) || [];
-  const displayProducts = availableProducts;
+  const getFilteredProducts = () => {
+    let baseProducts = [];
+    
+    if (searchQuery.length > 2) {
+      baseProducts = searchResults || [];
+    } else if (selectedCategoryId === 0) {
+      // All products view
+      baseProducts = allProducts || [];
+    } else if (selectedCategoryId !== null) {
+      // Single category view
+      baseProducts = products || [];
+    } else {
+      return [];
+    }
+
+    // Filter by availability
+    let filtered = baseProducts.filter(product => product.isAvailable !== false);
+
+    // Apply category filter for "All Products" view
+    if (selectedCategoryId === 0 && categoryFilter !== "all") {
+      filtered = filtered.filter(product => product.categoryId === parseInt(categoryFilter));
+    }
+
+    // Apply discount filter
+    if (discountFilter === "with_discount") {
+      filtered = filtered.filter(product => 
+        product.isSpecialOffer || (product.discountValue && parseFloat(product.discountValue) > 0)
+      );
+    } else if (discountFilter === "without_discount") {
+      filtered = filtered.filter(product => 
+        !product.isSpecialOffer && (!product.discountValue || parseFloat(product.discountValue) === 0)
+      );
+    }
+
+    return filtered;
+  };
+
+  const displayProducts = getFilteredProducts();
   const isLoading = searchQuery.length > 2 ? searchLoading : (selectedCategoryId === null ? allProductsLoading : productsLoading);
   
   // Get special offers (products marked as special offers)
@@ -287,6 +326,19 @@ export default function Home() {
           {/* Special Offers or Category View */}
           {!selectedCategory && searchQuery.length <= 2 && (
             <div>
+              {/* All Products Button */}
+              <div className="mb-8 text-center">
+                <Button
+                  onClick={() => setSelectedCategoryId(0)}
+                  variant="outline"
+                  size="lg"
+                  className="bg-white hover:bg-orange-50 border-orange-500 text-orange-600 hover:text-orange-700 font-semibold px-8 py-3"
+                >
+                  <Package className="mr-2 h-5 w-5" />
+                  Все товары
+                </Button>
+              </div>
+
               {/* Category Overview */}
               {categories && categories.length > 0 && (
                 <div className="mb-8">
@@ -423,6 +475,46 @@ export default function Home() {
           {/* Products Grid - Show when category is selected or showing all */}
           {(selectedCategoryId !== null || searchQuery.length > 2) && (
             <div className="mb-8">
+              {/* Filters for All Products/Category View */}
+              {selectedCategoryId !== null && (
+                <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                      {selectedCategoryId === 0 ? "Все товары" : selectedCategory?.name}
+                    </h2>
+                    {selectedCategory?.description && selectedCategoryId !== 0 && (
+                      <p className="text-gray-600">{selectedCategory.description}</p>
+                    )}
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    {selectedCategoryId === 0 && (
+                      <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                        <SelectTrigger className="w-full sm:w-48">
+                          <SelectValue placeholder="Все категории" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Все категории</SelectItem>
+                          {categories?.map((category) => (
+                            <SelectItem key={category.id} value={category.id.toString()}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                    <Select value={discountFilter} onValueChange={setDiscountFilter}>
+                      <SelectTrigger className="w-full sm:w-40">
+                        <SelectValue placeholder="Все товары" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Все товары</SelectItem>
+                        <SelectItem value="with_discount">Со скидкой</SelectItem>
+                        <SelectItem value="without_discount">Без скидки</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
               {isLoading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {[...Array(6)].map((_, i) => (
