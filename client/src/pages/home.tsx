@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useCallback, memo } from "react";
+import { useState, useMemo, useRef, useCallback, memo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -129,8 +129,8 @@ export default function Home() {
   // Get special offers (products marked as special offers)
   const specialOffers = allProducts?.filter(product => product.isAvailable !== false && product.isSpecialOffer === true) || [];
   
-  // Calculate total slides for carousel
-  const totalSlides = Math.ceil(specialOffers.length / 3);
+  // Calculate total slides for carousel - simplified approach
+  const totalSlides = Math.max(1, specialOffers.length);
   
   // Handle carousel navigation
   const goToSlide = (slideIndex: number) => {
@@ -405,7 +405,7 @@ export default function Home() {
                         opts={{
                           align: "start",
                           loop: false,
-                          slidesToScroll: 3,
+                          slidesToScroll: 1,
                         }}
                         className="w-full mx-auto"
                         setApi={(api) => {
@@ -421,7 +421,7 @@ export default function Home() {
                           {specialOffers.map((product) => (
                             <CarouselItem 
                               key={product.id} 
-                              className="min-w-0 shrink-0 grow-0 basis-1/3 flex flex-col flex-shrink-0 pl-[0px] pr-[0px]"
+                              className="min-w-0 shrink-0 grow-0 basis-full md:basis-1/2 lg:basis-1/3 flex flex-col flex-shrink-0 pl-[0px] pr-[0px]"
                             >
                               <div className="relative flex-1 flex">
                                 <div className="transform scale-90 origin-center w-full relative">
