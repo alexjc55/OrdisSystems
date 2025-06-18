@@ -3023,6 +3023,7 @@ export default function AdminDashboard() {
             createUserMutation.mutate(data);
           }
         }}
+        onDelete={(userId: string) => deleteUserMutation.mutate(userId)}
       />
 
       {/* Cancellation Reason Dialog */}
@@ -4621,7 +4622,7 @@ function CancellationReasonDialog({
 }
 
 // User Form Dialog Component
-function UserFormDialog({ open, onClose, user, onSubmit }: any) {
+function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
   const userSchema = z.object({
     email: z.string().email("Неверный формат email"),
     firstName: z.string().min(1, "Имя обязательно"),
@@ -4812,7 +4813,7 @@ function UserFormDialog({ open, onClose, user, onSubmit }: any) {
                         <AlertDialogCancel>Отмена</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => {
-                            deleteUserMutation.mutate(user.id);
+                            onDelete(user.id);
                             onClose();
                           }}
                           className="bg-red-600 hover:bg-red-700"
