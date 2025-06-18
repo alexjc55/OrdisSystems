@@ -184,9 +184,10 @@ export default function AdminDashboard() {
   const { data: productsResponse, isLoading: productsLoading } = useQuery({
     queryKey: ["/api/admin/products", productsPage, searchQuery, selectedCategoryFilter, selectedStatusFilter, sortField, sortDirection],
     queryFn: async () => {
+      const limit = storeSettings?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: productsPage.toString(),
-        limit: itemsPerPage.toString(),
+        limit: limit.toString(),
         search: searchQuery,
         category: selectedCategoryFilter,
         status: selectedStatusFilter,
@@ -202,9 +203,10 @@ export default function AdminDashboard() {
   const { data: ordersResponse, isLoading: ordersLoading } = useQuery({
     queryKey: ["/api/admin/orders", ordersPage, searchQuery, selectedStatusFilter],
     queryFn: async () => {
+      const limit = storeSettings?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: ordersPage.toString(),
-        limit: itemsPerPage.toString(),
+        limit: limit.toString(),
         search: searchQuery,
         status: selectedStatusFilter,
         sortField: 'createdAt',
@@ -219,9 +221,10 @@ export default function AdminDashboard() {
   const { data: usersResponse, isLoading: usersLoading } = useQuery({
     queryKey: ["/api/admin/users", usersPage, searchQuery],
     queryFn: async () => {
+      const limit = storeSettings?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: usersPage.toString(),
-        limit: itemsPerPage.toString(),
+        limit: limit.toString(),
         search: searchQuery
       });
       const response = await fetch(`/api/admin/users?${params}`);
@@ -233,6 +236,9 @@ export default function AdminDashboard() {
   const { data: storeSettings, isLoading: storeSettingsLoading } = useQuery({
     queryKey: ["/api/settings"]
   });
+
+  // Pagination configuration
+  const itemsPerPage = storeSettings?.defaultItemsPerPage || 10;
 
   // Extract data and pagination info
   const productsData = productsResponse?.data || [];
@@ -1806,6 +1812,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       bottomBanner2Url: storeSettings?.bottomBanner2Url || "",
       bottomBanner2Link: storeSettings?.bottomBanner2Link || "",
       showBottomBanners: storeSettings?.showBottomBanners !== false,
+      defaultItemsPerPage: storeSettings?.defaultItemsPerPage || 10,
     },
   });
 
@@ -1934,6 +1941,38 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormControl>
                   <Input placeholder="50.00" {...field} className="text-sm" />
                 </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="defaultItemsPerPage"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">Элементов на странице по умолчанию</FormLabel>
+                <Select 
+                  onValueChange={(value) => field.onChange(parseInt(value))} 
+                  value={field.value?.toString() || "10"}
+                >
+                  <FormControl>
+                    <SelectTrigger className="text-sm">
+                      <SelectValue placeholder="Выберите количество" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="10">10 элементов</SelectItem>
+                    <SelectItem value="15">15 элементов</SelectItem>
+                    <SelectItem value="25">25 элементов</SelectItem>
+                    <SelectItem value="50">50 элементов</SelectItem>
+                    <SelectItem value="100">100 элементов</SelectItem>
+                    <SelectItem value="1000">Все элементы</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription className="text-xs text-gray-500">
+                  Количество товаров, заказов и пользователей отображаемых на одной странице в админ панели
+                </FormDescription>
                 <FormMessage className="text-xs" />
               </FormItem>
             )}
