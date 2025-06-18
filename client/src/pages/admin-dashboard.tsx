@@ -200,22 +200,24 @@ export default function AdminDashboard() {
   });
 
   const { data: ordersResponse, isLoading: ordersLoading } = useQuery({
-    queryKey: ["/api/orders", ordersPage, searchQuery, selectedStatusFilter],
+    queryKey: ["/api/admin/orders", ordersPage, searchQuery, selectedStatusFilter],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: ordersPage.toString(),
         limit: itemsPerPage.toString(),
         search: searchQuery,
-        status: selectedStatusFilter
+        status: selectedStatusFilter,
+        sortField: 'createdAt',
+        sortDirection: 'desc'
       });
-      const response = await fetch(`/api/orders?${params}`);
+      const response = await fetch(`/api/admin/orders?${params}`);
       if (!response.ok) throw new Error('Failed to fetch orders');
       return response.json();
     },
   });
 
   const { data: usersResponse, isLoading: usersLoading } = useQuery({
-    queryKey: ["/api/users", usersPage, searchQuery],
+    queryKey: ["/api/admin/users", usersPage, searchQuery],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: usersPage.toString(),

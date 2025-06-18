@@ -289,6 +289,66 @@ export class DatabaseStorage implements IStorage {
     });
   }
 
+  async getOrdersPaginated(params: PaginationParams): Promise<PaginatedResult<OrderWithItems>> {
+    const { page, limit, search, status, sortField, sortDirection } = params;
+    const offset = (page - 1) * limit;
+
+    // Build where conditions
+    const conditions = [];
+    
+    if (search) {
+      conditions.push(like(orders.customerPhone, `%${search}%`));
+    }
+    
+    if (status && status !== 'all') {
+      conditions.push(eq(orders.status, status as any));
+    }
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    // Build order by
+    let orderBy;
+    if (sortField === 'totalAmount') {
+      orderBy = sortDirection === 'desc' ? desc(orders.totalAmount) : asc(orders.totalAmount);
+    } else if (sortField === 'status') {
+      orderBy = sortDirection === 'desc' ? desc(orders.status) : asc(orders.status);
+    } else {
+      orderBy = desc(orders.createdAt);
+    }
+
+    // Get total count
+    const [totalResult] = await db
+      .select({ count: count() })
+      .from(orders)
+      .where(whereClause);
+    
+    const total = totalResult?.count || 0;
+
+    // Get paginated data
+    const data = await db.query.orders.findMany({
+      with: {
+        items: {
+          with: {
+            product: true,
+          },
+        },
+        user: true,
+      },
+      where: whereClause,
+      orderBy,
+      limit,
+      offset,
+    });
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
   async getOrderById(id: number): Promise<OrderWithItems | undefined> {
     return await db.query.orders.findFirst({
       with: {
@@ -353,6 +413,58 @@ export class DatabaseStorage implements IStorage {
         .returning();
       return newSettings;
     }
+  }
+
+  // User operations with pagination
+  async getUsersPaginated(params: PaginationParams): Promise<PaginatedResult<User>> {
+    const { page, limit, search, sortField, sortDirection } = params;
+    const offset = (page - 1) * limit;
+
+    // Build where conditions
+    const conditions = [];
+    
+    if (search) {
+      conditions.push(
+        like(users.email, `%${search}%`)
+      );
+    }
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    // Build order by
+    let orderBy;
+    if (sortField === 'email') {
+      orderBy = sortDirection === 'desc' ? desc(users.email) : asc(users.email);
+    } else if (sortField === 'createdAt') {
+      orderBy = sortDirection === 'desc' ? desc(users.createdAt) : asc(users.createdAt);
+    } else {
+      orderBy = desc(users.createdAt);
+    }
+
+    // Get total count
+    const [totalResult] = await db
+      .select({ count: count() })
+      .from(users)
+      .where(whereClause);
+    
+    const total = totalResult?.count || 0;
+
+    // Get paginated data
+    const data = await db
+      .select()
+      .from(users)
+      .where(whereClause)
+      .orderBy(orderBy)
+      .limit(limit)
+      .offset(offset);
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 }
 
