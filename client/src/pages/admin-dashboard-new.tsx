@@ -1025,8 +1025,8 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 {/* Products Filters */}
-                <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                  <div className="relative flex-1">
+                <div className="space-y-4 mb-6">
+                  <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
                       placeholder="Поиск товаров..."
@@ -1035,31 +1035,71 @@ export default function AdminDashboard() {
                       className="pl-10"
                     />
                   </div>
-                  <AdminSelect
-                    value={selectedCategoryFilter}
-                    onValueChange={setSelectedCategoryFilter}
-                    placeholder="Все категории"
-                    className="w-full sm:w-[200px]"
-                    options={[
-                      { value: "all", label: "Все категории" },
-                      ...categories.map((category: any) => ({
-                        value: category.id.toString(),
-                        label: category.name
-                      }))
-                    ]}
-                  />
-                  <AdminSelect
-                    value={selectedStatusFilter}
-                    onValueChange={setSelectedStatusFilter}
-                    placeholder="Все статусы"
-                    className="w-full sm:w-[200px]"
-                    options={[
-                      { value: "all", label: "Все статусы" },
-                      { value: "available", label: "Доступные" },
-                      { value: "unavailable", label: "Недоступные" },
-                      { value: "with_discount", label: "Со скидкой" }
-                    ]}
-                  />
+                  
+                  {/* Category Filter Tabs */}
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">Категории</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                      <Button
+                        variant={selectedCategoryFilter === "all" ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedCategoryFilter("all")}
+                        className="text-xs h-8"
+                      >
+                        Все категории
+                      </Button>
+                      {categories.map((category: any) => (
+                        <Button
+                          key={category.id}
+                          variant={selectedCategoryFilter === category.id.toString() ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setSelectedCategoryFilter(category.id.toString())}
+                          className="text-xs h-8"
+                        >
+                          {category.name}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Status Filter Tabs */}
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">Статус</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      <Button
+                        variant={selectedStatusFilter === "all" ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedStatusFilter("all")}
+                        className="text-xs h-8"
+                      >
+                        Все статусы
+                      </Button>
+                      <Button
+                        variant={selectedStatusFilter === "available" ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedStatusFilter("available")}
+                        className="text-xs h-8"
+                      >
+                        Доступные
+                      </Button>
+                      <Button
+                        variant={selectedStatusFilter === "unavailable" ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedStatusFilter("unavailable")}
+                        className="text-xs h-8"
+                      >
+                        Недоступные
+                      </Button>
+                      <Button
+                        variant={selectedStatusFilter === "with_discount" ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedStatusFilter("with_discount")}
+                        className="text-xs h-8"
+                      >
+                        Со скидкой
+                      </Button>
+                    </div>
+                  </div>
                 </div>
 
                 {productsLoading ? (
