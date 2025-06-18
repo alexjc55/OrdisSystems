@@ -84,7 +84,7 @@ export default function Home() {
   const specialOffers = allProducts?.filter(product => product.isAvailable !== false && product.isSpecialOffer === true) || [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <Header />
       
       {/* Banner Image */}
@@ -95,7 +95,7 @@ export default function Home() {
         />
       )}
       
-      <div className="flex">
+      <div className="flex overflow-x-hidden">
         <Sidebar 
           categories={categories || []} 
           selectedCategoryId={selectedCategoryId}
@@ -103,7 +103,7 @@ export default function Home() {
           isLoading={categoriesLoading}
         />
 
-        <main className={`flex-1 p-6 lg:pb-6 ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
+        <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
           {/* Search Bar */}
           <div className="mb-8">
             <div className="mb-6">
@@ -314,7 +314,7 @@ export default function Home() {
 
               {/* Special Offers Section */}
               {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && (
-                <div className="mt-12 overflow-hidden">
+                <div className="mt-12">
                   <div className="flex items-center mb-6">
                     <span className="mr-3 text-2xl">🔥</span>
                     <h2 className="text-2xl font-poppins font-bold text-gray-900">Специальные предложения</h2>
@@ -334,17 +334,21 @@ export default function Home() {
                       ))}
                     </div>
                   ) : (
-                    <div className="w-full overflow-hidden">
+                    <div className="w-full">
                       <Carousel
                         opts={{
                           align: "start",
-                          containScroll: "trimSnaps",
+                          loop: false,
+                          slidesToScroll: 1,
                         }}
-                        className="w-full"
+                        className="w-full mx-auto"
                       >
-                        <CarouselContent className="ml-0 mr-0">
+                        <CarouselContent className="ml-0">
                           {specialOffers.map((product) => (
-                            <CarouselItem key={product.id} className="pl-0 pr-4 basis-full md:basis-1/2 lg:basis-1/3">
+                            <CarouselItem 
+                              key={product.id} 
+                              className="pr-4 basis-full md:basis-1/2 lg:basis-1/3"
+                            >
                               <div className="relative">
                                 <ProductCard 
                                   product={product} 
@@ -358,8 +362,8 @@ export default function Home() {
                             </CarouselItem>
                           ))}
                         </CarouselContent>
-                        <CarouselPrevious className="hidden md:flex" />
-                        <CarouselNext className="hidden md:flex" />
+                        <CarouselPrevious className="hidden lg:flex" />
+                        <CarouselNext className="hidden lg:flex" />
                       </Carousel>
                     </div>
                   )}
