@@ -3655,6 +3655,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       cartBannerImage: storeSettings?.cartBannerImage || "",
       cartBannerText: storeSettings?.cartBannerText || "",
       cartBannerBgColor: storeSettings?.cartBannerBgColor || "#f97316",
+      cartBannerTextColor: storeSettings?.cartBannerTextColor || "#ffffff",
     } as any,
   });
 
@@ -4537,6 +4538,38 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         </FormControl>
                         <FormDescription className="text-xs">
                           Цвет фона для текстового баннера
+                        </FormDescription>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="cartBannerTextColor"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm flex items-center gap-2">
+                          <Type className="h-4 w-4" />
+                          Цвет текста
+                        </FormLabel>
+                        <FormControl>
+                          <div className="flex items-center gap-2">
+                            <Input 
+                              type="color"
+                              {...field} 
+                              className="w-12 h-8 p-0 border rounded" 
+                            />
+                            <Input 
+                              type="text"
+                              {...field} 
+                              placeholder="#ffffff"
+                              className="text-sm flex-1" 
+                            />
+                          </div>
+                        </FormControl>
+                        <FormDescription className="text-xs">
+                          Цвет текста для текстового баннера
                         </FormDescription>
                         <FormMessage className="text-xs" />
                       </FormItem>
