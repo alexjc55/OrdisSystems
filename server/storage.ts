@@ -116,6 +116,74 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async updateUserProfile(id: string, updates: Partial<UpsertUser>): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return user;
+  }
+
+  // User address operations
+  async getUserAddresses(userId: string): Promise<UserAddress[]> {
+    return await db.select().from(userAddresses).where(eq(userAddresses.userId, userId)).orderBy(desc(userAddresses.isDefault), userAddresses.label);
+  }
+
+  async createUserAddress(address: InsertUserAddress): Promise<UserAddress> {
+    // If this is set as default, unset all other defaults for this user
+    if (address.isDefault) {
+      await db
+        .update(userAddresses)
+        .set({ isDefault: false })
+        .where(eq(userAddresses.userId, address.userId));
+    }
+
+    const [newAddress] = await db
+      .insert(userAddresses)
+      .values(address)
+      .returning();
+    return newAddress;
+  }
+
+  async updateUserAddress(id: number, address: Partial<InsertUserAddress>): Promise<UserAddress> {
+    // If this is being set as default, unset all other defaults for this user
+    if (address.isDefault) {
+      const existingAddress = await db.select().from(userAddresses).where(eq(userAddresses.id, id)).limit(1);
+      if (existingAddress.length > 0) {
+        await db
+          .update(userAddresses)
+          .set({ isDefault: false })
+          .where(eq(userAddresses.userId, existingAddress[0].userId));
+      }
+    }
+
+    const [updatedAddress] = await db
+      .update(userAddresses)
+      .set({ ...address, updatedAt: new Date() })
+      .where(eq(userAddresses.id, id))
+      .returning();
+    return updatedAddress;
+  }
+
+  async deleteUserAddress(id: number): Promise<void> {
+    await db.delete(userAddresses).where(eq(userAddresses.id, id));
+  }
+
+  async setDefaultAddress(userId: string, addressId: number): Promise<void> {
+    // Unset all defaults for this user
+    await db
+      .update(userAddresses)
+      .set({ isDefault: false })
+      .where(eq(userAddresses.userId, userId));
+
+    // Set the specified address as default
+    await db
+      .update(userAddresses)
+      .set({ isDefault: true })
+      .where(and(eq(userAddresses.id, addressId), eq(userAddresses.userId, userId)));
+  }
+
   // Category operations
   async getCategories(): Promise<CategoryWithProducts[]> {
     return await db.query.categories.findMany({

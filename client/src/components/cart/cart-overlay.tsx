@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCartStore } from "@/lib/cart";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
@@ -27,9 +27,44 @@ export default function CartOverlay() {
   const queryClient = useQueryClient();
   const [customerNotes, setCustomerNotes] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
   const [customerPhone, setCustomerPhone] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [deliveryTime, setDeliveryTime] = useState("");
+
+  // Fetch user addresses
+  const { data: userAddresses = [] } = useQuery({
+    queryKey: ["/api/addresses"],
+    enabled: !!user,
+  });
+
+  // Auto-populate user data when user is logged in
+  useEffect(() => {
+    if (user) {
+      // Set phone from user profile
+      if (user.phone && !customerPhone) {
+        setCustomerPhone(user.phone);
+      }
+      
+      // Set default address if user has addresses
+      if (userAddresses.length > 0 && !deliveryAddress) {
+        const defaultAddress = userAddresses.find(addr => addr.isDefault) || userAddresses[0];
+        if (defaultAddress) {
+          setDeliveryAddress(defaultAddress.address);
+          setSelectedAddressId(defaultAddress.id);
+        }
+      }
+    }
+  }, [user, userAddresses, customerPhone, deliveryAddress]);
+
+  // Handle address selection
+  const handleAddressSelect = (addressId: number) => {
+    const selectedAddress = userAddresses.find(addr => addr.id === addressId);
+    if (selectedAddress) {
+      setDeliveryAddress(selectedAddress.address);
+      setSelectedAddressId(addressId);
+    }
+  };
 
   // Reset delivery time when date changes to a closed day
   useEffect(() => {
@@ -445,10 +480,44 @@ export default function CartOverlay() {
                   <label className="text-sm font-medium text-gray-700">
                     Адрес доставки *
                   </label>
+                  
+                  {/* Address Selection for logged-in users */}
+                  {user && userAddresses.length > 0 && (
+                    <div className="space-y-2">
+                      <label className="text-xs text-gray-600">Выберите сохраненный адрес:</label>
+                      <Select
+                        value={selectedAddressId?.toString() || ""}
+                        onValueChange={(value) => {
+                          if (value === "new") {
+                            setDeliveryAddress("");
+                            setSelectedAddressId(null);
+                          } else {
+                            handleAddressSelect(parseInt(value));
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="text-sm">
+                          <SelectValue placeholder="Выберите адрес" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {userAddresses.map((addr) => (
+                            <SelectItem key={addr.id} value={addr.id.toString()}>
+                              {addr.label}{addr.isDefault ? " (по умолчанию)" : ""}: {addr.address.substring(0, 50)}...
+                            </SelectItem>
+                          ))}
+                          <SelectItem value="new">+ Новый адрес</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
                   <Textarea
                     placeholder="Введите адрес доставки... (обязательно)"
                     value={deliveryAddress}
-                    onChange={(e) => setDeliveryAddress(e.target.value)}
+                    onChange={(e) => {
+                      setDeliveryAddress(e.target.value);
+                      setSelectedAddressId(null); // Clear selection when manually editing
+                    }}
                     className={`min-h-[60px] ${!deliveryAddress.trim() ? 'border-red-300 focus:border-red-500' : ''}`}
                     required
                   />
