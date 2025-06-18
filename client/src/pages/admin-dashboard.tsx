@@ -751,8 +751,18 @@ export default function AdminDashboard() {
                       <Button
                         variant="outline"
                         size="sm"
+                        onClick={() => setProductsPage(1)}
+                        disabled={productsPage === 1}
+                        title="Первая страница"
+                      >
+                        ⟨⟨
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
                         disabled={productsPage === 1}
+                        title="Предыдущая страница"
                       >
                         <ChevronLeft className="h-4 w-4" />
                       </Button>
@@ -764,8 +774,18 @@ export default function AdminDashboard() {
                         size="sm"
                         onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
                         disabled={productsPage === productsTotalPages}
+                        title="Следующая страница"
                       >
                         <ChevronRight className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setProductsPage(productsTotalPages)}
+                        disabled={productsPage === productsTotalPages}
+                        title="Последняя страница"
+                      >
+                        ⟩⟩
                       </Button>
                     </div>
                   </div>
@@ -1027,8 +1047,18 @@ export default function AdminDashboard() {
                       <Button
                         variant="outline"
                         size="sm"
+                        onClick={() => setOrdersPage(1)}
+                        disabled={ordersPage === 1}
+                        title="Первая страница"
+                      >
+                        ⟨⟨
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                         disabled={ordersPage === 1}
+                        title="Предыдущая страница"
                       >
                         <ChevronLeft className="h-4 w-4" />
                       </Button>
@@ -1040,8 +1070,18 @@ export default function AdminDashboard() {
                         size="sm"
                         onClick={() => setOrdersPage(prev => Math.min(ordersTotalPages, prev + 1))}
                         disabled={ordersPage === ordersTotalPages}
+                        title="Следующая страница"
                       >
                         <ChevronRight className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setOrdersPage(ordersTotalPages)}
+                        disabled={ordersPage === ordersTotalPages}
+                        title="Последняя страница"
+                      >
+                        ⟩⟩
                       </Button>
                     </div>
                   </div>
@@ -1117,8 +1157,18 @@ export default function AdminDashboard() {
                       <Button
                         variant="outline"
                         size="sm"
+                        onClick={() => setUsersPage(1)}
+                        disabled={usersPage === 1}
+                        title="Первая страница"
+                      >
+                        ⟨⟨
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
                         disabled={usersPage === 1}
+                        title="Предыдущая страница"
                       >
                         <ChevronLeft className="h-4 w-4" />
                       </Button>
@@ -1130,8 +1180,18 @@ export default function AdminDashboard() {
                         size="sm"
                         onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
                         disabled={usersPage === usersTotalPages}
+                        title="Следующая страница"
                       >
                         <ChevronRight className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUsersPage(usersTotalPages)}
+                        disabled={usersPage === usersTotalPages}
+                        title="Последняя страница"
+                      >
+                        ⟩⟩
                       </Button>
                     </div>
                   </div>
