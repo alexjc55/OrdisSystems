@@ -478,6 +478,7 @@ export default function Profile() {
                       <p className="text-xs text-gray-500">
                         Определяет ваши права в системе
                       </p>
+
                     </div>
                   </div>
 
