@@ -224,8 +224,11 @@ export default function CartSidebar() {
                 <div className="space-y-3">
                   {storeSettings.cartBannerType === "text" && storeSettings.cartBannerText && (
                     <div 
-                      className="rounded-xl p-4 text-center text-white font-semibold shadow-md"
-                      style={{ backgroundColor: storeSettings.cartBannerBgColor || "#f97316" }}
+                      className="rounded-xl p-4 text-center font-semibold shadow-md"
+                      style={{ 
+                        backgroundColor: storeSettings.cartBannerBgColor || "#f97316",
+                        color: storeSettings.cartBannerTextColor || "#ffffff"
+                      }}
                     >
                       <p className="text-sm leading-relaxed">{storeSettings.cartBannerText}</p>
                     </div>

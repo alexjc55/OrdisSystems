@@ -3708,6 +3708,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         cartBannerImage: storeSettings?.cartBannerImage || "",
         cartBannerText: storeSettings?.cartBannerText || "",
         cartBannerBgColor: storeSettings?.cartBannerBgColor || "#f97316",
+        cartBannerTextColor: storeSettings?.cartBannerTextColor || "#ffffff",
       } as any);
     }
   }, [storeSettings, form]);
