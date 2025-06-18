@@ -381,11 +381,12 @@ export default function AdminDashboard() {
         </div>
 
         <Tabs defaultValue="products" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="products">Товары</TabsTrigger>
             <TabsTrigger value="categories">Категории</TabsTrigger>
             <TabsTrigger value="orders">Заказы</TabsTrigger>
             {user.role === 'admin' && <TabsTrigger value="users">Пользователи</TabsTrigger>}
+            <TabsTrigger value="settings">Настройки</TabsTrigger>
           </TabsList>
 
           {/* Enhanced Products Management */}
@@ -914,6 +915,32 @@ export default function AdminDashboard() {
               </Card>
             </TabsContent>
           )}
+
+          {/* Settings Management */}
+          <TabsContent value="settings" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-5 w-5" />
+                  Настройки магазина
+                </CardTitle>
+                <CardDescription>
+                  Конфигурация основных настроек магазина
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {storeSettingsLoading ? (
+                  <div className="text-center py-8">Загрузка...</div>
+                ) : (
+                  <StoreSettingsForm
+                    storeSettings={storeSettings}
+                    onSubmit={handleStoreSettingsSubmit}
+                    isLoading={updateStoreSettingsMutation.isPending}
+                  />
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
 
