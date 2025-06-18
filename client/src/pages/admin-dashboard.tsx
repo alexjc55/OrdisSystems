@@ -489,9 +489,7 @@ export default function AdminDashboard() {
     queryKey: ["/api/store-settings"],
   });
 
-  console.log("Store Settings:", storeSettings);
-  console.log("Store Settings Loading:", storeSettingsLoading);
-  console.log("Store Settings Error:", storeSettingsError);
+
 
   const statusChangeMutation = useStatusChangeHandler();
 
@@ -521,11 +519,7 @@ export default function AdminDashboard() {
 
   const updateStoreSettingsMutation = useMutation({
     mutationFn: async (data: any) => {
-      return await apiRequest("/api/store-settings", {
-        method: "PATCH",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" },
-      });
+      return await apiRequest("/api/store-settings", "PATCH", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/store-settings"] });
