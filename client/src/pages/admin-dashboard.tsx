@@ -714,12 +714,22 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Время</label>
-              <Input
-                type="time"
-                value={editedOrder.deliveryTime}
-                onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryTime: e.target.value }))}
-                className="text-sm"
-              />
+              <Select
+                value={editedOrder.deliveryTime || ""}
+                onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
+              >
+                <SelectTrigger className="text-sm">
+                  <SelectValue placeholder="Выберите время" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10:00-12:00">10:00-12:00</SelectItem>
+                  <SelectItem value="12:00-14:00">12:00-14:00</SelectItem>
+                  <SelectItem value="14:00-16:00">14:00-16:00</SelectItem>
+                  <SelectItem value="16:00-18:00">16:00-18:00</SelectItem>
+                  <SelectItem value="18:00-20:00">18:00-20:00</SelectItem>
+                  <SelectItem value="20:00-22:00">20:00-22:00</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
