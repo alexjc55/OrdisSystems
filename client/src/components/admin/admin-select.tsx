@@ -30,7 +30,13 @@ export function AdminSelect({ value, onValueChange, placeholder, options, classN
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="start">
+      <DropdownMenuContent 
+        className="w-56 z-[60]" 
+        align="start" 
+        side="bottom" 
+        sideOffset={4}
+        style={{ position: 'fixed' }}
+      >
         {options.map((option) => (
           <DropdownMenuItem
             key={option.value}
