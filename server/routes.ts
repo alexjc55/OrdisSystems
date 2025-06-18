@@ -444,6 +444,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Guest order creation
+  app.post('/api/orders/guest', async (req, res) => {
+    try {
+      const { items, totalAmount, guestInfo } = req.body;
+      
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ message: "Invalid order items" });
+      }
+
+      if (!guestInfo || !guestInfo.firstName || !guestInfo.lastName || !guestInfo.email || !guestInfo.phone || !guestInfo.address) {
+        return res.status(400).json({ message: "Guest information is required" });
+      }
+
+      // Create order with guest information
+      const orderData = {
+        userId: null, // Guest order
+        totalAmount,
+        status: "pending" as const,
+        deliveryAddress: guestInfo.address,
+        guestName: `${guestInfo.firstName} ${guestInfo.lastName}`,
+        guestEmail: guestInfo.email,
+        guestPhone: guestInfo.phone
+      };
+
+      const orderItems = items.map((item: any) => ({
+        productId: item.productId,
+        quantity: item.quantity.toString(),
+        pricePerKg: item.pricePerUnit.toString(),
+        totalPrice: item.totalPrice.toString()
+      }));
+
+      const order = await storage.createOrder(orderData, orderItems);
+      res.status(201).json(order);
+    } catch (error) {
+      console.error("Error creating guest order:", error);
+      res.status(500).json({ message: "Failed to create order" });
+    }
+  });
+
   app.post('/api/orders', async (req: any, res) => {
     try {
       let userId = null;
