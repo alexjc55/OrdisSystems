@@ -146,9 +146,9 @@ export default function Header({ onResetView }: HeaderProps) {
             ) : (
               <Button 
                 onClick={() => window.location.href = '/api/login'}
-                className="bg-primary hover:bg-primary/90 text-white hidden md:flex"
+                className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-300/50 text-white hidden md:flex transition-all duration-200"
               >
-                Войти
+                Войти в аккаунт
               </Button>
             )}
 

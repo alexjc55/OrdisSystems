@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency, formatQuantity, formatWeight, type ProductUnit } from "@/lib/currency";
-import { X, Plus, Minus, Trash2, CreditCard, Clock, MapPin, Phone } from "lucide-react";
+import { X, Plus, Minus, Trash2, CreditCard, Clock, MapPin, Phone, User } from "lucide-react";
 
 const DELIVERY_FEE = 15.00;
 
@@ -183,18 +183,8 @@ export default function CartOverlay() {
       return;
     }
 
-    // Проверяем авторизацию перед оформлением заказа
-    if (!user) {
-      toast({
-        title: "Требуется авторизация",
-        description: "Для оформления заказа необходимо войти в систему",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 1500);
-      return;
-    }
+    // Для неавторизованных пользователей создаем заказ как гость
+    // Авторизация не обязательна
 
     // Проверяем обязательные поля
     if (!deliveryAddress.trim()) {
@@ -511,6 +501,47 @@ export default function CartOverlay() {
                     </div>
                   </div>
                 </div>
+
+                {/* Authentication options for guests */}
+                {!user && (
+                  <Card className="bg-orange-50 border-orange-200">
+                    <CardContent className="p-4">
+                      <div className="text-center space-y-3">
+                        <div className="flex items-center justify-center gap-2 mb-3">
+                          <User className="h-5 w-5 text-orange-600" />
+                          <h3 className="font-medium text-gray-900">Войти в аккаунт или продолжить как гость</h3>
+                        </div>
+                        
+                        <p className="text-sm text-gray-600">
+                          Войдите в аккаунт для сохранения данных и истории заказов
+                        </p>
+                        
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => window.location.href = '/api/login'}
+                            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
+                          >
+                            Войти в аккаунт
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="flex-1 border-orange-300 text-orange-700 hover:bg-orange-100"
+                            onClick={() => {
+                              // Просто продолжить как гость - ничего не делаем
+                              // Пользователь может заполнить форму дальше
+                            }}
+                          >
+                            Продолжить как гость
+                          </Button>
+                        </div>
+                        
+                        <p className="text-xs text-gray-500">
+                          Новый клиент? При входе вы сможете зарегистрироваться
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
 
                 {/* Order Notes */}
                 <div className="space-y-3">
