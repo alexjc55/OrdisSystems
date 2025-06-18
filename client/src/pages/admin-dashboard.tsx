@@ -730,57 +730,80 @@ export default function AdminDashboard() {
                             <TableHead className="text-xs sm:text-sm w-16">Иконка</TableHead>
                             <TableHead className="text-xs sm:text-sm">Название</TableHead>
                             <TableHead className="text-xs sm:text-sm w-24 text-center">Товаров</TableHead>
-                            <TableHead className="text-xs sm:text-sm w-32 text-center">Действия</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {(categories as any[] || []).map((category: any) => (
-                            <TableRow key={category.id}>
+                            <TableRow key={category.id} className="group hover:bg-gray-50">
                               <TableCell className="text-xl sm:text-2xl text-center">{category.icon}</TableCell>
-                              <TableCell className="font-medium text-sm sm:text-base">{category.name}</TableCell>
-                              <TableCell className="text-center">
-                                <Badge variant="secondary" className="text-xs">
-                                  {category.products?.length || 0}
-                                </Badge>
-                              </TableCell>
                               <TableCell>
-                                <div className="flex items-center justify-center gap-2">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="h-8 w-8 p-0 hover:bg-blue-50 hover:border-blue-300"
+                                <div className="flex items-center justify-between">
+                                  <button
                                     onClick={() => {
                                       setEditingCategory(category);
                                       setIsCategoryFormOpen(true);
                                     }}
+                                    className="font-medium text-sm sm:text-base hover:text-blue-600 cursor-pointer text-left flex-1"
                                   >
-                                    <Edit2 className="h-3 w-3 text-blue-600" />
-                                  </Button>
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                      <Button variant="outline" size="sm" className="h-8 w-8 p-0 hover:bg-red-50 hover:border-red-300">
-                                        <Trash2 className="h-3 w-3 text-red-600" />
-                                      </Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
-                                      <AlertDialogHeader>
-                                        <AlertDialogTitle className="text-sm sm:text-base">Удалить категорию</AlertDialogTitle>
-                                        <AlertDialogDescription className="text-xs sm:text-sm">
-                                          Вы уверены, что хотите удалить категорию "{category.name}"? Все товары этой категории также будут удалены.
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                                        <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">Отмена</AlertDialogCancel>
-                                        <AlertDialogAction
-                                          onClick={() => deleteCategoryMutation.mutate(category.id)}
-                                          className="bg-red-600 text-white hover:bg-red-600 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-xs sm:text-sm"
-                                        >
-                                          Удалить
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
+                                    {category.name}
+                                    {category.description && (
+                                      <div className="text-xs text-gray-500 mt-1">{category.description}</div>
+                                    )}
+                                  </button>
+                                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="h-8 w-8 p-0 hover:bg-blue-50 hover:border-blue-300"
+                                      onClick={() => {
+                                        setEditingCategory(category);
+                                        setIsCategoryFormOpen(true);
+                                      }}
+                                    >
+                                      <Edit2 className="h-3 w-3 text-blue-600" />
+                                    </Button>
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        <Button variant="outline" size="sm" className="h-8 w-8 p-0 hover:bg-red-50 hover:border-red-300">
+                                          <Trash2 className="h-3 w-3 text-red-600" />
+                                        </Button>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle className="text-sm sm:text-base">Удалить категорию</AlertDialogTitle>
+                                          <AlertDialogDescription className="text-xs sm:text-sm">
+                                            Вы уверены, что хотите удалить категорию "{category.name}"? Все товары этой категории также будут удалены.
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                                          <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">Отмена</AlertDialogCancel>
+                                          <AlertDialogAction
+                                            onClick={() => deleteCategoryMutation.mutate(category.id)}
+                                            className="bg-red-600 text-white hover:bg-red-600 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-xs sm:text-sm"
+                                          >
+                                            Удалить
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                  </div>
                                 </div>
+                              </TableCell>
+                              <TableCell className="text-center">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedCategoryFilter(category.id.toString());
+                                    const productsTab = document.querySelector('[value="products"]') as HTMLElement;
+                                    if (productsTab) productsTab.click();
+                                  }}
+                                  className="h-auto p-1 hover:bg-blue-50"
+                                >
+                                  <Badge variant="secondary" className="text-xs hover:bg-blue-100">
+                                    {category.products?.length || 0}
+                                  </Badge>
+                                </Button>
                               </TableCell>
                             </TableRow>
                           ))}
