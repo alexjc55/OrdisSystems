@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AdminSelect } from "@/components/admin/admin-select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
@@ -1034,30 +1035,31 @@ export default function AdminDashboard() {
                       className="pl-10"
                     />
                   </div>
-                  <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
-                    <SelectTrigger className="w-full sm:w-[200px]">
-                      <SelectValue placeholder="Все категории" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Все категории</SelectItem>
-                      {categories.map((category: any) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
-                    <SelectTrigger className="w-full sm:w-[200px]">
-                      <SelectValue placeholder="Все статусы" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Все статусы</SelectItem>
-                      <SelectItem value="available">Доступные</SelectItem>
-                      <SelectItem value="unavailable">Недоступные</SelectItem>
-                      <SelectItem value="with_discount">Со скидкой</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <AdminSelect
+                    value={selectedCategoryFilter}
+                    onValueChange={setSelectedCategoryFilter}
+                    placeholder="Все категории"
+                    className="w-full sm:w-[200px]"
+                    options={[
+                      { value: "all", label: "Все категории" },
+                      ...categories.map((category: any) => ({
+                        value: category.id.toString(),
+                        label: category.name
+                      }))
+                    ]}
+                  />
+                  <AdminSelect
+                    value={selectedStatusFilter}
+                    onValueChange={setSelectedStatusFilter}
+                    placeholder="Все статусы"
+                    className="w-full sm:w-[200px]"
+                    options={[
+                      { value: "all", label: "Все статусы" },
+                      { value: "available", label: "Доступные" },
+                      { value: "unavailable", label: "Недоступные" },
+                      { value: "with_discount", label: "Со скидкой" }
+                    ]}
+                  />
                 </div>
 
                 {productsLoading ? (
