@@ -565,7 +565,7 @@ export class DatabaseStorage implements IStorage {
     
     // Filter by role
     if (status && status !== 'all') {
-      conditions.push(eq(users.role, status));
+      conditions.push(sql`${users.role} = ${status}`);
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
