@@ -54,7 +54,8 @@ import {
   User,
   Eye,
   X,
-  MessageCircle
+  MessageCircle,
+  Code
 } from "lucide-react";
 
 // Validation schemas
@@ -4458,6 +4459,76 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </div>
           )}
         </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Код отслеживания */}
+        <Collapsible open={isTrackingCodeOpen} onOpenChange={setIsTrackingCodeOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+                <Code className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">Код отслеживания</h3>
+                {isTrackingCodeOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="space-y-6">
+            <FormField
+              control={form.control}
+              name="headerHtml"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm flex items-center gap-2">
+                    <Code className="h-4 w-4" />
+                    HTML код для секции head
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="<!-- Добавьте сюда код Google Analytics, Facebook Pixel, или другие трекинговые скрипты -->" 
+                      className="text-sm font-mono min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs text-gray-500">
+                    Этот код будет добавлен в секцию &lt;head&gt; всех страниц сайта. Используйте для Google Analytics, Facebook Pixel и других систем аналитики.
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="footerHtml"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm flex items-center gap-2">
+                    <Code className="h-4 w-4" />
+                    HTML код для подвала сайта
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="<!-- Добавьте сюда код чатов, кнопок соц. сетей или другие виджеты -->" 
+                      className="text-sm font-mono min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs text-gray-500">
+                    Этот код будет добавлен в конец страницы перед закрывающим тегом &lt;/body&gt;. Используйте для онлайн-чатов, кнопок соц. сетей и других виджетов.
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
           </CollapsibleContent>
         </Collapsible>
 
