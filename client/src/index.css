@@ -354,41 +354,23 @@ button[role="switch"]:not(.carousel-dot),
     border-radius: 50% !important;
   }
 
-  /* Fix dropdown menu z-index on mobile - comprehensive solution */
-  [data-radix-dropdown-menu-content],
-  [data-radix-select-content],
-  [data-radix-navigation-menu-content],
-  [data-radix-popover-content] {
-    z-index: 99999 !important;
+  /* Global fix for dropdown overflow clipping on mobile */
+  .admin-dashboard * {
+    overflow: visible !important;
+  }
+
+  /* Reset specific overflow properties that clip dropdowns */
+  .admin-dashboard .overflow-hidden,
+  .admin-dashboard .overflow-auto,
+  .admin-dashboard .overflow-y-auto,
+  .admin-dashboard .overflow-x-hidden {
+    overflow: visible !important;
+  }
+
+  /* Force Radix Select to use proper positioning */
+  [data-radix-select-content] {
     position: fixed !important;
-  }
-
-  /* Ensure all dropdown portals appear above everything */
-  [data-radix-dropdown-menu-portal],
-  [data-radix-select-portal],
-  [data-radix-popover-portal] {
-    z-index: 99999 !important;
-  }
-
-  /* Reset stacking contexts that interfere with dropdowns */
-  [data-radix-tabs-content] {
-    isolation: auto !important;
-    transform: none !important;
-    contain: none !important;
-  }
-
-  /* Prevent Card components from creating new stacking contexts */
-  .admin-dashboard [data-radix-tabs-content] * {
-    isolation: auto !important;
-    contain: none !important;
-  }
-
-  /* Override any z-index on cards to prevent interference */
-  .admin-dashboard .bg-card,
-  .admin-dashboard .border {
-    z-index: auto !important;
-    isolation: auto !important;
-    position: static !important;
+    z-index: 9999 !important;
   }
 }
 
