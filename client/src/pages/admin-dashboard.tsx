@@ -499,8 +499,8 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Search and Filter Controls */}
-                <div className="flex flex-col gap-3">
-                  <div className="relative">
+                <div className="flex flex-col lg:flex-row gap-3">
+                  <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
                       placeholder="Поиск товаров..."
@@ -509,37 +509,52 @@ export default function AdminDashboard() {
                       className="pl-10 text-sm"
                     />
                   </div>
-                  <div className="relative">
-                    <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
-                      <SelectTrigger className="pl-10 text-sm">
-                        <SelectValue placeholder="Все категории" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        <SelectItem value="all">Все категории</SelectItem>
-                        {(categories as any[] || []).map((category: any) => (
-                          <SelectItem 
-                            key={category.id} 
-                            value={category.id.toString()}
-                          >
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="relative">
-                    <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Select value={selectedAvailabilityFilter} onValueChange={setSelectedAvailabilityFilter}>
-                      <SelectTrigger className="pl-10 text-sm">
-                        <SelectValue placeholder="Все товары" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        <SelectItem value="all">Все товары</SelectItem>
-                        <SelectItem value="available">Доступные</SelectItem>
-                        <SelectItem value="unavailable">Недоступные</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="flex flex-col sm:flex-row gap-3 lg:flex-shrink-0">
+                    <div className="relative min-w-[180px]">
+                      <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
+                        <SelectTrigger className="pl-10 text-sm">
+                          <SelectValue placeholder="Все категории" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white">
+                          <SelectItem value="all">Все категории</SelectItem>
+                          {(categories as any[] || []).map((category: any) => (
+                            <SelectItem 
+                              key={category.id} 
+                              value={category.id.toString()}
+                            >
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="relative min-w-[150px]">
+                      <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Select value={selectedAvailabilityFilter} onValueChange={setSelectedAvailabilityFilter}>
+                        <SelectTrigger className="pl-10 text-sm">
+                          <SelectValue placeholder="Наличие" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white">
+                          <SelectItem value="all">Все товары</SelectItem>
+                          <SelectItem value="available">Доступные</SelectItem>
+                          <SelectItem value="unavailable">Недоступные</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="relative min-w-[150px]">
+                      <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Select value={selectedDiscountFilter} onValueChange={setSelectedDiscountFilter}>
+                        <SelectTrigger className="pl-10 text-sm">
+                          <SelectValue placeholder="Скидки" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white">
+                          <SelectItem value="all">Все товары</SelectItem>
+                          <SelectItem value="with_discount">Со скидкой</SelectItem>
+                          <SelectItem value="without_discount">Без скидки</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
 
