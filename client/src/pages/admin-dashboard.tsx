@@ -873,7 +873,16 @@ export default function AdminDashboard() {
                                     <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">Отмена</AlertDialogCancel>
                                     <AlertDialogAction
                                       onClick={() => deleteCategoryMutation.mutate(category.id)}
-                                      className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 transition-colors duration-200 text-xs sm:text-sm"
+                                      className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 focus:bg-red-700 data-[state=open]:bg-red-700 transition-colors duration-200 text-xs sm:text-sm"
+                                      style={{ backgroundColor: 'rgb(220 38 38)', borderColor: 'rgb(220 38 38)' }}
+                                      onMouseEnter={(e) => {
+                                        e.currentTarget.style.backgroundColor = 'rgb(185 28 28)';
+                                        e.currentTarget.style.borderColor = 'rgb(185 28 28)';
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        e.currentTarget.style.backgroundColor = 'rgb(220 38 38)';
+                                        e.currentTarget.style.borderColor = 'rgb(220 38 38)';
+                                      }}
                                     >
                                       Удалить
                                     </AlertDialogAction>
