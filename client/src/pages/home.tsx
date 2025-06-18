@@ -353,7 +353,7 @@ export default function Home() {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 min-w-0">
+                  <div className="grid gap-4 min-w-0" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
                     {categories.map((category) => (
                       <Card 
                         key={category.id} 
@@ -450,11 +450,12 @@ export default function Home() {
                             <button
                               key={index}
                               onClick={() => goToSlide(index)}
-                              className={`w-3 h-3 rounded-full transition-colors flex-shrink-0 ${
+                              className={`w-3 h-3 rounded-full transition-colors flex-shrink-0 aspect-square ${
                                 index === currentSlide 
                                   ? 'bg-orange-500' 
                                   : 'bg-gray-300 hover:bg-orange-400'
                               }`}
+                              style={{ width: '12px', height: '12px' }}
                               aria-label={`Go to slide ${index + 1}`}
                             />
                           ))}
