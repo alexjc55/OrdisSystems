@@ -1514,15 +1514,91 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
             <FormField
               control={form.control}
               name="icon"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm">Иконка (эмодзи)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="🍽️" {...field} className="text-sm" />
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                const commonIcons = [
+                  "🥗", "🍖", "🐟", "🥩", "🥕", "🍎", "🍞", "🥛", 
+                  "🍽️", "🥘", "🍱", "🥙", "🧀", "🍯", "🥜", "🍲",
+                  "🍰", "🥧", "🍚", "🌮", "🍕", "🍝", "🥪", "🌯"
+                ];
+                
+                return (
+                  <FormItem>
+                    <FormLabel className="text-sm">Иконка категории</FormLabel>
+                    <div className="space-y-3">
+                      {/* Current selected icon display */}
+                      <div className="flex items-center gap-3 p-3 border rounded-lg bg-gray-50">
+                        <span className="text-2xl">{field.value}</span>
+                        <div className="flex-1">
+                          <div className="text-sm font-medium">Выбранная иконка</div>
+                          <div className="text-xs text-gray-500">Нажмите на иконку ниже для выбора</div>
+                        </div>
+                      </div>
+                      
+                      {/* Icon grid selector */}
+                      <div>
+                        <div className="text-xs text-gray-600 mb-2">Популярные иконки:</div>
+                        <div className="grid grid-cols-8 gap-2">
+                          {commonIcons.map((icon) => (
+                            <Button
+                              key={icon}
+                              type="button"
+                              variant={field.value === icon ? "default" : "outline"}
+                              className={`h-10 w-10 p-0 text-lg ${
+                                field.value === icon 
+                                  ? "bg-orange-500 border-orange-500 hover:bg-orange-600" 
+                                  : "hover:bg-orange-50 hover:border-orange-300"
+                              }`}
+                              onClick={() => field.onChange(icon)}
+                            >
+                              {icon}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Custom icon input */}
+                      <div>
+                        <div className="text-xs text-gray-600 mb-2">Или введите свою иконку:</div>
+                        <FormControl>
+                          <Input 
+                            placeholder="🍽️ Введите эмодзи"
+                            value={field.value}
+                            onChange={(e) => field.onChange(e.target.value)}
+                            className="text-sm"
+                          />
+                        </FormControl>
+                      </div>
+                      
+                      {/* Image upload option */}
+                      <div>
+                        <div className="text-xs text-gray-600 mb-2">Или загрузите изображение:</div>
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-orange-300 transition-colors">
+                          <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                          <div className="text-xs text-gray-500">
+                            Перетащите файл сюда или нажмите для выбора
+                          </div>
+                          <div className="text-xs text-gray-400 mt-1">
+                            Рекомендуемый размер: 64×64 пикселей
+                          </div>
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            size="sm" 
+                            className="mt-2 text-xs"
+                            onClick={() => {
+                              // TODO: Implement image upload functionality
+                              alert("Функция загрузки изображений будет добавлена в следующем обновлении");
+                            }}
+                          >
+                            Выбрать файл
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                );
+              }}
             />
 
             <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
