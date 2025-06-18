@@ -453,11 +453,11 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
       case 'piece': return `${qty} шт.`;
       case 'kg': return `${qty} кг`;
       case '100g': 
-        if (qty >= 10) {
-          return `${(qty / 10).toFixed(1)} кг`;
+        if (qty >= 1000) {
+          return `${(qty / 1000).toFixed(1)} кг`;
         }
-        return `${qty * 100} грамм`;
-      case '100ml': return `${qty * 100} мл`;
+        return `${qty} г`;
+      case '100ml': return `${qty} мл`;
       default: return `${qty}`;
     }
   };

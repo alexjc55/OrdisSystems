@@ -778,7 +778,16 @@ export default function Profile() {
                                 {formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit)}
                               </TableCell>
                               <TableCell>
-                                {formatCurrency(item.product.price)} {getUnitShortLabel((item.product.unit || "100g") as ProductUnit)}
+                                {(() => {
+                                  const unit = (item.product.unit || "100g") as ProductUnit;
+                                  switch (unit) {
+                                    case 'piece': return `${formatCurrency(item.product.price)} за шт.`;
+                                    case 'kg': return `${formatCurrency(item.product.price)} за кг`;
+                                    case '100g': return `${formatCurrency(item.product.price)} за 100г`;
+                                    case '100ml': return `${formatCurrency(item.product.price)} за 100мл`;
+                                    default: return formatCurrency(item.product.price);
+                                  }
+                                })()}
                               </TableCell>
                               <TableCell>
                                 {itemDiscount ? (
