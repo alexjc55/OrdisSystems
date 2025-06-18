@@ -292,7 +292,7 @@ export default function Checkout() {
                       />
                     </div>
                     
-                    {addresses && addresses.length > 0 && (
+                    {addresses && Array.isArray(addresses) && addresses.length > 0 && (
                       <div>
                         <Label>Или выберите из сохраненных адресов:</Label>
                         <div className="mt-2 space-y-2">
