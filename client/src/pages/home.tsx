@@ -161,6 +161,7 @@ export default function Home() {
         />
 
         <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
+          <div className="max-w-7xl mx-auto">
           {/* Search Bar */}
           <div className="mb-8">
             <div className="mb-6">
@@ -567,6 +568,7 @@ export default function Home() {
               )}
             </div>
           )}
+          </div>
         </main>
       </div>
 
