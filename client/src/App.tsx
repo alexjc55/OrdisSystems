@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ErrorBoundary from "@/components/error-boundary";
 import { useAuth } from "@/hooks/useAuth";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
+import { CustomHtml } from "@/components/custom-html";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 import AdminDashboard from "@/pages/admin-dashboard";
@@ -13,6 +15,7 @@ import NotFound from "@/pages/not-found";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
+  const { storeSettings } = useStoreSettings();
 
   if (isLoading) {
     return (
@@ -24,6 +27,11 @@ function Router() {
 
   return (
     <ErrorBoundary>
+      {/* Render custom header HTML/JS */}
+      {storeSettings?.headerHtml && (
+        <CustomHtml html={storeSettings.headerHtml} type="head" />
+      )}
+      
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/admin" component={AdminDashboard} />
@@ -31,6 +39,11 @@ function Router() {
         <Route path="/landing" component={Landing} />
         <Route component={NotFound} />
       </Switch>
+      
+      {/* Render custom footer HTML/JS */}
+      {storeSettings?.footerHtml && (
+        <CustomHtml html={storeSettings.footerHtml} type="footer" />
+      )}
     </ErrorBoundary>
   );
 }

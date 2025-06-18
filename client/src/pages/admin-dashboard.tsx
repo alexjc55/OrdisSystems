@@ -82,6 +82,8 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   bottomBanner1Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
   bottomBanner2Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
   cancellationReasons: z.array(z.string()).optional(),
+  headerHtml: z.string().optional(),
+  footerHtml: z.string().optional(),
 });
 
 
@@ -3624,7 +3626,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       bottomBanner2Link: storeSettings?.bottomBanner2Link || "",
       showBottomBanners: storeSettings?.showBottomBanners !== false,
       defaultItemsPerPage: storeSettings?.defaultItemsPerPage || 10,
-    },
+      headerHtml: storeSettings?.headerHtml || "",
+      footerHtml: storeSettings?.footerHtml || "",
+    } as any,
   });
 
   // Reset form when storeSettings changes
@@ -3668,7 +3672,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         defaultItemsPerPage: storeSettings?.defaultItemsPerPage || 10,
         headerHtml: storeSettings?.headerHtml || "",
         footerHtml: storeSettings?.footerHtml || "",
-      });
+      } as any);
     }
   }, [storeSettings, form]);
 
