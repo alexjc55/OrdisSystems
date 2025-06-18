@@ -132,10 +132,6 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: {
               <span className="font-medium">{formatCurrency(order.totalAmount)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Товаров:</span>
-              <span>{order.items.length}</span>
-            </div>
-            <div className="flex justify-between">
               <span className="text-gray-500">Время:</span>
               <span>{new Date(order.createdAt).toLocaleString('ru-RU')}</span>
             </div>
