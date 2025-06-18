@@ -78,10 +78,24 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   contactEmail: z.string().email("Неверный формат email").optional().or(z.literal("")),
   bottomBanner1Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
   bottomBanner2Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
+  cancellationReasons: z.array(z.string()).optional(),
 });
 
+// Handle status change with cancellation confirmation
+function useStatusChangeHandler() {
+  const handleStatusChange = (orderId: number, newStatus: string, onCancel: (id: number) => void, onConfirm: (data: { orderId: number, status: string }) => void) => {
+    if (newStatus === 'cancelled') {
+      onCancel(orderId);
+    } else {
+      onConfirm({ orderId, status: newStatus });
+    }
+  };
+  
+  return handleStatusChange;
+}
+
 // OrderCard component for kanban view
-function OrderCard({ order, onEdit, onStatusChange }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void }) {
+function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
@@ -184,7 +198,11 @@ function OrderCard({ order, onEdit, onStatusChange }: { order: any, onEdit: (ord
             <Select
               value={order.status}
               onValueChange={(newStatus) => {
-                onStatusChange({ orderId: order.id, status: newStatus });
+                if (newStatus === 'cancelled') {
+                  onCancelOrder(order.id);
+                } else {
+                  onStatusChange({ orderId: order.id, status: newStatus });
+                }
               }}
             >
               <SelectTrigger className="w-20 h-7 text-xs">
@@ -420,6 +438,12 @@ export default function AdminDashboard() {
   const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<any>(null);
   const [ordersStatusFilter, setOrdersStatusFilter] = useState("active"); // active, delivered, cancelled, all
+  
+  // Cancellation dialog state
+  const [isCancellationDialogOpen, setIsCancellationDialogOpen] = useState(false);
+  const [orderToCancelId, setOrderToCancelId] = useState<number | null>(null);
+  const [cancellationReason, setCancellationReason] = useState("");
+  const [customCancellationReason, setCustomCancellationReason] = useState("");
 
   // Pagination state
   const [productsPage, setProductsPage] = useState(1);
@@ -1532,21 +1556,21 @@ export default function AdminDashboard() {
                           </div>
                         </div>
 
-                        {/* Cancelled Column */}
-                        <div className="bg-red-50 rounded-lg p-4 min-w-80">
-                          <h3 className="font-semibold text-sm mb-3 text-red-800 flex items-center gap-2">
-                            <X className="h-4 w-4" />
-                            Отменен ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
-                          </h3>
-                          <div className="space-y-3">
-                            {ordersResponse.data.filter((order: any) => order.status === 'cancelled').map((order: any) => (
-                              <OrderCard key={order.id} order={order} onEdit={(order) => {
-                                setEditingOrder(order);
-                                setIsOrderFormOpen(true);
-                              }} onStatusChange={updateOrderStatusMutation.mutate} />
-                            ))}
+                          {/* Cancelled Column */}
+                          <div className="bg-red-50 rounded-lg p-4 min-w-80">
+                            <h3 className="font-semibold text-sm mb-3 text-red-800 flex items-center gap-2">
+                              <X className="h-4 w-4" />
+                              Отменен ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
+                            </h3>
+                            <div className="space-y-3">
+                              {ordersResponse.data.filter((order: any) => order.status === 'cancelled').map((order: any) => (
+                                <OrderCard key={order.id} order={order} onEdit={(order) => {
+                                  setEditingOrder(order);
+                                  setIsOrderFormOpen(true);
+                                }} onStatusChange={updateOrderStatusMutation.mutate} />
+                              ))}
+                            </div>
                           </div>
-                        </div>
                         </div>
                       </div>
                     )}

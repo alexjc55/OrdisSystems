@@ -134,6 +134,7 @@ export const storeSettings = pgTable("store_settings", {
   bottomBanner2Link: varchar("bottom_banner2_link", { length: 500 }),
   showBottomBanners: boolean("show_bottom_banners").default(false),
   defaultItemsPerPage: integer("default_items_per_page").default(10), // Default pagination size
+  cancellationReasons: jsonb("cancellation_reasons"), // Array of cancellation reason strings
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
