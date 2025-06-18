@@ -471,6 +471,15 @@ export default function AdminDashboard() {
     orderId: number | null;
   }>({ open: false, orderId: null });
 
+  // Product and category management states
+  const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [showProductDialog, setShowProductDialog] = useState(false);
+  const [showCategoryDialog, setShowCategoryDialog] = useState(false);
+  
+  // View mode for orders (kanban or table)
+  const [viewMode, setViewMode] = useState<'kanban' | 'table'>('kanban');
+
   const cancellationReasons = [
     "Клиент отменил заказ",
     "Товар закончился",
@@ -482,6 +491,16 @@ export default function AdminDashboard() {
   // Orders data
   const { data: orders = [], isLoading: ordersLoading } = useQuery({
     queryKey: ["/api/orders"],
+  });
+
+  // Products data
+  const { data: products = [], isLoading: productsLoading } = useQuery({
+    queryKey: ["/api/products"],
+  });
+
+  // Categories data
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
+    queryKey: ["/api/categories"],
   });
 
   // Store settings data
@@ -597,8 +616,10 @@ export default function AdminDashboard() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="orders">Заказы</TabsTrigger>
+            <TabsTrigger value="products">Товары</TabsTrigger>
+            <TabsTrigger value="categories">Категории</TabsTrigger>
             <TabsTrigger value="settings">Настройки</TabsTrigger>
           </TabsList>
 
@@ -657,6 +678,194 @@ export default function AdminDashboard() {
                         onStatusChange={handleStatusChange}
                         onCancelOrder={handleCancelOrder}
                       />
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="products" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Package className="h-5 w-5" />
+                      Управление товарами
+                    </CardTitle>
+                    <CardDescription>
+                      Добавление, редактирование и удаление товаров
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => {
+                    setEditingProduct(null);
+                    setShowProductDialog(true);
+                  }}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Добавить товар
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {productsLoading ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Название</TableHead>
+                          <TableHead>Категория</TableHead>
+                          <TableHead>Цена</TableHead>
+                          <TableHead>Единица</TableHead>
+                          <TableHead>Доступность</TableHead>
+                          <TableHead>Действия</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {products.map((product: any) => (
+                          <TableRow key={product.id}>
+                            <TableCell className="font-medium">{product.name}</TableCell>
+                            <TableCell>{product.category?.name || 'Без категории'}</TableCell>
+                            <TableCell>{formatCurrency(product.price)}</TableCell>
+                            <TableCell>{getUnitLabel(product.unit)}</TableCell>
+                            <TableCell>
+                              <Badge variant={product.isAvailable ? "default" : "secondary"}>
+                                {product.isAvailable ? "Доступен" : "Недоступен"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setEditingProduct(product);
+                                    setShowProductDialog(true);
+                                  }}
+                                >
+                                  <Edit2 className="h-4 w-4" />
+                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button variant="outline" size="sm">
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Удалить товар?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Это действие нельзя отменить. Товар будет удален навсегда.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Отмена</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => {
+                                          // Delete product logic here
+                                        }}
+                                      >
+                                        Удалить
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="categories" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Utensils className="h-5 w-5" />
+                      Управление категориями
+                    </CardTitle>
+                    <CardDescription>
+                      Добавление, редактирование и удаление категорий товаров
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => {
+                    setEditingCategory(null);
+                    setShowCategoryDialog(true);
+                  }}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Добавить категорию
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {categoriesLoading ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {categories.map((category: any) => (
+                      <Card key={category.id}>
+                        <CardHeader>
+                          <div className="flex items-center justify-between">
+                            <CardTitle className="text-lg">{category.name}</CardTitle>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setEditingCategory(category);
+                                  setShowCategoryDialog(true);
+                                }}
+                              >
+                                <Edit2 className="h-4 w-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="outline" size="sm">
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Удалить категорию?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Это действие нельзя отменить. Категория и все товары в ней будут удалены.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Отмена</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => {
+                                        // Delete category logic here
+                                      }}
+                                    >
+                                      Удалить
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </div>
+                          <CardDescription>{category.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-sm text-gray-600">
+                            Товаров: {category.products?.length || 0}
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 )}
