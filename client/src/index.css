@@ -82,13 +82,18 @@
     font-family: 'Inter', sans-serif;
   }
 
-  /* Switch styling */
+  /* Switch styling - Green when active, Grey when inactive */
   .switch-green[data-state="checked"] {
-    background-color: hsl(142, 51%, 45%); /* Green when active */
+    background-color: hsl(142, 51%, 45%) !important; /* Green when active */
   }
   
   .switch-green[data-state="unchecked"] {
-    background-color: hsl(0, 0%, 75%); /* Grey when inactive */
+    background-color: hsl(0, 0%, 75%) !important; /* Grey when inactive */
+  }
+  
+  /* Override default switch styling for consistent colors */
+  .switch-green {
+    border: none !important;
   }
 
   /* RTL support preparation */
@@ -157,14 +162,7 @@
     color: hsl(var(--success));
   }
 
-  /* Custom Switch styling for admin toggles */
-  .switch-admin[data-state="checked"] {
-    background-color: #22c55e !important;
-  }
-  
-  .switch-admin[data-state="unchecked"] {
-    background-color: #9ca3af !important;
-  }
+
   
   .bg-warning {
     background-color: hsl(var(--warning));
