@@ -365,7 +365,13 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
 
   const applyItemDiscount = (index: number, discountType: 'percentage' | 'amount', discountValue: number, reason: string) => {
     const updatedDiscounts = { ...itemDiscounts };
-    updatedDiscounts[index] = { type: discountType, value: discountValue, reason };
+    
+    // If discount value is 0, remove the discount
+    if (discountValue === 0) {
+      delete updatedDiscounts[index];
+    } else {
+      updatedDiscounts[index] = { type: discountType, value: discountValue, reason };
+    }
     setItemDiscounts(updatedDiscounts);
     
     // Recalculate item price
@@ -374,10 +380,12 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     const basePrice = item.quantity * item.pricePerUnit;
     let finalPrice = basePrice;
     
-    if (discountType === 'percentage') {
-      finalPrice = basePrice * (1 - discountValue / 100);
-    } else {
-      finalPrice = Math.max(0, basePrice - discountValue);
+    if (discountValue > 0) {
+      if (discountType === 'percentage') {
+        finalPrice = basePrice * (1 - discountValue / 100);
+      } else {
+        finalPrice = Math.max(0, basePrice - discountValue);
+      }
     }
     
     updatedItems[index] = { ...item, totalPrice: finalPrice };
@@ -577,11 +585,16 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
                   <TableCell className="text-sm">
                     <div className="flex items-center gap-1">
                       {itemDiscounts[index] ? (
-                        <div className="text-xs text-red-600">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setShowDiscountDialog(index)}
+                          className="h-6 px-2 text-xs text-red-600 border-red-200 hover:bg-red-50"
+                        >
                           {itemDiscounts[index].type === 'percentage' 
                             ? `${itemDiscounts[index].value}%` 
                             : `₪${itemDiscounts[index].value}`}
-                        </div>
+                        </Button>
                       ) : (
                         <Button
                           size="sm"
@@ -882,7 +895,7 @@ function ItemDiscountDialog({
               type="number"
               step="0.01"
               min="0"
-              max={discountType === 'percentage' ? 100 : basePrice}
+              max={discountType === 'percentage' ? "100" : basePrice.toString()}
               value={discountValue}
               onChange={(e) => setDiscountValue(parseFloat(e.target.value) || 0)}
             />
