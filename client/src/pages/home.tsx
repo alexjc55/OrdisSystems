@@ -368,19 +368,19 @@ export default function Home() {
                           {specialOffers.map((product) => (
                             <CarouselItem 
                               key={product.id} 
-                              className="basis-1/3 flex flex-col flex-shrink-0"
+                              className="min-w-0 shrink-0 grow-0 basis-1/3 flex flex-col flex-shrink-0 pl-[0px] pr-[0px]"
                             >
                               <div className="relative flex-1 flex">
-                                <div className="transform scale-90 origin-center w-full">
+                                <div className="transform scale-90 origin-center w-full relative">
                                   <ProductCard 
                                     product={product} 
                                     onCategoryClick={handleCategorySelect}
                                   />
+                                  <Badge className="absolute top-2 left-2 bg-orange-500 text-white z-10 text-xs">
+                                    <Star className="w-2 h-2 mr-1" />
+                                    {storeSettings?.discountBadgeText || "Скидка"}
+                                  </Badge>
                                 </div>
-                                <Badge className="absolute top-2 left-2 bg-orange-500 text-white z-10 text-xs">
-                                  <Star className="w-2 h-2 mr-1" />
-                                  {storeSettings?.discountBadgeText || "Скидка"}
-                                </Badge>
                               </div>
                             </CarouselItem>
                           ))}
