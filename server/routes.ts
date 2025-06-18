@@ -760,6 +760,127 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Password Management Routes
+  
+  // Change password for authenticated user
+  app.post('/api/auth/change-password', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { currentPassword, newPassword } = req.body;
+
+      if (!newPassword || newPassword.length < 6) {
+        return res.status(400).json({ message: "Новый пароль должен содержать минимум 6 символов" });
+      }
+
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+
+      // If user has an existing password, verify current password
+      if (user.password) {
+        if (!currentPassword) {
+          return res.status(400).json({ message: "Необходимо указать текущий пароль" });
+        }
+        
+        const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+        if (!isCurrentPasswordValid) {
+          return res.status(400).json({ message: "Неверный текущий пароль" });
+        }
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await storage.updatePassword(userId, hashedPassword);
+
+      res.json({ message: "Пароль успешно изменен" });
+    } catch (error) {
+      console.error("Error changing password:", error);
+      res.status(500).json({ message: "Ошибка при изменении пароля" });
+    }
+  });
+
+  // Request password reset
+  app.post('/api/auth/forgot-password', async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({ message: "Email обязателен" });
+      }
+
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        // Don't reveal if email exists or not for security
+        return res.json({ message: "Если пользователь с таким email существует, инструкции отправлены на почту" });
+      }
+
+      const { token } = await storage.createPasswordResetToken(email);
+      
+      // In production, send email here
+      console.log(`Password reset token for ${email}: ${token}`);
+      
+      res.json({ message: "Если пользователь с таким email существует, инструкции отправлены на почту" });
+    } catch (error) {
+      console.error("Error requesting password reset:", error);
+      res.status(500).json({ message: "Ошибка при запросе сброса пароля" });
+    }
+  });
+
+  // Reset password with token
+  app.post('/api/auth/reset-password', async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+
+      if (!token || !newPassword) {
+        return res.status(400).json({ message: "Токен и новый пароль обязательны" });
+      }
+
+      if (newPassword.length < 6) {
+        return res.status(400).json({ message: "Пароль должен содержать минимум 6 символов" });
+      }
+
+      const { userId, isValid } = await storage.validatePasswordResetToken(token);
+      if (!isValid) {
+        return res.status(400).json({ message: "Недействительный или истекший токен" });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await storage.updatePassword(userId, hashedPassword);
+
+      res.json({ message: "Пароль успешно сброшен" });
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      res.status(500).json({ message: "Ошибка при сбросе пароля" });
+    }
+  });
+
+  // Admin route to set password for any user
+  app.post('/api/admin/users/:id/set-password', isAuthenticated, async (req: any, res) => {
+    try {
+      const adminUserId = req.user.claims.sub;
+      const adminUser = await storage.getUser(adminUserId);
+      
+      if (!adminUser || adminUser.email !== "alexjc55@gmail.com") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const { id } = req.params;
+      const { password } = req.body;
+
+      if (!password || password.length < 6) {
+        return res.status(400).json({ message: "Пароль должен содержать минимум 6 символов" });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await storage.updatePassword(id, hashedPassword);
+
+      res.json({ message: "Пароль успешно установлен" });
+    } catch (error) {
+      console.error("Error setting user password:", error);
+      res.status(500).json({ message: "Ошибка при установке пароля" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

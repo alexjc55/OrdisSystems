@@ -4629,6 +4629,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
     lastName: z.string().min(1, "Фамилия обязательна"),
     phone: z.string().optional(),
     role: z.enum(["admin", "worker", "customer"]),
+    password: z.string().optional(),
   });
 
   type UserFormData = z.infer<typeof userSchema>;
@@ -4641,6 +4642,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
       lastName: "",
       phone: "",
       role: "customer",
+      password: "",
     },
   });
 
@@ -4654,6 +4656,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
           lastName: user.lastName || "",
           phone: user.phone || "",
           role: user.role || "customer",
+          password: "", // Always empty for editing existing users
         });
       } else {
         form.reset({
@@ -4779,6 +4782,27 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                       <SelectItem value="admin">Администратор</SelectItem>
                     </SelectContent>
                   </Select>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">
+                    {user ? "Новый пароль (оставьте пустым если не меняете)" : "Пароль"}
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="password"
+                      placeholder="Минимум 6 символов"
+                      {...field}
+                      className="text-sm"
+                    />
+                  </FormControl>
                   <FormMessage className="text-xs" />
                 </FormItem>
               )}
