@@ -21,7 +21,7 @@ export default function Header({ onResetView }: HeaderProps) {
 
   const { storeSettings } = useStoreSettings();
 
-  const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
+  const cartItemsCount = items.length; // Count unique products, not total quantity
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">

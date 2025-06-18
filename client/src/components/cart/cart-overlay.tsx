@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { formatCurrency, formatWeight } from "@/lib/currency";
+import { formatCurrency, formatQuantity, formatWeight, type ProductUnit } from "@/lib/currency";
 import { X, Plus, Minus, Trash2, CreditCard, Clock, MapPin, Phone } from "lucide-react";
 
 const DELIVERY_FEE = 15.00;
@@ -210,7 +210,7 @@ export default function CartOverlay() {
                         {item.product.name}
                       </h4>
                       <p className="text-sm text-gray-600">
-                        {formatWeight(item.quantity)} × {formatCurrency(parseFloat(item.product.pricePerKg))}
+                        {formatQuantity(item.quantity, item.product.unit as ProductUnit)} × {formatCurrency(parseFloat(item.product.pricePerKg))}
                       </p>
                       <div className="flex items-center space-x-2 mt-2">
                         <Button
