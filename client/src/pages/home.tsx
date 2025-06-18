@@ -350,17 +350,19 @@ export default function Home() {
                         }}
                         className="w-full mx-auto"
                       >
-                        <CarouselContent className="ml-0">
+                        <CarouselContent className="ml-0 flex items-stretch">
                           {specialOffers.map((product) => (
                             <CarouselItem 
                               key={product.id} 
-                              className="pr-3 basis-1/3"
+                              className="pr-3 basis-1/3 flex flex-col"
                             >
-                              <div className="relative scale-90 origin-center">
-                                <ProductCard 
-                                  product={product} 
-                                  onCategoryClick={handleCategorySelect}
-                                />
+                              <div className="relative flex-1 flex">
+                                <div className="transform scale-90 origin-center w-full">
+                                  <ProductCard 
+                                    product={product} 
+                                    onCategoryClick={handleCategorySelect}
+                                  />
+                                </div>
                                 <Badge className="absolute top-2 left-2 bg-orange-500 text-white z-10 text-xs">
                                   <Star className="w-2 h-2 mr-1" />
                                   {storeSettings?.discountBadgeText || "Скидка"}
