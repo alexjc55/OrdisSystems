@@ -1,581 +1,258 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { formatCurrency } from "@/lib/currency";
 import { ImageUpload } from "@/components/ui/image-upload";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { formatCurrency, getUnitLabel, type ProductUnit } from "@/lib/currency";
-import { insertStoreSettingsSchema, type StoreSettings } from "@shared/schema";
-import OrganizedStoreSettings from "@/components/admin/organized-store-settings";
-import { 
-  Package, 
-  Plus, 
-  Edit2, 
-  Trash2,
-  ChevronDown,
-  Users, 
-  ShoppingCart, 
-  Utensils,
-  Save,
-  Search,
-  Filter,
-  Menu,
-  ChevronUp,
-  Store,
-  Upload,
-  Clock,
-  CreditCard,
-  Truck,
-  ChevronLeft,
-  ChevronRight,
-  Grid3X3,
-  Columns,
-  Calendar,
-  MapPin,
-  Phone,
-  User,
-  Mail,
-  MoreVertical,
-  Eye,
-  X,
-  CheckCircle2,
-  AlertCircle,
-  ExternalLink
-} from "lucide-react";
-
-interface PaginationParams {
-  page: number;
-  limit: number;
-  search?: string;
-  categoryId?: number;
-  status?: string;
-  sortField?: string;
-  sortDirection?: string;
-}
-
-interface PaginatedResult<T> {
-  data: T[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
-function useStatusChangeHandler() {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-
-  return useMutation({
-    mutationFn: async ({ orderId, status }: { orderId: number; status: string }) => {
-      return await apiRequest(`/api/orders/${orderId}/status`, {
-        method: "PATCH",
-        body: JSON.stringify({ status }),
-        headers: { "Content-Type": "application/json" },
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
-      toast({
-        title: "Статус обновлен",
-        description: "Статус заказа успешно изменен",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Ошибка",
-        description: "Не удалось обновить статус заказа",
-        variant: "destructive",
-      });
-    },
-  });
-}
-
-function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
-  const getStatusBadge = (status: string) => {
-    const statusMap = {
-      pending: { label: "Ожидает", color: "bg-yellow-100 text-yellow-800" },
-      confirmed: { label: "Подтвержден", color: "bg-blue-100 text-blue-800" },
-      preparing: { label: "Готовится", color: "bg-orange-100 text-orange-800" },
-      ready: { label: "Готов", color: "bg-green-100 text-green-800" },
-      delivered: { label: "Доставлен", color: "bg-gray-100 text-gray-800" },
-      cancelled: { label: "Отменен", color: "bg-red-100 text-red-800" },
-    };
-    const statusInfo = statusMap[status as keyof typeof statusMap] || { label: status, color: "bg-gray-100 text-gray-800" };
-    return <Badge className={statusInfo.color}>{statusInfo.label}</Badge>;
-  };
-
-  const getNextStatus = (currentStatus: string) => {
-    const statusFlow = {
-      pending: "confirmed",
-      confirmed: "preparing", 
-      preparing: "ready",
-      ready: "delivered"
-    };
-    return statusFlow[currentStatus as keyof typeof statusFlow];
-  };
-
-  const getNextStatusLabel = (currentStatus: string) => {
-    const statusLabels = {
-      pending: "Подтвердить",
-      confirmed: "В работу",
-      preparing: "Готов",
-      ready: "Доставлен"
-    };
-    return statusLabels[currentStatus as keyof typeof statusLabels];
-  };
-
-  const formatPhoneNumber = (phone: string) => {
-    if (!phone) return '';
-    const cleaned = phone.replace(/\D/g, '');
-    if (cleaned.startsWith('972')) {
-      return `+${cleaned}`;
-    }
-    if (cleaned.startsWith('0')) {
-      return `+972${cleaned.slice(1)}`;
-    }
-    return `+972${cleaned}`;
-  };
-
-  const handlePhoneClick = (phone: string) => {
-    const formattedPhone = formatPhoneNumber(phone);
-    window.open(`tel:${formattedPhone}`, '_self');
-  };
-
-  const totalPrice = order.items?.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0) || 0;
-  const nextStatus = getNextStatus(order.status);
-  const nextStatusLabel = getNextStatusLabel(order.status);
-
-  return (
-    <Card className="mb-4 hover:shadow-md transition-shadow">
-      <CardHeader className="pb-3">
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="text-lg">Заказ #{order.id}</CardTitle>
-            <CardDescription className="flex items-center gap-2 mt-1">
-              <Calendar className="h-4 w-4" />
-              {new Date(order.createdAt).toLocaleString('ru-RU')}
-            </CardDescription>
-          </div>
-          <div className="flex items-center gap-2">
-            {getStatusBadge(order.status)}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onEdit(order)}>
-                  <Edit2 className="h-4 w-4 mr-2" />
-                  Редактировать
-                </DropdownMenuItem>
-                {order.status !== 'cancelled' && order.status !== 'delivered' && (
-                  <DropdownMenuItem 
-                    onClick={() => onCancelOrder(order.id)}
-                    className="text-red-600"
-                  >
-                    <X className="h-4 w-4 mr-2" />
-                    Отменить заказ
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-gray-500" />
-              <span className="font-medium">{order.customerName}</span>
-            </div>
-            <div className="text-lg font-bold text-green-600">
-              {formatCurrency(totalPrice)}
-            </div>
-          </div>
-          
-          {order.customerPhone && (
-            <div className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-gray-500" />
-              <button
-                onClick={() => handlePhoneClick(order.customerPhone)}
-                className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
-              >
-                {formatPhoneNumber(order.customerPhone)}
-              </button>
-            </div>
-          )}
-          
-          {order.deliveryAddress && (
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-gray-500" />
-              <span className="text-sm text-gray-600">{order.deliveryAddress}</span>
-            </div>
-          )}
-
-          <div className="border-t pt-3">
-            <h4 className="font-medium mb-2">Товары:</h4>
-            <div className="space-y-1">
-              {order.items?.map((item: any, index: number) => (
-                <div key={index} className="flex justify-between text-sm">
-                  <span>{item.product.name} x {item.quantity}{getUnitLabel(item.product.unit)}</span>
-                  <span>{formatCurrency(item.totalPrice)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {nextStatus && (
-            <div className="flex gap-2 pt-2">
-              <Button
-                size="sm"
-                onClick={() => onStatusChange({ orderId: order.id, status: nextStatus })}
-                className="flex-1"
-              >
-                <CheckCircle2 className="h-4 w-4 mr-2" />
-                {nextStatusLabel}
-              </Button>
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => void, onSave: () => void }) {
-  const [editedOrder, setEditedOrder] = useState({
-    customerName: order.customerName || '',
-    customerPhone: order.customerPhone || '',
-    deliveryAddress: order.deliveryAddress || '',
-    items: order.items || []
-  });
-
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  const updateOrderMutation = useMutation({
-    mutationFn: async (data: any) => {
-      return await apiRequest(`/api/orders/${order.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' },
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/orders'] });
-      toast({
-        title: "Заказ обновлен",
-        description: "Изменения успешно сохранены",
-      });
-      onSave();
-      onClose();
-    },
-    onError: () => {
-      toast({
-        title: "Ошибка",
-        description: "Не удалось обновить заказ",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleSave = () => {
-    updateOrderMutation.mutate(editedOrder);
-  };
-
-  return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Редактировать заказ #{order.id}</DialogTitle>
-          <DialogDescription>
-            Внесите необходимые изменения в заказ
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium">Имя клиента</label>
-              <Input
-                value={editedOrder.customerName}
-                onChange={(e) => setEditedOrder({ ...editedOrder, customerName: e.target.value })}
-                placeholder="Имя клиента"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium">Телефон</label>
-              <Input
-                value={editedOrder.customerPhone}
-                onChange={(e) => setEditedOrder({ ...editedOrder, customerPhone: e.target.value })}
-                placeholder="Телефон"
-              />
-            </div>
-          </div>
-          
-          <div>
-            <label className="text-sm font-medium">Адрес доставки</label>
-            <Textarea
-              value={editedOrder.deliveryAddress}
-              onChange={(e) => setEditedOrder({ ...editedOrder, deliveryAddress: e.target.value })}
-              placeholder="Адрес доставки"
-            />
-          </div>
-
-          <div>
-            <h4 className="font-medium mb-2">Товары в заказе</h4>
-            <div className="space-y-2">
-              {editedOrder.items.map((item: any, index: number) => (
-                <div key={index} className="flex items-center gap-2 p-2 border rounded">
-                  <span className="flex-1">{item.product.name}</span>
-                  <Input
-                    type="number"
-                    value={item.quantity}
-                    onChange={(e) => {
-                      const newItems = [...editedOrder.items];
-                      newItems[index].quantity = parseFloat(e.target.value);
-                      setEditedOrder({ ...editedOrder, items: newItems });
-                    }}
-                    className="w-20"
-                    min="0"
-                    step="0.1"
-                  />
-                  <span>{getUnitLabel(item.product.unit)}</span>
-                  <span className="w-20 text-right">{formatCurrency(item.totalPrice)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-2 pt-4">
-          <Button variant="outline" onClick={onClose}>
-            Отмена
-          </Button>
-          <Button 
-            onClick={handleSave}
-            disabled={updateOrderMutation.isPending}
-          >
-            {updateOrderMutation.isPending ? "Сохранение..." : "Сохранить"}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function CancellationReasonDialog({ 
-  open, 
-  orderId, 
-  onClose, 
-  onConfirm, 
-  cancellationReasons 
-}: {
-  open: boolean;
-  orderId: number | null;
-  onClose: () => void;
-  onConfirm: (reason: string) => void;
-  cancellationReasons: string[];
-}) {
-  const [selectedReason, setSelectedReason] = useState<string>("");
-
-  useEffect(() => {
-    if (open) {
-      setSelectedReason("");
-    }
-  }, [open]);
-
-  const handleConfirm = () => {
-    if (selectedReason) {
-      onConfirm(selectedReason);
-      onClose();
-    }
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md mx-4">
-        <DialogHeader>
-          <DialogTitle className="text-lg">Причина отмены заказа</DialogTitle>
-          <DialogDescription className="text-sm">
-            Выберите причину отмены заказа #{orderId}
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-3">
-          {cancellationReasons.map((reason, index) => (
-            <div key={index} className="flex items-center space-x-2">
-              <input
-                type="radio"
-                id={`reason-${index}`}
-                name="cancellation-reason"
-                value={reason}
-                checked={selectedReason === reason}
-                onChange={(e) => setSelectedReason(e.target.value)}
-                className="text-orange-500 focus:ring-orange-500"
-              />
-              <label htmlFor={`reason-${index}`} className="text-sm cursor-pointer">
-                {reason}
-              </label>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex justify-end space-x-2 pt-4">
-          <Button variant="outline" onClick={onClose} className="text-sm">
-            Отмена
-          </Button>
-          <Button 
-            onClick={handleConfirm} 
-            disabled={!selectedReason}
-            className="text-sm bg-red-600 text-white hover:bg-red-700"
-          >
-            Отменить заказ
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
+import { Package, Utensils, ShoppingCart, AlertTriangle, TrendingUp, Users, Edit2, Trash2, Plus, UserPlus, ChevronDown, ChevronRight } from "lucide-react";
+import type { CategoryWithProducts, OrderWithItems, ProductWithCategory, Product, Category, User } from "@shared/schema";
 
 export default function AdminDashboard() {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isLoading, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  const [activeTab, setActiveTab] = useState("orders");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [editingOrder, setEditingOrder] = useState<any>(null);
-  const [cancellationDialog, setCancellationDialog] = useState<{
-    open: boolean;
-    orderId: number | null;
-  }>({ open: false, orderId: null });
-
-  // Product and category management states
-  const [editingProduct, setEditingProduct] = useState<any>(null);
-  const [editingCategory, setEditingCategory] = useState<any>(null);
-  const [showProductDialog, setShowProductDialog] = useState(false);
-  const [showCategoryDialog, setShowCategoryDialog] = useState(false);
+  const [showAddProduct, setShowAddProduct] = useState(false);
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<number>>(new Set());
   
-  // View mode for orders (kanban or table)
-  const [viewMode, setViewMode] = useState<'kanban' | 'table'>('kanban');
+  // Product filtering and search states
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const cancellationReasons = [
-    "Клиент отменил заказ",
-    "Товар закончился",
-    "Проблемы с доставкой",
-    "Технические проблемы",
-    "Другое"
-  ];
-
-  // Orders data
-  const { data: orders = [], isLoading: ordersLoading } = useQuery({
-    queryKey: ["/api/orders"],
-  });
-
-  // Products data
-  const { data: products = [], isLoading: productsLoading } = useQuery({
-    queryKey: ["/api/products"],
-  });
-
-  // Categories data
-  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
-    queryKey: ["/api/categories"],
-  });
-
-  // Store settings data
-  const { data: storeSettings, isLoading: storeSettingsLoading, error: storeSettingsError } = useQuery({
-    queryKey: ["/api/store-settings"],
-  });
-
-
-
-  const statusChangeMutation = useStatusChangeHandler();
-
-  const cancelOrderMutation = useMutation({
-    mutationFn: async ({ orderId, reason }: { orderId: number; reason: string }) => {
-      return await apiRequest(`/api/orders/${orderId}/cancel`, {
-        method: "PATCH",
-        body: JSON.stringify({ reason }),
-        headers: { "Content-Type": "application/json" },
+  // Redirect if not authorized
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      toast({
+        title: "Требуется авторизация",
+        description: "Вход в систему...",
+        variant: "destructive",
       });
+      setTimeout(() => {
+        window.location.href = "/api/login";
+      }, 500);
+      return;
+    }
+
+    if (!isLoading && user && user.role !== 'admin' && user.role !== 'worker') {
+      toast({
+        title: "Доступ запрещен",
+        description: "Требуются права администратора или работника",
+        variant: "destructive",
+      });
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1000);
+      return;
+    }
+  }, [isAuthenticated, isLoading, user, toast]);
+
+  // Data queries
+  const { data: categories } = useQuery<CategoryWithProducts[]>({
+    queryKey: ["/api/categories"],
+    queryFn: async () => {
+      const res = await fetch("/api/categories", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+  });
+
+  const { data: allProducts } = useQuery<ProductWithCategory[]>({
+    queryKey: ["/api/products"],
+    queryFn: async () => {
+      const res = await fetch("/api/products", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+  });
+
+  const { data: orders } = useQuery<OrderWithItems[]>({
+    queryKey: ["/api/orders"],
+    queryFn: async () => {
+      const res = await fetch("/api/orders", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+  });
+
+  const { data: allUsers } = useQuery<User[]>({
+    queryKey: ["/api/users"],
+    queryFn: async () => {
+      const res = await fetch("/api/users", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+    enabled: user?.role === 'admin',
+  });
+
+  // Product availability toggle mutation
+  const toggleAvailabilityMutation = useMutation({
+    mutationFn: async ({ productId, isAvailable }: { productId: number; isAvailable: boolean }) => {
+      const response = await apiRequest("PATCH", `/api/products/${productId}`, { isAvailable });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      toast({
+        title: "Обновлено",
+        description: "Наличие товара изменено",
+      });
+    },
+  });
+
+  // Product CRUD mutations
+  const createProductMutation = useMutation({
+    mutationFn: async (productData: any) => {
+      const response = await apiRequest("POST", "/api/products", productData);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      setShowAddProduct(false);
+      setEditingProduct(null);
+      toast({ title: "Успех", description: "Товар создан" });
+    },
+  });
+
+  const updateProductMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: any }) => {
+      const response = await apiRequest("PATCH", `/api/products/${id}`, data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      setEditingProduct(null);
+      toast({ title: "Успех", description: "Товар обновлен" });
+    },
+  });
+
+  const deleteProductMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/products/${id}`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      toast({ title: "Успех", description: "Товар удален" });
+    },
+  });
+
+  // Category CRUD mutations
+  const createCategoryMutation = useMutation({
+    mutationFn: async (categoryData: any) => {
+      const response = await apiRequest("POST", "/api/categories", categoryData);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      setShowAddCategory(false);
+      setEditingCategory(null);
+      toast({ title: "Успех", description: "Категория создана" });
+    },
+  });
+
+  const updateCategoryMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: any }) => {
+      const response = await apiRequest("PATCH", `/api/categories/${id}`, data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      setEditingCategory(null);
+      toast({ title: "Успех", description: "Категория обновлена" });
+    },
+  });
+
+  const deleteCategoryMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/categories/${id}`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
+      toast({ title: "Успех", description: "Категория удалена" });
+    },
+  });
+
+  // User CRUD mutations (admin only)
+  const createUserMutation = useMutation({
+    mutationFn: async (userData: any) => {
+      const response = await apiRequest("POST", "/api/users", userData);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      setShowAddUser(false);
+      setEditingUser(null);
+      toast({ title: "Успех", description: "Пользователь создан" });
+    },
+  });
+
+  const updateUserMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: any }) => {
+      const response = await apiRequest("PATCH", `/api/users/${id}`, data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      setEditingUser(null);
+      toast({ title: "Успех", description: "Пользователь обновлен" });
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/users/${id}`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      toast({ title: "Успех", description: "Пользователь удален" });
+    },
+  });
+
+  // Order status update mutation
+  const updateOrderStatusMutation = useMutation({
+    mutationFn: async ({ orderId, status }: { orderId: number; status: string }) => {
+      const response = await apiRequest("PATCH", `/api/orders/${orderId}/status`, { status });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
-      toast({
-        title: "Заказ отменен",
-        description: "Заказ успешно отменен",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Ошибка",
-        description: "Не удалось отменить заказ",
-        variant: "destructive",
-      });
+      toast({ title: "Заказ обновлен", description: "Статус заказа изменен" });
     },
   });
 
-  const updateStoreSettingsMutation = useMutation({
-    mutationFn: async (data: any) => {
-      return await apiRequest("/api/store-settings", "PATCH", data);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/store-settings"] });
-      toast({
-        title: "Настройки сохранены",
-        description: "Настройки магазина успешно обновлены",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Ошибка",
-        description: "Не удалось сохранить настройки",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleStatusChange = (data: { orderId: number; status: string }) => {
-    statusChangeMutation.mutate(data);
-  };
-
-  const handleCancelOrder = (orderId: number) => {
-    setCancellationDialog({ open: true, orderId });
-  };
-
-  const handleConfirmCancellation = (reason: string) => {
-    if (cancellationDialog.orderId) {
-      cancelOrderMutation.mutate({ orderId: cancellationDialog.orderId, reason });
+  const toggleCategoryCollapse = (categoryId: number) => {
+    const newCollapsed = new Set(collapsedCategories);
+    if (newCollapsed.has(categoryId)) {
+      newCollapsed.delete(categoryId);
+    } else {
+      newCollapsed.add(categoryId);
     }
+    setCollapsedCategories(newCollapsed);
   };
-
-  const filteredOrders = orders.filter((order: any) => {
-    const matchesSearch = order.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.id.toString().includes(searchTerm);
-    const matchesStatus = statusFilter === "all" || order.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
 
   if (isLoading) {
     return (
@@ -585,106 +262,97 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="w-96">
-          <CardHeader>
-            <CardTitle>Доступ запрещен</CardTitle>
-            <CardDescription>
-              Вы должны войти в систему для доступа к панели администратора
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild className="w-full">
-              <a href="/api/login">Войти</a>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
+  if (!user || (user.role !== 'admin' && user.role !== 'worker')) {
+    return null;
   }
+
+  // Calculate statistics
+  const totalProducts = allProducts?.length || 0;
+  const availableProducts = allProducts?.filter(p => p.isAvailable).length || 0;
+  const outOfStockProducts = totalProducts - availableProducts;
+  const totalOrders = orders?.length || 0;
+  const pendingOrders = orders?.filter(order => order.status === 'pending').length || 0;
+  const totalRevenue = orders?.reduce((acc, order) => acc + parseFloat(order.totalAmount), 0) || 0;
+  const totalUsers = allUsers?.length || 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto p-6">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Панель администратора</h1>
-          <p className="text-gray-600">Управление заказами и настройками магазина</p>
+          <h1 className="text-3xl font-poppins font-bold text-gray-900 mb-2">
+            Панель Управления eDAHouse
+          </h1>
+          <p className="text-gray-600">
+            Полное управление рестораном готовой еды на развес
+          </p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Всего Блюд</CardTitle>
+              <Package className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totalProducts}</div>
+              <p className="text-xs text-muted-foreground">
+                {availableProducts} в наличии
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Нет в Наличии</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-red-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-600">{outOfStockProducts}</div>
+              <p className="text-xs text-muted-foreground">
+                Требует внимания
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Заказы</CardTitle>
+              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totalOrders}</div>
+              <p className="text-xs text-muted-foreground">
+                {pendingOrders} в ожидании
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Выручка</CardTitle>
+              <TrendingUp className="h-4 w-4 text-green-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{formatCurrency(totalRevenue)}</div>
+              <p className="text-xs text-muted-foreground">
+                Общий оборот
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Tabs defaultValue="products" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="orders">Заказы</TabsTrigger>
             <TabsTrigger value="products">Товары</TabsTrigger>
             <TabsTrigger value="categories">Категории</TabsTrigger>
-            <TabsTrigger value="settings">Настройки</TabsTrigger>
+            <TabsTrigger value="orders">Заказы</TabsTrigger>
+            {user.role === 'admin' && <TabsTrigger value="users">Пользователи</TabsTrigger>}
           </TabsList>
 
-          <TabsContent value="orders" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ShoppingCart className="h-5 w-5" />
-                  Управление заказами
-                </CardTitle>
-                <CardDescription>
-                  Просмотр и управление всеми заказами магазина
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                  <div className="flex-1">
-                    <Input
-                      placeholder="Поиск по имени клиента или номеру заказа..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full"
-                    />
-                  </div>
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full sm:w-48">
-                      <SelectValue placeholder="Фильтр по статусу" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Все статусы</SelectItem>
-                      <SelectItem value="pending">Ожидает</SelectItem>
-                      <SelectItem value="confirmed">Подтвержден</SelectItem>
-                      <SelectItem value="preparing">Готовится</SelectItem>
-                      <SelectItem value="ready">Готов</SelectItem>
-                      <SelectItem value="delivered">Доставлен</SelectItem>
-                      <SelectItem value="cancelled">Отменен</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {ordersLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                  </div>
-                ) : filteredOrders.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    Заказы не найдены
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {filteredOrders.map((order: any) => (
-                      <OrderCard
-                        key={order.id}
-                        order={order}
-                        onEdit={setEditingOrder}
-                        onStatusChange={handleStatusChange}
-                        onCancelOrder={handleCancelOrder}
-                      />
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
+          {/* Enhanced Products Management */}
           <TabsContent value="products" className="space-y-6">
             <Card>
               <CardHeader>
@@ -692,66 +360,134 @@ export default function AdminDashboard() {
                   <div>
                     <CardTitle className="flex items-center gap-2">
                       <Package className="h-5 w-5" />
-                      Управление товарами
+                      Управление Товарами
                     </CardTitle>
                     <CardDescription>
-                      Добавление, редактирование и удаление товаров
+                      Добавление, редактирование товаров и управление наличием с фильтрацией и поиском
                     </CardDescription>
                   </div>
-                  <Button onClick={() => {
-                    setEditingProduct(null);
-                    setShowProductDialog(true);
-                  }}>
+                  <Button onClick={() => setShowAddProduct(true)}>
                     <Plus className="h-4 w-4 mr-2" />
                     Добавить товар
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                {productsLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                {/* Search and Filter Controls */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                  <div className="flex-1">
+                    <Input
+                      placeholder="Поиск товаров..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full"
+                    />
                   </div>
-                ) : (
-                  <div className="overflow-x-auto">
+                  <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
+                    <SelectTrigger className="w-full sm:w-[200px]">
+                      <SelectValue placeholder="Все категории" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Все категории</SelectItem>
+                      {categories?.map((category) => (
+                        <SelectItem key={category.id} value={category.id.toString()}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Products Table */}
+                {(() => {
+                  // Filter products based on search query and selected category
+                  const filteredProducts = allProducts?.filter(product => {
+                    const matchesSearch = searchQuery === "" || 
+                      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      product.description?.toLowerCase().includes(searchQuery.toLowerCase());
+                    
+                    const matchesCategory = selectedCategoryFilter === "all" ||
+                      product.categoryId.toString() === selectedCategoryFilter;
+                    
+                    return matchesSearch && matchesCategory;
+                  }) || [];
+
+                  return filteredProducts.length > 0 ? (
                     <Table>
                       <TableHeader>
                         <TableRow>
+                          <TableHead>Изображение</TableHead>
                           <TableHead>Название</TableHead>
                           <TableHead>Категория</TableHead>
-                          <TableHead>Цена</TableHead>
-                          <TableHead>Единица</TableHead>
-                          <TableHead>Доступность</TableHead>
+                          <TableHead>Цена за 100г</TableHead>
+                          <TableHead>Наличие</TableHead>
                           <TableHead>Действия</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {products.map((product: any) => (
+                        {filteredProducts.map((product) => (
                           <TableRow key={product.id}>
-                            <TableCell className="font-medium">{product.name}</TableCell>
-                            <TableCell>{product.category?.name || 'Без категории'}</TableCell>
-                            <TableCell>{formatCurrency(product.price)}</TableCell>
-                            <TableCell>{getUnitLabel(product.unit)}</TableCell>
                             <TableCell>
-                              <Badge variant={product.isAvailable ? "default" : "secondary"}>
-                                {product.isAvailable ? "Доступен" : "Недоступен"}
+                              {product.imageUrl ? (
+                                <img 
+                                  src={product.imageUrl} 
+                                  alt={product.name}
+                                  className="w-12 h-12 object-cover rounded-lg"
+                                />
+                              ) : (
+                                <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                                  <Package className="h-6 w-6 text-gray-400" />
+                                </div>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <div className="font-medium">{product.name}</div>
+                                {product.description && (
+                                  <div className="text-sm text-gray-500 max-w-xs truncate">
+                                    {product.description}
+                                  </div>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline">
+                                {product.category.name}
                               </Badge>
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {formatCurrency(product.pricePerKg)}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Switch
+                                  checked={product.isAvailable}
+                                  onCheckedChange={(checked) => {
+                                    toggleAvailabilityMutation.mutate({
+                                      id: product.id,
+                                      isAvailable: checked
+                                    });
+                                  }}
+                                  disabled={toggleAvailabilityMutation.isPending}
+                                  className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-200"
+                                />
+                                <span className="text-sm">
+                                  {product.isAvailable ? 'Доступен' : 'Нет в наличии'}
+                                </span>
+                              </div>
                             </TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => {
-                                    setEditingProduct(product);
-                                    setShowProductDialog(true);
-                                  }}
+                                  onClick={() => setEditingProduct(product)}
                                 >
                                   <Edit2 className="h-4 w-4" />
                                 </Button>
                                 <AlertDialog>
                                   <AlertDialogTrigger asChild>
-                                    <Button variant="outline" size="sm">
+                                    <Button variant="outline" size="sm" className="text-red-600">
                                       <Trash2 className="h-4 w-4" />
                                     </Button>
                                   </AlertDialogTrigger>
@@ -759,16 +495,12 @@ export default function AdminDashboard() {
                                     <AlertDialogHeader>
                                       <AlertDialogTitle>Удалить товар?</AlertDialogTitle>
                                       <AlertDialogDescription>
-                                        Это действие нельзя отменить. Товар будет удален навсегда.
+                                        Это действие нельзя отменить. Товар "{product.name}" будет удален навсегда.
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                       <AlertDialogCancel>Отмена</AlertDialogCancel>
-                                      <AlertDialogAction
-                                        onClick={() => {
-                                          // Delete product logic here
-                                        }}
-                                      >
+                                      <AlertDialogAction onClick={() => deleteProductMutation.mutate(product.id)}>
                                         Удалить
                                       </AlertDialogAction>
                                     </AlertDialogFooter>
@@ -780,55 +512,71 @@ export default function AdminDashboard() {
                         ))}
                       </TableBody>
                     </Table>
-                  </div>
-                )}
+                  ) : (
+                    <div className="text-center py-8">
+                      <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        {searchQuery || selectedCategoryFilter !== "all" ? "Товары не найдены" : "Нет товаров"}
+                      </h3>
+                      <p className="text-gray-500">
+                        {searchQuery || selectedCategoryFilter !== "all" 
+                          ? "Попробуйте изменить критерии поиска или фильтрации"
+                          : "Начните с добавления первого товара"
+                        }
+                      </p>
+                    </div>
+                  );
+                })()}
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* Categories Management */}
           <TabsContent value="categories" className="space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="flex items-center gap-2">
-                      <Utensils className="h-5 w-5" />
-                      Управление категориями
+                      <Package className="h-5 w-5" />
+                      Управление Товарами
                     </CardTitle>
                     <CardDescription>
-                      Добавление, редактирование и удаление категорий товаров
+                      Добавление, редактирование и удаление товаров
                     </CardDescription>
                   </div>
-                  <Button onClick={() => {
-                    setEditingCategory(null);
-                    setShowCategoryDialog(true);
-                  }}>
+                  <Button onClick={() => setShowAddProduct(true)}>
                     <Plus className="h-4 w-4 mr-2" />
-                    Добавить категорию
+                    Добавить товар
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                {categoriesLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {categories.map((category: any) => (
-                      <Card key={category.id}>
-                        <CardHeader>
-                          <div className="flex items-center justify-between">
-                            <CardTitle className="text-lg">{category.name}</CardTitle>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                  setEditingCategory(category);
-                                  setShowCategoryDialog(true);
-                                }}
-                              >
+                {allProducts && allProducts.length > 0 ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Название</TableHead>
+                        <TableHead>Категория</TableHead>
+                        <TableHead>Цена/кг</TableHead>
+                        <TableHead>Статус</TableHead>
+                        <TableHead>Действия</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {allProducts.map((product) => (
+                        <TableRow key={product.id}>
+                          <TableCell className="font-medium">{product.name}</TableCell>
+                          <TableCell>{product.category.name}</TableCell>
+                          <TableCell>{formatCurrency(parseFloat(product.pricePerKg))}</TableCell>
+                          <TableCell>
+                            <Badge variant={product.isAvailable ? "default" : "destructive"}>
+                              {product.isAvailable ? "Доступен" : "Недоступен"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button variant="outline" size="sm" onClick={() => setEditingProduct(product)}>
                                 <Edit2 className="h-4 w-4" />
                               </Button>
                               <AlertDialog>
@@ -839,92 +587,705 @@ export default function AdminDashboard() {
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
-                                    <AlertDialogTitle>Удалить категорию?</AlertDialogTitle>
+                                    <AlertDialogTitle>Удалить товар</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Это действие нельзя отменить. Категория и все товары в ней будут удалены.
+                                      Вы уверены, что хотите удалить "{product.name}"? Это действие нельзя отменить.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>Отмена</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => {
-                                        // Delete category logic here
-                                      }}
-                                    >
+                                    <AlertDialogAction onClick={() => deleteProductMutation.mutate(product.id)}>
                                       Удалить
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
                               </AlertDialog>
                             </div>
-                          </div>
-                          <CardDescription>{category.description}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="text-sm text-gray-600">
-                            Товаров: {category.products?.length || 0}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <div className="text-center py-8">
+                    <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет товаров</h3>
+                    <p className="text-gray-500">Начните с добавления первого товара</p>
                   </div>
                 )}
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="settings" className="space-y-6">
+          {/* Categories Management */}
+          <TabsContent value="categories" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Utensils className="h-5 w-5" />
+                      Управление Категориями
+                    </CardTitle>
+                    <CardDescription>
+                      Добавление, редактирование и удаление категорий
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => setShowAddCategory(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Добавить категорию
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {categories && categories.length > 0 ? (
+                  <div className="grid gap-4">
+                    {categories.map((category) => (
+                      <div key={category.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{category.icon}</span>
+                          <div>
+                            <h3 className="font-semibold">{category.name}</h3>
+                            <p className="text-sm text-gray-600">{category.description}</p>
+                            <Badge variant="secondary">{category.products.length} товаров</Badge>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" onClick={() => setEditingCategory(category)}>
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="outline" size="sm">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Удалить категорию</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Вы уверены, что хотите удалить категорию "{category.name}"? 
+                                  Все товары в этой категории также будут удалены.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Отмена</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => deleteCategoryMutation.mutate(category.id)}>
+                                  Удалить
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Utensils className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет категорий</h3>
+                    <p className="text-gray-500">Начните с добавления первой категории</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Orders Management */}
+          <TabsContent value="orders" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Store className="h-5 w-5" />
-                  Настройки магазина
+                  <ShoppingCart className="h-5 w-5" />
+                  Управление Заказами
                 </CardTitle>
                 <CardDescription>
-                  Управление информацией о магазине
+                  Обработка и отслеживание заказов клиентов
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {storeSettingsLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                  </div>
-                ) : storeSettingsError ? (
-                  <div className="text-center py-8 text-red-500">
-                    Ошибка загрузки настроек: {storeSettingsError.message}
-                  </div>
-                ) : storeSettings ? (
-                  <OrganizedStoreSettings
-                    storeSettings={storeSettings}
-                    onSubmit={(data) => updateStoreSettingsMutation.mutate(data)}
-                    isLoading={updateStoreSettingsMutation.isPending}
-                  />
+                {orders && orders.length > 0 ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Заказ</TableHead>
+                        <TableHead>Клиент</TableHead>
+                        <TableHead>Статус</TableHead>
+                        <TableHead>Сумма</TableHead>
+                        <TableHead>Дата</TableHead>
+                        <TableHead>Действия</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {orders.map((order) => (
+                        <TableRow key={order.id}>
+                          <TableCell className="font-medium">#{order.id}</TableCell>
+                          <TableCell>
+                            {order.user?.firstName} {order.user?.lastName}
+                            <div className="text-sm text-gray-500">{order.user?.email}</div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={
+                              order.status === 'pending' ? 'destructive' :
+                              order.status === 'confirmed' ? 'default' :
+                              order.status === 'preparing' ? 'secondary' :
+                              order.status === 'ready' ? 'outline' :
+                              order.status === 'delivered' ? 'default' : 'destructive'
+                            }>
+                              {order.status === 'pending' ? 'Ожидает' :
+                               order.status === 'confirmed' ? 'Подтвержден' :
+                               order.status === 'preparing' ? 'Готовится' :
+                               order.status === 'ready' ? 'Готов' :
+                               order.status === 'delivered' ? 'Выдан' : 'Отменен'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{formatCurrency(parseFloat(order.totalAmount))}</TableCell>
+                          <TableCell>
+                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU') : 'Неизвестно'}
+                          </TableCell>
+                          <TableCell>
+                            <Select
+                              value={order.status}
+                              onValueChange={(newStatus) => 
+                                updateOrderStatusMutation.mutate({
+                                  orderId: order.id,
+                                  status: newStatus
+                                })
+                              }
+                            >
+                              <SelectTrigger className="w-[140px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="pending">Ожидает</SelectItem>
+                                <SelectItem value="confirmed">Подтвержден</SelectItem>
+                                <SelectItem value="preparing">Готовится</SelectItem>
+                                <SelectItem value="ready">Готов</SelectItem>
+                                <SelectItem value="delivered">Выдан</SelectItem>
+                                <SelectItem value="cancelled">Отменен</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    Настройки магазина не найдены
+                  <div className="text-center py-8">
+                    <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет заказов</h3>
+                    <p className="text-gray-500">Заказы будут отображаться здесь</p>
                   </div>
                 )}
               </CardContent>
             </Card>
           </TabsContent>
-        </Tabs>
-      </main>
 
-      {editingOrder && (
-        <OrderEditForm
-          order={editingOrder}
-          onClose={() => setEditingOrder(null)}
-          onSave={() => {}}
+          {/* Users Management (Admin Only) */}
+          {user.role === 'admin' && (
+            <TabsContent value="users" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <Users className="h-5 w-5" />
+                        Управление Пользователями
+                      </CardTitle>
+                      <CardDescription>
+                        Управление учетными записями и ролями пользователей
+                      </CardDescription>
+                    </div>
+                    <Button onClick={() => setShowAddUser(true)}>
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Добавить пользователя
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {allUsers && allUsers.length > 0 ? (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Имя</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Роль</TableHead>
+                          <TableHead>Дата регистрации</TableHead>
+                          <TableHead>Действия</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {allUsers.map((userItem) => (
+                          <TableRow key={userItem.id}>
+                            <TableCell className="font-medium">
+                              {userItem.firstName} {userItem.lastName}
+                            </TableCell>
+                            <TableCell>{userItem.email}</TableCell>
+                            <TableCell>
+                              <Badge variant={
+                                userItem.role === 'admin' ? 'default' :
+                                userItem.role === 'worker' ? 'secondary' : 'outline'
+                              }>
+                                {userItem.role === 'admin' ? 'Администратор' :
+                                 userItem.role === 'worker' ? 'Работник' : 'Клиент'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {userItem.createdAt ? new Date(userItem.createdAt).toLocaleDateString('ru-RU') : 'Неизвестно'}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-2">
+                                <Button variant="outline" size="sm" onClick={() => setEditingUser(userItem)}>
+                                  <Edit2 className="h-4 w-4" />
+                                </Button>
+                                {userItem.id !== user.id && (
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button variant="outline" size="sm">
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>Удалить пользователя</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          Вы уверены, что хотите удалить пользователя "{userItem.firstName} {userItem.lastName}"?
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>Отмена</AlertDialogCancel>
+                                        <AlertDialogAction onClick={() => deleteUserMutation.mutate(userItem.id)}>
+                                          Удалить
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">Нет пользователей</h3>
+                      <p className="text-gray-500">Пользователи будут отображаться здесь</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+        </Tabs>
+      </div>
+
+      {/* Add/Edit Product Dialog */}
+      <ProductFormDialog
+        open={showAddProduct || !!editingProduct}
+        onClose={() => {
+          setShowAddProduct(false);
+          setEditingProduct(null);
+        }}
+        categories={categories || []}
+        product={editingProduct}
+        onSubmit={(data) => {
+          if (editingProduct) {
+            updateProductMutation.mutate({ id: editingProduct.id, data });
+          } else {
+            createProductMutation.mutate(data);
+          }
+        }}
+      />
+
+      {/* Add/Edit Category Dialog */}
+      <CategoryFormDialog
+        open={showAddCategory || !!editingCategory}
+        onClose={() => {
+          setShowAddCategory(false);
+          setEditingCategory(null);
+        }}
+        category={editingCategory}
+        onSubmit={(data) => {
+          if (editingCategory) {
+            updateCategoryMutation.mutate({ id: editingCategory.id, data });
+          } else {
+            createCategoryMutation.mutate(data);
+          }
+        }}
+      />
+
+      {/* Add/Edit User Dialog */}
+      {user.role === 'admin' && (
+        <UserFormDialog
+          open={showAddUser || !!editingUser}
+          onClose={() => {
+            setShowAddUser(false);
+            setEditingUser(null);
+          }}
+          user={editingUser}
+          onSubmit={(data) => {
+            if (editingUser) {
+              updateUserMutation.mutate({ id: editingUser.id, data });
+            } else {
+              createUserMutation.mutate(data);
+            }
+          }}
         />
       )}
-
-      <CancellationReasonDialog
-        open={cancellationDialog.open}
-        orderId={cancellationDialog.orderId}
-        onClose={() => setCancellationDialog({ open: false, orderId: null })}
-        onConfirm={handleConfirmCancellation}
-        cancellationReasons={cancellationReasons}
-      />
     </div>
+  );
+}
+
+// Product Form Dialog Component
+function ProductFormDialog({ 
+  open, 
+  onClose, 
+  categories, 
+  product, 
+  onSubmit 
+}: {
+  open: boolean;
+  onClose: () => void;
+  categories: CategoryWithProducts[];
+  product?: Product | null;
+  onSubmit: (data: any) => void;
+}) {
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    pricePerKg: '',
+    categoryId: '',
+    imageUrl: '',
+    isAvailable: true,
+  });
+
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        name: product.name,
+        description: product.description || '',
+        pricePerKg: product.pricePerKg,
+        categoryId: product.categoryId.toString(),
+        imageUrl: product.imageUrl || '',
+        isAvailable: product.isAvailable,
+      });
+    } else {
+      setFormData({
+        name: '',
+        description: '',
+        pricePerKg: '',
+        categoryId: '',
+        imageUrl: '',
+        isAvailable: true,
+      });
+    }
+  }, [product, open]);
+
+  const handleSubmit = () => {
+    onSubmit({
+      ...formData,
+      categoryId: parseInt(formData.categoryId),
+      pricePerKg: formData.pricePerKg,
+    });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>{product ? 'Редактировать товар' : 'Добавить товар'}</DialogTitle>
+          <DialogDescription>
+            {product ? 'Изменить информацию о товаре' : 'Создать новый товар в меню'}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="name">Название</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Название блюда"
+            />
+          </div>
+          <div>
+            <Label htmlFor="description">Описание</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Описание блюда"
+            />
+          </div>
+          <div>
+            <Label htmlFor="categoryId">Категория</Label>
+            <Select value={formData.categoryId} onValueChange={(value) => setFormData({ ...formData, categoryId: value })}>
+              <SelectTrigger>
+                <SelectValue placeholder="Выберите категорию" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id.toString()}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="pricePerKg">Цена за кг (₪)</Label>
+            <Input
+              id="pricePerKg"
+              type="number"
+              step="0.01"
+              value={formData.pricePerKg}
+              onChange={(e) => setFormData({ ...formData, pricePerKg: e.target.value })}
+              placeholder="0.00"
+            />
+          </div>
+          <ImageUpload
+            value={formData.imageUrl}
+            onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+          />
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="isAvailable"
+              checked={formData.isAvailable}
+              onCheckedChange={(checked) => setFormData({ ...formData, isAvailable: checked })}
+              className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-200"
+            />
+            <Label htmlFor="isAvailable">Доступен в меню</Label>
+          </div>
+        </div>
+        <div className="flex justify-end space-x-2 pt-4">
+          <Button variant="outline" onClick={onClose}>
+            Отмена
+          </Button>
+          <Button 
+            onClick={handleSubmit}
+            disabled={!formData.name || !formData.pricePerKg || !formData.categoryId}
+          >
+            {product ? 'Сохранить' : 'Создать'}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// Category Form Dialog Component
+function CategoryFormDialog({ 
+  open, 
+  onClose, 
+  category, 
+  onSubmit 
+}: {
+  open: boolean;
+  onClose: () => void;
+  category?: Category | null;
+  onSubmit: (data: any) => void;
+}) {
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    icon: '🍽️',
+  });
+
+  useEffect(() => {
+    if (category) {
+      setFormData({
+        name: category.name,
+        description: category.description || '',
+        icon: category.icon || '🍽️',
+      });
+    } else {
+      setFormData({
+        name: '',
+        description: '',
+        icon: '🍽️',
+      });
+    }
+  }, [category, open]);
+
+  const iconOptions = ['🥗', '🍖', '🍚', '🍲', '🥧', '🍰', '🍽️', '🥘', '🍱', '🥙'];
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>{category ? 'Редактировать категорию' : 'Добавить категорию'}</DialogTitle>
+          <DialogDescription>
+            {category ? 'Изменить информацию о категории' : 'Создать новую категорию меню'}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="name">Название</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Название категории"
+            />
+          </div>
+          <div>
+            <Label htmlFor="description">Описание</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Описание категории"
+            />
+          </div>
+          <div>
+            <Label>Иконка</Label>
+            <div className="grid grid-cols-5 gap-2 mt-2">
+              {iconOptions.map((icon) => (
+                <Button
+                  key={icon}
+                  variant={formData.icon === icon ? "default" : "outline"}
+                  className="h-12 text-2xl"
+                  onClick={() => setFormData({ ...formData, icon })}
+                >
+                  {icon}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-end space-x-2 pt-4">
+          <Button variant="outline" onClick={onClose}>
+            Отмена
+          </Button>
+          <Button 
+            onClick={() => onSubmit(formData)}
+            disabled={!formData.name}
+          >
+            {category ? 'Сохранить' : 'Создать'}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// User Form Dialog Component
+function UserFormDialog({ 
+  open, 
+  onClose, 
+  user, 
+  onSubmit 
+}: {
+  open: boolean;
+  onClose: () => void;
+  user?: User | null;
+  onSubmit: (data: any) => void;
+}) {
+  const [formData, setFormData] = useState({
+    id: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+    role: 'customer' as 'admin' | 'worker' | 'customer',
+  });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        id: user.id,
+        email: user.email || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        role: user.role as 'admin' | 'worker' | 'customer',
+      });
+    } else {
+      setFormData({
+        id: '',
+        email: '',
+        firstName: '',
+        lastName: '',
+        role: 'customer',
+      });
+    }
+  }, [user, open]);
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>{user ? 'Редактировать пользователя' : 'Добавить пользователя'}</DialogTitle>
+          <DialogDescription>
+            {user ? 'Изменить информацию о пользователе' : 'Создать новую учетную запись'}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          {!user && (
+            <div>
+              <Label htmlFor="id">ID пользователя</Label>
+              <Input
+                id="id"
+                value={formData.id}
+                onChange={(e) => setFormData({ ...formData, id: e.target.value })}
+                placeholder="Уникальный ID"
+              />
+            </div>
+          )}
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              placeholder="email@example.com"
+            />
+          </div>
+          <div>
+            <Label htmlFor="firstName">Имя</Label>
+            <Input
+              id="firstName"
+              value={formData.firstName}
+              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+              placeholder="Имя"
+            />
+          </div>
+          <div>
+            <Label htmlFor="lastName">Фамилия</Label>
+            <Input
+              id="lastName"
+              value={formData.lastName}
+              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+              placeholder="Фамилия"
+            />
+          </div>
+          <div>
+            <Label htmlFor="role">Роль</Label>
+            <Select value={formData.role} onValueChange={(value: 'admin' | 'worker' | 'customer') => setFormData({ ...formData, role: value })}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="customer">Клиент</SelectItem>
+                <SelectItem value="worker">Работник</SelectItem>
+                <SelectItem value="admin">Администратор</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="flex justify-end space-x-2 pt-4">
+          <Button variant="outline" onClick={onClose}>
+            Отмена
+          </Button>
+          <Button 
+            onClick={() => onSubmit(formData)}
+            disabled={!formData.email || (!user && !formData.id)}
+          >
+            {user ? 'Сохранить' : 'Создать'}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
