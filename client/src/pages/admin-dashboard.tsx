@@ -49,7 +49,8 @@ import {
   MapPin,
   Phone,
   User,
-  Eye
+  Eye,
+  X
 } from "lucide-react";
 
 // Validation schemas
@@ -1266,70 +1267,69 @@ export default function AdminDashboard() {
 
           {/* Orders Management */}
           <TabsContent value="orders" className="space-y-4 sm:space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div>
-                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                      <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
-                      Заказы
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      Управление заказами клиентов
-                    </CardDescription>
-                  </div>
-                  
-                  {/* View Mode Toggle and Filters */}
-                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    {/* View Mode Toggle */}
-                    <div className="flex items-center gap-2 p-1 bg-gray-100 rounded-lg">
-                      <Button
-                        variant={ordersViewMode === "table" ? "default" : "ghost"}
-                        size="sm"
-                        onClick={() => setOrdersViewMode("table")}
-                        className="text-xs px-3 py-1 h-8"
-                      >
-                        <Grid3X3 className="h-3 w-3 mr-1" />
-                        Таблица
-                      </Button>
-                      <Button
-                        variant={ordersViewMode === "kanban" ? "default" : "ghost"}
-                        size="sm"
-                        onClick={() => setOrdersViewMode("kanban")}
-                        className="text-xs px-3 py-1 h-8"
-                      >
-                        <Columns className="h-3 w-3 mr-1" />
-                        Канбан
-                      </Button>
-                    </div>
+            {/* Header Section */}
+            <div className="flex flex-col gap-4">
+              <div>
+                <h1 className="text-2xl font-bold flex items-center gap-2">
+                  <ShoppingCart className="h-6 w-6" />
+                  Заказы
+                </h1>
+                <p className="text-gray-600 mt-1">Управление заказами клиентов</p>
+              </div>
+              
+              {/* Controls Row */}
+              <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+                {/* View Mode Toggle */}
+                <div className="flex items-center gap-2 p-1 bg-gray-100 rounded-lg">
+                  <Button
+                    variant={ordersViewMode === "table" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setOrdersViewMode("table")}
+                    className="text-xs px-3 py-1 h-8"
+                  >
+                    <Grid3X3 className="h-3 w-3 mr-1" />
+                    Таблица
+                  </Button>
+                  <Button
+                    variant={ordersViewMode === "kanban" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setOrdersViewMode("kanban")}
+                    className="text-xs px-3 py-1 h-8"
+                  >
+                    <Columns className="h-3 w-3 mr-1" />
+                    Канбан
+                  </Button>
+                </div>
 
-                    {/* Status Filter */}
-                    <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
-                      <SelectTrigger className="w-40 text-xs h-8">
-                        <SelectValue placeholder="Фильтр заказов" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Активные заказы</SelectItem>
-                        <SelectItem value="delivered">Доставленные</SelectItem>
-                        <SelectItem value="cancelled">Отмененные</SelectItem>
-                        <SelectItem value="all">Все заказы</SelectItem>
-                      </SelectContent>
-                    </Select>
+                {/* Filters */}
+                <div className="flex gap-3">
+                  <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
+                    <SelectTrigger className="w-40 text-xs h-8">
+                      <SelectValue placeholder="Фильтр заказов" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Активные заказы</SelectItem>
+                      <SelectItem value="delivered">Доставленные</SelectItem>
+                      <SelectItem value="cancelled">Отмененные</SelectItem>
+                      <SelectItem value="all">Все заказы</SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                    {/* Search Input */}
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
-                      <Input
-                        placeholder="Поиск по заказам..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 text-xs h-8 w-48"
-                      />
-                    </div>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
+                    <Input
+                      placeholder="Поиск по заказам..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-9 text-xs h-8 w-48"
+                    />
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent>
+              </div>
+            </div>
+
+            <Card>
+              <CardContent className="p-4">
                 {ordersLoading ? (
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
@@ -1450,57 +1450,58 @@ export default function AdminDashboard() {
 
                     {/* Kanban View */}
                     {ordersViewMode === "kanban" && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {/* Pending Column */}
-                        <div className="bg-yellow-50 rounded-lg p-4">
-                          <h3 className="font-semibold text-sm mb-3 text-yellow-800 flex items-center gap-2">
-                            <Clock className="h-4 w-4" />
-                            Ожидает ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
-                          </h3>
-                          <div className="space-y-3">
-                            {ordersResponse.data.filter((order: any) => order.status === 'pending').map((order: any) => (
-                              <OrderCard key={order.id} order={order} onEdit={(order) => {
-                                setEditingOrder(order);
-                                setIsOrderFormOpen(true);
-                              }} onStatusChange={updateOrderStatusMutation.mutate} />
-                            ))}
+                      <div className="overflow-x-auto">
+                        <div className="flex gap-4 min-w-max pb-4">
+                          {/* Pending Column */}
+                          <div className="bg-yellow-50 rounded-lg p-4 min-w-80">
+                            <h3 className="font-semibold text-sm mb-3 text-yellow-800 flex items-center gap-2">
+                              <Clock className="h-4 w-4" />
+                              Ожидает ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
+                            </h3>
+                            <div className="space-y-3">
+                              {ordersResponse.data.filter((order: any) => order.status === 'pending').map((order: any) => (
+                                <OrderCard key={order.id} order={order} onEdit={(order) => {
+                                  setEditingOrder(order);
+                                  setIsOrderFormOpen(true);
+                                }} onStatusChange={updateOrderStatusMutation.mutate} />
+                              ))}
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Confirmed Column */}
-                        <div className="bg-blue-50 rounded-lg p-4">
-                          <h3 className="font-semibold text-sm mb-3 text-blue-800 flex items-center gap-2">
-                            <ShoppingCart className="h-4 w-4" />
-                            Подтвержден ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
-                          </h3>
-                          <div className="space-y-3">
-                            {ordersResponse.data.filter((order: any) => order.status === 'confirmed').map((order: any) => (
-                              <OrderCard key={order.id} order={order} onEdit={(order) => {
-                                setEditingOrder(order);
-                                setIsOrderFormOpen(true);
-                              }} onStatusChange={updateOrderStatusMutation.mutate} />
-                            ))}
+                          {/* Confirmed Column */}
+                          <div className="bg-blue-50 rounded-lg p-4 min-w-80">
+                            <h3 className="font-semibold text-sm mb-3 text-blue-800 flex items-center gap-2">
+                              <ShoppingCart className="h-4 w-4" />
+                              Подтвержден ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
+                            </h3>
+                            <div className="space-y-3">
+                              {ordersResponse.data.filter((order: any) => order.status === 'confirmed').map((order: any) => (
+                                <OrderCard key={order.id} order={order} onEdit={(order) => {
+                                  setEditingOrder(order);
+                                  setIsOrderFormOpen(true);
+                                }} onStatusChange={updateOrderStatusMutation.mutate} />
+                              ))}
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Preparing Column */}
-                        <div className="bg-orange-50 rounded-lg p-4">
-                          <h3 className="font-semibold text-sm mb-3 text-orange-800 flex items-center gap-2">
-                            <Utensils className="h-4 w-4" />
-                            Готовится ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
-                          </h3>
-                          <div className="space-y-3">
-                            {ordersResponse.data.filter((order: any) => order.status === 'preparing').map((order: any) => (
-                              <OrderCard key={order.id} order={order} onEdit={(order) => {
-                                setEditingOrder(order);
-                                setIsOrderFormOpen(true);
-                              }} onStatusChange={updateOrderStatusMutation.mutate} />
-                            ))}
+                          {/* Preparing Column */}
+                          <div className="bg-orange-50 rounded-lg p-4 min-w-80">
+                            <h3 className="font-semibold text-sm mb-3 text-orange-800 flex items-center gap-2">
+                              <Utensils className="h-4 w-4" />
+                              Готовится ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
+                            </h3>
+                            <div className="space-y-3">
+                              {ordersResponse.data.filter((order: any) => order.status === 'preparing').map((order: any) => (
+                                <OrderCard key={order.id} order={order} onEdit={(order) => {
+                                  setEditingOrder(order);
+                                  setIsOrderFormOpen(true);
+                                }} onStatusChange={updateOrderStatusMutation.mutate} />
+                              ))}
+                            </div>
                           </div>
-                        </div>
 
                         {/* Ready Column */}
-                        <div className="bg-green-50 rounded-lg p-4">
+                        <div className="bg-green-50 rounded-lg p-4 min-w-80">
                           <h3 className="font-semibold text-sm mb-3 text-green-800 flex items-center gap-2">
                             <Package className="h-4 w-4" />
                             Готов ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
@@ -1513,6 +1514,39 @@ export default function AdminDashboard() {
                               }} onStatusChange={updateOrderStatusMutation.mutate} />
                             ))}
                           </div>
+                        </div>
+
+                        {/* Delivered Column */}
+                        <div className="bg-gray-50 rounded-lg p-4 min-w-80">
+                          <h3 className="font-semibold text-sm mb-3 text-gray-800 flex items-center gap-2">
+                            <Truck className="h-4 w-4" />
+                            Доставлен ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
+                          </h3>
+                          <div className="space-y-3">
+                            {ordersResponse.data.filter((order: any) => order.status === 'delivered').map((order: any) => (
+                              <OrderCard key={order.id} order={order} onEdit={(order) => {
+                                setEditingOrder(order);
+                                setIsOrderFormOpen(true);
+                              }} onStatusChange={updateOrderStatusMutation.mutate} />
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Cancelled Column */}
+                        <div className="bg-red-50 rounded-lg p-4 min-w-80">
+                          <h3 className="font-semibold text-sm mb-3 text-red-800 flex items-center gap-2">
+                            <X className="h-4 w-4" />
+                            Отменен ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
+                          </h3>
+                          <div className="space-y-3">
+                            {ordersResponse.data.filter((order: any) => order.status === 'cancelled').map((order: any) => (
+                              <OrderCard key={order.id} order={order} onEdit={(order) => {
+                                setEditingOrder(order);
+                                setIsOrderFormOpen(true);
+                              }} onStatusChange={updateOrderStatusMutation.mutate} />
+                            ))}
+                          </div>
+                        </div>
                         </div>
                       </div>
                     )}
