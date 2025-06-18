@@ -353,6 +353,20 @@ button[role="switch"]:not(.carousel-dot),
     height: 20px !important;
     border-radius: 50% !important;
   }
+
+  /* Fix dropdown menu z-index on mobile */
+  [data-radix-dropdown-menu-content],
+  [data-radix-select-content],
+  [data-radix-navigation-menu-content] {
+    z-index: 9999 !important;
+    position: fixed !important;
+  }
+
+  /* Ensure dropdowns appear above all other content on mobile */
+  [data-radix-dropdown-menu-portal],
+  [data-radix-select-portal] {
+    z-index: 9999 !important;
+  }
 }
 
 /* Navigation menu items */
