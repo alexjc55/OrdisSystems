@@ -441,9 +441,7 @@ export default function AdminDashboard() {
   
   // Cancellation dialog state
   const [isCancellationDialogOpen, setIsCancellationDialogOpen] = useState(false);
-  const [orderToCancelId, setOrderToCancelId] = useState<number | null>(null);
-  const [cancellationReason, setCancellationReason] = useState("");
-  const [customCancellationReason, setCustomCancellationReason] = useState("");
+  const [orderToCancel, setOrderToCancel] = useState<number | null>(null);
 
   // Pagination state
   const [productsPage, setProductsPage] = useState(1);
@@ -823,27 +821,8 @@ export default function AdminDashboard() {
 
   // Handle order cancellation with reason selection
   const handleOrderCancellation = (orderId: number) => {
-    setOrderToCancelId(orderId);
-    setCancellationReason("");
-    setCustomCancellationReason("");
+    setOrderToCancel(orderId);
     setIsCancellationDialogOpen(true);
-  };
-
-  // Confirm order cancellation with reason
-  const confirmOrderCancellation = () => {
-    if (!orderToCancelId) return;
-    
-    const finalReason = cancellationReason === "other" ? customCancellationReason : cancellationReason;
-    updateOrderStatusMutation.mutate({ 
-      orderId: orderToCancelId, 
-      status: "cancelled", 
-      cancellationReason: finalReason 
-    });
-    
-    setIsCancellationDialogOpen(false);
-    setOrderToCancelId(null);
-    setCancellationReason("");
-    setCustomCancellationReason("");
   };
 
   if (isLoading || !isAuthenticated) {
