@@ -22,7 +22,7 @@ import {
   type InsertStoreSettings,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, like, sql, not, ne, count, asc } from "drizzle-orm";
+import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull } from "drizzle-orm";
 
 // Pagination types
 export interface PaginationParams {
@@ -184,6 +184,17 @@ export class DatabaseStorage implements IStorage {
         conditions.push(eq(products.isAvailable, true));
       } else if (status === 'unavailable') {
         conditions.push(eq(products.isAvailable, false));
+      } else if (status === 'with_discount') {
+        conditions.push(
+          or(
+            eq(products.isSpecialOffer, true),
+            and(
+              isNotNull(products.discountValue),
+              ne(products.discountValue, "0"),
+              ne(products.discountValue, "")
+            )
+          )
+        );
       }
     }
 
