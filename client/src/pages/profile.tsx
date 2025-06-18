@@ -624,7 +624,30 @@ export default function Profile() {
                             </div>
                           </TableCell>
                           <TableCell className="font-medium">
-                            {formatCurrency(parseFloat(order.totalAmount))}
+                            {(() => {
+                              const discounts = parseOrderDiscounts(order.customerNotes || '');
+                              const hasDiscounts = discounts && (discounts.orderDiscount || Object.keys(discounts.itemDiscounts || {}).length > 0);
+                              
+                              if (hasDiscounts) {
+                                // Calculate original total without discounts
+                                const originalSubtotal = order.items.reduce((sum, item) => sum + parseFloat(item.totalPrice), 0);
+                                const deliveryFee = parseFloat(order.deliveryFee);
+                                const originalTotal = originalSubtotal + deliveryFee;
+                                
+                                return (
+                                  <div className="flex flex-col items-end">
+                                    <span className="text-xs text-gray-500 line-through">
+                                      {formatCurrency(originalTotal)}
+                                    </span>
+                                    <span className="text-red-600 font-medium">
+                                      {formatCurrency(parseFloat(order.totalAmount))}
+                                    </span>
+                                  </div>
+                                );
+                              }
+                              
+                              return formatCurrency(parseFloat(order.totalAmount));
+                            })()}
                           </TableCell>
                         </TableRow>
                       ))}
