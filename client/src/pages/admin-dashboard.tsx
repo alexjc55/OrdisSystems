@@ -99,6 +99,7 @@ const storeSettingsSchema = z.object({
   bottomBanner2Url: z.string().optional(),
   bottomBanner2Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
   showBottomBanners: z.boolean().optional(),
+  defaultItemsPerPage: z.number().int().min(1).max(1000).default(10),
 });
 
 export default function AdminDashboard() {
@@ -123,7 +124,6 @@ export default function AdminDashboard() {
   const [productsPage, setProductsPage] = useState(1);
   const [ordersPage, setOrdersPage] = useState(1);
   const [usersPage, setUsersPage] = useState(1);
-  const itemsPerPage = 10;
 
   // Reset pagination when filters change
   useEffect(() => {
