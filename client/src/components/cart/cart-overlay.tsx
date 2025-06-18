@@ -115,6 +115,8 @@ export default function CartOverlay() {
       customerNotes: customerNotes.trim() || null,
       deliveryAddress: deliveryAddress.trim(),
       customerPhone: customerPhone.trim(),
+      deliveryDate: deliveryDate || null,
+      deliveryTime: deliveryTime || null,
       paymentMethod: "cash",
       items: items.map(item => ({
         productId: item.product.id,

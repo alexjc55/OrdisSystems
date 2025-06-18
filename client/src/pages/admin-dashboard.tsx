@@ -375,6 +375,22 @@ export default function AdminDashboard() {
     }
   });
 
+  // Order status update mutation
+  const updateOrderStatusMutation = useMutation({
+    mutationFn: async ({ orderId, status }: { orderId: number; status: string }) => {
+      const response = await apiRequest('PUT', `/api/orders/${orderId}/status`, { status });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/orders'] });
+      toast({ title: "Статус обновлен", description: "Статус заказа успешно изменен" });
+    },
+    onError: (error: any) => {
+      console.error("Order status update error:", error);
+      toast({ title: "Ошибка", description: "Не удалось обновить статус заказа", variant: "destructive" });
+    }
+  });
+
   if (isLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -796,51 +812,72 @@ export default function AdminDashboard() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="text-xs sm:text-sm">№ Заказа</TableHead>
+                            <TableHead className="text-xs sm:text-sm w-20">№</TableHead>
                             <TableHead className="text-xs sm:text-sm">Клиент</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Статус</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Сумма</TableHead>
-                            <TableHead className="text-xs sm:text-sm hidden sm:table-cell">Дата</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Действия</TableHead>
+                            <TableHead className="text-xs sm:text-sm w-24">Статус</TableHead>
+                            <TableHead className="text-xs sm:text-sm w-20">Сумма</TableHead>
+                            <TableHead className="text-xs sm:text-sm hidden md:table-cell w-24">Дата</TableHead>
+                            <TableHead className="text-xs sm:text-sm hidden lg:table-cell w-32">Доставка</TableHead>
+                            <TableHead className="text-xs sm:text-sm w-24">Действия</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {(orders as any[] || []).map((order: any) => (
-                            <TableRow key={order.id}>
-                              <TableCell className="font-medium text-xs sm:text-sm">#{order.id}</TableCell>
+                            <TableRow key={order.id} className="hover:bg-gray-50">
+                              <TableCell className="font-bold text-xs sm:text-sm text-orange-600">#{order.id}</TableCell>
                               <TableCell className="text-xs sm:text-sm">
-                                {order.user?.firstName && order.user?.lastName 
-                                  ? `${order.user.firstName} ${order.user.lastName}`
-                                  : order.user?.email || "—"
-                                }
+                                <div className="space-y-1">
+                                  <div className="font-medium">
+                                    {order.user?.firstName && order.user?.lastName 
+                                      ? `${order.user.firstName} ${order.user.lastName}`
+                                      : order.user?.email || "—"
+                                    }
+                                  </div>
+                                  {order.customerPhone && (
+                                    <div className="text-gray-500 text-xs">{order.customerPhone}</div>
+                                  )}
+                                </div>
                               </TableCell>
                               <TableCell>
-                                <Badge 
-                                  variant={
-                                    order.status === "delivered" ? "default" :
-                                    order.status === "confirmed" ? "secondary" :
-                                    order.status === "cancelled" ? "destructive" :
-                                    "outline"
-                                  }
-                                  className="text-xs"
+                                <Select
+                                  value={order.status}
+                                  onValueChange={(newStatus) => {
+                                    // TODO: Implement status update
+                                    console.log("Update status:", order.id, newStatus);
+                                  }}
                                 >
-                                  {order.status === "pending" && "Ожидает"}
-                                  {order.status === "confirmed" && "Подтвержден"}
-                                  {order.status === "preparing" && "Готовится"}
-                                  {order.status === "ready" && "Готов"}
-                                  {order.status === "delivered" && "Доставлен"}
-                                  {order.status === "cancelled" && "Отменен"}
-                                </Badge>
+                                  <SelectTrigger className="w-full h-8 text-xs">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="pending">Ожидает</SelectItem>
+                                    <SelectItem value="confirmed">Подтвержден</SelectItem>
+                                    <SelectItem value="preparing">Готовится</SelectItem>
+                                    <SelectItem value="ready">Готов</SelectItem>
+                                    <SelectItem value="delivered">Доставлен</SelectItem>
+                                    <SelectItem value="cancelled">Отменен</SelectItem>
+                                  </SelectContent>
+                                </Select>
                               </TableCell>
                               <TableCell className="font-medium text-xs sm:text-sm">
                                 {formatCurrency(order.totalAmount)}
                               </TableCell>
-                              <TableCell className="text-xs sm:text-sm hidden sm:table-cell">
+                              <TableCell className="text-xs sm:text-sm hidden md:table-cell">
                                 {new Date(order.createdAt).toLocaleDateString('ru-RU')}
                               </TableCell>
+                              <TableCell className="text-xs hidden lg:table-cell">
+                                {order.deliveryDate && order.deliveryTime ? (
+                                  <div className="space-y-1">
+                                    <div className="font-medium">{order.deliveryDate}</div>
+                                    <div className="text-gray-500">{order.deliveryTime}</div>
+                                  </div>
+                                ) : (
+                                  <span className="text-gray-400">Не указано</span>
+                                )}
+                              </TableCell>
                               <TableCell>
-                                <Button variant="outline" size="sm" className="text-xs">
-                                  Подробнее
+                                <Button variant="outline" size="sm" className="text-xs h-8">
+                                  Детали
                                 </Button>
                               </TableCell>
                             </TableRow>
