@@ -106,6 +106,7 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
   const [selectedAvailabilityFilter, setSelectedAvailabilityFilter] = useState("all");
+  const [selectedDiscountFilter, setSelectedDiscountFilter] = useState("all");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
@@ -403,7 +404,11 @@ export default function AdminDashboard() {
         (selectedAvailabilityFilter === "available" && product.isAvailable) ||
         (selectedAvailabilityFilter === "unavailable" && !product.isAvailable);
       
-      return matchesSearch && matchesCategory && matchesAvailability;
+      const matchesDiscount = selectedDiscountFilter === "all" ||
+        (selectedDiscountFilter === "with_discount" && (product.isSpecialOffer || (product.discountValue && parseFloat(product.discountValue) > 0))) ||
+        (selectedDiscountFilter === "without_discount" && !product.isSpecialOffer && (!product.discountValue || parseFloat(product.discountValue) === 0));
+      
+      return matchesSearch && matchesCategory && matchesAvailability && matchesDiscount;
     })
     .sort((a: any, b: any) => {
       let aValue, bValue;
