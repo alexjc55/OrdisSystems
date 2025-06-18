@@ -340,17 +340,16 @@ export default function Home() {
                       <h2 className="text-2xl font-poppins font-bold text-gray-900">Категории</h2>
                     </div>
                     <div className="flex items-center gap-4">
-                      <Button
-                        onClick={() => setSelectedCategoryId(0)}
-                        size="lg"
-                        className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3"
-                      >
-                        <Package className="mr-2 h-5 w-5" />
-                        Все товары
-                      </Button>
                       <Badge variant="default" className="bg-primary">
                         {categories.length} категорий
                       </Badge>
+                      <Button
+                        onClick={() => setSelectedCategoryId(0)}
+                        className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2"
+                      >
+                        <Package className="mr-2 h-4 w-4" />
+                        Все товары
+                      </Button>
                     </div>
                   </div>
                   
