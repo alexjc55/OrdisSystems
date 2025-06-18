@@ -170,7 +170,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 <DropdownMenuContent align="start" className="w-40">
                   <DropdownMenuItem 
                     onClick={() => window.location.href = `tel:${order.customerPhone}`}
-                    className="cursor-pointer hover:text-orange-600 hover:bg-orange-50"
+                    className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
                   >
                     <Phone className="h-4 w-4 mr-2" />
                     Позвонить
@@ -180,7 +180,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                       const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
                       window.open(`https://wa.me/${cleanPhone}`, '_blank');
                     }}
-                    className="cursor-pointer hover:text-orange-600 hover:bg-orange-50"
+                    className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
                   >
                     <MessageCircle className="h-4 w-4 mr-2" />
                     WhatsApp
@@ -622,12 +622,46 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
           <div className="space-y-3">
             <div>
               <label className="block text-sm font-medium mb-1">Телефон клиента</label>
-              <Input
-                value={editedOrder.customerPhone}
-                onChange={(e) => setEditedOrder(prev => ({ ...prev, customerPhone: e.target.value }))}
-                placeholder="Номер телефона"
-                className="text-sm"
-              />
+              <div className="flex gap-2">
+                <Input
+                  value={editedOrder.customerPhone}
+                  onChange={(e) => setEditedOrder(prev => ({ ...prev, customerPhone: e.target.value }))}
+                  placeholder="Номер телефона"
+                  className="text-sm flex-1"
+                />
+                {editedOrder.customerPhone && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-9 px-3 text-blue-600 hover:text-blue-800 border-blue-200 hover:bg-blue-50"
+                      >
+                        <Phone className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-40">
+                      <DropdownMenuItem 
+                        onClick={() => window.location.href = `tel:${editedOrder.customerPhone}`}
+                        className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
+                      >
+                        <Phone className="h-4 w-4 mr-2" />
+                        Позвонить
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => {
+                          const cleanPhone = editedOrder.customerPhone.replace(/[^\d+]/g, '');
+                          window.open(`https://wa.me/${cleanPhone}`, '_blank');
+                        }}
+                        className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
+                      >
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        WhatsApp
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
             </div>
 
             <div>
@@ -2113,7 +2147,7 @@ export default function AdminDashboard() {
                                           <DropdownMenuContent align="start" className="w-40">
                                             <DropdownMenuItem 
                                               onClick={() => window.location.href = `tel:${order.customerPhone}`}
-                                              className="cursor-pointer hover:text-orange-600 hover:bg-orange-50"
+                                              className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
                                             >
                                               <Phone className="h-4 w-4 mr-2" />
                                               Позвонить
@@ -2123,7 +2157,7 @@ export default function AdminDashboard() {
                                                 const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
                                                 window.open(`https://wa.me/${cleanPhone}`, '_blank');
                                               }}
-                                              className="cursor-pointer hover:text-orange-600 hover:bg-orange-50"
+                                              className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
                                             >
                                               <MessageCircle className="h-4 w-4 mr-2" />
                                               WhatsApp
