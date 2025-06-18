@@ -261,14 +261,14 @@ export default function CartOverlay() {
                             <div>
                               <p className="text-sm font-medium text-gray-900 mb-1">Часы работы</p>
                               <div className="text-xs text-gray-600 space-y-0.5">
-                                {Object.entries(storeSettings.workingHours).map(([day, hours]) => 
-                                  hours && (
+                                {Object.entries(storeSettings.workingHours)
+                                  .filter(([_, hours]) => hours)
+                                  .map(([day, hours]) => (
                                     <div key={day} className="flex justify-between">
                                       <span className="capitalize">{day}:</span>
-                                      <span>{hours}</span>
+                                      <span>{hours as string}</span>
                                     </div>
-                                  )
-                                )}
+                                  ))}
                               </div>
                             </div>
                           </div>

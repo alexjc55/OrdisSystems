@@ -80,6 +80,8 @@ export const orders = pgTable("orders", {
   customerNotes: text("customer_notes"),
   deliveryAddress: text("delivery_address"),
   customerPhone: varchar("customer_phone", { length: 20 }),
+  deliveryDate: varchar("delivery_date", { length: 20 }), // Format: YYYY-MM-DD
+  deliveryTime: varchar("delivery_time", { length: 20 }), // Format: HH:MM
   requestedDeliveryTime: timestamp("requested_delivery_time"),
   paymentMethod: varchar("payment_method", { length: 50 }),
   createdAt: timestamp("created_at").defaultNow(),

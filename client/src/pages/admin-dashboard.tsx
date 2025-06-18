@@ -705,41 +705,39 @@ export default function AdminDashboard() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="text-xs sm:text-sm">Иконка</TableHead>
+                            <TableHead className="text-xs sm:text-sm w-16">Иконка</TableHead>
                             <TableHead className="text-xs sm:text-sm">Название</TableHead>
-                            <TableHead className="text-xs sm:text-sm hidden sm:table-cell">Описание</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Товаров</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Действия</TableHead>
+                            <TableHead className="text-xs sm:text-sm w-24 text-center">Товаров</TableHead>
+                            <TableHead className="text-xs sm:text-sm w-32 text-center">Действия</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {(categories as any[] || []).map((category: any) => (
                             <TableRow key={category.id}>
-                              <TableCell className="text-lg sm:text-2xl">{category.icon}</TableCell>
-                              <TableCell className="font-medium text-xs sm:text-sm">{category.name}</TableCell>
-                              <TableCell className="text-gray-500 text-xs sm:text-sm hidden sm:table-cell">{category.description || "—"}</TableCell>
-                              <TableCell>
+                              <TableCell className="text-xl sm:text-2xl text-center">{category.icon}</TableCell>
+                              <TableCell className="font-medium text-sm sm:text-base">{category.name}</TableCell>
+                              <TableCell className="text-center">
                                 <Badge variant="secondary" className="text-xs">
                                   {category.products?.length || 0}
                                 </Badge>
                               </TableCell>
                               <TableCell>
-                                <div className="flex items-center gap-1">
+                                <div className="flex items-center justify-center gap-2">
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    className="h-8 w-8 p-0"
+                                    className="h-8 w-8 p-0 hover:bg-blue-50 hover:border-blue-300"
                                     onClick={() => {
                                       setEditingCategory(category);
                                       setIsCategoryFormOpen(true);
                                     }}
                                   >
-                                    <Edit2 className="h-3 w-3" />
+                                    <Edit2 className="h-3 w-3 text-blue-600" />
                                   </Button>
                                   <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                      <Button variant="outline" size="sm" className="h-8 w-8 p-0 text-red-600">
-                                        <Trash2 className="h-3 w-3" />
+                                      <Button variant="outline" size="sm" className="h-8 w-8 p-0 hover:bg-red-50 hover:border-red-300">
+                                        <Trash2 className="h-3 w-3 text-red-600" />
                                       </Button>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent className="max-w-[90vw] sm:max-w-md">

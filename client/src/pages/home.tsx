@@ -326,19 +326,6 @@ export default function Home() {
           {/* Special Offers or Category View */}
           {!selectedCategory && searchQuery.length <= 2 && (
             <div>
-              {/* All Products Button */}
-              <div className="mb-8 text-center">
-                <Button
-                  onClick={() => setSelectedCategoryId(0)}
-                  variant="outline"
-                  size="lg"
-                  className="bg-white hover:bg-orange-50 border-orange-500 text-orange-600 hover:text-orange-700 font-semibold px-8 py-3"
-                >
-                  <Package className="mr-2 h-5 w-5" />
-                  Все товары
-                </Button>
-              </div>
-
               {/* Category Overview */}
               {categories && categories.length > 0 && (
                 <div className="mb-8">
@@ -347,9 +334,20 @@ export default function Home() {
                       <Package className="mr-3 h-6 w-6 text-primary" />
                       <h2 className="text-2xl font-poppins font-bold text-gray-900">Категории</h2>
                     </div>
-                    <Badge variant="default" className="bg-primary">
-                      {categories.length} категорий
-                    </Badge>
+                    <div className="flex items-center gap-4">
+                      <Button
+                        onClick={() => setSelectedCategoryId(0)}
+                        variant="outline"
+                        size="sm"
+                        className="bg-white hover:bg-orange-50 border-orange-500 text-orange-600 hover:text-orange-700 font-semibold"
+                      >
+                        <Package className="mr-2 h-4 w-4" />
+                        Все товары
+                      </Button>
+                      <Badge variant="default" className="bg-primary">
+                        {categories.length} категорий
+                      </Badge>
+                    </div>
                   </div>
                   
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -487,21 +485,30 @@ export default function Home() {
                     )}
                   </div>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    {selectedCategoryId === 0 && (
-                      <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                        <SelectTrigger className="w-full sm:w-48">
-                          <SelectValue placeholder="Все категории" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">Все категории</SelectItem>
-                          {categories?.map((category) => (
-                            <SelectItem key={category.id} value={category.id.toString()}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
+                    <Select 
+                      value={selectedCategoryId === 0 ? categoryFilter : selectedCategoryId.toString()} 
+                      onValueChange={(value) => {
+                        if (value === "all") {
+                          setSelectedCategoryId(0);
+                          setCategoryFilter("all");
+                        } else {
+                          setSelectedCategoryId(parseInt(value));
+                          setCategoryFilter("all");
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="w-full sm:w-48">
+                        <SelectValue placeholder="Категория" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Все категории</SelectItem>
+                        {categories?.map((category) => (
+                          <SelectItem key={category.id} value={category.id.toString()}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <Select value={discountFilter} onValueChange={setDiscountFilter}>
                       <SelectTrigger className="w-full sm:w-40">
                         <SelectValue placeholder="Все товары" />
