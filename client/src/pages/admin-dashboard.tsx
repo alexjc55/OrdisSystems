@@ -476,7 +476,18 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     const updatedItems = [...editedOrderItems];
     const item = updatedItems[index];
     const unitPrice = parseFloat(item.pricePerUnit || item.pricePerKg || 0);
-    const basePrice = newQuantity * unitPrice;
+    
+    // Calculate base price based on product unit
+    let basePrice;
+    const unit = item.product?.unit;
+    if (unit === '100g' || unit === '100ml') {
+      // For 100g/100ml products, price is per 100 units, quantity is in actual units (grams/ml)
+      basePrice = unitPrice * (newQuantity / 100);
+    } else {
+      // For piece and kg products, direct multiplication
+      basePrice = newQuantity * unitPrice;
+    }
+    
     const discount = itemDiscounts[index];
     let finalPrice = basePrice;
     
@@ -512,7 +523,18 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     const item = updatedItems[index];
     const quantity = parseFloat(item.quantity) || 0;
     const unitPrice = parseFloat(item.pricePerUnit || item.pricePerKg || 0);
-    const basePrice = quantity * unitPrice;
+    
+    // Calculate base price based on product unit
+    let basePrice;
+    const unit = item.product?.unit;
+    if (unit === '100g' || unit === '100ml') {
+      // For 100g/100ml products, price is per 100 units, quantity is in actual units (grams/ml)
+      basePrice = unitPrice * (quantity / 100);
+    } else {
+      // For piece and kg products, direct multiplication
+      basePrice = quantity * unitPrice;
+    }
+    
     let finalPrice = basePrice;
     
     console.log('Discount calculation:', {

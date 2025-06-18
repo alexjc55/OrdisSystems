@@ -77,19 +77,17 @@ export function formatQuantity(quantity: number | string, unit: ProductUnit): st
   
   switch (unit) {
     case "100g":
-      // For 100g products, quantity represents portions (1 = 100g, 2 = 200g, etc.)
-      const grams = quantityNum * 100;
-      if (grams >= 1000) {
-        return `${(grams / 1000).toFixed(2)} кг`;
+      // For 100g products, quantity is already in grams
+      if (quantityNum >= 1000) {
+        return `${(quantityNum / 1000).toFixed(2)} кг`;
       }
-      return `${grams.toFixed(0)}г`;
+      return `${quantityNum.toFixed(0)}г`;
     case "100ml":
-      // For 100ml products, quantity represents portions (1 = 100ml, 2 = 200ml, etc.)
-      const ml = quantityNum * 100;
-      if (ml >= 1000) {
-        return `${(ml / 1000).toFixed(2)} л`;
+      // For 100ml products, quantity is already in ml
+      if (quantityNum >= 1000) {
+        return `${(quantityNum / 1000).toFixed(2)} л`;
       }
-      return `${ml.toFixed(0)}мл`;
+      return `${quantityNum.toFixed(0)}мл`;
     case "piece":
       return `${quantityNum.toFixed(0)} шт`;
     case "kg":

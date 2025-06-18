@@ -285,7 +285,7 @@ export default function CartOverlay() {
                         {item.product.name}
                       </h4>
                       <p className="text-sm text-gray-600">
-                        {formatQuantity(item.quantity, item.product.unit as ProductUnit)} × {formatCurrency(parseFloat(item.product.pricePerKg))}
+                        {formatQuantity(item.quantity, item.product.unit as ProductUnit)} × {formatCurrency(parseFloat(item.product.price))}
                       </p>
                       <div className="flex items-center space-x-2 mt-2">
                         <Button
