@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useCallback, memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -70,25 +70,25 @@ export default function Home() {
     return categories.find(cat => cat.id === selectedCategoryId);
   }, [categories, selectedCategoryId]);
 
-  const handleCategorySelect = (categoryId: number | null) => {
+  const handleCategorySelect = useCallback((categoryId: number | null) => {
     setSelectedCategoryId(categoryId);
     setSearchQuery("");
-  };
+  }, []);
 
-  const handleResetView = () => {
+  const handleResetView = useCallback(() => {
     setSelectedCategoryId(null);
     setSearchQuery("");
     setCategoryFilter("all");
     setDiscountFilter("all");
-  };
+  }, []);
 
-  const handleSearch = (query: string) => {
+  const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
     setSelectedCategoryId(null);
-  };
+  }, []);
 
-  // Filter and prepare products for display
-  const getFilteredProducts = () => {
+  // Filter and prepare products for display with memoization
+  const displayProducts = useMemo(() => {
     let baseProducts = [];
     
     if (searchQuery.length > 2) {
@@ -123,9 +123,7 @@ export default function Home() {
     }
 
     return filtered;
-  };
-
-  const displayProducts = getFilteredProducts();
+  }, [searchQuery, searchResults, selectedCategoryId, allProducts, products, categoryFilter, discountFilter]);
   const isLoading = searchQuery.length > 2 ? searchLoading : (selectedCategoryId === null ? allProductsLoading : productsLoading);
   
   // Get special offers (products marked as special offers)
