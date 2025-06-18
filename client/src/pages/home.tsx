@@ -444,18 +444,39 @@ export default function Home() {
                       
                       {/* Carousel indicators */}
                       <div className="flex justify-center items-center mt-4 space-x-4">
-                        {/* Mobile-specific styles */}
+                        {/* Mobile carousel dots fix */}
                         <style dangerouslySetInnerHTML={{
                           __html: `
-                            @media (max-width: 767px) {
+                            .carousel-dot {
+                              display: block;
+                              width: 10px;
+                              height: 10px;
+                              border-radius: 50%;
+                              border: none;
+                              outline: none;
+                              padding: 0;
+                              margin: 0;
+                              flex: none;
+                              min-width: 10px;
+                              min-height: 10px;
+                              max-width: 10px;
+                              max-height: 10px;
+                              box-sizing: border-box;
+                            }
+                            @media (max-width: 768px) {
                               .carousel-dot {
-                                width: 12px !important;
-                                height: 12px !important;
+                                width: 10px !important;
+                                height: 10px !important;
+                                min-width: 10px !important;
+                                min-height: 10px !important;
+                                max-width: 10px !important;
+                                max-height: 10px !important;
                                 border-radius: 50% !important;
                                 flex-shrink: 0 !important;
+                                padding: 0 !important;
+                                margin: 0 !important;
                                 border: none !important;
                                 outline: none !important;
-                                box-sizing: border-box !important;
                               }
                             }
                           `
@@ -466,20 +487,10 @@ export default function Home() {
                             <button
                               key={index}
                               onClick={() => goToSlide(index)}
-                              className={`carousel-dot rounded-full transition-colors flex-shrink-0 ${
-                                index === currentSlide 
-                                  ? 'bg-orange-500' 
-                                  : 'bg-gray-300 hover:bg-orange-400'
-                              }`}
+                              className="carousel-dot"
                               style={{ 
-                                width: '12px', 
-                                height: '12px', 
-                                minWidth: '12px', 
-                                minHeight: '12px',
-                                maxWidth: '12px',
-                                maxHeight: '12px',
-                                borderRadius: '50%',
-                                flexShrink: 0
+                                backgroundColor: index === currentSlide ? '#f97316' : '#d1d5db',
+                                transition: 'background-color 0.2s ease'
                               }}
                               aria-label={`Go to slide ${index + 1}`}
                             />
