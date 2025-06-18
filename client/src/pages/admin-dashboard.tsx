@@ -342,7 +342,12 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
   };
 
   const handleSave = () => {
-    updateOrderMutation.mutate(editedOrder);
+    const totalAmount = editedOrderItems.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
+    updateOrderMutation.mutate({
+      ...editedOrder,
+      items: editedOrderItems,
+      totalAmount
+    });
   };
 
   return (
@@ -516,6 +521,14 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
         />
       </div>
 
+      {/* Add Item Dialog */}
+      {showAddItem && (
+        <AddItemDialog 
+          onClose={() => setShowAddItem(false)}
+          onAdd={addItem}
+        />
+      )}
+
       {/* Actions */}
       <div className="flex justify-end gap-3 pt-4 border-t">
         <Button variant="outline" onClick={onClose}>
@@ -531,6 +544,102 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
       </div>
     </div>
   );
+}
+
+// Add Item Dialog Component
+function AddItemDialog({ onClose, onAdd }: { onClose: () => void, onAdd: (product: any, quantity: number) => void }) {
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { data: productsResponse } = useQuery({
+    queryKey: ["/api/products"],
+    select: (data: any) => data?.filter((product: any) => 
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  });
+
+  const handleAdd = () => {
+    if (selectedProduct && quantity > 0) {
+      onAdd(selectedProduct, quantity);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-96 max-h-[80vh] overflow-y-auto">
+        <h3 className="text-lg font-semibold mb-4">Добавить товар</h3>
+        
+        {/* Search */}
+        <div className="mb-4">
+          <Input
+            placeholder="Поиск товаров..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="mb-3"
+          />
+        </div>
+
+        {/* Product List */}
+        <div className="mb-4 max-h-60 overflow-y-auto border rounded">
+          {productsResponse?.map((product: any) => (
+            <div
+              key={product.id}
+              className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${
+                selectedProduct?.id === product.id ? 'bg-blue-50' : ''
+              }`}
+              onClick={() => setSelectedProduct(product)}
+            >
+              <div className="font-medium">{product.name}</div>
+              <div className="text-sm text-gray-500">
+                {formatCurrency(product.price || product.pricePerKg)} за {getUnitDisplay(product.unit)}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Quantity */}
+        {selectedProduct && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2">
+              Количество ({getUnitDisplay(selectedProduct.unit)})
+            </label>
+            <Input
+              type="number"
+              step="0.1"
+              min="0.1"
+              value={quantity}
+              onChange={(e) => setQuantity(parseFloat(e.target.value) || 0.1)}
+            />
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex justify-end gap-3">
+          <Button variant="outline" onClick={onClose}>
+            Отмена
+          </Button>
+          <Button 
+            onClick={handleAdd}
+            disabled={!selectedProduct || quantity <= 0}
+            className="bg-green-600 hover:bg-green-700"
+          >
+            Добавить
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  function getUnitDisplay(unit: string) {
+    switch (unit) {
+      case 'piece': return 'шт.';
+      case 'kg': return 'кг';
+      case '100g': return 'по 100г';
+      case '100ml': return 'по 100мл';
+      default: return '';
+    }
+  }
 }
 
 export default function AdminDashboard() {

@@ -73,6 +73,7 @@ export interface IStorage {
   createOrder(order: InsertOrder, items: InsertOrderItem[]): Promise<Order>;
   updateOrder(id: number, orderData: Partial<InsertOrder>): Promise<Order>;
   updateOrderStatus(id: number, status: "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "cancelled"): Promise<Order>;
+  updateOrderItems(orderId: number, items: any[]): Promise<void>;
 
   // User operations with pagination
   getUsersPaginated(params: PaginationParams): Promise<PaginatedResult<User>>;

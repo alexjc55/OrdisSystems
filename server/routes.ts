@@ -400,11 +400,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const id = parseInt(req.params.id);
-      const updateData = req.body;
+      const { items, totalAmount, ...orderData } = req.body;
       
-      // Update order using storage interface
-      const order = await storage.updateOrder(id, updateData);
-      res.json(order);
+      // If items are provided, this is a comprehensive update
+      if (items) {
+        // Update order items in database
+        await storage.updateOrderItems(id, items);
+        
+        // Update order with new total amount and other data
+        const updatedOrder = await storage.updateOrder(id, { 
+          ...orderData, 
+          totalAmount: totalAmount || orderData.totalAmount 
+        });
+        
+        // Return the updated order with items
+        const orderWithItems = await storage.getOrderById(id);
+        res.json(orderWithItems);
+      } else {
+        // Standard order update without items modification
+        const order = await storage.updateOrder(id, orderData);
+        res.json(order);
+      }
     } catch (error) {
       console.error("Error updating order:", error);
       res.status(500).json({ message: "Failed to update order" });
