@@ -273,6 +273,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
   const queryClient = useQueryClient();
   const [showAddItem, setShowAddItem] = useState(false);
   const [editedOrderItems, setEditedOrderItems] = useState(order.items || []);
+  const [showDiscountDialog, setShowDiscountDialog] = useState<number | null>(null);
 
   const updateOrderMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -420,11 +421,13 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
   };
 
   const handleSave = () => {
-    const totalAmount = editedOrderItems.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
+    const finalTotal = calculateFinalTotal();
     updateOrderMutation.mutate({
       ...editedOrder,
       items: editedOrderItems,
-      totalAmount
+      totalAmount: finalTotal,
+      orderDiscount: orderDiscount.value > 0 ? orderDiscount : null,
+      itemDiscounts: Object.keys(itemDiscounts).length > 0 ? itemDiscounts : null
     });
   };
 
@@ -572,11 +575,24 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
                   <TableCell className="text-sm">{getUnitPrice(item.product)}</TableCell>
                   <TableCell className="text-sm font-medium">{formatCurrency(item.totalPrice)}</TableCell>
                   <TableCell className="text-sm">
-                    <ItemDiscountControl 
-                      index={index} 
-                      discount={itemDiscounts[index]} 
-                      onApplyDiscount={applyItemDiscount} 
-                    />
+                    <div className="flex items-center gap-1">
+                      {itemDiscounts[index] ? (
+                        <div className="text-xs text-red-600">
+                          {itemDiscounts[index].type === 'percentage' 
+                            ? `${itemDiscounts[index].value}%` 
+                            : `₪${itemDiscounts[index].value}`}
+                        </div>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setShowDiscountDialog(index)}
+                          className="h-6 px-2 text-xs"
+                        >
+                          Скидка
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Button
@@ -592,6 +608,65 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
               ))}
             </TableBody>
           </Table>
+        </div>
+
+        {/* Order Total Summary */}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-medium mb-3">Итого по заказу</h4>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span>Промежуточная сумма:</span>
+              <span>{formatCurrency(calculateSubtotal())}</span>
+            </div>
+            
+            {/* Order-level discount */}
+            <div className="border-t pt-2">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-medium">Общая скидка на заказ:</span>
+                <span className="text-red-600">-{formatCurrency(calculateOrderDiscount(calculateSubtotal()))}</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <Select
+                  value={orderDiscount.type}
+                  onValueChange={(value: 'percentage' | 'amount') => 
+                    setOrderDiscount(prev => ({ ...prev, type: value }))
+                  }
+                >
+                  <SelectTrigger className="h-8 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="percentage">%</SelectItem>
+                    <SelectItem value="amount">₪</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={orderDiscount.value}
+                  onChange={(e) => setOrderDiscount(prev => ({ 
+                    ...prev, 
+                    value: parseFloat(e.target.value) || 0 
+                  }))}
+                  className="h-8 text-xs"
+                />
+                <Input
+                  placeholder="Причина"
+                  value={orderDiscount.reason}
+                  onChange={(e) => setOrderDiscount(prev => ({ 
+                    ...prev, 
+                    reason: e.target.value 
+                  }))}
+                  className="h-8 text-xs"
+                />
+              </div>
+            </div>
+            
+            <div className="border-t pt-2 flex justify-between font-semibold">
+              <span>К доплате:</span>
+              <span>{formatCurrency(calculateFinalTotal())}</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -612,6 +687,17 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
         <AddItemDialog 
           onClose={() => setShowAddItem(false)}
           onAdd={addItem}
+        />
+      )}
+
+      {/* Item Discount Dialog */}
+      {showDiscountDialog !== null && (
+        <ItemDiscountDialog
+          itemIndex={showDiscountDialog}
+          item={editedOrderItems[showDiscountDialog]}
+          currentDiscount={itemDiscounts[showDiscountDialog]}
+          onClose={() => setShowDiscountDialog(null)}
+          onApply={applyItemDiscount}
         />
       )}
 
@@ -726,6 +812,133 @@ function AddItemDialog({ onClose, onAdd }: { onClose: () => void, onAdd: (produc
       default: return '';
     }
   }
+}
+
+// Item Discount Dialog Component
+function ItemDiscountDialog({ 
+  itemIndex, 
+  item, 
+  currentDiscount, 
+  onClose, 
+  onApply 
+}: { 
+  itemIndex: number;
+  item: any;
+  currentDiscount?: {type: 'percentage' | 'amount', value: number, reason: string};
+  onClose: () => void;
+  onApply: (index: number, type: 'percentage' | 'amount', value: number, reason: string) => void;
+}) {
+  const [discountType, setDiscountType] = useState<'percentage' | 'amount'>(currentDiscount?.type || 'percentage');
+  const [discountValue, setDiscountValue] = useState(currentDiscount?.value || 0);
+  const [discountReason, setDiscountReason] = useState(currentDiscount?.reason || '');
+
+  const handleApply = () => {
+    if (discountValue > 0) {
+      onApply(itemIndex, discountType, discountValue, discountReason);
+    }
+    onClose();
+  };
+
+  const basePrice = item.quantity * item.pricePerUnit;
+  const discountAmount = discountType === 'percentage' 
+    ? basePrice * (discountValue / 100) 
+    : Math.min(discountValue, basePrice);
+  const finalPrice = basePrice - discountAmount;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-96">
+        <h3 className="text-lg font-semibold mb-4">Скидка на товар</h3>
+        
+        <div className="mb-4">
+          <div className="font-medium">{item.product?.name}</div>
+          <div className="text-sm text-gray-500">
+            Базовая стоимость: {formatCurrency(basePrice)}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Тип скидки</label>
+            <Select
+              value={discountType}
+              onValueChange={(value: 'percentage' | 'amount') => setDiscountType(value)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="percentage">Процент (%)</SelectItem>
+                <SelectItem value="amount">Сумма (₪)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Размер скидки {discountType === 'percentage' ? '(%)' : '(₪)'}
+            </label>
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              max={discountType === 'percentage' ? 100 : basePrice}
+              value={discountValue}
+              onChange={(e) => setDiscountValue(parseFloat(e.target.value) || 0)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Причина скидки</label>
+            <Input
+              placeholder="Укажите причину скидки..."
+              value={discountReason}
+              onChange={(e) => setDiscountReason(e.target.value)}
+            />
+          </div>
+
+          {discountValue > 0 && (
+            <div className="bg-gray-50 p-3 rounded">
+              <div className="text-sm space-y-1">
+                <div className="flex justify-between">
+                  <span>Скидка:</span>
+                  <span className="text-red-600">-{formatCurrency(discountAmount)}</span>
+                </div>
+                <div className="flex justify-between font-medium">
+                  <span>Итого:</span>
+                  <span>{formatCurrency(finalPrice)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-end gap-3 mt-6">
+          <Button variant="outline" onClick={onClose}>
+            Отмена
+          </Button>
+          {currentDiscount && (
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                onApply(itemIndex, 'percentage', 0, '');
+                onClose();
+              }}
+              className="text-red-600 hover:text-red-800"
+            >
+              Убрать скидку
+            </Button>
+          )}
+          <Button 
+            onClick={handleApply}
+            className="bg-green-600 hover:bg-green-700"
+          >
+            Применить
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function AdminDashboard() {
