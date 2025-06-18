@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +33,8 @@ import type { CategoryWithProducts, ProductWithCategory } from "@shared/schema";
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const carouselApiRef = useRef<any>(null);
   const { user } = useAuth();
   const { isOpen: isCartOpen } = useCartStore();
   const { storeSettings } = useStoreSettings();
@@ -82,6 +84,17 @@ export default function Home() {
   
   // Get special offers (products marked as special offers)
   const specialOffers = allProducts?.filter(product => product.isAvailable !== false && product.isSpecialOffer === true) || [];
+  
+  // Calculate total slides for carousel
+  const totalSlides = Math.ceil(specialOffers.length / 3);
+  
+  // Handle carousel navigation
+  const goToSlide = (slideIndex: number) => {
+    if (carouselApiRef.current) {
+      carouselApiRef.current.scrollTo(slideIndex);
+      setCurrentSlide(slideIndex);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
@@ -315,16 +328,9 @@ export default function Home() {
               {/* Special Offers Section */}
               {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && (
                 <div className="mt-12">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center">
-                      <span className="mr-3 text-2xl">🔥</span>
-                      <h2 className="text-2xl font-poppins font-bold text-gray-900">Специальные предложения</h2>
-                    </div>
-                    <div className="hidden md:flex items-center text-sm text-gray-500">
-                      <span className="mr-2">Листайте</span>
-                      <ChevronLeft className="w-4 h-4 mr-1" />
-                      <ChevronRight className="w-4 h-4" />
-                    </div>
+                  <div className="flex items-center mb-6">
+                    <span className="mr-3 text-2xl">🔥</span>
+                    <h2 className="text-2xl font-poppins font-bold text-gray-900">Специальные предложения</h2>
                   </div>
                   
                   {allProductsLoading ? (
@@ -349,6 +355,14 @@ export default function Home() {
                           slidesToScroll: 3,
                         }}
                         className="w-full mx-auto"
+                        setApi={(api) => {
+                          carouselApiRef.current = api;
+                          if (api) {
+                            api.on('select', () => {
+                              setCurrentSlide(api.selectedScrollSnap());
+                            });
+                          }
+                        }}
                       >
                         <CarouselContent className="ml-0 flex items-stretch">
                           {specialOffers.map((product) => (
@@ -379,10 +393,16 @@ export default function Home() {
                       <div className="flex justify-center items-center mt-4 space-x-4">
                         {/* Dots indicator */}
                         <div className="flex space-x-2">
-                          {Array.from({ length: Math.ceil(specialOffers.length / 3) }).map((_, index) => (
-                            <div 
+                          {Array.from({ length: totalSlides }).map((_, index) => (
+                            <button
                               key={index}
-                              className="w-2 h-2 rounded-full bg-gray-300 hover:bg-primary cursor-pointer transition-colors"
+                              onClick={() => goToSlide(index)}
+                              className={`w-2 h-2 rounded-full transition-colors ${
+                                index === currentSlide 
+                                  ? 'bg-primary' 
+                                  : 'bg-gray-300 hover:bg-primary'
+                              }`}
+                              aria-label={`Go to slide ${index + 1}`}
                             />
                           ))}
                         </div>
