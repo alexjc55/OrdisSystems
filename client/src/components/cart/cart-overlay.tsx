@@ -321,12 +321,62 @@ export default function CartOverlay() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="asap">Как можно скорее</SelectItem>
-                          <SelectItem value="10:00-12:00">10:00 - 12:00</SelectItem>
-                          <SelectItem value="12:00-14:00">12:00 - 14:00</SelectItem>
-                          <SelectItem value="14:00-16:00">14:00 - 16:00</SelectItem>
-                          <SelectItem value="16:00-18:00">16:00 - 18:00</SelectItem>
-                          <SelectItem value="18:00-20:00">18:00 - 20:00</SelectItem>
-                          <SelectItem value="20:00-22:00">20:00 - 22:00</SelectItem>
+                          {(() => {
+                            if (!storeSettings?.workingHours || !deliveryDate) {
+                              return [
+                                <SelectItem key="10-12" value="10:00-12:00">10:00 - 12:00</SelectItem>,
+                                <SelectItem key="12-14" value="12:00-14:00">12:00 - 14:00</SelectItem>,
+                                <SelectItem key="14-16" value="14:00-16:00">14:00 - 16:00</SelectItem>,
+                                <SelectItem key="16-18" value="16:00-18:00">16:00 - 18:00</SelectItem>,
+                                <SelectItem key="18-20" value="18:00-20:00">18:00 - 20:00</SelectItem>,
+                                <SelectItem key="20-22" value="20:00-22:00">20:00 - 22:00</SelectItem>
+                              ];
+                            }
+
+                            const selectedDate = new Date(deliveryDate);
+                            const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                            const dayName = dayNames[selectedDate.getDay()];
+                            
+                            const workingHours = storeSettings.workingHours as Record<string, string>;
+                            const todayHours = workingHours[dayName];
+                            
+                            if (!todayHours || todayHours.toLowerCase().includes('выходной') || todayHours.toLowerCase().includes('закрыто')) {
+                              return <SelectItem key="closed" value="" disabled>Выходной день</SelectItem>;
+                            }
+
+                            // Parse working hours (e.g., "10:00-22:00")
+                            const hoursMatch = todayHours.match(/(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})/);
+                            if (!hoursMatch) {
+                              return [
+                                <SelectItem key="10-12" value="10:00-12:00">10:00 - 12:00</SelectItem>,
+                                <SelectItem key="12-14" value="12:00-14:00">12:00 - 14:00</SelectItem>,
+                                <SelectItem key="14-16" value="14:00-16:00">14:00 - 16:00</SelectItem>,
+                                <SelectItem key="16-18" value="16:00-18:00">16:00 - 18:00</SelectItem>,
+                                <SelectItem key="18-20" value="18:00-20:00">18:00 - 20:00</SelectItem>,
+                                <SelectItem key="20-22" value="20:00-22:00">20:00 - 22:00</SelectItem>
+                              ];
+                            }
+
+                            const startHour = parseInt(hoursMatch[1]);
+                            const endHour = parseInt(hoursMatch[3]);
+                            
+                            const timeSlots = [
+                              { value: "10:00-12:00", start: 10, end: 12 },
+                              { value: "12:00-14:00", start: 12, end: 14 },
+                              { value: "14:00-16:00", start: 14, end: 16 },
+                              { value: "16:00-18:00", start: 16, end: 18 },
+                              { value: "18:00-20:00", start: 18, end: 20 },
+                              { value: "20:00-22:00", start: 20, end: 22 }
+                            ];
+
+                            return timeSlots
+                              .filter(slot => slot.start >= startHour && slot.end <= endHour)
+                              .map(slot => (
+                                <SelectItem key={slot.value} value={slot.value}>
+                                  {slot.value.replace('-', ' - ')}
+                                </SelectItem>
+                              ));
+                          })()}
                         </SelectContent>
                       </Select>
                     </div>

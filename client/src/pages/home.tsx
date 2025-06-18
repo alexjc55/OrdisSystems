@@ -205,7 +205,7 @@ export default function Home() {
               )}
 
               {/* Compact Store Information */}
-              {!selectedCategory && searchQuery.length <= 2 && storeSettings && storeSettings?.showInfoBlocks !== false && (
+              {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && storeSettings?.showInfoBlocks !== false && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-6">
                   {/* Working Hours */}
                   {storeSettings?.workingHours && (

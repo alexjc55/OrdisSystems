@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { memo, useMemo } from "react";
 import type { CategoryWithProducts } from "@shared/schema";
 
 interface SidebarProps {
@@ -15,7 +16,7 @@ function getIconForCategory(category: CategoryWithProducts): string {
   return category.icon || '📦';
 }
 
-export default function Sidebar({
+const Sidebar = memo(function Sidebar({
   categories,
   selectedCategoryId,
   onCategorySelect,
@@ -93,4 +94,6 @@ export default function Sidebar({
       </div>
     </aside>
   );
-}
+});
+
+export default Sidebar;
