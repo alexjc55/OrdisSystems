@@ -236,8 +236,8 @@ export default function CartSidebar() {
                       <img 
                         src={storeSettings.cartBannerImage} 
                         alt="Cart Banner"
-                        className="w-full h-auto max-h-[220px] object-cover"
-                        style={{ maxHeight: "220px" }}
+                        className="w-full h-auto max-h-[120px] object-cover"
+                        style={{ maxHeight: "120px" }}
                       />
                     </div>
                   )}

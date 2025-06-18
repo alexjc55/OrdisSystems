@@ -4562,7 +4562,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         />
                       </FormControl>
                       <FormDescription className="text-xs text-gray-500">
-                        Максимальная высота: 220px. Рекомендуемый размер: 400×220 пикселей
+                        Максимальная высота: 120px. Рекомендуемый размер: 400×120 пикселей
                       </FormDescription>
                       <FormMessage className="text-xs" />
                     </FormItem>
