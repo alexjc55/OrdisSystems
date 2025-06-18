@@ -91,6 +91,7 @@ const storeSettingsSchema = z.object({
   showInfoBlocks: z.boolean().optional(),
   showSpecialOffers: z.boolean().optional(),
   showCategoryMenu: z.boolean().optional(),
+  weekStartDay: z.enum(["monday", "sunday"]).default("monday"),
 });
 
 export default function AdminDashboard() {
