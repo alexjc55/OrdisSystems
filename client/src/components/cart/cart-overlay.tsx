@@ -6,6 +6,7 @@ import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import type { UserAddress } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,7 +34,7 @@ export default function CartOverlay() {
   const [deliveryTime, setDeliveryTime] = useState("");
 
   // Fetch user addresses
-  const { data: userAddresses = [] } = useQuery({
+  const { data: userAddresses = [] } = useQuery<UserAddress[]>({
     queryKey: ["/api/addresses"],
     enabled: !!user,
   });
@@ -47,8 +48,9 @@ export default function CartOverlay() {
       }
       
       // Set default address if user has addresses
-      if (userAddresses.length > 0 && !deliveryAddress) {
-        const defaultAddress = userAddresses.find(addr => addr.isDefault) || userAddresses[0];
+      const addresses = userAddresses as UserAddress[];
+      if (addresses.length > 0 && !deliveryAddress) {
+        const defaultAddress = addresses.find(addr => addr.isDefault) || addresses[0];
         if (defaultAddress) {
           setDeliveryAddress(defaultAddress.address);
           setSelectedAddressId(defaultAddress.id);
@@ -59,7 +61,8 @@ export default function CartOverlay() {
 
   // Handle address selection
   const handleAddressSelect = (addressId: number) => {
-    const selectedAddress = userAddresses.find(addr => addr.id === addressId);
+    const addresses = userAddresses as UserAddress[];
+    const selectedAddress = addresses.find(addr => addr.id === addressId);
     if (selectedAddress) {
       setDeliveryAddress(selectedAddress.address);
       setSelectedAddressId(addressId);
@@ -482,7 +485,7 @@ export default function CartOverlay() {
                   </label>
                   
                   {/* Address Selection for logged-in users */}
-                  {user && userAddresses.length > 0 && (
+                  {user && (userAddresses as UserAddress[]).length > 0 && (
                     <div className="space-y-2">
                       <label className="text-xs text-gray-600">Выберите сохраненный адрес:</label>
                       <Select
@@ -500,7 +503,7 @@ export default function CartOverlay() {
                           <SelectValue placeholder="Выберите адрес" />
                         </SelectTrigger>
                         <SelectContent>
-                          {userAddresses.map((addr) => (
+                          {(userAddresses as UserAddress[]).map((addr) => (
                             <SelectItem key={addr.id} value={addr.id.toString()}>
                               {addr.label}{addr.isDefault ? " (по умолчанию)" : ""}: {addr.address.substring(0, 50)}...
                             </SelectItem>
