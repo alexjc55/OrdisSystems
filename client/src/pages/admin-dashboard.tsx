@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -27,7 +28,8 @@ import {
   Package, 
   Plus, 
   Edit2, 
-  Trash2, 
+  Trash2,
+  ChevronDown, 
   Users, 
   ShoppingCart, 
   Utensils,
@@ -81,6 +83,8 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   bottomBanner1Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
   bottomBanner2Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
   cancellationReasons: z.array(z.string()).optional(),
+  headerHtml: z.string().optional(),
+  footerHtml: z.string().optional(),
 });
 
 
@@ -3438,6 +3442,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       bottomBanner2Link: storeSettings?.bottomBanner2Link || "",
       showBottomBanners: storeSettings?.showBottomBanners !== false,
       defaultItemsPerPage: storeSettings?.defaultItemsPerPage || 10,
+      headerHtml: storeSettings?.headerHtml || "",
+      footerHtml: storeSettings?.footerHtml || "",
     },
   });
 
@@ -3480,6 +3486,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         bottomBanner2Link: storeSettings?.bottomBanner2Link || "",
         showBottomBanners: storeSettings?.showBottomBanners !== false,
         defaultItemsPerPage: storeSettings?.defaultItemsPerPage || 10,
+        headerHtml: storeSettings?.headerHtml || "",
+        footerHtml: storeSettings?.footerHtml || "",
       });
     }
   }, [storeSettings, form]);
@@ -3487,7 +3495,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Basic Store Information */}
+        <Collapsible defaultOpen>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-50 hover:bg-gray-100 rounded-lg">
+            <h3 className="text-lg font-semibold text-gray-900">Основная информация о магазине</h3>
+            <ChevronDown className="h-5 w-5 text-gray-500" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-4 p-4 border border-gray-200 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
             name="storeName"
