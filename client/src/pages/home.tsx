@@ -482,7 +482,7 @@ export default function Home() {
                           `
                         }} />
                         {/* Dots indicator */}
-                        <div className="flex space-x-2">
+                        <div className="flex space-x-4">
                           {Array.from({ length: totalSlides }).map((_, index) => (
                             <button
                               key={index}
@@ -511,7 +511,7 @@ export default function Home() {
             <div className="mb-8">
               {/* Filters for All Products/Category View */}
               {selectedCategoryId !== null && (
-                <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                <div className="mb-6 flex flex-col gap-4 items-start justify-between">
                   <div>
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">
                       {selectedCategoryId === 0 ? "Все товары" : selectedCategory?.name}
@@ -520,7 +520,7 @@ export default function Home() {
                       <p className="text-gray-600">{selectedCategory.description}</p>
                     )}
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex flex-row gap-3 w-full">
                     <Select 
                       value={selectedCategoryId === 0 ? categoryFilter : selectedCategoryId.toString()} 
                       onValueChange={(value) => {
@@ -533,7 +533,7 @@ export default function Home() {
                         }
                       }}
                     >
-                      <SelectTrigger className="w-full sm:w-48">
+                      <SelectTrigger className="w-1/2 sm:w-48">
                         <SelectValue placeholder="Категория" />
                       </SelectTrigger>
                       <SelectContent>
@@ -546,7 +546,7 @@ export default function Home() {
                       </SelectContent>
                     </Select>
                     <Select value={discountFilter} onValueChange={setDiscountFilter}>
-                      <SelectTrigger className="w-full sm:w-40">
+                      <SelectTrigger className="w-1/2 sm:w-40">
                         <SelectValue placeholder="Все товары" />
                       </SelectTrigger>
                       <SelectContent>
