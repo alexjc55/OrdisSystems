@@ -354,23 +354,15 @@ button[role="switch"]:not(.carousel-dot),
     border-radius: 50% !important;
   }
 
-  /* Global fix for dropdown overflow clipping on mobile */
-  .admin-dashboard * {
-    overflow: visible !important;
-  }
-
-  /* Reset specific overflow properties that clip dropdowns */
-  .admin-dashboard .overflow-hidden,
-  .admin-dashboard .overflow-auto,
-  .admin-dashboard .overflow-y-auto,
-  .admin-dashboard .overflow-x-hidden {
-    overflow: visible !important;
-  }
-
-  /* Force Radix Select to use proper positioning */
-  [data-radix-select-content] {
-    position: fixed !important;
-    z-index: 9999 !important;
+  /* Mobile dropdown fix - prevent CSS transforms and clipping */
+  .admin-dashboard [data-radix-tabs-content],
+  .admin-dashboard .bg-card,
+  .admin-dashboard .border {
+    transform: none !important;
+    will-change: auto !important;
+    contain: none !important;
+    clip-path: none !important;
+    mask: none !important;
   }
 }
 
