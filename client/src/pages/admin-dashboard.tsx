@@ -170,7 +170,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 <DropdownMenuContent align="start" className="w-40">
                   <DropdownMenuItem 
                     onClick={() => window.location.href = `tel:${order.customerPhone}`}
-                    className="cursor-pointer"
+                    className="cursor-pointer hover:text-orange-600 hover:bg-orange-50"
                   >
                     <Phone className="h-4 w-4 mr-2" />
                     Позвонить
@@ -180,7 +180,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                       const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
                       window.open(`https://wa.me/${cleanPhone}`, '_blank');
                     }}
-                    className="cursor-pointer"
+                    className="cursor-pointer hover:text-orange-600 hover:bg-orange-50"
                   >
                     <MessageCircle className="h-4 w-4 mr-2" />
                     WhatsApp
@@ -2113,7 +2113,7 @@ export default function AdminDashboard() {
                                           <DropdownMenuContent align="start" className="w-40">
                                             <DropdownMenuItem 
                                               onClick={() => window.location.href = `tel:${order.customerPhone}`}
-                                              className="cursor-pointer"
+                                              className="cursor-pointer hover:text-orange-600 hover:bg-orange-50"
                                             >
                                               <Phone className="h-4 w-4 mr-2" />
                                               Позвонить
@@ -2123,7 +2123,7 @@ export default function AdminDashboard() {
                                                 const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
                                                 window.open(`https://wa.me/${cleanPhone}`, '_blank');
                                               }}
-                                              className="cursor-pointer"
+                                              className="cursor-pointer hover:text-orange-600 hover:bg-orange-50"
                                             >
                                               <MessageCircle className="h-4 w-4 mr-2" />
                                               WhatsApp
