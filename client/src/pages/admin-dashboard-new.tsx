@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -718,68 +719,28 @@ export default function AdminDashboard() {
           <p className="text-gray-600">Управление магазином eDAHouse</p>
         </div>
 
-        {/* Admin Navigation Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-          <button
-            onClick={() => setActiveTab("products")}
-            className={`h-16 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
-              activeTab === "products"
-                ? "border-orange-500 bg-orange-50 text-orange-700 shadow-lg"
-                : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md text-gray-600"
-            }`}
-          >
-            <div className="flex flex-col items-center gap-1">
-              <Package className="h-5 w-5" />
-              <span className="text-sm font-medium">Товары</span>
-            </div>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab("orders")}
-            className={`h-16 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
-              activeTab === "orders"
-                ? "border-orange-500 bg-orange-50 text-orange-700 shadow-lg"
-                : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md text-gray-600"
-            }`}
-          >
-            <div className="flex flex-col items-center gap-1">
-              <ShoppingCart className="h-5 w-5" />
-              <span className="text-sm font-medium">Заказы</span>
-            </div>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab("users")}
-            className={`h-16 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
-              activeTab === "users"
-                ? "border-orange-500 bg-orange-50 text-orange-700 shadow-lg"
-                : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md text-gray-600"
-            }`}
-          >
-            <div className="flex flex-col items-center gap-1">
-              <Users className="h-5 w-5" />
-              <span className="text-sm font-medium">Пользователи</span>
-            </div>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab("settings")}
-            className={`h-16 px-4 py-3 rounded-xl border-2 transition-all duration-200 col-span-2 md:col-span-1 ${
-              activeTab === "settings"
-                ? "border-orange-500 bg-orange-50 text-orange-700 shadow-lg"
-                : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md text-gray-600"
-            }`}
-          >
-            <div className="flex flex-col items-center gap-1">
-              <Store className="h-5 w-5" />
-              <span className="text-sm font-medium">Настройки</span>
-            </div>
-          </button>
-        </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full h-auto p-2 gap-2">
+            <TabsTrigger value="products" className="flex-1 h-12">
+              <Package className="h-4 w-4 mr-2" />
+              Товары
+            </TabsTrigger>
+            <TabsTrigger value="orders" className="flex-1 h-12">
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              Заказы
+            </TabsTrigger>
+            <TabsTrigger value="users" className="flex-1 h-12">
+              <Users className="h-4 w-4 mr-2" />
+              Пользователи
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="col-span-2 md:col-span-1 flex-1 h-12">
+              <Store className="h-4 w-4 mr-2" />
+              Настройки
+            </TabsTrigger>
+          </TabsList>
 
           {/* Orders Tab Content */}
-          {activeTab === "orders" && (
-            <div className="space-y-6">
+          <TabsContent value="orders" className="space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -1041,12 +1002,10 @@ export default function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
-            </div>
-          )}
+          </TabsContent>
 
           {/* Products Tab Content */}
-          {activeTab === "products" && (
-            <div className="space-y-6">
+          <TabsContent value="products" className="space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -1276,12 +1235,10 @@ export default function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
-            </div>
-          )}
+          </TabsContent>
           
           {/* Users Tab Content */}
-          {activeTab === "users" && (
-            <div className="space-y-6">
+          <TabsContent value="users" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1397,30 +1354,28 @@ export default function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
-            </div>
-          )}
+          </TabsContent>
           
           {/* Settings Tab Content */}
-          {activeTab === "settings" && (
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Store className="h-5 w-5" />
-                    Настройки магазина
-                  </CardTitle>
-                  <CardDescription>
-                    Управление настройками магазина и причинами отмены заказов
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">Настройки магазина (реализация продолжается)</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+          <TabsContent value="settings" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Store className="h-5 w-5" />
+                  Настройки магазина
+                </CardTitle>
+                <CardDescription>
+                  Управление настройками магазина и причинами отмены заказов
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Настройки магазина (реализация продолжается)</p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Order Details Dialog */}
