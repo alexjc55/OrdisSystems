@@ -185,16 +185,7 @@ export class DatabaseStorage implements IStorage {
       } else if (status === 'unavailable') {
         conditions.push(eq(products.isAvailable, false));
       } else if (status === 'with_discount') {
-        conditions.push(
-          or(
-            eq(products.isSpecialOffer, true),
-            and(
-              isNotNull(products.discountValue),
-              ne(products.discountValue, "0"),
-              ne(products.discountValue, "")
-            )
-          )
-        );
+        conditions.push(eq(products.isSpecialOffer, true));
       }
     }
 
