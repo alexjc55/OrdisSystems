@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
@@ -3588,6 +3589,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   onSubmit: (data: any) => void;
   isLoading: boolean;
 }) {
+  const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
+  
   const form = useForm({
     resolver: zodResolver(storeSettingsSchema),
     defaultValues: {
@@ -3680,13 +3683,26 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Основная информация */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <Store className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Основная информация</h3>
-          </div>
+        <Collapsible open={isBasicInfoOpen} onOpenChange={setIsBasicInfoOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+                <Store className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">Основная информация</h3>
+                {isBasicInfoOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CollapsibleContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
             control={form.control}
             name="storeName"
@@ -3802,8 +3818,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               </FormItem>
             )}
           />
-          </div>
-        </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
 
         {/* Описание и контакты */}
         <div className="space-y-6">
