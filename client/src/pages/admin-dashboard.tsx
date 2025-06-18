@@ -1815,6 +1815,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             form.setValue(`workingHours.${key}` as any, "");
                           }
                         }}
+                        className="switch-green"
                       />
                       <span className="text-xs text-gray-600">
                         {isWorking ? "Рабочий день" : "Выходной"}
@@ -1968,7 +1969,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="switch-admin"
+                      className="switch-green"
                     />
                   </FormControl>
                 </FormItem>
@@ -1990,7 +1991,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="switch-admin"
+                      className="switch-green"
                     />
                   </FormControl>
                 </FormItem>
@@ -2012,7 +2013,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="switch-admin"
+                      className="switch-green"
                     />
                   </FormControl>
                 </FormItem>
@@ -2034,7 +2035,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="switch-admin"
+                      className="switch-green"
                     />
                   </FormControl>
                 </FormItem>

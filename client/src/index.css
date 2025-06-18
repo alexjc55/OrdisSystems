@@ -82,6 +82,15 @@
     font-family: 'Inter', sans-serif;
   }
 
+  /* Switch styling */
+  .switch-green[data-state="checked"] {
+    background-color: hsl(142, 51%, 45%); /* Green when active */
+  }
+  
+  .switch-green[data-state="unchecked"] {
+    background-color: hsl(0, 0%, 75%); /* Grey when inactive */
+  }
+
   /* RTL support preparation */
   .rtl {
     direction: rtl;
