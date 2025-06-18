@@ -143,6 +143,27 @@ export default function Profile() {
     },
   });
 
+  const updatePhoneMutation = useMutation({
+    mutationFn: async (phone: string) => {
+      await apiRequest("PATCH", "/api/profile", { phone });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      setIsPhoneEditing(false);
+      toast({
+        title: "Успешно",
+        description: "Телефон обновлен",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось обновить телефон",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleEditAddress = (address: UserAddress) => {
     setEditingAddress(address);
     setAddressForm({
@@ -285,6 +306,57 @@ export default function Profile() {
                     <div>
                       <label className="text-sm font-medium text-gray-700">Email</label>
                       <div className="mt-1 text-sm text-gray-900">{user.email}</div>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Телефон</label>
+                      <div className="mt-1 flex items-center gap-2">
+                        {isPhoneEditing ? (
+                          <>
+                            <Input
+                              type="tel"
+                              placeholder="+972-XX-XXX-XXXX"
+                              value={phoneForm.phone}
+                              onChange={(e) => setPhoneForm({ phone: e.target.value })}
+                              className="flex-1"
+                            />
+                            <Button
+                              size="sm"
+                              onClick={() => updatePhoneMutation.mutate(phoneForm.phone)}
+                              disabled={updatePhoneMutation.isPending}
+                              className="bg-orange-500 hover:bg-orange-600 text-white"
+                            >
+                              Сохранить
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setIsPhoneEditing(false);
+                                setPhoneForm({ phone: user?.phone || "" });
+                              }}
+                            >
+                              Отмена
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-sm text-gray-900 flex-1">
+                              {user.phone || 'Не указан'}
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setPhoneForm({ phone: user?.phone || "" });
+                                setIsPhoneEditing(true);
+                              }}
+                            >
+                              <Edit className="h-4 w-4 mr-1" />
+                              Изменить
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-700">Дата регистрации</label>

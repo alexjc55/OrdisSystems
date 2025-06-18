@@ -39,15 +39,15 @@ export default function CartOverlay() {
     enabled: !!user,
   });
 
-  // Auto-populate user data when user is logged in
+  // Auto-populate user data when user is logged in and cart is opened
   useEffect(() => {
-    if (user) {
-      // Set phone from user profile
+    if (user && isOpen) {
+      // Set phone from user profile if empty
       if (user.phone && !customerPhone) {
         setCustomerPhone(user.phone);
       }
       
-      // Set default address if user has addresses
+      // Set default address if user has addresses and no address is selected
       const addresses = userAddresses as UserAddress[];
       if (addresses.length > 0 && !deliveryAddress) {
         const defaultAddress = addresses.find(addr => addr.isDefault) || addresses[0];
@@ -57,7 +57,7 @@ export default function CartOverlay() {
         }
       }
     }
-  }, [user, userAddresses, customerPhone, deliveryAddress]);
+  }, [user, userAddresses, isOpen]);
 
   // Handle address selection
   const handleAddressSelect = (addressId: number) => {
