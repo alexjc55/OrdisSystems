@@ -2135,7 +2135,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         />
                       </FormControl>
                       <FormDescription className="text-xs text-gray-500">
-                        Рекомендуемый размер: 600×320 пикселей
+                        Рекомендуемый размер: 660×260 пикселей (соотношение 2.5:1)
                       </FormDescription>
                       <FormMessage className="text-xs" />
                     </FormItem>
@@ -2184,7 +2184,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         />
                       </FormControl>
                       <FormDescription className="text-xs text-gray-500">
-                        Рекомендуемый размер: 600×320 пикселей
+                        Рекомендуемый размер: 660×260 пикселей (соотношение 2.5:1)
                       </FormDescription>
                       <FormMessage className="text-xs" />
                     </FormItem>
