@@ -27,6 +27,7 @@ import {
   Package, 
   Plus, 
   Edit2, 
+  Edit,
   Trash2, 
   Users, 
   ShoppingCart, 
@@ -1218,6 +1219,11 @@ export default function AdminDashboard() {
   const [ordersPage, setOrdersPage] = useState(1);
   const [usersPage, setUsersPage] = useState(1);
 
+  // User management state
+  const [isUserFormOpen, setIsUserFormOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<any>(null);
+  const [usersRoleFilter, setUsersRoleFilter] = useState("all");
+
   // Reset pagination when filters change
   useEffect(() => {
     setProductsPage(1);
@@ -1600,6 +1606,88 @@ export default function AdminDashboard() {
         variant: "destructive",
       });
     },
+  });
+
+  // User management mutations
+  const createUserMutation = useMutation({
+    mutationFn: async (userData: any) => {
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+      if (!response.ok) throw new Error('Failed to create user');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      setIsUserFormOpen(false);
+      setEditingUser(null);
+      toast({ title: "Пользователь создан", description: "Пользователь успешно добавлен" });
+    },
+    onError: (error: any) => {
+      console.error("User creation error:", error);
+      toast({ title: "Ошибка", description: "Не удалось создать пользователя", variant: "destructive" });
+    }
+  });
+
+  const updateUserMutation = useMutation({
+    mutationFn: async ({ id, ...userData }: any) => {
+      const response = await fetch(`/api/admin/users/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+      if (!response.ok) throw new Error('Failed to update user');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      setEditingUser(null);
+      setIsUserFormOpen(false);
+      toast({ title: "Пользователь обновлен", description: "Изменения сохранены" });
+    },
+    onError: (error: any) => {
+      console.error("User update error:", error);
+      toast({ title: "Ошибка", description: "Не удалось обновить пользователя", variant: "destructive" });
+    }
+  });
+
+  const updateUserRoleMutation = useMutation({
+    mutationFn: async ({ userId, role }: { userId: string, role: "admin" | "worker" | "customer" }) => {
+      const response = await fetch(`/api/admin/users/${userId}/role`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role }),
+      });
+      if (!response.ok) throw new Error('Failed to update user role');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      toast({ title: "Роль обновлена", description: "Роль пользователя успешно изменена" });
+    },
+    onError: (error: any) => {
+      console.error("User role update error:", error);
+      toast({ title: "Ошибка", description: "Не удалось обновить роль", variant: "destructive" });
+    }
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete user');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      toast({ title: "Пользователь удален", description: "Пользователь успешно удален" });
+    },
+    onError: (error: any) => {
+      console.error("User deletion error:", error);
+      toast({ title: "Ошибка", description: "Не удалось удалить пользователя", variant: "destructive" });
+    }
   });
 
   // Handle order cancellation with reason selection
@@ -2671,10 +2759,42 @@ export default function AdminDashboard() {
                   Пользователи
                 </CardTitle>
                 <CardDescription className="text-sm">
-                  Все зарегистрированные пользователи
+                  Управление пользователями и ролями
                 </CardDescription>
               </CardHeader>
               <CardContent>
+                {/* Users Filters and Controls */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                  <div className="flex-1">
+                    <Input
+                      placeholder="Поиск по email или имени..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="max-w-sm"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
+                      <SelectTrigger className="w-40">
+                        <SelectValue placeholder="Все роли" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Все роли</SelectItem>
+                        <SelectItem value="admin">Администраторы</SelectItem>
+                        <SelectItem value="worker">Сотрудники</SelectItem>
+                        <SelectItem value="customer">Клиенты</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button 
+                      onClick={() => setIsUserFormOpen(true)}
+                      className="bg-orange-500 hover:bg-orange-600 text-white"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Добавить пользователя
+                    </Button>
+                  </div>
+                </div>
+
                 {(usersData as any[] || []).length > 0 ? (
                   <div className="border rounded-lg bg-white overflow-hidden">
                     <div className="overflow-x-auto">
@@ -2682,28 +2802,77 @@ export default function AdminDashboard() {
                         <TableHeader>
                           <TableRow>
                             <TableHead className="text-xs sm:text-sm">Email</TableHead>
-                            <TableHead className="text-xs sm:text-sm hidden sm:table-cell">Имя</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Имя</TableHead>
                             <TableHead className="text-xs sm:text-sm">Роль</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Телефон</TableHead>
                             <TableHead className="text-xs sm:text-sm hidden sm:table-cell">Дата регистрации</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Действия</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {(usersData as any[] || []).map((user: any) => (
                             <TableRow key={user.id}>
                               <TableCell className="font-medium text-xs sm:text-sm">{user.email}</TableCell>
-                              <TableCell className="text-xs sm:text-sm hidden sm:table-cell">
+                              <TableCell className="text-xs sm:text-sm">
                                 {user.firstName && user.lastName 
                                   ? `${user.firstName} ${user.lastName}`
                                   : "—"
                                 }
                               </TableCell>
                               <TableCell>
-                                <Badge variant={user.email === "alexjc55@gmail.com" ? "default" : "secondary"} className="text-xs">
-                                  {user.email === "alexjc55@gmail.com" ? "Admin" : "Customer"}
-                                </Badge>
+                                <Select 
+                                  value={user.role || "customer"} 
+                                  onValueChange={(newRole) => {
+                                    updateUserRoleMutation.mutate({ 
+                                      userId: user.id, 
+                                      role: newRole as "admin" | "worker" | "customer"
+                                    });
+                                  }}
+                                  disabled={user.id === "43948959"} // Prevent changing own role
+                                >
+                                  <SelectTrigger className="w-32">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="customer">Клиент</SelectItem>
+                                    <SelectItem value="worker">Сотрудник</SelectItem>
+                                    <SelectItem value="admin">Админ</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </TableCell>
+                              <TableCell className="text-xs sm:text-sm">
+                                {user.phone || "—"}
                               </TableCell>
                               <TableCell className="text-xs sm:text-sm hidden sm:table-cell">
                                 {new Date(user.createdAt).toLocaleDateString('ru-RU')}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      setEditingUser(user);
+                                      setIsUserFormOpen(true);
+                                    }}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                  {user.id !== "43948959" && ( // Prevent deleting yourself
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => {
+                                        if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
+                                          deleteUserMutation.mutate(user.id);
+                                        }
+                                      }}
+                                      className="text-red-600 hover:text-red-700"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  )}
+                                </div>
                               </TableCell>
                             </TableRow>
                           ))}
@@ -2833,6 +3002,23 @@ export default function AdminDashboard() {
             updateCategoryMutation.mutate({ id: editingCategory.id, ...data });
           } else {
             createCategoryMutation.mutate(data);
+          }
+        }}
+      />
+
+      {/* User Form Dialog */}
+      <UserFormDialog
+        open={isUserFormOpen}
+        onClose={() => {
+          setIsUserFormOpen(false);
+          setEditingUser(null);
+        }}
+        user={editingUser}
+        onSubmit={(data: any) => {
+          if (editingUser) {
+            updateUserMutation.mutate({ id: editingUser.id, ...data });
+          } else {
+            createUserMutation.mutate(data);
           }
         }}
       />
