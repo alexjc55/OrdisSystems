@@ -224,7 +224,7 @@ export default function AdminDashboard() {
         limit: itemsPerPage.toString(),
         search: searchQuery
       });
-      const response = await fetch(`/api/users?${params}`);
+      const response = await fetch(`/api/admin/users?${params}`);
       if (!response.ok) throw new Error('Failed to fetch users');
       return response.json();
     },
@@ -236,15 +236,15 @@ export default function AdminDashboard() {
 
   // Extract data and pagination info
   const productsData = productsResponse?.data || [];
-  const productsTotalPages = Math.ceil((productsResponse?.total || 0) / itemsPerPage);
+  const productsTotalPages = productsResponse?.totalPages || 0;
   const productsTotal = productsResponse?.total || 0;
 
-  const orders = ordersResponse?.data || [];
-  const ordersTotalPages = Math.ceil((ordersResponse?.total || 0) / itemsPerPage);
+  const ordersData = ordersResponse?.data || [];
+  const ordersTotalPages = ordersResponse?.totalPages || 0;
   const ordersTotal = ordersResponse?.total || 0;
 
-  const users = usersResponse?.data || [];
-  const usersTotalPages = Math.ceil((usersResponse?.total || 0) / itemsPerPage);
+  const usersData = usersResponse?.data || [];
+  const usersTotalPages = usersResponse?.totalPages || 0;
   const usersTotal = usersResponse?.total || 0;
 
   // Product mutations
@@ -919,7 +919,7 @@ export default function AdminDashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                {(orders as any[] || []).length > 0 ? (
+                {(ordersData as any[] || []).length > 0 ? (
                   <div className="border rounded-lg bg-white overflow-hidden">
                     <div className="overflow-x-auto">
                       <Table>
@@ -935,7 +935,7 @@ export default function AdminDashboard() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {(orders as any[] || [])
+                          {(ordersData as any[] || [])
                             .filter((order: any) => selectedStatusFilter === "all" || order.status === selectedStatusFilter)
                             .map((order: any) => (
                             <TableRow key={order.id} className="hover:bg-gray-50">
@@ -1024,7 +1024,7 @@ export default function AdminDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {(users as any[] || []).length > 0 ? (
+                {(usersData as any[] || []).length > 0 ? (
                   <div className="border rounded-lg bg-white overflow-hidden">
                     <div className="overflow-x-auto">
                       <Table>
