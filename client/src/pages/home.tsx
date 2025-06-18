@@ -368,7 +368,8 @@ export default function Home() {
                           {specialOffers.map((product) => (
                             <CarouselItem 
                               key={product.id} 
-                              className="pr-1 basis-1/3 flex flex-col"
+                              className="basis-1/3 flex flex-col"
+                              style={{ paddingRight: '10px' }}
                             >
                               <div className="relative flex-1 flex">
                                 <div className="transform scale-90 origin-center w-full">
