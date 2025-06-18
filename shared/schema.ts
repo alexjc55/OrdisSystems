@@ -154,6 +154,8 @@ export const storeSettings = pgTable("store_settings", {
   headerHtml: text("header_html"), // Custom HTML/JS code for header
   footerHtml: text("footer_html"), // Custom HTML/JS code for footer
   cancellationReasons: jsonb("cancellation_reasons"), // Array of cancellation reason strings
+  showWhatsAppChat: boolean("show_whatsapp_chat").default(false), // Enable/disable WhatsApp chat widget
+  whatsappPhoneNumber: varchar("whatsapp_phone_number", { length: 20 }), // WhatsApp phone number
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

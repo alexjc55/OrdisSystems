@@ -87,6 +87,8 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   cancellationReasons: z.array(z.string()).optional(),
   headerHtml: z.string().optional(),
   footerHtml: z.string().optional(),
+  showWhatsAppChat: z.boolean().default(false),
+  whatsappPhoneNumber: z.string().optional(),
 });
 
 
@@ -3637,6 +3639,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       defaultItemsPerPage: storeSettings?.defaultItemsPerPage || 10,
       headerHtml: storeSettings?.headerHtml || "",
       footerHtml: storeSettings?.footerHtml || "",
+      showWhatsAppChat: storeSettings?.showWhatsAppChat !== false,
+      whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
     } as any,
   });
 
@@ -3681,6 +3685,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         defaultItemsPerPage: storeSettings?.defaultItemsPerPage || 10,
         headerHtml: storeSettings?.headerHtml || "",
         footerHtml: storeSettings?.footerHtml || "",
+        showWhatsAppChat: storeSettings?.showWhatsAppChat !== false,
+        whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
       } as any);
     }
   }, [storeSettings, form]);
@@ -4323,6 +4329,54 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="showWhatsAppChat"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-sm font-medium">Показывать чат WhatsApp</FormLabel>
+                    <FormDescription className="text-xs">
+                      Плавающая кнопка WhatsApp в правом нижнем углу сайта
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className="switch-green"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {form.watch("showWhatsAppChat") && (
+              <FormField
+                control={form.control}
+                name="whatsappPhoneNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm flex items-center gap-2">
+                      <Phone className="h-4 w-4" />
+                      Номер телефона WhatsApp
+                    </FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="+972501234567"
+                        {...field} 
+                        className="text-sm" 
+                      />
+                    </FormControl>
+                    <FormDescription className="text-xs">
+                      Номер телефона в международном формате (включая код страны)
+                    </FormDescription>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            )}
           </div>
         </div>
 
