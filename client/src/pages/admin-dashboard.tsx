@@ -493,7 +493,7 @@ export default function AdminDashboard() {
                       Управление Товарами
                     </CardTitle>
                     <CardDescription className="text-sm">
-                      Добавление, редактирование и управление товарами
+                      Полное управление товарами с поиском и фильтрацией
                     </CardDescription>
                   </div>
                   <Button 
@@ -842,7 +842,9 @@ export default function AdminDashboard() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {(orders as any[] || []).map((order: any) => (
+                          {(orders as any[] || [])
+                            .filter((order: any) => selectedStatusFilter === "all" || order.status === selectedStatusFilter)
+                            .map((order: any) => (
                             <TableRow key={order.id} className="hover:bg-gray-50">
                               <TableCell className="font-bold text-xs sm:text-sm text-orange-600">#{order.id}</TableCell>
                               <TableCell className="text-xs sm:text-sm">
@@ -922,10 +924,10 @@ export default function AdminDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                   <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                  Управление Пользователями
+                  Пользователи
                 </CardTitle>
                 <CardDescription className="text-sm">
-                  Просмотр и управление пользователями системы
+                  Все зарегистрированные пользователи
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -984,10 +986,10 @@ export default function AdminDashboard() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                     <Store className="h-4 w-4 sm:h-5 sm:w-5" />
-                    Основная информация
+                    Настройки магазина
                   </CardTitle>
                   <CardDescription className="text-sm">
-                    Название магазина, описание и контактная информация
+                    Управление информацией о магазине
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
