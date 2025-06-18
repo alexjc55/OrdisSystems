@@ -24,7 +24,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
-            <Link href="/">
+            <Link href="/" onClick={() => window.location.reload()}>
               <div className="flex items-center cursor-pointer">
                 {storeSettings?.logoUrl ? (
                   <img 
@@ -48,7 +48,7 @@ export default function Header() {
               </div>
             </Link>
             <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+              <Link href="/" onClick={() => window.location.reload()} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                 Меню
               </Link>
               {(user?.role === 'admin' || user?.role === 'worker') && (

@@ -698,7 +698,7 @@ export default function AdminDashboard() {
                       Управление Категориями
                     </CardTitle>
                     <CardDescription className="text-sm">
-                      Добавление, редактирование и удаление категорий товаров
+                      Простое управление категориями
                     </CardDescription>
                   </div>
                   <Button 
@@ -797,13 +797,33 @@ export default function AdminDashboard() {
           <TabsContent value="orders" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                  <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
-                  Управление Заказами
-                </CardTitle>
-                <CardDescription className="text-sm">
-                  Просмотр и управление заказами клиентов
-                </CardDescription>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div>
+                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                      <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
+                      Заказы
+                    </CardTitle>
+                    <CardDescription className="text-sm">
+                      Все заказы клиентов
+                    </CardDescription>
+                  </div>
+                  <div className="flex gap-2">
+                    <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
+                      <SelectTrigger className="w-40">
+                        <SelectValue placeholder="Все статусы" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Все статусы</SelectItem>
+                        <SelectItem value="pending">Ожидает</SelectItem>
+                        <SelectItem value="confirmed">Подтвержден</SelectItem>
+                        <SelectItem value="preparing">Готовится</SelectItem>
+                        <SelectItem value="ready">Готов</SelectItem>
+                        <SelectItem value="delivered">Доставлен</SelectItem>
+                        <SelectItem value="cancelled">Отменен</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 {(orders as any[] || []).length > 0 ? (

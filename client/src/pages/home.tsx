@@ -324,7 +324,7 @@ export default function Home() {
           </div>
 
           {/* Special Offers or Category View */}
-          {!selectedCategory && searchQuery.length <= 2 && (
+          {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && (
             <div>
               {/* Category Overview */}
               {categories && categories.length > 0 && (
@@ -337,11 +337,10 @@ export default function Home() {
                     <div className="flex items-center gap-4">
                       <Button
                         onClick={() => setSelectedCategoryId(0)}
-                        variant="outline"
-                        size="sm"
-                        className="bg-white hover:bg-orange-50 border-orange-500 text-orange-600 hover:text-orange-700 font-semibold"
+                        size="lg"
+                        className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3"
                       >
-                        <Package className="mr-2 h-4 w-4" />
+                        <Package className="mr-2 h-5 w-5" />
                         Все товары
                       </Button>
                       <Badge variant="default" className="bg-primary">
