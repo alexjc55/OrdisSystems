@@ -190,10 +190,39 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
             </div>
           )}
 
-          {/* Order Items Count */}
-          <div className="text-xs text-gray-500">
-            {order.items?.length || 0} товаров
-          </div>
+          {/* Order Items with Clear Quantities */}
+          {order.items && order.items.length > 0 && (
+            <div className="text-xs text-gray-500 space-y-1">
+              <div className="font-medium">{order.items.length} товаров:</div>
+              <div className="space-y-0.5 max-h-16 overflow-y-auto">
+                {order.items.map((item: any, index: number) => {
+                  const formatQuantity = (quantity: number, unit: string) => {
+                    switch (unit) {
+                      case 'piece':
+                        return `${quantity} шт.`;
+                      case 'kg':
+                        return `${quantity} кг`;
+                      case '100g':
+                        return `${quantity * 100}г`;
+                      case '100ml':
+                        return `${quantity * 100}мл`;
+                      default:
+                        return `${quantity}`;
+                    }
+                  };
+                  
+                  return (
+                    <div key={index} className="flex justify-between items-center text-xs">
+                      <span className="truncate flex-1 mr-2">{item.product?.name}</span>
+                      <span className="font-medium">
+                        {formatQuantity(item.quantity, item.product?.unit || 'piece')}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex gap-2 pt-2">
@@ -2009,7 +2038,7 @@ export default function AdminDashboard() {
             });
           }
         }}
-        cancellationReasons={storeSettings?.cancellationReasons || []}
+        cancellationReasons={(storeSettings?.cancellationReasons as string[]) || ["Клиент отменил", "Товар отсутствует", "Технические проблемы", "Другое"]}
       />
     </div>
   );
