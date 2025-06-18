@@ -581,6 +581,69 @@ export default function Home() {
         />
       )}
 
+      {/* Bottom Banners */}
+      {storeSettings?.showBottomBanners && (storeSettings?.bottomBanner1Url || storeSettings?.bottomBanner2Url) && (
+        <div className="mt-16 mb-8 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Banner 1 */}
+              {storeSettings?.bottomBanner1Url && (
+                <div className="relative overflow-hidden rounded-lg shadow-lg group">
+                  {storeSettings?.bottomBanner1Link ? (
+                    <a 
+                      href={storeSettings.bottomBanner1Link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
+                    >
+                      <img
+                        src={storeSettings.bottomBanner1Url}
+                        alt="Баннер 1"
+                        className="w-full h-64 md:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
+                    </a>
+                  ) : (
+                    <img
+                      src={storeSettings.bottomBanner1Url}
+                      alt="Баннер 1"
+                      className="w-full h-64 md:h-80 object-cover"
+                    />
+                  )}
+                </div>
+              )}
+
+              {/* Banner 2 */}
+              {storeSettings?.bottomBanner2Url && (
+                <div className="relative overflow-hidden rounded-lg shadow-lg group">
+                  {storeSettings?.bottomBanner2Link ? (
+                    <a 
+                      href={storeSettings.bottomBanner2Link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
+                    >
+                      <img
+                        src={storeSettings.bottomBanner2Url}
+                        alt="Баннер 2"
+                        className="w-full h-64 md:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
+                    </a>
+                  ) : (
+                    <img
+                      src={storeSettings.bottomBanner2Url}
+                      alt="Баннер 2"
+                      className="w-full h-64 md:h-80 object-cover"
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Cart Overlay */}
       {isCartOpen && <CartOverlay />}
 
