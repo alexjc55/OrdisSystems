@@ -390,6 +390,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch('/api/orders/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.email !== "alexjc55@gmail.com") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const id = parseInt(req.params.id);
+      const updateData = req.body;
+      
+      // Update order using storage interface
+      const order = await storage.updateOrder(id, updateData);
+      res.json(order);
+    } catch (error) {
+      console.error("Error updating order:", error);
+      res.status(500).json({ message: "Failed to update order" });
+    }
+  });
+
   app.put('/api/orders/:id/status', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;

@@ -70,6 +70,7 @@ export interface IStorage {
   getOrdersPaginated(params: PaginationParams): Promise<PaginatedResult<OrderWithItems>>;
   getOrderById(id: number): Promise<OrderWithItems | undefined>;
   createOrder(order: InsertOrder, items: InsertOrderItem[]): Promise<Order>;
+  updateOrder(id: number, orderData: Partial<InsertOrder>): Promise<Order>;
   updateOrderStatus(id: number, status: "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "cancelled"): Promise<Order>;
 
   // User operations with pagination
@@ -299,11 +300,23 @@ export class DatabaseStorage implements IStorage {
     const conditions = [];
     
     if (search) {
-      conditions.push(like(orders.customerPhone, `%${search}%`));
+      conditions.push(
+        or(
+          like(orders.customerPhone, `%${search}%`),
+          like(orders.deliveryAddress, `%${search}%`),
+          like(orders.notes, `%${search}%`)
+        )
+      );
     }
     
     if (status && status !== 'all') {
-      conditions.push(eq(orders.status, status as any));
+      // Handle multiple statuses separated by comma (for active filter)
+      if (status.includes(',')) {
+        const statusList = status.split(',');
+        conditions.push(inArray(orders.status, statusList as any));
+      } else {
+        conditions.push(eq(orders.status, status as any));
+      }
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
@@ -381,6 +394,15 @@ export class DatabaseStorage implements IStorage {
 
       return newOrder;
     });
+  }
+
+  async updateOrder(id: number, orderData: Partial<InsertOrder>): Promise<Order> {
+    const [updatedOrder] = await db
+      .update(orders)
+      .set({ ...orderData, updatedAt: new Date() })
+      .where(eq(orders.id, id))
+      .returning();
+    return updatedOrder;
   }
 
   async updateOrderStatus(id: number, status: "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "cancelled"): Promise<Order> {

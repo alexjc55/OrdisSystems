@@ -1581,6 +1581,35 @@ export default function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Order Details/Edit Dialog */}
+            <Dialog open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen}>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-lg font-semibold">
+                    {editingOrder ? `Заказ #${editingOrder.id}` : 'Новый заказ'}
+                  </DialogTitle>
+                  <DialogDescription>
+                    {editingOrder ? 'Просмотр и редактирование заказа' : 'Создание нового заказа'}
+                  </DialogDescription>
+                </DialogHeader>
+                
+                {editingOrder && (
+                  <OrderEditForm 
+                    order={editingOrder}
+                    onClose={() => {
+                      setIsOrderFormOpen(false);
+                      setEditingOrder(null);
+                    }}
+                    onSave={() => {
+                      setIsOrderFormOpen(false);
+                      setEditingOrder(null);
+                      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
+                    }}
+                  />
+                )}
+              </DialogContent>
+            </Dialog>
           </TabsContent>
 
           {/* Users Management */}
