@@ -415,6 +415,26 @@ export class DatabaseStorage implements IStorage {
     return updatedOrder;
   }
 
+  async updateOrderItems(orderId: number, items: any[]): Promise<void> {
+    return await db.transaction(async (tx) => {
+      // Delete existing order items
+      await tx.delete(orderItems).where(eq(orderItems.orderId, orderId));
+      
+      // Insert new order items
+      if (items.length > 0) {
+        const orderItemsData = items.map(item => ({
+          orderId,
+          productId: item.product?.id || item.productId,
+          quantity: item.quantity.toString(),
+          pricePerUnit: item.pricePerUnit.toString(),
+          totalPrice: item.totalPrice.toString()
+        }));
+        
+        await tx.insert(orderItems).values(orderItemsData);
+      }
+    });
+  }
+
   // Store settings
   async getStoreSettings(): Promise<StoreSettings | undefined> {
     const [settings] = await db.select().from(storeSettings).limit(1);
