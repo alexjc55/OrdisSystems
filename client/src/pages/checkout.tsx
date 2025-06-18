@@ -74,11 +74,11 @@ export default function Checkout() {
       const orderData = {
         items: items.map(item => ({
           productId: item.product.id,
-          quantity: item.quantity,
-          pricePerUnit: parseFloat(item.product.price),
-          totalPrice: item.totalPrice
+          quantity: item.quantity.toString(),
+          pricePerKg: item.product.price,
+          totalPrice: item.totalPrice.toString()
         })),
-        totalAmount: getTotalPrice(),
+        totalAmount: getTotalPrice().toString(),
         guestInfo: data,
         status: "pending"
       };
@@ -178,11 +178,11 @@ export default function Checkout() {
       const orderData = {
         items: items.map(item => ({
           productId: item.product.id,
-          quantity: item.quantity,
-          pricePerUnit: parseFloat(item.product.price),
-          totalPrice: item.totalPrice
+          quantity: item.quantity.toString(),
+          pricePerKg: item.product.price,
+          totalPrice: item.totalPrice.toString()
         })),
-        totalAmount: getTotalPrice(),
+        totalAmount: getTotalPrice().toString(),
         deliveryAddress: addressData.address,
         status: "pending"
       };
@@ -308,7 +308,7 @@ export default function Checkout() {
                       <div>
                         <Label>Или выберите из сохраненных адресов:</Label>
                         <div className="mt-2 space-y-2">
-                          {addresses.map((addr: any) => (
+                          {(addresses as any[]).map((addr: any) => (
                             <Button
                               key={addr.id}
                               type="button"
@@ -328,7 +328,7 @@ export default function Checkout() {
 
                     <Button 
                       type="submit" 
-                      className="w-full"
+                      className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 text-lg shadow-lg"
                       disabled={createAuthenticatedOrderMutation.isPending}
                     >
                       {createAuthenticatedOrderMutation.isPending ? "Оформляем..." : "Оформить заказ"}
@@ -455,7 +455,7 @@ export default function Checkout() {
 
                       <Button 
                         type="submit" 
-                        className="w-full"
+                        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 text-lg shadow-lg"
                         disabled={registerAndOrderMutation.isPending}
                       >
                         {registerAndOrderMutation.isPending ? "Регистрируем и оформляем..." : "Зарегистрироваться и оформить заказ"}
@@ -585,7 +585,7 @@ export default function Checkout() {
 
                       <Button 
                         type="submit" 
-                        className="w-full"
+                        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 text-lg shadow-lg"
                         disabled={createGuestOrderMutation.isPending}
                       >
                         {createGuestOrderMutation.isPending ? "Оформляем..." : "Оформить заказ как гость"}
