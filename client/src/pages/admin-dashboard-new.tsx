@@ -718,28 +718,57 @@ export default function AdminDashboard() {
           <p className="text-gray-600">Управление магазином eDAHouse</p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="admin-tabs-list">
-            <TabsTrigger value="products" className="admin-tabs-trigger">
-              <Package className="h-4 w-4" />
-              Товары
-            </TabsTrigger>
-            <TabsTrigger value="orders" className="admin-tabs-trigger">
-              <ShoppingCart className="h-4 w-4" />
-              Заказы
-            </TabsTrigger>
-            <TabsTrigger value="users" className="admin-tabs-trigger">
-              <Users className="h-4 w-4" />
-              Пользователи
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="admin-tabs-trigger">
-              <Store className="h-4 w-4" />
-              Настройки
-            </TabsTrigger>
-          </TabsList>
+        {/* Custom Tab Navigation */}
+        <div className="flex flex-wrap gap-2 mb-6 p-2 bg-gray-100 rounded-lg">
+          <button
+            onClick={() => setActiveTab("products")}
+            className={`flex items-center gap-2 px-4 py-3 rounded-md font-medium transition-all flex-1 min-w-[calc(50%-4px)] md:min-w-0 justify-center ${
+              activeTab === "products"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
+          >
+            <Package className="h-4 w-4" />
+            Товары
+          </button>
+          <button
+            onClick={() => setActiveTab("orders")}
+            className={`flex items-center gap-2 px-4 py-3 rounded-md font-medium transition-all flex-1 min-w-[calc(50%-4px)] md:min-w-0 justify-center ${
+              activeTab === "orders"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
+          >
+            <ShoppingCart className="h-4 w-4" />
+            Заказы
+          </button>
+          <button
+            onClick={() => setActiveTab("users")}
+            className={`flex items-center gap-2 px-4 py-3 rounded-md font-medium transition-all flex-1 min-w-[calc(50%-4px)] md:min-w-0 justify-center ${
+              activeTab === "users"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
+          >
+            <Users className="h-4 w-4" />
+            Пользователи
+          </button>
+          <button
+            onClick={() => setActiveTab("settings")}
+            className={`flex items-center gap-2 px-4 py-3 rounded-md font-medium transition-all w-full md:flex-1 md:w-auto md:min-w-0 justify-center ${
+              activeTab === "settings"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
+          >
+            <Store className="h-4 w-4" />
+            Настройки
+          </button>
+        </div>
 
           {/* Orders Tab Content */}
-          <TabsContent value="orders" className="space-y-6">
+          {activeTab === "orders" && (
+            <div className="space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -1001,10 +1030,12 @@ export default function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+            </div>
+          )}
 
           {/* Products Tab Content */}
-          <TabsContent value="products" className="space-y-6">
+          {activeTab === "products" && (
+            <div className="space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -1234,10 +1265,12 @@ export default function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+            </div>
+          )}
           
           {/* Users Tab Content */}
-          <TabsContent value="users" className="space-y-6">
+          {activeTab === "users" && (
+            <div className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1353,28 +1386,30 @@ export default function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+            </div>
+          )}
           
           {/* Settings Tab Content */}
-          <TabsContent value="settings" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Store className="h-5 w-5" />
-                  Настройки магазина
-                </CardTitle>
-                <CardDescription>
-                  Управление настройками магазина и причинами отмены заказов
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8">
-                  <p className="text-gray-500">Настройки магазина (реализация продолжается)</p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+          {activeTab === "settings" && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Store className="h-5 w-5" />
+                    Настройки магазина
+                  </CardTitle>
+                  <CardDescription>
+                    Управление настройками магазина и причинами отмены заказов
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">Настройки магазина (реализация продолжается)</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
       </div>
 
       {/* Order Details Dialog */}
