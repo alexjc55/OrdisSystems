@@ -55,7 +55,8 @@ import {
   Eye,
   X,
   MessageCircle,
-  Code
+  Code,
+  Layers
 } from "lucide-react";
 
 // Validation schemas
@@ -4325,13 +4326,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </div>
         </div>
 
-        {/* Код отслеживания */}
+        {/* Нижние баннеры */}
         <div className="space-y-6">
           <div className="flex items-center gap-2 pb-2 border-b">
-            <MessageCircle className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Код отслеживания</h3>
+            <Layers className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Нижние баннеры</h3>
           </div>
-          <h4 className="text-sm font-medium text-gray-700">Нижние баннеры</h4>
+
           
           <FormField
             control={form.control}
@@ -4460,7 +4461,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Код отслеживания */}
+        {/* Нижние баннеры */}
         <Collapsible open={isTrackingCodeOpen} onOpenChange={setIsTrackingCodeOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
@@ -4468,8 +4469,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
               <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
-                <Code className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">Код отслеживания</h3>
+                <Layers className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">Нижние баннеры</h3>
                 {isTrackingCodeOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
