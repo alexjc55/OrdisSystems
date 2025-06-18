@@ -397,9 +397,8 @@ export default function AdminDashboard() {
 
   const deleteCategoryMutation = useMutation({
     mutationFn: async (categoryId: number) => {
-      const response = await fetch(`/api/categories/${categoryId}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error('Failed to delete category');
-      return await response.json();
+      const response = await apiRequest('DELETE', `/api/categories/${categoryId}`, {});
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
@@ -874,7 +873,7 @@ export default function AdminDashboard() {
                                     <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">Отмена</AlertDialogCancel>
                                     <AlertDialogAction
                                       onClick={() => deleteCategoryMutation.mutate(category.id)}
-                                      className="bg-red-600 text-white hover:bg-red-600 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-xs sm:text-sm"
+                                      className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 transition-colors duration-200 text-xs sm:text-sm"
                                     >
                                       Удалить
                                     </AlertDialogAction>
