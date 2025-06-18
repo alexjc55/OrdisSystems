@@ -969,11 +969,11 @@ export default function AdminDashboard() {
 
                 {/* Orders Pagination */}
                 {ordersTotalPages > 1 && (
-                  <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50 mt-4">
-                    <div className="flex items-center text-sm text-gray-500">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-t bg-gray-50 mt-4 gap-3">
+                    <div className="flex items-center text-sm text-gray-500 order-2 sm:order-1">
                       Показано {((ordersPage - 1) * itemsPerPage) + 1}-{Math.min(ordersPage * itemsPerPage, ordersTotal)} из {ordersTotal}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 justify-center sm:justify-end order-1 sm:order-2">
                       <Button
                         variant="outline"
                         size="sm"
@@ -1161,11 +1161,11 @@ export default function AdminDashboard() {
 
                 {/* Products Pagination */}
                 {productsTotalPages > 1 && (
-                  <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50 mt-4">
-                    <div className="flex items-center text-sm text-gray-500">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-t bg-gray-50 mt-4 gap-3">
+                    <div className="flex items-center text-sm text-gray-500 order-2 sm:order-1">
                       Показано {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} из {productsTotal}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 justify-center sm:justify-end order-1 sm:order-2">
                       <Button
                         variant="outline"
                         size="sm"
@@ -1280,11 +1280,11 @@ export default function AdminDashboard() {
 
                 {/* Users Pagination */}
                 {usersTotalPages > 1 && (
-                  <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50 mt-4">
-                    <div className="flex items-center text-sm text-gray-500">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-t bg-gray-50 mt-4 gap-3">
+                    <div className="flex items-center text-sm text-gray-500 order-2 sm:order-1">
                       Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 justify-center sm:justify-end order-1 sm:order-2">
                       <Button
                         variant="outline"
                         size="sm"
