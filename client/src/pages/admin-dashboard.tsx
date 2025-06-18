@@ -4401,3 +4401,184 @@ function CancellationReasonDialog({
     </Dialog>
   );
 }
+
+// User Form Dialog Component
+function UserFormDialog({ open, onClose, user, onSubmit }: any) {
+  const userSchema = z.object({
+    email: z.string().email("Неверный формат email"),
+    firstName: z.string().min(1, "Имя обязательно"),
+    lastName: z.string().min(1, "Фамилия обязательна"),
+    phone: z.string().optional(),
+    role: z.enum(["admin", "worker", "customer"]),
+  });
+
+  type UserFormData = z.infer<typeof userSchema>;
+  
+  const form = useForm<UserFormData>({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      email: "",
+      firstName: "",
+      lastName: "",
+      phone: "",
+      role: "customer",
+    },
+  });
+
+  // Reset form when user or dialog state changes
+  useEffect(() => {
+    if (open) {
+      if (user) {
+        form.reset({
+          email: user.email || "",
+          firstName: user.firstName || "",
+          lastName: user.lastName || "",
+          phone: user.phone || "",
+          role: user.role || "customer",
+        });
+      } else {
+        form.reset({
+          email: "",
+          firstName: "",
+          lastName: "",
+          phone: "",
+          role: "customer",
+        });
+      }
+    }
+  }, [open, user, form]);
+
+  const handleSubmit = (data: UserFormData) => {
+    onSubmit(data);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-lg">
+            {user ? "Редактировать пользователя" : "Добавить пользователя"}
+          </DialogTitle>
+          <DialogDescription className="text-sm">
+            {user ? "Изменить информацию о пользователе" : "Создать нового пользователя"}
+          </DialogDescription>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">Email *</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="email"
+                      placeholder="user@example.com"
+                      {...field}
+                      className="text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">Имя *</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Иван"
+                        {...field}
+                        className="text-sm"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">Фамилия *</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Иванов"
+                        {...field}
+                        className="text-sm"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">Телефон</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="tel"
+                      placeholder="+972-50-123-4567"
+                      {...field}
+                      className="text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">Роль *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder="Выберите роль" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="customer">Клиент</SelectItem>
+                      <SelectItem value="worker">Сотрудник</SelectItem>
+                      <SelectItem value="admin">Администратор</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-between items-center pt-4">
+              <Button type="button" variant="outline" onClick={onClose} className="text-sm">
+                Отмена
+              </Button>
+              <Button 
+                type="submit" 
+                className="text-sm bg-orange-500 hover:bg-orange-600 text-white"
+              >
+                {user ? "Сохранить изменения" : "Создать пользователя"}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}

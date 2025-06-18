@@ -547,7 +547,7 @@ export class DatabaseStorage implements IStorage {
 
   // User operations with pagination
   async getUsersPaginated(params: PaginationParams): Promise<PaginatedResult<User>> {
-    const { page, limit, search, sortField, sortDirection } = params;
+    const { page, limit, search, status, sortField, sortDirection } = params;
     const offset = (page - 1) * limit;
 
     // Build where conditions
@@ -555,8 +555,17 @@ export class DatabaseStorage implements IStorage {
     
     if (search) {
       conditions.push(
-        like(users.email, `%${search}%`)
+        or(
+          like(users.email, `%${search}%`),
+          like(users.firstName, `%${search}%`),
+          like(users.lastName, `%${search}%`)
+        )
       );
+    }
+    
+    // Filter by role
+    if (status && status !== 'all') {
+      conditions.push(eq(users.role, status));
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
