@@ -412,7 +412,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Update order with new total amount and other data
         const updatedOrder = await storage.updateOrder(id, { 
           ...orderData, 
-          totalAmount: totalAmount || orderData.totalAmount 
+          totalAmount: totalAmount || orderData.totalAmount,
+          orderDiscount: req.body.orderDiscount,
+          itemDiscounts: req.body.itemDiscounts
         });
         
         // Return the updated order with items

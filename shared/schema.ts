@@ -85,6 +85,8 @@ export const orders = pgTable("orders", {
   requestedDeliveryTime: timestamp("requested_delivery_time"),
   paymentMethod: varchar("payment_method", { length: 50 }),
   cancellationReason: text("cancellation_reason"),
+  orderDiscount: jsonb("order_discount"), // Store order-level discount as JSON
+  itemDiscounts: jsonb("item_discounts"), // Store item-level discounts as JSON
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

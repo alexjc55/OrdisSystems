@@ -296,23 +296,70 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     },
   });
 
+  // Clean notes from discount metadata for display
+  const cleanNotes = (notes: string) => {
+    return notes.replace(/\[DISCOUNTS:.*?\]/g, '').trim();
+  };
+
   const [editedOrder, setEditedOrder] = useState({
     customerPhone: order.customerPhone || '',
     deliveryAddress: order.deliveryAddress || '',
     deliveryDate: order.deliveryDate || '',
     deliveryTime: order.deliveryTime || '',
     status: order.status || 'pending',
-    notes: order.notes || '',
+    notes: cleanNotes(order.notes || ''),
   });
+
+  // Extract discount information from order notes
+  const extractDiscountsFromNotes = (notes: string) => {
+    const discountMatch = notes.match(/\[DISCOUNTS:(.*?)\]/);
+    if (discountMatch) {
+      try {
+        return JSON.parse(discountMatch[1]);
+      } catch (e) {
+        return { orderDiscount: null, itemDiscounts: null };
+      }
+    }
+    return { orderDiscount: null, itemDiscounts: null };
+  };
+
+  const savedDiscounts = extractDiscountsFromNotes(order.notes || '');
 
   // Discount state
   const [orderDiscount, setOrderDiscount] = useState({
-    type: 'percentage' as 'percentage' | 'amount',
-    value: 0,
-    reason: ''
+    type: (savedDiscounts.orderDiscount?.type || 'percentage') as 'percentage' | 'amount',
+    value: savedDiscounts.orderDiscount?.value || 0,
+    reason: savedDiscounts.orderDiscount?.reason || ''
   });
 
-  const [itemDiscounts, setItemDiscounts] = useState<{[key: number]: {type: 'percentage' | 'amount', value: number, reason: string}}>({});
+  const [itemDiscounts, setItemDiscounts] = useState<{[key: number]: {type: 'percentage' | 'amount', value: number, reason: string}}>(
+    savedDiscounts.itemDiscounts || {}
+  );
+
+  // Apply saved discounts to order items on component mount
+  useEffect(() => {
+    if (Object.keys(savedDiscounts.itemDiscounts || {}).length > 0) {
+      const updatedItems = editedOrderItems.map((item: any, index: number) => {
+        const discount = savedDiscounts.itemDiscounts[index];
+        if (discount) {
+          const quantity = parseFloat(item.quantity) || 0;
+          const unitPrice = parseFloat(item.pricePerUnit || item.pricePerKg || 0);
+          const basePrice = quantity * unitPrice;
+          let finalPrice = basePrice;
+          
+          if (discount.type === 'percentage') {
+            finalPrice = basePrice * (1 - discount.value / 100);
+          } else {
+            finalPrice = Math.max(0, basePrice - discount.value);
+          }
+          
+          return { ...item, totalPrice: finalPrice };
+        }
+        return item;
+      });
+      setEditedOrderItems(updatedItems);
+    }
+  }, []); // Only run on mount
 
   // Helper functions for order items editing
   const getUnitDisplay = (unit: string, quantity: number) => {
@@ -447,12 +494,22 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
 
   const handleSave = () => {
     const finalTotal = calculateFinalTotal();
-    updateOrderMutation.mutate({
-      ...editedOrder,
-      items: editedOrderItems,
-      totalAmount: finalTotal,
+    
+    // Store discount information in notes as a workaround
+    const discountInfo = {
       orderDiscount: orderDiscount.value > 0 ? orderDiscount : null,
       itemDiscounts: Object.keys(itemDiscounts).length > 0 ? itemDiscounts : null
+    };
+    
+    const notesWithDiscounts = editedOrder.notes + 
+      (discountInfo.orderDiscount || discountInfo.itemDiscounts ? 
+        `\n[DISCOUNTS:${JSON.stringify(discountInfo)}]` : '');
+    
+    updateOrderMutation.mutate({
+      ...editedOrder,
+      notes: notesWithDiscounts,
+      items: editedOrderItems,
+      totalAmount: finalTotal
     });
   };
 
