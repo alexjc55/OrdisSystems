@@ -121,7 +121,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
       <div className="relative">
         <img
           src={product.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'}
@@ -137,8 +137,8 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
         </div>
       </div>
       
-      <CardContent className="p-4">
-        <div className="mb-3">
+      <CardContent className="p-4 flex-1 flex flex-col">
+        <div className="flex-1">
           <h3 className="text-lg font-poppins font-semibold text-gray-900 mb-1">
             {product.name}
           </h3>
@@ -150,13 +150,13 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           {product.category && (
             <Badge 
               variant="secondary" 
-              className="mb-2 cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+              className="mb-2 cursor-pointer bg-gray-100 text-gray-700 hover:bg-primary hover:text-primary-foreground transition-colors"
               onClick={() => onCategoryClick?.(product.category.id)}
             >
               {product.category.name}
             </Badge>
           )}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-3">
             <div className="flex flex-col">
               {product.isSpecialOffer && discountedPrice < price ? (
                 <>
@@ -180,7 +180,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           </div>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3 mt-auto">
           {/* Quantity Selector */}
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium text-gray-700">
