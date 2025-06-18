@@ -718,51 +718,62 @@ export default function AdminDashboard() {
           <p className="text-gray-600">Управление магазином eDAHouse</p>
         </div>
 
-        {/* Custom Tab Navigation */}
-        <div className="flex flex-wrap gap-2 mb-6 p-2 bg-gray-100 rounded-lg">
+        {/* Admin Navigation Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           <button
             onClick={() => setActiveTab("products")}
-            className={`flex items-center gap-2 px-4 py-3 rounded-md font-medium transition-all flex-1 min-w-[calc(50%-4px)] md:min-w-0 justify-center ${
+            className={`h-16 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
               activeTab === "products"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                ? "border-orange-500 bg-orange-50 text-orange-700 shadow-lg"
+                : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md text-gray-600"
             }`}
           >
-            <Package className="h-4 w-4" />
-            Товары
+            <div className="flex flex-col items-center gap-1">
+              <Package className="h-5 w-5" />
+              <span className="text-sm font-medium">Товары</span>
+            </div>
           </button>
+          
           <button
             onClick={() => setActiveTab("orders")}
-            className={`flex items-center gap-2 px-4 py-3 rounded-md font-medium transition-all flex-1 min-w-[calc(50%-4px)] md:min-w-0 justify-center ${
+            className={`h-16 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
               activeTab === "orders"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                ? "border-orange-500 bg-orange-50 text-orange-700 shadow-lg"
+                : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md text-gray-600"
             }`}
           >
-            <ShoppingCart className="h-4 w-4" />
-            Заказы
+            <div className="flex flex-col items-center gap-1">
+              <ShoppingCart className="h-5 w-5" />
+              <span className="text-sm font-medium">Заказы</span>
+            </div>
           </button>
+          
           <button
             onClick={() => setActiveTab("users")}
-            className={`flex items-center gap-2 px-4 py-3 rounded-md font-medium transition-all flex-1 min-w-[calc(50%-4px)] md:min-w-0 justify-center ${
+            className={`h-16 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
               activeTab === "users"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                ? "border-orange-500 bg-orange-50 text-orange-700 shadow-lg"
+                : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md text-gray-600"
             }`}
           >
-            <Users className="h-4 w-4" />
-            Пользователи
+            <div className="flex flex-col items-center gap-1">
+              <Users className="h-5 w-5" />
+              <span className="text-sm font-medium">Пользователи</span>
+            </div>
           </button>
+          
           <button
             onClick={() => setActiveTab("settings")}
-            className={`flex items-center gap-2 px-4 py-3 rounded-md font-medium transition-all w-full md:flex-1 md:w-auto md:min-w-0 justify-center ${
+            className={`h-16 px-4 py-3 rounded-xl border-2 transition-all duration-200 col-span-2 md:col-span-1 ${
               activeTab === "settings"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                ? "border-orange-500 bg-orange-50 text-orange-700 shadow-lg"
+                : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md text-gray-600"
             }`}
           >
-            <Store className="h-4 w-4" />
-            Настройки
+            <div className="flex flex-col items-center gap-1">
+              <Store className="h-5 w-5" />
+              <span className="text-sm font-medium">Настройки</span>
+            </div>
           </button>
         </div>
 
