@@ -84,6 +84,7 @@ export const orders = pgTable("orders", {
   deliveryTime: varchar("delivery_time", { length: 20 }), // Format: HH:MM
   requestedDeliveryTime: timestamp("requested_delivery_time"),
   paymentMethod: varchar("payment_method", { length: 50 }),
+  cancellationReason: text("cancellation_reason"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

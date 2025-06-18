@@ -421,10 +421,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const id = parseInt(req.params.id);
-      const { status } = req.body;
+      const { status, cancellationReason } = req.body;
       
-      const order = await storage.updateOrderStatus(id, status);
-      res.json(order);
+      // If status is cancelled and cancellation reason is provided, update order with reason
+      if (status === 'cancelled' && cancellationReason) {
+        const order = await storage.updateOrder(id, { status, cancellationReason });
+        res.json(order);
+      } else {
+        const order = await storage.updateOrderStatus(id, status);
+        res.json(order);
+      }
     } catch (error) {
       console.error("Error updating order status:", error);
       res.status(500).json({ message: "Failed to update order status" });
