@@ -148,6 +148,8 @@ export const storeSettings = pgTable("store_settings", {
   bottomBanner2Link: varchar("bottom_banner2_link", { length: 500 }),
   showBottomBanners: boolean("show_bottom_banners").default(false),
   defaultItemsPerPage: integer("default_items_per_page").default(10), // Default pagination size
+  headerHtml: text("header_html"), // Custom HTML/JS code for header
+  footerHtml: text("footer_html"), // Custom HTML/JS code for footer
   cancellationReasons: jsonb("cancellation_reasons"), // Array of cancellation reason strings
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -229,6 +231,8 @@ export const insertStoreSettingsSchema = createInsertSchema(storeSettings).omit(
   updatedAt: true,
 }).extend({
   defaultItemsPerPage: z.number().int().min(1).max(1000).default(10),
+  headerHtml: z.string().optional(),
+  footerHtml: z.string().optional(),
 });
 
 export const insertUserAddressSchema = createInsertSchema(userAddresses).omit({

@@ -3666,6 +3666,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         bottomBanner2Link: storeSettings?.bottomBanner2Link || "",
         showBottomBanners: storeSettings?.showBottomBanners !== false,
         defaultItemsPerPage: storeSettings?.defaultItemsPerPage || 10,
+        headerHtml: storeSettings?.headerHtml || "",
+        footerHtml: storeSettings?.footerHtml || "",
       });
     }
   }, [storeSettings, form]);
@@ -4310,6 +4312,66 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               </div>
             </div>
           )}
+        </div>
+
+        {/* HTML/JS Code Injection Section */}
+        <div className="space-y-6 border-t pt-6">
+          <div className="flex items-center gap-2">
+            <div className="text-lg font-semibold">Код отслеживания</div>
+            <div className="text-sm text-gray-500">(Facebook Pixel, Google Analytics, и т.д.)</div>
+          </div>
+
+          <FormField
+            control={form.control}
+            name="headerHtml"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">HTML/JS код для &lt;head&gt;</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder={`<!-- Вставьте код для <head> здесь -->
+<!-- Например, Facebook Pixel, Google Analytics, и другие скрипты отслеживания -->
+<script>
+  // Ваш код здесь
+</script>`}
+                    {...field}
+                    className="text-sm font-mono min-h-[120px] resize-y"
+                  />
+                </FormControl>
+                <FormDescription className="text-xs text-gray-500">
+                  Этот код будет добавлен в секцию &lt;head&gt; всех страниц сайта. 
+                  Используйте для Facebook Pixel, Google Analytics, и других счетчиков.
+                </FormDescription>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="footerHtml"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">HTML/JS код для футера</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder={`<!-- Вставьте код для футера здесь -->
+<!-- Например, чаты поддержки, дополнительные скрипты -->
+<script>
+  // Ваш код здесь
+</script>`}
+                    {...field}
+                    className="text-sm font-mono min-h-[120px] resize-y"
+                  />
+                </FormControl>
+                <FormDescription className="text-xs text-gray-500">
+                  Этот код будет добавлен в конец страницы перед закрывающим тегом &lt;/body&gt;. 
+                  Используйте для чатов поддержки и других скрипты.
+                </FormDescription>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
         </div>
 
         <div className="flex justify-end">
