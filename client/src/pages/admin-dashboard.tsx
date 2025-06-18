@@ -507,9 +507,13 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
       itemDiscounts: Object.keys(itemDiscounts).length > 0 ? itemDiscounts : null
     };
     
-    const notesWithDiscounts = editedOrder.notes + 
+    const baseNotes = editedOrder.notes || '';
+    const notesWithDiscounts = baseNotes + 
       (discountInfo.orderDiscount || discountInfo.itemDiscounts ? 
         `\n[DISCOUNTS:${JSON.stringify(discountInfo)}]` : '');
+    
+    console.log('Saving order with discount info:', discountInfo);
+    console.log('Notes with discounts:', notesWithDiscounts);
     
     updateOrderMutation.mutate({
       ...editedOrder,
