@@ -761,6 +761,36 @@ export default function AdminDashboard() {
                     </p>
                   </div>
                 )}
+                
+                {/* Products Pagination */}
+                {productsTotalPages > 1 && (
+                  <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
+                    <div className="flex items-center gap-2 text-sm text-gray-700">
+                      <span>Показано {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} из {productsTotal}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
+                        disabled={productsPage === 1}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <span className="text-sm font-medium px-3 py-1 bg-white border rounded">
+                        {productsPage} из {productsTotalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
+                        disabled={productsPage === productsTotalPages}
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -1007,6 +1037,36 @@ export default function AdminDashboard() {
                     <p className="text-gray-500 text-sm">Заказы будут отображаться здесь</p>
                   </div>
                 )}
+                
+                {/* Orders Pagination */}
+                {ordersTotalPages > 1 && (
+                  <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
+                    <div className="flex items-center gap-2 text-sm text-gray-700">
+                      <span>Показано {((ordersPage - 1) * itemsPerPage) + 1}-{Math.min(ordersPage * itemsPerPage, ordersTotal)} из {ordersTotal}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
+                        disabled={ordersPage === 1}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <span className="text-sm font-medium px-3 py-1 bg-white border rounded">
+                        {ordersPage} из {ordersTotalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setOrdersPage(prev => Math.min(ordersTotalPages, prev + 1))}
+                        disabled={ordersPage === ordersTotalPages}
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -1037,7 +1097,7 @@ export default function AdminDashboard() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {(users as any[] || []).map((user: any) => (
+                          {(usersData as any[] || []).map((user: any) => (
                             <TableRow key={user.id}>
                               <TableCell className="font-medium text-xs sm:text-sm">{user.email}</TableCell>
                               <TableCell className="text-xs sm:text-sm hidden sm:table-cell">
@@ -1065,6 +1125,36 @@ export default function AdminDashboard() {
                     <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Нет пользователей</h3>
                     <p className="text-gray-500 text-sm">Пользователи будут отображаться здесь</p>
+                  </div>
+                )}
+                
+                {/* Users Pagination */}
+                {usersTotalPages > 1 && (
+                  <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
+                    <div className="flex items-center gap-2 text-sm text-gray-700">
+                      <span>Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
+                        disabled={usersPage === 1}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <span className="text-sm font-medium px-3 py-1 bg-white border rounded">
+                        {usersPage} из {usersTotalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
+                        disabled={usersPage === usersTotalPages}
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 )}
               </CardContent>
