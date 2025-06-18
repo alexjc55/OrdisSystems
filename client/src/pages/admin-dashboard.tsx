@@ -799,19 +799,52 @@ export default function AdminDashboard() {
 
   // Order status update mutation
   const updateOrderStatusMutation = useMutation({
-    mutationFn: async ({ orderId, status }: { orderId: number; status: string }) => {
-      const response = await apiRequest('PUT', `/api/orders/${orderId}/status`, { status });
-      return response.json();
+    mutationFn: async ({ orderId, status, cancellationReason }: { orderId: number, status: string, cancellationReason?: string }) => {
+      const payload = status === 'cancelled' && cancellationReason 
+        ? { status, cancellationReason }
+        : { status };
+      return await apiRequest("PUT", `/api/orders/${orderId}/status`, payload);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/orders'] });
-      toast({ title: "Статус обновлен", description: "Статус заказа успешно изменен" });
+      toast({
+        title: "Статус заказа обновлен",
+        description: "Изменения сохранены успешно",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
     },
     onError: (error: any) => {
-      console.error("Order status update error:", error);
-      toast({ title: "Ошибка", description: "Не удалось обновить статус заказа", variant: "destructive" });
-    }
+      toast({
+        title: "Ошибка",
+        description: error.message || "Не удалось обновить статус заказа",
+        variant: "destructive",
+      });
+    },
   });
+
+  // Handle order cancellation with reason selection
+  const handleOrderCancellation = (orderId: number) => {
+    setOrderToCancelId(orderId);
+    setCancellationReason("");
+    setCustomCancellationReason("");
+    setIsCancellationDialogOpen(true);
+  };
+
+  // Confirm order cancellation with reason
+  const confirmOrderCancellation = () => {
+    if (!orderToCancelId) return;
+    
+    const finalReason = cancellationReason === "other" ? customCancellationReason : cancellationReason;
+    updateOrderStatusMutation.mutate({ 
+      orderId: orderToCancelId, 
+      status: "cancelled", 
+      cancellationReason: finalReason 
+    });
+    
+    setIsCancellationDialogOpen(false);
+    setOrderToCancelId(null);
+    setCancellationReason("");
+    setCustomCancellationReason("");
+  };
 
   if (isLoading || !isAuthenticated) {
     return (
