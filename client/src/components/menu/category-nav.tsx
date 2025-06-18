@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { memo, useCallback } from "react";
 import type { CategoryWithProducts } from "@shared/schema";
 
 interface CategoryNavProps {
@@ -12,18 +13,26 @@ function getIconForCategory(category: CategoryWithProducts): string {
   return category.icon || '📦';
 }
 
-export default function CategoryNav({
+export default memo(function CategoryNav({
   categories,
   selectedCategoryId,
   onCategorySelect
 }: CategoryNavProps) {
+  const handleAllCategoriesClick = useCallback(() => {
+    onCategorySelect(null);
+  }, [onCategorySelect]);
+
+  const handleCategoryClick = useCallback((categoryId: number) => {
+    onCategorySelect(categoryId);
+  }, [onCategorySelect]);
+
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-40">
       <div className="flex items-center space-x-2 overflow-x-auto pb-2">
         <Button
           variant={selectedCategoryId === null ? "default" : "secondary"}
           size="sm"
-          onClick={() => onCategorySelect(null)}
+          onClick={handleAllCategoriesClick}
           className={cn(
             "flex-shrink-0 text-sm font-medium px-3 py-1.5 h-8",
             selectedCategoryId === null
@@ -40,7 +49,7 @@ export default function CategoryNav({
             key={category.id}
             variant={selectedCategoryId === category.id ? "default" : "secondary"}
             size="sm"
-            onClick={() => onCategorySelect(category.id)}
+            onClick={() => handleCategoryClick(category.id)}
             className={cn(
               "flex-shrink-0 text-sm font-medium px-3 py-1.5 h-8",
               selectedCategoryId === category.id
@@ -55,4 +64,4 @@ export default function CategoryNav({
       </div>
     </div>
   );
-}
+});

@@ -2,7 +2,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { memo, useMemo } from "react";
 import type { CategoryWithProducts } from "@shared/schema";
 
 interface SidebarProps {
@@ -16,7 +15,7 @@ function getIconForCategory(category: CategoryWithProducts): string {
   return category.icon || '📦';
 }
 
-const Sidebar = memo(function Sidebar({
+export default function Sidebar({
   categories,
   selectedCategoryId,
   onCategorySelect,
@@ -51,32 +50,15 @@ const Sidebar = memo(function Sidebar({
         <h2 className="text-lg font-poppins font-semibold text-gray-900 mb-4">
           Категории
         </h2>
-        <ScrollArea className="h-[calc(100vh-200px)]">
-          <nav className="space-y-2">
-            <Button
-              variant="ghost"
-              onClick={() => onCategorySelect(null)}
-              className={cn(
-                "w-full justify-start px-3 py-1.5 text-sm font-medium rounded-md h-9",
-                selectedCategoryId === null
-                  ? "text-primary bg-primary/10 border-r-2 border-primary"
-                  : "text-gray-700 hover:bg-gray-50 hover:text-primary"
-              )}
-            >
-              <span className="mr-3">🛍️</span>
-              Все товары
-              <Badge variant="secondary" className="ml-auto text-xs bg-gray-200 text-gray-700">
-                {categories.reduce((acc, cat) => acc + cat.products.length, 0)}
-              </Badge>
-            </Button>
-            
+        <ScrollArea className="h-[calc(100vh-8rem)]">
+          <nav className="space-y-1">
             {categories.map((category) => (
               <Button
                 key={category.id}
                 variant="ghost"
                 onClick={() => onCategorySelect(category.id)}
                 className={cn(
-                  "w-full justify-start px-3 py-1.5 text-sm font-medium rounded-md h-9",
+                  "w-full justify-start text-left h-auto px-3 py-2 font-normal",
                   selectedCategoryId === category.id
                     ? "text-primary bg-primary/10 border-r-2 border-primary"
                     : "text-gray-700 hover:bg-gray-50 hover:text-primary"
@@ -94,6 +76,4 @@ const Sidebar = memo(function Sidebar({
       </div>
     </aside>
   );
-});
-
-export default Sidebar;
+}
