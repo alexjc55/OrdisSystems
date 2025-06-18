@@ -149,8 +149,6 @@ export const storeSettings = pgTable("store_settings", {
   showBottomBanners: boolean("show_bottom_banners").default(false),
   defaultItemsPerPage: integer("default_items_per_page").default(10), // Default pagination size
   cancellationReasons: jsonb("cancellation_reasons"), // Array of cancellation reason strings
-  headerHtml: text("header_html"), // Custom HTML/JS for website header
-  footerHtml: text("footer_html"), // Custom HTML/JS for website footer
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

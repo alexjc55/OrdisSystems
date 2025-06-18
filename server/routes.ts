@@ -582,51 +582,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/store-settings', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      
-      if (!user || user.email !== "alexjc55@gmail.com") {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
-      const settings = await storage.getStoreSettings();
-      res.json(settings);
-    } catch (error) {
-      console.error("Error fetching store settings:", error);
-      res.status(500).json({ message: "Failed to fetch store settings" });
-    }
-  });
-
   app.put('/api/settings', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
       
       if (!user || user.role !== 'admin') {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
-      const settingsData = insertStoreSettingsSchema.parse(req.body);
-      const settings = await storage.updateStoreSettings(settingsData);
-      
-      res.json(settings);
-    } catch (error) {
-      console.error("Error updating store settings:", error);
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to update store settings" });
-    }
-  });
-
-  app.patch('/api/store-settings', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      
-      if (!user || user.email !== "alexjc55@gmail.com") {
         return res.status(403).json({ message: "Admin access required" });
       }
 
