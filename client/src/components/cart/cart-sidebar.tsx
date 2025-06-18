@@ -1,14 +1,17 @@
 import { useCartStore } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency, formatQuantity, type ProductUnit } from "@/lib/currency";
 import { X, Plus, Minus, Trash2, ShoppingCart } from "lucide-react";
 import { useLocation } from "wouter";
+import { useState } from "react";
 
 export default function CartSidebar() {
   const { items, isOpen, setCartOpen, updateQuantity, removeItem, getTotalPrice } = useCartStore();
   const [, setLocation] = useLocation();
+  const [editingQuantity, setEditingQuantity] = useState<{[key: number]: string}>({});
 
   const handleQuantityChange = (productId: number, newQuantity: number, unit: ProductUnit) => {
     if (newQuantity <= 0) {
@@ -36,6 +39,39 @@ export default function CartSidebar() {
       default:
         return 0.1; // For 100g/100ml
     }
+  };
+
+  const handleManualQuantityChange = (productId: number, value: string, unit: ProductUnit) => {
+    setEditingQuantity(prev => ({ ...prev, [productId]: value }));
+  };
+
+  const handleQuantityBlur = (productId: number, unit: ProductUnit) => {
+    const value = editingQuantity[productId];
+    if (value !== undefined) {
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue) && numValue > 0) {
+        handleQuantityChange(productId, numValue, unit);
+      }
+      setEditingQuantity(prev => {
+        const newState = { ...prev };
+        delete newState[productId];
+        return newState;
+      });
+    }
+  };
+
+  const handleQuantityKeyPress = (e: React.KeyboardEvent, productId: number, unit: ProductUnit) => {
+    if (e.key === 'Enter') {
+      handleQuantityBlur(productId, unit);
+    }
+  };
+
+  const getDisplayQuantity = (item: any) => {
+    const productId = item.product.id;
+    if (editingQuantity[productId] !== undefined) {
+      return editingQuantity[productId];
+    }
+    return item.quantity.toString();
   };
 
   const handleCheckout = () => {
@@ -110,36 +146,46 @@ export default function CartSidebar() {
                           
                           {/* Price and Quantity Controls */}
                           <div className="flex items-center justify-between mt-3">
-                            <div className="flex items-center gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleQuantityChange(
-                                  item.product.id, 
-                                  item.quantity - getIncrementValue(item.product.unit as ProductUnit),
-                                  item.product.unit as ProductUnit
-                                )}
-                                className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50"
-                              >
-                                <Minus className="h-3 w-3" />
-                              </Button>
-                              <div className="min-w-[70px] text-center bg-white rounded-lg px-3 py-1 border border-gray-200">
-                                <div className="text-sm font-bold text-gray-900">
-                                  {formatQuantity(item.quantity, item.product.unit as ProductUnit)}
-                                </div>
+                            <div className="flex flex-col items-center gap-2">
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleQuantityChange(
+                                    item.product.id, 
+                                    item.quantity - getIncrementValue(item.product.unit as ProductUnit),
+                                    item.product.unit as ProductUnit
+                                  )}
+                                  className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50"
+                                >
+                                  <Minus className="h-3 w-3" />
+                                </Button>
+                                <Input
+                                  type="text"
+                                  value={getDisplayQuantity(item)}
+                                  onChange={(e) => handleManualQuantityChange(item.product.id, e.target.value, item.product.unit as ProductUnit)}
+                                  onBlur={() => handleQuantityBlur(item.product.id, item.product.unit as ProductUnit)}
+                                  onKeyPress={(e) => handleQuantityKeyPress(e, item.product.id, item.product.unit as ProductUnit)}
+                                  className="w-16 h-8 text-center text-sm font-bold border-gray-200 focus:border-orange-300"
+                                />
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleQuantityChange(
+                                    item.product.id, 
+                                    item.quantity + getIncrementValue(item.product.unit as ProductUnit),
+                                    item.product.unit as ProductUnit
+                                  )}
+                                  className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50"
+                                >
+                                  <Plus className="h-3 w-3" />
+                                </Button>
                               </div>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleQuantityChange(
-                                  item.product.id, 
-                                  item.quantity + getIncrementValue(item.product.unit as ProductUnit),
-                                  item.product.unit as ProductUnit
-                                )}
-                                className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50"
-                              >
-                                <Plus className="h-3 w-3" />
-                              </Button>
+                              <div className="text-xs text-gray-500">
+                                {item.product.unit === "piece" ? "шт" : 
+                                 item.product.unit === "kg" ? "кг" : 
+                                 item.product.unit === "100g" ? "100г" : "100мл"}
+                              </div>
                             </div>
                             
                             <div className="text-right">
