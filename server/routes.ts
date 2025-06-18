@@ -377,10 +377,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Process requestedDeliveryTime to extract deliveryDate and deliveryTime
       let processedOrderData = { ...validatedData, userId };
-      if (validatedData.requestedDeliveryTime) {
-        const deliveryDateTime = new Date(validatedData.requestedDeliveryTime);
-        processedOrderData.deliveryDate = deliveryDateTime.toISOString().split('T')[0]; // YYYY-MM-DD
-        processedOrderData.deliveryTime = deliveryDateTime.toTimeString().slice(0, 5); // HH:MM
+      if (validatedData.requestedDeliveryTime && validatedData.requestedDeliveryDate) {
+        // Store the date and time range separately
+        processedOrderData.deliveryDate = validatedData.requestedDeliveryDate; // YYYY-MM-DD from form
+        processedOrderData.deliveryTime = validatedData.requestedDeliveryTime; // Time range like "10:00-12:00"
       }
       
       const order = await storage.createOrder(

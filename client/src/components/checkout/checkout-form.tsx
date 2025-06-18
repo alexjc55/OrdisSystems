@@ -103,21 +103,22 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
     const date = new Date(selectedDate);
     const isToday = date.toDateString() === new Date().toDateString();
     
-    const slots = [];
     let startHour = isToday ? Math.max(minDate.getHours() + 1, 9) : 9;
-    const endHour = 21;
+    const endHour = 22;
 
-    for (let hour = startHour; hour < endHour; hour++) {
-      const timeSlot = `${hour.toString().padStart(2, '0')}:00`;
-      slots.push(timeSlot);
-      
-      if (hour < endHour - 1) {
-        const halfHourSlot = `${hour.toString().padStart(2, '0')}:30`;
-        slots.push(halfHourSlot);
-      }
-    }
+    // Time range slots like in cart overlay
+    const timeSlots = [
+      { value: "10:00-12:00", label: "10:00 - 12:00", start: 10, end: 12 },
+      { value: "12:00-14:00", label: "12:00 - 14:00", start: 12, end: 14 },
+      { value: "14:00-16:00", label: "14:00 - 16:00", start: 14, end: 16 },
+      { value: "16:00-18:00", label: "16:00 - 18:00", start: 16, end: 18 },
+      { value: "18:00-20:00", label: "18:00 - 20:00", start: 18, end: 20 },
+      { value: "20:00-22:00", label: "20:00 - 22:00", start: 20, end: 22 }
+    ];
 
-    return slots;
+    return timeSlots
+      .filter(slot => slot.start >= startHour && slot.end <= endHour)
+      .map(slot => ({ value: slot.value, label: slot.label }));
   };
 
   const totalAmount = getTotalPrice();
@@ -152,10 +153,8 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
 
     let requestedDeliveryTime = null;
     if (formData.requestedDeliveryDate && formData.requestedDeliveryTime) {
-      const [hours, minutes] = formData.requestedDeliveryTime.split(':');
-      const deliveryDateTime = new Date(formData.requestedDeliveryDate);
-      deliveryDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-      requestedDeliveryTime = deliveryDateTime.toISOString();
+      // Handle time ranges like "10:00-12:00" - just store the range as-is
+      requestedDeliveryTime = formData.requestedDeliveryTime;
     }
 
     createOrderMutation.mutate({
@@ -165,6 +164,7 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
       customerPhone: formData.customerPhone,
       customerNotes: formData.customerNotes,
       paymentMethod: formData.paymentMethod,
+      requestedDeliveryDate: formData.requestedDeliveryDate,
       requestedDeliveryTime,
       items: orderItems,
     });
@@ -307,9 +307,9 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
                     <SelectValue placeholder="Выберите время" />
                   </SelectTrigger>
                   <SelectContent>
-                    {availableTimeSlots.map((time) => (
-                      <SelectItem key={time} value={time}>
-                        {time}
+                    {availableTimeSlots.map((slot) => (
+                      <SelectItem key={slot.value} value={slot.value}>
+                        {slot.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
