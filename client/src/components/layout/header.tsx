@@ -48,7 +48,7 @@ export default function Header() {
               </div>
             </Link>
             <nav className="hidden md:flex space-x-8">
-              <Link href="/" onClick={() => window.location.reload()} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+              <Link href="/" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                 Меню
               </Link>
               {(user?.role === 'admin' || user?.role === 'worker') && (

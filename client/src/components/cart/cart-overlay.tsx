@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCartStore } from "@/lib/cart";
 import { useAuth } from "@/hooks/useAuth";
@@ -30,6 +30,27 @@ export default function CartOverlay() {
   const [customerPhone, setCustomerPhone] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [deliveryTime, setDeliveryTime] = useState("");
+
+  // Reset delivery time when date changes to a closed day
+  useEffect(() => {
+    if (deliveryDate && storeSettings?.workingHours) {
+      const selectedDate = new Date(deliveryDate + 'T12:00:00');
+      const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+      const dayName = dayNames[selectedDate.getDay()];
+      
+      const workingHours = storeSettings.workingHours as Record<string, string>;
+      const todayHours = workingHours[dayName];
+      
+      // If the store is closed on this day, reset delivery time
+      if (!todayHours || 
+          todayHours.toLowerCase().includes('выходной') || 
+          todayHours.toLowerCase().includes('закрыто') ||
+          todayHours.trim() === '' ||
+          todayHours.toLowerCase() === 'closed') {
+        setDeliveryTime("");
+      }
+    }
+  }, [deliveryDate, storeSettings?.workingHours]);
 
   const subtotal = items.reduce((total, item) => total + item.totalPrice, 0);
   const total = subtotal + DELIVERY_FEE;
@@ -320,10 +341,14 @@ export default function CartOverlay() {
                           <SelectValue placeholder="Выберите время" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="asap">Как можно скорее</SelectItem>
                           {(() => {
-                            if (!storeSettings?.workingHours || !deliveryDate) {
+                            if (!deliveryDate) {
+                              return <SelectItem key="select-date" value="" disabled>Сначала выберите дату</SelectItem>;
+                            }
+
+                            if (!storeSettings?.workingHours) {
                               return [
+                                <SelectItem key="asap" value="asap">Как можно скорее</SelectItem>,
                                 <SelectItem key="10-12" value="10:00-12:00">10:00 - 12:00</SelectItem>,
                                 <SelectItem key="12-14" value="12:00-14:00">12:00 - 14:00</SelectItem>,
                                 <SelectItem key="14-16" value="14:00-16:00">14:00 - 16:00</SelectItem>,
@@ -333,47 +358,49 @@ export default function CartOverlay() {
                               ];
                             }
 
-                            const selectedDate = new Date(deliveryDate);
+                            const selectedDate = new Date(deliveryDate + 'T12:00:00');
                             const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
                             const dayName = dayNames[selectedDate.getDay()];
                             
                             const workingHours = storeSettings.workingHours as Record<string, string>;
                             const todayHours = workingHours[dayName];
                             
-                            if (!todayHours || todayHours.toLowerCase().includes('выходной') || todayHours.toLowerCase().includes('закрыто')) {
-                              return <SelectItem key="closed" value="" disabled>Выходной день</SelectItem>;
+                            // Check if the store is closed on this day
+                            if (!todayHours || 
+                                todayHours.toLowerCase().includes('выходной') || 
+                                todayHours.toLowerCase().includes('закрыто') ||
+                                todayHours.trim() === '' ||
+                                todayHours.toLowerCase() === 'closed') {
+                              return <SelectItem key="closed" value="" disabled>Выходной день - магазин закрыт</SelectItem>;
                             }
 
                             // Parse working hours (e.g., "10:00-22:00")
                             const hoursMatch = todayHours.match(/(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})/);
                             if (!hoursMatch) {
-                              return [
-                                <SelectItem key="10-12" value="10:00-12:00">10:00 - 12:00</SelectItem>,
-                                <SelectItem key="12-14" value="12:00-14:00">12:00 - 14:00</SelectItem>,
-                                <SelectItem key="14-16" value="14:00-16:00">14:00 - 16:00</SelectItem>,
-                                <SelectItem key="16-18" value="16:00-18:00">16:00 - 18:00</SelectItem>,
-                                <SelectItem key="18-20" value="18:00-20:00">18:00 - 20:00</SelectItem>,
-                                <SelectItem key="20-22" value="20:00-22:00">20:00 - 22:00</SelectItem>
-                              ];
+                              return <SelectItem key="invalid-hours" value="" disabled>Часы работы не указаны</SelectItem>;
                             }
 
                             const startHour = parseInt(hoursMatch[1]);
                             const endHour = parseInt(hoursMatch[3]);
                             
                             const timeSlots = [
-                              { value: "10:00-12:00", start: 10, end: 12 },
-                              { value: "12:00-14:00", start: 12, end: 14 },
-                              { value: "14:00-16:00", start: 14, end: 16 },
-                              { value: "16:00-18:00", start: 16, end: 18 },
-                              { value: "18:00-20:00", start: 18, end: 20 },
-                              { value: "20:00-22:00", start: 20, end: 22 }
+                              { value: "asap", label: "Как можно скорее", start: 0, end: 24 },
+                              { value: "10:00-12:00", label: "10:00 - 12:00", start: 10, end: 12 },
+                              { value: "12:00-14:00", label: "12:00 - 14:00", start: 12, end: 14 },
+                              { value: "14:00-16:00", label: "14:00 - 16:00", start: 14, end: 16 },
+                              { value: "16:00-18:00", label: "16:00 - 18:00", start: 16, end: 18 },
+                              { value: "18:00-20:00", label: "18:00 - 20:00", start: 18, end: 20 },
+                              { value: "20:00-22:00", label: "20:00 - 22:00", start: 20, end: 22 }
                             ];
 
                             return timeSlots
-                              .filter(slot => slot.start >= startHour && slot.end <= endHour)
+                              .filter(slot => {
+                                if (slot.value === "asap") return true;
+                                return slot.start >= startHour && slot.end <= endHour;
+                              })
                               .map(slot => (
                                 <SelectItem key={slot.value} value={slot.value}>
-                                  {slot.value.replace('-', ' - ')}
+                                  {slot.label}
                                 </SelectItem>
                               ));
                           })()}
