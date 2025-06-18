@@ -315,15 +315,21 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     const discountMatch = notes.match(/\[DISCOUNTS:(.*?)\]/);
     if (discountMatch) {
       try {
-        return JSON.parse(discountMatch[1]);
+        const parsed = JSON.parse(discountMatch[1]);
+        console.log('Extracted discounts from notes:', parsed);
+        return parsed;
       } catch (e) {
+        console.log('Failed to parse discount data:', e);
         return { orderDiscount: null, itemDiscounts: null };
       }
     }
+    console.log('No discount data found in notes');
     return { orderDiscount: null, itemDiscounts: null };
   };
 
   const savedDiscounts = extractDiscountsFromNotes(order.notes || '');
+  console.log('Order notes:', order.notes);
+  console.log('Saved discounts:', savedDiscounts);
 
   // Discount state
   const [orderDiscount, setOrderDiscount] = useState({
@@ -336,9 +342,9 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     savedDiscounts.itemDiscounts || {}
   );
 
-  // Apply saved discounts to order items on component mount
+  // Apply saved discounts to order items when order data is loaded
   useEffect(() => {
-    if (Object.keys(savedDiscounts.itemDiscounts || {}).length > 0) {
+    if (order.items && Object.keys(savedDiscounts.itemDiscounts || {}).length > 0) {
       const updatedItems = editedOrderItems.map((item: any, index: number) => {
         const discount = savedDiscounts.itemDiscounts[index];
         if (discount) {
@@ -359,7 +365,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
       });
       setEditedOrderItems(updatedItems);
     }
-  }, []); // Only run on mount
+  }, [order.items]); // Run when order items are loaded
 
   // Helper functions for order items editing
   const getUnitDisplay = (unit: string, quantity: number) => {
