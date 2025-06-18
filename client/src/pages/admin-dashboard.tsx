@@ -56,7 +56,9 @@ import {
   X,
   MessageCircle,
   Code,
-  Layers
+  Layers,
+  Type,
+  Palette
 } from "lucide-react";
 
 // Validation schemas
@@ -90,6 +92,11 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   showWhatsAppChat: z.boolean().default(false),
   whatsappPhoneNumber: z.string().optional(),
   whatsappDefaultMessage: z.string().optional(),
+  showCartBanner: z.boolean().default(false),
+  cartBannerType: z.enum(["image", "text"]).default("text"),
+  cartBannerImage: z.string().optional(),
+  cartBannerText: z.string().optional(),
+  cartBannerBgColor: z.string().default("#f97316"),
 });
 
 
@@ -3643,6 +3650,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       showWhatsAppChat: storeSettings?.showWhatsAppChat !== false,
       whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
       whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || "Здравствуйте! Я хотел бы узнать больше о ваших товарах.",
+      showCartBanner: storeSettings?.showCartBanner || false,
+      cartBannerType: storeSettings?.cartBannerType || "text",
+      cartBannerImage: storeSettings?.cartBannerImage || "",
+      cartBannerText: storeSettings?.cartBannerText || "",
+      cartBannerBgColor: storeSettings?.cartBannerBgColor || "#f97316",
     } as any,
   });
 
@@ -3690,6 +3702,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         showWhatsAppChat: storeSettings?.showWhatsAppChat !== false,
         whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
         whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || "Здравствуйте! Я хотел бы узнать больше о ваших товарах.",
+        showCartBanner: storeSettings?.showCartBanner || false,
+        cartBannerType: storeSettings?.cartBannerType || "text",
+        cartBannerImage: storeSettings?.cartBannerImage || "",
+        cartBannerText: storeSettings?.cartBannerText || "",
+        cartBannerBgColor: storeSettings?.cartBannerBgColor || "#f97316",
       } as any);
     }
   }, [storeSettings, form]);
@@ -4407,6 +4424,153 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               </>
             )}
           </div>
+        </div>
+
+        {/* Баннер корзины */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 pb-2 border-b">
+            <ShoppingCart className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Баннер корзины</h3>
+          </div>
+
+          <FormField
+            control={form.control}
+            name="showCartBanner"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-sm font-medium">Показывать баннер в корзине</FormLabel>
+                  <FormDescription className="text-xs">
+                    Баннер отображается в корзине под итоговой суммой
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    className="switch-green"
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          {form.watch("showCartBanner") && (
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="cartBannerType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm flex items-center gap-2">
+                      <Layers className="h-4 w-4" />
+                      Тип баннера
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="text-sm">
+                          <SelectValue placeholder="Выберите тип баннера" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="text">Текстовый баннер</SelectItem>
+                        <SelectItem value="image">Изображение</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription className="text-xs">
+                      Выберите между текстовым баннером с фоном или загрузкой изображения
+                    </FormDescription>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              {form.watch("cartBannerType") === "text" && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="cartBannerText"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm flex items-center gap-2">
+                          <Type className="h-4 w-4" />
+                          Текст баннера
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Бесплатная доставка от 100₪!"
+                            {...field} 
+                            className="text-sm min-h-[60px]" 
+                          />
+                        </FormControl>
+                        <FormDescription className="text-xs">
+                          Текст для отображения в баннере корзины
+                        </FormDescription>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="cartBannerBgColor"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm flex items-center gap-2">
+                          <Palette className="h-4 w-4" />
+                          Цвет фона
+                        </FormLabel>
+                        <FormControl>
+                          <div className="flex items-center gap-2">
+                            <Input 
+                              type="color"
+                              {...field} 
+                              className="w-12 h-8 p-0 border rounded" 
+                            />
+                            <Input 
+                              type="text"
+                              {...field} 
+                              placeholder="#f97316"
+                              className="text-sm flex-1" 
+                            />
+                          </div>
+                        </FormControl>
+                        <FormDescription className="text-xs">
+                          Цвет фона для текстового баннера
+                        </FormDescription>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+
+              {form.watch("cartBannerType") === "image" && (
+                <FormField
+                  control={form.control}
+                  name="cartBannerImage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm flex items-center gap-2">
+                        <Upload className="h-4 w-4" />
+                        Изображение баннера
+                      </FormLabel>
+                      <FormControl>
+                        <ImageUpload
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs text-gray-500">
+                        Максимальная высота: 220px. Рекомендуемый размер: 400×220 пикселей
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
+          )}
         </div>
 
         {/* Нижние баннеры */}

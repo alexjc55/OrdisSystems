@@ -157,6 +157,11 @@ export const storeSettings = pgTable("store_settings", {
   showWhatsAppChat: boolean("show_whatsapp_chat").default(false), // Enable/disable WhatsApp chat widget
   whatsappPhoneNumber: varchar("whatsapp_phone_number", { length: 20 }), // WhatsApp phone number
   whatsappDefaultMessage: text("whatsapp_default_message"), // Default WhatsApp message
+  showCartBanner: boolean("show_cart_banner").default(false), // Enable/disable cart banner
+  cartBannerType: varchar("cart_banner_type", { enum: ["image", "text"] }).default("text"), // Banner type
+  cartBannerImage: varchar("cart_banner_image", { length: 500 }), // Banner image URL
+  cartBannerText: text("cart_banner_text"), // Banner text content
+  cartBannerBgColor: varchar("cart_banner_bg_color", { length: 7 }).default("#f97316"), // Background color for text banner
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

@@ -7,11 +7,13 @@ import { formatCurrency, formatQuantity, type ProductUnit } from "@/lib/currency
 import { X, Plus, Minus, Trash2, ShoppingCart } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState } from "react";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
 
 export default function CartSidebar() {
   const { items, isOpen, setCartOpen, updateQuantity, removeItem, getTotalPrice } = useCartStore();
   const [, setLocation] = useLocation();
   const [editingQuantity, setEditingQuantity] = useState<{[key: number]: string}>({});
+  const { storeSettings } = useStoreSettings();
 
   const handleQuantityChange = (productId: number, newQuantity: number, unit: ProductUnit) => {
     if (newQuantity <= 0) {
@@ -216,6 +218,31 @@ export default function CartSidebar() {
                 </div>
                 <p className="text-xs text-gray-500 mt-1">Доставка рассчитывается при оформлении</p>
               </div>
+
+              {/* Cart Banner */}
+              {storeSettings?.showCartBanner && (
+                <div className="space-y-3">
+                  {storeSettings.cartBannerType === "text" && storeSettings.cartBannerText && (
+                    <div 
+                      className="rounded-xl p-4 text-center text-white font-semibold shadow-md"
+                      style={{ backgroundColor: storeSettings.cartBannerBgColor || "#f97316" }}
+                    >
+                      <p className="text-sm leading-relaxed">{storeSettings.cartBannerText}</p>
+                    </div>
+                  )}
+                  
+                  {storeSettings.cartBannerType === "image" && storeSettings.cartBannerImage && (
+                    <div className="rounded-xl overflow-hidden shadow-md">
+                      <img 
+                        src={storeSettings.cartBannerImage} 
+                        alt="Cart Banner"
+                        className="w-full h-auto max-h-[220px] object-cover"
+                        style={{ maxHeight: "220px" }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
               
               <Button 
                 onClick={handleCheckout}
