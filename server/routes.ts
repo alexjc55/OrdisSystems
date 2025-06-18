@@ -365,6 +365,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { items, ...orderData } = req.body;
       
       const orderSchema = insertOrderSchema.extend({
+        requestedDeliveryDate: z.string().optional(),
+        requestedDeliveryTime: z.string().optional(), // Override to accept string instead of timestamp
         items: z.array(z.object({
           productId: z.number(),
           quantity: z.string(),
@@ -375,13 +377,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = orderSchema.parse({ ...orderData, userId, items });
       
-      // Process requestedDeliveryTime to extract deliveryDate and deliveryTime
-      let processedOrderData = { ...validatedData, userId };
-      if (validatedData.requestedDeliveryTime && validatedData.requestedDeliveryDate) {
+      // Process delivery date and time from form data
+      const { requestedDeliveryDate, requestedDeliveryTime, items: _, ...orderDataWithoutTemp } = validatedData;
+      let processedOrderData = { ...orderDataWithoutTemp, userId };
+      
+      if (requestedDeliveryTime && requestedDeliveryDate) {
         // Store the date and time range separately
-        processedOrderData.deliveryDate = validatedData.requestedDeliveryDate; // YYYY-MM-DD from form
-        processedOrderData.deliveryTime = validatedData.requestedDeliveryTime; // Time range like "10:00-12:00"
+        processedOrderData.deliveryDate = requestedDeliveryDate; // YYYY-MM-DD from form
+        processedOrderData.deliveryTime = requestedDeliveryTime; // Time range like "10:00-12:00"
       }
+      
+      // Remove the extended fields that aren't part of the original order schema
+      delete (processedOrderData as any).requestedDeliveryDate;
+      delete (processedOrderData as any).requestedDeliveryTime;
       
       const order = await storage.createOrder(
         processedOrderData,
