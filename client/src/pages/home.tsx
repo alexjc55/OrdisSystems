@@ -143,7 +143,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden pt-16">
       <Header onResetView={handleResetView} />
       
       {/* Banner Image */}
