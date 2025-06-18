@@ -1239,6 +1239,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       onChange={field.onChange}
                     />
                   </FormControl>
+                  <FormDescription className="text-xs text-gray-500">
+                    Рекомендуемый размер: 400×300 пикселей (соотношение 4:3)
+                  </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
               )}
@@ -1743,6 +1746,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   onChange={field.onChange}
                 />
               </FormControl>
+              <FormDescription className="text-xs text-gray-500">
+                Рекомендуемый размер: 200×60 пикселей (PNG с прозрачным фоном)
+              </FormDescription>
               <FormMessage className="text-xs" />
             </FormItem>
           )}
@@ -1764,7 +1770,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 />
               </FormControl>
               <FormDescription className="text-xs text-gray-500">
-                Изображение будет отображаться под шапкой на всю ширину страницы
+                Рекомендуемый размер: 1200×400 пикселей. Изображение будет отображаться под шапкой на всю ширину страницы
               </FormDescription>
               <FormMessage className="text-xs" />
             </FormItem>
@@ -2128,6 +2134,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                           onChange={field.onChange}
                         />
                       </FormControl>
+                      <FormDescription className="text-xs text-gray-500">
+                        Рекомендуемый размер: 600×320 пикселей
+                      </FormDescription>
                       <FormMessage className="text-xs" />
                     </FormItem>
                   )}
@@ -2174,6 +2183,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                           onChange={field.onChange}
                         />
                       </FormControl>
+                      <FormDescription className="text-xs text-gray-500">
+                        Рекомендуемый размер: 600×320 пикселей
+                      </FormDescription>
                       <FormMessage className="text-xs" />
                     </FormItem>
                   )}
