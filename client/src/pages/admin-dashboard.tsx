@@ -115,6 +115,7 @@ export default function AdminDashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [activeTab, setActiveTab] = useState("products");
 
   // Sorting function
   const handleSort = (field: "name" | "price" | "category") => {
@@ -477,7 +478,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <Tabs defaultValue="products" className="space-y-4 sm:space-y-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
           <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
             <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 gap-1">
               <TabsTrigger value="products" className="text-xs sm:text-sm">Товары</TabsTrigger>
@@ -788,8 +789,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => {
                                 setSelectedCategoryFilter(category.id.toString());
-                                const productsTab = document.querySelector('[value="products"]') as HTMLElement;
-                                if (productsTab) productsTab.click();
+                                setActiveTab("products");
                               }}
                               className="text-xs hover:bg-blue-50 hover:border-blue-300"
                             >
@@ -1460,7 +1460,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] mx-4">
+      <DialogContent className="sm:max-w-[500px] mx-4 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl">
             {category ? "Редактировать категорию" : "Добавить категорию"}
@@ -1573,7 +1573,6 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                                 field.onChange(url);
                               }
                             }}
-                            className="w-full"
                           />
                           <div className="text-xs text-gray-400 mt-2 text-center">
                             Рекомендуемый размер: 64×64 пикселей
