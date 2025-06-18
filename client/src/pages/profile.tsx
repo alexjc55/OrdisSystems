@@ -209,6 +209,12 @@ export default function Profile() {
     ['pending', 'confirmed', 'preparing', 'ready'].includes(order.status)
   ).length || 0;
 
+  // Debug logging
+  console.log('Orders data:', orders);
+  console.log('Total orders:', totalOrders);
+  console.log('Total spent:', totalSpent);
+  console.log('Active orders:', activeOrders);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />

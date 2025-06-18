@@ -370,7 +370,7 @@ export class DatabaseStorage implements IStorage {
       },
       where: whereClause,
       orderBy: [desc(orders.createdAt)],
-    });
+    }) as OrderWithItems[];
   }
 
   async getOrdersPaginated(params: PaginationParams): Promise<PaginatedResult<OrderWithItems>> {
@@ -436,7 +436,7 @@ export class DatabaseStorage implements IStorage {
     });
 
     return {
-      data,
+      data: data as OrderWithItems[],
       total,
       page,
       limit,
@@ -455,7 +455,7 @@ export class DatabaseStorage implements IStorage {
         user: true,
       },
       where: eq(orders.id, id),
-    });
+    }) as OrderWithItems | undefined;
   }
 
   async createOrder(order: InsertOrder, items: InsertOrderItem[]): Promise<Order> {
