@@ -364,12 +364,11 @@ export default function Home() {
                           }
                         }}
                       >
-                        <CarouselContent className="ml-0 flex items-stretch">
+                        <CarouselContent className="ml-0 flex items-stretch gap-2.5">
                           {specialOffers.map((product) => (
                             <CarouselItem 
                               key={product.id} 
-                              className="basis-1/3 flex flex-col"
-                              style={{ paddingRight: '10px' }}
+                              className="basis-1/3 flex flex-col flex-shrink-0"
                             >
                               <div className="relative flex-1 flex">
                                 <div className="transform scale-90 origin-center w-full">
