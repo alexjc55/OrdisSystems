@@ -39,7 +39,9 @@ import {
   Upload,
   Clock,
   CreditCard,
-  Truck
+  Truck,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 
 // Validation schemas
@@ -117,6 +119,25 @@ export default function AdminDashboard() {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [activeTab, setActiveTab] = useState("products");
 
+  // Pagination state
+  const [productsPage, setProductsPage] = useState(1);
+  const [ordersPage, setOrdersPage] = useState(1);
+  const [usersPage, setUsersPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setProductsPage(1);
+  }, [searchQuery, selectedCategoryFilter, selectedStatusFilter]);
+
+  useEffect(() => {
+    setOrdersPage(1);
+  }, [searchQuery, selectedStatusFilter]);
+
+  useEffect(() => {
+    setUsersPage(1);
+  }, [searchQuery]);
+
   // Sorting function
   const handleSort = (field: "name" | "price" | "category") => {
     if (sortField === field) {
@@ -155,26 +176,74 @@ export default function AdminDashboard() {
     }
   }, [user, toast]);
 
-  // Data queries
+  // Data queries with pagination
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["/api/categories"]
   });
 
-  const { data: productsData = [], isLoading: productsLoading } = useQuery({
-    queryKey: ["/api/admin/products"]
+  const { data: productsResponse, isLoading: productsLoading } = useQuery({
+    queryKey: ["/api/admin/products", productsPage, searchQuery, selectedCategoryFilter, selectedStatusFilter, sortField, sortDirection],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        page: productsPage.toString(),
+        limit: itemsPerPage.toString(),
+        search: searchQuery,
+        category: selectedCategoryFilter,
+        status: selectedStatusFilter,
+        sortField,
+        sortDirection
+      });
+      const response = await fetch(`/api/admin/products?${params}`);
+      if (!response.ok) throw new Error('Failed to fetch products');
+      return response.json();
+    },
   });
 
-  const { data: orders = [], isLoading: ordersLoading } = useQuery({
-    queryKey: ["/api/orders"]
+  const { data: ordersResponse, isLoading: ordersLoading } = useQuery({
+    queryKey: ["/api/orders", ordersPage, searchQuery, selectedStatusFilter],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        page: ordersPage.toString(),
+        limit: itemsPerPage.toString(),
+        search: searchQuery,
+        status: selectedStatusFilter
+      });
+      const response = await fetch(`/api/orders?${params}`);
+      if (!response.ok) throw new Error('Failed to fetch orders');
+      return response.json();
+    },
   });
 
-  const { data: users = [], isLoading: usersLoading } = useQuery({
-    queryKey: ["/api/users"]
+  const { data: usersResponse, isLoading: usersLoading } = useQuery({
+    queryKey: ["/api/users", usersPage, searchQuery],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        page: usersPage.toString(),
+        limit: itemsPerPage.toString(),
+        search: searchQuery
+      });
+      const response = await fetch(`/api/users?${params}`);
+      if (!response.ok) throw new Error('Failed to fetch users');
+      return response.json();
+    },
   });
 
   const { data: storeSettings, isLoading: storeSettingsLoading } = useQuery({
     queryKey: ["/api/settings"]
   });
+
+  // Extract data and pagination info
+  const productsData = productsResponse?.data || [];
+  const productsTotalPages = Math.ceil((productsResponse?.total || 0) / itemsPerPage);
+  const productsTotal = productsResponse?.total || 0;
+
+  const orders = ordersResponse?.data || [];
+  const ordersTotalPages = Math.ceil((ordersResponse?.total || 0) / itemsPerPage);
+  const ordersTotal = ordersResponse?.total || 0;
+
+  const users = usersResponse?.data || [];
+  const usersTotalPages = Math.ceil((usersResponse?.total || 0) / itemsPerPage);
+  const usersTotal = usersResponse?.total || 0;
 
   // Product mutations
   const createProductMutation = useMutation({
