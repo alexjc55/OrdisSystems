@@ -54,6 +54,13 @@ export interface IStorage {
   upsertUser(user: UpsertUser): Promise<User>;
   updateUserProfile(id: string, updates: Partial<UpsertUser>): Promise<User>;
   
+  // Password management
+  getUserByEmail(email: string): Promise<User | undefined>;
+  updatePassword(userId: string, hashedPassword: string): Promise<User>;
+  createPasswordResetToken(email: string): Promise<{ token: string; userId: string }>;
+  validatePasswordResetToken(token: string): Promise<{ userId: string; isValid: boolean }>;
+  clearPasswordResetToken(userId: string): Promise<void>;
+  
   // Admin user management
   createUser(user: Omit<UpsertUser, 'id'> & { password?: string }): Promise<User>;
   updateUser(id: string, updates: Partial<UpsertUser>): Promise<User>;
@@ -598,6 +605,9 @@ export class DatabaseStorage implements IStorage {
         profileImageUrl: users.profileImageUrl,
         phone: users.phone,
         defaultAddress: users.defaultAddress,
+        password: users.password,
+        passwordResetToken: users.passwordResetToken,
+        passwordResetExpires: users.passwordResetExpires,
         role: users.role,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
@@ -607,7 +617,7 @@ export class DatabaseStorage implements IStorage {
       .from(users)
       .leftJoin(orders, eq(users.id, orders.userId))
       .where(whereClause)
-      .groupBy(users.id, users.email, users.firstName, users.lastName, users.profileImageUrl, users.phone, users.defaultAddress, users.role, users.createdAt, users.updatedAt)
+      .groupBy(users.id, users.email, users.firstName, users.lastName, users.profileImageUrl, users.phone, users.defaultAddress, users.password, users.passwordResetToken, users.passwordResetExpires, users.role, users.createdAt, users.updatedAt)
       .orderBy(orderBy)
       .limit(limit)
       .offset(offset);
@@ -672,6 +682,81 @@ export class DatabaseStorage implements IStorage {
       throw new Error('User not found');
     }
     return user;
+  }
+
+  // Password management methods
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
+  async updatePassword(userId: string, hashedPassword: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        password: hashedPassword, 
+        updatedAt: new Date(),
+        passwordResetToken: null,
+        passwordResetExpires: null
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  }
+
+  async createPasswordResetToken(email: string): Promise<{ token: string; userId: string }> {
+    const user = await this.getUserByEmail(email);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    await db
+      .update(users)
+      .set({
+        passwordResetToken: token,
+        passwordResetExpires: expiresAt,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, user.id));
+
+    return { token, userId: user.id };
+  }
+
+  async validatePasswordResetToken(token: string): Promise<{ userId: string; isValid: boolean }> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.passwordResetToken, token));
+
+    if (!user) {
+      return { userId: "", isValid: false };
+    }
+
+    const isExpired = user.passwordResetExpires && user.passwordResetExpires < new Date();
+    if (isExpired) {
+      await this.clearPasswordResetToken(user.id);
+      return { userId: user.id, isValid: false };
+    }
+
+    return { userId: user.id, isValid: true };
+  }
+
+  async clearPasswordResetToken(userId: string): Promise<void> {
+    await db
+      .update(users)
+      .set({
+        passwordResetToken: null,
+        passwordResetExpires: null,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId));
   }
 }
 
