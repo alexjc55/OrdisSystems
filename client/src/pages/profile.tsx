@@ -471,8 +471,15 @@ export default function Profile() {
                     <div className="p-4 border rounded-lg">
                       <h4 className="font-medium mb-2">Тип аккаунта</h4>
                       <Badge variant="secondary" className="mb-1">
-                        {user.role === 'admin' ? 'Администратор' : 
-                         user.role === 'worker' ? 'Сотрудник' : 'Клиент'}
+                        {(() => {
+                          const role = user?.role || 'customer';
+                          switch(role) {
+                            case 'admin': return 'Администратор';
+                            case 'worker': return 'Сотрудник';
+                            case 'customer': return 'Клиент';
+                            default: return 'Клиент';
+                          }
+                        })()}
                       </Badge>
                       <p className="text-xs text-gray-500">
                         Определяет ваши права в системе
