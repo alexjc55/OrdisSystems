@@ -21,6 +21,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { formatCurrency, getUnitLabel, type ProductUnit } from "@/lib/currency";
+import { insertStoreSettingsSchema } from "@shared/schema";
 import { 
   Package, 
   Plus, 
@@ -184,7 +185,7 @@ export default function AdminDashboard() {
   const { data: productsResponse, isLoading: productsLoading } = useQuery({
     queryKey: ["/api/admin/products", productsPage, searchQuery, selectedCategoryFilter, selectedStatusFilter, sortField, sortDirection],
     queryFn: async () => {
-      const limit = storeSettings?.defaultItemsPerPage || 10;
+      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: productsPage.toString(),
         limit: limit.toString(),
@@ -203,7 +204,7 @@ export default function AdminDashboard() {
   const { data: ordersResponse, isLoading: ordersLoading } = useQuery({
     queryKey: ["/api/admin/orders", ordersPage, searchQuery, selectedStatusFilter],
     queryFn: async () => {
-      const limit = storeSettings?.defaultItemsPerPage || 10;
+      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: ordersPage.toString(),
         limit: limit.toString(),
@@ -221,7 +222,7 @@ export default function AdminDashboard() {
   const { data: usersResponse, isLoading: usersLoading } = useQuery({
     queryKey: ["/api/admin/users", usersPage, searchQuery],
     queryFn: async () => {
-      const limit = storeSettings?.defaultItemsPerPage || 10;
+      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: usersPage.toString(),
         limit: limit.toString(),
@@ -238,7 +239,7 @@ export default function AdminDashboard() {
   });
 
   // Pagination configuration
-  const itemsPerPage = storeSettings?.defaultItemsPerPage || 10;
+  const itemsPerPage = (storeSettings as any)?.defaultItemsPerPage || 10;
 
   // Extract data and pagination info
   const productsData = productsResponse?.data || [];
@@ -1854,6 +1855,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         bottomBanner2Url: storeSettings?.bottomBanner2Url || "",
         bottomBanner2Link: storeSettings?.bottomBanner2Link || "",
         showBottomBanners: storeSettings?.showBottomBanners !== false,
+        defaultItemsPerPage: storeSettings?.defaultItemsPerPage || 10,
       });
     }
   }, [storeSettings, form]);
