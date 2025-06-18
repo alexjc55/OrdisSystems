@@ -444,13 +444,29 @@ export default function Home() {
                       
                       {/* Carousel indicators */}
                       <div className="flex justify-center items-center mt-4 space-x-4">
+                        {/* Mobile-specific styles */}
+                        <style dangerouslySetInnerHTML={{
+                          __html: `
+                            @media (max-width: 767px) {
+                              .carousel-dot {
+                                width: 12px !important;
+                                height: 12px !important;
+                                border-radius: 50% !important;
+                                flex-shrink: 0 !important;
+                                border: none !important;
+                                outline: none !important;
+                                box-sizing: border-box !important;
+                              }
+                            }
+                          `
+                        }} />
                         {/* Dots indicator */}
                         <div className="flex space-x-2">
                           {Array.from({ length: totalSlides }).map((_, index) => (
                             <button
                               key={index}
                               onClick={() => goToSlide(index)}
-                              className={`rounded-full transition-colors flex-shrink-0 ${
+                              className={`carousel-dot rounded-full transition-colors flex-shrink-0 ${
                                 index === currentSlide 
                                   ? 'bg-orange-500' 
                                   : 'bg-gray-300 hover:bg-orange-400'
