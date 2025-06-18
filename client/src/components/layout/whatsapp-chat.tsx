@@ -1,15 +1,17 @@
 import { MessageCircle } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useAuth } from "@/hooks/useAuth";
+import { useLocation } from "wouter";
 
 export function WhatsAppChat() {
   const { storeSettings } = useStoreSettings();
   const { user } = useAuth();
+  const [location] = useLocation();
 
-  // Don't show for admin users or workers, or if not enabled/configured
+  // Don't show if not enabled/configured or if on admin dashboard
   if (!storeSettings?.showWhatsAppChat || 
       !storeSettings?.whatsappPhoneNumber ||
-      (user && (user.role === 'admin' || user.role === 'worker'))) {
+      location.startsWith('/admin')) {
     return null;
   }
 
