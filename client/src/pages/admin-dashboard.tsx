@@ -18,6 +18,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { StoreSettingsForm } from "@/components/store-settings-form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -3582,26 +3583,233 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   );
 }
 
-// Store Settings Form Component
-function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
-  storeSettings: any;
-  onSubmit: (data: any) => void;
-  isLoading: boolean;
+// Store Settings Form Component is now imported from a separate file
+
+// Cancellation Reason Dialog Component
+function CancellationReasonDialog({ 
+  open, 
+  orderId, 
+  onClose, 
+  onConfirm, 
+  cancellationReasons 
+}: {
+  open: boolean;
+  orderId: number | null;
+  onClose: () => void;
+  onConfirm: (reason: string) => void;
+  cancellationReasons: string[];
 }) {
-  const [expandedSections, setExpandedSections] = useState({
-    basic: true,
-    contact: false,
-    appearance: false,
-    delivery: false,
-    banners: false,
-    tracking: false,
+  const [selectedReason, setSelectedReason] = useState<string>("");
+
+  useEffect(() => {
+    if (open) {
+      setSelectedReason("");
+    }
+  }, [open]);
+
+  const handleConfirm = () => {
+    if (selectedReason) {
+      onConfirm(selectedReason);
+      onClose();
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md mx-4">
+        <DialogHeader>
+          <DialogTitle className="text-lg">Причина отмены заказа</DialogTitle>
+          <DialogDescription className="text-sm">
+            Выберите причину отмены заказа #{orderId}
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="space-y-3">
+          {cancellationReasons.map((reason, index) => (
+            <div key={index} className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id={`reason-${index}`}
+                name="cancellation-reason"
+                value={reason}
+                checked={selectedReason === reason}
+                onChange={(e) => setSelectedReason(e.target.value)}
+                className="text-orange-500 focus:ring-orange-500"
+              />
+              <label htmlFor={`reason-${index}`} className="text-sm cursor-pointer">
+                {reason}
+              </label>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex justify-end space-x-2 pt-4">
+          <Button variant="outline" onClick={onClose} className="text-sm">
+            Отмена
+          </Button>
+          <Button 
+            onClick={handleConfirm} 
+            disabled={!selectedReason}
+            className="text-sm bg-red-600 text-white hover:bg-red-700"
+          >
+            Отменить заказ
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// User Form Dialog Component
+function UserFormDialog({ open, onClose, user, onSubmit }: any) {
+  type UserFormData = z.infer<typeof userSchema>;
+
+  const form = useForm<UserFormData>({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      id: user?.id || "",
+      email: user?.email || "",
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      phone: user?.phone || "",
+      role: user?.role || "customer",
+    },
   });
 
-  const toggleSection = (section: keyof typeof expandedSections) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        id: user.id || "",
+        email: user.email || "",
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        phone: user.phone || "",
+        role: user.role || "customer",
+      });
+    } else {
+      form.reset({
+        id: "",
+        email: "",
+        firstName: "",
+        lastName: "",
+        phone: "",
+        role: "customer",
+      });
+    }
+  }, [user, form]);
+
+  const handleSubmit = (data: UserFormData) => {
+    onSubmit(data);
+    onClose();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md mx-4">
+        <DialogHeader>
+          <DialogTitle className="text-lg">
+            {user ? "Редактировать пользователя" : "Добавить пользователя"}
+          </DialogTitle>
+        </DialogHeader>
+        
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="user@example.com" {...field} className="text-sm" />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">Имя</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Иван" {...field} className="text-sm" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">Фамилия</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Иванов" {...field} className="text-sm" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">Телефон</FormLabel>
+                  <FormControl>
+                    <Input placeholder="+972-XX-XXX-XXXX" {...field} className="text-sm" />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">Роль</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder="Выберите роль" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="customer">Клиент</SelectItem>
+                      <SelectItem value="worker">Сотрудник</SelectItem>
+                      <SelectItem value="admin">Администратор</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 pt-4">
+              <Button type="button" variant="outline" onClick={onClose} className="text-sm">
+                Отмена
+              </Button>
+              <Button type="submit" className="text-sm bg-orange-500 text-white hover:bg-orange-500">
+                <Save className="mr-2 h-4 w-4" />
+                {user ? "Обновить" : "Создать"}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
   };
 
   const form = useForm({
