@@ -2052,18 +2052,17 @@ export default function AdminDashboard() {
                   <>
                     {/* Table View */}
                     {ordersViewMode === "table" && (
-                      <div className="border rounded-lg bg-white overflow-hidden">
-                        <div className="overflow-x-auto">
+                      <div className="border rounded-lg bg-white">
+                        <div className="w-full">
                           <Table>
                             <TableHeader>
                               <TableRow>
-                                <TableHead className="text-xs sm:text-sm w-20">№</TableHead>
+                                <TableHead className="text-xs sm:text-sm w-12">№</TableHead>
                                 <TableHead className="text-xs sm:text-sm">Клиент</TableHead>
-                                <TableHead className="text-xs sm:text-sm w-24">Статус</TableHead>
+                                <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-24">Статус</TableHead>
                                 <TableHead className="text-xs sm:text-sm w-20">Сумма</TableHead>
-                                <TableHead className="text-xs sm:text-sm hidden md:table-cell w-24">Дата</TableHead>
-                                <TableHead className="text-xs sm:text-sm hidden lg:table-cell w-32">Доставка</TableHead>
-                                <TableHead className="text-xs sm:text-sm w-24">Действия</TableHead>
+                                <TableHead className="text-xs sm:text-sm hidden md:table-cell w-20">Дата</TableHead>
+                                <TableHead className="text-xs sm:text-sm w-12">Действия</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -2072,22 +2071,20 @@ export default function AdminDashboard() {
                                   <TableCell className="font-bold text-xs sm:text-sm text-orange-600">#{order.id}</TableCell>
                                   <TableCell className="text-xs sm:text-sm">
                                     <div className="space-y-1">
-                                      <div className="font-medium flex items-center gap-2">
-                                        <User className="h-3 w-3 text-gray-400" />
+                                      <div className="font-medium">
                                         {order.user?.firstName && order.user?.lastName 
                                           ? `${order.user.firstName} ${order.user.lastName}`
                                           : order.user?.email || "—"
                                         }
                                       </div>
                                       {order.customerPhone && (
-                                        <div className="text-gray-500 text-xs flex items-center gap-1">
-                                          <Phone className="h-3 w-3" />
+                                        <div className="text-gray-500 text-xs">
                                           {order.customerPhone}
                                         </div>
                                       )}
                                     </div>
                                   </TableCell>
-                                  <TableCell>
+                                  <TableCell className="hidden sm:table-cell">
                                     <Select
                                       value={order.status}
                                       onValueChange={(newStatus) => {
@@ -2145,7 +2142,7 @@ export default function AdminDashboard() {
                                         
                                         return (
                                           <div className="space-y-1">
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex flex-col gap-1">
                                               <span className="text-xs text-gray-500 line-through">
                                                 {formatCurrency(originalTotal)}
                                               </span>
@@ -2169,43 +2166,18 @@ export default function AdminDashboard() {
                                       {new Date(order.createdAt).toLocaleDateString('ru-RU')}
                                     </div>
                                   </TableCell>
-                                  <TableCell className="text-xs hidden lg:table-cell">
-                                    {order.deliveryDate && order.deliveryTime ? (
-                                      <div className="space-y-1">
-                                        <div className="font-medium flex items-center gap-1">
-                                          <Calendar className="h-3 w-3 text-gray-400" />
-                                          {order.deliveryDate}
-                                        </div>
-                                        <div className="text-gray-500 flex items-center gap-1">
-                                          <Clock className="h-3 w-3" />
-                                          {order.deliveryTime}
-                                        </div>
-                                        {order.deliveryAddress && (
-                                          <div className="text-gray-500 flex items-center gap-1">
-                                            <MapPin className="h-3 w-3" />
-                                            {order.deliveryAddress}
-                                          </div>
-                                        )}
-                                      </div>
-                                    ) : (
-                                      <span className="text-gray-400">Не указано</span>
-                                    )}
-                                  </TableCell>
                                   <TableCell>
-                                    <div className="flex gap-1">
-                                      <Button 
-                                        variant="outline" 
-                                        size="sm" 
-                                        className="text-xs h-8"
-                                        onClick={() => {
-                                          setEditingOrder(order);
-                                          setIsOrderFormOpen(true);
-                                        }}
-                                      >
-                                        <Eye className="h-3 w-3 mr-1" />
-                                        Детали
-                                      </Button>
-                                    </div>
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm" 
+                                      className="text-xs h-8 px-2"
+                                      onClick={() => {
+                                        setEditingOrder(order);
+                                        setIsOrderFormOpen(true);
+                                      }}
+                                    >
+                                      <Eye className="h-3 w-3" />
+                                    </Button>
                                   </TableCell>
                                 </TableRow>
                               ))}
