@@ -10,11 +10,31 @@ export default function CartSidebar() {
   const { items, isOpen, setCartOpen, updateQuantity, removeItem, getTotalPrice } = useCartStore();
   const [, setLocation] = useLocation();
 
-  const handleQuantityChange = (productId: number, newQuantity: number) => {
+  const handleQuantityChange = (productId: number, newQuantity: number, unit: ProductUnit) => {
     if (newQuantity <= 0) {
       removeItem(productId);
     } else {
-      updateQuantity(productId, Number(newQuantity.toFixed(1)));
+      // Adjust increment based on unit type
+      let adjustedQuantity = newQuantity;
+      if (unit === "piece") {
+        adjustedQuantity = Math.round(newQuantity); // Whole numbers for pieces
+      } else if (unit === "kg") {
+        adjustedQuantity = Number(newQuantity.toFixed(1)); // 0.1 kg increments
+      } else {
+        adjustedQuantity = Number(newQuantity.toFixed(1)); // 0.1 increments for 100g/100ml
+      }
+      updateQuantity(productId, adjustedQuantity);
+    }
+  };
+
+  const getIncrementValue = (unit: ProductUnit) => {
+    switch (unit) {
+      case "piece":
+        return 1;
+      case "kg":
+        return 0.1;
+      default:
+        return 0.1; // For 100g/100ml
     }
   };
 
@@ -62,53 +82,74 @@ export default function CartSidebar() {
               </div>
             ) : (
               <ScrollArea className="h-full p-4">
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {items.map((item) => (
-                    <div key={item.product.id} className="rounded-lg border p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex-1">
-                          <h4 className="font-medium text-sm">{item.product.name}</h4>
-                          <p className="text-xs text-gray-600 mt-1">{item.product.description}</p>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeItem(item.product.id)}
-                          className="h-6 w-6 p-0 text-gray-400 hover:text-red-500"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleQuantityChange(item.product.id, item.quantity - 0.1)}
-                            className="h-6 w-6 p-0"
-                          >
-                            <Minus className="h-3 w-3" />
-                          </Button>
-                          <span className="text-sm font-medium min-w-[60px] text-center">
-                            {formatQuantity(item.quantity, item.product.unit as ProductUnit)}
-                          </span>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleQuantityChange(item.product.id, item.quantity + 0.1)}
-                            className="h-6 w-6 p-0"
-                          >
-                            <Plus className="h-3 w-3" />
-                          </Button>
+                    <div key={item.product.id} className="bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm">
+                      <div className="flex items-start gap-3">
+                        {/* Product Image Placeholder */}
+                        <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <ShoppingCart className="h-6 w-6 text-orange-600" />
                         </div>
                         
-                        <div className="text-right">
-                          <div className="text-sm text-gray-600">
-                            {formatCurrency(item.product.price)} за {item.product.unit}
+                        {/* Product Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start mb-2">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-gray-900 text-sm leading-tight">{item.product.name}</h4>
+                              <p className="text-xs text-gray-500 mt-1 line-clamp-2">{item.product.description}</p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeItem(item.product.id)}
+                              className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full flex-shrink-0 ml-2"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
-                          <div className="font-semibold">
-                            {formatCurrency(item.totalPrice)}
+                          
+                          {/* Price and Quantity Controls */}
+                          <div className="flex items-center justify-between mt-3">
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleQuantityChange(
+                                  item.product.id, 
+                                  item.quantity - getIncrementValue(item.product.unit as ProductUnit),
+                                  item.product.unit as ProductUnit
+                                )}
+                                className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50"
+                              >
+                                <Minus className="h-3 w-3" />
+                              </Button>
+                              <div className="min-w-[70px] text-center bg-white rounded-lg px-3 py-1 border border-gray-200">
+                                <div className="text-sm font-bold text-gray-900">
+                                  {formatQuantity(item.quantity, item.product.unit as ProductUnit)}
+                                </div>
+                              </div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleQuantityChange(
+                                  item.product.id, 
+                                  item.quantity + getIncrementValue(item.product.unit as ProductUnit),
+                                  item.product.unit as ProductUnit
+                                )}
+                                className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50"
+                              >
+                                <Plus className="h-3 w-3" />
+                              </Button>
+                            </div>
+                            
+                            <div className="text-right">
+                              <div className="text-xs text-gray-500">
+                                {formatCurrency(item.product.price)} за {item.product.unit}
+                              </div>
+                              <div className="font-bold text-lg text-gray-900">
+                                {formatCurrency(item.totalPrice)}
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -121,18 +162,18 @@ export default function CartSidebar() {
 
           {/* Footer */}
           {items.length > 0 && (
-            <div className="border-t p-4 space-y-4">
-              <div className="space-y-2">
-                <Separator />
-                <div className="flex justify-between text-lg font-bold">
-                  <span>Итого:</span>
-                  <span>{formatCurrency(getTotalPrice())}</span>
+            <div className="border-t bg-white p-4 space-y-4">
+              <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl p-4 border border-orange-200">
+                <div className="flex justify-between items-center">
+                  <span className="text-lg font-semibold text-gray-700">Итого:</span>
+                  <span className="text-2xl font-bold text-orange-600">{formatCurrency(getTotalPrice())}</span>
                 </div>
+                <p className="text-xs text-gray-500 mt-1">Доставка рассчитывается при оформлении</p>
               </div>
               
               <Button 
                 onClick={handleCheckout}
-                className="w-full"
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-200"
                 size="lg"
               >
                 Оформить заказ

@@ -17,7 +17,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { formatCurrency } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle } from "lucide-react";
+import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft } from "lucide-react";
 
 const guestOrderSchema = z.object({
   firstName: z.string().min(2, "Имя должно содержать минимум 2 символа"),
@@ -226,6 +226,18 @@ export default function Checkout() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Back Navigation */}
+      <div className="mb-6">
+        <Button
+          variant="ghost"
+          onClick={() => setLocation("/")}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Вернуться к покупкам
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Order Summary */}
         <Card>
