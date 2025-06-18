@@ -2112,7 +2112,56 @@ export default function AdminDashboard() {
                                     </Select>
                                   </TableCell>
                                   <TableCell className="font-medium text-xs sm:text-sm">
-                                    {formatCurrency(order.totalAmount)}
+                                    {(() => {
+                                      // Extract discount information from order notes
+                                      const extractDiscounts = (notes: string) => {
+                                        const discountMatch = notes?.match(/\[DISCOUNTS:(.*?)\]/);
+                                        if (discountMatch) {
+                                          try {
+                                            return JSON.parse(discountMatch[1]);
+                                          } catch (e) {
+                                            return { orderDiscount: null, itemDiscounts: null };
+                                          }
+                                        }
+                                        return { orderDiscount: null, itemDiscounts: null };
+                                      };
+
+                                      const discounts = extractDiscounts(order.customerNotes || '');
+                                      const hasOrderDiscount = discounts.orderDiscount && discounts.orderDiscount.value > 0;
+                                      const hasItemDiscounts = discounts.itemDiscounts && Object.keys(discounts.itemDiscounts).length > 0;
+                                      
+                                      if (hasOrderDiscount || hasItemDiscounts) {
+                                        // Calculate original total before discounts
+                                        let originalTotal = parseFloat(order.totalAmount);
+                                        
+                                        // Apply reverse order discount calculation
+                                        if (hasOrderDiscount) {
+                                          if (discounts.orderDiscount.type === 'percentage') {
+                                            originalTotal = originalTotal / (1 - discounts.orderDiscount.value / 100);
+                                          } else {
+                                            originalTotal = originalTotal + discounts.orderDiscount.value;
+                                          }
+                                        }
+                                        
+                                        return (
+                                          <div className="space-y-1">
+                                            <div className="flex items-center gap-2">
+                                              <span className="text-xs text-gray-500 line-through">
+                                                {formatCurrency(originalTotal)}
+                                              </span>
+                                              <span className="font-medium text-green-600">
+                                                {formatCurrency(order.totalAmount)}
+                                              </span>
+                                            </div>
+                                            <div className="text-xs text-red-600 font-medium">
+                                              скидка
+                                            </div>
+                                          </div>
+                                        );
+                                      }
+                                      
+                                      return formatCurrency(order.totalAmount);
+                                    })()}
                                   </TableCell>
                                   <TableCell className="text-xs sm:text-sm hidden md:table-cell">
                                     <div className="flex items-center gap-1">
