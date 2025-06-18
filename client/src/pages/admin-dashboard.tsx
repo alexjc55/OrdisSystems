@@ -343,7 +343,8 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
   const updateItemQuantity = (index: number, newQuantity: number) => {
     const updatedItems = [...editedOrderItems];
     const item = updatedItems[index];
-    const basePrice = newQuantity * item.pricePerUnit;
+    const unitPrice = parseFloat(item.pricePerUnit || item.pricePerKg || 0);
+    const basePrice = newQuantity * unitPrice;
     const discount = itemDiscounts[index];
     let finalPrice = basePrice;
     
@@ -377,8 +378,19 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     // Recalculate item price
     const updatedItems = [...editedOrderItems];
     const item = updatedItems[index];
-    const basePrice = item.quantity * item.pricePerUnit;
+    const quantity = parseFloat(item.quantity) || 0;
+    const unitPrice = parseFloat(item.pricePerUnit || item.pricePerKg || 0);
+    const basePrice = quantity * unitPrice;
     let finalPrice = basePrice;
+    
+    console.log('Discount calculation:', {
+      index,
+      quantity,
+      unitPrice,
+      basePrice,
+      discountType,
+      discountValue
+    });
     
     if (discountValue > 0) {
       if (discountType === 'percentage') {
@@ -387,6 +399,8 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
         finalPrice = Math.max(0, basePrice - discountValue);
       }
     }
+    
+    console.log('Final price after discount:', finalPrice);
     
     updatedItems[index] = { ...item, totalPrice: finalPrice };
     setEditedOrderItems(updatedItems);
@@ -855,7 +869,9 @@ function ItemDiscountDialog({
     onClose();
   };
 
-  const basePrice = item.quantity * item.pricePerUnit;
+  const quantity = parseFloat(item.quantity) || 0;
+  const unitPrice = parseFloat(item.pricePerUnit || item.pricePerKg || 0);
+  const basePrice = quantity * unitPrice;
   const discountAmount = discountType === 'percentage' 
     ? basePrice * (discountValue / 100) 
     : Math.min(discountValue, basePrice);
