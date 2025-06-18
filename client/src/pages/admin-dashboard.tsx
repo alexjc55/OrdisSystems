@@ -56,6 +56,338 @@ import {
   FileText
 } from "lucide-react";
 
+// Store Settings Content Component with collapsible sections
+function StoreSettingsContent() {
+  // State for collapsible sections
+  const [collapsedSections, setCollapsedSections] = useState({
+    basicInfo: false,
+    description: false,
+    visual: false,
+    schedule: false,
+    delivery: false,
+    display: false,
+    tracking: false,
+  });
+
+  const toggleSection = (section: keyof typeof collapsedSections) => {
+    setCollapsedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Basic Info Section */}
+      <div className="border rounded-lg p-4">
+        <button
+          type="button"
+          onClick={() => toggleSection('basicInfo')}
+          className="flex items-center justify-between w-full pb-2 border-b hover:bg-gray-50 transition-colors rounded px-2 py-1"
+        >
+          <div className="flex items-center gap-2">
+            <Store className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Основная информация</h3>
+          </div>
+          {collapsedSections.basicInfo ? (
+            <ChevronDown className="h-5 w-5 text-gray-500" />
+          ) : (
+            <ChevronUp className="h-5 w-5 text-gray-500" />
+          )}
+        </button>
+        
+        {!collapsedSections.basicInfo && (
+          <div className="mt-4 space-y-4">
+            <p className="text-sm text-gray-600">
+              Название магазина, приветственный заголовок и другие основные настройки
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium">Название магазина</label>
+                <Input placeholder="eDAHouse" className="mt-1" />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Приветственный заголовок</label>
+                <Input placeholder="Добро пожаловать в наш магазин" className="mt-1" />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Description Section */}
+      <div className="border rounded-lg p-4">
+        <button
+          type="button"
+          onClick={() => toggleSection('description')}
+          className="flex items-center justify-between w-full pb-2 border-b hover:bg-gray-50 transition-colors rounded px-2 py-1"
+        >
+          <div className="flex items-center gap-2">
+            <MapPin className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Описание и контакты</h3>
+          </div>
+          {collapsedSections.description ? (
+            <ChevronDown className="h-5 w-5 text-gray-500" />
+          ) : (
+            <ChevronUp className="h-5 w-5 text-gray-500" />
+          )}
+        </button>
+        
+        {!collapsedSections.description && (
+          <div className="mt-4 space-y-4">
+            <p className="text-sm text-gray-600">
+              Описание магазина, адрес, телефон и email для связи
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Описание магазина</label>
+                <Textarea placeholder="Расскажите о вашем магазине..." className="mt-1" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Телефон</label>
+                  <Input placeholder="+972-XX-XXX-XXXX" className="mt-1" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Email</label>
+                  <Input placeholder="info@example.com" className="mt-1" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Адрес</label>
+                  <Input placeholder="Ваш адрес" className="mt-1" />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Visual Section */}
+      <div className="border rounded-lg p-4">
+        <button
+          type="button"
+          onClick={() => toggleSection('visual')}
+          className="flex items-center justify-between w-full pb-2 border-b hover:bg-gray-50 transition-colors rounded px-2 py-1"
+        >
+          <div className="flex items-center gap-2">
+            <Upload className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Визуальное оформление</h3>
+          </div>
+          {collapsedSections.visual ? (
+            <ChevronDown className="h-5 w-5 text-gray-500" />
+          ) : (
+            <ChevronUp className="h-5 w-5 text-gray-500" />
+          )}
+        </button>
+        
+        {!collapsedSections.visual && (
+          <div className="mt-4 space-y-4">
+            <p className="text-sm text-gray-600">
+              Логотип и баннер для главной страницы
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium">URL логотипа</label>
+                <Input placeholder="https://example.com/logo.png" className="mt-1" />
+              </div>
+              <div>
+                <label className="text-sm font-medium">URL баннера</label>
+                <Input placeholder="https://example.com/banner.jpg" className="mt-1" />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Schedule Section */}
+      <div className="border rounded-lg p-4">
+        <button
+          type="button"
+          onClick={() => toggleSection('schedule')}
+          className="flex items-center justify-between w-full pb-2 border-b hover:bg-gray-50 transition-colors rounded px-2 py-1"
+        >
+          <div className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Часы работы</h3>
+          </div>
+          {collapsedSections.schedule ? (
+            <ChevronDown className="h-5 w-5 text-gray-500" />
+          ) : (
+            <ChevronUp className="h-5 w-5 text-gray-500" />
+          )}
+        </button>
+        
+        {!collapsedSections.schedule && (
+          <div className="mt-4 space-y-4">
+            <p className="text-sm text-gray-600">
+              Настройка рабочих часов для каждого дня недели
+            </p>
+            <div className="space-y-3">
+              {[
+                { key: "monday", label: "Понедельник" },
+                { key: "tuesday", label: "Вторник" },
+                { key: "wednesday", label: "Среда" },
+                { key: "thursday", label: "Четверг" },
+                { key: "friday", label: "Пятница" },
+                { key: "saturday", label: "Суббота" },
+                { key: "sunday", label: "Воскресенье" },
+              ].map(({ key, label }) => (
+                <div key={key} className="flex items-center gap-4">
+                  <div className="w-24 text-sm font-medium">{label}</div>
+                  <div className="flex items-center gap-2">
+                    <Input placeholder="09:00" className="w-20" />
+                    <span>-</span>
+                    <Input placeholder="18:00" className="w-20" />
+                    <span className="text-sm text-gray-500">или</span>
+                    <Button variant="outline" size="sm">Выходной</Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Delivery Section */}
+      <div className="border rounded-lg p-4">
+        <button
+          type="button"
+          onClick={() => toggleSection('delivery')}
+          className="flex items-center justify-between w-full pb-2 border-b hover:bg-gray-50 transition-colors rounded px-2 py-1"
+        >
+          <div className="flex items-center gap-2">
+            <Truck className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Доставка и оплата</h3>
+          </div>
+          {collapsedSections.delivery ? (
+            <ChevronDown className="h-5 w-5 text-gray-500" />
+          ) : (
+            <ChevronUp className="h-5 w-5 text-gray-500" />
+          )}
+        </button>
+        
+        {!collapsedSections.delivery && (
+          <div className="mt-4 space-y-4">
+            <p className="text-sm text-gray-600">
+              Информация о доставке и способах оплаты
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Информация о доставке</label>
+                <Textarea placeholder="Условия доставки, зоны доставки, стоимость..." className="mt-1" />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Информация об оплате</label>
+                <Textarea placeholder="Принимаемые способы оплаты, условия оплаты..." className="mt-1" />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Display Section */}
+      <div className="border rounded-lg p-4">
+        <button
+          type="button"
+          onClick={() => toggleSection('display')}
+          className="flex items-center justify-between w-full pb-2 border-b hover:bg-gray-50 transition-colors rounded px-2 py-1"
+        >
+          <div className="flex items-center gap-2">
+            <Eye className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Настройки отображения</h3>
+          </div>
+          {collapsedSections.display ? (
+            <ChevronDown className="h-5 w-5 text-gray-500" />
+          ) : (
+            <ChevronUp className="h-5 w-5 text-gray-500" />
+          )}
+        </button>
+        
+        {!collapsedSections.display && (
+          <div className="mt-4 space-y-4">
+            <p className="text-sm text-gray-600">
+              Количество элементов на странице в админ панели
+            </p>
+            <div>
+              <label className="text-sm font-medium">Элементов на странице</label>
+              <Select>
+                <SelectTrigger className="w-48 mt-1">
+                  <SelectValue placeholder="Выберите количество" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10 элементов</SelectItem>
+                  <SelectItem value="15">15 элементов</SelectItem>
+                  <SelectItem value="25">25 элементов</SelectItem>
+                  <SelectItem value="50">50 элементов</SelectItem>
+                  <SelectItem value="100">100 элементов</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Tracking Section */}
+      <div className="border rounded-lg p-4">
+        <button
+          type="button"
+          onClick={() => toggleSection('tracking')}
+          className="flex items-center justify-between w-full pb-2 border-b hover:bg-gray-50 transition-colors rounded px-2 py-1"
+        >
+          <div className="flex items-center gap-2">
+            <Upload className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">HTML/JS код отслеживания</h3>
+          </div>
+          {collapsedSections.tracking ? (
+            <ChevronDown className="h-5 w-5 text-gray-500" />
+          ) : (
+            <ChevronUp className="h-5 w-5 text-gray-500" />
+          )}
+        </button>
+        
+        {!collapsedSections.tracking && (
+          <div className="mt-4 space-y-4">
+            <p className="text-sm text-gray-600">
+              Код для Facebook Pixel, Google Analytics и других счетчиков отслеживания
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">HTML/JS код для &lt;head&gt;</label>
+                <Textarea 
+                  placeholder="<!-- Facebook Pixel, Google Analytics и другой код для вставки в <head> -->"
+                  className="mt-1 font-mono text-xs"
+                  rows={4}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Код будет вставлен в секцию &lt;head&gt; всех страниц сайта
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-medium">HTML/JS код перед &lt;/body&gt;</label>
+                <Textarea 
+                  placeholder="<!-- Код счетчиков и скриптов для вставки перед закрывающим тегом </body> -->"
+                  className="mt-1 font-mono text-xs"
+                  rows={4}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Код будет вставлен перед закрывающим тегом &lt;/body&gt; всех страниц
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="flex justify-end pt-4">
+        <Button className="bg-orange-500 hover:bg-orange-600">
+          <Save className="h-4 w-4 mr-2" />
+          Сохранить настройки
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 // Product schema for form validation
 const productSchema = z.object({
   name: z.string().min(1, "Название обязательно"),
@@ -1326,9 +1658,7 @@ export default function AdminDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8">
-                  <p className="text-gray-500">Настройки магазина (реализация продолжается)</p>
-                </div>
+                <StoreSettingsContent />
               </CardContent>
             </Card>
           </TabsContent>
