@@ -1556,7 +1556,7 @@ export default function AdminDashboard() {
                                 <OrderCard key={order.id} order={order} onEdit={(order) => {
                                   setEditingOrder(order);
                                   setIsOrderFormOpen(true);
-                                }} onStatusChange={updateOrderStatusMutation.mutate} />
+                                }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
                               ))}
                             </div>
                           </div>
@@ -1572,7 +1572,7 @@ export default function AdminDashboard() {
                               <OrderCard key={order.id} order={order} onEdit={(order) => {
                                 setEditingOrder(order);
                                 setIsOrderFormOpen(true);
-                              }} onStatusChange={updateOrderStatusMutation.mutate} />
+                              }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
                             ))}
                           </div>
                         </div>
@@ -1588,7 +1588,7 @@ export default function AdminDashboard() {
                               <OrderCard key={order.id} order={order} onEdit={(order) => {
                                 setEditingOrder(order);
                                 setIsOrderFormOpen(true);
-                              }} onStatusChange={updateOrderStatusMutation.mutate} />
+                              }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
                             ))}
                           </div>
                         </div>
@@ -1604,7 +1604,7 @@ export default function AdminDashboard() {
                                 <OrderCard key={order.id} order={order} onEdit={(order) => {
                                   setEditingOrder(order);
                                   setIsOrderFormOpen(true);
-                                }} onStatusChange={updateOrderStatusMutation.mutate} />
+                                }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
                               ))}
                             </div>
                           </div>
