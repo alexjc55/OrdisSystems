@@ -95,6 +95,20 @@ function useStatusChangeHandler() {
 }
 
 // OrderCard component for kanban view
+function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
+  return (
+    <div
+      draggable
+      onDragStart={(e) => {
+        e.dataTransfer.setData("orderId", order.id.toString());
+      }}
+      className="cursor-move"
+    >
+      <OrderCard order={order} onEdit={onEdit} onStatusChange={onStatusChange} onCancelOrder={onCancelOrder} />
+    </div>
+  );
+}
+
 function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -1491,102 +1505,219 @@ export default function AdminDashboard() {
                     {/* Kanban View */}
                     {ordersViewMode === "kanban" && (
                       <div className="overflow-x-auto">
-                        <div className="flex gap-4 min-w-max pb-4">
+                        <div className="flex gap-4 min-w-max pb-4"
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            const orderId = e.dataTransfer.getData("orderId");
+                            const newStatus = e.dataTransfer.getData("newStatus");
+                            if (orderId && newStatus) {
+                              if (newStatus === 'cancelled') {
+                                handleOrderCancellation(parseInt(orderId));
+                              } else {
+                                updateOrderStatusMutation.mutate({
+                                  orderId: parseInt(orderId),
+                                  status: newStatus
+                                });
+                              }
+                            }
+                          }}
+                        >
                           {/* Pending Column */}
-                          <div className="bg-yellow-50 rounded-lg p-4 min-w-80">
+                          <div 
+                            className="bg-yellow-50 rounded-lg p-4 min-w-80"
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              e.dataTransfer.setData("newStatus", "pending");
+                            }}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              e.dataTransfer.setData("newStatus", "pending");
+                            }}
+                          >
                             <h3 className="font-semibold text-sm mb-3 text-yellow-800 flex items-center gap-2">
                               <Clock className="h-4 w-4" />
                               Ожидает ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
                             </h3>
-                            <div className="space-y-3">
+                            <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'pending').map((order: any) => (
-                                <OrderCard key={order.id} order={order} onEdit={(order) => {
-                                  setEditingOrder(order);
-                                  setIsOrderFormOpen(true);
-                                }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
+                                <DraggableOrderCard 
+                                  key={order.id} 
+                                  order={order} 
+                                  onEdit={(order) => {
+                                    setEditingOrder(order);
+                                    setIsOrderFormOpen(true);
+                                  }} 
+                                  onStatusChange={updateOrderStatusMutation.mutate} 
+                                  onCancelOrder={handleOrderCancellation} 
+                                />
                               ))}
                             </div>
                           </div>
 
                           {/* Confirmed Column */}
-                          <div className="bg-blue-50 rounded-lg p-4 min-w-80">
+                          <div 
+                            className="bg-blue-50 rounded-lg p-4 min-w-80"
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              e.dataTransfer.setData("newStatus", "confirmed");
+                            }}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              e.dataTransfer.setData("newStatus", "confirmed");
+                            }}
+                          >
                             <h3 className="font-semibold text-sm mb-3 text-blue-800 flex items-center gap-2">
                               <ShoppingCart className="h-4 w-4" />
                               Подтвержден ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
                             </h3>
-                            <div className="space-y-3">
+                            <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'confirmed').map((order: any) => (
-                                <OrderCard key={order.id} order={order} onEdit={(order) => {
-                                  setEditingOrder(order);
-                                  setIsOrderFormOpen(true);
-                                }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
+                                <DraggableOrderCard 
+                                  key={order.id} 
+                                  order={order} 
+                                  onEdit={(order) => {
+                                    setEditingOrder(order);
+                                    setIsOrderFormOpen(true);
+                                  }} 
+                                  onStatusChange={updateOrderStatusMutation.mutate} 
+                                  onCancelOrder={handleOrderCancellation} 
+                                />
                               ))}
                             </div>
                           </div>
 
                           {/* Preparing Column */}
-                          <div className="bg-orange-50 rounded-lg p-4 min-w-80">
+                          <div 
+                            className="bg-orange-50 rounded-lg p-4 min-w-80"
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              e.dataTransfer.setData("newStatus", "preparing");
+                            }}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              e.dataTransfer.setData("newStatus", "preparing");
+                            }}
+                          >
                             <h3 className="font-semibold text-sm mb-3 text-orange-800 flex items-center gap-2">
                               <Utensils className="h-4 w-4" />
                               Готовится ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
                             </h3>
-                            <div className="space-y-3">
+                            <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'preparing').map((order: any) => (
-                                <OrderCard key={order.id} order={order} onEdit={(order) => {
-                                  setEditingOrder(order);
-                                  setIsOrderFormOpen(true);
-                                }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
+                                <DraggableOrderCard 
+                                  key={order.id} 
+                                  order={order} 
+                                  onEdit={(order) => {
+                                    setEditingOrder(order);
+                                    setIsOrderFormOpen(true);
+                                  }} 
+                                  onStatusChange={updateOrderStatusMutation.mutate} 
+                                  onCancelOrder={handleOrderCancellation} 
+                                />
                               ))}
                             </div>
                           </div>
 
-                        {/* Ready Column */}
-                        <div className="bg-green-50 rounded-lg p-4 min-w-80">
-                          <h3 className="font-semibold text-sm mb-3 text-green-800 flex items-center gap-2">
-                            <Package className="h-4 w-4" />
-                            Готов ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
-                          </h3>
-                          <div className="space-y-3">
-                            {ordersResponse.data.filter((order: any) => order.status === 'ready').map((order: any) => (
-                              <OrderCard key={order.id} order={order} onEdit={(order) => {
-                                setEditingOrder(order);
-                                setIsOrderFormOpen(true);
-                              }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Delivered Column */}
-                        <div className="bg-gray-50 rounded-lg p-4 min-w-80">
-                          <h3 className="font-semibold text-sm mb-3 text-gray-800 flex items-center gap-2">
-                            <Truck className="h-4 w-4" />
-                            Доставлен ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
-                          </h3>
-                          <div className="space-y-3">
-                            {ordersResponse.data.filter((order: any) => order.status === 'delivered').map((order: any) => (
-                              <OrderCard key={order.id} order={order} onEdit={(order) => {
-                                setEditingOrder(order);
-                                setIsOrderFormOpen(true);
-                              }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
-                            ))}
-                          </div>
-                        </div>
-
-                          {/* Cancelled Column */}
-                          <div className="bg-red-50 rounded-lg p-4 min-w-80">
-                            <h3 className="font-semibold text-sm mb-3 text-red-800 flex items-center gap-2">
-                              <X className="h-4 w-4" />
-                              Отменен ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
+                          {/* Ready Column */}
+                          <div 
+                            className="bg-green-50 rounded-lg p-4 min-w-80"
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              e.dataTransfer.setData("newStatus", "ready");
+                            }}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              e.dataTransfer.setData("newStatus", "ready");
+                            }}
+                          >
+                            <h3 className="font-semibold text-sm mb-3 text-green-800 flex items-center gap-2">
+                              <Package className="h-4 w-4" />
+                              Готов ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
                             </h3>
-                            <div className="space-y-3">
-                              {ordersResponse.data.filter((order: any) => order.status === 'cancelled').map((order: any) => (
-                                <OrderCard key={order.id} order={order} onEdit={(order) => {
-                                  setEditingOrder(order);
-                                  setIsOrderFormOpen(true);
-                                }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
+                            <div className="space-y-3 min-h-24">
+                              {ordersResponse.data.filter((order: any) => order.status === 'ready').map((order: any) => (
+                                <DraggableOrderCard 
+                                  key={order.id} 
+                                  order={order} 
+                                  onEdit={(order) => {
+                                    setEditingOrder(order);
+                                    setIsOrderFormOpen(true);
+                                  }} 
+                                  onStatusChange={updateOrderStatusMutation.mutate} 
+                                  onCancelOrder={handleOrderCancellation} 
+                                />
                               ))}
                             </div>
                           </div>
+
+                          {/* Delivered Column - only show when filter includes delivered */}
+                          {(ordersStatusFilter === "delivered" || ordersStatusFilter === "all") && (
+                            <div 
+                              className="bg-gray-50 rounded-lg p-4 min-w-80"
+                              onDragOver={(e) => {
+                                e.preventDefault();
+                                e.dataTransfer.setData("newStatus", "delivered");
+                              }}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                e.dataTransfer.setData("newStatus", "delivered");
+                              }}
+                            >
+                              <h3 className="font-semibold text-sm mb-3 text-gray-800 flex items-center gap-2">
+                                <Truck className="h-4 w-4" />
+                                Доставлен ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
+                              </h3>
+                              <div className="space-y-3 min-h-24">
+                                {ordersResponse.data.filter((order: any) => order.status === 'delivered').map((order: any) => (
+                                  <DraggableOrderCard 
+                                    key={order.id} 
+                                    order={order} 
+                                    onEdit={(order) => {
+                                      setEditingOrder(order);
+                                      setIsOrderFormOpen(true);
+                                    }} 
+                                    onStatusChange={updateOrderStatusMutation.mutate} 
+                                    onCancelOrder={handleOrderCancellation} 
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Cancelled Column - only show when filter includes cancelled */}
+                          {(ordersStatusFilter === "cancelled" || ordersStatusFilter === "all") && (
+                            <div 
+                              className="bg-red-50 rounded-lg p-4 min-w-80"
+                              onDragOver={(e) => {
+                                e.preventDefault();
+                                e.dataTransfer.setData("newStatus", "cancelled");
+                              }}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                e.dataTransfer.setData("newStatus", "cancelled");
+                              }}
+                            >
+                              <h3 className="font-semibold text-sm mb-3 text-red-800 flex items-center gap-2">
+                                <X className="h-4 w-4" />
+                                Отменен ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
+                              </h3>
+                              <div className="space-y-3 min-h-24">
+                                {ordersResponse.data.filter((order: any) => order.status === 'cancelled').map((order: any) => (
+                                  <DraggableOrderCard 
+                                    key={order.id} 
+                                    order={order} 
+                                    onEdit={(order) => {
+                                      setEditingOrder(order);
+                                      setIsOrderFormOpen(true);
+                                    }} 
+                                    onStatusChange={updateOrderStatusMutation.mutate} 
+                                    onCancelOrder={handleOrderCancellation} 
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
