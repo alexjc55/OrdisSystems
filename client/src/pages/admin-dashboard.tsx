@@ -255,6 +255,29 @@ export default function AdminDashboard() {
     },
   });
 
+  // Store settings mutation
+  const updateStoreSettingsMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiRequest("POST", "/api/store-settings", data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/store-settings"] });
+      toast({ title: "Настройки сохранены", description: "Настройки магазина обновлены" });
+    },
+    onError: (error) => {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось сохранить настройки",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleStoreSettingsSubmit = (data: any) => {
+    updateStoreSettingsMutation.mutate(data);
+  };
+
   const toggleCategoryCollapse = (categoryId: number) => {
     const newCollapsed = new Set(collapsedCategories);
     if (newCollapsed.has(categoryId)) {
@@ -890,6 +913,32 @@ export default function AdminDashboard() {
               </Card>
             </TabsContent>
           )}
+
+          {/* Store Settings */}
+          <TabsContent value="settings" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Store className="h-5 w-5" />
+                  Настройки Магазина
+                </CardTitle>
+                <CardDescription>
+                  Управление основными настройками магазина
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {storeSettingsLoading ? (
+                  <div className="text-center py-8">Загрузка...</div>
+                ) : (
+                  <StoreSettingsForm
+                    storeSettings={storeSettings}
+                    onSubmit={handleStoreSettingsSubmit}
+                    isLoading={updateStoreSettingsMutation.isPending}
+                  />
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
 
