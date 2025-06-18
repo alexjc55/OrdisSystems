@@ -42,7 +42,14 @@ import {
   CreditCard,
   Truck,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Table2,
+  Layout,
+  Calendar,
+  MapPin,
+  Phone,
+  User,
+  Eye
 } from "lucide-react";
 
 // Validation schemas
@@ -90,6 +97,12 @@ export default function AdminDashboard() {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [activeTab, setActiveTab] = useState("products");
 
+  // Orders management state
+  const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
+  const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
+  const [editingOrder, setEditingOrder] = useState<any>(null);
+  const [ordersStatusFilter, setOrdersStatusFilter] = useState("active"); // active, delivered, cancelled, all
+
   // Pagination state
   const [productsPage, setProductsPage] = useState(1);
   const [ordersPage, setOrdersPage] = useState(1);
@@ -102,7 +115,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     setOrdersPage(1);
-  }, [searchQuery, selectedStatusFilter]);
+  }, [searchQuery, ordersStatusFilter]);
 
   useEffect(() => {
     setUsersPage(1);
@@ -176,14 +189,25 @@ export default function AdminDashboard() {
   });
 
   const { data: ordersResponse, isLoading: ordersLoading } = useQuery({
-    queryKey: ["/api/admin/orders", ordersPage, searchQuery, selectedStatusFilter, storeSettings?.defaultItemsPerPage],
+    queryKey: ["/api/admin/orders", ordersPage, searchQuery, ordersStatusFilter, storeSettings?.defaultItemsPerPage],
     queryFn: async () => {
       const limit = storeSettings?.defaultItemsPerPage || 10;
+      
+      // Map filter states to API parameters
+      let statusParam = "all";
+      if (ordersStatusFilter === "active") {
+        statusParam = "pending,confirmed,preparing,ready";
+      } else if (ordersStatusFilter === "delivered") {
+        statusParam = "delivered";
+      } else if (ordersStatusFilter === "cancelled") {
+        statusParam = "cancelled";
+      }
+      
       const params = new URLSearchParams({
         page: ordersPage.toString(),
         limit: limit.toString(),
         search: searchQuery,
-        status: selectedStatusFilter,
+        status: statusParam,
         sortField: 'createdAt',
         sortDirection: 'desc'
       });
@@ -934,24 +958,57 @@ export default function AdminDashboard() {
                       Заказы
                     </CardTitle>
                     <CardDescription className="text-sm">
-                      Все заказы клиентов
+                      Управление заказами клиентов
                     </CardDescription>
                   </div>
-                  <div className="flex gap-2">
-                    <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
-                      <SelectTrigger className="w-40">
-                        <SelectValue placeholder="Все статусы" />
+                  
+                  {/* View Mode Toggle and Filters */}
+                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    {/* View Mode Toggle */}
+                    <div className="flex items-center gap-2 p-1 bg-gray-100 rounded-lg">
+                      <Button
+                        variant={ordersViewMode === "table" ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => setOrdersViewMode("table")}
+                        className="text-xs px-3 py-1 h-8"
+                      >
+                        <Table2 className="h-3 w-3 mr-1" />
+                        Таблица
+                      </Button>
+                      <Button
+                        variant={ordersViewMode === "kanban" ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => setOrdersViewMode("kanban")}
+                        className="text-xs px-3 py-1 h-8"
+                      >
+                        <Layout className="h-3 w-3 mr-1" />
+                        Канбан
+                      </Button>
+                    </div>
+
+                    {/* Status Filter */}
+                    <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
+                      <SelectTrigger className="w-40 text-xs h-8">
+                        <SelectValue placeholder="Фильтр заказов" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Все статусы</SelectItem>
-                        <SelectItem value="pending">Ожидает</SelectItem>
-                        <SelectItem value="confirmed">Подтвержден</SelectItem>
-                        <SelectItem value="preparing">Готовится</SelectItem>
-                        <SelectItem value="ready">Готов</SelectItem>
-                        <SelectItem value="delivered">Доставлен</SelectItem>
-                        <SelectItem value="cancelled">Отменен</SelectItem>
+                        <SelectItem value="active">Активные заказы</SelectItem>
+                        <SelectItem value="delivered">Доставленные</SelectItem>
+                        <SelectItem value="cancelled">Отмененные</SelectItem>
+                        <SelectItem value="all">Все заказы</SelectItem>
                       </SelectContent>
                     </Select>
+
+                    {/* Search Input */}
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
+                      <Input
+                        placeholder="Поиск по заказам..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9 text-xs h-8 w-48"
+                      />
+                    </div>
                   </div>
                 </div>
               </CardHeader>
