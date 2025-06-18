@@ -3588,6 +3588,23 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   onSubmit: (data: any) => void;
   isLoading: boolean;
 }) {
+  // State for collapsible sections
+  const [collapsedSections, setCollapsedSections] = useState({
+    basicInfo: false,
+    description: false,
+    visual: false,
+    schedule: false,
+    delivery: false,
+    display: false,
+    tracking: false,
+  });
+
+  const toggleSection = (section: keyof typeof collapsedSections) => {
+    setCollapsedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
   const form = useForm({
     resolver: zodResolver(storeSettingsSchema),
     defaultValues: {
@@ -3680,12 +3697,24 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Основная информация */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <Store className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Основная информация</h3>
-          </div>
+        <div className="space-y-6 border rounded-lg p-4">
+          <button
+            type="button"
+            onClick={() => toggleSection('basicInfo')}
+            className="flex items-center justify-between w-full pb-2 border-b hover:bg-gray-50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <Store className="h-5 w-5 text-orange-500" />
+              <h3 className="text-lg font-semibold">Основная информация</h3>
+            </div>
+            {collapsedSections.basicInfo ? (
+              <ChevronDown className="h-5 w-5 text-gray-500" />
+            ) : (
+              <ChevronUp className="h-5 w-5 text-gray-500" />
+            )}
+          </button>
           
+          {!collapsedSections.basicInfo && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
             control={form.control}
@@ -3803,14 +3832,29 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             )}
           />
           </div>
+          )}
         </div>
 
         {/* Описание и контакты */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <MapPin className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Описание и контакты</h3>
-          </div>
+        <div className="space-y-6 border rounded-lg p-4">
+          <button
+            type="button"
+            onClick={() => toggleSection('description')}
+            className="flex items-center justify-between w-full pb-2 border-b hover:bg-gray-50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-orange-500" />
+              <h3 className="text-lg font-semibold">Описание и контакты</h3>
+            </div>
+            {collapsedSections.description ? (
+              <ChevronDown className="h-5 w-5 text-gray-500" />
+            ) : (
+              <ChevronUp className="h-5 w-5 text-gray-500" />
+            )}
+          </button>
+
+          {!collapsedSections.description && (
+          <div className="space-y-6">
 
         <FormField
           control={form.control}
@@ -3902,13 +3946,29 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           )}
         />
         </div>
+        )}
+        </div>
 
         {/* Часы работы */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <Clock className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Часы работы</h3>
-          </div>
+        <div className="space-y-6 border rounded-lg p-4">
+          <button
+            type="button"
+            onClick={() => toggleSection('schedule')}
+            className="flex items-center justify-between w-full pb-2 border-b hover:bg-gray-50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-orange-500" />
+              <h3 className="text-lg font-semibold">Часы работы</h3>
+            </div>
+            {collapsedSections.schedule ? (
+              <ChevronDown className="h-5 w-5 text-gray-500" />
+            ) : (
+              <ChevronUp className="h-5 w-5 text-gray-500" />
+            )}
+          </button>
+          
+          {!collapsedSections.schedule && (
+          <div className="space-y-6">
           
           <FormField
             control={form.control}
