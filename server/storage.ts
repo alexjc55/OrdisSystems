@@ -546,7 +546,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // User operations with pagination
-  async getUsersPaginated(params: PaginationParams): Promise<PaginatedResult<User>> {
+  async getUsersPaginated(params: PaginationParams): Promise<PaginatedResult<User & { orderCount: number; totalOrderAmount: number }>> {
     const { page, limit, search, status, sortField, sortDirection } = params;
     const offset = (page - 1) * limit;
 
@@ -588,11 +588,26 @@ export class DatabaseStorage implements IStorage {
     
     const total = totalResult?.count || 0;
 
-    // Get paginated data
+    // Get paginated data with order statistics
     const data = await db
-      .select()
+      .select({
+        id: users.id,
+        email: users.email,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        profileImageUrl: users.profileImageUrl,
+        phone: users.phone,
+        defaultAddress: users.defaultAddress,
+        role: users.role,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+        orderCount: sql<number>`COALESCE(COUNT(${orders.id}), 0)`,
+        totalOrderAmount: sql<number>`COALESCE(SUM(${orders.totalAmount}), 0)`
+      })
       .from(users)
+      .leftJoin(orders, eq(users.id, orders.userId))
       .where(whereClause)
+      .groupBy(users.id, users.email, users.firstName, users.lastName, users.profileImageUrl, users.phone, users.defaultAddress, users.role, users.createdAt, users.updatedAt)
       .orderBy(orderBy)
       .limit(limit)
       .offset(offset);

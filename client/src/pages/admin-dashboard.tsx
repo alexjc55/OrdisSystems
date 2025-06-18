@@ -2805,78 +2805,76 @@ export default function AdminDashboard() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="text-xs sm:text-sm">Email</TableHead>
                             <TableHead className="text-xs sm:text-sm">Имя</TableHead>
                             <TableHead className="text-xs sm:text-sm">Роль</TableHead>
                             <TableHead className="text-xs sm:text-sm">Телефон</TableHead>
-                            <TableHead className="text-xs sm:text-sm hidden sm:table-cell">Дата регистрации</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Действия</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Заказов</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Сумма заказов</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {(usersData as any[] || []).map((user: any) => (
                             <TableRow key={user.id}>
-                              <TableCell className="font-medium text-xs sm:text-sm">{user.email}</TableCell>
-                              <TableCell className="text-xs sm:text-sm">
-                                {user.firstName && user.lastName 
-                                  ? `${user.firstName} ${user.lastName}`
-                                  : "—"
-                                }
-                              </TableCell>
-                              <TableCell>
-                                <Select 
-                                  value={user.role || "customer"} 
-                                  onValueChange={(newRole) => {
-                                    updateUserRoleMutation.mutate({ 
-                                      userId: user.id, 
-                                      role: newRole as "admin" | "worker" | "customer"
-                                    });
+                              <TableCell className="font-medium text-xs sm:text-sm">
+                                <Button
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setEditingUser(user);
+                                    setIsUserFormOpen(true);
                                   }}
-                                  disabled={user.id === "43948959"} // Prevent changing own role
+                                  className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent"
                                 >
-                                  <SelectTrigger className="w-32">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="customer">Клиент</SelectItem>
-                                    <SelectItem value="worker">Сотрудник</SelectItem>
-                                    <SelectItem value="admin">Админ</SelectItem>
-                                  </SelectContent>
-                                </Select>
+                                  {user.firstName && user.lastName 
+                                    ? `${user.firstName} ${user.lastName}`
+                                    : user.email || "Безымянный пользователь"
+                                  }
+                                </Button>
                               </TableCell>
                               <TableCell className="text-xs sm:text-sm">
-                                {user.phone || "—"}
+                                <Badge variant="outline" className={
+                                  user.role === "admin" ? "border-red-200 text-red-700 bg-red-50" :
+                                  user.role === "worker" ? "border-orange-200 text-orange-700 bg-orange-50" :
+                                  "border-gray-200 text-gray-700 bg-gray-50"
+                                }>
+                                  {user.role === "admin" ? "Админ" : 
+                                   user.role === "worker" ? "Сотрудник" : "Клиент"}
+                                </Badge>
                               </TableCell>
-                              <TableCell className="text-xs sm:text-sm hidden sm:table-cell">
-                                {new Date(user.createdAt).toLocaleDateString('ru-RU')}
+                              <TableCell className="text-xs sm:text-sm">
+                                {user.phone ? (
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent"
+                                      >
+                                        {user.phone}
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                      <DropdownMenuItem onClick={() => window.open(`tel:${user.phone}`, '_self')}>
+                                        <Phone className="mr-2 h-4 w-4" />
+                                        Позвонить
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => window.open(`https://wa.me/${user.phone.replace(/[^\d]/g, '')}`, '_blank')}>
+                                        <MessageCircle className="mr-2 h-4 w-4" />
+                                        WhatsApp
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                ) : (
+                                  <span className="text-gray-400">—</span>
+                                )}
                               </TableCell>
-                              <TableCell>
-                                <div className="flex gap-2">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => {
-                                      setEditingUser(user);
-                                      setIsUserFormOpen(true);
-                                    }}
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                  </Button>
-                                  {user.id !== "43948959" && ( // Prevent deleting yourself
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => {
-                                        if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
-                                          deleteUserMutation.mutate(user.id);
-                                        }
-                                      }}
-                                      className="text-red-600 hover:text-red-700"
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                  )}
-                                </div>
+                              <TableCell className="text-xs sm:text-sm">
+                                <span className="font-medium">
+                                  {user.orderCount || 0}
+                                </span>
+                              </TableCell>
+                              <TableCell className="text-xs sm:text-sm">
+                                <span className="font-medium">
+                                  {formatCurrency(user.totalOrderAmount || 0)}
+                                </span>
                               </TableCell>
                             </TableRow>
                           ))}
@@ -4786,9 +4784,46 @@ function UserFormDialog({ open, onClose, user, onSubmit }: any) {
             />
 
             <div className="flex justify-between items-center pt-4">
-              <Button type="button" variant="outline" onClick={onClose} className="text-sm">
-                Отмена
-              </Button>
+              <div className="flex gap-2">
+                <Button type="button" variant="outline" onClick={onClose} className="text-sm">
+                  Отмена
+                </Button>
+                {user && user.id !== "43948959" && ( // Don't allow deleting yourself
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="text-sm text-red-600 border-red-200 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Удалить
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Удалить пользователя</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Вы уверены, что хотите удалить пользователя {user.email}? 
+                          Это действие нельзя отменить.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Отмена</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => {
+                            deleteUserMutation.mutate(user.id);
+                            onClose();
+                          }}
+                          className="bg-red-600 hover:bg-red-700"
+                        >
+                          Удалить
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+              </div>
               <Button 
                 type="submit" 
                 className="text-sm bg-orange-500 hover:bg-orange-600 text-white"
