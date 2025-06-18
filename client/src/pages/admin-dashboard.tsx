@@ -83,6 +83,7 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   cancellationReasons: z.array(z.string()).optional(),
 });
 
+
 // Handle status change with cancellation confirmation
 function useStatusChangeHandler() {
   const handleStatusChange = (orderId: number, newStatus: string, onCancel: (id: number) => void, onConfirm: (data: { orderId: number, status: string }) => void) => {
@@ -1236,6 +1237,19 @@ export default function AdminDashboard() {
     }
   }, [user, toast]);
 
+  // Status color helper function
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'ready': return 'bg-green-100 text-green-800 border-green-200';
+      case 'delivered': return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
   // Data queries with pagination
   const { data: storeSettings, isLoading: storeSettingsLoading } = useQuery<StoreSettings>({
     queryKey: ["/api/settings"]
@@ -2178,16 +2192,16 @@ export default function AdminDashboard() {
                                         }
                                       }}
                                     >
-                                      <SelectTrigger className="w-full h-8 text-xs">
+                                      <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)}`}>
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent>
-                                        <SelectItem value="pending">Ожидает</SelectItem>
-                                        <SelectItem value="confirmed">Подтвержден</SelectItem>
-                                        <SelectItem value="preparing">Готовится</SelectItem>
-                                        <SelectItem value="ready">Готов</SelectItem>
-                                        <SelectItem value="delivered">Доставлен</SelectItem>
-                                        <SelectItem value="cancelled">Отменен</SelectItem>
+                                        <SelectItem value="pending" className="bg-yellow-50 text-yellow-800 hover:bg-yellow-100 focus:bg-yellow-100">Ожидает</SelectItem>
+                                        <SelectItem value="confirmed" className="bg-blue-50 text-blue-800 hover:bg-blue-100 focus:bg-blue-100">Подтвержден</SelectItem>
+                                        <SelectItem value="preparing" className="bg-orange-50 text-orange-800 hover:bg-orange-100 focus:bg-orange-100">Готовится</SelectItem>
+                                        <SelectItem value="ready" className="bg-green-50 text-green-800 hover:bg-green-100 focus:bg-green-100">Готов</SelectItem>
+                                        <SelectItem value="delivered" className="bg-gray-50 text-gray-800 hover:bg-gray-100 focus:bg-gray-100">Доставлен</SelectItem>
+                                        <SelectItem value="cancelled" className="bg-red-50 text-red-800 hover:bg-red-100 focus:bg-red-100">Отменен</SelectItem>
                                       </SelectContent>
                                     </Select>
                                   </TableCell>
