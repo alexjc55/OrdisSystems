@@ -260,7 +260,7 @@ export type ProductWithCategory = Product & {
 
 export type OrderWithItems = Order & {
   items: Array<OrderItem & { product: Product }>;
-  user: User;
+  user: User | null;
 };
 
 export type CategoryWithProducts = Category & {

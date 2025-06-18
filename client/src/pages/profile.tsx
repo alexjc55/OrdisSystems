@@ -50,12 +50,7 @@ export default function Profile() {
   }, [isAuthenticated, isLoading, toast]);
 
   const { data: orders } = useQuery<OrderWithItems[]>({
-    queryKey: ["/api/orders", "my"],
-    queryFn: async () => {
-      const res = await fetch("/api/orders/my", { credentials: "include" });
-      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
-      return res.json();
-    },
+    queryKey: ["/api/orders/my"],
     enabled: !!user,
   });
 
@@ -271,10 +266,10 @@ export default function Profile() {
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="profile">Профиль</TabsTrigger>
-            <TabsTrigger value="addresses">Адреса</TabsTrigger>
-            <TabsTrigger value="orders">История Заказов</TabsTrigger>
+          <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
+            <TabsTrigger value="profile" className="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Профиль</TabsTrigger>
+            <TabsTrigger value="addresses" className="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Адреса</TabsTrigger>
+            <TabsTrigger value="orders" className="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">История Заказов</TabsTrigger>
           </TabsList>
 
           {/* Profile Information */}
@@ -447,6 +442,7 @@ export default function Profile() {
                             id="default"
                             checked={addressForm.isDefault}
                             onCheckedChange={(checked) => setAddressForm({ ...addressForm, isDefault: checked })}
+                            className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-300"
                           />
                           <Label htmlFor="default">Сделать адресом по умолчанию</Label>
                         </div>
