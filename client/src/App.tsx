@@ -14,7 +14,6 @@ import Profile from "@/pages/profile";
 import ChangePasswordPage from "@/pages/change-password";
 import ForgotPasswordPage from "@/pages/forgot-password";
 import ResetPasswordPage from "@/pages/reset-password";
-import Checkout from "@/pages/checkout";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -40,7 +39,6 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/admin" component={AdminDashboard} />
         <Route path="/profile" component={Profile} />
-        <Route path="/checkout" component={Checkout} />
         <Route path="/change-password" component={ChangePasswordPage} />
         <Route path="/forgot-password" component={ForgotPasswordPage} />
         <Route path="/reset-password" component={ResetPasswordPage} />

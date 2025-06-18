@@ -11,7 +11,7 @@ import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import CategoryNav from "@/components/menu/category-nav";
 import ProductCard from "@/components/menu/product-card";
-import CartSidebar from "@/components/cart/cart-sidebar";
+import CartOverlay from "@/components/cart/cart-overlay";
 import { useCartStore } from "@/lib/cart";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { 
@@ -643,7 +643,7 @@ export default function Home() {
       )}
 
       {/* Cart Overlay */}
-      <CartSidebar />
+      {isCartOpen && <CartOverlay />}
 
       {/* Admin Floating Actions */}
       {(user?.role === 'admin') && (
