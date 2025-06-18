@@ -803,7 +803,7 @@ export default function AdminDashboard() {
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
                   </div>
                 ) : ordersViewMode === "table" ? (
-                  <div className="rounded-md border">
+                  <div className="rounded-md border overflow-visible">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -1065,7 +1065,7 @@ export default function AdminDashboard() {
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
                   </div>
                 ) : (
-                  <div className="rounded-md border">
+                  <div className="rounded-md border overflow-visible">
                     <Table>
                       <TableHeader>
                         <TableRow>
