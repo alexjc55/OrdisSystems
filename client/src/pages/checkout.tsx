@@ -40,9 +40,15 @@ const authSchema = z.object({
   password: z.string().min(1, "Введите пароль"),
 });
 
+const authenticatedOrderSchema = z.object({
+  address: z.string().min(10, "Введите полный адрес доставки"),
+  phone: z.string().min(10, "Введите корректный номер телефона"),
+});
+
 type GuestOrderData = z.infer<typeof guestOrderSchema>;
 type RegistrationData = z.infer<typeof registrationSchema>;
 type AuthData = z.infer<typeof authSchema>;
+type AuthenticatedOrderData = z.infer<typeof authenticatedOrderSchema>;
 
 export default function Checkout() {
   const { user, isAuthenticated } = useAuth();
@@ -174,7 +180,7 @@ export default function Checkout() {
   });
 
   const createAuthenticatedOrderMutation = useMutation({
-    mutationFn: async (addressData: { address: string }) => {
+    mutationFn: async (formData: AuthenticatedOrderData) => {
       const orderData = {
         items: items.map(item => ({
           productId: item.product.id,
@@ -183,7 +189,8 @@ export default function Checkout() {
           totalPrice: item.totalPrice.toString()
         })),
         totalAmount: getTotalPrice().toString(),
-        deliveryAddress: addressData.address,
+        deliveryAddress: formData.address,
+        customerPhone: formData.phone,
         status: "pending"
       };
       
@@ -291,15 +298,28 @@ export default function Checkout() {
                   e.preventDefault();
                   const formData = new FormData(e.target as HTMLFormElement);
                   const address = formData.get("address") as string;
-                  createAuthenticatedOrderMutation.mutate({ address });
+                  const phone = formData.get("phone") as string;
+                  createAuthenticatedOrderMutation.mutate({ address, phone });
                 }}>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="address">Адрес доставки</Label>
+                      <Label htmlFor="address">Адрес доставки *</Label>
                       <Input
                         id="address"
                         name="address"
                         placeholder="Введите адрес доставки"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="phone">Номер телефона *</Label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        placeholder="+972-XX-XXX-XXXX"
+                        defaultValue={user?.phone || ""}
                         required
                       />
                     </div>
