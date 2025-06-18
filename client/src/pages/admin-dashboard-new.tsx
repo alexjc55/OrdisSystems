@@ -719,20 +719,20 @@ export default function AdminDashboard() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="!flex !flex-wrap md:!flex-nowrap w-full gap-2 h-auto p-2 bg-muted rounded-md">
-            <TabsTrigger value="products" className="flex items-center gap-2 h-12 flex-1 min-w-[calc(50%-4px)] md:min-w-0">
+          <TabsList className="admin-tabs-list">
+            <TabsTrigger value="products" className="admin-tabs-trigger">
               <Package className="h-4 w-4" />
               Товары
             </TabsTrigger>
-            <TabsTrigger value="orders" className="flex items-center gap-2 h-12 flex-1 min-w-[calc(50%-4px)] md:min-w-0">
+            <TabsTrigger value="orders" className="admin-tabs-trigger">
               <ShoppingCart className="h-4 w-4" />
               Заказы
             </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-2 h-12 flex-1 min-w-[calc(50%-4px)] md:min-w-0">
+            <TabsTrigger value="users" className="admin-tabs-trigger">
               <Users className="h-4 w-4" />
               Пользователи
             </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2 h-12 flex-1 w-full md:min-w-0 md:w-auto">
+            <TabsTrigger value="settings" className="admin-tabs-trigger">
               <Store className="h-4 w-4" />
               Настройки
             </TabsTrigger>
