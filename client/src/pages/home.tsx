@@ -450,12 +450,21 @@ export default function Home() {
                             <button
                               key={index}
                               onClick={() => goToSlide(index)}
-                              className={`w-3 h-3 rounded-full transition-colors flex-shrink-0 aspect-square ${
+                              className={`rounded-full transition-colors flex-shrink-0 ${
                                 index === currentSlide 
                                   ? 'bg-orange-500' 
                                   : 'bg-gray-300 hover:bg-orange-400'
                               }`}
-                              style={{ width: '12px', height: '12px' }}
+                              style={{ 
+                                width: '12px', 
+                                height: '12px', 
+                                minWidth: '12px', 
+                                minHeight: '12px',
+                                maxWidth: '12px',
+                                maxHeight: '12px',
+                                borderRadius: '50%',
+                                flexShrink: 0
+                              }}
                               aria-label={`Go to slide ${index + 1}`}
                             />
                           ))}
