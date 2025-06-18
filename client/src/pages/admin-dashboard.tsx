@@ -1694,6 +1694,29 @@ export default function AdminDashboard() {
     }
   });
 
+  // Password management mutations
+  const setUserPasswordMutation = useMutation({
+    mutationFn: async ({ userId, password }: { userId: string, password: string }) => {
+      const response = await fetch(`/api/admin/users/${userId}/set-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to set password');
+      }
+      return await response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Пароль установлен", description: "Пароль успешно установлен для пользователя" });
+    },
+    onError: (error: any) => {
+      console.error("Set password error:", error);
+      toast({ title: "Ошибка", description: error.message || "Не удалось установить пароль", variant: "destructive" });
+    }
+  });
+
   // Handle order cancellation with reason selection
   const handleOrderCancellation = (orderId: number) => {
     setOrderToCancel(orderId);
@@ -3018,8 +3041,16 @@ export default function AdminDashboard() {
         user={editingUser}
         onSubmit={(data: any) => {
           if (editingUser) {
-            updateUserMutation.mutate({ id: editingUser.id, ...data });
+            // For editing users, handle password separately if provided
+            const { password, ...userData } = data;
+            updateUserMutation.mutate({ id: editingUser.id, ...userData });
+            
+            // If password is provided, set it separately
+            if (password && password.trim()) {
+              setUserPasswordMutation.mutate({ userId: editingUser.id, password });
+            }
           } else {
+            // For creating new users, include password in the creation
             createUserMutation.mutate(data);
           }
         }}
