@@ -43,8 +43,8 @@ import {
   Truck,
   ChevronLeft,
   ChevronRight,
-  Table2,
-  Layout,
+  Grid3X3,
+  Columns,
   Calendar,
   MapPin,
   Phone,
@@ -78,6 +78,323 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   bottomBanner1Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
   bottomBanner2Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
 });
+
+// OrderCard component for kanban view
+function OrderCard({ order, onEdit, onStatusChange }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void }) {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'ready': return 'bg-green-100 text-green-800 border-green-200';
+      case 'delivered': return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'pending': return 'Ожидает';
+      case 'confirmed': return 'Подтвержден';
+      case 'preparing': return 'Готовится';
+      case 'ready': return 'Готов';
+      case 'delivered': return 'Доставлен';
+      case 'cancelled': return 'Отменен';
+      default: return status;
+    }
+  };
+
+  return (
+    <Card className="cursor-pointer hover:shadow-md transition-shadow bg-white">
+      <CardContent className="p-3">
+        <div className="space-y-2">
+          {/* Order Header */}
+          <div className="flex items-center justify-between">
+            <div className="font-bold text-sm text-orange-600">#{order.id}</div>
+            <Badge className={`text-xs px-2 py-1 ${getStatusColor(order.status)}`}>
+              {getStatusLabel(order.status)}
+            </Badge>
+          </div>
+
+          {/* Customer Info */}
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-sm">
+              <User className="h-3 w-3 text-gray-400" />
+              <span className="font-medium">
+                {order.user?.firstName && order.user?.lastName 
+                  ? `${order.user.firstName} ${order.user.lastName}`
+                  : order.user?.email || "—"
+                }
+              </span>
+            </div>
+            {order.customerPhone && (
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                <Phone className="h-3 w-3" />
+                {order.customerPhone}
+              </div>
+            )}
+          </div>
+
+          {/* Order Amount */}
+          <div className="text-lg font-bold text-green-600">
+            {formatCurrency(order.totalAmount)}
+          </div>
+
+          {/* Delivery Info */}
+          {order.deliveryDate && order.deliveryTime && (
+            <div className="space-y-1 text-xs text-gray-500">
+              <div className="flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                {order.deliveryDate}
+              </div>
+              <div className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                {order.deliveryTime}
+              </div>
+              {order.deliveryAddress && (
+                <div className="flex items-center gap-1">
+                  <MapPin className="h-3 w-3" />
+                  <span className="truncate">{order.deliveryAddress}</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Order Items Count */}
+          <div className="text-xs text-gray-500">
+            {order.items?.length || 0} товаров
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-2 pt-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-xs h-7 flex-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(order);
+              }}
+            >
+              <Eye className="h-3 w-3 mr-1" />
+              Детали
+            </Button>
+            <Select
+              value={order.status}
+              onValueChange={(newStatus) => {
+                onStatusChange({ orderId: order.id, status: newStatus });
+              }}
+            >
+              <SelectTrigger className="w-20 h-7 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Ожидает</SelectItem>
+                <SelectItem value="confirmed">Подтвержден</SelectItem>
+                <SelectItem value="preparing">Готовится</SelectItem>
+                <SelectItem value="ready">Готов</SelectItem>
+                <SelectItem value="delivered">Доставлен</SelectItem>
+                <SelectItem value="cancelled">Отменен</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// OrderEditForm component
+function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => void, onSave: () => void }) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const updateOrderMutation = useMutation({
+    mutationFn: async (data: any) => {
+      return await apiRequest("PATCH", `/api/orders/${order.id}`, data);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Заказ обновлен",
+        description: "Изменения сохранены успешно",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
+      onSave();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Ошибка",
+        description: error.message || "Не удалось обновить заказ",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const [editedOrder, setEditedOrder] = useState({
+    customerPhone: order.customerPhone || '',
+    deliveryAddress: order.deliveryAddress || '',
+    deliveryDate: order.deliveryDate || '',
+    deliveryTime: order.deliveryTime || '',
+    status: order.status || 'pending',
+    notes: order.notes || '',
+  });
+
+  const handleSave = () => {
+    updateOrderMutation.mutate(editedOrder);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Order Information */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <h3 className="font-semibold mb-2">Информация о заказе</h3>
+          <div className="space-y-2 text-sm">
+            <div><strong>№ заказа:</strong> #{order.id}</div>
+            <div><strong>Дата создания:</strong> {new Date(order.createdAt).toLocaleString('ru-RU')}</div>
+            <div><strong>Сумма:</strong> {formatCurrency(order.totalAmount)}</div>
+            <div><strong>Клиент:</strong> {order.user?.firstName && order.user?.lastName 
+              ? `${order.user.firstName} ${order.user.lastName}`
+              : order.user?.email || "—"}</div>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2">Редактирование</h3>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium mb-1">Телефон клиента</label>
+              <Input
+                value={editedOrder.customerPhone}
+                onChange={(e) => setEditedOrder(prev => ({ ...prev, customerPhone: e.target.value }))}
+                placeholder="Номер телефона"
+                className="text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Статус заказа</label>
+              <Select
+                value={editedOrder.status}
+                onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
+              >
+                <SelectTrigger className="text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">Ожидает</SelectItem>
+                  <SelectItem value="confirmed">Подтвержден</SelectItem>
+                  <SelectItem value="preparing">Готовится</SelectItem>
+                  <SelectItem value="ready">Готов</SelectItem>
+                  <SelectItem value="delivered">Доставлен</SelectItem>
+                  <SelectItem value="cancelled">Отменен</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Delivery Information */}
+      <div>
+        <h3 className="font-semibold mb-3">Доставка</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Адрес доставки</label>
+            <Input
+              value={editedOrder.deliveryAddress}
+              onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryAddress: e.target.value }))}
+              placeholder="Введите адрес"
+              className="text-sm"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-sm font-medium mb-1">Дата</label>
+              <Input
+                type="date"
+                value={editedOrder.deliveryDate}
+                onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
+                className="text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Время</label>
+              <Input
+                type="time"
+                value={editedOrder.deliveryTime}
+                onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryTime: e.target.value }))}
+                className="text-sm"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Order Items */}
+      <div>
+        <h3 className="font-semibold mb-3">Товары в заказе</h3>
+        <div className="border rounded-lg overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-xs">Товар</TableHead>
+                <TableHead className="text-xs w-20">Кол-во</TableHead>
+                <TableHead className="text-xs w-20">Цена</TableHead>
+                <TableHead className="text-xs w-24">Сумма</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {order.items?.map((item: any, index: number) => (
+                <TableRow key={index}>
+                  <TableCell className="text-sm">
+                    <div>
+                      <div className="font-medium">{item.product?.name}</div>
+                      {item.product?.description && (
+                        <div className="text-xs text-gray-500">{item.product.description}</div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm">{item.quantity}</TableCell>
+                  <TableCell className="text-sm">{formatCurrency(item.pricePerUnit)}</TableCell>
+                  <TableCell className="text-sm font-medium">{formatCurrency(item.totalPrice)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      {/* Notes */}
+      <div>
+        <label className="block text-sm font-medium mb-2">Примечания</label>
+        <Textarea
+          value={editedOrder.notes}
+          onChange={(e) => setEditedOrder(prev => ({ ...prev, notes: e.target.value }))}
+          placeholder="Дополнительные заметки к заказу..."
+          className="text-sm"
+          rows={3}
+        />
+      </div>
+
+      {/* Actions */}
+      <div className="flex justify-end gap-3 pt-4 border-t">
+        <Button variant="outline" onClick={onClose}>
+          Отмена
+        </Button>
+        <Button 
+          onClick={handleSave}
+          disabled={updateOrderMutation.isPending}
+          className="bg-green-600 hover:bg-green-700"
+        >
+          {updateOrderMutation.isPending ? "Сохранение..." : "Сохранить изменения"}
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminDashboard() {
   const { user, isLoading, isAuthenticated } = useAuth();
@@ -972,7 +1289,7 @@ export default function AdminDashboard() {
                         onClick={() => setOrdersViewMode("table")}
                         className="text-xs px-3 py-1 h-8"
                       >
-                        <Table2 className="h-3 w-3 mr-1" />
+                        <Grid3X3 className="h-3 w-3 mr-1" />
                         Таблица
                       </Button>
                       <Button
@@ -981,7 +1298,7 @@ export default function AdminDashboard() {
                         onClick={() => setOrdersViewMode("kanban")}
                         className="text-xs px-3 py-1 h-8"
                       >
-                        <Layout className="h-3 w-3 mr-1" />
+                        <Columns className="h-3 w-3 mr-1" />
                         Канбан
                       </Button>
                     </div>
@@ -1013,142 +1330,253 @@ export default function AdminDashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                {(ordersData as any[] || []).length > 0 ? (
-                  <div className="border rounded-lg bg-white overflow-hidden">
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="text-xs sm:text-sm w-20">№</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Клиент</TableHead>
-                            <TableHead className="text-xs sm:text-sm w-24">Статус</TableHead>
-                            <TableHead className="text-xs sm:text-sm w-20">Сумма</TableHead>
-                            <TableHead className="text-xs sm:text-sm hidden md:table-cell w-24">Дата</TableHead>
-                            <TableHead className="text-xs sm:text-sm hidden lg:table-cell w-32">Доставка</TableHead>
-                            <TableHead className="text-xs sm:text-sm w-24">Действия</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {(ordersData as any[] || [])
-                            .filter((order: any) => selectedStatusFilter === "all" || order.status === selectedStatusFilter)
-                            .map((order: any) => (
-                            <TableRow key={order.id} className="hover:bg-gray-50">
-                              <TableCell className="font-bold text-xs sm:text-sm text-orange-600">#{order.id}</TableCell>
-                              <TableCell className="text-xs sm:text-sm">
-                                <div className="space-y-1">
-                                  <div className="font-medium">
-                                    {order.user?.firstName && order.user?.lastName 
-                                      ? `${order.user.firstName} ${order.user.lastName}`
-                                      : order.user?.email || "—"
-                                    }
-                                  </div>
-                                  {order.customerPhone && (
-                                    <div className="text-gray-500 text-xs">{order.customerPhone}</div>
-                                  )}
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <Select
-                                  value={order.status}
-                                  onValueChange={(newStatus) => {
-                                    updateOrderStatusMutation.mutate({ orderId: order.id, status: newStatus });
-                                  }}
-                                >
-                                  <SelectTrigger className="w-full h-8 text-xs">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="pending">Ожидает</SelectItem>
-                                    <SelectItem value="confirmed">Подтвержден</SelectItem>
-                                    <SelectItem value="preparing">Готовится</SelectItem>
-                                    <SelectItem value="ready">Готов</SelectItem>
-                                    <SelectItem value="delivered">Доставлен</SelectItem>
-                                    <SelectItem value="cancelled">Отменен</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </TableCell>
-                              <TableCell className="font-medium text-xs sm:text-sm">
-                                {formatCurrency(order.totalAmount)}
-                              </TableCell>
-                              <TableCell className="text-xs sm:text-sm hidden md:table-cell">
-                                {new Date(order.createdAt).toLocaleDateString('ru-RU')}
-                              </TableCell>
-                              <TableCell className="text-xs hidden lg:table-cell">
-                                {order.deliveryDate && order.deliveryTime ? (
-                                  <div className="space-y-1">
-                                    <div className="font-medium">{order.deliveryDate}</div>
-                                    <div className="text-gray-500">{order.deliveryTime}</div>
-                                  </div>
-                                ) : (
-                                  <span className="text-gray-400">Не указано</span>
-                                )}
-                              </TableCell>
-                              <TableCell>
-                                <Button variant="outline" size="sm" className="text-xs h-8">
-                                  Детали
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
+                {ordersLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
                   </div>
+                ) : ordersResponse?.data?.length > 0 ? (
+                  <>
+                    {/* Table View */}
+                    {ordersViewMode === "table" && (
+                      <div className="border rounded-lg bg-white overflow-hidden">
+                        <div className="overflow-x-auto">
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead className="text-xs sm:text-sm w-20">№</TableHead>
+                                <TableHead className="text-xs sm:text-sm">Клиент</TableHead>
+                                <TableHead className="text-xs sm:text-sm w-24">Статус</TableHead>
+                                <TableHead className="text-xs sm:text-sm w-20">Сумма</TableHead>
+                                <TableHead className="text-xs sm:text-sm hidden md:table-cell w-24">Дата</TableHead>
+                                <TableHead className="text-xs sm:text-sm hidden lg:table-cell w-32">Доставка</TableHead>
+                                <TableHead className="text-xs sm:text-sm w-24">Действия</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {ordersResponse.data.map((order: any) => (
+                                <TableRow key={order.id} className="hover:bg-gray-50">
+                                  <TableCell className="font-bold text-xs sm:text-sm text-orange-600">#{order.id}</TableCell>
+                                  <TableCell className="text-xs sm:text-sm">
+                                    <div className="space-y-1">
+                                      <div className="font-medium flex items-center gap-2">
+                                        <User className="h-3 w-3 text-gray-400" />
+                                        {order.user?.firstName && order.user?.lastName 
+                                          ? `${order.user.firstName} ${order.user.lastName}`
+                                          : order.user?.email || "—"
+                                        }
+                                      </div>
+                                      {order.customerPhone && (
+                                        <div className="text-gray-500 text-xs flex items-center gap-1">
+                                          <Phone className="h-3 w-3" />
+                                          {order.customerPhone}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </TableCell>
+                                  <TableCell>
+                                    <Select
+                                      value={order.status}
+                                      onValueChange={(newStatus) => {
+                                        updateOrderStatusMutation.mutate({ orderId: order.id, status: newStatus });
+                                      }}
+                                    >
+                                      <SelectTrigger className="w-full h-8 text-xs">
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="pending">Ожидает</SelectItem>
+                                        <SelectItem value="confirmed">Подтвержден</SelectItem>
+                                        <SelectItem value="preparing">Готовится</SelectItem>
+                                        <SelectItem value="ready">Готов</SelectItem>
+                                        <SelectItem value="delivered">Доставлен</SelectItem>
+                                        <SelectItem value="cancelled">Отменен</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </TableCell>
+                                  <TableCell className="font-medium text-xs sm:text-sm">
+                                    {formatCurrency(order.totalAmount)}
+                                  </TableCell>
+                                  <TableCell className="text-xs sm:text-sm hidden md:table-cell">
+                                    <div className="flex items-center gap-1">
+                                      <Calendar className="h-3 w-3 text-gray-400" />
+                                      {new Date(order.createdAt).toLocaleDateString('ru-RU')}
+                                    </div>
+                                  </TableCell>
+                                  <TableCell className="text-xs hidden lg:table-cell">
+                                    {order.deliveryDate && order.deliveryTime ? (
+                                      <div className="space-y-1">
+                                        <div className="font-medium flex items-center gap-1">
+                                          <Calendar className="h-3 w-3 text-gray-400" />
+                                          {order.deliveryDate}
+                                        </div>
+                                        <div className="text-gray-500 flex items-center gap-1">
+                                          <Clock className="h-3 w-3" />
+                                          {order.deliveryTime}
+                                        </div>
+                                        {order.deliveryAddress && (
+                                          <div className="text-gray-500 flex items-center gap-1">
+                                            <MapPin className="h-3 w-3" />
+                                            {order.deliveryAddress}
+                                          </div>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <span className="text-gray-400">Не указано</span>
+                                    )}
+                                  </TableCell>
+                                  <TableCell>
+                                    <div className="flex gap-1">
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="text-xs h-8"
+                                        onClick={() => {
+                                          setEditingOrder(order);
+                                          setIsOrderFormOpen(true);
+                                        }}
+                                      >
+                                        <Eye className="h-3 w-3 mr-1" />
+                                        Детали
+                                      </Button>
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Kanban View */}
+                    {ordersViewMode === "kanban" && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {/* Pending Column */}
+                        <div className="bg-yellow-50 rounded-lg p-4">
+                          <h3 className="font-semibold text-sm mb-3 text-yellow-800 flex items-center gap-2">
+                            <Clock className="h-4 w-4" />
+                            Ожидает ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
+                          </h3>
+                          <div className="space-y-3">
+                            {ordersResponse.data.filter((order: any) => order.status === 'pending').map((order: any) => (
+                              <OrderCard key={order.id} order={order} onEdit={(order) => {
+                                setEditingOrder(order);
+                                setIsOrderFormOpen(true);
+                              }} onStatusChange={updateOrderStatusMutation.mutate} />
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Confirmed Column */}
+                        <div className="bg-blue-50 rounded-lg p-4">
+                          <h3 className="font-semibold text-sm mb-3 text-blue-800 flex items-center gap-2">
+                            <ShoppingCart className="h-4 w-4" />
+                            Подтвержден ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
+                          </h3>
+                          <div className="space-y-3">
+                            {ordersResponse.data.filter((order: any) => order.status === 'confirmed').map((order: any) => (
+                              <OrderCard key={order.id} order={order} onEdit={(order) => {
+                                setEditingOrder(order);
+                                setIsOrderFormOpen(true);
+                              }} onStatusChange={updateOrderStatusMutation.mutate} />
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Preparing Column */}
+                        <div className="bg-orange-50 rounded-lg p-4">
+                          <h3 className="font-semibold text-sm mb-3 text-orange-800 flex items-center gap-2">
+                            <Utensils className="h-4 w-4" />
+                            Готовится ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
+                          </h3>
+                          <div className="space-y-3">
+                            {ordersResponse.data.filter((order: any) => order.status === 'preparing').map((order: any) => (
+                              <OrderCard key={order.id} order={order} onEdit={(order) => {
+                                setEditingOrder(order);
+                                setIsOrderFormOpen(true);
+                              }} onStatusChange={updateOrderStatusMutation.mutate} />
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Ready Column */}
+                        <div className="bg-green-50 rounded-lg p-4">
+                          <h3 className="font-semibold text-sm mb-3 text-green-800 flex items-center gap-2">
+                            <Package className="h-4 w-4" />
+                            Готов ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
+                          </h3>
+                          <div className="space-y-3">
+                            {ordersResponse.data.filter((order: any) => order.status === 'ready').map((order: any) => (
+                              <OrderCard key={order.id} order={order} onEdit={(order) => {
+                                setEditingOrder(order);
+                                setIsOrderFormOpen(true);
+                              }} onStatusChange={updateOrderStatusMutation.mutate} />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Orders Pagination */}
+                    {ordersResponse?.totalPages > 1 && (
+                      <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50 mt-4">
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <span>Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setOrdersPage(1)}
+                            disabled={ordersResponse.page === 1}
+                            title="Первая страница"
+                          >
+                            ⟨⟨
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
+                            disabled={ordersResponse.page === 1}
+                            title="Предыдущая страница"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          <span className="text-sm font-medium px-3 py-1 bg-white border rounded">
+                            {ordersResponse.page} из {ordersResponse.totalPages}
+                          </span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
+                            disabled={ordersResponse.page === ordersResponse.totalPages}
+                            title="Следующая страница"
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setOrdersPage(ordersResponse.totalPages)}
+                            disabled={ordersResponse.page === ordersResponse.totalPages}
+                            title="Последняя страница"
+                          >
+                            ⟩⟩
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="text-center py-8">
                     <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Нет заказов</h3>
-                    <p className="text-gray-500 text-sm">Заказы будут отображаться здесь</p>
-                  </div>
-                )}
-                
-                {/* Orders Pagination */}
-                {ordersTotalPages > 1 && (
-                  <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
-                    <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <span>Показано {((ordersPage - 1) * itemsPerPage) + 1}-{Math.min(ordersPage * itemsPerPage, ordersTotal)} из {ordersTotal}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setOrdersPage(1)}
-                        disabled={ordersPage === 1}
-                        title="Первая страница"
-                      >
-                        ⟨⟨
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
-                        disabled={ordersPage === 1}
-                        title="Предыдущая страница"
-                      >
-                        <ChevronLeft className="h-4 w-4" />
-                      </Button>
-                      <span className="text-sm font-medium px-3 py-1 bg-white border rounded">
-                        {ordersPage} из {ordersTotalPages}
-                      </span>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setOrdersPage(prev => Math.min(ordersTotalPages, prev + 1))}
-                        disabled={ordersPage === ordersTotalPages}
-                        title="Следующая страница"
-                      >
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setOrdersPage(ordersTotalPages)}
-                        disabled={ordersPage === ordersTotalPages}
-                        title="Последняя страница"
-                      >
-                        ⟩⟩
-                      </Button>
-                    </div>
+                    <p className="text-gray-500 text-sm">
+                      {ordersStatusFilter === "active" ? "Активные заказы будут отображаться здесь" :
+                       ordersStatusFilter === "delivered" ? "Доставленные заказы будут отображаться здесь" :
+                       ordersStatusFilter === "cancelled" ? "Отмененные заказы будут отображаться здесь" :
+                       "Заказы будут отображаться здесь"}
+                    </p>
                   </div>
                 )}
               </CardContent>
