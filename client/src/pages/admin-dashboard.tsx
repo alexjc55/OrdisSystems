@@ -2120,7 +2120,7 @@ export default function AdminDashboard() {
                                 <TableHead className="text-xs sm:text-sm">Клиент</TableHead>
                                 <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-24">Статус</TableHead>
                                 <TableHead className="text-xs sm:text-sm w-20">Сумма</TableHead>
-                                <TableHead className="text-xs sm:text-sm hidden md:table-cell w-20">Дата</TableHead>
+                                <TableHead className="text-xs sm:text-sm hidden md:table-cell w-32">Дата и время</TableHead>
                                 <TableHead className="text-xs sm:text-sm w-12">Действия</TableHead>
                               </TableRow>
                             </TableHeader>
@@ -2244,9 +2244,25 @@ export default function AdminDashboard() {
                                     })()}
                                   </TableCell>
                                   <TableCell className="text-xs sm:text-sm hidden md:table-cell">
-                                    <div className="flex items-center gap-1">
-                                      <Calendar className="h-3 w-3 text-gray-400" />
-                                      {new Date(order.createdAt).toLocaleDateString('ru-RU')}
+                                    <div className="space-y-1">
+                                      <div className="flex items-center gap-1">
+                                        <Calendar className="h-3 w-3 text-gray-400" />
+                                        <span className="font-medium">Создан:</span>
+                                      </div>
+                                      <div className="text-xs text-gray-600">
+                                        {new Date(order.createdAt).toLocaleDateString('ru-RU')} {new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                                      </div>
+                                      {order.deliveryDate && (
+                                        <>
+                                          <div className="flex items-center gap-1 mt-2">
+                                            <Clock className="h-3 w-3 text-blue-400" />
+                                            <span className="font-medium text-blue-600">Доставка:</span>
+                                          </div>
+                                          <div className="text-xs text-blue-600">
+                                            {new Date(order.deliveryDate).toLocaleDateString('ru-RU')} {order.deliveryTime || ''}
+                                          </div>
+                                        </>
+                                      )}
                                     </div>
                                   </TableCell>
                                   <TableCell>
