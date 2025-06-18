@@ -3901,12 +3901,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </FormItem>
           )}
         />
+        </div>
 
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium flex items-center gap-2">
-            <Clock className="h-4 w-4" />
-            Часы работы
-          </h3>
+        {/* Часы работы */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 pb-2 border-b">
+            <Clock className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Часы работы</h3>
+          </div>
           
           <FormField
             control={form.control}
@@ -4032,6 +4034,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </div>
         </div>
 
+        {/* Доставка и оплата */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 pb-2 border-b">
+            <Truck className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Доставка и оплата</h3>
+          </div>
+
         <FormField
           control={form.control}
           name="deliveryInfo"
@@ -4073,6 +4082,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </FormItem>
           )}
         />
+        </div>
+
+        {/* Настройки отображения */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 pb-2 border-b">
+            <Eye className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Настройки отображения</h3>
+          </div>
 
         <FormField
           control={form.control}
@@ -4095,9 +4112,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           )}
         />
 
-        {/* Home Page Display Settings */}
-        <div className="space-y-4 pt-6 border-t">
-          <h3 className="text-lg font-medium">Настройки отображения главной страницы</h3>
+        {/* Переключатели отображения */}
+        <div className="space-y-4">
+          <h4 className="text-sm font-medium text-gray-700">Настройки отображения главной страницы</h4>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
@@ -4212,9 +4229,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </div>
         </div>
 
-        {/* Bottom Banners Settings */}
-        <div className="space-y-4 pt-6 border-t">
-          <h3 className="text-lg font-medium">Нижние баннеры</h3>
+        {/* Баннеры */}
+        <div className="space-y-4">
+          <h4 className="text-sm font-medium text-gray-700">Нижние баннеры</h4>
           
           <FormField
             control={form.control}
@@ -4340,12 +4357,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </div>
           )}
         </div>
+        </div>
 
         {/* HTML/JS Code Injection Section */}
-        <div className="space-y-6 border-t pt-6">
-          <div className="flex items-center gap-2">
-            <div className="text-lg font-semibold">Код отслеживания</div>
-            <div className="text-sm text-gray-500">(Facebook Pixel, Google Analytics, и т.д.)</div>
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 pb-2 border-b">
+            <MessageCircle className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Код отслеживания</h3>
+            <span className="text-sm text-gray-500">(Facebook Pixel, Google Analytics, и т.д.)</span>
           </div>
 
           <FormField
