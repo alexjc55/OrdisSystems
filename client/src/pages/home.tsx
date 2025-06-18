@@ -368,7 +368,7 @@ export default function Home() {
                           {specialOffers.map((product) => (
                             <CarouselItem 
                               key={product.id} 
-                              className="pr-3 basis-1/3 flex flex-col"
+                              className="pr-1 basis-1/3 flex flex-col"
                             >
                               <div className="relative flex-1 flex">
                                 <div className="transform scale-90 origin-center w-full">
@@ -399,8 +399,8 @@ export default function Home() {
                               onClick={() => goToSlide(index)}
                               className={`w-2 h-2 rounded-full transition-colors ${
                                 index === currentSlide 
-                                  ? 'bg-primary' 
-                                  : 'bg-gray-300 hover:bg-primary'
+                                  ? 'bg-orange-500' 
+                                  : 'bg-gray-300 hover:bg-orange-400'
                               }`}
                               aria-label={`Go to slide ${index + 1}`}
                             />
