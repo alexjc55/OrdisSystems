@@ -354,15 +354,10 @@ button[role="switch"]:not(.carousel-dot),
     border-radius: 50% !important;
   }
 
-  /* Mobile dropdown fix - prevent CSS transforms and clipping */
-  .admin-dashboard [data-radix-tabs-content],
-  .admin-dashboard .bg-card,
-  .admin-dashboard .border {
-    transform: none !important;
-    will-change: auto !important;
-    contain: none !important;
-    clip-path: none !important;
-    mask: none !important;
+  /* Mobile dropdown positioning fix */
+  [data-radix-select-content] {
+    position: fixed !important;
+    z-index: 50 !important;
   }
 }
 
