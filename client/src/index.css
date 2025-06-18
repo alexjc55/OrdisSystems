@@ -280,7 +280,55 @@ button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root])
   background-color: rgb(34 197 94) !important; /* green-500 */
 }
 
-/* Let the switch component handle its own styling without interference */
+/* Protect switch components from carousel dot styling */
+[data-radix-switch-root] {
+  width: 44px !important;
+  height: 24px !important;
+  border-radius: 9999px !important;
+  min-width: 44px !important;
+  min-height: 24px !important;
+  max-width: none !important;
+  max-height: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 2px solid transparent !important;
+  background-color: hsl(0, 0%, 75%) !important;
+  transition: background-color 0.2s ease !important;
+}
+
+[data-radix-switch-root][data-state="checked"] {
+  background-color: rgb(34 197 94) !important;
+}
+
+[data-radix-switch-thumb] {
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  background-color: white !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  transition: transform 0.2s ease !important;
+  transform: translateX(0px) !important;
+}
+
+[data-radix-switch-root][data-state="checked"] [data-radix-switch-thumb] {
+  transform: translateX(20px) !important;
+}
+
+/* Mobile specific switch fixes */
+@media (max-width: 768px) {
+  [data-radix-switch-root] {
+    width: 44px !important;
+    height: 24px !important;
+    border-radius: 9999px !important;
+    flex-shrink: 0 !important;
+  }
+  
+  [data-radix-switch-thumb] {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 50% !important;
+  }
+}
 
 /* Navigation menu items */
 nav a, nav button:not(.bg-orange-500):not(.border-orange-500) {
