@@ -315,9 +315,16 @@ export default function Home() {
               {/* Special Offers Section */}
               {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && (
                 <div className="mt-12">
-                  <div className="flex items-center mb-6">
-                    <span className="mr-3 text-2xl">🔥</span>
-                    <h2 className="text-2xl font-poppins font-bold text-gray-900">Специальные предложения</h2>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center">
+                      <span className="mr-3 text-2xl">🔥</span>
+                      <h2 className="text-2xl font-poppins font-bold text-gray-900">Специальные предложения</h2>
+                    </div>
+                    <div className="hidden md:flex items-center text-sm text-gray-500">
+                      <span className="mr-2">Листайте</span>
+                      <ChevronLeft className="w-4 h-4 mr-1" />
+                      <ChevronRight className="w-4 h-4" />
+                    </div>
                   </div>
                   
                   {allProductsLoading ? (
@@ -334,12 +341,12 @@ export default function Home() {
                       ))}
                     </div>
                   ) : (
-                    <div className="w-full">
+                    <div className="w-full relative">
                       <Carousel
                         opts={{
                           align: "start",
                           loop: false,
-                          slidesToScroll: 1,
+                          slidesToScroll: 3,
                         }}
                         className="w-full mx-auto"
                       >
@@ -347,24 +354,43 @@ export default function Home() {
                           {specialOffers.map((product) => (
                             <CarouselItem 
                               key={product.id} 
-                              className="pr-4 basis-full md:basis-1/2 lg:basis-1/3"
+                              className="pr-3 basis-1/3"
                             >
-                              <div className="relative">
+                              <div className="relative scale-90 origin-center">
                                 <ProductCard 
                                   product={product} 
                                   onCategoryClick={handleCategorySelect}
                                 />
-                                <Badge className="absolute top-3 left-3 bg-orange-500 text-white z-10">
-                                  <Star className="w-3 h-3 mr-1" />
+                                <Badge className="absolute top-2 left-2 bg-orange-500 text-white z-10 text-xs">
+                                  <Star className="w-2 h-2 mr-1" />
                                   {storeSettings?.discountBadgeText || "Скидка"}
                                 </Badge>
                               </div>
                             </CarouselItem>
                           ))}
                         </CarouselContent>
-                        <CarouselPrevious className="hidden lg:flex" />
-                        <CarouselNext className="hidden lg:flex" />
+                        <CarouselPrevious className="flex" />
+                        <CarouselNext className="flex" />
                       </Carousel>
+                      
+                      {/* Carousel indicators */}
+                      <div className="flex justify-center items-center mt-4 space-x-4">
+                        {/* Dots indicator */}
+                        <div className="flex space-x-2">
+                          {Array.from({ length: Math.ceil(specialOffers.length / 3) }).map((_, index) => (
+                            <div 
+                              key={index}
+                              className="w-2 h-2 rounded-full bg-gray-300 hover:bg-primary cursor-pointer transition-colors"
+                            />
+                          ))}
+                        </div>
+                        
+                        {/* Mobile swipe hint */}
+                        <div className="md:hidden flex items-center text-xs text-gray-400">
+                          <span className="mr-1">👆</span>
+                          <span>Свайпайте</span>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
