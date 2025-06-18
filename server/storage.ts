@@ -23,6 +23,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 
 // Pagination types
 export interface PaginationParams {
@@ -303,8 +304,7 @@ export class DatabaseStorage implements IStorage {
       conditions.push(
         or(
           like(orders.customerPhone, `%${search}%`),
-          like(orders.deliveryAddress, `%${search}%`),
-          like(orders.notes, `%${search}%`)
+          like(orders.deliveryAddress, `%${search}%`)
         )
       );
     }
