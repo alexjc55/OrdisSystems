@@ -410,6 +410,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const id = parseInt(req.params.id);
       const { items, totalAmount, ...orderData } = req.body;
       
+      console.log("Order update request body:", JSON.stringify(req.body, null, 2));
+      console.log("Order data being updated:", JSON.stringify(orderData, null, 2));
+      
       // If items are provided, this is a comprehensive update
       if (items) {
         console.log("Updating order items:", JSON.stringify(items, null, 2));
