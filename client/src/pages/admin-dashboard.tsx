@@ -1881,6 +1881,26 @@ export default function AdminDashboard() {
           }
         }}
       />
+
+      {/* Cancellation Reason Dialog */}
+      <CancellationReasonDialog
+        open={isCancellationDialogOpen}
+        orderId={orderToCancel}
+        onClose={() => {
+          setIsCancellationDialogOpen(false);
+          setOrderToCancel(null);
+        }}
+        onConfirm={(reason) => {
+          if (orderToCancel) {
+            updateOrderStatusMutation.mutate({
+              orderId: orderToCancel,
+              status: 'cancelled',
+              cancellationReason: reason
+            });
+          }
+        }}
+        cancellationReasons={storeSettings?.cancellationReasons || []}
+      />
     </div>
   );
 }
@@ -3163,5 +3183,80 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         </div>
       </form>
     </Form>
+  );
+}
+
+// Cancellation Reason Dialog Component
+function CancellationReasonDialog({ 
+  open, 
+  orderId, 
+  onClose, 
+  onConfirm, 
+  cancellationReasons 
+}: {
+  open: boolean;
+  orderId: number | null;
+  onClose: () => void;
+  onConfirm: (reason: string) => void;
+  cancellationReasons: string[];
+}) {
+  const [selectedReason, setSelectedReason] = useState<string>("");
+
+  useEffect(() => {
+    if (open) {
+      setSelectedReason("");
+    }
+  }, [open]);
+
+  const handleConfirm = () => {
+    if (selectedReason) {
+      onConfirm(selectedReason);
+      onClose();
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md mx-4">
+        <DialogHeader>
+          <DialogTitle className="text-lg">Причина отмены заказа</DialogTitle>
+          <DialogDescription className="text-sm">
+            Выберите причину отмены заказа #{orderId}
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="space-y-3">
+          {cancellationReasons.map((reason, index) => (
+            <div key={index} className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id={`reason-${index}`}
+                name="cancellation-reason"
+                value={reason}
+                checked={selectedReason === reason}
+                onChange={(e) => setSelectedReason(e.target.value)}
+                className="text-orange-500 focus:ring-orange-500"
+              />
+              <label htmlFor={`reason-${index}`} className="text-sm cursor-pointer">
+                {reason}
+              </label>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex justify-end space-x-2 pt-4">
+          <Button variant="outline" onClick={onClose} className="text-sm">
+            Отмена
+          </Button>
+          <Button 
+            onClick={handleConfirm} 
+            disabled={!selectedReason}
+            className="text-sm bg-red-600 text-white hover:bg-red-700"
+          >
+            Отменить заказ
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
