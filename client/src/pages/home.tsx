@@ -421,7 +421,7 @@ export default function Home() {
                           {specialOffers.map((product) => (
                             <CarouselItem 
                               key={product.id} 
-                              className="min-w-0 shrink-0 grow-0 basis-full md:basis-1/2 lg:basis-1/3 flex flex-col flex-shrink-0 pl-[0px] pr-[0px]"
+                              className="min-w-0 shrink-0 grow-0 basis-full md:basis-1/3 flex flex-col flex-shrink-0 pl-[0px] pr-[0px]"
                             >
                               <div className="relative flex-1 flex">
                                 <div className="transform scale-90 origin-center w-full relative">
@@ -460,11 +460,7 @@ export default function Home() {
                           ))}
                         </div>
                         
-                        {/* Mobile swipe hint */}
-                        <div className="md:hidden flex items-center text-xs text-gray-400">
-                          <span className="mr-1">👆</span>
-                          <span>Свайпайте</span>
-                        </div>
+
                       </div>
                     </div>
                   )}
