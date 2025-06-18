@@ -21,7 +21,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { formatCurrency, getUnitLabel, type ProductUnit } from "@/lib/currency";
-import { insertStoreSettingsSchema } from "@shared/schema";
+import { insertStoreSettingsSchema, type StoreSettings } from "@shared/schema";
 import { 
   Package, 
   Plus, 
@@ -65,42 +65,11 @@ const categorySchema = z.object({
   icon: z.string().default("🍽️"),
 });
 
-const storeSettingsSchema = z.object({
-  storeName: z.string().min(1, "Название магазина обязательно"),
-  welcomeTitle: z.string().optional(),
-  storeDescription: z.string().optional(),
-  logoUrl: z.string().optional(),
-  bannerImage: z.string().optional(),
-  contactPhone: z.string().optional(),
+// Use the imported store settings schema with extended validation
+const storeSettingsSchema = insertStoreSettingsSchema.extend({
   contactEmail: z.string().email("Неверный формат email").optional().or(z.literal("")),
-  address: z.string().optional(),
-  workingHours: z.object({
-    monday: z.string().optional(),
-    tuesday: z.string().optional(),
-    wednesday: z.string().optional(),
-    thursday: z.string().optional(),
-    friday: z.string().optional(),
-    saturday: z.string().optional(),
-    sunday: z.string().optional(),
-  }).optional(),
-  deliveryInfo: z.string().optional(),
-  paymentInfo: z.string().optional(),
-  aboutUsPhotos: z.array(z.string()).optional(),
-  deliveryFee: z.string().optional(),
-  minOrderAmount: z.string().optional(),
-  discountBadgeText: z.string().optional(),
-  showBannerImage: z.boolean().optional(),
-  showTitleDescription: z.boolean().optional(),
-  showInfoBlocks: z.boolean().optional(),
-  showSpecialOffers: z.boolean().optional(),
-  showCategoryMenu: z.boolean().optional(),
-  weekStartDay: z.enum(["monday", "sunday"]).default("monday"),
-  bottomBanner1Url: z.string().optional(),
   bottomBanner1Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
-  bottomBanner2Url: z.string().optional(),
   bottomBanner2Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
-  showBottomBanners: z.boolean().optional(),
-  defaultItemsPerPage: z.number().int().min(1).max(1000).default(10),
 });
 
 export default function AdminDashboard() {
@@ -178,14 +147,18 @@ export default function AdminDashboard() {
   }, [user, toast]);
 
   // Data queries with pagination
+  const { data: storeSettings, isLoading: storeSettingsLoading } = useQuery<StoreSettings>({
+    queryKey: ["/api/settings"]
+  });
+
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["/api/categories"]
   });
 
   const { data: productsResponse, isLoading: productsLoading } = useQuery({
-    queryKey: ["/api/admin/products", productsPage, searchQuery, selectedCategoryFilter, selectedStatusFilter, sortField, sortDirection],
+    queryKey: ["/api/admin/products", productsPage, searchQuery, selectedCategoryFilter, selectedStatusFilter, sortField, sortDirection, storeSettings?.defaultItemsPerPage],
     queryFn: async () => {
-      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
+      const limit = storeSettings?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: productsPage.toString(),
         limit: limit.toString(),
@@ -199,12 +172,13 @@ export default function AdminDashboard() {
       if (!response.ok) throw new Error('Failed to fetch products');
       return response.json();
     },
+    enabled: !!storeSettings,
   });
 
   const { data: ordersResponse, isLoading: ordersLoading } = useQuery({
-    queryKey: ["/api/admin/orders", ordersPage, searchQuery, selectedStatusFilter],
+    queryKey: ["/api/admin/orders", ordersPage, searchQuery, selectedStatusFilter, storeSettings?.defaultItemsPerPage],
     queryFn: async () => {
-      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
+      const limit = storeSettings?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: ordersPage.toString(),
         limit: limit.toString(),
@@ -217,12 +191,13 @@ export default function AdminDashboard() {
       if (!response.ok) throw new Error('Failed to fetch orders');
       return response.json();
     },
+    enabled: !!storeSettings,
   });
 
   const { data: usersResponse, isLoading: usersLoading } = useQuery({
-    queryKey: ["/api/admin/users", usersPage, searchQuery],
+    queryKey: ["/api/admin/users", usersPage, searchQuery, storeSettings?.defaultItemsPerPage],
     queryFn: async () => {
-      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
+      const limit = storeSettings?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: usersPage.toString(),
         limit: limit.toString(),
@@ -232,14 +207,11 @@ export default function AdminDashboard() {
       if (!response.ok) throw new Error('Failed to fetch users');
       return response.json();
     },
-  });
-
-  const { data: storeSettings, isLoading: storeSettingsLoading } = useQuery({
-    queryKey: ["/api/settings"]
+    enabled: !!storeSettings,
   });
 
   // Pagination configuration
-  const itemsPerPage = (storeSettings as any)?.defaultItemsPerPage || 10;
+  const itemsPerPage = storeSettings?.defaultItemsPerPage || 10;
 
   // Extract data and pagination info
   const productsData = productsResponse?.data || [];
