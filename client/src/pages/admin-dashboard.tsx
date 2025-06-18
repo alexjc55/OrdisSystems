@@ -24,12 +24,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { formatCurrency, getUnitLabel, type ProductUnit } from "@/lib/currency";
 import { insertStoreSettingsSchema, type StoreSettings } from "@shared/schema";
+import OrganizedStoreSettings from "@/components/admin/organized-store-settings";
 import { 
   Package, 
   Plus, 
   Edit2, 
   Trash2,
-  ChevronDown, 
+ 
   Users, 
   ShoppingCart, 
   Utensils,
@@ -38,7 +39,6 @@ import {
   Filter,
   Menu,
   ChevronUp,
-  ChevronDown,
   Store,
   Upload,
   Clock,
@@ -2791,11 +2791,13 @@ export default function AdminDashboard() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <StoreSettingsForm
-                    storeSettings={storeSettings}
-                    onSubmit={(data) => updateStoreSettingsMutation.mutate(data)}
-                    isLoading={updateStoreSettingsMutation.isPending}
-                  />
+                  {storeSettings && (
+                    <OrganizedStoreSettings
+                      storeSettings={storeSettings}
+                      onSubmit={(data) => updateStoreSettingsMutation.mutate(data)}
+                      isLoading={updateStoreSettingsMutation.isPending}
+                    />
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -3618,7 +3620,18 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               </FormItem>
             )}
           />
-        </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Additional Settings */}
+        <Collapsible>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-gray-50 hover:bg-gray-100 rounded-lg">
+            <h3 className="text-lg font-semibold text-gray-900">Дополнительные настройки</h3>
+            <ChevronDown className="h-5 w-5 text-gray-500" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-4 p-4 border border-gray-200 rounded-lg">
+            <div className="space-y-6">
 
         <FormField
           control={form.control}
