@@ -95,12 +95,59 @@ export default function CartOverlay() {
 
   const createOrderMutation = useMutation({
     mutationFn: async (orderData: any) => {
+      // Save user data if not already saved
+      if (user) {
+        const promises = [];
+        
+        // Save address if user doesn't have any saved addresses
+        if (userAddresses.length === 0 && deliveryAddress.trim()) {
+          promises.push(
+            apiRequest("POST", "/api/addresses", {
+              label: "Адрес доставки",
+              address: deliveryAddress.trim(),
+              isDefault: true
+            }).catch(error => console.log("Failed to save address:", error))
+          );
+        }
+        
+        // Save phone if user doesn't have one
+        if (!user.phone && customerPhone.trim()) {
+          promises.push(
+            apiRequest("PATCH", "/api/profile", {
+              phone: customerPhone.trim()
+            }).catch(error => console.log("Failed to save phone:", error))
+          );
+        }
+        
+        // Wait for all saves to complete
+        if (promises.length > 0) {
+          await Promise.all(promises);
+          // Refresh user data and addresses
+          queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
+          queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        }
+      }
+      
+      // Create the order
       await apiRequest("POST", "/api/orders", orderData);
     },
     onSuccess: () => {
+      const savedData = [];
+      if (user && userAddresses.length === 0 && deliveryAddress.trim()) {
+        savedData.push("адрес доставки");
+      }
+      if (user && !user.phone && customerPhone.trim()) {
+        savedData.push("телефон");
+      }
+      
+      let description = "Ваш заказ успешно оформлен и передан в обработку";
+      if (savedData.length > 0) {
+        description += `. Ваш ${savedData.join(" и ")} сохранен в профиле для будущих заказов`;
+      }
+      
       toast({
         title: "Заказ создан",
-        description: "Ваш заказ успешно оформлен и передан в обработку",
+        description,
       });
       clearCart();
       setCartOpen(false);
