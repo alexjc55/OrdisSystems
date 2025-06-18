@@ -688,17 +688,7 @@ export default function Home() {
       {/* Cart Overlay */}
       <CartSidebar />
 
-      {/* Admin Floating Actions */}
-      {(user?.role === 'admin') && (
-        <div className="fixed bottom-6 right-6 space-y-3">
-          <Button
-            onClick={() => window.location.href = '/admin'}
-            className="w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 shadow-lg"
-          >
-            <Settings className="h-6 w-6" />
-          </Button>
-        </div>
-      )}
+
     </div>
   );
 }
