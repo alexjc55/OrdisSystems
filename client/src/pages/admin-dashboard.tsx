@@ -105,8 +105,7 @@ export default function AdminDashboard() {
   const [editingCategory, setEditingCategory] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
-  const [selectedAvailabilityFilter, setSelectedAvailabilityFilter] = useState("all");
-  const [selectedDiscountFilter, setSelectedDiscountFilter] = useState("all");
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState("all");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
@@ -400,15 +399,12 @@ export default function AdminDashboard() {
       const matchesCategory = selectedCategoryFilter === "all" || 
         product.categoryId === parseInt(selectedCategoryFilter);
       
-      const matchesAvailability = selectedAvailabilityFilter === "all" ||
-        (selectedAvailabilityFilter === "available" && product.isAvailable) ||
-        (selectedAvailabilityFilter === "unavailable" && !product.isAvailable);
+      const matchesStatus = selectedStatusFilter === "all" ||
+        (selectedStatusFilter === "available" && product.isAvailable) ||
+        (selectedStatusFilter === "unavailable" && !product.isAvailable) ||
+        (selectedStatusFilter === "with_discount" && (product.isSpecialOffer || (product.discountValue && parseFloat(product.discountValue) > 0)));
       
-      const matchesDiscount = selectedDiscountFilter === "all" ||
-        (selectedDiscountFilter === "with_discount" && (product.isSpecialOffer || (product.discountValue && parseFloat(product.discountValue) > 0))) ||
-        (selectedDiscountFilter === "without_discount" && !product.isSpecialOffer && (!product.discountValue || parseFloat(product.discountValue) === 0));
-      
-      return matchesSearch && matchesCategory && matchesAvailability && matchesDiscount;
+      return matchesSearch && matchesCategory && matchesStatus;
     })
     .sort((a: any, b: any) => {
       let aValue, bValue;
@@ -529,29 +525,17 @@ export default function AdminDashboard() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="relative min-w-[150px]">
+                    <div className="relative min-w-[160px]">
                       <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Select value={selectedAvailabilityFilter} onValueChange={setSelectedAvailabilityFilter}>
+                      <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
                         <SelectTrigger className="pl-10 text-sm">
-                          <SelectValue placeholder="Наличие" />
+                          <SelectValue placeholder="Статус товара" />
                         </SelectTrigger>
                         <SelectContent className="bg-white">
                           <SelectItem value="all">Все товары</SelectItem>
                           <SelectItem value="available">Доступные</SelectItem>
                           <SelectItem value="unavailable">Недоступные</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="relative min-w-[150px]">
-                      <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Select value={selectedDiscountFilter} onValueChange={setSelectedDiscountFilter}>
-                        <SelectTrigger className="pl-10 text-sm">
-                          <SelectValue placeholder="Скидки" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white">
-                          <SelectItem value="all">Все товары</SelectItem>
                           <SelectItem value="with_discount">Со скидкой</SelectItem>
-                          <SelectItem value="without_discount">Без скидки</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
