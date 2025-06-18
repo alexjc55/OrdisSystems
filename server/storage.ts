@@ -22,7 +22,26 @@ import {
   type InsertStoreSettings,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, like, sql, not, ne } from "drizzle-orm";
+import { eq, desc, and, like, sql, not, ne, count, asc } from "drizzle-orm";
+
+// Pagination types
+export interface PaginationParams {
+  page: number;
+  limit: number;
+  search?: string;
+  categoryId?: number;
+  status?: string;
+  sortField?: string;
+  sortDirection?: string;
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
 
 // Interface for storage operations
 export interface IStorage {
@@ -39,6 +58,7 @@ export interface IStorage {
 
   // Product operations
   getProducts(categoryId?: number): Promise<ProductWithCategory[]>;
+  getProductsPaginated(params: PaginationParams): Promise<PaginatedResult<ProductWithCategory>>;
   getProductById(id: number): Promise<ProductWithCategory | undefined>;
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product>;
@@ -47,9 +67,13 @@ export interface IStorage {
 
   // Order operations
   getOrders(userId?: string): Promise<OrderWithItems[]>;
+  getOrdersPaginated(params: PaginationParams): Promise<PaginatedResult<OrderWithItems>>;
   getOrderById(id: number): Promise<OrderWithItems | undefined>;
   createOrder(order: InsertOrder, items: InsertOrderItem[]): Promise<Order>;
   updateOrderStatus(id: number, status: "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "cancelled"): Promise<Order>;
+
+  // User operations with pagination
+  getUsersPaginated(params: PaginationParams): Promise<PaginatedResult<User>>;
 
   // Store settings
   getStoreSettings(): Promise<StoreSettings | undefined>;
@@ -138,6 +162,69 @@ export class DatabaseStorage implements IStorage {
       where: whereClause,
       orderBy: [products.sortOrder, products.name],
     });
+  }
+
+  async getProductsPaginated(params: PaginationParams): Promise<PaginatedResult<ProductWithCategory>> {
+    const { page, limit, search, categoryId, status, sortField, sortDirection } = params;
+    const offset = (page - 1) * limit;
+
+    // Build where conditions
+    const conditions = [];
+    
+    if (search) {
+      conditions.push(like(products.name, `%${search}%`));
+    }
+    
+    if (categoryId) {
+      conditions.push(eq(products.categoryId, categoryId));
+    }
+    
+    if (status && status !== 'all') {
+      if (status === 'available') {
+        conditions.push(eq(products.isAvailable, true));
+      } else if (status === 'unavailable') {
+        conditions.push(eq(products.isAvailable, false));
+      }
+    }
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    // Build order by
+    let orderBy;
+    if (sortField === 'name') {
+      orderBy = sortDirection === 'desc' ? desc(products.name) : asc(products.name);
+    } else if (sortField === 'price') {
+      orderBy = sortDirection === 'desc' ? desc(products.price) : asc(products.price);
+    } else {
+      orderBy = asc(products.name);
+    }
+
+    // Get total count
+    const [totalResult] = await db
+      .select({ count: count() })
+      .from(products)
+      .where(whereClause);
+    
+    const total = totalResult?.count || 0;
+
+    // Get paginated data
+    const data = await db.query.products.findMany({
+      with: {
+        category: true,
+      },
+      where: whereClause,
+      orderBy,
+      limit,
+      offset,
+    });
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async getProductById(id: number): Promise<ProductWithCategory | undefined> {
