@@ -750,7 +750,13 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
           <div className="space-y-2 text-sm">
             <div><strong>№ заказа:</strong> #{order.id}</div>
             <div><strong>Дата создания:</strong> {new Date(order.createdAt).toLocaleString('ru-RU')}</div>
-            <div><strong>Сумма:</strong> {formatCurrency(order.totalAmount)}</div>
+            <div><strong>Сумма товаров:</strong> {formatCurrency(parseFloat(order.totalAmount) - parseFloat(order.deliveryFee || "0"))}</div>
+            <div><strong>Доставка:</strong> {
+              parseFloat(order.deliveryFee || "0") === 0 ? 
+                <span className="text-green-600 font-medium">Бесплатно</span> : 
+                formatCurrency(order.deliveryFee || "0")
+            }</div>
+            <div><strong>Итого:</strong> {formatCurrency(order.totalAmount)}</div>
             <div><strong>Клиент:</strong> {order.user?.firstName && order.user?.lastName 
               ? `${order.user.firstName} ${order.user.lastName}`
               : order.user?.email || "—"}</div>
@@ -2569,6 +2575,40 @@ export default function AdminDashboard() {
                                             </div>
                                             <div className="text-xs text-red-600 font-medium">
                                               скидка
+                                            </div>
+                                          </div>
+                                        );
+                                      }
+                                      
+                                      // Show detailed breakdown for orders with delivery fee
+                                      const deliveryFee = parseFloat(order.deliveryFee || "0");
+                                      const subtotal = parseFloat(order.totalAmount) - deliveryFee;
+                                      
+                                      if (deliveryFee > 0) {
+                                        return (
+                                          <div className="space-y-1">
+                                            <div className="text-xs text-gray-600">
+                                              Товары: {formatCurrency(subtotal)}
+                                            </div>
+                                            <div className="text-xs text-gray-600">
+                                              Доставка: {formatCurrency(deliveryFee)}
+                                            </div>
+                                            <div className="font-medium">
+                                              {formatCurrency(order.totalAmount)}
+                                            </div>
+                                          </div>
+                                        );
+                                      } else if (deliveryFee === 0 && order.deliveryFee !== undefined) {
+                                        return (
+                                          <div className="space-y-1">
+                                            <div className="text-xs text-gray-600">
+                                              Товары: {formatCurrency(subtotal)}
+                                            </div>
+                                            <div className="text-xs text-green-600">
+                                              Доставка: Бесплатно
+                                            </div>
+                                            <div className="font-medium">
+                                              {formatCurrency(order.totalAmount)}
                                             </div>
                                           </div>
                                         );
