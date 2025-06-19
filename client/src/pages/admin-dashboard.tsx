@@ -3235,9 +3235,9 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">Управление заказами</label>
                           <p className="text-xs text-gray-500">Просмотр и изменение статуса заказов</p>
                         </div>
-                        <Switch
+                        <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageOrders || false}
-                          onCheckedChange={(checked) => 
+                          onChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -3245,6 +3245,7 @@ export default function AdminDashboard() {
                               }
                             })
                           }
+                          bgColor="bg-blue-500"
                         />
                       </div>
                     </div>
@@ -3273,9 +3274,9 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">Управление пользователями</label>
                           <p className="text-xs text-gray-500">Редактирование и удаление пользователей</p>
                         </div>
-                        <Switch
+                        <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageUsers || false}
-                          onCheckedChange={(checked) => 
+                          onChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -3283,6 +3284,7 @@ export default function AdminDashboard() {
                               }
                             })
                           }
+                          bgColor="bg-blue-500"
                         />
                       </div>
                       
@@ -3291,9 +3293,9 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">Просмотр настроек</label>
                           <p className="text-xs text-gray-500">Доступ к настройкам магазина (только чтение)</p>
                         </div>
-                        <Switch
+                        <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canViewSettings || false}
-                          onCheckedChange={(checked) => 
+                          onChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -3301,6 +3303,7 @@ export default function AdminDashboard() {
                               }
                             })
                           }
+                          bgColor="bg-blue-500"
                         />
                       </div>
                       
@@ -3309,9 +3312,9 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">Управление настройками</label>
                           <p className="text-xs text-gray-500">Полный доступ к настройкам магазина</p>
                         </div>
-                        <Switch
+                        <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageSettings || false}
-                          onCheckedChange={(checked) => 
+                          onChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -3319,6 +3322,7 @@ export default function AdminDashboard() {
                               }
                             })
                           }
+                          bgColor="bg-blue-500"
                         />
                       </div>
                     </div>
