@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 
@@ -84,11 +84,24 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
-        {/* Hero Section */}
-        <div className="hidden lg:block space-y-6">
-          <div className="space-y-4">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex flex-col">
+      {/* Header with back button */}
+      <div className="p-4">
+        <Button
+          variant="ghost"
+          onClick={() => setLocation("/")}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          На главную
+        </Button>
+      </div>
+      
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
+          {/* Hero Section */}
+          <div className="hidden lg:block space-y-6">
+            <div className="space-y-4">
             <h1 className="text-4xl font-bold text-gray-900">
               {storeSettings?.authPageTitle || "Добро пожаловать в eDAHouse"}
             </h1>
@@ -290,6 +303,7 @@ export default function AuthPage() {
             </Tabs>
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );
