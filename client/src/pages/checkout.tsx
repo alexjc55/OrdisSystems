@@ -92,8 +92,11 @@ const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStar
   const dayName = dayNames[date.getDay()];
   const daySchedule = workingHours[dayName];
   
-  if (!daySchedule || daySchedule.trim() === '') {
-    return [];
+  if (!daySchedule || daySchedule.trim() === '' || daySchedule.toLowerCase() === 'закрыто') {
+    return [{
+      value: 'closed',
+      label: 'Выходной день'
+    }];
   }
   
   // Parse working hours (e.g., "09:00-18:00" or "09:00-14:00, 16:00-20:00")
@@ -451,9 +454,7 @@ export default function Checkout() {
                               disabled={(date) => {
                                 const today = new Date();
                                 today.setHours(0, 0, 0, 0);
-                                const maxDate = new Date(today);
-                                maxDate.setDate(maxDate.getDate() + (storeSettings?.maxDeliveryTimeDays || 7));
-                                return date < today || date > maxDate;
+                                return date < today;
                               }}
                               initialFocus
                             />
@@ -660,9 +661,7 @@ export default function Checkout() {
                                 disabled={(date) => {
                                   const today = new Date();
                                   today.setHours(0, 0, 0, 0);
-                                  const maxDate = new Date(today);
-                                  maxDate.setDate(maxDate.getDate() + (storeSettings?.maxDeliveryTimeDays || 7));
-                                  return date < today || date > maxDate;
+                                  return date < today;
                                 }}
                                 initialFocus
                               />
@@ -850,9 +849,7 @@ export default function Checkout() {
                                 disabled={(date) => {
                                   const today = new Date();
                                   today.setHours(0, 0, 0, 0);
-                                  const maxDate = new Date(today);
-                                  maxDate.setDate(maxDate.getDate() + (storeSettings?.maxDeliveryTimeDays || 7));
-                                  return date < today || date > maxDate;
+                                  return date < today;
                                 }}
                                 initialFocus
                               />
