@@ -149,6 +149,9 @@ export default function Checkout() {
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedGuestTime, setSelectedGuestTime] = useState("");
   const [selectedRegisterTime, setSelectedRegisterTime] = useState("");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+  const [selectedGuestPaymentMethod, setSelectedGuestPaymentMethod] = useState("");
+  const [selectedRegisterPaymentMethod, setSelectedRegisterPaymentMethod] = useState("");
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [guestDatePickerOpen, setGuestDatePickerOpen] = useState(false);
   const [registerDatePickerOpen, setRegisterDatePickerOpen] = useState(false);
@@ -406,7 +409,7 @@ export default function Checkout() {
                   const phone = formData.get("phone") as string;
                   const deliveryDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
                   const deliveryTime = selectedTime || "";
-                  const paymentMethod = formData.get("paymentMethod") as string;
+                  const paymentMethod = selectedPaymentMethod;
                   createAuthenticatedOrderMutation.mutate({ address, phone, deliveryDate, deliveryTime, paymentMethod });
                 }}>
                   <div className="space-y-4">
@@ -532,7 +535,7 @@ export default function Checkout() {
 
                     <div>
                       <Label htmlFor="paymentMethod">Способ оплаты *</Label>
-                      <Select name="paymentMethod" required>
+                      <Select value={selectedPaymentMethod} onValueChange={setSelectedPaymentMethod} required>
                         <SelectTrigger>
                           <SelectValue placeholder="Выберите способ оплаты" />
                         </SelectTrigger>
