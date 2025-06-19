@@ -1943,17 +1943,30 @@ export default function AdminDashboard() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
           <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
             <TabsList className="flex w-full overflow-x-auto gap-1 justify-start">
-              <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">Товары</TabsTrigger>
-              <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">Категории</TabsTrigger>
-              <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">Заказы</TabsTrigger>
-              <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">Пользователи</TabsTrigger>
-              <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">Магазин</TabsTrigger>
-              <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Настройки</TabsTrigger>
+              {canAccess('canManageProducts') && (
+                <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">Товары</TabsTrigger>
+              )}
+              {canAccess('canManageCategories') && (
+                <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">Категории</TabsTrigger>
+              )}
+              {canAccess('canManageOrders') && (
+                <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">Заказы</TabsTrigger>
+              )}
+              {canAccess('canManageUsers') && (
+                <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">Пользователи</TabsTrigger>
+              )}
+              {isAdmin && (
+                <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">Магазин</TabsTrigger>
+              )}
+              {isAdmin && (
+                <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Настройки</TabsTrigger>
+              )}
             </TabsList>
           </div>
 
           {/* Products Management */}
-          <TabsContent value="products" className="space-y-4 sm:space-y-6">
+          {canAccess('canManageProducts') && (
+            <TabsContent value="products" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -2206,9 +2219,11 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Categories Management */}
-          <TabsContent value="categories" className="space-y-4 sm:space-y-6">
+          {canAccess('canManageCategories') && (
+            <TabsContent value="categories" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -2336,9 +2351,11 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Orders Management */}
-          <TabsContent value="orders" className="space-y-4 sm:space-y-6">
+          {canAccess('canManageOrders') && (
+            <TabsContent value="orders" className="space-y-4 sm:space-y-6">
             {/* Header Section */}
             <div className="flex flex-col gap-4">
               <div>
@@ -2914,9 +2931,11 @@ export default function AdminDashboard() {
               </DialogContent>
             </Dialog>
           </TabsContent>
+          )}
 
           {/* Users Management */}
-          <TabsContent value="users" className="space-y-4 sm:space-y-6">
+          {canAccess('canManageUsers') && (
+            <TabsContent value="users" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
@@ -3103,9 +3122,11 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Store Management */}
-          <TabsContent value="store" className="space-y-4 sm:space-y-6">
+          {isAdmin && (
+            <TabsContent value="store" className="space-y-4 sm:space-y-6">
             <div className="grid gap-6">
               {/* Basic Store Information */}
               <Card>
