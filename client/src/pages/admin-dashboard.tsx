@@ -1697,8 +1697,13 @@ export default function AdminDashboard() {
       return await response.json();
     },
     onSuccess: () => {
+      // Update cache data directly instead of invalidating to prevent tab switching
+      queryClient.setQueryData(['/api/settings'], (oldData: any) => {
+        if (!oldData) return oldData;
+        return { ...oldData };
+      });
       queryClient.invalidateQueries({ queryKey: ['/api/settings'] });
-      toast({ title: "Настройки сохранены", description: "Настройки магазина успешно обновлены" });
+      toast({ title: "Настройки сохранены", description: "Права доступа обновлены" });
     },
     onError: (error: any) => {
       console.error("Store settings update error:", error);

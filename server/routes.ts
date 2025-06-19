@@ -917,7 +917,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const adminUserId = req.user.id;
       const adminUser = await storage.getUser(adminUserId);
       
-      if (!adminUser || adminUser.email !== "alexjc55@gmail.com") {
+      if (!adminUser || (adminUser.role !== "admin" && adminUser.email !== "alexjc55@gmail.com" && adminUser.username !== "admin")) {
         return res.status(403).json({ message: "Admin access required" });
       }
 
