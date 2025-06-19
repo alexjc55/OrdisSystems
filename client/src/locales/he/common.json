@@ -1,4 +1,15 @@
 {
+  "menu": "תפריט",
+  "admin": "ניהול",
+  "profile": "פרופיל", 
+  "adminPanel": "לוח בקרה",
+  "logout": "התנתקות",
+  "login": "כניסה לחשבון",
+  "userRole": {
+    "admin": "מנהל",
+    "worker": "עובד",
+    "customer": "לקוח"
+  },
   "navigation": {
     "home": "בית",
     "admin": "פאנל ניהול",

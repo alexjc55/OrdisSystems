@@ -1,4 +1,27 @@
 {
+  "searchResults": "Search Results",
+  "defaultWelcomeTitle": "eDAHouse - Home-cooked Food by Weight",
+  "foundItems": "Found {{count}} items",
+  "workingHours": "Working Hours", 
+  "notSpecified": "Not specified",
+  "loadingError": "Loading error",
+  "contacts": "Contacts",
+  "phone": "Phone",
+  "delivery": "Delivery",
+  "payment": "Payment",
+  "searchPlaceholder": "Search dishes...",
+  "categories": "Categories",
+  "categoriesCount": "{{count}} categories",
+  "allProducts": "All Products",
+  "days": {
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed", 
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun"
+  },
   "cart": {
     "title": "Cart",
     "empty": "Cart is empty",

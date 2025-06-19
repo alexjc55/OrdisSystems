@@ -1,4 +1,27 @@
 {
+  "searchResults": "Результаты поиска",
+  "defaultWelcomeTitle": "eDAHouse - Домашняя еда на развес",
+  "foundItems": "Найдено {{count}} товаров",
+  "workingHours": "Часы работы", 
+  "notSpecified": "Не указаны",
+  "loadingError": "Ошибка загрузки",
+  "contacts": "Контакты",
+  "phone": "Телефон",
+  "delivery": "Доставка",
+  "payment": "Оплата",
+  "searchPlaceholder": "Поиск блюд...",
+  "categories": "Категории",
+  "categoriesCount": "{{count}} категорий",
+  "allProducts": "Все товары",
+  "days": {
+    "mon": "Пн",
+    "tue": "Вт",
+    "wed": "Ср", 
+    "thu": "Чт",
+    "fri": "Пт",
+    "sat": "Сб",
+    "sun": "Вс"
+  },
   "cart": {
     "title": "Корзина",
     "empty": "Корзина пуста",

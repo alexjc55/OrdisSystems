@@ -1,4 +1,15 @@
 {
+  "menu": "Menu",
+  "admin": "Admin",
+  "profile": "Profile",
+  "adminPanel": "Admin Panel",
+  "logout": "Logout",
+  "login": "Login",
+  "userRole": {
+    "admin": "Administrator",
+    "worker": "Worker",
+    "customer": "Customer"
+  },
   "navigation": {
     "home": "Home",
     "admin": "Admin Panel",
