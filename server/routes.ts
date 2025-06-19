@@ -635,8 +635,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Admin access required" });
       }
 
-      const settingsData = insertStoreSettingsSchema.parse(req.body);
-      const settings = await storage.updateStoreSettings(settingsData);
+      // Get current settings first
+      const currentSettings = await storage.getStoreSettings();
+      if (!currentSettings) {
+        return res.status(404).json({ message: "Store settings not found" });
+      }
+
+      // Merge current settings with updates
+      const mergedData = {
+        ...currentSettings,
+        ...req.body,
+        id: currentSettings.id // Ensure ID is preserved
+      };
+
+      // Validate the merged data
+      const settingsData = insertStoreSettingsSchema.partial().parse(req.body);
+      const settings = await storage.updateStoreSettings(mergedData);
       
       res.json(settings);
     } catch (error) {

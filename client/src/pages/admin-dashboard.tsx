@@ -1693,12 +1693,7 @@ export default function AdminDashboard() {
   // Store settings mutation
   const updateStoreSettingsMutation = useMutation({
     mutationFn: async (settingsData: any) => {
-      const response = await fetch('/api/settings', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settingsData),
-      });
-      if (!response.ok) throw new Error('Failed to update store settings');
+      const response = await apiRequest('PUT', '/api/settings', settingsData);
       return await response.json();
     },
     onSuccess: () => {
