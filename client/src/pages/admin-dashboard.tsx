@@ -24,6 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { formatCurrency, getUnitLabel, type ProductUnit } from "@/lib/currency";
 import { insertStoreSettingsSchema, type StoreSettings } from "@shared/schema";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { 
   Package, 
   Plus, 
@@ -387,6 +388,11 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
 function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => void, onSave: () => void }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { data: storeSettingsData } = useQuery({
+    queryKey: ['/api/settings'],
+    queryFn: () => apiRequest('GET', '/api/settings')
+  });
+  const storeSettings = storeSettingsData;
   const [showAddItem, setShowAddItem] = useState(false);
   const [editedOrderItems, setEditedOrderItems] = useState(order.items || []);
   const [showDiscountDialog, setShowDiscountDialog] = useState<number | null>(null);
@@ -781,7 +787,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
                   <SelectValue placeholder="Выберите время" />
                 </SelectTrigger>
                 <SelectContent>
-                  {generateAdminDeliveryTimes(storeSettings?.workingHours, editedOrder.deliveryDate).map((timeSlot) => (
+                  {generateAdminDeliveryTimes(storeSettings?.workingHours, editedOrder.deliveryDate).map((timeSlot: any) => (
                     <SelectItem key={timeSlot.value} value={timeSlot.label}>
                       {timeSlot.label}
                     </SelectItem>

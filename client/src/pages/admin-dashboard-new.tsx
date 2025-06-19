@@ -185,6 +185,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     customerName: order.customerName || '',
     customerPhone: order.customerPhone || '',
     deliveryAddress: order.deliveryAddress || '',
+    deliveryDate: order.deliveryDate || '',
     deliveryTime: order.deliveryTime || '',
     notes: order.notes || '',
   });
@@ -303,13 +304,34 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
           </div>
         )}
 
-        <div>
-          <label className="text-sm font-medium">Время {editedOrder.deliveryType === 'delivery' ? 'доставки' : 'получения'}</label>
-          <Input
-            type="datetime-local"
-            value={editedOrder.deliveryTime}
-            onChange={(e) => setEditedOrder({...editedOrder, deliveryTime: e.target.value})}
-          />
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="text-sm font-medium">Дата {editedOrder.deliveryType === 'delivery' ? 'доставки' : 'получения'}</label>
+            <Input
+              type="date"
+              value={editedOrder.deliveryDate || ''}
+              onChange={(e) => setEditedOrder({...editedOrder, deliveryDate: e.target.value})}
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium">Время</label>
+            <Select
+              value={editedOrder.deliveryTime || ""}
+              onValueChange={(value) => setEditedOrder({...editedOrder, deliveryTime: value})}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Выберите время" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="09:00 - 11:00">09:00 - 11:00</SelectItem>
+                <SelectItem value="11:00 - 13:00">11:00 - 13:00</SelectItem>
+                <SelectItem value="13:00 - 15:00">13:00 - 15:00</SelectItem>
+                <SelectItem value="15:00 - 17:00">15:00 - 17:00</SelectItem>
+                <SelectItem value="17:00 - 19:00">17:00 - 19:00</SelectItem>
+                <SelectItem value="19:00 - 21:00">19:00 - 21:00</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div>
