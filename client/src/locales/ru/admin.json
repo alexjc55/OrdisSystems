@@ -31,8 +31,13 @@
     "totalProducts": "Всего товаров",
     "totalCustomers": "Всего клиентов"
   },
+  "common": {
+    "noResults": "Результаты не найдены",
+    "tryDifferentSearch": "Попробуйте изменить критерии поиска или фильтрации"
+  },
   "products": {
     "title": "Товары",
+    "description": "Полное управление товарами с поиском и фильтрацией",
     "addProduct": "Добавить товар",
     "editProduct": "Редактировать товар",
     "deleteProduct": "Удалить товар",
@@ -52,12 +57,16 @@
     "unit": "Единица измерения",
     "searchProducts": "Поиск товаров...",
     "allCategories": "Все категории",
+    "allProducts": "Все товары",
     "availableProducts": "Доступные товары",
     "unavailableProducts": "Недоступные товары",
-    "productsWithDiscount": "Товары со скидкой"
+    "productsWithDiscount": "Товары со скидкой",
+    "noProducts": "Нет товаров",
+    "addFirstProduct": "Начните с добавления первого товара"
   },
   "categories": {
     "title": "Категории",
+    "description": "Простое управление категориями",
     "addCategory": "Добавить категорию",
     "editCategory": "Редактировать категорию",
     "deleteCategory": "Удалить категорию",

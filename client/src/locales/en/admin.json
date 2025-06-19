@@ -31,8 +31,13 @@
     "totalProducts": "Total Products",
     "totalCustomers": "Total Customers"
   },
+  "common": {
+    "noResults": "No results found",
+    "tryDifferentSearch": "Try changing search criteria or filters"
+  },
   "products": {
     "title": "Products",
+    "description": "Complete product management with search and filtering",
     "addProduct": "Add Product",
     "editProduct": "Edit Product",
     "deleteProduct": "Delete Product",
@@ -52,9 +57,12 @@
     "unit": "Unit",
     "searchProducts": "Search products...",
     "allCategories": "All Categories",
+    "allProducts": "All Products",
     "availableProducts": "Available Products",
     "unavailableProducts": "Unavailable Products",
-    "productsWithDiscount": "Products with Discount"
+    "productsWithDiscount": "Products with Discount",
+    "noProducts": "No Products",
+    "addFirstProduct": "Start by adding your first product"
   },
   "categories": {
     "title": "Categories",

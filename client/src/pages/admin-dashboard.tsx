@@ -2268,10 +2268,10 @@ export default function AdminDashboard() {
                     <div>
                       <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                       <Utensils className="h-4 w-4 sm:h-5 sm:w-5" />
-                      Управление Категориями
+                      {t('categories.title')}
                     </CardTitle>
                     <CardDescription className="text-sm">
-                      Простое управление категориями
+                      {t('categories.description', 'Простое управление категориями')}
                     </CardDescription>
                   </div>
                   <Button 
@@ -2283,7 +2283,7 @@ export default function AdminDashboard() {
                     size="sm"
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                    Добавить категорию
+                    {t('actions.add')} {t('categories.title')}
                   </Button>
                 </div>
               </CardHeader>
