@@ -217,6 +217,7 @@ export default function Checkout() {
     mutationFn: async (data: RegistrationData) => {
       // First register the user
       const registerRes = await apiRequest("POST", "/api/register", {
+        username: data.email, // Use email as username for checkout registration
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
