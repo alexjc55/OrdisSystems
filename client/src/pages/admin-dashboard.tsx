@@ -113,6 +113,59 @@ function useStatusChangeHandler() {
   return handleStatusChange;
 }
 
+// Function to generate delivery times for admin dashboard (same logic as checkout)
+const generateAdminDeliveryTimes = (workingHours: any, selectedDate: string, weekStartDay: string = 'monday') => {
+  if (!workingHours || !selectedDate) return [];
+  
+  const date = new Date(selectedDate + 'T00:00:00');
+  const dayNames = weekStartDay === 'sunday' 
+    ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+    : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  
+  const dayName = dayNames[date.getDay()];
+  const daySchedule = workingHours[dayName];
+  
+  if (!daySchedule || daySchedule.trim() === '' || 
+      daySchedule.toLowerCase().includes('закрыто') || 
+      daySchedule.toLowerCase().includes('closed') ||
+      daySchedule.toLowerCase().includes('выходной')) {
+    return [{
+      value: 'closed',
+      label: 'Выходной день'
+    }];
+  }
+  
+  // Parse working hours (e.g., "09:00-18:00" or "09:00-14:00, 16:00-20:00")
+  const timeSlots: { value: string; label: string }[] = [];
+  const scheduleRanges = daySchedule.split(',').map((range: string) => range.trim());
+  
+  scheduleRanges.forEach((range: string) => {
+    const [start, end] = range.split('-').map((time: string) => time.trim());
+    if (start && end) {
+      const [startHour, startMin] = start.split(':').map(Number);
+      const [endHour, endMin] = end.split(':').map(Number);
+      
+      // Generate 2-hour intervals
+      for (let hour = startHour; hour < endHour; hour += 2) {
+        const nextHour = Math.min(hour + 2, endHour);
+        
+        // Skip if the interval would be less than 2 hours and we're not at the start
+        if (nextHour - hour < 2 && hour !== startHour) continue;
+        
+        const timeStr = `${hour.toString().padStart(2, '0')}:00`;
+        const endTimeStr = `${nextHour.toString().padStart(2, '0')}:00`;
+        
+        timeSlots.push({
+          value: timeStr,
+          label: `${timeStr} - ${endTimeStr}`
+        });
+      }
+    }
+  });
+  
+  return timeSlots;
+};
+
 // OrderCard component for kanban view
 function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
   return (
@@ -728,12 +781,11 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
                   <SelectValue placeholder="Выберите время" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="10:00-12:00">10:00-12:00</SelectItem>
-                  <SelectItem value="12:00-14:00">12:00-14:00</SelectItem>
-                  <SelectItem value="14:00-16:00">14:00-16:00</SelectItem>
-                  <SelectItem value="16:00-18:00">16:00-18:00</SelectItem>
-                  <SelectItem value="18:00-20:00">18:00-20:00</SelectItem>
-                  <SelectItem value="20:00-22:00">20:00-22:00</SelectItem>
+                  {generateAdminDeliveryTimes(storeSettings?.workingHours, editedOrder.deliveryDate).map((timeSlot) => (
+                    <SelectItem key={timeSlot.value} value={timeSlot.label}>
+                      {timeSlot.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
