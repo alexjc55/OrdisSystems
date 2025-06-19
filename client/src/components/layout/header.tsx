@@ -136,7 +136,7 @@ export default function Header({ onResetView }: HeaderProps) {
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => window.location.href = '/api/logout'}>
+                    <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Выйти</span>
                     </DropdownMenuItem>
@@ -193,7 +193,7 @@ export default function Header({ onResetView }: HeaderProps) {
                     <Button 
                       variant="ghost" 
                       className="w-full justify-start px-3 py-2 text-sm"
-                      onClick={() => window.location.href = '/api/logout'}
+                      onClick={() => logoutMutation.mutate()}
                     >
                       <LogOut className="mr-2 h-4 w-4" />
                       Выйти
