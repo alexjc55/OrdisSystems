@@ -242,8 +242,6 @@ export default function Checkout() {
         deliveryTime: selectedRegisterTime,
         paymentMethod: selectedRegisterPaymentMethod,
         customerPhone: data.phone,
-        deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
-        deliveryTime: selectedRegisterTime,
         status: "pending"
       };
       
