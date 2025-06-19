@@ -1,0 +1,65 @@
+{
+  "navigation": {
+    "home": "Home",
+    "admin": "Admin Panel",
+    "profile": "Profile",
+    "logout": "Logout",
+    "login": "Login",
+    "cart": "Cart"
+  },
+  "buttons": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "update": "Update",
+    "create": "Create",
+    "close": "Close",
+    "view": "View",
+    "remove": "Remove",
+    "search": "Search"
+  },
+  "forms": {
+    "required": "Required field",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phone": "Phone",
+    "address": "Address",
+    "name": "Name",
+    "description": "Description",
+    "price": "Price",
+    "category": "Category",
+    "status": "Status",
+    "notes": "Notes"
+  },
+  "status": {
+    "loading": "Loading...",
+    "success": "Success",
+    "error": "Error",
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "preparing": "Preparing",
+    "ready": "Ready",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled",
+    "available": "Available",
+    "unavailable": "Unavailable"
+  },
+  "messages": {
+    "noData": "No data",
+    "noResults": "No results found",
+    "loginRequired": "Login required",
+    "accessDenied": "Access denied",
+    "operationCompleted": "Operation completed",
+    "confirmDelete": "Are you sure you want to delete?",
+    "unsavedChanges": "You have unsaved changes"
+  }
+}

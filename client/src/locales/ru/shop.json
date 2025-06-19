@@ -1,0 +1,82 @@
+{
+  "cart": {
+    "title": "Корзина",
+    "empty": "Корзина пуста",
+    "addProducts": "Добавьте товары для оформления заказа",
+    "continueShopping": "Продолжить покупки",
+    "items": "Товары:",
+    "delivery": "Доставка:",
+    "total": "Итого:",
+    "free": "Бесплатно",
+    "freeDeliveryFrom": "Бесплатная доставка от",
+    "checkout": "Оформить заказ",
+    "removeItem": "Удалить товар",
+    "updateQuantity": "Изменить количество"
+  },
+  "products": {
+    "price": "Цена",
+    "addToCart": "В корзину",
+    "outOfStock": "Нет в наличии",
+    "category": "Категория",
+    "description": "Описание",
+    "perKg": "за кг",
+    "per100g": "за 100г",
+    "piece": "шт",
+    "weight": "Вес",
+    "quantity": "Количество"
+  },
+  "checkout": {
+    "title": "Оформление заказа",
+    "yourOrder": "Ваш заказ",
+    "customerInfo": "Информация о клиенте",
+    "deliveryInfo": "Информация о доставке",
+    "paymentMethod": "Способ оплаты",
+    "deliveryDate": "Дата доставки",
+    "deliveryTime": "Время доставки",
+    "deliveryAddress": "Адрес доставки",
+    "customerPhone": "Номер телефона",
+    "customerNotes": "Комментарии к заказу",
+    "guestOrder": "Оформить как гость",
+    "createAccount": "Создать аккаунт",
+    "login": "У меня уже есть аккаунт",
+    "placeOrder": "Оформить заказ",
+    "orderTotal": "Сумма заказа",
+    "processing": "Обработка заказа..."
+  },
+  "orders": {
+    "myOrders": "Мои заказы",
+    "orderNumber": "Заказ №",
+    "orderDate": "Дата заказа",
+    "orderStatus": "Статус заказа",
+    "orderTotal": "Сумма заказа",
+    "viewDetails": "Подробности",
+    "noOrders": "У вас пока нет заказов",
+    "trackOrder": "Отследить заказ"
+  },
+  "auth": {
+    "welcome": "Добро пожаловать",
+    "signIn": "Вход в систему",
+    "signUp": "Регистрация",
+    "createAccount": "Создать аккаунт",
+    "alreadyHaveAccount": "Уже есть аккаунт?",
+    "dontHaveAccount": "Нет аккаунта?",
+    "forgotPassword": "Забыли пароль?",
+    "resetPassword": "Сбросить пароль",
+    "newPassword": "Новый пароль",
+    "loginSuccess": "Вход выполнен успешно",
+    "logoutSuccess": "Выход выполнен",
+    "registrationSuccess": "Регистрация прошла успешно"
+  },
+  "profile": {
+    "title": "Профиль",
+    "personalInfo": "Личная информация",
+    "addresses": "Адреса доставки",
+    "orderHistory": "История заказов",
+    "settings": "Настройки",
+    "changePassword": "Изменить пароль",
+    "addAddress": "Добавить адрес",
+    "defaultAddress": "Адрес по умолчанию",
+    "editProfile": "Редактировать профиль",
+    "saveChanges": "Сохранить изменения"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "navigation": {
+    "home": "בית",
+    "admin": "פאנל ניהול",
+    "profile": "פרופיל",
+    "logout": "יציאה",
+    "login": "כניסה",
+    "cart": "עגלת קניות"
+  },
+  "buttons": {
+    "add": "הוסף",
+    "edit": "ערוך",
+    "delete": "מחק",
+    "save": "שמור",
+    "cancel": "בטל",
+    "confirm": "אשר",
+    "back": "חזור",
+    "next": "הבא",
+    "submit": "שלח",
+    "update": "עדכן",
+    "create": "צור",
+    "close": "סגור",
+    "view": "צפה",
+    "remove": "הסר",
+    "search": "חיפוש"
+  },
+  "forms": {
+    "required": "שדה חובה",
+    "email": "אימייל",
+    "password": "סיסמה",
+    "confirmPassword": "אשר סיסמה",
+    "firstName": "שם פרטי",
+    "lastName": "שם משפחה",
+    "phone": "טלפון",
+    "address": "כתובת",
+    "name": "שם",
+    "description": "תיאור",
+    "price": "מחיר",
+    "category": "קטגוריה",
+    "status": "סטטוס",
+    "notes": "הערות"
+  },
+  "status": {
+    "loading": "טוען...",
+    "success": "הצלחה",
+    "error": "שגיאה",
+    "pending": "ממתין",
+    "confirmed": "מאושר",
+    "preparing": "בהכנה",
+    "ready": "מוכן",
+    "delivered": "נמסר",
+    "cancelled": "בוטל",
+    "available": "זמין",
+    "unavailable": "לא זמין"
+  },
+  "messages": {
+    "noData": "אין נתונים",
+    "noResults": "לא נמצאו תוצאות",
+    "loginRequired": "נדרשת התחברות",
+    "accessDenied": "הגישה נדחתה",
+    "operationCompleted": "הפעולה הושלמה",
+    "confirmDelete": "האם אתה בטוח שברצונך למחוק?",
+    "unsavedChanges": "יש לך שינויים שלא נשמרו"
+  }
+}

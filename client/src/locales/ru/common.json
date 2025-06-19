@@ -1,0 +1,65 @@
+{
+  "navigation": {
+    "home": "Главная",
+    "admin": "Админ-панель",
+    "profile": "Профиль",
+    "logout": "Выйти",
+    "login": "Войти",
+    "cart": "Корзина"
+  },
+  "buttons": {
+    "add": "Добавить",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить",
+    "back": "Назад",
+    "next": "Далее",
+    "submit": "Отправить",
+    "update": "Обновить",
+    "create": "Создать",
+    "close": "Закрыть",
+    "view": "Просмотр",
+    "remove": "Удалить",
+    "search": "Поиск"
+  },
+  "forms": {
+    "required": "Обязательное поле",
+    "email": "Email",
+    "password": "Пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "phone": "Телефон",
+    "address": "Адрес",
+    "name": "Название",
+    "description": "Описание",
+    "price": "Цена",
+    "category": "Категория",
+    "status": "Статус",
+    "notes": "Примечания"
+  },
+  "status": {
+    "loading": "Загрузка...",
+    "success": "Успешно",
+    "error": "Ошибка",
+    "pending": "В ожидании",
+    "confirmed": "Подтверждён",
+    "preparing": "Готовится",
+    "ready": "Готов",
+    "delivered": "Доставлен",
+    "cancelled": "Отменён",
+    "available": "Доступен",
+    "unavailable": "Недоступен"
+  },
+  "messages": {
+    "noData": "Нет данных",
+    "noResults": "Результаты не найдены",
+    "loginRequired": "Требуется авторизация",
+    "accessDenied": "Доступ запрещён",
+    "operationCompleted": "Операция выполнена",
+    "confirmDelete": "Вы уверены, что хотите удалить?",
+    "unsavedChanges": "У вас есть несохранённые изменения"
+  }
+}

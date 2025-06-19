@@ -1,0 +1,82 @@
+{
+  "cart": {
+    "title": "עגלת קניות",
+    "empty": "העגלה ריקה",
+    "addProducts": "הוסף מוצרים לביצוע הזמנה",
+    "continueShopping": "המשך קניות",
+    "items": "פריטים:",
+    "delivery": "משלוח:",
+    "total": "סה\"כ:",
+    "free": "בחינם",
+    "freeDeliveryFrom": "משלוח חינם מ",
+    "checkout": "ביצוע הזמנה",
+    "removeItem": "הסר פריט",
+    "updateQuantity": "עדכן כמות"
+  },
+  "products": {
+    "price": "מחיר",
+    "addToCart": "הוסף לעגלה",
+    "outOfStock": "אזל במלאי",
+    "category": "קטגוריה",
+    "description": "תיאור",
+    "perKg": "לק\"ג",
+    "per100g": "ל100 גרם",
+    "piece": "יח'",
+    "weight": "משקל",
+    "quantity": "כמות"
+  },
+  "checkout": {
+    "title": "ביצוע הזמנה",
+    "yourOrder": "ההזמנה שלך",
+    "customerInfo": "פרטי לקוח",
+    "deliveryInfo": "פרטי משלוח",
+    "paymentMethod": "אמצעי תשלום",
+    "deliveryDate": "תאריך משלוח",
+    "deliveryTime": "שעת משלוח",
+    "deliveryAddress": "כתובת משלוח",
+    "customerPhone": "מספר טלפון",
+    "customerNotes": "הערות להזמנה",
+    "guestOrder": "הזמן כאורח",
+    "createAccount": "צור חשבון",
+    "login": "יש לי כבר חשבון",
+    "placeOrder": "בצע הזמנה",
+    "orderTotal": "סכום ההזמנה",
+    "processing": "מעבד הזמנה..."
+  },
+  "orders": {
+    "myOrders": "ההזמנות שלי",
+    "orderNumber": "הזמנה מס'",
+    "orderDate": "תאריך הזמנה",
+    "orderStatus": "סטטוס הזמנה",
+    "orderTotal": "סכום הזמנה",
+    "viewDetails": "צפה בפרטים",
+    "noOrders": "אין לך הזמנות עדיין",
+    "trackOrder": "עקוב אחר הזמנה"
+  },
+  "auth": {
+    "welcome": "ברוכים הבאים",
+    "signIn": "כניסה",
+    "signUp": "הרשמה",
+    "createAccount": "צור חשבון",
+    "alreadyHaveAccount": "כבר יש לך חשבון?",
+    "dontHaveAccount": "אין לך חשבון?",
+    "forgotPassword": "שכחת סיסמה?",
+    "resetPassword": "איפוס סיסמה",
+    "newPassword": "סיסמה חדשה",
+    "loginSuccess": "הכניסה הצליחה",
+    "logoutSuccess": "היציאה הצליחה",
+    "registrationSuccess": "ההרשמה הצליחה"
+  },
+  "profile": {
+    "title": "פרופיל",
+    "personalInfo": "מידע אישי",
+    "addresses": "כתובות משלוח",
+    "orderHistory": "היסטוריית הזמנות",
+    "settings": "הגדרות",
+    "changePassword": "שנה סיסמה",
+    "addAddress": "הוסף כתובת",
+    "defaultAddress": "כתובת ברירת מחדל",
+    "editProfile": "ערוך פרופיל",
+    "saveChanges": "שמור שינויים"
+  }
+}

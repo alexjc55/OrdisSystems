@@ -1,0 +1,82 @@
+{
+  "cart": {
+    "title": "Cart",
+    "empty": "Cart is empty",
+    "addProducts": "Add products to place an order",
+    "continueShopping": "Continue shopping",
+    "items": "Items:",
+    "delivery": "Delivery:",
+    "total": "Total:",
+    "free": "Free",
+    "freeDeliveryFrom": "Free delivery from",
+    "checkout": "Checkout",
+    "removeItem": "Remove item",
+    "updateQuantity": "Update quantity"
+  },
+  "products": {
+    "price": "Price",
+    "addToCart": "Add to Cart",
+    "outOfStock": "Out of Stock",
+    "category": "Category",
+    "description": "Description",
+    "perKg": "per kg",
+    "per100g": "per 100g",
+    "piece": "pc",
+    "weight": "Weight",
+    "quantity": "Quantity"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "yourOrder": "Your Order",
+    "customerInfo": "Customer Information",
+    "deliveryInfo": "Delivery Information",
+    "paymentMethod": "Payment Method",
+    "deliveryDate": "Delivery Date",
+    "deliveryTime": "Delivery Time",
+    "deliveryAddress": "Delivery Address",
+    "customerPhone": "Phone Number",
+    "customerNotes": "Order Notes",
+    "guestOrder": "Order as Guest",
+    "createAccount": "Create Account",
+    "login": "I already have an account",
+    "placeOrder": "Place Order",
+    "orderTotal": "Order Total",
+    "processing": "Processing order..."
+  },
+  "orders": {
+    "myOrders": "My Orders",
+    "orderNumber": "Order #",
+    "orderDate": "Order Date",
+    "orderStatus": "Order Status",
+    "orderTotal": "Order Total",
+    "viewDetails": "View Details",
+    "noOrders": "You have no orders yet",
+    "trackOrder": "Track Order"
+  },
+  "auth": {
+    "welcome": "Welcome",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "createAccount": "Create Account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "newPassword": "New Password",
+    "loginSuccess": "Login successful",
+    "logoutSuccess": "Logout successful",
+    "registrationSuccess": "Registration successful"
+  },
+  "profile": {
+    "title": "Profile",
+    "personalInfo": "Personal Information",
+    "addresses": "Delivery Addresses",
+    "orderHistory": "Order History",
+    "settings": "Settings",
+    "changePassword": "Change Password",
+    "addAddress": "Add Address",
+    "defaultAddress": "Default Address",
+    "editProfile": "Edit Profile",
+    "saveChanges": "Save Changes"
+  }
+}
