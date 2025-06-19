@@ -454,7 +454,23 @@ export default function Checkout() {
                               disabled={(date) => {
                                 const today = new Date();
                                 today.setHours(0, 0, 0, 0);
-                                return date < today;
+                                
+                                // Check if date is before today
+                                if (date < today) return true;
+                                
+                                // Check if it's a non-working day
+                                if (storeSettings?.workingHours) {
+                                  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                                  const dayName = dayNames[date.getDay()];
+                                  const daySchedule = storeSettings.workingHours[dayName];
+                                  
+                                  // Disable if no schedule or closed
+                                  if (!daySchedule || daySchedule.trim() === '' || daySchedule.toLowerCase() === 'закрыто') {
+                                    return true;
+                                  }
+                                }
+                                
+                                return false;
                               }}
                               initialFocus
                             />
@@ -661,7 +677,23 @@ export default function Checkout() {
                                 disabled={(date) => {
                                   const today = new Date();
                                   today.setHours(0, 0, 0, 0);
-                                  return date < today;
+                                  
+                                  // Check if date is before today
+                                  if (date < today) return true;
+                                  
+                                  // Check if it's a non-working day
+                                  if (storeSettings?.workingHours) {
+                                    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                                    const dayName = dayNames[date.getDay()];
+                                    const daySchedule = storeSettings.workingHours[dayName];
+                                    
+                                    // Disable if no schedule or closed
+                                    if (!daySchedule || daySchedule.trim() === '' || daySchedule.toLowerCase() === 'закрыто') {
+                                      return true;
+                                    }
+                                  }
+                                  
+                                  return false;
                                 }}
                                 initialFocus
                               />
@@ -849,7 +881,23 @@ export default function Checkout() {
                                 disabled={(date) => {
                                   const today = new Date();
                                   today.setHours(0, 0, 0, 0);
-                                  return date < today;
+                                  
+                                  // Check if date is before today
+                                  if (date < today) return true;
+                                  
+                                  // Check if it's a non-working day
+                                  if (storeSettings?.workingHours) {
+                                    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                                    const dayName = dayNames[date.getDay()];
+                                    const daySchedule = storeSettings.workingHours[dayName];
+                                    
+                                    // Disable if no schedule or closed
+                                    if (!daySchedule || daySchedule.trim() === '' || daySchedule.toLowerCase() === 'закрыто') {
+                                      return true;
+                                    }
+                                  }
+                                  
+                                  return false;
                                 }}
                                 initialFocus
                               />
