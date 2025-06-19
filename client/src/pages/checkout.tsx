@@ -140,6 +140,9 @@ export default function Checkout() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedGuestDate, setSelectedGuestDate] = useState<Date | undefined>(undefined);
   const [selectedRegisterDate, setSelectedRegisterDate] = useState<Date | undefined>(undefined);
+  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedGuestTime, setSelectedGuestTime] = useState("");
+  const [selectedRegisterTime, setSelectedRegisterTime] = useState("");
 
   const guestForm = useForm<GuestOrderData>({
     resolver: zodResolver(guestOrderSchema),
@@ -169,7 +172,10 @@ export default function Checkout() {
           totalPrice: item.totalPrice.toString()
         })),
         totalAmount: getTotalPrice().toString(),
-        guestInfo: data,
+        guestInfo: {
+          ...data,
+          deliveryDate: selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : "",
+        },
         status: "pending"
       };
       
@@ -218,6 +224,9 @@ export default function Checkout() {
         })),
         totalAmount: getTotalPrice(),
         deliveryAddress: data.address,
+        customerPhone: data.phone,
+        deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
+        deliveryTime: data.deliveryTime,
         status: "pending"
       };
       
@@ -619,6 +628,63 @@ export default function Checkout() {
                         </div>
                       </div>
 
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="registerDeliveryDate">Дата доставки *</Label>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full justify-start text-left font-normal",
+                                  !selectedRegisterDate && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {selectedRegisterDate ? format(selectedRegisterDate, "dd MMMM yyyy", { locale: ru }) : "Выберите дату"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <CalendarComponent
+                                mode="single"
+                                selected={selectedRegisterDate}
+                                onSelect={setSelectedRegisterDate}
+                                disabled={(date) => {
+                                  const today = new Date();
+                                  today.setHours(0, 0, 0, 0);
+                                  const minDate = new Date(today);
+                                  minDate.setHours(minDate.getHours() + (storeSettings?.minDeliveryTimeHours || 2));
+                                  const maxDate = new Date(today);
+                                  maxDate.setDate(maxDate.getDate() + (storeSettings?.maxDeliveryTimeDays || 7));
+                                  return date < minDate || date > maxDate;
+                                }}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="registerDeliveryTime">Время доставки *</Label>
+                          <Select name="deliveryTime" disabled={!selectedRegisterDate} required>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Выберите время" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {selectedRegisterDate && generateDeliveryTimes(
+                                storeSettings?.workingHours,
+                                format(selectedRegisterDate, "yyyy-MM-dd"),
+                                storeSettings?.weekStartDay
+                              ).map((time) => (
+                                <SelectItem key={time.value} value={time.value}>
+                                  {time.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
                       <Button 
                         type="submit" 
                         className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 text-lg shadow-lg"
@@ -748,6 +814,63 @@ export default function Checkout() {
                         {guestForm.formState.errors.address && (
                           <p className="text-sm text-red-600">{guestForm.formState.errors.address.message}</p>
                         )}
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="guestDeliveryDate">Дата доставки *</Label>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full justify-start text-left font-normal",
+                                  !selectedGuestDate && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {selectedGuestDate ? format(selectedGuestDate, "dd MMMM yyyy", { locale: ru }) : "Выберите дату"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <CalendarComponent
+                                mode="single"
+                                selected={selectedGuestDate}
+                                onSelect={setSelectedGuestDate}
+                                disabled={(date) => {
+                                  const today = new Date();
+                                  today.setHours(0, 0, 0, 0);
+                                  const minDate = new Date(today);
+                                  minDate.setHours(minDate.getHours() + (storeSettings?.minDeliveryTimeHours || 2));
+                                  const maxDate = new Date(today);
+                                  maxDate.setDate(maxDate.getDate() + (storeSettings?.maxDeliveryTimeDays || 7));
+                                  return date < minDate || date > maxDate;
+                                }}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="guestDeliveryTime">Время доставки *</Label>
+                          <Select name="deliveryTime" disabled={!selectedGuestDate} required>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Выберите время" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {selectedGuestDate && generateDeliveryTimes(
+                                storeSettings?.workingHours,
+                                format(selectedGuestDate, "yyyy-MM-dd"),
+                                storeSettings?.weekStartDay
+                              ).map((time) => (
+                                <SelectItem key={time.value} value={time.value}>
+                                  {time.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
 
                       <Button 
