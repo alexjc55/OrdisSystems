@@ -30,7 +30,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { formatCurrency, getUnitLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
@@ -3432,10 +3432,15 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       imageUrl: "",
       isAvailable: true,
       isSpecialOffer: false,
-      discountType: undefined,
+      discountType: "",
       discountValue: "",
     },
   });
+
+  // Watch form values with useWatch to avoid re-render issues on mobile
+  const isSpecialOffer = useWatch({ control: form.control, name: "isSpecialOffer" });
+  const discountType = useWatch({ control: form.control, name: "discountType" });
+  const unit = useWatch({ control: form.control, name: "unit" });
 
   // Reset form when product or dialog state changes
   useEffect(() => {
@@ -3656,7 +3661,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               )}
             />
 
-            {form.watch("isSpecialOffer") && (
+            {isSpecialOffer && (
               <div className="space-y-4 p-4 border rounded-lg bg-orange-50">
                 <h4 className="text-sm font-medium text-orange-800">Настройки скидки</h4>
                 
@@ -3692,13 +3697,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm">
-                          Размер скидки {form.watch("discountType") === "percentage" ? "(%)" : "(₪)"}
+                          Размер скидки {discountType === "percentage" ? "(%)" : "(₪)"}
                         </FormLabel>
                         <FormControl>
                           <Input 
                             type="number"
                             step="0.01"
-                            placeholder={form.watch("discountType") === "percentage" ? "10" : "5.00"}
+                            placeholder={discountType === "percentage" ? "10" : "5.00"}
                             {...field}
                             className="text-sm"
                           />
@@ -3709,9 +3714,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   />
                 </div>
 
-                {form.watch("discountType") === "fixed" && (
+                {discountType === "fixed" && (
                   <div className="text-xs text-orange-700 bg-orange-100 p-2 rounded">
-                    Фиксированная скидка применяется за {form.watch("unit") === "piece" ? "штуку" : form.watch("unit") === "kg" ? "кг" : "100г/100мл"}
+                    Фиксированная скидка применяется за {unit === "piece" ? "штуку" : unit === "kg" ? "кг" : "100г/100мл"}
                   </div>
                 )}
               </div>
