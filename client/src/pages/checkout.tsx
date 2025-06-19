@@ -112,21 +112,20 @@ const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStar
       const [startHour, startMin] = start.split(':').map(Number);
       const [endHour, endMin] = end.split(':').map(Number);
       
-      // Generate 30-minute intervals
-      for (let hour = startHour; hour < endHour || (hour === endHour && startMin < endMin); hour++) {
-        for (let min = (hour === startHour ? startMin : 0); min < 60; min += 30) {
-          if (hour === endHour && min >= endMin) break;
-          
-          const timeStr = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
-          const endTimeHour = min === 30 ? hour + 1 : hour;
-          const endTimeMin = min === 30 ? 0 : min + 30;
-          const endTimeStr = `${endTimeHour.toString().padStart(2, '0')}:${endTimeMin.toString().padStart(2, '0')}`;
-          
-          timeSlots.push({
-            value: timeStr,
-            label: `${timeStr} - ${endTimeStr}`
-          });
-        }
+      // Generate 2-hour intervals
+      for (let hour = startHour; hour < endHour; hour += 2) {
+        const nextHour = Math.min(hour + 2, endHour);
+        
+        // Skip if the interval would be less than 2 hours and we're not at the start
+        if (nextHour - hour < 2 && hour !== startHour) continue;
+        
+        const timeStr = `${hour.toString().padStart(2, '0')}:00`;
+        const endTimeStr = `${nextHour.toString().padStart(2, '0')}:00`;
+        
+        timeSlots.push({
+          value: timeStr,
+          label: `${timeStr} - ${endTimeStr}`
+        });
       }
     }
   });
