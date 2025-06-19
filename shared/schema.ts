@@ -133,7 +133,7 @@ export const storeSettings = pgTable("store_settings", {
   paymentInfo: text("payment_info"),
   aboutUsPhotos: jsonb("about_us_photos"), // Array of photo URLs
   deliveryFee: decimal("delivery_fee", { precision: 10, scale: 2 }).default("15.00"),
-  minOrderAmount: decimal("min_order_amount", { precision: 10, scale: 2 }).default("50.00"),
+  freeDeliveryFrom: decimal("free_delivery_from", { precision: 10, scale: 2 }).default("50.00"),
   minDeliveryTimeHours: integer("min_delivery_time_hours").default(2), // Minimum hours for delivery
   maxDeliveryTimeDays: integer("max_delivery_time_days").default(4), // Maximum days for delivery
   paymentMethods: jsonb("payment_methods"), // Array of payment methods

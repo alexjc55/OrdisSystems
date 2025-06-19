@@ -4035,7 +4035,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       ],
       aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
       deliveryFee: storeSettings?.deliveryFee || "15.00",
-      minOrderAmount: storeSettings?.minOrderAmount || "50.00",
+      freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "50.00",
       discountBadgeText: storeSettings?.discountBadgeText || "Скидка",
       showBannerImage: storeSettings?.showBannerImage !== false,
       showTitleDescription: storeSettings?.showTitleDescription !== false,
@@ -4093,7 +4093,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         ],
         aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
         deliveryFee: storeSettings?.deliveryFee || "15.00",
-        minOrderAmount: storeSettings?.minOrderAmount || "50.00",
+        freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "50.00",
         discountBadgeText: storeSettings?.discountBadgeText || "Скидка",
         showBannerImage: storeSettings?.showBannerImage !== false,
         showTitleDescription: storeSettings?.showTitleDescription !== false,
@@ -4223,12 +4223,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
           <FormField
             control={form.control}
-            name="minOrderAmount"
+            name="freeDeliveryFrom"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">Минимальная сумма заказа (₪)</FormLabel>
+                <FormLabel className="text-sm">Бесплатная доставка от (₪)</FormLabel>
                 <FormControl>
-                  <Input placeholder="50.00" {...field} className="text-sm" />
+                  <Input placeholder="100.00" {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>

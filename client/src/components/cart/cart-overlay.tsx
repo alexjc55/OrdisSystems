@@ -18,7 +18,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { formatCurrency, formatQuantity, formatWeight, type ProductUnit } from "@/lib/currency";
 import { X, Plus, Minus, Trash2, CreditCard, Clock, MapPin, Phone, User } from "lucide-react";
 
-const DELIVERY_FEE = 15.00;
+// Calculate delivery fee based on order total and free delivery threshold
+const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number) => {
+  return orderTotal >= freeDeliveryFrom ? 0 : deliveryFee;
+};
 
 export default function CartOverlay() {
   const { items, isOpen, setCartOpen, updateQuantity, removeItem, clearCart } = useCartStore();
