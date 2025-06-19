@@ -14,50 +14,6 @@ import { promisify } from "util";
 
 const scryptAsync = promisify(scrypt);
 
-// Admin access middleware with worker permissions
-async function requireAdminOrWorkerAccess(permission?: string) {
-  return async (req: any, res: any, next: any) => {
-    try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
-      
-      if (!user) {
-        return res.status(403).json({ message: "Access denied" });
-      }
-
-      // Admin always has access
-      if (user.role === "admin" || user.email === "alexjc55@gmail.com" || user.username === "admin") {
-        return next();
-      }
-
-      // Check worker permissions
-      if (user.role === "worker") {
-        const storeSettings = await storage.getStoreSettings();
-        const workerPermissions = storeSettings?.workerPermissions as any;
-        
-        if (!workerPermissions) {
-          return res.status(403).json({ message: "Worker permissions not configured" });
-        }
-
-        // If no specific permission required, any worker access is allowed
-        if (!permission) {
-          return next();
-        }
-
-        // Check specific permission
-        if (workerPermissions[permission]) {
-          return next();
-        }
-      }
-
-      return res.status(403).json({ message: "Access denied" });
-    } catch (error) {
-      console.error("Error checking admin/worker access:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  };
-}
-
 export async function registerRoutes(app: Express): Promise<Server> {
   // Ensure uploads directory exists
   const uploadsDir = path.join(process.cwd(), 'uploads', 'images');
@@ -318,9 +274,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin/Worker route to get all products including unavailable ones with pagination
-  app.get('/api/admin/products', isAuthenticated, await requireAdminOrWorkerAccess('canManageProducts'), async (req: any, res) => {
+  // Admin-only route to get all products including unavailable ones with pagination
+  app.get('/api/admin/products', isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== "admin" && user.email !== "alexjc55@gmail.com" && user.username !== "admin") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
 
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
@@ -704,9 +666,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin/Worker route to get orders with pagination
-  app.get('/api/admin/orders', isAuthenticated, await requireAdminOrWorkerAccess('canManageOrders'), async (req: any, res) => {
+  // Admin-only route to get orders with pagination
+  app.get('/api/admin/orders', isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== "admin" && user.email !== "alexjc55@gmail.com" && user.username !== "admin") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
 
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
@@ -731,9 +699,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin/Worker route to get users with pagination
-  app.get('/api/admin/users', isAuthenticated, await requireAdminOrWorkerAccess('canManageUsers'), async (req: any, res) => {
+  // Admin-only route to get users with pagination
+  app.get('/api/admin/users', isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== "admin" && user.email !== "alexjc55@gmail.com" && user.username !== "admin") {
+        return res.status(403).json({ message: "Admin access required" });
+      }
 
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
