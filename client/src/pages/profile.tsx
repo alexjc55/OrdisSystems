@@ -42,6 +42,21 @@ export default function Profile() {
   const [avatarForm, setAvatarForm] = useState({
     profileImageUrl: user?.profileImageUrl || ""
   });
+  const [nameForm, setNameForm] = useState({
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || ""
+  });
+  const [isNameEditing, setIsNameEditing] = useState(false);
+
+  // Update forms when user data changes
+  useEffect(() => {
+    if (user) {
+      setNameForm({
+        firstName: user.firstName || "",
+        lastName: user.lastName || ""
+      });
+    }
+  }, [user]);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -184,6 +199,27 @@ export default function Profile() {
       toast({
         title: "Ошибка",
         description: "Не удалось обновить фото профиля",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateNameMutation = useMutation({
+    mutationFn: async (nameData: { firstName: string; lastName: string }) => {
+      await apiRequest("PATCH", "/api/profile", nameData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      setIsNameEditing(false);
+      toast({
+        title: "Успешно",
+        description: "Имя обновлено",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось обновить имя",
         variant: "destructive",
       });
     },
@@ -380,12 +416,64 @@ export default function Profile() {
 
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Имя</label>
-                      <div className="mt-1 text-sm text-gray-900">{user.firstName || 'Не указано'}</div>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-700">Фамилия</label>
-                      <div className="mt-1 text-sm text-gray-900">{user.lastName || 'Не указано'}</div>
+                      <label className="text-sm font-medium text-gray-700">Имя и Фамилия</label>
+                      <div className="mt-1 flex items-center gap-2">
+                        {isNameEditing ? (
+                          <>
+                            <div className="grid grid-cols-2 gap-2 flex-1">
+                              <Input
+                                type="text"
+                                placeholder="Имя"
+                                value={nameForm.firstName}
+                                onChange={(e) => setNameForm({ ...nameForm, firstName: e.target.value })}
+                              />
+                              <Input
+                                type="text"
+                                placeholder="Фамилия"
+                                value={nameForm.lastName}
+                                onChange={(e) => setNameForm({ ...nameForm, lastName: e.target.value })}
+                              />
+                            </div>
+                            <Button
+                              size="sm"
+                              onClick={() => updateNameMutation.mutate(nameForm)}
+                              disabled={updateNameMutation.isPending}
+                              className="bg-orange-500 hover:bg-orange-600 text-white"
+                            >
+                              Сохранить
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setIsNameEditing(false);
+                                setNameForm({
+                                  firstName: user?.firstName || "",
+                                  lastName: user?.lastName || ""
+                                });
+                              }}
+                            >
+                              Отмена
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <div className="text-sm text-gray-900 flex-1">
+                              {user.firstName || user.lastName 
+                                ? `${user.firstName || ''} ${user.lastName || ''}`.trim()
+                                : 'Не указано'
+                              }
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setIsNameEditing(true)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                   
