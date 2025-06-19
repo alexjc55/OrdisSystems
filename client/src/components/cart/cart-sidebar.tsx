@@ -8,6 +8,7 @@ import { X, Plus, Minus, Trash2, ShoppingCart } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState } from "react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
+import { useShopTranslation } from "@/hooks/use-language";
 
 // Calculate delivery fee based on order total and free delivery threshold
 const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number) => {
@@ -19,6 +20,7 @@ export default function CartSidebar() {
   const [, setLocation] = useLocation();
   const [editingQuantity, setEditingQuantity] = useState<{[key: number]: string}>({});
   const { storeSettings } = useStoreSettings();
+  const { t } = useShopTranslation();
 
   const handleQuantityChange = (productId: number, newQuantity: number, unit: ProductUnit) => {
     if (newQuantity <= 0) {
@@ -98,7 +100,7 @@ export default function CartSidebar() {
           <div className="flex items-center justify-between border-b p-4">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <ShoppingCart className="h-5 w-5" />
-              Корзина ({items.length})
+              {t('cart.title', 'Корзина')} ({items.length})
             </h2>
             <Button
               variant="ghost"
@@ -116,10 +118,10 @@ export default function CartSidebar() {
               <div className="flex h-full items-center justify-center p-6">
                 <div className="text-center">
                   <ShoppingCart className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Корзина пуста</h3>
-                  <p className="text-gray-500 mb-4">Добавьте товары для оформления заказа</p>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">{t('cart.empty', 'Корзина пуста')}</h3>
+                  <p className="text-gray-500 mb-4">{t('cart.emptyDescription', 'Добавьте товары для оформления заказа')}</p>
                   <Button onClick={() => setCartOpen(false)}>
-                    Продолжить покупки
+                    {t('cart.continueShopping', 'Продолжить покупки')}
                   </Button>
                 </div>
               </div>
@@ -229,7 +231,7 @@ export default function CartSidebar() {
                   return (
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span>Товары:</span>
+                        <span>{t('cart.items', 'Товары')}:</span>
                         <span>{formatCurrency(subtotal)}</span>
                       </div>
                       <div className="flex justify-between text-sm">

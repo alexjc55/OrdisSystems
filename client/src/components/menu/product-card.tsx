@@ -247,7 +247,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             style={{ backgroundColor: 'hsl(16, 100%, 60%)', color: 'white' }}
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
-            В корзину
+            {t('product.addToCart', 'В корзину')}
           </Button>
         </div>
       </CardContent>
