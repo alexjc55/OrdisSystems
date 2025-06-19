@@ -59,7 +59,8 @@ import {
   Code,
   Layers,
   Type,
-  Palette
+  Palette,
+  Settings
 } from "lucide-react";
 
 // Validation schemas
@@ -3101,6 +3102,162 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Settings Management */}
+          <TabsContent value="settings" className="space-y-4 sm:space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
+                  <Settings className="h-5 w-5" />
+                  Настройки системы
+                </CardTitle>
+                <CardDescription className="text-sm">
+                  Управление правами доступа для сотрудников
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Worker Permissions Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Права доступа сотрудников</h3>
+                  <p className="text-sm text-gray-600">
+                    Настройте, к каким разделам админ-панели имеют доступ пользователи с ролью "Работник"
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium">Управление товарами</label>
+                          <p className="text-xs text-gray-500">Добавление, редактирование и удаление товаров</p>
+                        </div>
+                        <Switch
+                          checked={(storeSettings?.workerPermissions as any)?.canManageProducts || false}
+                          onCheckedChange={(checked) => 
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canManageProducts: checked
+                              }
+                            })
+                          }
+                        />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium">Управление категориями</label>
+                          <p className="text-xs text-gray-500">Добавление, редактирование и удаление категорий</p>
+                        </div>
+                        <Switch
+                          checked={(storeSettings?.workerPermissions as any)?.canManageCategories || false}
+                          onCheckedChange={(checked) => 
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canManageCategories: checked
+                              }
+                            })
+                          }
+                        />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium">Управление заказами</label>
+                          <p className="text-xs text-gray-500">Просмотр и изменение статуса заказов</p>
+                        </div>
+                        <Switch
+                          checked={(storeSettings?.workerPermissions as any)?.canManageOrders || false}
+                          onCheckedChange={(checked) => 
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canManageOrders: checked
+                              }
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium">Просмотр пользователей</label>
+                          <p className="text-xs text-gray-500">Просмотр списка клиентов</p>
+                        </div>
+                        <Switch
+                          checked={(storeSettings?.workerPermissions as any)?.canViewUsers || false}
+                          onCheckedChange={(checked) => 
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canViewUsers: checked
+                              }
+                            })
+                          }
+                        />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium">Управление пользователями</label>
+                          <p className="text-xs text-gray-500">Редактирование и удаление пользователей</p>
+                        </div>
+                        <Switch
+                          checked={(storeSettings?.workerPermissions as any)?.canManageUsers || false}
+                          onCheckedChange={(checked) => 
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canManageUsers: checked
+                              }
+                            })
+                          }
+                        />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium">Просмотр настроек</label>
+                          <p className="text-xs text-gray-500">Доступ к настройкам магазина (только чтение)</p>
+                        </div>
+                        <Switch
+                          checked={(storeSettings?.workerPermissions as any)?.canViewSettings || false}
+                          onCheckedChange={(checked) => 
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canViewSettings: checked
+                              }
+                            })
+                          }
+                        />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium">Управление настройками</label>
+                          <p className="text-xs text-gray-500">Полный доступ к настройкам магазина</p>
+                        </div>
+                        <Switch
+                          checked={(storeSettings?.workerPermissions as any)?.canManageSettings || false}
+                          onCheckedChange={(checked) => 
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canManageSettings: checked
+                              }
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
