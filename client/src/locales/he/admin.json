@@ -33,7 +33,9 @@
   },
   "common": {
     "noResults": "לא נמצאו תוצאות",
-    "tryDifferentSearch": "נסה לשנות את קריטריוני החיפוש או הסינון"
+    "tryDifferentSearch": "נסה לשנות את קריטריוני החיפוש או הסינון",
+    "table": "טבלה",
+    "kanban": "קנבן"
   },
   "products": {
     "title": "מוצרים",
@@ -77,6 +79,9 @@
   },
   "orders": {
     "title": "הזמנות",
+    "description": "ניהול הזמנות לקוחות",
+    "filterOrders": "סינון הזמנות",
+    "activeOrders": "הזמנות פעילות",
     "orderDetails": "פרטי הזמנה",
     "orderNumber": "מספר הזמנה",
     "orderDate": "תאריך הזמנה",

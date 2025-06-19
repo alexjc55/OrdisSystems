@@ -2445,7 +2445,7 @@ export default function AdminDashboard() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
                     <Input
-                      placeholder="Поиск по заказам..."
+                      placeholder={t('orders.searchOrders')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-9 text-xs h-8 w-48"

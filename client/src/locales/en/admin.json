@@ -33,7 +33,9 @@
   },
   "common": {
     "noResults": "No results found",
-    "tryDifferentSearch": "Try changing search criteria or filters"
+    "tryDifferentSearch": "Try changing search criteria or filters",
+    "table": "Table",
+    "kanban": "Kanban"
   },
   "products": {
     "title": "Products",
@@ -77,6 +79,9 @@
   },
   "orders": {
     "title": "Orders",
+    "description": "Customer order management",
+    "filterOrders": "Filter Orders",
+    "activeOrders": "Active Orders",
     "orderDetails": "Order Details",
     "orderNumber": "Order Number",
     "orderDate": "Order Date",

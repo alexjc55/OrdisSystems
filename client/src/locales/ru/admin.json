@@ -33,7 +33,9 @@
   },
   "common": {
     "noResults": "Результаты не найдены",
-    "tryDifferentSearch": "Попробуйте изменить критерии поиска или фильтрации"
+    "tryDifferentSearch": "Попробуйте изменить критерии поиска или фильтрации",
+    "table": "Таблица",
+    "kanban": "Канбан"
   },
   "products": {
     "title": "Товары",
@@ -77,6 +79,9 @@
   },
   "orders": {
     "title": "Заказы",
+    "description": "Управление заказами клиентов",
+    "filterOrders": "Фильтр заказов",
+    "activeOrders": "Активные заказы",
     "orderDetails": "Детали заказа",
     "orderNumber": "Номер заказа",
     "orderDate": "Дата заказа",
