@@ -1857,9 +1857,23 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!user || (user.role !== "admin" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
+  if (!user || (user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
     return null;
   }
+
+  // Get worker permissions for conditional rendering
+  const workerPermissions = storeSettings?.workerPermissions as any;
+  const isAdmin = user.role === "admin" || user.email === "alexjc55@gmail.com" || user.username === "admin";
+  const isWorker = user.role === "worker";
+
+  // Helper function to check if user can access a specific section
+  const canAccess = (permission: string) => {
+    if (isAdmin) return true;
+    if (isWorker && workerPermissions) {
+      return workerPermissions[permission] || false;
+    }
+    return false;
+  };
 
   const filteredProducts = (productsData as any[] || [])
     .filter((product: any) => {
