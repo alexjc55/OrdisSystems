@@ -496,10 +496,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let userId = null;
       let user = null;
       
-      // Check if user is authenticated
-      if (req.isAuthenticated && req.isAuthenticated() && req.user?.claims?.sub) {
+      // Check if user is authenticated (session-based auth or userId provided in body)
+      if (req.isAuthenticated && req.isAuthenticated() && req.user?.id) {
         userId = req.user.id;
         user = await storage.getUser(userId);
+        console.log("Order creation: Using authenticated user", userId);
+      } else if (req.body.userId) {
+        // For newly registered users during checkout
+        userId = req.body.userId;
+        user = await storage.getUser(userId);
+        console.log("Order creation: Using userId from body", userId);
+      } else {
+        console.log("Order creation: No user found, creating guest order");
       }
 
       const { items, ...orderData } = req.body;
