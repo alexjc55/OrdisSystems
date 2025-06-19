@@ -1916,12 +1916,13 @@ export default function AdminDashboard() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
           <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 gap-1">
+            <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 gap-1">
               <TabsTrigger value="products" className="text-xs sm:text-sm">Товары</TabsTrigger>
               <TabsTrigger value="categories" className="text-xs sm:text-sm">Категории</TabsTrigger>
               <TabsTrigger value="orders" className="text-xs sm:text-sm">Заказы</TabsTrigger>
               <TabsTrigger value="users" className="text-xs sm:text-sm">Пользователи</TabsTrigger>
               <TabsTrigger value="store" className="text-xs sm:text-sm">Магазин</TabsTrigger>
+              <TabsTrigger value="settings" className="text-xs sm:text-sm">Настройки</TabsTrigger>
             </TabsList>
           </div>
 

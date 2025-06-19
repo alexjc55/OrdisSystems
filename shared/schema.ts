@@ -169,6 +169,15 @@ export const storeSettings = pgTable("store_settings", {
   cartBannerText: text("cart_banner_text"), // Banner text content
   cartBannerBgColor: varchar("cart_banner_bg_color", { length: 7 }).default("#f97316"), // Background color for text banner
   cartBannerTextColor: varchar("cart_banner_text_color", { length: 7 }).default("#ffffff"), // Text color for text banner
+  workerPermissions: jsonb("worker_permissions").default({
+    canManageProducts: true,
+    canManageCategories: true,
+    canManageOrders: true,
+    canViewUsers: false,
+    canManageUsers: false,
+    canViewSettings: false,
+    canManageSettings: false
+  }),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
