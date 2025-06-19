@@ -812,7 +812,24 @@ export default function AdminDashboard() {
 
   // Helper functions for permission checks
   const isAdmin = user.role === "admin" || user.email === "alexjc55@gmail.com" || user.username === "admin";
-  const workerPermissions = (storeSettings?.workerPermissions as any) || {};
+  let workerPermissions = {};
+  try {
+    workerPermissions = typeof storeSettings?.worker_permissions === 'string' 
+      ? JSON.parse(storeSettings.worker_permissions)
+      : (storeSettings?.worker_permissions || {});
+  } catch (e) {
+    console.error("Error parsing worker permissions:", e);
+    workerPermissions = {};
+  }
+  
+  // Debug: Log permissions for worker
+  if (user.role === "worker") {
+    console.log("Worker permissions:", workerPermissions);
+    console.log("Store settings:", storeSettings);
+    console.log("canViewUsers:", isAdmin || workerPermissions.canViewUsers);
+    console.log("canManageProducts:", isAdmin || workerPermissions.canManageProducts);
+    console.log("canManageOrders:", isAdmin || workerPermissions.canManageOrders);
+  }
   
   const canManageProducts = isAdmin || workerPermissions.canManageProducts;
   const canManageCategories = isAdmin || workerPermissions.canManageCategories;
@@ -823,7 +840,7 @@ export default function AdminDashboard() {
   const canManageSettings = isAdmin || workerPermissions.canManageSettings;
 
   // Determine available tabs and set default
-  const availableTabs = [];
+  const availableTabs: string[] = [];
   if (canManageProducts || canManageCategories) availableTabs.push('products');
   if (canManageOrders) availableTabs.push('orders');
   if (canViewUsers) availableTabs.push('users');
