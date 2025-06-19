@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { useQuery } from "@tanstack/react-query";
+import Header from "@/components/layout/header";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Package, ShoppingCart, Users, Settings } from "lucide-react";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -1303,30 +1305,65 @@ function ItemDiscountDialog({
 }
 
 export default function AdminDashboard() {
-  const { user, isLoading, isAuthenticated } = useAuth();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
+  try {
+    const { user, isLoading } = useAuth();
+    
+    console.log('AdminDashboard render:', { user: user?.username, role: user?.role, isLoading });
 
-  // Early loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+    // Early loading state
+    if (isLoading) {
+      console.log('Showing loading state');
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        </div>
+      );
+    }
 
-  // Early access check
-  if (!user || (user.role !== 'admin' && user.role !== 'worker')) {
+    // Early access check
+    if (!user) {
+      console.log('No user found');
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold mb-2">Требуется авторизация</h2>
+            <p className="text-gray-600">Пожалуйста, войдите в систему</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (user.role !== 'admin' && user.role !== 'worker') {
+      console.log('Invalid role:', user.role);
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold mb-2">Доступ запрещен</h2>
+            <p className="text-gray-600">Недостаточно прав для доступа к админ-панели</p>
+          </div>
+        </div>
+      );
+    }
+
+    console.log('Access granted, rendering AdminDashboardContent');
+    return <AdminDashboardContent user={user} />;
+  } catch (error) {
+    console.error('Error in AdminDashboard:', error);
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">Доступ запрещен</h2>
-          <p className="text-gray-600">Недостаточно прав для доступа к админ-панели</p>
+          <h2 className="text-xl font-semibold mb-2">Ошибка загрузки</h2>
+          <p className="text-gray-600">Произошла ошибка при загрузке админ-панели</p>
+          <p className="text-sm text-red-500 mt-2">{String(error)}</p>
         </div>
       </div>
     );
   }
+}
+
+function AdminDashboardContent({ user }: { user: any }) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // State for forms and filters
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);

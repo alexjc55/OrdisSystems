@@ -10,7 +10,7 @@ import { CustomHtml } from "@/components/custom-html";
 import { WhatsAppChat } from "@/components/layout/whatsapp-chat";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
-import AdminDashboard from "@/pages/admin-dashboard";
+import AdminDashboard from "@/pages/admin-dashboard-fixed";
 import Profile from "@/pages/profile";
 import ChangePasswordPage from "@/pages/change-password";
 import ForgotPasswordPage from "@/pages/forgot-password";
