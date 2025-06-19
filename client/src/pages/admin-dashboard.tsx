@@ -2209,7 +2209,7 @@ export default function AdminDashboard() {
                 {productsTotalPages > 1 && (
                   <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
                     <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <span>Показано {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} из {productsTotal}</span>
+                      <span>{t('common.showing', 'Показано')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {t('common.of', 'из')} {productsTotal}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
@@ -2351,7 +2351,7 @@ export default function AdminDashboard() {
                                         e.currentTarget.style.borderColor = 'rgb(220 38 38)';
                                       }}
                                     >
-                                      Удалить
+{t('common.delete', 'Удалить')}
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -2369,7 +2369,7 @@ export default function AdminDashboard() {
                               className="text-xs hover:bg-blue-50 hover:border-blue-300"
                             >
                               <Package className="h-3 w-3 mr-1" />
-                              {category.products?.length || 0} товаров
+{category.products?.length || 0} {t('products.items', 'товаров')}
                             </Button>
                             <div className="text-xs text-gray-500">
                               ID: {category.id}
@@ -2504,7 +2504,7 @@ export default function AdminDashboard() {
                                               className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
                                             >
                                               <Phone className="h-4 w-4 mr-2" />
-                                              Позвонить
+{t('orders.call', 'Позвонить')}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem 
                                               onClick={() => {

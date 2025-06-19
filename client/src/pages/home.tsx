@@ -490,8 +490,8 @@ export default function Home() {
                                     product={product} 
                                     onCategoryClick={handleCategorySelect}
                                   />
-                                  <Badge className="absolute top-2 left-2 bg-orange-500 text-white z-10 text-xs">
-                                    <Star className="w-2 h-2 mr-1" />
+                                  <Badge className="absolute top-2 left-2 rtl:left-auto rtl:right-2 bg-orange-500 text-white z-10 text-xs">
+                                    <Star className="w-2 h-2 mr-1 rtl:mr-0 rtl:ml-1" />
                                     {storeSettings?.discountBadgeText || "Скидка"}
                                   </Badge>
                                 </div>
