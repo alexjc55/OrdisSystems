@@ -694,7 +694,8 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
   const calculateFinalTotal = () => {
     const subtotal = calculateSubtotal();
     const discount = calculateOrderDiscount(subtotal);
-    return subtotal - discount;
+    const deliveryFee = parseFloat(order.deliveryFee || "0");
+    return subtotal - discount + deliveryFee;
   };
 
   const removeItem = (index: number) => {
@@ -991,8 +992,19 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
           <h4 className="font-medium mb-3">Итого по заказу</h4>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span>Промежуточная сумма:</span>
+              <span>Сумма товаров:</span>
               <span>{formatCurrency(calculateSubtotal())}</span>
+            </div>
+            
+            <div className="flex justify-between">
+              <span>Доставка:</span>
+              <span>
+                {parseFloat(order.deliveryFee || "0") === 0 ? (
+                  <span className="text-green-600 font-medium">Бесплатно</span>
+                ) : (
+                  formatCurrency(order.deliveryFee || "0")
+                )}
+              </span>
             </div>
             
             {/* Order-level discount */}
