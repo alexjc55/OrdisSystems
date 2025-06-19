@@ -18,7 +18,7 @@ import ResetPasswordPage from "@/pages/reset-password";
 import Checkout from "@/pages/checkout";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
-import { ProtectedRoute } from "@/lib/protected-route";
+import { ProtectedRoute, AdminProtectedRoute } from "@/lib/protected-route";
 
 function Router() {
   const { storeSettings } = useStoreSettings();
@@ -35,7 +35,7 @@ function Router() {
         <Route path="/category/:categoryId" component={Home} />
         <Route path="/all-products" component={Home} />
         <Route path="/auth" component={AuthPage} />
-        <ProtectedRoute path="/admin" component={() => <AdminDashboard />} />
+        <AdminProtectedRoute path="/admin" component={() => <AdminDashboard />} />
         <ProtectedRoute path="/profile" component={() => <Profile />} />
         <Route path="/checkout" component={Checkout} />
         <Route path="/change-password" component={ChangePasswordPage} />
