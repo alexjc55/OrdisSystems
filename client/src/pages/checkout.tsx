@@ -232,11 +232,11 @@ export default function Checkout() {
       const orderData = {
         items: items.map(item => ({
           productId: item.product.id,
-          quantity: item.quantity,
-          pricePerUnit: parseFloat(item.product.price),
-          totalPrice: item.totalPrice
+          quantity: item.quantity.toString(),
+          pricePerKg: item.product.price,
+          totalPrice: item.totalPrice.toString()
         })),
-        totalAmount: getTotalPrice(),
+        totalAmount: getTotalPrice().toString(),
         deliveryAddress: data.address,
         deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
         deliveryTime: formatDeliveryTimeRange(selectedRegisterTime),
