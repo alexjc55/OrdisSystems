@@ -21,6 +21,12 @@ export function LanguageSwitcher({
   
   // Only show enabled languages
   const availableLanguages = languages;
+  const languageCount = Object.keys(availableLanguages).length;
+  
+  // Hide language switcher if only one language is available
+  if (languageCount <= 1) {
+    return null;
+  }
 
   if (variant === "select") {
     return (
