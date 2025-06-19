@@ -15,7 +15,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { formatCurrency, formatQuantity, getUnitShortLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
-import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin, Lock, Shield } from "lucide-react";
+import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin, Lock, Shield, Camera, Upload } from "lucide-react";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "wouter";
 import type { OrderWithItems, UserAddress } from "@shared/schema";
 
@@ -36,6 +38,10 @@ export default function Profile() {
   const [isPhoneEditing, setIsPhoneEditing] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
+  const [isAvatarDialogOpen, setIsAvatarDialogOpen] = useState(false);
+  const [avatarForm, setAvatarForm] = useState({
+    profileImageUrl: user?.profileImageUrl || ""
+  });
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -157,6 +163,27 @@ export default function Profile() {
       toast({
         title: "Ошибка",
         description: "Не удалось обновить телефон",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateAvatarMutation = useMutation({
+    mutationFn: async (profileImageUrl: string) => {
+      await apiRequest("PATCH", "/api/profile", { profileImageUrl });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      setIsAvatarDialogOpen(false);
+      toast({
+        title: "Успешно",
+        description: "Фото профиля обновлено",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось обновить фото профиля",
         variant: "destructive",
       });
     },
