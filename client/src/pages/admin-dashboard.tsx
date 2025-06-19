@@ -167,7 +167,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: {
           <div className="flex items-start justify-between">
             <div>
               <h4 className="font-medium text-sm">Заказ #{order.id}</h4>
-              <p className="text-xs text-gray-500">{order.user.email}</p>
+              <p className="text-xs text-gray-500">{order.user?.email || 'Гость'}</p>
             </div>
             <Badge className={`text-xs ${getStatusColor(order.status)}`}>
               {order.status === 'pending' && 'Ожидает'}
@@ -806,9 +806,21 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!user || user.email !== "alexjc55@gmail.com") {
+  if (!user || (user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
     return null;
   }
+
+  // Helper functions for permission checks
+  const isAdmin = user.role === "admin" || user.email === "alexjc55@gmail.com" || user.username === "admin";
+  const workerPermissions = (storeSettings?.workerPermissions as any) || {};
+  
+  const canManageProducts = isAdmin || workerPermissions.canManageProducts;
+  const canManageCategories = isAdmin || workerPermissions.canManageCategories;
+  const canManageOrders = isAdmin || workerPermissions.canManageOrders;
+  const canViewUsers = isAdmin || workerPermissions.canViewUsers;
+  const canManageUsers = isAdmin || workerPermissions.canManageUsers;
+  const canViewSettings = isAdmin || workerPermissions.canViewSettings;
+  const canManageSettings = isAdmin || workerPermissions.canManageSettings;
 
   return (
     <div className="min-h-screen bg-gray-50 admin-dashboard">
@@ -822,26 +834,35 @@ export default function AdminDashboard() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full h-auto p-2 gap-2">
-            <TabsTrigger value="products" className="flex-1 h-12">
-              <Package className="h-4 w-4 mr-2" />
-              Товары
-            </TabsTrigger>
-            <TabsTrigger value="orders" className="flex-1 h-12">
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Заказы
-            </TabsTrigger>
-            <TabsTrigger value="users" className="flex-1 h-12">
-              <Users className="h-4 w-4 mr-2" />
-              Пользователи
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="col-span-2 md:col-span-1 flex-1 h-12">
-              <Store className="h-4 w-4 mr-2" />
-              Настройки
-            </TabsTrigger>
+            {(canManageProducts || canManageCategories) && (
+              <TabsTrigger value="products" className="flex-1 h-12">
+                <Package className="h-4 w-4 mr-2" />
+                Товары
+              </TabsTrigger>
+            )}
+            {canManageOrders && (
+              <TabsTrigger value="orders" className="flex-1 h-12">
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Заказы
+              </TabsTrigger>
+            )}
+            {canViewUsers && (
+              <TabsTrigger value="users" className="flex-1 h-12">
+                <Users className="h-4 w-4 mr-2" />
+                Пользователи
+              </TabsTrigger>
+            )}
+            {canViewSettings && (
+              <TabsTrigger value="settings" className="col-span-2 md:col-span-1 flex-1 h-12">
+                <Store className="h-4 w-4 mr-2" />
+                Настройки
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* Orders Tab Content */}
-          <TabsContent value="orders" className="space-y-6">
+          {canManageOrders && (
+            <TabsContent value="orders" className="space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -922,7 +943,7 @@ export default function AdminDashboard() {
                         {ordersData.map((order: any) => (
                           <TableRow key={order.id}>
                             <TableCell className="font-medium">#{order.id}</TableCell>
-                            <TableCell>{order.user.email}</TableCell>
+                            <TableCell>{order.user?.email || 'Гость'}</TableCell>
                             <TableCell>{formatCurrency(order.totalAmount)}</TableCell>
                             <TableCell>
                               <Select
@@ -1104,9 +1125,11 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Products Tab Content */}
-          <TabsContent value="products" className="space-y-6">
+          {(canManageProducts || canManageCategories) && (
+            <TabsContent value="products" className="space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -1393,16 +1416,16 @@ export default function AdminDashboard() {
                                   <div className="font-medium">
                                     {user.firstName && user.lastName 
                                       ? `${user.firstName} ${user.lastName}`
-                                      : user.email
+                                      : user.email || user.username || 'Пользователь'
                                     }
                                   </div>
                                   {user.firstName && (
-                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                    <div className="text-sm text-gray-500">{user.email || ''}</div>
                                   )}
                                 </div>
                               </div>
                             </TableCell>
-                            <TableCell>{user.email}</TableCell>
+                            <TableCell>{user.email || user.username || 'Не указан'}</TableCell>
                             <TableCell>
                               <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
                                 {user.role === 'admin' ? 'Администратор' : 
