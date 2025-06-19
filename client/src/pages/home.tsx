@@ -264,8 +264,10 @@ export default function Home() {
                               sunday: 'Вс'
                             };
 
-                            // Define proper day order starting from Monday
-                            const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+                            // Define day order based on store settings
+                            const dayOrder = storeSettings?.weekStartDay === 'sunday' 
+                              ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+                              : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
                             
                             const validEntries = dayOrder
                               .filter(day => workingHours[day] && typeof workingHours[day] === 'string' && workingHours[day].trim() !== '')
@@ -275,12 +277,40 @@ export default function Home() {
                               return <p className="text-gray-500 text-xs">Не указаны</p>;
                             }
 
-                            return validEntries.map(([day, hours]) => (
-                              <div key={day} className="flex justify-between text-xs sm:text-sm">
-                                <span className="text-gray-600">{dayNames[day] || day}</span>
-                                <span className="font-medium">{hours as string}</span>
-                              </div>
-                            ));
+                            // Group consecutive days with same hours
+                            const groupedHours: Array<{days: string[], hours: string}> = [];
+                            let currentGroup: {days: string[], hours: string} | null = null;
+
+                            validEntries.forEach(([day, hours]) => {
+                              if (currentGroup && currentGroup.hours === hours) {
+                                currentGroup.days.push(day);
+                              } else {
+                                if (currentGroup) {
+                                  groupedHours.push(currentGroup);
+                                }
+                                currentGroup = { days: [day], hours: hours as string };
+                              }
+                            });
+
+                            if (currentGroup) {
+                              groupedHours.push(currentGroup);
+                            }
+
+                            return groupedHours.map((group, index) => {
+                              const dayDisplay = group.days.length === 1 
+                                ? dayNames[group.days[0]]
+                                : group.days.length > 2 && 
+                                  dayOrder.indexOf(group.days[group.days.length - 1]) - dayOrder.indexOf(group.days[0]) === group.days.length - 1
+                                  ? `${dayNames[group.days[0]]}-${dayNames[group.days[group.days.length - 1]]}`
+                                  : group.days.map(day => dayNames[day]).join(', ');
+
+                              return (
+                                <div key={index} className="flex justify-between text-xs sm:text-sm">
+                                  <span className="text-gray-600">{dayDisplay}</span>
+                                  <span className="font-medium">{group.hours}</span>
+                                </div>
+                              );
+                            });
                           } catch (error) {
                             console.error('Error rendering working hours:', error);
                             return <p className="text-gray-500 text-xs">Ошибка загрузки</p>;
