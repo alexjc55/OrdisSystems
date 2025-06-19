@@ -1861,6 +1861,18 @@ export default function AdminDashboard() {
     return null;
   }
 
+  // Helper functions for permission checks
+  const isAdmin = user.role === "admin" || user.email === "alexjc55@gmail.com" || user.username === "admin";
+  const workerPermissions = (storeSettings?.workerPermissions as any) || {};
+  
+  const canManageProducts = isAdmin || workerPermissions.canManageProducts;
+  const canManageCategories = isAdmin || workerPermissions.canManageCategories;
+  const canManageOrders = isAdmin || workerPermissions.canManageOrders;
+  const canViewUsers = isAdmin || workerPermissions.canViewUsers;
+  const canManageUsers = isAdmin || workerPermissions.canManageUsers;
+  const canViewSettings = isAdmin || workerPermissions.canViewSettings;
+  const canManageSettings = isAdmin || workerPermissions.canManageSettings;
+
   const filteredProducts = (productsData as any[] || [])
     .filter((product: any) => {
       const matchesSearch = !searchQuery || 
@@ -1929,12 +1941,12 @@ export default function AdminDashboard() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
           <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
             <TabsList className="flex w-full overflow-x-auto gap-1 justify-start">
-              <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">Товары</TabsTrigger>
-              <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">Категории</TabsTrigger>
-              <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">Заказы</TabsTrigger>
-              <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">Пользователи</TabsTrigger>
-              <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">Магазин</TabsTrigger>
-              <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Настройки</TabsTrigger>
+              {canManageProducts && <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">Товары</TabsTrigger>}
+              {canManageCategories && <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">Категории</TabsTrigger>}
+              {canManageOrders && <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">Заказы</TabsTrigger>}
+              {canViewUsers && <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">Пользователи</TabsTrigger>}
+              {canViewSettings && <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">Магазин</TabsTrigger>}
+              {canViewSettings && <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Настройки</TabsTrigger>}
             </TabsList>
           </div>
 
@@ -2191,10 +2203,10 @@ export default function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent>}
 
           {/* Categories Management */}
-          <TabsContent value="categories" className="space-y-4 sm:space-y-6">
+          {canManageCategories && <TabsContent value="categories" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -2321,10 +2333,10 @@ export default function AdminDashboard() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent>}
 
           {/* Orders Management */}
-          <TabsContent value="orders" className="space-y-4 sm:space-y-6">
+          {canManageOrders && <TabsContent value="orders" className="space-y-4 sm:space-y-6">
             {/* Header Section */}
             <div className="flex flex-col gap-4">
               <div>
