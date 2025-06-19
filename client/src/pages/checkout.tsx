@@ -52,6 +52,7 @@ const authenticatedOrderSchema = z.object({
   phone: z.string().min(10, "Введите корректный номер телефона"),
   deliveryDate: z.string().min(1, "Выберите дату доставки"),
   deliveryTime: z.string().min(1, "Выберите время доставки"),
+  paymentMethod: z.string().min(1, "Выберите способ оплаты"),
 });
 
 type GuestOrderData = z.infer<typeof guestOrderSchema>;
@@ -403,9 +404,10 @@ export default function Checkout() {
                   const formData = new FormData(e.target as HTMLFormElement);
                   const address = formData.get("address") as string;
                   const phone = formData.get("phone") as string;
-                  const deliveryDate = formData.get("deliveryDate") as string;
-                  const deliveryTime = formData.get("deliveryTime") as string;
-                  createAuthenticatedOrderMutation.mutate({ address, phone, deliveryDate, deliveryTime });
+                  const deliveryDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
+                  const deliveryTime = selectedTime || "";
+                  const paymentMethod = formData.get("paymentMethod") as string;
+                  createAuthenticatedOrderMutation.mutate({ address, phone, deliveryDate, deliveryTime, paymentMethod });
                 }}>
                   <div className="space-y-4">
                     <div>
@@ -527,6 +529,30 @@ export default function Checkout() {
                         </div>
                       </div>
                     )}
+
+                    <div>
+                      <Label htmlFor="paymentMethod">Способ оплаты *</Label>
+                      <Select name="paymentMethod" required>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Выберите способ оплаты" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
+                            storeSettings.paymentMethods.map((method: any) => (
+                              <SelectItem key={method.id} value={method.name}>
+                                {method.name}
+                              </SelectItem>
+                            )) : (
+                              <>
+                                <SelectItem value="cash">Наличными при получении</SelectItem>
+                                <SelectItem value="card">Банковской картой</SelectItem>
+                                <SelectItem value="transfer">Банковский перевод</SelectItem>
+                              </>
+                            )
+                          }
+                        </SelectContent>
+                      </Select>
+                    </div>
 
                     <Button 
                       type="submit" 
@@ -730,6 +756,34 @@ export default function Checkout() {
                             </SelectContent>
                           </Select>
                         </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="registerPaymentMethod">Способ оплаты *</Label>
+                        <Select 
+                          value={selectedRegisterPaymentMethod} 
+                          onValueChange={setSelectedRegisterPaymentMethod} 
+                          required
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Выберите способ оплаты" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
+                              storeSettings.paymentMethods.map((method: any) => (
+                                <SelectItem key={method.id} value={method.name}>
+                                  {method.name}
+                                </SelectItem>
+                              )) : (
+                                <>
+                                  <SelectItem value="cash">Наличными при получении</SelectItem>
+                                  <SelectItem value="card">Банковской картой</SelectItem>
+                                  <SelectItem value="transfer">Банковский перевод</SelectItem>
+                                </>
+                              )
+                            }
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       <Button 
