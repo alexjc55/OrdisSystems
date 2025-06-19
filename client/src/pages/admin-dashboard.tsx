@@ -2010,7 +2010,7 @@ export default function AdminDashboard() {
                 <CardHeader>
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>
-                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl rtl:flex-row-reverse">
                       <Package className="h-4 w-4 sm:h-5 sm:w-5" />
                       {t('products.title')}
                     </CardTitle>
@@ -2266,7 +2266,7 @@ export default function AdminDashboard() {
                 <CardHeader>
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
-                      <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                      <CardTitle className="flex items-center gap-2 text-lg sm:text-xl rtl:flex-row-reverse">
                       <Utensils className="h-4 w-4 sm:h-5 sm:w-5" />
                       {t('categories.title')}
                     </CardTitle>
@@ -2397,7 +2397,7 @@ export default function AdminDashboard() {
               {/* Header Section */}
               <div className="flex flex-col gap-4">
                 <div>
-                  <h1 className="text-2xl font-bold flex items-center gap-2">
+                  <h1 className="text-2xl font-bold flex items-center gap-2 rtl:flex-row-reverse">
                     <ShoppingCart className="h-6 w-6" />
                     {t('orders.title')}
                   </h1>

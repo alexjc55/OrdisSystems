@@ -9,6 +9,7 @@ import { formatCurrency, formatWeight, calculateTotal, getUnitLabel, formatQuant
 import { ShoppingCart, Plus, Minus, Eye } from "lucide-react";
 import type { ProductWithCategory } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
+import { useShopTranslation } from "@/hooks/use-language";
 
 interface ProductCardProps {
   product: ProductWithCategory;
@@ -18,6 +19,7 @@ interface ProductCardProps {
 export default function ProductCard({ product, onCategoryClick }: ProductCardProps) {
   const unit = (product.unit || "100g") as ProductUnit;
   const { storeSettings } = useStoreSettings();
+  const { t } = useShopTranslation();
   
   // Set default quantity based on unit type
   const getDefaultQuantity = () => {
@@ -184,9 +186,9 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           {/* Quantity Selector */}
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium text-gray-700">
-              {unit === "piece" ? "Количество:" : 
-               unit === "kg" ? "Вес (кг):" : 
-               unit === "100g" || unit === "100ml" ? "Граммы:" : "Количество:"}
+              {unit === "piece" ? t('product.quantity', 'Количество:') : 
+               unit === "kg" ? t('product.weight', 'Вес (кг):') : 
+               unit === "100g" || unit === "100ml" ? t('product.grams', 'Граммы:') : t('product.quantity', 'Количество:')}
             </label>
             <div className="flex items-center space-x-2">
               <Button
@@ -231,7 +233,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           {/* Total Price */}
           <div className="bg-gray-50 rounded-lg p-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Итого:</span>
+              <span className="text-sm text-gray-600">{t('product.total', 'Итого:')}:</span>
               <span className="text-lg font-bold text-gray-900">
                 {formatCurrency(totalPrice)}
               </span>
