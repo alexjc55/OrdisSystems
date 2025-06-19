@@ -91,7 +91,7 @@ export const updateDocumentDirection = (lng: string) => {
   }
 };
 
-// Get initial language from localStorage
+// Get initial language from localStorage (database loading happens later)
 const getInitialLanguage = () => {
   if (typeof window !== 'undefined') {
     const saved = localStorage.getItem('language');
@@ -102,7 +102,7 @@ const getInitialLanguage = () => {
   return 'ru';
 };
 
-// Initialize i18n with explicit language
+// Initialize i18n with localStorage language first
 const initialLang = getInitialLanguage();
 i18n
   .use(LanguageDetector)

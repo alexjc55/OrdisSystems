@@ -1,11 +1,32 @@
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
 import { LANGUAGES, Language, isRTL, updateDocumentDirection } from '../lib/i18n';
 
 export function useLanguage() {
   const { i18n } = useTranslation();
   
+  // Load store settings to get language configuration
+  const { data: storeSettings } = useQuery({
+    queryKey: ['/api/settings'],
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+  
   const currentLanguage = (i18n.language || 'ru') as Language;
   const currentLanguageInfo = LANGUAGES[currentLanguage] || LANGUAGES.ru;
+  
+  // Get enabled languages from database settings
+  const getEnabledLanguages = () => {
+    if (storeSettings?.enabledLanguages && Array.isArray(storeSettings.enabledLanguages)) {
+      const enabledLangs: Record<string, any> = {};
+      storeSettings.enabledLanguages.forEach((lang: string) => {
+        if (LANGUAGES[lang as keyof typeof LANGUAGES]) {
+          enabledLangs[lang] = LANGUAGES[lang as keyof typeof LANGUAGES];
+        }
+      });
+      return enabledLangs;
+    }
+    return LANGUAGES; // Fallback to all languages if no settings
+  };
   
   const changeLanguage = async (lng: Language) => {
     console.log('Changing language to:', lng);
@@ -22,7 +43,10 @@ export function useLanguage() {
     currentLanguage,
     currentLanguageInfo,
     isCurrentRTL: isRTL(currentLanguage),
-    languages: LANGUAGES,
+    languages: getEnabledLanguages(), // Use enabled languages from database
+    allLanguages: LANGUAGES, // All available languages
+    defaultLanguage: storeSettings?.defaultLanguage || 'ru',
+    enabledLanguages: storeSettings?.enabledLanguages || ['ru', 'en', 'he'],
     changeLanguage,
   };
 }
