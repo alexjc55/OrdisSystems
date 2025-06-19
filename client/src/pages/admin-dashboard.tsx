@@ -396,8 +396,64 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
   const queryClient = useQueryClient();
   const { data: storeSettingsData } = useQuery({
     queryKey: ['/api/settings'],
-    queryFn: () => apiRequest('GET', '/api/settings')
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/settings');
+      return await response.json();
+    }
   });
+
+  // Generate time slots based on store working hours for this component
+  const getFormTimeSlots = (selectedDate = '', workingHours: any = {}, weekStartDay = 'monday') => {
+    if (!selectedDate) return [];
+    
+    const date = new Date(selectedDate + 'T00:00:00');
+    const dayNames = weekStartDay === 'sunday' 
+      ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+      : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    
+    const dayName = dayNames[date.getDay()];
+    const daySchedule = workingHours[dayName];
+    
+    if (!daySchedule || daySchedule.trim() === '' || 
+        daySchedule.toLowerCase().includes('закрыто') || 
+        daySchedule.toLowerCase().includes('closed') ||
+        daySchedule.toLowerCase().includes('выходной')) {
+      return [{
+        value: 'closed',
+        label: 'Выходной день'
+      }];
+    }
+    
+    // Parse working hours (e.g., "09:00-18:00" or "09:00-14:00, 16:00-20:00")
+    const timeSlots: { value: string; label: string }[] = [];
+    const scheduleRanges = daySchedule.split(',').map((range: string) => range.trim());
+    
+    scheduleRanges.forEach((range: string) => {
+      const [start, end] = range.split('-').map((time: string) => time.trim());
+      if (start && end) {
+        const [startHour, startMin] = start.split(':').map(Number);
+        const [endHour, endMin] = end.split(':').map(Number);
+        
+        // Generate 2-hour intervals
+        for (let hour = startHour; hour < endHour; hour += 2) {
+          const nextHour = Math.min(hour + 2, endHour);
+          
+          // Skip if the interval would be less than 2 hours and we're not at the start
+          if (nextHour - hour < 2 && hour !== startHour) continue;
+          
+          const timeStr = `${hour.toString().padStart(2, '0')}:00`;
+          const endTimeStr = `${nextHour.toString().padStart(2, '0')}:00`;
+          
+          timeSlots.push({
+            value: timeStr,
+            label: `${timeStr} - ${endTimeStr}`
+          });
+        }
+      }
+    });
+    
+    return timeSlots;
+  };
   const storeSettings = storeSettingsData;
   const [showAddItem, setShowAddItem] = useState(false);
   const [editedOrderItems, setEditedOrderItems] = useState(order.items || []);
@@ -805,7 +861,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
                   <SelectValue placeholder="Выберите время" />
                 </SelectTrigger>
                 <SelectContent>
-                  {getTimeSlots().map((slot) => (
+                  {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
                     <SelectItem key={slot.value} value={slot.label}>
                       {slot.label}
                     </SelectItem>

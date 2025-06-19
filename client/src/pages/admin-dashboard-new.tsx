@@ -235,6 +235,10 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
   const queryClient = useQueryClient();
   const { data: storeSettings } = useQuery({
     queryKey: ["/api/settings"],
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/settings');
+      return await response.json();
+    }
   });
   const [editedOrder, setEditedOrder] = useState({
     deliveryType: order.deliveryType || 'pickup',
@@ -403,7 +407,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
                 <SelectValue placeholder="Выберите время" />
               </SelectTrigger>
               <SelectContent>
-                {getTimeSlots(editedOrder.deliveryDate, storeSettings?.workingHours, storeSettings?.weekStartDay).map((slot) => (
+                {getTimeSlots(editedOrder.deliveryDate, storeSettings?.workingHours || {}, storeSettings?.weekStartDay || 'monday').map((slot) => (
                   <SelectItem key={slot.value} value={slot.label}>
                     {slot.label}
                   </SelectItem>
