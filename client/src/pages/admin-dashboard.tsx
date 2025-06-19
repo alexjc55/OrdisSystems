@@ -167,7 +167,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: {
           <div className="flex items-start justify-between">
             <div>
               <h4 className="font-medium text-sm">Заказ #{order.id}</h4>
-              <p className="text-xs text-gray-500">{order.user.email}</p>
+              <p className="text-xs text-gray-500">{order.user?.email || 'Гость'}</p>
             </div>
             <Badge className={`text-xs ${getStatusColor(order.status)}`}>
               {order.status === 'pending' && 'Ожидает'}
@@ -449,6 +449,29 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Store settings query
+  const { data: storeSettings } = useQuery({
+    queryKey: ["/api/settings"],
+    enabled: !!user,
+  });
+
+  // Helper functions for permission checks
+  const isAdmin = user?.role === "admin" || user?.email === "alexjc55@gmail.com" || user?.username === "admin";
+  let workerPermissions: any = {};
+  try {
+    workerPermissions = typeof (storeSettings as any)?.worker_permissions === 'string' 
+      ? JSON.parse((storeSettings as any).worker_permissions)
+      : ((storeSettings as any)?.worker_permissions || {});
+  } catch (e) {
+    workerPermissions = {};
+  }
+  
+  const canManageProducts = isAdmin || workerPermissions.canManageProducts;
+  const canManageCategories = isAdmin || workerPermissions.canManageCategories;
+  const canManageOrders = isAdmin || workerPermissions.canManageOrders;
+  const canViewUsers = isAdmin || workerPermissions.canViewUsers;
+  const canViewSettings = isAdmin || workerPermissions.canViewSettings;
+
   // State for forms and filters
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
   const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
@@ -479,15 +502,7 @@ export default function AdminDashboard() {
   const [ordersPage, setOrdersPage] = useState(1);
   const [usersPage, setUsersPage] = useState(1);
 
-  // Fetch store settings
-  const { data: storeSettings } = useQuery({
-    queryKey: ["/api/settings"],
-    queryFn: async () => {
-      const response = await fetch("/api/settings");
-      if (!response.ok) throw new Error("Failed to fetch settings");
-      return response.json();
-    },
-  });
+
 
   // Fetch categories
   const { data: categories = [] } = useQuery({
@@ -501,9 +516,9 @@ export default function AdminDashboard() {
 
   // Fetch products with pagination
   const { data: productsResponse, isLoading: productsLoading } = useQuery({
-    queryKey: ["/api/admin/products", productsPage, searchQuery, selectedCategoryFilter, selectedStatusFilter, sortField, sortDirection, storeSettings?.defaultItemsPerPage],
+    queryKey: ["/api/admin/products", productsPage, searchQuery, selectedCategoryFilter, selectedStatusFilter, sortField, sortDirection, (storeSettings as any)?.defaultItemsPerPage],
     queryFn: async () => {
-      const limit = storeSettings?.defaultItemsPerPage || 10;
+      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: productsPage.toString(),
         limit: limit.toString(),
@@ -922,7 +937,7 @@ export default function AdminDashboard() {
                         {ordersData.map((order: any) => (
                           <TableRow key={order.id}>
                             <TableCell className="font-medium">#{order.id}</TableCell>
-                            <TableCell>{order.user.email}</TableCell>
+                            <TableCell>{order.user?.email || 'Гость'}</TableCell>
                             <TableCell>{formatCurrency(order.totalAmount)}</TableCell>
                             <TableCell>
                               <Select
@@ -1385,7 +1400,7 @@ export default function AdminDashboard() {
                                 {user.profileImageUrl && (
                                   <img 
                                     src={user.profileImageUrl} 
-                                    alt={user.firstName || user.email}
+                                    alt={user.firstName || user.email || 'Пользователь'}
                                     className="w-8 h-8 rounded-full object-cover"
                                   />
                                 )}
