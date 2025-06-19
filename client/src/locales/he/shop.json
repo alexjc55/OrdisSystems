@@ -25,18 +25,18 @@
   "cart": {
     "title": "עגלת קניות",
     "empty": "העגלה ריקה",
-    "addProducts": "הוסף מוצרים לביצוע הזמנה",
+    "emptyDescription": "הוסף מוצרים לביצוע הזמנה",
     "continueShopping": "המשך קניות",
-    "items": "פריטים:",
-    "delivery": "משלוח:",
-    "total": "סה\"כ:",
+    "items": "פריטים",
+    "delivery": "משלוח",
+    "total": "סה\"כ",
     "free": "בחינם",
     "freeDeliveryFrom": "משלוח חינם מ",
     "checkout": "ביצוע הזמנה",
     "removeItem": "הסר פריט",
     "updateQuantity": "עדכן כמות"
   },
-  "products": {
+  "product": {
     "price": "מחיר",
     "addToCart": "הוסף לעגלה",
     "outOfStock": "אזל במלאי",
@@ -45,8 +45,10 @@
     "perKg": "לק\"ג",
     "per100g": "ל100 גרם",
     "piece": "יח'",
-    "weight": "משקל",
-    "quantity": "כמות"
+    "weight": "משקל (ק\"ג)",
+    "quantity": "כמות",
+    "grams": "גרמים",
+    "total": "סה\"כ"
   },
   "checkout": {
     "title": "ביצוע הזמנה",

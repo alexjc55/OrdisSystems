@@ -156,6 +156,10 @@
     "favicon": "Иконка сайта",
     "primaryColor": "Основной цвет",
     "secondaryColor": "Вторичный цвет",
+    "languageSettings": "Настройки языка",
+    "defaultLanguage": "Язык по умолчанию",
+    "availableLanguages": "Доступные языки",
+    "enableMultiLanguage": "Многоязычный интерфейс",
     "saveSettings": "Сохранить настройки"
   },
   "permissions": {

@@ -36,7 +36,7 @@
     "removeItem": "Remove item",
     "updateQuantity": "Update quantity"
   },
-  "products": {
+  "product": {
     "price": "Price",
     "addToCart": "Add to Cart",
     "outOfStock": "Out of Stock",
@@ -45,8 +45,10 @@
     "perKg": "per kg",
     "per100g": "per 100g",
     "piece": "pc",
-    "weight": "Weight",
-    "quantity": "Quantity"
+    "weight": "Weight (kg)",
+    "quantity": "Quantity",
+    "grams": "Grams",
+    "total": "Total"
   },
   "checkout": {
     "title": "Checkout",

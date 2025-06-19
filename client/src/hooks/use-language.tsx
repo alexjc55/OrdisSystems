@@ -7,11 +7,15 @@ export function useLanguage() {
   const currentLanguage = (i18n.language || 'ru') as Language;
   const currentLanguageInfo = LANGUAGES[currentLanguage] || LANGUAGES.ru;
   
-  const changeLanguage = (lng: Language) => {
+  const changeLanguage = async (lng: Language) => {
     console.log('Changing language to:', lng);
-    i18n.changeLanguage(lng);
+    await i18n.changeLanguage(lng);
     updateDocumentDirection(lng);
     localStorage.setItem('language', lng);
+    // Force re-render by triggering a small delay
+    setTimeout(() => {
+      window.dispatchEvent(new Event('languageChanged'));
+    }, 100);
   };
   
   return {
