@@ -229,7 +229,10 @@ export default function Checkout() {
         throw new Error("Ошибка регистрации");
       }
 
-      // Then create the order
+      // Get the created user data
+      const newUser = await registerRes.json();
+
+      // Then create the order with user ID
       const orderData = {
         items: items.map(item => ({
           productId: item.product.id,
@@ -238,6 +241,7 @@ export default function Checkout() {
           totalPrice: item.totalPrice.toString()
         })),
         totalAmount: getTotalPrice().toString(),
+        userId: newUser.id, // Link order to the newly created user
         deliveryAddress: data.address,
         deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
         deliveryTime: formatDeliveryTimeRange(selectedRegisterTime),
