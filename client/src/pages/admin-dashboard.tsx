@@ -4492,7 +4492,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(LANGUAGES).map(([code, info]) => (
+                      {Object.entries(LANGUAGES).filter(([code]) => {
+                        const enabledLanguages = form.watch("enabledLanguages") || ["ru", "en", "he"];
+                        return enabledLanguages.includes(code);
+                      }).map(([code, info]) => (
                         <SelectItem key={code} value={code}>
                           <div className="flex items-center gap-2">
                             <span>{(info as any).flag}</span>
@@ -4532,17 +4535,26 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             checked={isEnabled}
                             onChange={(checked) => {
                               const currentEnabled = form.getValues("enabledLanguages") || ["ru", "en", "he"];
+                              const currentDefault = form.getValues("defaultLanguage") || "ru";
                               let newEnabled;
+                              
                               if (checked) {
                                 newEnabled = [...currentEnabled, code];
                               } else {
                                 newEnabled = currentEnabled.filter((lang: string) => lang !== code);
                               }
+                              
                               // Ensure at least one language is always enabled
                               if (newEnabled.length === 0) {
                                 newEnabled = ["ru"];
                               }
+                              
                               form.setValue("enabledLanguages", newEnabled);
+                              
+                              // If the default language is being disabled, switch to the first enabled language
+                              if (!newEnabled.includes(currentDefault)) {
+                                form.setValue("defaultLanguage", newEnabled[0]);
+                              }
                             }}
                             bgColor={isEnabled ? "bg-green-500" : "bg-gray-300"}
                           />
