@@ -1325,11 +1325,16 @@ export default function AdminDashboard() {
 
   // Helper function to check worker permissions
   const hasPermission = (permission: string) => {
+    console.log('Checking permission:', permission, 'for user:', user?.role);
+    
     if (user?.role === "admin") return true;
     if (user?.role !== "worker") return false;
     
     const workerPermissions = (storeSettings?.workerPermissions as any) || {};
-    return workerPermissions[permission] || false;
+    console.log('Worker permissions:', workerPermissions);
+    console.log('Permission result:', workerPermissions[permission]);
+    
+    return workerPermissions[permission] === true;
   };
 
   // State for forms and filters
