@@ -183,6 +183,10 @@ function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { 
 }
 
 function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
+  // Debug log to see order data structure
+  console.log('Order data:', order);
+  console.log('Payment method:', order.paymentMethod);
+  
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
@@ -340,6 +344,11 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 <div className="flex items-center gap-1">
                   <CreditCard className="h-3 w-3" />
                   <span>{order.paymentMethod}</span>
+                </div>
+              )}
+              {!order.paymentMethod && order.status && (
+                <div className="text-xs text-gray-400">
+                  Способ оплаты не указан
                 </div>
               )}
             </div>
