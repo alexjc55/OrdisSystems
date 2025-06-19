@@ -156,6 +156,10 @@
     "favicon": "Favicon",
     "primaryColor": "Primary Color",
     "secondaryColor": "Secondary Color",
+    "languageSettings": "Language Settings",
+    "defaultLanguage": "Default Language",
+    "availableLanguages": "Available Languages",
+    "enableMultiLanguage": "Multi-language Interface",
     "saveSettings": "Save Settings"
   },
   "permissions": {

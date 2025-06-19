@@ -156,6 +156,10 @@
     "favicon": "אייקון אתר",
     "primaryColor": "צבע ראשי",
     "secondaryColor": "צבע משני",
+    "languageSettings": "הגדרות שפה",
+    "defaultLanguage": "שפת ברירת מחדל",
+    "availableLanguages": "שפות זמינות",
+    "enableMultiLanguage": "ממשק רב לשוני",
     "saveSettings": "שמור הגדרות"
   },
   "permissions": {
