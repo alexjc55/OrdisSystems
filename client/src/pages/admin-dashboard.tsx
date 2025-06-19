@@ -1314,7 +1314,7 @@ function ItemDiscountDialog({
 }
 
 export default function AdminDashboard() {
-  const { user, isLoading, isAuthenticated } = useAuth();
+  const { user, isLoading } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -1376,7 +1376,7 @@ export default function AdminDashboard() {
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isLoading && !user) {
       toast({
         title: "Unauthorized",
         description: "You are logged out. Logging in again...",
@@ -1387,14 +1387,14 @@ export default function AdminDashboard() {
       }, 500);
       return;
     }
-  }, [isAuthenticated, isLoading, toast]);
+  }, [user, isLoading, toast]);
 
-  // Check admin access
+  // Check admin access - allow admin and worker roles
   useEffect(() => {
-    if (user && user.role !== "admin" && user.email !== "alexjc55@gmail.com" && user.username !== "admin") {
+    if (user && user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin") {
       toast({
-        title: "Access Denied",
-        description: "You don't have admin privileges",
+        title: "Доступ запрещен",
+        description: "У вас нет прав администратора или работника",
         variant: "destructive",
       });
       window.location.href = "/";
@@ -1846,7 +1846,7 @@ export default function AdminDashboard() {
     setIsCancellationDialogOpen(true);
   };
 
-  if (isLoading || !isAuthenticated) {
+  if (isLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
