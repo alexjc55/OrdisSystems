@@ -449,6 +449,29 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Store settings query for worker permissions
+  const { data: storeSettings } = useQuery({
+    queryKey: ["/api/settings"],
+    enabled: !!user,
+  });
+
+  // Helper functions for permission checks
+  const isAdmin = user?.role === "admin" || user?.email === "alexjc55@gmail.com" || user?.username === "admin";
+  let workerPermissions: any = {};
+  try {
+    workerPermissions = typeof (storeSettings as any)?.worker_permissions === 'string' 
+      ? JSON.parse((storeSettings as any).worker_permissions)
+      : ((storeSettings as any)?.worker_permissions || {});
+  } catch (e) {
+    workerPermissions = {};
+  }
+  
+  const canManageProducts = isAdmin || workerPermissions.canManageProducts;
+  const canManageCategories = isAdmin || workerPermissions.canManageCategories;
+  const canManageOrders = isAdmin || workerPermissions.canManageOrders;
+  const canViewUsers = isAdmin || workerPermissions.canViewUsers;
+  const canViewSettings = isAdmin || workerPermissions.canViewSettings;
+
   // State for forms and filters
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
   const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
@@ -479,15 +502,7 @@ export default function AdminDashboard() {
   const [ordersPage, setOrdersPage] = useState(1);
   const [usersPage, setUsersPage] = useState(1);
 
-  // Fetch store settings
-  const { data: storeSettings } = useQuery({
-    queryKey: ["/api/settings"],
-    queryFn: async () => {
-      const response = await fetch("/api/settings");
-      if (!response.ok) throw new Error("Failed to fetch settings");
-      return response.json();
-    },
-  });
+
 
   // Fetch categories
   const { data: categories = [] } = useQuery({
@@ -501,9 +516,9 @@ export default function AdminDashboard() {
 
   // Fetch products with pagination
   const { data: productsResponse, isLoading: productsLoading } = useQuery({
-    queryKey: ["/api/admin/products", productsPage, searchQuery, selectedCategoryFilter, selectedStatusFilter, sortField, sortDirection, storeSettings?.defaultItemsPerPage],
+    queryKey: ["/api/admin/products", productsPage, searchQuery, selectedCategoryFilter, selectedStatusFilter, sortField, sortDirection, (storeSettings as any)?.defaultItemsPerPage],
     queryFn: async () => {
-      const limit = storeSettings?.defaultItemsPerPage || 10;
+      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: productsPage.toString(),
         limit: limit.toString(),
@@ -521,9 +536,9 @@ export default function AdminDashboard() {
 
   // Fetch orders with pagination and filtering
   const { data: ordersResponse, isLoading: ordersLoading } = useQuery({
-    queryKey: ["/api/admin/orders", ordersPage, searchQuery, ordersStatusFilter, storeSettings?.defaultItemsPerPage],
+    queryKey: ["/api/admin/orders", ordersPage, searchQuery, ordersStatusFilter, (storeSettings as any)?.defaultItemsPerPage],
     queryFn: async () => {
-      const limit = storeSettings?.defaultItemsPerPage || 10;
+      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
       let statusParam = "";
       
       if (ordersStatusFilter === "active") {
@@ -550,9 +565,9 @@ export default function AdminDashboard() {
   });
 
   const { data: usersResponse, isLoading: usersLoading } = useQuery({
-    queryKey: ["/api/admin/users", usersPage, searchQuery, storeSettings?.defaultItemsPerPage],
+    queryKey: ["/api/admin/users", usersPage, searchQuery, (storeSettings as any)?.defaultItemsPerPage],
     queryFn: async () => {
-      const limit = storeSettings?.defaultItemsPerPage || 10;
+      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: usersPage.toString(),
         limit: limit.toString(),
@@ -566,7 +581,7 @@ export default function AdminDashboard() {
   });
 
   // Pagination configuration
-  const itemsPerPage = storeSettings?.defaultItemsPerPage || 10;
+  const itemsPerPage = (storeSettings as any)?.defaultItemsPerPage || 10;
 
   // Extract data and pagination info
   const productsData = productsResponse?.data || [];
@@ -631,7 +646,7 @@ export default function AdminDashboard() {
   };
 
   // Get default cancellation reasons
-  const defaultCancellationReasons = storeSettings?.cancellationReasons || [
+  const defaultCancellationReasons = (storeSettings as any)?.cancellationReasons || [
     "Товар недоступен",
     "Клиент отменил заказ",
     "Проблемы с доставкой",
@@ -795,7 +810,7 @@ export default function AdminDashboard() {
     }
   });
 
-  if (isLoading || !isAuthenticated) {
+  if (isLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
