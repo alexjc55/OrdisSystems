@@ -2152,16 +2152,15 @@ export default function AdminDashboard() {
                               </TableCell>
                               <TableCell className="px-2 sm:px-4 py-2">
                                 <div className="flex items-center gap-2">
-                                  <Switch
+                                  <CustomSwitch
                                     checked={product.isAvailable}
-                                    onCheckedChange={(checked) => {
+                                    onChange={(checked) => {
                                       toggleAvailabilityMutation.mutate({
                                         id: product.id,
                                         isAvailable: checked
                                       });
                                     }}
-                                    disabled={toggleAvailabilityMutation.isPending}
-                                    className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+                                    bgColor="bg-green-500"
                                   />
                                 </div>
                               </TableCell>
@@ -3198,9 +3197,9 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">Управление товарами</label>
                           <p className="text-xs text-gray-500">Добавление, редактирование и удаление товаров</p>
                         </div>
-                        <Switch
+                        <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageProducts || false}
-                          onCheckedChange={(checked) => 
+                          onChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -3208,6 +3207,7 @@ export default function AdminDashboard() {
                               }
                             })
                           }
+                          bgColor="bg-blue-500"
                         />
                       </div>
                       
@@ -3216,9 +3216,9 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">Управление категориями</label>
                           <p className="text-xs text-gray-500">Добавление, редактирование и удаление категорий</p>
                         </div>
-                        <Switch
+                        <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageCategories || false}
-                          onCheckedChange={(checked) => 
+                          onChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -3226,6 +3226,7 @@ export default function AdminDashboard() {
                               }
                             })
                           }
+                          bgColor="bg-blue-500"
                         />
                       </div>
                       
@@ -3412,6 +3413,36 @@ export default function AdminDashboard() {
           }
         }}
         cancellationReasons={(storeSettings?.cancellationReasons as string[]) || ["Клиент отменил", "Товар отсутствует", "Технические проблемы", "Другое"]}
+      />
+    </div>
+  );
+}
+
+// Custom Switch Component for mobile compatibility
+function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: { 
+  checked: boolean; 
+  onChange: (checked: boolean) => void; 
+  bgColor?: string;
+}) {
+  return (
+    <div
+      role="switch"
+      aria-checked={checked}
+      onClick={() => {
+        try {
+          onChange(!checked);
+        } catch (error) {
+          console.error('Switch toggle error:', error);
+        }
+      }}
+      className={`h-6 w-11 rounded-full cursor-pointer transition-colors ${
+        checked ? bgColor : 'bg-gray-200'
+      } relative`}
+    >
+      <div
+        className={`h-5 w-5 bg-white rounded-full absolute top-0.5 transition-transform ${
+          checked ? 'translate-x-5' : 'translate-x-0.5'
+        }`}
       />
     </div>
   );
@@ -3629,10 +3660,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     </div>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+                    <CustomSwitch
+                      checked={Boolean(field.value)}
+                      onChange={field.onChange}
+                      bgColor="bg-green-500"
                     />
                   </FormControl>
                 </FormItem>
@@ -3651,26 +3682,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     </div>
                   </div>
                   <FormControl>
-                    <div
-                      role="switch"
-                      aria-checked={Boolean(field.value)}
-                      onClick={() => {
-                        try {
-                          field.onChange(!Boolean(field.value));
-                        } catch (error) {
-                          console.error('Switch toggle error:', error);
-                        }
-                      }}
-                      className={`h-6 w-11 rounded-full cursor-pointer transition-colors ${
-                        Boolean(field.value) ? 'bg-orange-500' : 'bg-gray-200'
-                      } relative`}
-                    >
-                      <div
-                        className={`h-5 w-5 bg-white rounded-full absolute top-0.5 transition-transform ${
-                          Boolean(field.value) ? 'translate-x-5' : 'translate-x-0.5'
-                        }`}
-                      />
-                    </div>
+                    <CustomSwitch
+                      checked={Boolean(field.value)}
+                      onChange={field.onChange}
+                      bgColor="bg-orange-500"
+                    />
                   </FormControl>
                 </FormItem>
               )}
