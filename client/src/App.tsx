@@ -8,6 +8,9 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { CustomHtml } from "@/components/custom-html";
 import { WhatsAppChat } from "@/components/layout/whatsapp-chat";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { updateDocumentDirection } from "@/lib/i18n";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 import AdminDashboard from "@/pages/admin-dashboard";
@@ -22,6 +25,16 @@ import { ProtectedRoute } from "@/lib/protected-route";
 
 function Router() {
   const { storeSettings } = useStoreSettings();
+  const { i18n } = useTranslation();
+
+  // Initialize language and direction on app start
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage && savedLanguage !== i18n.language) {
+      i18n.changeLanguage(savedLanguage);
+    }
+    updateDocumentDirection(i18n.language);
+  }, [i18n]);
 
   return (
     <ErrorBoundary>

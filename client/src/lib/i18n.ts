@@ -120,6 +120,17 @@ i18n
       transSupportBasicHtmlNodes: true,
       transKeepBasicHtmlNodesFor: ['br', 'strong', 'i'],
     },
+  })
+  .then(() => {
+    // Ensure the saved language is applied and direction is updated
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage && Object.keys(LANGUAGES).includes(savedLanguage)) {
+      i18n.changeLanguage(savedLanguage);
+      updateDocumentDirection(savedLanguage);
+    } else {
+      // Apply direction for the detected/fallback language
+      updateDocumentDirection(i18n.language);
+    }
   });
 
 // Listen for language changes and update document direction
