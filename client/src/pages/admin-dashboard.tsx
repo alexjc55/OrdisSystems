@@ -1335,6 +1335,7 @@ function ItemDiscountDialog({
 export default function AdminDashboard() {
   const { user, isLoading } = useAuth();
   const { toast } = useToast();
+  const { t } = useAdminTranslation();
   const queryClient = useQueryClient();
 
   // Data queries with pagination  
@@ -1982,22 +1983,22 @@ export default function AdminDashboard() {
           <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
             <TabsList className="flex w-full overflow-x-auto gap-1 justify-start">
               {hasPermission("canManageProducts") && (
-                <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">Товары</TabsTrigger>
+                <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.products')}</TabsTrigger>
               )}
               {hasPermission("canManageCategories") && (
-                <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">Категории</TabsTrigger>
+                <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.categories')}</TabsTrigger>
               )}
               {hasPermission("canManageOrders") && (
-                <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">Заказы</TabsTrigger>
+                <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.orders')}</TabsTrigger>
               )}
               {hasPermission("canViewUsers") && (
-                <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">Пользователи</TabsTrigger>
+                <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.users')}</TabsTrigger>
               )}
               {hasPermission("canViewSettings") && (
-                <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">Магазин</TabsTrigger>
+                <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.settings')}</TabsTrigger>
               )}
               {hasPermission("canManageSettings") && (
-                <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Настройки</TabsTrigger>
+                <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.settings')}</TabsTrigger>
               )}
             </TabsList>
           </div>
@@ -2011,10 +2012,10 @@ export default function AdminDashboard() {
                   <div>
                     <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                       <Package className="h-4 w-4 sm:h-5 sm:w-5" />
-                      Управление Товарами
+                      {t('products.title')}
                     </CardTitle>
                     <CardDescription className="text-sm">
-                      Полное управление товарами с поиском и фильтрацией
+                      {t('products.description', 'Полное управление товарами с поиском и фильтрацией')}
                     </CardDescription>
                   </div>
                   <Button 
