@@ -1318,12 +1318,17 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Data queries with pagination  
+  const { data: storeSettings, isLoading: storeSettingsLoading } = useQuery<StoreSettings>({
+    queryKey: ["/api/settings"]
+  });
+
   // Helper function to check worker permissions
-  const hasPermission = (permission: string, settings?: any) => {
+  const hasPermission = (permission: string) => {
     if (user?.role === "admin") return true;
     if (user?.role !== "worker") return false;
     
-    const workerPermissions = (settings?.workerPermissions as any) || {};
+    const workerPermissions = (storeSettings?.workerPermissions as any) || {};
     return workerPermissions[permission] || false;
   };
 
@@ -1979,7 +1984,8 @@ export default function AdminDashboard() {
           </div>
 
           {/* Products Management */}
-          <TabsContent value="products" className="space-y-4 sm:space-y-6">
+          {hasPermission("canManageProducts") && (
+            <TabsContent value="products" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -2232,9 +2238,11 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Categories Management */}
-          <TabsContent value="categories" className="space-y-4 sm:space-y-6">
+          {hasPermission("canManageCategories") && (
+            <TabsContent value="categories" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -2362,9 +2370,11 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Orders Management */}
-          <TabsContent value="orders" className="space-y-4 sm:space-y-6">
+          {hasPermission("canManageOrders") && (
+            <TabsContent value="orders" className="space-y-4 sm:space-y-6">
             {/* Header Section */}
             <div className="flex flex-col gap-4">
               <div>
@@ -2940,9 +2950,11 @@ export default function AdminDashboard() {
               </DialogContent>
             </Dialog>
           </TabsContent>
+          )}
 
           {/* Users Management */}
-          <TabsContent value="users" className="space-y-4 sm:space-y-6">
+          {hasPermission("canViewUsers") && (
+            <TabsContent value="users" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
