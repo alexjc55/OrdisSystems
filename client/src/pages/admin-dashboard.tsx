@@ -1379,7 +1379,7 @@ export default function AdminDashboard() {
 
   // Check admin access
   useEffect(() => {
-    if (user && user.email !== "alexjc55@gmail.com") {
+    if (user && user.role !== "admin" && user.email !== "alexjc55@gmail.com" && user.username !== "admin") {
       toast({
         title: "Access Denied",
         description: "You don't have admin privileges",
@@ -1845,7 +1845,7 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!user || user.email !== "alexjc55@gmail.com") {
+  if (!user || (user.role !== "admin" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
     return null;
   }
 
