@@ -188,6 +188,7 @@ export default function Checkout() {
           ...data,
           deliveryDate: selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : "",
           deliveryTime: selectedGuestTime,
+          paymentMethod: selectedGuestPaymentMethod,
         },
         status: "pending"
       };
@@ -237,6 +238,9 @@ export default function Checkout() {
         })),
         totalAmount: getTotalPrice(),
         deliveryAddress: data.address,
+        deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
+        deliveryTime: selectedRegisterTime,
+        paymentMethod: selectedRegisterPaymentMethod,
         customerPhone: data.phone,
         deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
         deliveryTime: selectedRegisterTime,
@@ -511,7 +515,7 @@ export default function Checkout() {
                       </div>
                     </div>
                     
-                    {addresses && Array.isArray(addresses) && addresses.length > 0 && (
+                    {addresses && Array.isArray(addresses) && (addresses as any[]).length > 0 && (
                       <div>
                         <Label>Или выберите из сохраненных адресов:</Label>
                         <div className="mt-2 space-y-2">
@@ -526,7 +530,7 @@ export default function Checkout() {
                                 if (input) input.value = addr.address;
                               }}
                             >
-                              {addr.label}: {addr.address}
+                              {addr.label ? `${addr.label}: ${addr.address}` : addr.address}
                             </Button>
                           ))}
                         </div>
@@ -994,6 +998,34 @@ export default function Checkout() {
                             </SelectContent>
                           </Select>
                         </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="guestPaymentMethod">Способ оплаты *</Label>
+                        <Select 
+                          value={selectedGuestPaymentMethod} 
+                          onValueChange={setSelectedGuestPaymentMethod} 
+                          required
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Выберите способ оплаты" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
+                              storeSettings.paymentMethods.map((method: any) => (
+                                <SelectItem key={method.id} value={method.name}>
+                                  {method.name}
+                                </SelectItem>
+                              )) : (
+                                <>
+                                  <SelectItem value="cash">Наличными при получении</SelectItem>
+                                  <SelectItem value="card">Банковской картой</SelectItem>
+                                  <SelectItem value="transfer">Банковский перевод</SelectItem>
+                                </>
+                              )
+                            }
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       <Button 
