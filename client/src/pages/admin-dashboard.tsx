@@ -2027,7 +2027,7 @@ export default function AdminDashboard() {
                     size="sm"
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                    Добавить товар
+                    {t('actions.add')} {t('products.title')}
                   </Button>
                 </div>
               </CardHeader>
@@ -2037,7 +2037,7 @@ export default function AdminDashboard() {
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                      placeholder="Поиск товаров..."
+                      placeholder={t('products.searchProducts')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10 text-sm"
@@ -2048,10 +2048,10 @@ export default function AdminDashboard() {
                       <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
                         <SelectTrigger className="pl-10 text-sm">
-                          <SelectValue placeholder="Все категории" />
+                          <SelectValue placeholder={t('products.allCategories')} />
                         </SelectTrigger>
                         <SelectContent className="bg-white">
-                          <SelectItem value="all">Все категории</SelectItem>
+                          <SelectItem value="all">{t('products.allCategories')}</SelectItem>
                           {(categories as any[] || []).map((category: any) => (
                             <SelectItem 
                               key={category.id} 
@@ -2067,13 +2067,13 @@ export default function AdminDashboard() {
                       <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
                         <SelectTrigger className="pl-10 text-sm">
-                          <SelectValue placeholder="Статус товара" />
+                          <SelectValue placeholder={t('products.productStatus')} />
                         </SelectTrigger>
                         <SelectContent className="bg-white">
-                          <SelectItem value="all">Все товары</SelectItem>
-                          <SelectItem value="available">Доступные</SelectItem>
-                          <SelectItem value="unavailable">Недоступные</SelectItem>
-                          <SelectItem value="with_discount">Со скидкой</SelectItem>
+                          <SelectItem value="all">{t('products.allProducts', 'Все товары')}</SelectItem>
+                          <SelectItem value="available">{t('products.availableProducts')}</SelectItem>
+                          <SelectItem value="unavailable">{t('products.unavailableProducts')}</SelectItem>
+                          <SelectItem value="with_discount">{t('products.productsWithDiscount')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -2092,7 +2092,7 @@ export default function AdminDashboard() {
                                 onClick={() => handleSort("name")}
                                 className="flex items-center gap-1 hover:text-orange-600 transition-colors"
                               >
-                                Название
+                                {t('products.productName')}
                                 {sortField === "name" && (
                                   sortDirection === "asc" ? 
                                     <ChevronUp className="h-3 w-3" /> : 
@@ -2105,7 +2105,7 @@ export default function AdminDashboard() {
                                 onClick={() => handleSort("category")}
                                 className="flex items-center gap-1 hover:text-orange-600 transition-colors"
                               >
-                                Категория
+                                {t('products.productCategory')}
                                 {sortField === "category" && (
                                   sortDirection === "asc" ? 
                                     <ChevronUp className="h-3 w-3" /> : 
@@ -2118,7 +2118,7 @@ export default function AdminDashboard() {
                                 onClick={() => handleSort("price")}
                                 className="flex items-center gap-1 hover:text-orange-600 transition-colors"
                               >
-                                Цена
+                                {t('products.productPrice')}
                                 {sortField === "price" && (
                                   sortDirection === "asc" ? 
                                     <ChevronUp className="h-3 w-3" /> : 
@@ -2126,7 +2126,7 @@ export default function AdminDashboard() {
                                 )}
                               </button>
                             </TableHead>
-                            <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm">Наличие</TableHead>
+                            <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm">{t('products.productStatus')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -2194,12 +2194,12 @@ export default function AdminDashboard() {
                   <div className="text-center py-8">
                     <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      {searchQuery || selectedCategoryFilter !== "all" ? "Товары не найдены" : "Нет товаров"}
+                      {searchQuery || selectedCategoryFilter !== "all" ? t('common.noResults', 'Товары не найдены') : t('products.noProducts', 'Нет товаров')}
                     </h3>
                     <p className="text-gray-500 text-sm">
                       {searchQuery || selectedCategoryFilter !== "all" 
-                        ? "Попробуйте изменить критерии поиска или фильтрации"
-                        : "Начните с добавления первого товара"
+                        ? t('common.tryDifferentSearch', 'Попробуйте изменить критерии поиска или фильтрации')
+                        : t('products.addFirstProduct', 'Начните с добавления первого товара')
                       }
                     </p>
                   </div>
