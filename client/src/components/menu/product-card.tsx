@@ -123,62 +123,68 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
-      <div className="relative">
+    <div className="product-card-modern h-full flex flex-col">
+      <div className="relative overflow-hidden">
         <img
           src={product.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'}
           alt={product.name}
-          className="w-full h-48 object-cover"
+          className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop';
           }}
         />
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-3 right-3">
           {getStockBadge()}
         </div>
+        {product.isSpecialOffer && discountedPrice < price && (
+          <div className="absolute top-3 left-3">
+            <Badge className="bg-gradient-accent text-white px-3 py-1 shadow-soft">
+              {storeSettings?.discountBadgeText || "Скидка"}
+            </Badge>
+          </div>
+        )}
       </div>
       
-      <CardContent className="p-4 flex-1 flex flex-col">
+      <div className="p-6 flex-1 flex flex-col">
         <div className="flex-1">
-          <h3 className="text-lg font-poppins font-semibold text-gray-900 mb-1">
+          <h3 className="text-xl font-outfit font-bold text-gray-900 mb-2 leading-tight">
             {product.name}
           </h3>
           {product.description && (
-            <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+            <p className="text-sm text-gray-600 mb-3 line-clamp-2 leading-relaxed">
               {product.description}
             </p>
           )}
           {product.category && (
             <Badge 
               variant="secondary" 
-              className="mb-2 cursor-pointer bg-gray-100 text-gray-700 hover:bg-primary hover:text-primary-foreground transition-colors"
+              className="mb-4 cursor-pointer bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800 hover:from-orange-200 hover:to-orange-300 transition-all border-0 rounded-full px-3 py-1"
               onClick={() => onCategoryClick?.(product.category.id)}
             >
               {product.category.name}
             </Badge>
           )}
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex flex-col">
               {product.isSpecialOffer && discountedPrice < price ? (
                 <>
-                  <span className="text-lg line-through text-gray-400">
+                  <span className="text-lg line-through text-gray-400 font-medium">
                     {formatCurrency(price)}
                   </span>
                   <span className="text-2xl font-bold text-orange-600">
                     {formatCurrency(discountedPrice)}
                   </span>
-                  <Badge className="bg-orange-500 text-white text-xs mt-1 w-fit">
-                    {storeSettings?.discountBadgeText || "Скидка"}
-                  </Badge>
                 </>
               ) : (
-                <span className="text-2xl font-bold text-primary">
+                <span className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
                   {formatCurrency(discountedPrice)}
                 </span>
               )}
             </div>
-            <span className="text-sm text-gray-500">{getUnitLabel(unit)}</span>
+            <span className="text-sm text-gray-500 font-medium bg-gray-100 px-3 py-1 rounded-full">
+              {getUnitLabel(unit)}
+            </span>
           </div>
         </div>
 
@@ -250,7 +256,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             {t('product.addToCart', 'В корзину')}
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
