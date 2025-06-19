@@ -254,7 +254,6 @@ export default function Home() {
                               return <p className="text-gray-500 text-xs">Не указаны</p>;
                             }
 
-                            const entries = Object.entries(workingHours);
                             const dayNames: Record<string, string> = {
                               monday: 'Пн',
                               tuesday: 'Вт', 
@@ -265,15 +264,18 @@ export default function Home() {
                               sunday: 'Вс'
                             };
 
-                            const validEntries = entries.filter(([day, hours]) => {
-                              return hours && typeof hours === 'string' && hours.trim() !== '';
-                            });
+                            // Define proper day order starting from Monday
+                            const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+                            
+                            const validEntries = dayOrder
+                              .filter(day => workingHours[day] && typeof workingHours[day] === 'string' && workingHours[day].trim() !== '')
+                              .map(day => [day, workingHours[day]]);
 
                             if (validEntries.length === 0) {
                               return <p className="text-gray-500 text-xs">Не указаны</p>;
                             }
 
-                            return validEntries.slice(0, 3).map(([day, hours]) => (
+                            return validEntries.map(([day, hours]) => (
                               <div key={day} className="flex justify-between text-xs sm:text-sm">
                                 <span className="text-gray-600">{dayNames[day] || day}</span>
                                 <span className="font-medium">{hours as string}</span>
