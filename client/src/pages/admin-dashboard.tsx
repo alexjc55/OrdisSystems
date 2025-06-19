@@ -86,14 +86,6 @@ const productSchema = z.object({
   isSpecialOffer: z.boolean().default(false),
   discountType: z.enum(["percentage", "fixed"]).optional(),
   discountValue: z.string().optional(),
-}).refine((data) => {
-  if (data.isSpecialOffer) {
-    return data.discountType && data.discountValue && parseFloat(data.discountValue) > 0;
-  }
-  return true;
-}, {
-  message: "При включении специального предложения необходимо указать тип и размер скидки",
-  path: ["discountType"],
 });
 
 const categorySchema = z.object({
@@ -3656,7 +3648,14 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   <FormControl>
                     <Switch
                       checked={field.value}
-                      onCheckedChange={field.onChange}
+                      onCheckedChange={(checked) => {
+                        field.onChange(checked);
+                        if (!checked) {
+                          // Reset discount fields when special offer is disabled
+                          form.setValue("discountType", undefined as any);
+                          form.setValue("discountValue", "");
+                        }
+                      }}
                       className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                     />
                   </FormControl>
