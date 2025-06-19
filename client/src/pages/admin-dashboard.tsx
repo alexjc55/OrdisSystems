@@ -4464,7 +4464,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full rtl:flex-row-reverse">
                 <Languages className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{t('settings.languageSettings', 'Настройки языка')}</h3>
+                <h3 className="text-lg font-semibold">Настройки языка</h3>
               </div>
             </Button>
           </CollapsibleTrigger>
@@ -4472,21 +4472,21 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           <CollapsibleContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h4 className="text-sm font-medium">{t('settings.defaultLanguage', 'Язык по умолчанию')}</h4>
+                <h4 className="text-sm font-medium">Язык по умолчанию</h4>
                 <LanguageSwitcher variant="select" showFlag={true} showText={true} />
                 <p className="text-xs text-gray-500">
                   Выберите язык интерфейса по умолчанию для новых посетителей
                 </p>
               </div>
               <div className="space-y-4">
-                <h4 className="text-sm font-medium">{t('settings.availableLanguages', 'Доступные языки')}</h4>
+                <h4 className="text-sm font-medium">Доступные языки</h4>
                 <div className="space-y-2">
                   {Object.entries(LANGUAGES).map(([code, info]) => (
-                    <div key={code} className="flex items-center justify-between p-2 border rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <span className="text-base">{info.flag}</span>
-                        <span className="font-medium">{info.name}</span>
-                        <span className="text-sm text-gray-500">({info.nativeName})</span>
+                    <div key={code} className="flex items-center justify-between p-2 border rounded-lg rtl:flex-row-reverse">
+                      <div className="flex items-center gap-2 rtl:flex-row-reverse">
+                        <span className="text-base">{(info as any).flag}</span>
+                        <span className="font-medium">{(info as any).name}</span>
+                        <span className="text-sm text-gray-500">({(info as any).nativeName})</span>
                       </div>
                       <CustomSwitch 
                         checked={true} 
