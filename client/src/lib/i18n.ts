@@ -97,6 +97,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
+    lng: 'ru', // Set initial language
     fallbackLng: 'ru',
     defaultNS: 'common',
     ns: ['common', 'shop', 'admin'],
@@ -106,8 +107,9 @@ i18n
     },
     
     detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
+      order: ['localStorage', 'querystring', 'navigator'],
       lookupLocalStorage: 'language',
+      lookupQuerystring: 'lng',
       caches: ['localStorage'],
     },
     
@@ -126,7 +128,14 @@ i18n.on('languageChanged', (lng) => {
   updateDocumentDirection(lng);
 });
 
+// Force load all namespaces for all languages
+Object.keys(LANGUAGES).forEach(lang => {
+  ['common', 'shop', 'admin'].forEach(ns => {
+    i18n.loadNamespaces(ns);
+  });
+});
+
 // Initialize document direction on load
-updateDocumentDirection(i18n.language);
+updateDocumentDirection(i18n.language || 'ru');
 
 export default i18n;

@@ -4,12 +4,14 @@ import { LANGUAGES, Language, isRTL, updateDocumentDirection } from '../lib/i18n
 export function useLanguage() {
   const { i18n } = useTranslation();
   
-  const currentLanguage = i18n.language as Language;
+  const currentLanguage = (i18n.language || 'ru') as Language;
   const currentLanguageInfo = LANGUAGES[currentLanguage] || LANGUAGES.ru;
   
   const changeLanguage = (lng: Language) => {
+    console.log('Changing language to:', lng);
     i18n.changeLanguage(lng);
     updateDocumentDirection(lng);
+    localStorage.setItem('language', lng);
   };
   
   return {
