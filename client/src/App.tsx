@@ -34,8 +34,9 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/category/:categoryId" component={Home} />
         <Route path="/all-products" component={Home} />
-        <Route path="/admin" component={AdminDashboard} />
-        <Route path="/profile" component={Profile} />
+        <Route path="/auth" component={AuthPage} />
+        <ProtectedRoute path="/admin" component={() => <AdminDashboard />} />
+        <ProtectedRoute path="/profile" component={() => <Profile />} />
         <Route path="/checkout" component={Checkout} />
         <Route path="/change-password" component={ChangePasswordPage} />
         <Route path="/forgot-password" component={ForgotPasswordPage} />
@@ -58,10 +59,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
