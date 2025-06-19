@@ -2,6 +2,12 @@ import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { LANGUAGES, Language, isRTL, updateDocumentDirection } from '../lib/i18n';
 
+type StoreSettingsWithLanguage = {
+  defaultLanguage?: string;
+  enabledLanguages?: string[];
+  [key: string]: any;
+};
+
 export function useLanguage() {
   const { i18n } = useTranslation();
   
@@ -9,7 +15,7 @@ export function useLanguage() {
   const { data: storeSettings } = useQuery({
     queryKey: ['/api/settings'],
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-  });
+  }) as { data: StoreSettingsWithLanguage | undefined };
   
   const currentLanguage = (i18n.language || 'ru') as Language;
   const currentLanguageInfo = LANGUAGES[currentLanguage] || LANGUAGES.ru;

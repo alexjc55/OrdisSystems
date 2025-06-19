@@ -262,6 +262,8 @@ export const insertStoreSettingsSchema = createInsertSchema(storeSettings).omit(
   defaultItemsPerPage: z.number().int().min(1).max(1000).default(10),
   headerHtml: z.string().optional(),
   footerHtml: z.string().optional(),
+  defaultLanguage: z.string().optional(),
+  enabledLanguages: z.array(z.string()).optional(),
 });
 
 export const insertUserAddressSchema = createInsertSchema(userAddresses).omit({
