@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -93,7 +94,7 @@ const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStar
   }
   
   // Parse working hours (e.g., "09:00-18:00" or "09:00-14:00, 16:00-20:00")
-  const timeSlots = [];
+  const timeSlots: { value: string; label: string }[] = [];
   const scheduleRanges = daySchedule.split(',').map((range: string) => range.trim());
   
   scheduleRanges.forEach((range: string) => {
@@ -404,6 +405,47 @@ export default function Checkout() {
                         placeholder="Введите адрес доставки"
                         required
                       />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="deliveryDate">Дата доставки *</Label>
+                        <Select name="deliveryDate" value={selectedDate} onValueChange={setSelectedDate} required>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Выберите дату" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {generateDeliveryDates(
+                              storeSettings?.minDeliveryTimeHours || 2,
+                              storeSettings?.maxDeliveryTimeDays || 7
+                            ).map((date) => (
+                              <SelectItem key={date.value} value={date.value}>
+                                {date.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="deliveryTime">Время доставки *</Label>
+                        <Select name="deliveryTime" disabled={!selectedDate} required>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Выберите время" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {generateDeliveryTimes(
+                              storeSettings?.workingHours,
+                              selectedDate,
+                              storeSettings?.weekStartDay
+                            ).map((time) => (
+                              <SelectItem key={time.value} value={time.value}>
+                                {time.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                     
                     {addresses && Array.isArray(addresses) && addresses.length > 0 && (
