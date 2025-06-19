@@ -18,6 +18,9 @@ export function LanguageSwitcher({
 }: LanguageSwitcherProps) {
   const { currentLanguage, currentLanguageInfo, languages, changeLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Only show enabled languages
+  const availableLanguages = languages;
 
   if (variant === "select") {
     return (
@@ -31,7 +34,7 @@ export function LanguageSwitcher({
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
-          {Object.entries(languages).map(([code, info]) => (
+          {Object.entries(availableLanguages).map(([code, info]) => (
             <SelectItem key={code} value={code}>
               <div className="flex items-center gap-2">
                 {showFlag && <span className="text-base">{info.flag}</span>}

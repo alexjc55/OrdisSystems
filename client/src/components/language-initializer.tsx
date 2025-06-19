@@ -22,10 +22,12 @@ export function LanguageInitializer() {
       const defaultLanguage = storeSettings.defaultLanguage;
       const currentLanguage = i18n.language;
       
-      // Only change language if it's different from current and not already set by user
-      if (defaultLanguage !== currentLanguage && !localStorage.getItem('language')) {
+      // Always apply the default language from database settings
+      if (defaultLanguage !== currentLanguage) {
         i18n.changeLanguage(defaultLanguage).then(() => {
           updateDocumentDirection(defaultLanguage);
+          // Update localStorage to persist the choice
+          localStorage.setItem('language', defaultLanguage);
         });
       }
     }

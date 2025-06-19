@@ -192,5 +192,21 @@
     "manageSettings": "ניהול הגדרות",
     "viewReports": "צפייה בדוחות",
     "accessAdmin": "גישה לניהול"
+  },
+  "notifications": {
+    "success": {
+      "saved": "נשמר בהצלחה",
+      "updated": "עודכן בהצלחה",
+      "deleted": "נמחק בהצלחה",
+      "created": "נוצר בהצלחה",
+      "settingsUpdated": "ההגדרות עודכנו בהצלחה"
+    },
+    "error": {
+      "saveFailed": "השמירה נכשלה",
+      "updateFailed": "העדכון נכשל",
+      "deleteFailed": "המחיקה נכשלה",
+      "createFailed": "היצירה נכשלה",
+      "loadFailed": "הטעינה נכשלה"
+    }
   }
 }
