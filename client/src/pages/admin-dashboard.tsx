@@ -536,9 +536,9 @@ export default function AdminDashboard() {
 
   // Fetch orders with pagination and filtering
   const { data: ordersResponse, isLoading: ordersLoading } = useQuery({
-    queryKey: ["/api/admin/orders", ordersPage, searchQuery, ordersStatusFilter, storeSettings?.defaultItemsPerPage],
+    queryKey: ["/api/admin/orders", ordersPage, searchQuery, ordersStatusFilter, (storeSettings as any)?.defaultItemsPerPage],
     queryFn: async () => {
-      const limit = storeSettings?.defaultItemsPerPage || 10;
+      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
       let statusParam = "";
       
       if (ordersStatusFilter === "active") {
@@ -565,9 +565,9 @@ export default function AdminDashboard() {
   });
 
   const { data: usersResponse, isLoading: usersLoading } = useQuery({
-    queryKey: ["/api/admin/users", usersPage, searchQuery, storeSettings?.defaultItemsPerPage],
+    queryKey: ["/api/admin/users", usersPage, searchQuery, (storeSettings as any)?.defaultItemsPerPage],
     queryFn: async () => {
-      const limit = storeSettings?.defaultItemsPerPage || 10;
+      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: usersPage.toString(),
         limit: limit.toString(),
@@ -581,7 +581,7 @@ export default function AdminDashboard() {
   });
 
   // Pagination configuration
-  const itemsPerPage = storeSettings?.defaultItemsPerPage || 10;
+  const itemsPerPage = (storeSettings as any)?.defaultItemsPerPage || 10;
 
   // Extract data and pagination info
   const productsData = productsResponse?.data || [];
@@ -646,7 +646,7 @@ export default function AdminDashboard() {
   };
 
   // Get default cancellation reasons
-  const defaultCancellationReasons = storeSettings?.cancellationReasons || [
+  const defaultCancellationReasons = (storeSettings as any)?.cancellationReasons || [
     "Товар недоступен",
     "Клиент отменил заказ",
     "Проблемы с доставкой",
@@ -837,26 +837,35 @@ export default function AdminDashboard() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full h-auto p-2 gap-2">
-            <TabsTrigger value="products" className="flex-1 h-12">
-              <Package className="h-4 w-4 mr-2" />
-              Товары
-            </TabsTrigger>
-            <TabsTrigger value="orders" className="flex-1 h-12">
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Заказы
-            </TabsTrigger>
-            <TabsTrigger value="users" className="flex-1 h-12">
-              <Users className="h-4 w-4 mr-2" />
-              Пользователи
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="col-span-2 md:col-span-1 flex-1 h-12">
-              <Store className="h-4 w-4 mr-2" />
-              Настройки
-            </TabsTrigger>
+            {canManageProducts && (
+              <TabsTrigger value="products" className="flex-1 h-12">
+                <Package className="h-4 w-4 mr-2" />
+                Товары
+              </TabsTrigger>
+            )}
+            {canManageOrders && (
+              <TabsTrigger value="orders" className="flex-1 h-12">
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Заказы
+              </TabsTrigger>
+            )}
+            {canViewUsers && (
+              <TabsTrigger value="users" className="flex-1 h-12">
+                <Users className="h-4 w-4 mr-2" />
+                Пользователи
+              </TabsTrigger>
+            )}
+            {canViewSettings && (
+              <TabsTrigger value="settings" className="col-span-2 md:col-span-1 flex-1 h-12">
+                <Store className="h-4 w-4 mr-2" />
+                Настройки
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* Orders Tab Content */}
-          <TabsContent value="orders" className="space-y-6">
+          {canManageOrders && (
+            <TabsContent value="orders" className="space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -1119,9 +1128,11 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Products Tab Content */}
-          <TabsContent value="products" className="space-y-6">
+          {canManageProducts && (
+            <TabsContent value="products" className="space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -1352,9 +1363,11 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
           
           {/* Users Tab Content */}
-          <TabsContent value="users" className="space-y-6">
+          {canViewUsers && (
+            <TabsContent value="users" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1471,9 +1484,11 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
           
           {/* Settings Tab Content */}
-          <TabsContent value="settings" className="space-y-6">
+          {canViewSettings && (
+            <TabsContent value="settings" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1491,6 +1506,7 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
         </Tabs>
       </div>
 
