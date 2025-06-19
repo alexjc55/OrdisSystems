@@ -25,18 +25,18 @@
   "cart": {
     "title": "Корзина",
     "empty": "Корзина пуста",
-    "addProducts": "Добавьте товары для оформления заказа",
+    "emptyDescription": "Добавьте товары для оформления заказа",
     "continueShopping": "Продолжить покупки",
-    "items": "Товары:",
-    "delivery": "Доставка:",
-    "total": "Итого:",
+    "items": "Товары",
+    "delivery": "Доставка",
+    "total": "Итого",
     "free": "Бесплатно",
     "freeDeliveryFrom": "Бесплатная доставка от",
     "checkout": "Оформить заказ",
     "removeItem": "Удалить товар",
     "updateQuantity": "Изменить количество"
   },
-  "products": {
+  "product": {
     "price": "Цена",
     "addToCart": "В корзину",
     "outOfStock": "Нет в наличии",
@@ -45,8 +45,10 @@
     "perKg": "за кг",
     "per100g": "за 100г",
     "piece": "шт",
-    "weight": "Вес",
-    "quantity": "Количество"
+    "weight": "Вес (кг)",
+    "quantity": "Количество",
+    "grams": "Граммы",
+    "total": "Итого"
   },
   "checkout": {
     "title": "Оформление заказа",

@@ -235,10 +235,10 @@ export default function CartSidebar() {
                         <span>{formatCurrency(subtotal)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span>Доставка:</span>
+                        <span>{t('cart.delivery', 'Доставка')}:</span>
                         <span>
                           {deliveryFeeAmount === 0 ? (
-                            <span className="text-green-600 font-medium">Бесплатно</span>
+                            <span className="text-green-600 font-medium">{t('cart.free', 'Бесплатно')}</span>
                           ) : (
                             formatCurrency(deliveryFeeAmount)
                           )}
@@ -246,12 +246,12 @@ export default function CartSidebar() {
                       </div>
                       {deliveryFeeAmount > 0 && (
                         <div className="text-xs text-gray-500 text-center">
-                          Бесплатная доставка от {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                          {t('cart.freeDeliveryFrom', 'Бесплатная доставка от')} {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
                         </div>
                       )}
                       <Separator />
                       <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold text-gray-700">Итого:</span>
+                        <span className="text-lg font-semibold text-gray-700">{t('cart.total', 'Итого')}:</span>
                         <span className="text-2xl font-bold text-orange-600">{formatCurrency(total)}</span>
                       </div>
                     </div>
@@ -292,7 +292,7 @@ export default function CartSidebar() {
                 className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-200"
                 size="lg"
               >
-                Оформить заказ
+{t('cart.checkout', 'Оформить заказ')}
               </Button>
             </div>
           )}
