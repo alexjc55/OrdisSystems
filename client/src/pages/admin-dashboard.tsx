@@ -1319,11 +1319,11 @@ export default function AdminDashboard() {
   const queryClient = useQueryClient();
 
   // Helper function to check worker permissions
-  const hasPermission = (permission: string) => {
+  const hasPermission = (permission: string, settings?: any) => {
     if (user?.role === "admin") return true;
     if (user?.role !== "worker") return false;
     
-    const workerPermissions = (storeSettings?.workerPermissions as any) || {};
+    const workerPermissions = (settings?.workerPermissions as any) || {};
     return workerPermissions[permission] || false;
   };
 
@@ -1339,6 +1339,30 @@ export default function AdminDashboard() {
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [activeTab, setActiveTab] = useState("products");
+
+  // Set default tab based on worker permissions
+  useEffect(() => {
+    if (user?.role === "worker" && storeSettings) {
+      const workerPermissions = (storeSettings?.workerPermissions as any) || {};
+      let defaultTab = "products";
+      
+      if (workerPermissions.canManageProducts) {
+        defaultTab = "products";
+      } else if (workerPermissions.canManageCategories) {
+        defaultTab = "categories";
+      } else if (workerPermissions.canManageOrders) {
+        defaultTab = "orders";
+      } else if (workerPermissions.canViewUsers) {
+        defaultTab = "users";
+      } else if (workerPermissions.canViewSettings) {
+        defaultTab = "store";
+      } else if (workerPermissions.canManageSettings) {
+        defaultTab = "settings";
+      }
+      
+      setActiveTab(defaultTab);
+    }
+  }, [user, storeSettings]);
 
   // Orders management state
   const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
@@ -1423,11 +1447,6 @@ export default function AdminDashboard() {
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
-
-  // Data queries with pagination
-  const { data: storeSettings, isLoading: storeSettingsLoading } = useQuery<StoreSettings>({
-    queryKey: ["/api/settings"]
-  });
 
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["/api/categories"]
