@@ -9,6 +9,10 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import express from "express";
+import { scrypt, randomBytes } from "crypto";
+import { promisify } from "util";
+
+const scryptAsync = promisify(scrypt);
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Ensure uploads directory exists
@@ -928,7 +932,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Пароль должен содержать минимум 6 символов" });
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
+      // Use the same hashing method as in auth.ts
+      const salt = randomBytes(16).toString("hex");
+      const buf = (await scryptAsync(password, salt, 64)) as Buffer;
+      const hashedPassword = `${buf.toString("hex")}.${salt}`;
       await storage.updatePassword(id, hashedPassword);
 
       res.json({ message: "Пароль успешно установлен" });
