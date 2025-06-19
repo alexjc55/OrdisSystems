@@ -30,14 +30,14 @@ export default function Header({ onResetView }: HeaderProps) {
     <header className="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 rtl:space-x-reverse">
             <Link href="/" onClick={() => onResetView?.()}>
               <div className="flex items-center cursor-pointer">
                 {storeSettings?.logoUrl ? (
                   <img 
                     src={storeSettings.logoUrl} 
                     alt={storeSettings.storeName || "eDAHouse"} 
-                    className="h-10 w-auto mr-3"
+                    className="h-10 w-auto mr-3 rtl:mr-0 rtl:ml-3"
                     onError={(e) => {
                       e.currentTarget.src = "/@assets/Edahouse_sign__source_1750184330403.png";
                     }}
@@ -46,7 +46,7 @@ export default function Header({ onResetView }: HeaderProps) {
                   <img 
                     src="/@assets/Edahouse_sign__source_1750184330403.png" 
                     alt="eDAHouse" 
-                    className="h-10 w-auto mr-3"
+                    className="h-10 w-auto mr-3 rtl:mr-0 rtl:ml-3"
                   />
                 )}
                 <h1 className="text-2xl font-poppins font-bold text-primary">
@@ -54,7 +54,7 @@ export default function Header({ onResetView }: HeaderProps) {
                 </h1>
               </div>
             </Link>
-            <nav className="hidden md:flex space-x-8">
+            <nav className="hidden md:flex space-x-8 rtl:space-x-reverse">
               <Link href="/" onClick={() => onResetView?.()} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                 {t('menu')}
               </Link>
@@ -66,7 +66,7 @@ export default function Header({ onResetView }: HeaderProps) {
             </nav>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 rtl:space-x-reverse">
             {/* Language Switcher */}
             <LanguageSwitcher variant="compact" />
             
@@ -176,13 +176,13 @@ export default function Header({ onResetView }: HeaderProps) {
           <div className="md:hidden border-t border-gray-200 py-4">
             <div className="flex flex-col space-y-2">
               <Link href="/">
-                <a className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium block">
+                <a className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium block text-start">
                   {t('menu')}
                 </a>
               </Link>
               {(user?.role === 'admin' || user?.role === 'worker') && (
                 <Link href="/admin">
-                  <a className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium block">
+                  <a className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium block text-start">
                     {t('admin')}
                   </a>
                 </Link>

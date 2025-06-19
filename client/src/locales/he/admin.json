@@ -1,4 +1,26 @@
 {
+  "tabs": {
+    "products": "מוצרים",
+    "categories": "קטגוריות", 
+    "orders": "הזמנות",
+    "users": "משתמשים",
+    "settings": "הגדרות"
+  },
+  "actions": {
+    "add": "הוסף",
+    "edit": "ערוך",
+    "delete": "מחק",
+    "save": "שמור",
+    "cancel": "ביטול",
+    "update": "עדכן",
+    "create": "צור",
+    "view": "צפה",
+    "close": "סגור",
+    "search": "חיפוש",
+    "filter": "סינון",
+    "reset": "איפוס",
+    "confirm": "אשר"
+  },
   "dashboard": {
     "title": "לוח בקרה",
     "overview": "סקירה כללית",

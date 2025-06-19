@@ -1,4 +1,26 @@
 {
+  "tabs": {
+    "products": "Products",
+    "categories": "Categories", 
+    "orders": "Orders",
+    "users": "Users",
+    "settings": "Settings"
+  },
+  "actions": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "update": "Update",
+    "create": "Create",
+    "view": "View",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "reset": "Reset",
+    "confirm": "Confirm"
+  },
   "dashboard": {
     "title": "Dashboard",
     "overview": "Overview",
