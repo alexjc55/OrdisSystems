@@ -3851,6 +3851,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         cartBannerText: storeSettings?.cartBannerText || "",
         cartBannerBgColor: storeSettings?.cartBannerBgColor || "#f97316",
         cartBannerTextColor: storeSettings?.cartBannerTextColor || "#ffffff",
+        authPageTitle: storeSettings?.authPageTitle || "",
+        authPageSubtitle: storeSettings?.authPageSubtitle || "",
+        authPageFeature1: storeSettings?.authPageFeature1 || "",
+        authPageFeature2: storeSettings?.authPageFeature2 || "",
+        authPageFeature3: storeSettings?.authPageFeature3 || "",
       } as any);
     }
   }, [storeSettings, form]);
@@ -5001,6 +5006,143 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
                     Этот код будет добавлен в конец страницы перед закрывающим тегом &lt;/body&gt;. Используйте для онлайн-чатов, кнопок соц. сетей и других виджетов.
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Настройки страницы авторизации */}
+        <Collapsible open={isAuthPageOpen} onOpenChange={setIsAuthPageOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className="flex items-center gap-2">
+                <User className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">Страница авторизации</h3>
+              </div>
+              {isAuthPageOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-6">
+            <FormField
+              control={form.control}
+              name="authPageTitle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm flex items-center gap-2">
+                    <Type className="h-4 w-4" />
+                    Заголовок страницы входа
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Добро пожаловать в eDAHouse"
+                      {...field} 
+                      className="text-sm"
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs">
+                    Основной заголовок на странице входа/регистрации
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="authPageSubtitle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm flex items-center gap-2">
+                    <Type className="h-4 w-4" />
+                    Подзаголовок страницы входа
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="Готовые блюда высокого качества с доставкой на дом"
+                      {...field} 
+                      className="text-sm min-h-[60px]"
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs">
+                    Описание под основным заголовком
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="authPageFeature1"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm flex items-center gap-2">
+                    <Type className="h-4 w-4" />
+                    Первое преимущество
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Свежие готовые блюда каждый день"
+                      {...field} 
+                      className="text-sm"
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs">
+                    Первое преимущество в списке на странице авторизации
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="authPageFeature2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm flex items-center gap-2">
+                    <Type className="h-4 w-4" />
+                    Второе преимущество
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Быстрая доставка в удобное время"
+                      {...field} 
+                      className="text-sm"
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs">
+                    Второе преимущество в списке на странице авторизации
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="authPageFeature3"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm flex items-center gap-2">
+                    <Type className="h-4 w-4" />
+                    Третье преимущество
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Широкий выбор блюд на любой вкус"
+                      {...field} 
+                      className="text-sm"
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs">
+                    Третье преимущество в списке на странице авторизации
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
