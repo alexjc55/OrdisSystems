@@ -14,6 +14,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminTranslation } from "@/hooks/use-language";
+import { LANGUAGES } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -72,7 +74,8 @@ import {
   Layers,
   Type,
   Palette,
-  Settings
+  Settings,
+  Languages
 } from "lucide-react";
 
 // Validation schemas
@@ -2653,7 +2656,7 @@ export default function AdminDashboard() {
                                       )}
                                     </div>
                                   </TableCell>
-                                  <TableCell>
+                                  <TableCell className="rtl:text-right">
                                     <Button 
                                       variant="outline" 
                                       size="sm" 
@@ -2677,7 +2680,7 @@ export default function AdminDashboard() {
                     {/* Kanban View */}
                     {ordersViewMode === "kanban" && (
                       <div className="overflow-x-auto">
-                        <div className="flex gap-4 min-w-max pb-4"
+                        <div className="flex gap-4 min-w-max pb-4 rtl:flex-row-reverse"
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => {
                             e.preventDefault();
@@ -4449,6 +4452,52 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </FormItem>
           )}
         />
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Language Settings */}
+        <Collapsible open={true} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full rtl:flex-row-reverse">
+                <Languages className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">{t('settings.languageSettings', 'Настройки языка')}</h3>
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium">{t('settings.defaultLanguage', 'Язык по умолчанию')}</h4>
+                <LanguageSwitcher variant="select" showFlag={true} showText={true} />
+                <p className="text-xs text-gray-500">
+                  Выберите язык интерфейса по умолчанию для новых посетителей
+                </p>
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium">{t('settings.availableLanguages', 'Доступные языки')}</h4>
+                <div className="space-y-2">
+                  {Object.entries(LANGUAGES).map(([code, info]) => (
+                    <div key={code} className="flex items-center justify-between p-2 border rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">{info.flag}</span>
+                        <span className="font-medium">{info.name}</span>
+                        <span className="text-sm text-gray-500">({info.nativeName})</span>
+                      </div>
+                      <CustomSwitch 
+                        checked={true} 
+                        onChange={() => {}} 
+                        bgColor="bg-green-500"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </CollapsibleContent>
         </Collapsible>
 
