@@ -301,6 +301,7 @@ export default function Checkout() {
         customerPhone: formData.phone,
         deliveryDate: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
         deliveryTime: formatDeliveryTimeRange(selectedTime),
+        paymentMethod: formData.paymentMethod,
         status: "pending"
       };
       
