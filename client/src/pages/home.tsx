@@ -409,7 +409,7 @@ export default function Home() {
                         className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2"
                       >
                         <Package className="mr-2 h-4 w-4" />
-                        Все товары
+                        {t('allProducts')}
                       </Button>
                     </div>
                   </div>
