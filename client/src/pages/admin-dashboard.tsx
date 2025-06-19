@@ -1965,8 +1965,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Products Management */}
-          {canAccess('canManageProducts') && (
-            <TabsContent value="products" className="space-y-4 sm:space-y-6">
+          <TabsContent value="products" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -2219,11 +2218,9 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
-          )}
 
           {/* Categories Management */}
-          {canAccess('canManageCategories') && (
-            <TabsContent value="categories" className="space-y-4 sm:space-y-6">
+          <TabsContent value="categories" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -2351,11 +2348,9 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
-          )}
 
           {/* Orders Management */}
-          {canAccess('canManageOrders') && (
-            <TabsContent value="orders" className="space-y-4 sm:space-y-6">
+          <TabsContent value="orders" className="space-y-4 sm:space-y-6">
             {/* Header Section */}
             <div className="flex flex-col gap-4">
               <div>
@@ -2931,11 +2926,9 @@ export default function AdminDashboard() {
               </DialogContent>
             </Dialog>
           </TabsContent>
-          )}
 
           {/* Users Management */}
-          {canAccess('canManageUsers') && (
-            <TabsContent value="users" className="space-y-4 sm:space-y-6">
+          <TabsContent value="users" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
@@ -3122,11 +3115,9 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
-          )}
 
           {/* Store Management */}
-          {isAdmin && (
-            <TabsContent value="store" className="space-y-4 sm:space-y-6">
+          <TabsContent value="store" className="space-y-4 sm:space-y-6">
             <div className="grid gap-6">
               {/* Basic Store Information */}
               <Card>
@@ -3305,6 +3296,7 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
         </Tabs>
       </div>
 
