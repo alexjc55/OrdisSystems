@@ -419,43 +419,51 @@ export default function Profile() {
                       <label className="text-sm font-medium text-gray-700">Имя и Фамилия</label>
                       <div className="mt-1 flex items-center gap-2">
                         {isNameEditing ? (
-                          <>
-                            <div className="grid grid-cols-2 gap-2 flex-1">
+                          <div className="space-y-3 w-full">
+                            <div>
+                              <Label className="text-xs text-gray-600">Имя</Label>
                               <Input
                                 type="text"
-                                placeholder="Имя"
+                                placeholder="Введите имя"
                                 value={nameForm.firstName}
                                 onChange={(e) => setNameForm({ ...nameForm, firstName: e.target.value })}
-                              />
-                              <Input
-                                type="text"
-                                placeholder="Фамилия"
-                                value={nameForm.lastName}
-                                onChange={(e) => setNameForm({ ...nameForm, lastName: e.target.value })}
+                                className="mt-1"
                               />
                             </div>
-                            <Button
-                              size="sm"
-                              onClick={() => updateNameMutation.mutate(nameForm)}
-                              disabled={updateNameMutation.isPending}
-                              className="bg-orange-500 hover:bg-orange-600 text-white"
-                            >
-                              Сохранить
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                setIsNameEditing(false);
-                                setNameForm({
-                                  firstName: user?.firstName || "",
-                                  lastName: user?.lastName || ""
-                                });
-                              }}
-                            >
-                              Отмена
-                            </Button>
-                          </>
+                            <div>
+                              <Label className="text-xs text-gray-600">Фамилия</Label>
+                              <Input
+                                type="text"
+                                placeholder="Введите фамилию"
+                                value={nameForm.lastName}
+                                onChange={(e) => setNameForm({ ...nameForm, lastName: e.target.value })}
+                                className="mt-1"
+                              />
+                            </div>
+                            <div className="flex gap-2 pt-2">
+                              <Button
+                                size="sm"
+                                onClick={() => updateNameMutation.mutate(nameForm)}
+                                disabled={updateNameMutation.isPending}
+                                className="bg-orange-500 hover:bg-orange-600 text-white"
+                              >
+                                {updateNameMutation.isPending ? "Сохранение..." : "Сохранить"}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setIsNameEditing(false);
+                                  setNameForm({
+                                    firstName: user?.firstName || "",
+                                    lastName: user?.lastName || ""
+                                  });
+                                }}
+                              >
+                                Отмена
+                              </Button>
+                            </div>
+                          </div>
                         ) : (
                           <>
                             <div className="text-sm text-gray-900 flex-1">
