@@ -141,6 +141,9 @@ export default function Checkout() {
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedGuestTime, setSelectedGuestTime] = useState("");
   const [selectedRegisterTime, setSelectedRegisterTime] = useState("");
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [guestDatePickerOpen, setGuestDatePickerOpen] = useState(false);
+  const [registerDatePickerOpen, setRegisterDatePickerOpen] = useState(false);
 
   const guestForm = useForm<GuestOrderData>({
     resolver: zodResolver(guestOrderSchema),
@@ -423,7 +426,7 @@ export default function Checkout() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="deliveryDate">Дата доставки *</Label>
-                        <Popover>
+                        <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
                           <PopoverTrigger asChild>
                             <Button
                               variant="outline"
@@ -440,15 +443,17 @@ export default function Checkout() {
                             <CalendarComponent
                               mode="single"
                               selected={selectedDate}
-                              onSelect={setSelectedDate}
+                              onSelect={(date) => {
+                                setSelectedDate(date);
+                                setSelectedTime(""); // Reset time selection when date changes
+                                setDatePickerOpen(false); // Close calendar after selection
+                              }}
                               disabled={(date) => {
                                 const today = new Date();
                                 today.setHours(0, 0, 0, 0);
-                                const minDate = new Date(today);
-                                minDate.setHours(minDate.getHours() + (storeSettings?.minDeliveryTimeHours || 2));
                                 const maxDate = new Date(today);
                                 maxDate.setDate(maxDate.getDate() + (storeSettings?.maxDeliveryTimeDays || 7));
-                                return date < minDate || date > maxDate;
+                                return date < today || date > maxDate;
                               }}
                               initialFocus
                             />
@@ -630,7 +635,7 @@ export default function Checkout() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="registerDeliveryDate">Дата доставки *</Label>
-                          <Popover>
+                          <Popover open={registerDatePickerOpen} onOpenChange={setRegisterDatePickerOpen}>
                             <PopoverTrigger asChild>
                               <Button
                                 variant="outline"
@@ -647,15 +652,17 @@ export default function Checkout() {
                               <CalendarComponent
                                 mode="single"
                                 selected={selectedRegisterDate}
-                                onSelect={setSelectedRegisterDate}
+                                onSelect={(date) => {
+                                  setSelectedRegisterDate(date);
+                                  setSelectedRegisterTime(""); // Reset time selection when date changes
+                                  setRegisterDatePickerOpen(false); // Close calendar after selection
+                                }}
                                 disabled={(date) => {
                                   const today = new Date();
                                   today.setHours(0, 0, 0, 0);
-                                  const minDate = new Date(today);
-                                  minDate.setHours(minDate.getHours() + (storeSettings?.minDeliveryTimeHours || 2));
                                   const maxDate = new Date(today);
                                   maxDate.setDate(maxDate.getDate() + (storeSettings?.maxDeliveryTimeDays || 7));
-                                  return date < minDate || date > maxDate;
+                                  return date < today || date > maxDate;
                                 }}
                                 initialFocus
                               />
@@ -818,7 +825,7 @@ export default function Checkout() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="guestDeliveryDate">Дата доставки *</Label>
-                          <Popover>
+                          <Popover open={guestDatePickerOpen} onOpenChange={setGuestDatePickerOpen}>
                             <PopoverTrigger asChild>
                               <Button
                                 variant="outline"
@@ -835,15 +842,17 @@ export default function Checkout() {
                               <CalendarComponent
                                 mode="single"
                                 selected={selectedGuestDate}
-                                onSelect={setSelectedGuestDate}
+                                onSelect={(date) => {
+                                  setSelectedGuestDate(date);
+                                  setSelectedGuestTime(""); // Reset time selection when date changes
+                                  setGuestDatePickerOpen(false); // Close calendar after selection
+                                }}
                                 disabled={(date) => {
                                   const today = new Date();
                                   today.setHours(0, 0, 0, 0);
-                                  const minDate = new Date(today);
-                                  minDate.setHours(minDate.getHours() + (storeSettings?.minDeliveryTimeHours || 2));
                                   const maxDate = new Date(today);
                                   maxDate.setDate(maxDate.getDate() + (storeSettings?.maxDeliveryTimeDays || 7));
-                                  return date < minDate || date > maxDate;
+                                  return date < today || date > maxDate;
                                 }}
                                 initialFocus
                               />
