@@ -1986,9 +1986,9 @@ export default function AdminDashboard() {
           {/* Products Management */}
           {hasPermission("canManageProducts") && (
             <TabsContent value="products" className="space-y-4 sm:space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <Card>
+                <CardHeader>
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>
                     <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                       <Package className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -3141,9 +3141,11 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Store Management */}
-          <TabsContent value="store" className="space-y-4 sm:space-y-6">
+          {hasPermission("canViewSettings") && (
+            <TabsContent value="store" className="space-y-4 sm:space-y-6">
             <div className="grid gap-6">
               {/* Basic Store Information */}
               <Card>
@@ -3166,9 +3168,11 @@ export default function AdminDashboard() {
               </Card>
             </div>
           </TabsContent>
+          )}
 
           {/* Settings Management */}
-          <TabsContent value="settings" className="space-y-4 sm:space-y-6">
+          {hasPermission("canManageSettings") && (
+            <TabsContent value="settings" className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
@@ -3322,6 +3326,7 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
         </Tabs>
       </div>
 
