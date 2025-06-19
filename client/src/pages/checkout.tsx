@@ -435,6 +435,28 @@ export default function Checkout() {
                         placeholder="Введите адрес доставки"
                         required
                       />
+                      
+                      {addresses && Array.isArray(addresses) && (addresses as any[]).length > 0 && (
+                        <div className="mt-2">
+                          <Label className="text-sm text-gray-600">Или выберите из сохраненных адресов:</Label>
+                          <div className="mt-1 flex flex-wrap gap-2">
+                            {(addresses as any[]).map((addr: any) => (
+                              <Button
+                                key={addr.id}
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  const input = document.getElementById("address") as HTMLInputElement;
+                                  if (input) input.value = addr.address;
+                                }}
+                              >
+                                {addr.label ? `${addr.label}: ${addr.address}` : addr.address}
+                              </Button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -512,28 +534,6 @@ export default function Checkout() {
                         </Select>
                       </div>
                     </div>
-                    
-                    {addresses && Array.isArray(addresses) && (addresses as any[]).length > 0 && (
-                      <div>
-                        <Label>Или выберите из сохраненных адресов:</Label>
-                        <div className="mt-2 space-y-2">
-                          {(addresses as any[]).map((addr: any) => (
-                            <Button
-                              key={addr.id}
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                const input = document.getElementById("address") as HTMLInputElement;
-                                if (input) input.value = addr.address;
-                              }}
-                            >
-                              {addr.label ? `${addr.label}: ${addr.address}` : addr.address}
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
 
                     <div>
                       <Label htmlFor="paymentMethod">Способ оплаты *</Label>

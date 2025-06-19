@@ -3746,6 +3746,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         },
         deliveryInfo: storeSettings?.deliveryInfo || "",
         paymentInfo: storeSettings?.paymentInfo || "",
+        paymentMethods: storeSettings?.paymentMethods || [
+          { name: "Наличными при получении", id: 1 },
+          { name: "Банковской картой", id: 2 },
+          { name: "Банковский перевод", id: 3 }
+        ],
         aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
         deliveryFee: storeSettings?.deliveryFee || "15.00",
         minOrderAmount: storeSettings?.minOrderAmount || "50.00",
@@ -4257,54 +4262,59 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           )}
         />
 
-        <div>
-          <FormLabel className="text-sm flex items-center gap-2 mb-3">
-            <CreditCard className="h-4 w-4" />
-            Способы оплаты
-          </FormLabel>
-          <div className="space-y-3">
-            {(form.watch("paymentMethods") || []).map((method: any, index: number) => (
-              <div key={index} className="flex items-center gap-2 p-3 border rounded-lg">
-                <Input
-                  placeholder="Название способа оплаты"
-                  value={method.name || ""}
-                  onChange={(e) => {
-                    const currentMethods = form.getValues("paymentMethods") || [];
-                    const updatedMethods = [...currentMethods];
-                    updatedMethods[index] = { ...method, name: e.target.value };
-                    form.setValue("paymentMethods", updatedMethods);
-                  }}
-                  className="flex-1"
-                />
+        <FormField
+          control={form.control}
+          name="paymentMethods"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm flex items-center gap-2">
+                <CreditCard className="h-4 w-4" />
+                Способы оплаты
+              </FormLabel>
+              <div className="space-y-3">
+                {(field.value || []).map((method: any, index: number) => (
+                  <div key={method.id || index} className="flex items-center gap-2 p-3 border rounded-lg">
+                    <Input
+                      placeholder="Название способа оплаты"
+                      value={method.name || ""}
+                      onChange={(e) => {
+                        const updatedMethods = [...(field.value || [])];
+                        updatedMethods[index] = { ...method, name: e.target.value };
+                        field.onChange(updatedMethods);
+                      }}
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const updatedMethods = (field.value || []).filter((_: any, i: number) => i !== index);
+                        field.onChange(updatedMethods);
+                      }}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      Удалить
+                    </Button>
+                  </div>
+                ))}
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    const currentMethods = form.getValues("paymentMethods") || [];
-                    const updatedMethods = currentMethods.filter((_: any, i: number) => i !== index);
-                    form.setValue("paymentMethods", updatedMethods);
+                    const newMethod = { name: "", id: Date.now() };
+                    field.onChange([...(field.value || []), newMethod]);
                   }}
-                  className="text-red-600 hover:text-red-700"
+                  className="w-full"
                 >
-                  Удалить
+                  + Добавить способ оплаты
                 </Button>
               </div>
-            ))}
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const currentMethods = form.getValues("paymentMethods") || [];
-                form.setValue("paymentMethods", [...currentMethods, { name: "", id: Date.now() }]);
-              }}
-              className="w-full"
-            >
-              + Добавить способ оплаты
-            </Button>
-          </div>
-        </div>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
 
           </CollapsibleContent>
         </Collapsible>
