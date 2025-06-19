@@ -4457,7 +4457,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         </Collapsible>
 
         {/* Language Settings */}
-        <Collapsible open={false} className="space-y-6">
+        <Collapsible open={isLanguageSettingsOpen} onOpenChange={setIsLanguageSettingsOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
@@ -4466,7 +4466,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full rtl:flex-row-reverse">
                 <Languages className="h-5 w-5 text-orange-500" />
                 <h3 className="text-lg font-semibold">Настройки языка</h3>
-                <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                {isLanguageSettingsOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                )}
               </div>
             </Button>
           </CollapsibleTrigger>
