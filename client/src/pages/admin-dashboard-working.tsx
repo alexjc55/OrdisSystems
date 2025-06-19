@@ -69,8 +69,10 @@ export default function AdminDashboard() {
   const checkWorkerPermission = (permission: string) => {
     if (user?.role === 'admin') return true;
     if (user?.role !== 'worker') return false;
-    const permissions = storeSettings?.workerPermissions as any;
-    return permissions?.[permission] || false;
+    const permissions = storeSettings?.workerPermissions;
+    console.log('Worker permissions check:', { permission, permissions, result: permissions?.[permission] });
+    if (!permissions) return false;
+    return permissions[permission] === true;
   };
 
   // Data queries
