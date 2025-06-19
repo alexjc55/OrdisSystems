@@ -48,19 +48,19 @@ export default function AdminDashboard() {
 
   // Helper functions for permission checks
   const isAdmin = user?.role === "admin" || user?.email === "alexjc55@gmail.com" || user?.username === "admin";
-  let workerPermissions = {};
+  let workerPermissions: any = {};
   try {
-    workerPermissions = typeof storeSettings?.worker_permissions === 'string' 
-      ? JSON.parse(storeSettings.worker_permissions)
-      : (storeSettings?.worker_permissions || {});
+    workerPermissions = typeof (storeSettings as any)?.worker_permissions === 'string' 
+      ? JSON.parse((storeSettings as any).worker_permissions)
+      : ((storeSettings as any)?.worker_permissions || {});
   } catch (e) {
     workerPermissions = {};
   }
   
-  const canManageProducts = isAdmin || (workerPermissions as any).canManageProducts;
-  const canManageCategories = isAdmin || (workerPermissions as any).canManageCategories;
-  const canManageOrders = isAdmin || (workerPermissions as any).canManageOrders;
-  const canViewUsers = isAdmin || (workerPermissions as any).canViewUsers;
+  const canManageProducts = isAdmin || workerPermissions.canManageProducts;
+  const canManageCategories = isAdmin || workerPermissions.canManageCategories;
+  const canManageOrders = isAdmin || workerPermissions.canManageOrders;
+  const canViewUsers = isAdmin || workerPermissions.canViewUsers;
 
   // Redirect if not authorized
   useEffect(() => {
@@ -368,10 +368,10 @@ export default function AdminDashboard() {
 
         <Tabs defaultValue="products" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="products">Товары</TabsTrigger>
-            <TabsTrigger value="categories">Категории</TabsTrigger>
-            <TabsTrigger value="orders">Заказы</TabsTrigger>
-            {user.role === 'admin' && <TabsTrigger value="users">Пользователи</TabsTrigger>}
+            {(canManageProducts || canManageCategories) && <TabsTrigger value="products">Товары</TabsTrigger>}
+            {canManageCategories && <TabsTrigger value="categories">Категории</TabsTrigger>}
+            {canManageOrders && <TabsTrigger value="orders">Заказы</TabsTrigger>}
+            {canViewUsers && <TabsTrigger value="users">Пользователи</TabsTrigger>}
           </TabsList>
 
           {/* Enhanced Products Management */}
@@ -486,7 +486,7 @@ export default function AdminDashboard() {
                                   checked={product.isAvailable}
                                   onCheckedChange={(checked) => {
                                     toggleAvailabilityMutation.mutate({
-                                      id: product.id,
+                                      productId: product.id,
                                       isAvailable: checked
                                     });
                                   }}
