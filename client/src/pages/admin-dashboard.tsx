@@ -1318,6 +1318,15 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Helper function to check worker permissions
+  const hasPermission = (permission: string) => {
+    if (user?.role === "admin") return true;
+    if (user?.role !== "worker") return false;
+    
+    const workerPermissions = (storeSettings?.workerPermissions as any) || {};
+    return workerPermissions[permission] || false;
+  };
+
   // State for forms and filters
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
   const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
@@ -1929,12 +1938,24 @@ export default function AdminDashboard() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
           <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
             <TabsList className="flex w-full overflow-x-auto gap-1 justify-start">
-              <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">Товары</TabsTrigger>
-              <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">Категории</TabsTrigger>
-              <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">Заказы</TabsTrigger>
-              <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">Пользователи</TabsTrigger>
-              <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">Магазин</TabsTrigger>
-              <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Настройки</TabsTrigger>
+              {hasPermission("canManageProducts") && (
+                <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">Товары</TabsTrigger>
+              )}
+              {hasPermission("canManageCategories") && (
+                <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">Категории</TabsTrigger>
+              )}
+              {hasPermission("canManageOrders") && (
+                <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">Заказы</TabsTrigger>
+              )}
+              {hasPermission("canViewUsers") && (
+                <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">Пользователи</TabsTrigger>
+              )}
+              {hasPermission("canViewSettings") && (
+                <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">Магазин</TabsTrigger>
+              )}
+              {hasPermission("canManageSettings") && (
+                <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Настройки</TabsTrigger>
+              )}
             </TabsList>
           </div>
 
