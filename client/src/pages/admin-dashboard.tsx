@@ -2955,15 +2955,15 @@ export default function AdminDashboard() {
           {/* Users Management */}
           {hasPermission("canViewUsers") && (
             <TabsContent value="users" className="space-y-4 sm:space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                  <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                  Пользователи
-                </CardTitle>
-                <CardDescription className="text-sm">
-                  Управление пользователями и ролями
-                </CardDescription>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                    <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+                    Пользователи
+                  </CardTitle>
+                  <CardDescription className="text-sm">
+                    Управление пользователями и ролями
+                  </CardDescription>
               </CardHeader>
               <CardContent>
                 {/* Users Filters and Controls */}
@@ -3146,17 +3146,17 @@ export default function AdminDashboard() {
           {/* Store Management */}
           {hasPermission("canViewSettings") && (
             <TabsContent value="store" className="space-y-4 sm:space-y-6">
-            <div className="grid gap-6">
-              {/* Basic Store Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                    <Store className="h-4 w-4 sm:h-5 sm:w-5" />
-                    Настройки магазина
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    Управление информацией о магазине
-                  </CardDescription>
+              <div className="grid gap-6">
+                {/* Basic Store Information */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                      <Store className="h-4 w-4 sm:h-5 sm:w-5" />
+                      Настройки магазина
+                    </CardTitle>
+                    <CardDescription className="text-sm">
+                      Управление информацией о магазине
+                    </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <StoreSettingsForm
@@ -3173,9 +3173,9 @@ export default function AdminDashboard() {
           {/* Settings Management */}
           {hasPermission("canManageSettings") && (
             <TabsContent value="settings" className="space-y-4 sm:space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
                   <Settings className="h-5 w-5" />
                   Настройки системы
                 </CardTitle>
