@@ -232,6 +232,18 @@ export default function Checkout() {
       // Get the created user data
       const newUser = await registerRes.json();
 
+      // Save the delivery address for the new user
+      if (data.address && data.address.trim()) {
+        try {
+          await apiRequest("POST", "/api/addresses", {
+            label: "Дом",
+            address: data.address.trim()
+          });
+        } catch (error) {
+          console.warn("Failed to save address:", error);
+        }
+      }
+
       // Then create the order with user ID
       const orderData = {
         items: items.map(item => ({
