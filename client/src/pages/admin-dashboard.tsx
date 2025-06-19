@@ -1338,6 +1338,24 @@ export default function AdminDashboard() {
   // User management state
   const [isUserFormOpen, setIsUserFormOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
+
+  // Store settings for worker permissions
+  const { data: storeSettingsData } = useQuery({
+    queryKey: ['/api/settings'],
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/settings');
+      return response.json();
+    }
+  });
+  const storeSettings = storeSettingsData;
+
+  // Check worker permissions
+  const checkWorkerPermission = (permission: string) => {
+    if (user?.role === 'admin') return true;
+    if (user?.role !== 'worker') return false;
+    const permissions = storeSettings?.workerPermissions as any;
+    return permissions?.[permission] || false;
+  };
   const [usersRoleFilter, setUsersRoleFilter] = useState("all");
 
   // Reset pagination when filters change
@@ -1404,10 +1422,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // Data queries with pagination
-  const { data: storeSettings, isLoading: storeSettingsLoading } = useQuery<StoreSettings>({
-    queryKey: ["/api/settings"]
-  });
+  // Data queries with pagination (storeSettings already declared above for permissions)
 
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["/api/categories"]
@@ -1917,13 +1932,32 @@ export default function AdminDashboard() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
           <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
-            <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 gap-1">
-              <TabsTrigger value="products" className="text-xs sm:text-sm">Товары</TabsTrigger>
-              <TabsTrigger value="categories" className="text-xs sm:text-sm">Категории</TabsTrigger>
-              <TabsTrigger value="orders" className="text-xs sm:text-sm">Заказы</TabsTrigger>
-              <TabsTrigger value="users" className="text-xs sm:text-sm">Пользователи</TabsTrigger>
-              <TabsTrigger value="store" className="text-xs sm:text-sm">Магазин</TabsTrigger>
-              <TabsTrigger value="settings" className="text-xs sm:text-sm">Настройки</TabsTrigger>
+            <TabsList className="grid w-full gap-1" style={{ gridTemplateColumns: `repeat(${[
+              checkWorkerPermission('canManageProducts') && 'products',
+              checkWorkerPermission('canManageCategories') && 'categories', 
+              checkWorkerPermission('canManageOrders') && 'orders',
+              checkWorkerPermission('canViewUsers') && 'users',
+              (user?.role === 'admin') && 'store',
+              (user?.role === 'admin') && 'settings'
+            ].filter(Boolean).length}, 1fr)` }}>
+              {checkWorkerPermission('canManageProducts') && (
+                <TabsTrigger value="products" className="text-xs sm:text-sm">Товары</TabsTrigger>
+              )}
+              {checkWorkerPermission('canManageCategories') && (
+                <TabsTrigger value="categories" className="text-xs sm:text-sm">Категории</TabsTrigger>
+              )}
+              {checkWorkerPermission('canManageOrders') && (
+                <TabsTrigger value="orders" className="text-xs sm:text-sm">Заказы</TabsTrigger>
+              )}
+              {checkWorkerPermission('canViewUsers') && (
+                <TabsTrigger value="users" className="text-xs sm:text-sm">Пользователи</TabsTrigger>
+              )}
+              {user?.role === 'admin' && (
+                <TabsTrigger value="store" className="text-xs sm:text-sm">Магазин</TabsTrigger>
+              )}
+              {user?.role === 'admin' && (
+                <TabsTrigger value="settings" className="text-xs sm:text-sm">Настройки</TabsTrigger>
+              )}
             </TabsList>
           </div>
 
