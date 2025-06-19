@@ -22,7 +22,7 @@ import { ImageUpload } from "@/components/ui/image-upload";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { formatCurrency, getUnitLabel, type ProductUnit } from "@/lib/currency";
+import { formatCurrency, getUnitLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
 import { insertStoreSettingsSchema, type StoreSettings } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { 

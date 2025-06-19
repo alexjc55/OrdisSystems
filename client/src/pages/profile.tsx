@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { formatCurrency, formatQuantity, getUnitShortLabel, type ProductUnit } from "@/lib/currency";
+import { formatCurrency, formatQuantity, getUnitShortLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
 import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin, Lock, Shield } from "lucide-react";
 import { Link } from "wouter";
 import type { OrderWithItems, UserAddress } from "@shared/schema";
@@ -791,10 +791,22 @@ export default function Profile() {
                         <span className="text-sm text-gray-600">Адрес:</span>
                         <span className="text-sm max-w-48 text-right">{selectedOrder.deliveryAddress}</span>
                       </div>
-                      {selectedOrder.deliveryDate && selectedOrder.deliveryTime && (
+                      {selectedOrder.deliveryDate && (
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Дата доставки:</span>
+                          <span className="text-sm">{new Date(selectedOrder.deliveryDate).toLocaleDateString('ru-RU')}</span>
+                        </div>
+                      )}
+                      {selectedOrder.deliveryTime && (
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Время доставки:</span>
-                          <span className="text-sm">{selectedOrder.deliveryDate} {selectedOrder.deliveryTime}</span>
+                          <span className="text-sm">{formatDeliveryTimeRange(selectedOrder.deliveryTime)}</span>
+                        </div>
+                      )}
+                      {selectedOrder.paymentMethod && (
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Способ оплаты:</span>
+                          <span className="text-sm">{selectedOrder.paymentMethod}</span>
                         </div>
                       )}
                     </CardContent>

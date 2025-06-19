@@ -101,3 +101,27 @@ export function formatQuantity(quantity: number | string, unit: ProductUnit): st
 export function formatWeight(weight: number | string): string {
   return formatQuantity(weight, "100g");
 }
+
+// Convert single delivery time to time range format
+export function formatDeliveryTimeRange(deliveryTime: string): string {
+  if (!deliveryTime) return deliveryTime;
+  
+  // If it's already a range, return as is
+  if (deliveryTime.includes(' - ')) {
+    return deliveryTime;
+  }
+  
+  // Parse the time and create a 2-hour range
+  const timeMatch = deliveryTime.match(/(\d{1,2}):(\d{2})/);
+  if (!timeMatch) return deliveryTime;
+  
+  const hour = parseInt(timeMatch[1]);
+  const minute = parseInt(timeMatch[2]);
+  
+  // Create 2-hour range
+  const startTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+  const endHour = hour + 2;
+  const endTime = `${endHour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+  
+  return `${startTime} - ${endTime}`;
+}
