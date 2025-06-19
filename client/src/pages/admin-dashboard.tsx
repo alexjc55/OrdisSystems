@@ -84,7 +84,7 @@ const productSchema = z.object({
   imageUrl: z.string().optional(),
   isAvailable: z.boolean().default(true),
   isSpecialOffer: z.boolean().default(false),
-  discountType: z.enum(["percentage", "fixed"]).optional(),
+  discountType: z.string().optional(),
   discountValue: z.string().optional(),
 });
 
@@ -3450,7 +3450,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           imageUrl: product.imageUrl || "",
           isAvailable: product.isAvailable ?? true,
           isSpecialOffer: product.isSpecialOffer ?? false,
-          discountType: product.discountType || undefined,
+          discountType: product.discountType || "",
           discountValue: product.discountValue?.toString() || "",
         });
       } else {
@@ -3463,7 +3463,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           imageUrl: "",
           isAvailable: true,
           isSpecialOffer: false,
-          discountType: undefined,
+          discountType: "",
           discountValue: "",
         });
       }
@@ -3647,15 +3647,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   </div>
                   <FormControl>
                     <Switch
-                      checked={field.value}
-                      onCheckedChange={(checked) => {
-                        field.onChange(checked);
-                        if (!checked) {
-                          // Reset discount fields when special offer is disabled
-                          form.setValue("discountType", undefined as any);
-                          form.setValue("discountValue", "");
-                        }
-                      }}
+                      checked={Boolean(field.value)}
+                      onCheckedChange={field.onChange}
                       className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                     />
                   </FormControl>
