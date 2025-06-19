@@ -4,6 +4,54 @@
 @tailwind components;
 @tailwind utilities;
 
+/* RTL Support */
+@layer base {
+  html[dir="rtl"] {
+    --text-align-start: right;
+    --text-align-end: left;
+    --margin-start: 0;
+    --margin-end: 1rem;
+    --padding-start: 0;
+    --padding-end: 1rem;
+  }
+  
+  html[dir="ltr"] {
+    --text-align-start: left;
+    --text-align-end: right;
+    --margin-start: 1rem;
+    --margin-end: 0;
+    --padding-start: 1rem;
+    --padding-end: 0;
+  }
+}
+
+/* RTL Utilities */
+@layer utilities {
+  .text-start {
+    text-align: var(--text-align-start);
+  }
+  
+  .text-end {
+    text-align: var(--text-align-end);
+  }
+  
+  .ms-auto {
+    margin-inline-start: auto;
+  }
+  
+  .me-auto {
+    margin-inline-end: auto;
+  }
+  
+  .ps-4 {
+    padding-inline-start: 1rem;
+  }
+  
+  .pe-4 {
+    padding-inline-end: 1rem;
+  }
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(20, 14.3%, 4.1%);
