@@ -44,6 +44,8 @@ export function AdminProtectedRoute({
   return (
     <Route path={path}>
       {() => {
+        console.log('AdminProtectedRoute:', { user, isLoading, role: user?.role });
+        
         if (isLoading) {
           return (
             <div className="flex items-center justify-center min-h-screen">
@@ -53,13 +55,16 @@ export function AdminProtectedRoute({
         }
 
         if (!user) {
+          console.log('No user, redirecting to auth');
           return <Redirect to="/auth" />;
         }
 
         if (user.role !== 'admin' && user.role !== 'worker') {
+          console.log('Invalid role:', user.role, 'redirecting to home');
           return <Redirect to="/" />;
         }
 
+        console.log('Access granted for role:', user.role);
         return <Component />;
       }}
     </Route>
