@@ -178,6 +178,8 @@ export const storeSettings = pgTable("store_settings", {
     canViewSettings: false,
     canManageSettings: false
   }),
+  defaultLanguage: varchar("default_language", { length: 5 }).default("ru"), // Default site language
+  enabledLanguages: jsonb("enabled_languages").default(["ru", "en", "he"]), // Array of enabled language codes
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

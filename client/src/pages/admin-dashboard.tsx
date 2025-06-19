@@ -4118,6 +4118,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       cartBannerText: storeSettings?.cartBannerText || "",
       cartBannerBgColor: storeSettings?.cartBannerBgColor || "#f97316",
       cartBannerTextColor: storeSettings?.cartBannerTextColor || "#ffffff",
+      defaultLanguage: storeSettings?.defaultLanguage || "ru",
+      enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
     } as any,
   });
 
@@ -4181,6 +4183,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         authPageFeature1: storeSettings?.authPageFeature1 || "",
         authPageFeature2: storeSettings?.authPageFeature2 || "",
         authPageFeature3: storeSettings?.authPageFeature3 || "",
+        defaultLanguage: storeSettings?.defaultLanguage || "ru",
+        enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
       } as any);
     }
   }, [storeSettings, form]);
@@ -4480,7 +4484,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <div className="space-y-4">
                 <h4 className="text-sm font-medium">Язык по умолчанию</h4>
                 <div className="p-3 border rounded-lg bg-gray-50">
-                  <Select defaultValue="ru">
+                  <Select 
+                    value={form.watch("defaultLanguage") || "ru"}
+                    onValueChange={(value) => form.setValue("defaultLanguage", value)}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>
@@ -4504,25 +4511,45 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <div className="space-y-4">
                 <h4 className="text-sm font-medium">Доступные языки</h4>
                 <div className="space-y-3">
-                  {Object.entries(LANGUAGES).map(([code, info]) => (
-                    <div key={code} className="flex items-center justify-between p-3 border rounded-lg rtl:flex-row-reverse">
-                      <div className="flex items-center gap-3 rtl:flex-row-reverse">
-                        <span className="text-lg">{(info as any).flag}</span>
-                        <div className="flex flex-col">
-                          <span className="font-medium">{(info as any).name}</span>
-                          <span className="text-xs text-gray-500">{(info as any).nativeName}</span>
+                  {Object.entries(LANGUAGES).map(([code, info]) => {
+                    const enabledLanguages = form.watch("enabledLanguages") || ["ru", "en", "he"];
+                    const isEnabled = enabledLanguages.includes(code);
+                    
+                    return (
+                      <div key={code} className="flex items-center justify-between p-3 border rounded-lg rtl:flex-row-reverse">
+                        <div className="flex items-center gap-3 rtl:flex-row-reverse">
+                          <span className="text-lg">{(info as any).flag}</span>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{(info as any).name}</span>
+                            <span className="text-xs text-gray-500">{(info as any).nativeName}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className={`text-xs font-medium ${isEnabled ? 'text-green-600' : 'text-gray-400'}`}>
+                            {isEnabled ? 'Активен' : 'Отключен'}
+                          </span>
+                          <CustomSwitch 
+                            checked={isEnabled}
+                            onChange={(checked) => {
+                              const currentEnabled = form.getValues("enabledLanguages") || ["ru", "en", "he"];
+                              let newEnabled;
+                              if (checked) {
+                                newEnabled = [...currentEnabled, code];
+                              } else {
+                                newEnabled = currentEnabled.filter((lang: string) => lang !== code);
+                              }
+                              // Ensure at least one language is always enabled
+                              if (newEnabled.length === 0) {
+                                newEnabled = ["ru"];
+                              }
+                              form.setValue("enabledLanguages", newEnabled);
+                            }}
+                            bgColor={isEnabled ? "bg-green-500" : "bg-gray-300"}
+                          />
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs text-green-600 font-medium">Активен</span>
-                        <CustomSwitch 
-                          checked={true}
-                          onChange={() => {}}
-                          bgColor="bg-green-500"
-                        />
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
