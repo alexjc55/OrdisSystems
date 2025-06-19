@@ -1857,7 +1857,7 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!user || (user.role !== "admin" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
+  if (!user || (user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
     return null;
   }
 
