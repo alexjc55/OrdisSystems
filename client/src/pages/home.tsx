@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
+import { useShopTranslation } from "@/hooks/use-language";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import CategoryNav from "@/components/menu/category-nav";
@@ -44,6 +45,7 @@ export default function Home() {
   const { user } = useAuth();
   const { isOpen: isCartOpen } = useCartStore();
   const { storeSettings } = useStoreSettings();
+  const { t } = useShopTranslation();
 
   // Fetch categories
   const { data: categories = [], isLoading: categoriesLoading } = useQuery<CategoryWithProducts[]>({
@@ -198,7 +200,7 @@ export default function Home() {
                     {(() => {
                       try {
                         if (searchQuery && searchQuery.length > 2) {
-                          return `Результаты поиска: "${searchQuery}"`;
+                          return `${t('searchResults')}: "${searchQuery}"`;
                         }
                         if (selectedCategory?.name) {
                           return selectedCategory.name;
@@ -206,10 +208,10 @@ export default function Home() {
                         if (storeSettings?.welcomeTitle) {
                           return storeSettings.welcomeTitle;
                         }
-                        return "eDAHouse - Домашняя еда на развес";
+                        return t('defaultWelcomeTitle');
                       } catch (error) {
                         console.error('Error rendering title:', error);
-                        return "eDAHouse - Домашняя еда на развес";
+                        return t('defaultWelcomeTitle');
                       }
                     })()}
                   </h1>
@@ -218,7 +220,7 @@ export default function Home() {
                     {(() => {
                       try {
                         if (searchQuery && searchQuery.length > 2) {
-                          return `Найдено ${displayProducts.length} товаров`;
+                          return `${t('foundItems', { count: displayProducts.length })}`;
                         }
                         if (selectedCategory?.description) {
                           return selectedCategory.description;
@@ -244,24 +246,24 @@ export default function Home() {
                     <Card className="p-3 sm:p-4">
                       <div className="flex items-center gap-2 mb-2 sm:mb-3">
                         <Clock className="h-4 w-4 text-primary" />
-                        <span className="font-medium text-sm sm:text-base">Часы работы</span>
+                        <span className="font-medium text-sm sm:text-base">{t('workingHours')}</span>
                       </div>
                       <div className="space-y-1">
                         {(() => {
                           try {
                             const workingHours = storeSettings.workingHours;
                             if (!workingHours || typeof workingHours !== 'object') {
-                              return <p className="text-gray-500 text-xs">Не указаны</p>;
+                              return <p className="text-gray-500 text-xs">{t('notSpecified')}</p>;
                             }
 
                             const dayNames: Record<string, string> = {
-                              monday: 'Пн',
-                              tuesday: 'Вт', 
-                              wednesday: 'Ср',
-                              thursday: 'Чт',
-                              friday: 'Пт',
-                              saturday: 'Сб',
-                              sunday: 'Вс'
+                              monday: t('days.mon'),
+                              tuesday: t('days.tue'), 
+                              wednesday: t('days.wed'),
+                              thursday: t('days.thu'),
+                              friday: t('days.fri'),
+                              saturday: t('days.sat'),
+                              sunday: t('days.sun')
                             };
 
                             // Define day order based on store settings
