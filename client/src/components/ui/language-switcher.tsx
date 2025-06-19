@@ -57,7 +57,7 @@ export function LanguageSwitcher({
         </PopoverTrigger>
         <PopoverContent className="w-auto p-1" align="end">
           <div className="flex flex-col gap-1">
-            {Object.entries(languages).map(([code, info]) => (
+            {Object.entries(availableLanguages).map(([code, info]) => (
               <Button
                 key={code}
                 variant={code === currentLanguage ? "default" : "ghost"}
@@ -93,7 +93,7 @@ export function LanguageSwitcher({
           <div className="text-sm font-medium text-gray-700 mb-2">
             Choose Language
           </div>
-          {Object.entries(languages).map(([code, info]) => (
+          {Object.entries(availableLanguages).map(([code, info]) => (
             <Button
               key={code}
               variant={code === currentLanguage ? "default" : "ghost"}
