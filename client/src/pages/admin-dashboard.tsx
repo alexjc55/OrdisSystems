@@ -44,21 +44,20 @@ export default function AdminDashboard() {
 
   // Permission checking function for workers
   const checkWorkerPermission = (permission: string) => {
-    if (!user || !storeSettings) return false;
-    if (user.role === 'admin') return true;
-    if (user.role !== 'worker') return false;
-    const permissions = storeSettings.workerPermissions as any;
+    if (user?.role === 'admin') return true;
+    if (user?.role !== 'worker') return false;
+    const permissions = storeSettings?.workerPermissions as any;
     return permissions?.[permission] || false;
   };
 
   // Check which tabs should be visible based on permissions
-  const canViewProducts = user?.role === 'admin' || (user && storeSettings && checkWorkerPermission('canManageProducts'));
-  const canViewCategories = user?.role === 'admin' || (user && storeSettings && checkWorkerPermission('canManageCategories'));
-  const canViewOrders = user?.role === 'admin' || (user && storeSettings && checkWorkerPermission('canManageOrders'));
-  const canViewUsers = user?.role === 'admin' || (user && storeSettings && checkWorkerPermission('canViewUsers'));
-  const canManageUsers = user?.role === 'admin' || (user && storeSettings && checkWorkerPermission('canManageUsers'));
-  const canViewStoreSettings = user?.role === 'admin' || (user && storeSettings && (checkWorkerPermission('canViewSettings') || checkWorkerPermission('canManageSettings')));
-  const canManageStoreSettings = user?.role === 'admin' || (user && storeSettings && checkWorkerPermission('canManageSettings'));
+  const canViewProducts = user?.role === 'admin' || checkWorkerPermission('canManageProducts');
+  const canViewCategories = user?.role === 'admin' || checkWorkerPermission('canManageCategories');
+  const canViewOrders = user?.role === 'admin' || checkWorkerPermission('canManageOrders');
+  const canViewUsers = user?.role === 'admin' || checkWorkerPermission('canViewUsers');
+  const canManageUsers = user?.role === 'admin' || checkWorkerPermission('canManageUsers');
+  const canViewStoreSettings = user?.role === 'admin' || checkWorkerPermission('canViewSettings') || checkWorkerPermission('canManageSettings');
+  const canManageStoreSettings = user?.role === 'admin' || checkWorkerPermission('canManageSettings');
   const canViewSystemSettings = user?.role === 'admin';
 
   // Redirect if not authorized
