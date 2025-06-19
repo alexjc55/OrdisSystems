@@ -460,7 +460,7 @@ export default function AdminDashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [activeTab, setActiveTab] = useState("products");
+  const [activeTab, setActiveTab] = useState("orders");
 
   // Orders management state
   const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
@@ -821,6 +821,16 @@ export default function AdminDashboard() {
   const canManageUsers = isAdmin || workerPermissions.canManageUsers;
   const canViewSettings = isAdmin || workerPermissions.canViewSettings;
   const canManageSettings = isAdmin || workerPermissions.canManageSettings;
+
+  // Determine available tabs and set default
+  const availableTabs = [];
+  if (canManageProducts || canManageCategories) availableTabs.push('products');
+  if (canManageOrders) availableTabs.push('orders');
+  if (canViewUsers) availableTabs.push('users');
+  if (canViewSettings) availableTabs.push('settings');
+  
+  // Set default tab to first available tab for workers
+  const defaultTab = availableTabs.length > 0 ? availableTabs[0] : 'orders';
 
   return (
     <div className="min-h-screen bg-gray-50 admin-dashboard">
@@ -1360,9 +1370,11 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
           
           {/* Users Tab Content */}
-          <TabsContent value="users" className="space-y-6">
+          {canViewUsers && (
+            <TabsContent value="users" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1479,9 +1491,11 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
           
           {/* Settings Tab Content */}
-          <TabsContent value="settings" className="space-y-6">
+          {canViewSettings && (
+            <TabsContent value="settings" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1499,6 +1513,7 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
         </Tabs>
       </div>
 
