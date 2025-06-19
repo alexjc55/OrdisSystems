@@ -97,7 +97,6 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'ru', // Set initial language
     fallbackLng: 'ru',
     defaultNS: 'common',
     ns: ['common', 'shop', 'admin'],

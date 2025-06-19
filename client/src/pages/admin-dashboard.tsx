@@ -2467,22 +2467,22 @@ export default function AdminDashboard() {
                     {ordersViewMode === "table" && (
                       <div className="border rounded-lg bg-white">
                         <div className="w-full">
-                          <Table>
+                          <Table className="rtl:text-right">
                             <TableHeader>
                               <TableRow>
-                                <TableHead className="text-xs sm:text-sm w-12">№</TableHead>
-                                <TableHead className="text-xs sm:text-sm">Клиент</TableHead>
-                                <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-24">Статус</TableHead>
-                                <TableHead className="text-xs sm:text-sm w-20">Сумма</TableHead>
-                                <TableHead className="text-xs sm:text-sm hidden md:table-cell w-32">Дата и время</TableHead>
-                                <TableHead className="text-xs sm:text-sm w-12">Действия</TableHead>
+                                <TableHead className="text-xs sm:text-sm w-12 rtl:text-right">№</TableHead>
+                                <TableHead className="text-xs sm:text-sm rtl:text-right">{t('orders.customer', 'Клиент')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-24 rtl:text-right">{t('orders.status', 'Статус')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm w-20 rtl:text-right">{t('orders.total', 'Сумма')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm hidden md:table-cell w-32 rtl:text-right">{t('orders.date', 'Дата и время')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm w-12 rtl:text-right">{t('orders.actions', 'Действия')}</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {ordersResponse.data.map((order: any) => (
                                 <TableRow key={order.id} className="hover:bg-gray-50">
-                                  <TableCell className="font-bold text-xs sm:text-sm text-orange-600">#{order.id}</TableCell>
-                                  <TableCell className="text-xs sm:text-sm">
+                                  <TableCell className="font-bold text-xs sm:text-sm text-orange-600 rtl:text-right">#{order.id}</TableCell>
+                                  <TableCell className="text-xs sm:text-sm rtl:text-right">
                                     <div className="space-y-1">
                                       <div className="font-medium">
                                         {order.user?.firstName && order.user?.lastName 
@@ -2521,7 +2521,7 @@ export default function AdminDashboard() {
                                       )}
                                     </div>
                                   </TableCell>
-                                  <TableCell className="hidden sm:table-cell">
+                                  <TableCell className="hidden sm:table-cell rtl:text-right">
                                     <Select
                                       value={order.status}
                                       onValueChange={(newStatus) => {
@@ -2545,7 +2545,7 @@ export default function AdminDashboard() {
                                       </SelectContent>
                                     </Select>
                                   </TableCell>
-                                  <TableCell className="font-medium text-xs sm:text-sm">
+                                  <TableCell className="font-medium text-xs sm:text-sm rtl:text-right">
                                     {(() => {
                                       // Extract discount information from order notes
                                       const extractDiscounts = (notes: string) => {
