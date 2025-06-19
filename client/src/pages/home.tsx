@@ -170,15 +170,74 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden pt-16">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50/30 to-slate-100 overflow-x-hidden pt-16">
       <Header onResetView={handleResetView} />
       
-      {/* Banner Image */}
-      {storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
-        <div 
-          className="w-full h-32 sm:h-40 lg:h-48 bg-cover bg-center"
-          style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
-        />
+      {/* Modern Hero Section with Banner */}
+      {(!selectedCategoryId && searchQuery.length <= 2) && (
+        <section className="hero-section py-12 md:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+          {/* Background Banner Image */}
+          {storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
+            <div 
+              className="absolute inset-0 bg-cover bg-center opacity-20"
+              style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
+            />
+          )}
+          
+          <div className="max-w-7xl mx-auto relative z-10">
+            <div className="text-center animate-fade-in">
+              <h1 className="font-outfit text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
+                {(() => {
+                  try {
+                    if (storeSettings?.welcomeTitle) {
+                      return storeSettings.welcomeTitle;
+                    }
+                    return t('defaultWelcomeTitle');
+                  } catch (error) {
+                    console.error('Error rendering title:', error);
+                    return t('defaultWelcomeTitle');
+                  }
+                })()}
+              </h1>
+              
+              <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
+                {(() => {
+                  try {
+                    if (storeSettings?.storeDescription) {
+                      return storeSettings.storeDescription;
+                    }
+                    return "Свежая домашняя еда на развес - выбирайте по вкусу";
+                  } catch (error) {
+                    console.error('Error rendering description:', error);
+                    return "Свежая домашняя еда на развес - выбирайте по вкусу";
+                  }
+                })()}
+              </p>
+              
+              {/* Modern Search Bar */}
+              <div className="max-w-2xl mx-auto animate-slide-up">
+                <div className="relative glass-card rounded-2xl p-2 shadow-modern">
+                  <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 text-orange-600 h-6 w-6" />
+                  <Input
+                    type="text"
+                    placeholder={t('searchPlaceholder')}
+                    value={searchQuery}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="pl-16 pr-6 py-4 w-full text-lg rounded-xl border-0 bg-white/90 backdrop-blur-sm focus:ring-2 focus:ring-orange-500 focus:bg-white transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Floating Decorative Elements */}
+            <div className="absolute top-20 left-10 animate-float opacity-50">
+              <div className="w-20 h-20 bg-white/20 rounded-full blur-xl"></div>
+            </div>
+            <div className="absolute bottom-20 right-10 animate-float opacity-50" style={{animationDelay: '2s'}}>
+              <div className="w-32 h-32 bg-orange-300/20 rounded-full blur-xl"></div>
+            </div>
+          </div>
+        </section>
       )}
       
       <div className="flex overflow-x-hidden">
@@ -189,65 +248,86 @@ export default function Home() {
           isLoading={categoriesLoading}
         />
 
-        <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
-          {/* Search Bar */}
-          <div className="mb-8">
-            <div className="mb-6">
-              {/* Title and Description */}
-              {storeSettings?.showTitleDescription !== false && (
-                <>
-                  <h1 className="text-3xl font-poppins font-bold text-gray-900 mb-4">
-                    {(() => {
-                      try {
-                        if (searchQuery && searchQuery.length > 2) {
-                          return `${t('searchResults')}: "${searchQuery}"`;
+        <main className={`flex-1 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'} ${(!selectedCategoryId && searchQuery.length <= 2) ? 'pt-0' : 'pt-6 px-6'}`}>
+          {/* Modern Content Header for Category/Search Views */}
+          {(selectedCategoryId || searchQuery.length > 2) && (
+            <div className="mb-8 px-6">
+              <div className="glass-card rounded-2xl p-6 mb-6 animate-fade-in">
+                {/* Title and Description */}
+                {storeSettings?.showTitleDescription !== false && (
+                  <>
+                    <h1 className="text-3xl md:text-4xl font-outfit font-bold text-gray-900 mb-4">
+                      {(() => {
+                        try {
+                          if (searchQuery && searchQuery.length > 2) {
+                            return `${t('searchResults')}: "${searchQuery}"`;
+                          }
+                          if (selectedCategory?.name) {
+                            return selectedCategory.name;
+                          }
+                          if (storeSettings?.welcomeTitle) {
+                            return storeSettings.welcomeTitle;
+                          }
+                          return t('defaultWelcomeTitle');
+                        } catch (error) {
+                          console.error('Error rendering title:', error);
+                          return t('defaultWelcomeTitle');
                         }
-                        if (selectedCategory?.name) {
-                          return selectedCategory.name;
+                      })()}
+                    </h1>
+                    
+                    <p className="text-gray-600 text-lg mb-6 leading-relaxed">
+                      {(() => {
+                        try {
+                          if (searchQuery && searchQuery.length > 2) {
+                            return `${t('foundItems', { count: displayProducts.length })}`;
+                          }
+                          if (selectedCategory?.description) {
+                            return selectedCategory.description;
+                          }
+                          if (storeSettings?.storeDescription) {
+                            return storeSettings.storeDescription;
+                          }
+                          return "Свежая домашняя еда на развес - выбирайте по вкусу";
+                        } catch (error) {
+                          console.error('Error rendering description:', error);
+                          return "Свежая домашняя еда на развес - выбирайте по вкусу";
                         }
-                        if (storeSettings?.welcomeTitle) {
-                          return storeSettings.welcomeTitle;
-                        }
-                        return t('defaultWelcomeTitle');
-                      } catch (error) {
-                        console.error('Error rendering title:', error);
-                        return t('defaultWelcomeTitle');
-                      }
-                    })()}
-                  </h1>
-                  
-                  <p className="text-gray-600 text-lg mb-6">
-                    {(() => {
-                      try {
-                        if (searchQuery && searchQuery.length > 2) {
-                          return `${t('foundItems', { count: displayProducts.length })}`;
-                        }
-                        if (selectedCategory?.description) {
-                          return selectedCategory.description;
-                        }
-                        if (storeSettings?.storeDescription) {
-                          return storeSettings.storeDescription;
-                        }
-                        return "Свежая домашняя еда на развес - выбирайте по вкусу";
-                      } catch (error) {
-                        console.error('Error rendering description:', error);
-                        return "Свежая домашняя еда на развес - выбирайте по вкусу";
-                      }
-                    })()}
-                  </p>
-                </>
-              )}
+                      })()}
+                    </p>
 
-              {/* Compact Store Information */}
-              {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && storeSettings?.showInfoBlocks !== false && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-6">
-                  {/* Working Hours */}
-                  {storeSettings?.workingHours && (
-                    <Card className="p-3 sm:p-4">
-                      <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                        <Clock className="h-4 w-4 text-primary" />
-                        <span className="font-medium text-sm sm:text-base">{t('workingHours')}</span>
+                    {/* Compact Search Bar for Category/Search Views */}
+                    <div className="max-w-md">
+                      <div className="relative">
+                        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-500 h-5 w-5" />
+                        <Input
+                          type="text"
+                          placeholder={t('searchPlaceholder')}
+                          value={searchQuery}
+                          onChange={(e) => handleSearch(e.target.value)}
+                          className="pl-12 pr-4 py-3 w-full rounded-xl border-orange-200 focus:border-orange-500 focus:ring-orange-500/30 bg-white/80"
+                        />
                       </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+              {/* Modern Store Information Cards */}
+              {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && storeSettings?.showInfoBlocks !== false && (
+                <div className="px-6 mb-8">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                    {/* Working Hours */}
+                    {storeSettings?.workingHours && (
+                      <div className="category-card p-4 sm:p-6 animate-scale-hover">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="p-2 bg-gradient-primary rounded-lg">
+                            <Clock className="h-5 w-5 text-white" />
+                          </div>
+                          <span className="font-outfit font-semibold text-base sm:text-lg text-gray-900">{t('workingHours')}</span>
+                        </div>
                       <div className="space-y-1">
                         {(() => {
                           try {
@@ -319,75 +399,67 @@ export default function Home() {
                           }
                         })()}
                       </div>
-                    </Card>
+                    </div>
                   )}
 
                   {/* Contact Information */}
                   {(storeSettings?.contactPhone || storeSettings?.contactEmail) && (
-                    <Card className="p-3 sm:p-4">
-                      <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                        <Phone className="h-4 w-4 text-primary" />
-                        <span className="font-medium text-sm sm:text-base">{t('contacts')}</span>
+                    <div className="category-card p-4 sm:p-6 animate-scale-hover">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-gradient-primary rounded-lg">
+                          <Phone className="h-5 w-5 text-white" />
+                        </div>
+                        <span className="font-outfit font-semibold text-base sm:text-lg text-gray-900">{t('contacts')}</span>
                       </div>
-                      <div className="space-y-1">
+                      <div className="space-y-2">
                         {storeSettings.contactPhone && (
-                          <div className="text-xs sm:text-sm">
+                          <div className="text-sm">
                             <span className="text-gray-600">{t('phone')}:</span>
                             <br />
-                            <span className="font-medium">{storeSettings.contactPhone}</span>
+                            <span className="font-medium text-gray-900">{storeSettings.contactPhone}</span>
                           </div>
                         )}
                         {storeSettings.contactEmail && (
-                          <div className="text-xs sm:text-sm">
+                          <div className="text-sm">
                             <span className="text-gray-600">Email:</span>
                             <br />
-                            <span className="font-medium">{storeSettings.contactEmail}</span>
+                            <span className="font-medium text-gray-900">{storeSettings.contactEmail}</span>
                           </div>
                         )}
                       </div>
-                    </Card>
+                    </div>
                   )}
 
                   {/* Delivery & Payment */}
                   {(storeSettings?.deliveryInfo || storeSettings?.paymentInfo) && (
-                    <Card className="p-3 sm:p-4">
-                      <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                        <CreditCard className="h-4 w-4 text-primary" />
-                        <span className="font-medium text-sm sm:text-base">Оплата и доставка</span>
+                    <div className="category-card p-4 sm:p-6 animate-scale-hover">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-gradient-primary rounded-lg">
+                          <CreditCard className="h-5 w-5 text-white" />
+                        </div>
+                        <span className="font-outfit font-semibold text-base sm:text-lg text-gray-900">Оплата и доставка</span>
                       </div>
                       <div className="space-y-2">
                         {storeSettings.deliveryInfo && (
-                          <div className="text-xs sm:text-sm">
+                          <div className="text-sm">
                             <span className="text-gray-600">{t('delivery')}:</span>
                             <br />
-                            <span className="font-medium">{storeSettings.deliveryInfo}</span>
+                            <span className="font-medium text-gray-900">{storeSettings.deliveryInfo}</span>
                           </div>
                         )}
                         {storeSettings.paymentInfo && (
-                          <div className="text-xs sm:text-sm">
+                          <div className="text-sm">
                             <span className="text-gray-600">{t('payment')}:</span>
                             <br />
-                            <span className="font-medium">{storeSettings.paymentInfo}</span>
+                            <span className="font-medium text-gray-900">{storeSettings.paymentInfo}</span>
                           </div>
                         )}
                       </div>
-                    </Card>
+                    </div>
                   )}
+                  </div>
                 </div>
               )}
-            </div>
-
-            <div className="relative max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                type="text"
-                placeholder={t('searchPlaceholder')}
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10 bg-white border-gray-300"
-              />
-            </div>
-          </div>
 
           {/* Special Offers or Category View */}
           {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && (
