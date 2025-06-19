@@ -2399,9 +2399,9 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="text-2xl font-bold flex items-center gap-2">
                     <ShoppingCart className="h-6 w-6" />
-                    Заказы
+                    {t('orders.title')}
                   </h1>
-                  <p className="text-gray-600 mt-1">Управление заказами клиентов</p>
+                  <p className="text-gray-600 mt-1">{t('orders.description', 'Управление заказами клиентов')}</p>
                 </div>
               
               {/* Controls Row */}
@@ -2415,7 +2415,7 @@ export default function AdminDashboard() {
                     className="text-xs px-3 py-1 h-8"
                   >
                     <Grid3X3 className="h-3 w-3 mr-1" />
-                    Таблица
+                    {t('common.table', 'Таблица')}
                   </Button>
                   <Button
                     variant={ordersViewMode === "kanban" ? "default" : "ghost"}
@@ -2424,7 +2424,7 @@ export default function AdminDashboard() {
                     className="text-xs px-3 py-1 h-8"
                   >
                     <Columns className="h-3 w-3 mr-1" />
-                    Канбан
+                    {t('common.kanban', 'Канбан')}
                   </Button>
                 </div>
 
@@ -2432,13 +2432,13 @@ export default function AdminDashboard() {
                 <div className="flex gap-3">
                   <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
                     <SelectTrigger className="w-40 text-xs h-8">
-                      <SelectValue placeholder="Фильтр заказов" />
+                      <SelectValue placeholder={t('orders.filterOrders', 'Фильтр заказов')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="active">Активные заказы</SelectItem>
-                      <SelectItem value="delivered">Доставленные</SelectItem>
-                      <SelectItem value="cancelled">Отмененные</SelectItem>
-                      <SelectItem value="all">Все заказы</SelectItem>
+                      <SelectItem value="active">{t('orders.activeOrders', 'Активные заказы')}</SelectItem>
+                      <SelectItem value="delivered">{t('orders.deliveredOrders')}</SelectItem>
+                      <SelectItem value="cancelled">{t('orders.cancelledOrders')}</SelectItem>
+                      <SelectItem value="all">{t('orders.allOrders')}</SelectItem>
                     </SelectContent>
                   </Select>
 

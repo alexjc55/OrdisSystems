@@ -66,6 +66,7 @@
   },
   "categories": {
     "title": "Categories",
+    "description": "Simple category management",
     "addCategory": "Add Category",
     "editCategory": "Edit Category",
     "deleteCategory": "Delete Category",

@@ -31,8 +31,13 @@
     "totalProducts": "סה\"כ מוצרים",
     "totalCustomers": "סה\"כ לקוחות"
   },
+  "common": {
+    "noResults": "לא נמצאו תוצאות",
+    "tryDifferentSearch": "נסה לשנות את קריטריוני החיפוש או הסינון"
+  },
   "products": {
     "title": "מוצרים",
+    "description": "ניהול מוצרים מלא עם חיפוש וסינון",
     "addProduct": "הוסף מוצר",
     "editProduct": "ערוך מוצר",
     "deleteProduct": "מחק מוצר",
@@ -52,12 +57,16 @@
     "unit": "יחידה",
     "searchProducts": "חפש מוצרים...",
     "allCategories": "כל הקטגוריות",
+    "allProducts": "כל המוצרים",
     "availableProducts": "מוצרים זמינים",
     "unavailableProducts": "מוצרים לא זמינים",
-    "productsWithDiscount": "מוצרים בהנחה"
+    "productsWithDiscount": "מוצרים בהנחה",
+    "noProducts": "אין מוצרים",
+    "addFirstProduct": "התחל בהוספת המוצר הראשון שלך"
   },
   "categories": {
     "title": "קטגוריות",
+    "description": "ניהול קטגוריות פשוט",
     "addCategory": "הוסף קטגוריה",
     "editCategory": "ערוך קטגוריה",
     "deleteCategory": "מחק קטגוריה",
