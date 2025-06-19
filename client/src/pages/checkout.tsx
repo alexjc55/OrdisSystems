@@ -26,6 +26,11 @@ import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
+// Calculate delivery fee based on order total and free delivery threshold
+const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number) => {
+  return orderTotal >= freeDeliveryFrom ? 0 : deliveryFee;
+};
+
 const guestOrderSchema = z.object({
   firstName: z.string().min(2, "Имя должно содержать минимум 2 символа"),
   lastName: z.string().min(2, "Фамилия должна содержать минимум 2 символа"),
@@ -176,6 +181,14 @@ export default function Checkout() {
 
   const createGuestOrderMutation = useMutation({
     mutationFn: async (data: GuestOrderData) => {
+      const subtotal = getTotalPrice();
+      const deliveryFeeAmount = calculateDeliveryFee(
+        subtotal, 
+        parseFloat(storeSettings?.deliveryFee || "15.00"), 
+        parseFloat(storeSettings?.freeDeliveryFrom || "50.00")
+      );
+      const total = subtotal + deliveryFeeAmount;
+
       const orderData = {
         items: items.map(item => ({
           productId: item.product.id,
@@ -183,7 +196,8 @@ export default function Checkout() {
           pricePerKg: item.product.price,
           totalPrice: item.totalPrice.toString()
         })),
-        totalAmount: getTotalPrice().toString(),
+        totalAmount: total.toString(),
+        deliveryFee: deliveryFeeAmount.toString(),
         guestInfo: {
           ...data,
           deliveryDate: selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : "",
@@ -245,6 +259,14 @@ export default function Checkout() {
       }
 
       // Then create the order with user ID
+      const subtotal = getTotalPrice();
+      const deliveryFeeAmount = calculateDeliveryFee(
+        subtotal, 
+        parseFloat(storeSettings?.deliveryFee || "15.00"), 
+        parseFloat(storeSettings?.freeDeliveryFrom || "50.00")
+      );
+      const total = subtotal + deliveryFeeAmount;
+
       const orderData = {
         items: items.map(item => ({
           productId: item.product.id,
@@ -252,7 +274,8 @@ export default function Checkout() {
           pricePerKg: item.product.price,
           totalPrice: item.totalPrice.toString()
         })),
-        totalAmount: getTotalPrice().toString(),
+        totalAmount: total.toString(),
+        deliveryFee: deliveryFeeAmount.toString(),
         userId: newUser.id, // Link order to the newly created user
         deliveryAddress: data.address,
         deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
@@ -306,6 +329,14 @@ export default function Checkout() {
 
   const createAuthenticatedOrderMutation = useMutation({
     mutationFn: async (formData: AuthenticatedOrderData) => {
+      const subtotal = getTotalPrice();
+      const deliveryFeeAmount = calculateDeliveryFee(
+        subtotal, 
+        parseFloat(storeSettings?.deliveryFee || "15.00"), 
+        parseFloat(storeSettings?.freeDeliveryFrom || "50.00")
+      );
+      const total = subtotal + deliveryFeeAmount;
+
       const orderData = {
         items: items.map(item => ({
           productId: item.product.id,
@@ -313,7 +344,8 @@ export default function Checkout() {
           pricePerKg: item.product.price,
           totalPrice: item.totalPrice.toString()
         })),
-        totalAmount: getTotalPrice().toString(),
+        totalAmount: total.toString(),
+        deliveryFee: deliveryFeeAmount.toString(),
         deliveryAddress: formData.address,
         customerPhone: formData.phone,
         deliveryDate: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
@@ -398,10 +430,44 @@ export default function Checkout() {
                 </div>
               ))}
               <Separator />
-              <div className="flex justify-between items-center text-lg font-bold">
-                <span>Итого:</span>
-                <span>{formatCurrency(getTotalPrice())}</span>
-              </div>
+              {(() => {
+                const subtotal = getTotalPrice();
+                const deliveryFeeAmount = calculateDeliveryFee(
+                  subtotal, 
+                  parseFloat(storeSettings?.deliveryFee || "15.00"), 
+                  parseFloat(storeSettings?.freeDeliveryFrom || "50.00")
+                );
+                const total = subtotal + deliveryFeeAmount;
+
+                return (
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span>Товары:</span>
+                      <span>{formatCurrency(subtotal)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Доставка:</span>
+                      <span>
+                        {deliveryFeeAmount === 0 ? (
+                          <span className="text-green-600 font-medium">Бесплатно</span>
+                        ) : (
+                          formatCurrency(deliveryFeeAmount)
+                        )}
+                      </span>
+                    </div>
+                    {deliveryFeeAmount > 0 && (
+                      <div className="text-xs text-gray-500 text-center">
+                        Бесплатная доставка от {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                      </div>
+                    )}
+                    <Separator />
+                    <div className="flex justify-between items-center text-lg font-bold">
+                      <span>Итого:</span>
+                      <span>{formatCurrency(total)}</span>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </CardContent>
         </Card>
