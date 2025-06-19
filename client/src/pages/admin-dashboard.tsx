@@ -4308,8 +4308,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
           </CollapsibleContent>
         </Collapsible>
-          </CollapsibleContent>
-        </Collapsible>
 
         {/* Настройки отображения */}
         <Collapsible open={isDisplaySettingsOpen} onOpenChange={setIsDisplaySettingsOpen} className="space-y-6">

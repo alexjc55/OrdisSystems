@@ -465,7 +465,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         deliveryAddress: guestInfo.address,
         guestName: `${guestInfo.firstName} ${guestInfo.lastName}`,
         guestEmail: guestInfo.email,
-        guestPhone: guestInfo.phone
+        guestPhone: guestInfo.phone,
+        deliveryDate: guestInfo.deliveryDate,
+        deliveryTime: guestInfo.deliveryTime,
+        paymentMethod: guestInfo.paymentMethod
       };
 
       const orderItems = items.map((item: any) => ({
