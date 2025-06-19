@@ -4,7 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ErrorBoundary from "@/components/error-boundary";
-import { useAuth } from "@/hooks/useAuth";
+import { AuthProvider } from "@/hooks/use-auth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { CustomHtml } from "@/components/custom-html";
 import { WhatsAppChat } from "@/components/layout/whatsapp-chat";
@@ -16,19 +16,12 @@ import ChangePasswordPage from "@/pages/change-password";
 import ForgotPasswordPage from "@/pages/forgot-password";
 import ResetPasswordPage from "@/pages/reset-password";
 import Checkout from "@/pages/checkout";
+import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
+import { ProtectedRoute } from "@/lib/protected-route";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
   const { storeSettings } = useStoreSettings();
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
 
   return (
     <ErrorBoundary>
