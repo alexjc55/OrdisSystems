@@ -22,7 +22,7 @@ import { ImageUpload } from "@/components/ui/image-upload";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { formatCurrency, getUnitLabel, type ProductUnit } from "@/lib/currency";
+import { formatCurrency, getUnitLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
 import { insertStoreSettingsSchema, type StoreSettings } from "@shared/schema";
 import { 
   Package, 
@@ -87,6 +87,59 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   bottomBanner2Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
   cancellationReasons: z.array(z.string()).optional(),
 });
+
+// Generate time slots based on store working hours
+const getTimeSlots = (selectedDate = '', workingHours: any = {}, weekStartDay = 'monday') => {
+  if (!selectedDate) return [];
+  
+  const date = new Date(selectedDate + 'T00:00:00');
+  const dayNames = weekStartDay === 'sunday' 
+    ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+    : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  
+  const dayName = dayNames[date.getDay()];
+  const daySchedule = workingHours[dayName];
+  
+  if (!daySchedule || daySchedule.trim() === '' || 
+      daySchedule.toLowerCase().includes('закрыто') || 
+      daySchedule.toLowerCase().includes('closed') ||
+      daySchedule.toLowerCase().includes('выходной')) {
+    return [{
+      value: 'closed',
+      label: 'Выходной день'
+    }];
+  }
+  
+  // Parse working hours (e.g., "09:00-18:00" or "09:00-14:00, 16:00-20:00")
+  const timeSlots: { value: string; label: string }[] = [];
+  const scheduleRanges = daySchedule.split(',').map((range: string) => range.trim());
+  
+  scheduleRanges.forEach((range: string) => {
+    const [start, end] = range.split('-').map((time: string) => time.trim());
+    if (start && end) {
+      const [startHour, startMin] = start.split(':').map(Number);
+      const [endHour, endMin] = end.split(':').map(Number);
+      
+      // Generate 2-hour intervals
+      for (let hour = startHour; hour < endHour; hour += 2) {
+        const nextHour = Math.min(hour + 2, endHour);
+        
+        // Skip if the interval would be less than 2 hours and we're not at the start
+        if (nextHour - hour < 2 && hour !== startHour) continue;
+        
+        const timeStr = `${hour.toString().padStart(2, '0')}:00`;
+        const endTimeStr = `${nextHour.toString().padStart(2, '0')}:00`;
+        
+        timeSlots.push({
+          value: timeStr,
+          label: `${timeStr} - ${endTimeStr}`
+        });
+      }
+    }
+  });
+  
+  return timeSlots;
+};
 
 // OrderCard component for kanban view
 function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { 
@@ -180,6 +233,9 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: {
 function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => void, onSave: () => void }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { data: storeSettings } = useQuery({
+    queryKey: ["/api/settings"],
+  });
   const [editedOrder, setEditedOrder] = useState({
     deliveryType: order.deliveryType || 'pickup',
     customerName: order.customerName || '',
@@ -243,7 +299,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
           {order.deliveryTime && (
             <div className="flex justify-between">
               <span>Время доставки:</span>
-              <span>{order.deliveryTime}</span>
+              <span>{formatDeliveryTimeRange(order.deliveryTime)}</span>
             </div>
           )}
           {order.paymentMethod && (
@@ -340,19 +396,18 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
           <div>
             <label className="text-sm font-medium">Время</label>
             <Select
-              value={editedOrder.deliveryTime || ""}
+              value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
               onValueChange={(value) => setEditedOrder({...editedOrder, deliveryTime: value})}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Выберите время" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="09:00 - 11:00">09:00 - 11:00</SelectItem>
-                <SelectItem value="11:00 - 13:00">11:00 - 13:00</SelectItem>
-                <SelectItem value="13:00 - 15:00">13:00 - 15:00</SelectItem>
-                <SelectItem value="15:00 - 17:00">15:00 - 17:00</SelectItem>
-                <SelectItem value="17:00 - 19:00">17:00 - 19:00</SelectItem>
-                <SelectItem value="19:00 - 21:00">19:00 - 21:00</SelectItem>
+                {getTimeSlots(editedOrder.deliveryDate, storeSettings?.workingHours, storeSettings?.weekStartDay).map((slot) => (
+                  <SelectItem key={slot.value} value={slot.label}>
+                    {slot.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
