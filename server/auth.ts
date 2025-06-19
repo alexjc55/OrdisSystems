@@ -56,7 +56,8 @@ export function setupAuth(app: Express) {
   passport.use(
     new LocalStrategy(async (username, password, done) => {
       try {
-        const user = await storage.getUserByUsername(username);
+        // Convert username to lowercase for case-insensitive lookup
+        const user = await storage.getUserByUsername(username.toLowerCase());
         if (!user || !user.password || !(await comparePasswords(password, user.password))) {
           return done(null, false);
         }
@@ -81,8 +82,8 @@ export function setupAuth(app: Express) {
     try {
       const { username, email, password, firstName, lastName, phone } = req.body;
       
-      // Check if username or email already exists
-      const existingUser = await storage.getUserByUsername(username);
+      // Check if username or email already exists (case-insensitive)
+      const existingUser = await storage.getUserByUsername(username.toLowerCase());
       if (existingUser) {
         return res.status(400).json({ message: "Имя пользователя уже занято" });
       }
@@ -94,10 +95,10 @@ export function setupAuth(app: Express) {
         }
       }
 
-      // Create user with hashed password
+      // Create user with hashed password and lowercase username
       const hashedPassword = await hashPassword(password);
       const user = await storage.createUser({
-        username,
+        username: username.toLowerCase(),
         email,
         password: hashedPassword,
         firstName,
