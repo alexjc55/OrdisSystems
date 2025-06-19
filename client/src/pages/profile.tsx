@@ -353,7 +353,31 @@ export default function Profile() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Avatar Section */}
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="relative">
+                      <Avatar className="h-24 w-24">
+                        <AvatarImage src={user.profileImageUrl || ""} alt="Profile" />
+                        <AvatarFallback className="text-lg">
+                          {user.firstName ? user.firstName[0] : user.username[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0"
+                        onClick={() => setIsAvatarDialogOpen(true)}
+                      >
+                        <Camera className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm font-medium">{user.firstName || user.username}</div>
+                      <div className="text-xs text-gray-500">Нажмите для изменения фото</div>
+                    </div>
+                  </div>
+
                   <div className="space-y-4">
                     <div>
                       <label className="text-sm font-medium text-gray-700">Имя</label>
@@ -996,6 +1020,55 @@ export default function Profile() {
                 )}
               </div>
             )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Avatar Upload Dialog */}
+        <Dialog open={isAvatarDialogOpen} onOpenChange={setIsAvatarDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Изменить фото профиля</DialogTitle>
+              <DialogDescription>
+                Загрузите новое фото профиля
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div className="flex justify-center">
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src={avatarForm.profileImageUrl || user.profileImageUrl || ""} alt="Preview" />
+                  <AvatarFallback className="text-lg">
+                    {user.firstName ? user.firstName[0] : user.username[0]}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              
+              <div>
+                <Label htmlFor="avatar-upload">Фото профиля</Label>
+                <ImageUpload
+                  value={avatarForm.profileImageUrl}
+                  onChange={(url) => setAvatarForm({ profileImageUrl: url })}
+                />
+              </div>
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsAvatarDialogOpen(false);
+                  setAvatarForm({ profileImageUrl: user.profileImageUrl || "" });
+                }}
+              >
+                Отмена
+              </Button>
+              <Button
+                onClick={() => updateAvatarMutation.mutate(avatarForm.profileImageUrl)}
+                disabled={updateAvatarMutation.isPending}
+              >
+                {updateAvatarMutation.isPending ? "Сохранение..." : "Сохранить"}
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
