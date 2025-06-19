@@ -2243,11 +2243,11 @@ export default function AdminDashboard() {
           {/* Categories Management */}
           {hasPermission("canManageCategories") && (
             <TabsContent value="categories" className="space-y-4 sm:space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div>
-                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <Card>
+                <CardHeader>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                      <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                       <Utensils className="h-4 w-4 sm:h-5 sm:w-5" />
                       Управление Категориями
                     </CardTitle>
@@ -2375,15 +2375,15 @@ export default function AdminDashboard() {
           {/* Orders Management */}
           {hasPermission("canManageOrders") && (
             <TabsContent value="orders" className="space-y-4 sm:space-y-6">
-            {/* Header Section */}
-            <div className="flex flex-col gap-4">
-              <div>
-                <h1 className="text-2xl font-bold flex items-center gap-2">
-                  <ShoppingCart className="h-6 w-6" />
-                  Заказы
-                </h1>
-                <p className="text-gray-600 mt-1">Управление заказами клиентов</p>
-              </div>
+              {/* Header Section */}
+              <div className="flex flex-col gap-4">
+                <div>
+                  <h1 className="text-2xl font-bold flex items-center gap-2">
+                    <ShoppingCart className="h-6 w-6" />
+                    Заказы
+                  </h1>
+                  <p className="text-gray-600 mt-1">Управление заказами клиентов</p>
+                </div>
               
               {/* Controls Row */}
               <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
