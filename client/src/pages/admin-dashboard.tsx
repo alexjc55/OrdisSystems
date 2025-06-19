@@ -336,6 +336,12 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                   <span className="truncate">{order.deliveryAddress}</span>
                 </div>
               )}
+              {order.paymentMethod && (
+                <div className="flex items-center gap-1">
+                  <CreditCard className="h-3 w-3" />
+                  <span>{order.paymentMethod}</span>
+                </div>
+              )}
             </div>
           )}
 
@@ -680,6 +686,18 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
             <div><strong>Клиент:</strong> {order.user?.firstName && order.user?.lastName 
               ? `${order.user.firstName} ${order.user.lastName}`
               : order.user?.email || "—"}</div>
+            {order.deliveryDate && (
+              <div><strong>Дата доставки:</strong> {new Date(order.deliveryDate).toLocaleDateString('ru-RU')}</div>
+            )}
+            {order.deliveryTime && (
+              <div><strong>Время доставки:</strong> {order.deliveryTime}</div>
+            )}
+            {order.paymentMethod && (
+              <div><strong>Способ оплаты:</strong> {order.paymentMethod}</div>
+            )}
+            {order.deliveryAddress && (
+              <div><strong>Адрес доставки:</strong> {order.deliveryAddress}</div>
+            )}
           </div>
         </div>
 

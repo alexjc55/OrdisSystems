@@ -234,6 +234,30 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
             <span>Создан:</span>
             <span>{new Date(order.createdAt).toLocaleString('ru-RU')}</span>
           </div>
+          {order.deliveryDate && (
+            <div className="flex justify-between">
+              <span>Дата доставки:</span>
+              <span>{new Date(order.deliveryDate).toLocaleDateString('ru-RU')}</span>
+            </div>
+          )}
+          {order.deliveryTime && (
+            <div className="flex justify-between">
+              <span>Время доставки:</span>
+              <span>{order.deliveryTime}</span>
+            </div>
+          )}
+          {order.paymentMethod && (
+            <div className="flex justify-between">
+              <span>Способ оплаты:</span>
+              <span>{order.paymentMethod}</span>
+            </div>
+          )}
+          {order.deliveryAddress && (
+            <div className="flex justify-between">
+              <span>Адрес доставки:</span>
+              <span className="text-right max-w-48 truncate">{order.deliveryAddress}</span>
+            </div>
+          )}
         </div>
       </div>
 
