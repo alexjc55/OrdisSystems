@@ -1,0 +1,26 @@
+{
+  "deployment": {
+    "name": "My Store",
+    "domain": "mystore.com",
+    "port": 3001,
+    "database": {
+      "name": "mystore_db",
+      "host": "localhost",
+      "port": 5432
+    },
+    "paths": {
+      "uploads": "./uploads",
+      "backups": "./backups",
+      "logs": "./logs"
+    },
+    "security": {
+      "sessionSecret": "GENERATE_RANDOM_STRING_HERE",
+      "allowedOrigins": ["https://mystore.com"]
+    },
+    "features": {
+      "enableRegistration": true,
+      "enableGuestOrders": true,
+      "requireEmailVerification": false
+    }
+  }
+}
