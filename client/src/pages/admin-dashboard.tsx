@@ -4057,6 +4057,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
   const [isVisualsOpen, setIsVisualsOpen] = useState(false);
+  const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
   const [isWorkingHoursOpen, setIsWorkingHoursOpen] = useState(false);
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
   const [isDisplaySettingsOpen, setIsDisplaySettingsOpen] = useState(false);
@@ -4456,7 +4457,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         </Collapsible>
 
         {/* Language Settings */}
-        <Collapsible open={true} className="space-y-6">
+        <Collapsible open={false} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
@@ -4465,38 +4466,40 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full rtl:flex-row-reverse">
                 <Languages className="h-5 w-5 text-orange-500" />
                 <h3 className="text-lg font-semibold">Настройки языка</h3>
+                <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
               </div>
             </Button>
           </CollapsibleTrigger>
           
           <CollapsibleContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h4 className="text-sm font-medium">Управление языками сайта</h4>
-                <p className="text-xs text-gray-500">
-                  Настройте доступные языки интерфейса для пользователей
-                </p>
-              </div>
-              <div className="space-y-4">
-                <div className="space-y-3">
-                  {Object.entries(LANGUAGES).map(([code, info]) => (
-                    <div key={code} className="flex items-center justify-between p-3 border rounded-lg rtl:flex-row-reverse">
-                      <div className="flex items-center gap-3 rtl:flex-row-reverse">
-                        <span className="text-lg">{(info as any).flag}</span>
-                        <div className="flex flex-col">
-                          <span className="font-medium">{(info as any).name}</span>
-                          <span className="text-xs text-gray-500">{(info as any).nativeName}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs text-green-600 font-medium">Включен</span>
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      </div>
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">
+                Управляйте доступными языками интерфейса для пользователей вашего сайта
+              </p>
+              
+              {Object.entries(LANGUAGES).map(([code, info]) => (
+                <div key={code} className="flex items-center justify-between p-4 border rounded-lg bg-gray-50 rtl:flex-row-reverse">
+                  <div className="flex items-center gap-3 rtl:flex-row-reverse">
+                    <span className="text-xl">{(info as any).flag}</span>
+                    <div className="flex flex-col">
+                      <span className="font-medium text-lg">{(info as any).name}</span>
+                      <span className="text-sm text-gray-500">{(info as any).nativeName}</span>
                     </div>
-                  ))}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-green-600 font-medium">Активен</span>
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
                 </div>
-                <div className="text-xs text-gray-500 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <strong>Примечание:</strong> Все языки в данный момент включены. Функция отключения языков будет добавлена в следующем обновлении.
+              ))}
+              
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <div className="w-5 h-5 text-blue-600 mt-0.5">ℹ️</div>
+                  <div className="text-sm text-blue-800">
+                    <strong>Информация:</strong> Все языки в настоящее время активны и доступны пользователям. 
+                    Функционал отключения отдельных языков будет добавлен в следующем обновлении системы.
+                  </div>
                 </div>
               </div>
             </div>
