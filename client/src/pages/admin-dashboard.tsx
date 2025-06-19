@@ -3176,12 +3176,12 @@ export default function AdminDashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
-                  <Settings className="h-5 w-5" />
-                  Настройки системы
-                </CardTitle>
-                <CardDescription className="text-sm">
-                  Управление правами доступа для сотрудников
-                </CardDescription>
+                    <Settings className="h-5 w-5" />
+                    Настройки системы
+                  </CardTitle>
+                  <CardDescription className="text-sm">
+                    Управление правами доступа для сотрудников
+                  </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Worker Permissions Section */}
