@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCartStore } from "@/lib/cart";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -138,6 +138,8 @@ export default function Checkout() {
   const { toast } = useToast();
   const [orderType, setOrderType] = useState<"guest" | "register" | "login">("register");
   const { storeSettings } = useStoreSettings();
+  
+
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedGuestDate, setSelectedGuestDate] = useState<Date | undefined>(undefined);
   const [selectedRegisterDate, setSelectedRegisterDate] = useState<Date | undefined>(undefined);
@@ -464,8 +466,11 @@ export default function Checkout() {
                                   const dayName = dayNames[date.getDay()];
                                   const daySchedule = storeSettings.workingHours[dayName];
                                   
-                                  // Disable if no schedule or closed
-                                  if (!daySchedule || daySchedule.trim() === '' || daySchedule.toLowerCase() === 'закрыто') {
+                                  // Disable if no schedule or closed or weekend
+                                  if (!daySchedule || daySchedule.trim() === '' || 
+                                      daySchedule.toLowerCase().includes('закрыто') || 
+                                      daySchedule.toLowerCase().includes('closed') ||
+                                      daySchedule.toLowerCase().includes('выходной')) {
                                     return true;
                                   }
                                 }
