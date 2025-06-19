@@ -536,9 +536,9 @@ export default function AdminDashboard() {
 
   // Fetch orders with pagination and filtering
   const { data: ordersResponse, isLoading: ordersLoading } = useQuery({
-    queryKey: ["/api/admin/orders", ordersPage, searchQuery, ordersStatusFilter, (storeSettings as any)?.defaultItemsPerPage],
+    queryKey: ["/api/admin/orders", ordersPage, searchQuery, ordersStatusFilter, storeSettings?.defaultItemsPerPage],
     queryFn: async () => {
-      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
+      const limit = storeSettings?.defaultItemsPerPage || 10;
       let statusParam = "";
       
       if (ordersStatusFilter === "active") {
@@ -565,9 +565,9 @@ export default function AdminDashboard() {
   });
 
   const { data: usersResponse, isLoading: usersLoading } = useQuery({
-    queryKey: ["/api/admin/users", usersPage, searchQuery, (storeSettings as any)?.defaultItemsPerPage],
+    queryKey: ["/api/admin/users", usersPage, searchQuery, storeSettings?.defaultItemsPerPage],
     queryFn: async () => {
-      const limit = (storeSettings as any)?.defaultItemsPerPage || 10;
+      const limit = storeSettings?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: usersPage.toString(),
         limit: limit.toString(),
@@ -581,7 +581,7 @@ export default function AdminDashboard() {
   });
 
   // Pagination configuration
-  const itemsPerPage = (storeSettings as any)?.defaultItemsPerPage || 10;
+  const itemsPerPage = storeSettings?.defaultItemsPerPage || 10;
 
   // Extract data and pagination info
   const productsData = productsResponse?.data || [];
@@ -646,7 +646,7 @@ export default function AdminDashboard() {
   };
 
   // Get default cancellation reasons
-  const defaultCancellationReasons = (storeSettings as any)?.cancellationReasons || [
+  const defaultCancellationReasons = storeSettings?.cancellationReasons || [
     "Товар недоступен",
     "Клиент отменил заказ",
     "Проблемы с доставкой",
@@ -821,7 +821,7 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!user || user.email !== "alexjc55@gmail.com") {
+  if (!user || (user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
     return null;
   }
 
