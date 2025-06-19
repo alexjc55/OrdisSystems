@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -18,8 +20,11 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { formatCurrency } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar } from "lucide-react";
+import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
+import { format } from "date-fns";
+import { ru } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 const guestOrderSchema = z.object({
   firstName: z.string().min(2, "Имя должно содержать минимум 2 символа"),
@@ -132,9 +137,9 @@ export default function Checkout() {
   const { toast } = useToast();
   const [orderType, setOrderType] = useState<"guest" | "register" | "login">("register");
   const { storeSettings } = useStoreSettings();
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  const [selectedGuestDate, setSelectedGuestDate] = useState<string>("");
-  const [selectedRegisterDate, setSelectedRegisterDate] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedGuestDate, setSelectedGuestDate] = useState<Date | undefined>(undefined);
+  const [selectedRegisterDate, setSelectedRegisterDate] = useState<Date | undefined>(undefined);
 
   const guestForm = useForm<GuestOrderData>({
     resolver: zodResolver(guestOrderSchema),
@@ -270,7 +275,7 @@ export default function Checkout() {
         totalAmount: getTotalPrice().toString(),
         deliveryAddress: formData.address,
         customerPhone: formData.phone,
-        deliveryDate: formData.deliveryDate,
+        deliveryDate: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
         deliveryTime: formData.deliveryTime,
         status: "pending"
       };
@@ -410,21 +415,37 @@ export default function Checkout() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="deliveryDate">Дата доставки *</Label>
-                        <Select name="deliveryDate" value={selectedDate} onValueChange={setSelectedDate} required>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Выберите дату" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {generateDeliveryDates(
-                              storeSettings?.minDeliveryTimeHours || 2,
-                              storeSettings?.maxDeliveryTimeDays || 7
-                            ).map((date) => (
-                              <SelectItem key={date.value} value={date.value}>
-                                {date.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !selectedDate && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {selectedDate ? format(selectedDate, "dd MMMM yyyy", { locale: ru }) : "Выберите дату"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <CalendarComponent
+                              mode="single"
+                              selected={selectedDate}
+                              onSelect={setSelectedDate}
+                              disabled={(date) => {
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
+                                const minDate = new Date(today);
+                                minDate.setHours(minDate.getHours() + (storeSettings?.minDeliveryTimeHours || 2));
+                                const maxDate = new Date(today);
+                                maxDate.setDate(maxDate.getDate() + (storeSettings?.maxDeliveryTimeDays || 7));
+                                return date < minDate || date > maxDate;
+                              }}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
                       </div>
 
                       <div>
@@ -434,9 +455,9 @@ export default function Checkout() {
                             <SelectValue placeholder="Выберите время" />
                           </SelectTrigger>
                           <SelectContent>
-                            {generateDeliveryTimes(
+                            {selectedDate && generateDeliveryTimes(
                               storeSettings?.workingHours,
-                              selectedDate,
+                              format(selectedDate, "yyyy-MM-dd"),
                               storeSettings?.weekStartDay
                             ).map((time) => (
                               <SelectItem key={time.value} value={time.value}>
