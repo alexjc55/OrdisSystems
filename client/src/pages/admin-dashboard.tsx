@@ -328,7 +328,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
               </div>
               <div className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
-                {order.deliveryTime}
+                {formatDeliveryTimeRange(order.deliveryTime)}
               </div>
               {order.deliveryAddress && (
                 <div className="flex items-center gap-1">
@@ -690,7 +690,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
               <div><strong>Дата доставки:</strong> {new Date(order.deliveryDate).toLocaleDateString('ru-RU')}</div>
             )}
             {order.deliveryTime && (
-              <div><strong>Время доставки:</strong> {order.deliveryTime}</div>
+              <div><strong>Время доставки:</strong> {formatDeliveryTimeRange(order.deliveryTime)}</div>
             )}
             {order.paymentMethod && (
               <div><strong>Способ оплаты:</strong> {order.paymentMethod}</div>

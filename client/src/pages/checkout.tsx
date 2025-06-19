@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { formatCurrency } from "@/lib/currency";
+import { formatCurrency, formatDeliveryTimeRange } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon } from "lucide-react";
@@ -187,7 +187,7 @@ export default function Checkout() {
         guestInfo: {
           ...data,
           deliveryDate: selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : "",
-          deliveryTime: selectedGuestTime,
+          deliveryTime: formatDeliveryTimeRange(selectedGuestTime),
           paymentMethod: selectedGuestPaymentMethod,
         },
         status: "pending"
@@ -239,7 +239,7 @@ export default function Checkout() {
         totalAmount: getTotalPrice(),
         deliveryAddress: data.address,
         deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
-        deliveryTime: selectedRegisterTime,
+        deliveryTime: formatDeliveryTimeRange(selectedRegisterTime),
         paymentMethod: selectedRegisterPaymentMethod,
         customerPhone: data.phone,
         status: "pending"
@@ -300,7 +300,7 @@ export default function Checkout() {
         deliveryAddress: formData.address,
         customerPhone: formData.phone,
         deliveryDate: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
-        deliveryTime: selectedTime,
+        deliveryTime: formatDeliveryTimeRange(selectedTime),
         status: "pending"
       };
       
@@ -410,7 +410,7 @@ export default function Checkout() {
                   const address = formData.get("address") as string;
                   const phone = formData.get("phone") as string;
                   const deliveryDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
-                  const deliveryTime = selectedTime || "";
+                  const deliveryTime = formatDeliveryTimeRange(selectedTime || "");
                   const paymentMethod = selectedPaymentMethod;
                   createAuthenticatedOrderMutation.mutate({ address, phone, deliveryDate, deliveryTime, paymentMethod });
                 }}>
