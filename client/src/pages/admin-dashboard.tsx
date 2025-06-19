@@ -86,6 +86,14 @@ const productSchema = z.object({
   isSpecialOffer: z.boolean().default(false),
   discountType: z.enum(["percentage", "fixed"]).optional(),
   discountValue: z.string().optional(),
+}).refine((data) => {
+  if (data.isSpecialOffer) {
+    return data.discountType && data.discountValue && parseFloat(data.discountValue) > 0;
+  }
+  return true;
+}, {
+  message: "При включении специального предложения необходимо указать тип и размер скидки",
+  path: ["discountType"],
 });
 
 const categorySchema = z.object({
