@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/use-auth";
 import { useCartStore } from "@/lib/cart";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ interface HeaderProps {
 }
 
 export default function Header({ onResetView }: HeaderProps) {
-  const { user } = useAuth();
+  const { user, logoutMutation } = useAuth();
   const { items, toggleCart } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -144,12 +144,13 @@ export default function Header({ onResetView }: HeaderProps) {
                 </DropdownMenu>
               </div>
             ) : (
-              <Button 
-                onClick={() => window.location.href = '/api/login'}
-                className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-300/50 text-white hidden md:flex transition-all duration-200"
-              >
-                Войти в аккаунт
-              </Button>
+              <Link href="/auth">
+                <Button 
+                  className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-300/50 text-white hidden md:flex transition-all duration-200"
+                >
+                  Войти в аккаунт
+                </Button>
+              </Link>
             )}
 
             {/* Mobile Menu Button */}
@@ -199,12 +200,13 @@ export default function Header({ onResetView }: HeaderProps) {
                     </Button>
                   </>
                 ) : (
-                  <Button 
-                    className="w-full bg-primary hover:bg-primary/90 text-white mx-3 my-2"
-                    onClick={() => window.location.href = '/api/login'}
-                  >
-                    Войти
-                  </Button>
+                  <Link href="/auth">
+                    <Button 
+                      className="w-full bg-primary hover:bg-primary/90 text-white mx-3 my-2"
+                    >
+                      Войти
+                    </Button>
+                  </Link>
                 )}
               </div>
             </div>
