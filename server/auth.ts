@@ -39,7 +39,7 @@ export function setupAuth(app: Express) {
     saveUninitialized: false,
     store: new PostgresSessionStore({ 
       pool, 
-      createTableIfMissing: true 
+      createTableIfMissing: false // Don't create table, it already exists
     }),
     cookie: {
       secure: false, // Set to true in production with HTTPS
