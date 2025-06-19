@@ -92,7 +92,10 @@ const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStar
   const dayName = dayNames[date.getDay()];
   const daySchedule = workingHours[dayName];
   
-  if (!daySchedule || daySchedule.trim() === '' || daySchedule.toLowerCase() === 'закрыто') {
+  if (!daySchedule || daySchedule.trim() === '' || 
+      daySchedule.toLowerCase().includes('закрыто') || 
+      daySchedule.toLowerCase().includes('closed') ||
+      daySchedule.toLowerCase().includes('выходной')) {
     return [{
       value: 'closed',
       label: 'Выходной день'
@@ -692,8 +695,11 @@ export default function Checkout() {
                                     const dayName = dayNames[date.getDay()];
                                     const daySchedule = storeSettings.workingHours[dayName];
                                     
-                                    // Disable if no schedule or closed
-                                    if (!daySchedule || daySchedule.trim() === '' || daySchedule.toLowerCase() === 'закрыто') {
+                                    // Disable if no schedule or closed or weekend
+                                    if (!daySchedule || daySchedule.trim() === '' || 
+                                        daySchedule.toLowerCase().includes('закрыто') || 
+                                        daySchedule.toLowerCase().includes('closed') ||
+                                        daySchedule.toLowerCase().includes('выходной')) {
                                       return true;
                                     }
                                   }
@@ -896,8 +902,11 @@ export default function Checkout() {
                                     const dayName = dayNames[date.getDay()];
                                     const daySchedule = storeSettings.workingHours[dayName];
                                     
-                                    // Disable if no schedule or closed
-                                    if (!daySchedule || daySchedule.trim() === '' || daySchedule.toLowerCase() === 'закрыто') {
+                                    // Disable if no schedule or closed or weekend
+                                    if (!daySchedule || daySchedule.trim() === '' || 
+                                        daySchedule.toLowerCase().includes('закрыто') || 
+                                        daySchedule.toLowerCase().includes('closed') ||
+                                        daySchedule.toLowerCase().includes('выходной')) {
                                       return true;
                                     }
                                   }
