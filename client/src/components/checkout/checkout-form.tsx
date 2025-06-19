@@ -124,8 +124,10 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
   };
 
   const totalAmount = getTotalPrice();
-  const deliveryFee = parseFloat(storeSettings?.deliveryFee || "15");
-  const finalTotal = totalAmount + deliveryFee;
+  const deliveryFeeAmount = totalAmount >= parseFloat(storeSettings?.freeDeliveryFrom || "50") 
+    ? 0 
+    : parseFloat(storeSettings?.deliveryFee || "15");
+  const finalTotal = totalAmount + deliveryFeeAmount;
 
   const handleSubmit = () => {
     if (!user) {
@@ -161,7 +163,7 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
 
     createOrderMutation.mutate({
       totalAmount: finalTotal.toString(),
-      deliveryFee: deliveryFee.toString(),
+      deliveryFee: deliveryFeeAmount.toString(),
       deliveryAddress: formData.deliveryAddress,
       customerPhone: formData.customerPhone,
       customerNotes: formData.customerNotes,
@@ -212,8 +214,19 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
               </div>
               <div className="flex justify-between">
                 <span>Доставка:</span>
-                <span>{formatCurrency(deliveryFee)}</span>
+                <span>
+                  {deliveryFeeAmount === 0 ? (
+                    <span className="text-green-600 font-medium">Бесплатно</span>
+                  ) : (
+                    formatCurrency(deliveryFeeAmount)
+                  )}
+                </span>
               </div>
+              {deliveryFeeAmount > 0 && (
+                <div className="text-xs text-gray-500 text-center">
+                  Бесплатная доставка от {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                </div>
+              )}
               <Separator />
               <div className="flex justify-between font-semibold text-lg">
                 <span>Итого:</span>

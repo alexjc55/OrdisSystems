@@ -94,7 +94,12 @@ export default function CartOverlay() {
   }, [deliveryDate, storeSettings?.workingHours]);
 
   const subtotal = items.reduce((total, item) => total + item.totalPrice, 0);
-  const total = subtotal + DELIVERY_FEE;
+  const deliveryFeeAmount = calculateDeliveryFee(
+    subtotal, 
+    parseFloat(storeSettings?.deliveryFee || "15.00"), 
+    parseFloat(storeSettings?.freeDeliveryFrom || "50.00")
+  );
+  const total = subtotal + deliveryFeeAmount;
 
   const createOrderMutation = useMutation({
     mutationFn: async (orderData: any) => {
@@ -210,7 +215,7 @@ export default function CartOverlay() {
 
     const orderData = {
       totalAmount: total.toFixed(2),
-      deliveryFee: DELIVERY_FEE.toFixed(2),
+      deliveryFee: deliveryFeeAmount.toFixed(2),
       customerNotes: customerNotes.trim() || null,
       deliveryAddress: deliveryAddress.trim(),
       customerPhone: customerPhone.trim(),
@@ -646,8 +651,19 @@ export default function CartOverlay() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Доставка:</span>
-                  <span>{formatCurrency(DELIVERY_FEE)}</span>
+                  <span>
+                    {deliveryFeeAmount === 0 ? (
+                      <span className="text-green-600 font-medium">Бесплатно</span>
+                    ) : (
+                      formatCurrency(deliveryFeeAmount)
+                    )}
+                  </span>
                 </div>
+                {deliveryFeeAmount > 0 && (
+                  <div className="text-xs text-gray-500 text-center">
+                    Бесплатная доставка от {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                  </div>
+                )}
                 <Separator />
                 <div className="flex justify-between text-lg font-bold">
                   <span>Итого:</span>
