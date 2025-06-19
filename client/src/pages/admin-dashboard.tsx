@@ -3651,11 +3651,26 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     </div>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={Boolean(field.value)}
-                      onCheckedChange={field.onChange}
-                      className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
-                    />
+                    <div
+                      role="switch"
+                      aria-checked={Boolean(field.value)}
+                      onClick={() => {
+                        try {
+                          field.onChange(!Boolean(field.value));
+                        } catch (error) {
+                          console.error('Switch toggle error:', error);
+                        }
+                      }}
+                      className={`h-6 w-11 rounded-full cursor-pointer transition-colors ${
+                        Boolean(field.value) ? 'bg-orange-500' : 'bg-gray-200'
+                      } relative`}
+                    >
+                      <div
+                        className={`h-5 w-5 bg-white rounded-full absolute top-0.5 transition-transform ${
+                          Boolean(field.value) ? 'translate-x-5' : 'translate-x-0.5'
+                        }`}
+                      />
+                    </div>
                   </FormControl>
                 </FormItem>
               )}
