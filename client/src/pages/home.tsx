@@ -276,7 +276,7 @@ export default function Home() {
                               .map(day => [day, workingHours[day]]);
 
                             if (validEntries.length === 0) {
-                              return <p className="text-gray-500 text-xs">Не указаны</p>;
+                              return <p className="text-gray-500 text-xs">{t('notSpecified')}</p>;
                             }
 
                             // Group consecutive days with same hours
@@ -315,7 +315,7 @@ export default function Home() {
                             });
                           } catch (error) {
                             console.error('Error rendering working hours:', error);
-                            return <p className="text-gray-500 text-xs">Ошибка загрузки</p>;
+                            return <p className="text-gray-500 text-xs">{t('loadingError')}</p>;
                           }
                         })()}
                       </div>
@@ -327,12 +327,12 @@ export default function Home() {
                     <Card className="p-3 sm:p-4">
                       <div className="flex items-center gap-2 mb-2 sm:mb-3">
                         <Phone className="h-4 w-4 text-primary" />
-                        <span className="font-medium text-sm sm:text-base">Контакты</span>
+                        <span className="font-medium text-sm sm:text-base">{t('contacts')}</span>
                       </div>
                       <div className="space-y-1">
                         {storeSettings.contactPhone && (
                           <div className="text-xs sm:text-sm">
-                            <span className="text-gray-600">Телефон:</span>
+                            <span className="text-gray-600">{t('phone')}:</span>
                             <br />
                             <span className="font-medium">{storeSettings.contactPhone}</span>
                           </div>
@@ -358,14 +358,14 @@ export default function Home() {
                       <div className="space-y-2">
                         {storeSettings.deliveryInfo && (
                           <div className="text-xs sm:text-sm">
-                            <span className="text-gray-600">Доставка:</span>
+                            <span className="text-gray-600">{t('delivery')}:</span>
                             <br />
                             <span className="font-medium">{storeSettings.deliveryInfo}</span>
                           </div>
                         )}
                         {storeSettings.paymentInfo && (
                           <div className="text-xs sm:text-sm">
-                            <span className="text-gray-600">Оплата:</span>
+                            <span className="text-gray-600">{t('payment')}:</span>
                             <br />
                             <span className="font-medium">{storeSettings.paymentInfo}</span>
                           </div>
@@ -381,7 +381,7 @@ export default function Home() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 type="text"
-                placeholder="Поиск блюд..."
+                placeholder={t('searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="pl-10 bg-white border-gray-300"
@@ -398,11 +398,11 @@ export default function Home() {
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center">
                       <Package className="mr-3 h-6 w-6 text-primary" />
-                      <h2 className="text-2xl font-poppins font-bold text-gray-900">Категории</h2>
+                      <h2 className="text-2xl font-poppins font-bold text-gray-900">{t('categories')}</h2>
                     </div>
                     <div className="flex items-center gap-4">
                       <Badge variant="default" className="bg-primary">
-                        {categories.length} категорий
+                        {t('categoriesCount', { count: categories.length })}
                       </Badge>
                       <Button
                         onClick={() => setSelectedCategoryId(0)}
