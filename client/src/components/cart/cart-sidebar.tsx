@@ -9,6 +9,11 @@ import { useLocation } from "wouter";
 import { useState } from "react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 
+// Calculate delivery fee based on order total and free delivery threshold
+const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number) => {
+  return orderTotal >= freeDeliveryFrom ? 0 : deliveryFee;
+};
+
 export default function CartSidebar() {
   const { items, isOpen, setCartOpen, updateQuantity, removeItem, getTotalPrice } = useCartStore();
   const [, setLocation] = useLocation();
@@ -212,11 +217,44 @@ export default function CartSidebar() {
           {items.length > 0 && (
             <div className="border-t bg-white p-4 space-y-4">
               <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl p-4 border border-orange-200">
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-semibold text-gray-700">Итого:</span>
-                  <span className="text-2xl font-bold text-orange-600">{formatCurrency(getTotalPrice())}</span>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">Доставка рассчитывается при оформлении</p>
+                {(() => {
+                  const subtotal = getTotalPrice();
+                  const deliveryFeeAmount = calculateDeliveryFee(
+                    subtotal, 
+                    parseFloat(storeSettings?.deliveryFee || "15.00"), 
+                    parseFloat(storeSettings?.freeDeliveryFrom || "50.00")
+                  );
+                  const total = subtotal + deliveryFeeAmount;
+
+                  return (
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Товары:</span>
+                        <span>{formatCurrency(subtotal)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Доставка:</span>
+                        <span>
+                          {deliveryFeeAmount === 0 ? (
+                            <span className="text-green-600 font-medium">Бесплатно</span>
+                          ) : (
+                            formatCurrency(deliveryFeeAmount)
+                          )}
+                        </span>
+                      </div>
+                      {deliveryFeeAmount > 0 && (
+                        <div className="text-xs text-gray-500 text-center">
+                          Бесплатная доставка от {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                        </div>
+                      )}
+                      <Separator />
+                      <div className="flex justify-between items-center">
+                        <span className="text-lg font-semibold text-gray-700">Итого:</span>
+                        <span className="text-2xl font-bold text-orange-600">{formatCurrency(total)}</span>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Cart Banner */}
