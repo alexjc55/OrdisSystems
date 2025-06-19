@@ -78,6 +78,44 @@ export default function AdminDashboard() {
     queryKey: ["/api/settings"],
   });
 
+  // Data queries for products, categories, and orders
+  const { data: products } = useQuery({
+    queryKey: ["/api/products"],
+    queryFn: async () => {
+      const res = await fetch("/api/products", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+  });
+
+  const { data: categories } = useQuery({
+    queryKey: ["/api/categories"],
+    queryFn: async () => {
+      const res = await fetch("/api/categories", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+  });
+
+  const { data: orders } = useQuery({
+    queryKey: ["/api/orders"],
+    queryFn: async () => {
+      const res = await fetch("/api/orders", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+  });
+
+  const { data: users } = useQuery({
+    queryKey: ["/api/users"],
+    queryFn: async () => {
+      const res = await fetch("/api/users", { credentials: "include" });
+      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+      return res.json();
+    },
+    enabled: user?.role === 'admin',
+  });
+
   if (isLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -171,7 +209,27 @@ export default function AdminDashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-4">
-                    <p className="text-gray-600">Раздел управления товарами будет здесь</p>
+                    {products && products.length > 0 ? (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {products.slice(0, 6).map((product: any) => (
+                            <div key={product.id} className="border rounded-lg p-3">
+                              <h4 className="font-medium text-sm">{product.name}</h4>
+                              <p className="text-xs text-gray-600 mt-1">{product.category?.name}</p>
+                              <p className="text-xs font-medium mt-2">{formatCurrency(product.price)}</p>
+                              <Badge variant={product.isAvailable ? "default" : "secondary"} className="mt-2 text-xs">
+                                {product.isAvailable ? "В наличии" : "Нет в наличии"}
+                              </Badge>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-xs text-gray-500 text-center">
+                          Показано {Math.min(6, products.length)} из {products.length} товаров
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 text-center py-8">Товары не найдены</p>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -191,7 +249,26 @@ export default function AdminDashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-4">
-                    <p className="text-gray-600">Раздел управления категориями будет здесь</p>
+                    {categories && categories.length > 0 ? (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {categories.map((category: any) => (
+                            <div key={category.id} className="border rounded-lg p-3">
+                              <h4 className="font-medium text-sm">{category.name}</h4>
+                              <p className="text-xs text-gray-600 mt-1">{category.description}</p>
+                              <p className="text-xs text-gray-500 mt-2">
+                                Товаров: {category.products?.length || 0}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-xs text-gray-500 text-center">
+                          Всего категорий: {categories.length}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 text-center py-8">Категории не найдены</p>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -211,7 +288,45 @@ export default function AdminDashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-4">
-                    <p className="text-gray-600">Раздел управления заказами будет здесь</p>
+                    {orders && orders.length > 0 ? (
+                      <div className="space-y-4">
+                        <div className="space-y-3">
+                          {orders.slice(0, 5).map((order: any) => (
+                            <div key={order.id} className="border rounded-lg p-3">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <h4 className="font-medium text-sm">Заказ #{order.id}</h4>
+                                  <p className="text-xs text-gray-600 mt-1">
+                                    {order.user ? `${order.user.firstName || ''} ${order.user.lastName || ''}`.trim() || order.user.username : 'Гость'}
+                                  </p>
+                                  <p className="text-xs font-medium mt-1">{formatCurrency(order.totalAmount)}</p>
+                                </div>
+                                <Badge variant={
+                                  order.status === 'delivered' ? 'default' :
+                                  order.status === 'confirmed' ? 'secondary' :
+                                  order.status === 'cancelled' ? 'destructive' : 'outline'
+                                } className="text-xs">
+                                  {order.status === 'pending' ? 'Ожидает' :
+                                   order.status === 'confirmed' ? 'Подтвержден' :
+                                   order.status === 'preparing' ? 'Готовится' :
+                                   order.status === 'ready' ? 'Готов' :
+                                   order.status === 'delivered' ? 'Доставлен' :
+                                   order.status === 'cancelled' ? 'Отменен' : order.status}
+                                </Badge>
+                              </div>
+                              <p className="text-xs text-gray-500 mt-2">
+                                Товаров: {order.items?.length || 0}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-xs text-gray-500 text-center">
+                          Показано {Math.min(5, orders.length)} из {orders.length} заказов
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 text-center py-8">Заказы не найдены</p>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -231,7 +346,40 @@ export default function AdminDashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-4">
-                    <p className="text-gray-600">Раздел управления пользователями будет здесь</p>
+                    {users && users.length > 0 ? (
+                      <div className="space-y-4">
+                        <div className="space-y-3">
+                          {users.slice(0, 5).map((user: any) => (
+                            <div key={user.id} className="border rounded-lg p-3">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <h4 className="font-medium text-sm">{user.username}</h4>
+                                  <p className="text-xs text-gray-600 mt-1">{user.email}</p>
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    {user.firstName || user.lastName ? 
+                                      `${user.firstName || ''} ${user.lastName || ''}`.trim() : 
+                                      'Имя не указано'}
+                                  </p>
+                                </div>
+                                <Badge variant={
+                                  user.role === 'admin' ? 'default' :
+                                  user.role === 'worker' ? 'secondary' : 'outline'
+                                } className="text-xs">
+                                  {user.role === 'admin' ? 'Администратор' :
+                                   user.role === 'worker' ? 'Сотрудник' :
+                                   user.role === 'customer' ? 'Клиент' : user.role}
+                                </Badge>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-xs text-gray-500 text-center">
+                          Показано {Math.min(5, users.length)} из {users.length} пользователей
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 text-center py-8">Пользователи не найдены</p>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
