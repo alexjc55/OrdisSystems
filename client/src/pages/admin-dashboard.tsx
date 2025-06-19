@@ -1356,6 +1356,28 @@ export default function AdminDashboard() {
     const permissions = storeSettings?.workerPermissions as any;
     return permissions?.[permission] || false;
   };
+
+  // Set default tab for workers based on their permissions
+  useEffect(() => {
+    if (user?.role === 'worker' && storeSettings) {
+      const availableTabs = [
+        { tab: 'products', permission: 'canManageProducts' },
+        { tab: 'categories', permission: 'canManageCategories' },
+        { tab: 'orders', permission: 'canManageOrders' },
+        { tab: 'users', permission: 'canViewUsers' }
+      ];
+      
+      const firstAvailableTab = availableTabs.find(({ permission }) => 
+        checkWorkerPermission(permission)
+      );
+      
+      if (firstAvailableTab && !availableTabs.some(({ tab, permission }) => 
+        tab === activeTab && checkWorkerPermission(permission)
+      )) {
+        setActiveTab(firstAvailableTab.tab);
+      }
+    }
+  }, [user, storeSettings, activeTab]);
   const [usersRoleFilter, setUsersRoleFilter] = useState("all");
 
   // Reset pagination when filters change
@@ -1491,7 +1513,7 @@ export default function AdminDashboard() {
       if (!response.ok) throw new Error('Failed to fetch users');
       return response.json();
     },
-    enabled: !!storeSettings,
+    enabled: !!storeSettings && checkWorkerPermission('canViewUsers'),
   });
 
   // Pagination configuration
