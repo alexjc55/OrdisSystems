@@ -4476,34 +4476,63 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleTrigger>
           
           <CollapsibleContent className="space-y-6">
-            <div className="space-y-4">
-              <p className="text-sm text-gray-600">
-                Управляйте доступными языками интерфейса для пользователей вашего сайта
-              </p>
-              
-              {Object.entries(LANGUAGES).map(([code, info]) => (
-                <div key={code} className="flex items-center justify-between p-4 border rounded-lg bg-gray-50 rtl:flex-row-reverse">
-                  <div className="flex items-center gap-3 rtl:flex-row-reverse">
-                    <span className="text-xl">{(info as any).flag}</span>
-                    <div className="flex flex-col">
-                      <span className="font-medium text-lg">{(info as any).name}</span>
-                      <span className="text-sm text-gray-500">{(info as any).nativeName}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-green-600 font-medium">Активен</span>
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium">Язык по умолчанию</h4>
+                <div className="p-3 border rounded-lg bg-gray-50">
+                  <Select defaultValue="ru">
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(LANGUAGES).map(([code, info]) => (
+                        <SelectItem key={code} value={code}>
+                          <div className="flex items-center gap-2">
+                            <span>{(info as any).flag}</span>
+                            <span>{(info as any).name}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              ))}
+                <p className="text-xs text-gray-500">
+                  Выберите язык интерфейса по умолчанию для новых посетителей
+                </p>
+              </div>
               
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-start gap-2">
-                  <div className="w-5 h-5 text-blue-600 mt-0.5">ℹ️</div>
-                  <div className="text-sm text-blue-800">
-                    <strong>Информация:</strong> Все языки в настоящее время активны и доступны пользователям. 
-                    Функционал отключения отдельных языков будет добавлен в следующем обновлении системы.
-                  </div>
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium">Доступные языки</h4>
+                <div className="space-y-3">
+                  {Object.entries(LANGUAGES).map(([code, info]) => (
+                    <div key={code} className="flex items-center justify-between p-3 border rounded-lg rtl:flex-row-reverse">
+                      <div className="flex items-center gap-3 rtl:flex-row-reverse">
+                        <span className="text-lg">{(info as any).flag}</span>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{(info as any).name}</span>
+                          <span className="text-xs text-gray-500">{(info as any).nativeName}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-green-600 font-medium">Активен</span>
+                        <CustomSwitch 
+                          checked={true}
+                          onChange={() => {}}
+                          bgColor="bg-green-500"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-start gap-2">
+                <div className="w-5 h-5 text-blue-600 mt-0.5">ℹ️</div>
+                <div className="text-sm text-blue-800">
+                  <strong>Примечание:</strong> Изменения в настройках языков применяются после сохранения настроек. 
+                  Отключение языка скроет его из селектора на сайте.
                 </div>
               </div>
             </div>
