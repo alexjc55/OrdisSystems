@@ -30,10 +30,25 @@ function Router() {
   // Initialize language and direction on app start
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language');
-    if (savedLanguage && savedLanguage !== i18n.language) {
-      i18n.changeLanguage(savedLanguage);
+    if (savedLanguage && Object.keys({ru: 1, en: 1, he: 1}).includes(savedLanguage)) {
+      if (savedLanguage !== i18n.language) {
+        i18n.changeLanguage(savedLanguage);
+      }
+      updateDocumentDirection(savedLanguage);
+    } else {
+      updateDocumentDirection(i18n.language);
     }
-    updateDocumentDirection(i18n.language);
+    
+    // Listen for language changes
+    const handleLanguageChange = (lng: string) => {
+      updateDocumentDirection(lng);
+    };
+    
+    i18n.on('languageChanged', handleLanguageChange);
+    
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
   }, [i18n]);
 
   return (

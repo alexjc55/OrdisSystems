@@ -91,12 +91,25 @@ export const updateDocumentDirection = (lng: string) => {
   }
 };
 
-// Initialize i18n
+// Get initial language from localStorage
+const getInitialLanguage = () => {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('language');
+    if (saved && Object.keys(LANGUAGES).includes(saved)) {
+      return saved;
+    }
+  }
+  return 'ru';
+};
+
+// Initialize i18n with explicit language
+const initialLang = getInitialLanguage();
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
+    lng: initialLang,
     fallbackLng: 'ru',
     defaultNS: 'common',
     ns: ['common', 'shop', 'admin'],
@@ -122,15 +135,8 @@ i18n
     },
   })
   .then(() => {
-    // Ensure the saved language is applied and direction is updated
-    const savedLanguage = localStorage.getItem('language');
-    if (savedLanguage && Object.keys(LANGUAGES).includes(savedLanguage)) {
-      i18n.changeLanguage(savedLanguage);
-      updateDocumentDirection(savedLanguage);
-    } else {
-      // Apply direction for the detected/fallback language
-      updateDocumentDirection(i18n.language);
-    }
+    // Apply initial direction
+    updateDocumentDirection(initialLang);
   });
 
 // Listen for language changes and update document direction

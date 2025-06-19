@@ -4472,30 +4472,36 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           <CollapsibleContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h4 className="text-sm font-medium">Язык по умолчанию</h4>
-                <LanguageSwitcher variant="select" showFlag={true} showText={true} />
+                <h4 className="text-sm font-medium">Текущий язык интерфейса</h4>
+                <div className="p-3 border rounded-lg bg-gray-50">
+                  <LanguageSwitcher variant="select" showFlag={true} showText={true} />
+                </div>
                 <p className="text-xs text-gray-500">
-                  Выберите язык интерфейса по умолчанию для новых посетителей
+                  Изменение языка применяется сразу для вашего браузера
                 </p>
               </div>
               <div className="space-y-4">
-                <h4 className="text-sm font-medium">Доступные языки</h4>
+                <h4 className="text-sm font-medium">Информация о языках</h4>
                 <div className="space-y-2">
                   {Object.entries(LANGUAGES).map(([code, info]) => (
-                    <div key={code} className="flex items-center justify-between p-2 border rounded-lg rtl:flex-row-reverse">
+                    <div key={code} className="flex items-center justify-between p-3 border rounded-lg rtl:flex-row-reverse bg-gray-50">
                       <div className="flex items-center gap-2 rtl:flex-row-reverse">
-                        <span className="text-base">{(info as any).flag}</span>
-                        <span className="font-medium">{(info as any).name}</span>
-                        <span className="text-sm text-gray-500">({(info as any).nativeName})</span>
+                        <span className="text-lg">{(info as any).flag}</span>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{(info as any).name}</span>
+                          <span className="text-xs text-gray-500">{(info as any).nativeName}</span>
+                        </div>
                       </div>
-                      <CustomSwitch 
-                        checked={true} 
-                        onChange={() => {}} 
-                        bgColor="bg-green-500"
-                      />
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-green-600 font-medium">Активен</span>
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      </div>
                     </div>
                   ))}
                 </div>
+                <p className="text-xs text-gray-500">
+                  Все языки активны и доступны для пользователей
+                </p>
               </div>
             </div>
           </CollapsibleContent>
