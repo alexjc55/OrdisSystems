@@ -158,6 +158,11 @@ export const storeSettings = pgTable("store_settings", {
   showWhatsAppChat: boolean("show_whatsapp_chat").default(false), // Enable/disable WhatsApp chat widget
   whatsappPhoneNumber: varchar("whatsapp_phone_number", { length: 20 }), // WhatsApp phone number
   whatsappDefaultMessage: text("whatsapp_default_message"), // Default WhatsApp message
+  authPageTitle: varchar("auth_page_title", { length: 255 }).default("Добро пожаловать в eDAHouse"),
+  authPageSubtitle: text("auth_page_subtitle").default("Готовые блюда высокого качества с доставкой на дом"),
+  authPageFeature1: varchar("auth_page_feature1", { length: 255 }).default("Свежие готовые блюда каждый день"),
+  authPageFeature2: varchar("auth_page_feature2", { length: 255 }).default("Быстрая доставка в удобное время"),
+  authPageFeature3: varchar("auth_page_feature3", { length: 255 }).default("Широкий выбор блюд на любой вкус"),
   showCartBanner: boolean("show_cart_banner").default(false), // Enable/disable cart banner
   cartBannerType: varchar("cart_banner_type", { enum: ["image", "text"] }).default("text"), // Banner type
   cartBannerImage: varchar("cart_banner_image", { length: 500 }), // Banner image URL

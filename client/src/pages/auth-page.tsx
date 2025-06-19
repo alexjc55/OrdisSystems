@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Введите имя пользователя"),
@@ -38,6 +39,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export default function AuthPage() {
   const [, setLocation] = useLocation();
   const { user, loginMutation, registerMutation } = useAuth();
+  const { storeSettings } = useStoreSettings();
   const [activeTab, setActiveTab] = useState("login");
 
   const loginForm = useForm<LoginFormData>({
@@ -88,10 +90,10 @@ export default function AuthPage() {
         <div className="hidden lg:block space-y-6">
           <div className="space-y-4">
             <h1 className="text-4xl font-bold text-gray-900">
-              Добро пожаловать в eDAHouse
+              {storeSettings?.authPageTitle || "Добро пожаловать в eDAHouse"}
             </h1>
             <p className="text-xl text-gray-600">
-              Готовые блюда высокого качества с доставкой на дом
+              {storeSettings?.authPageSubtitle || "Готовые блюда высокого качества с доставкой на дом"}
             </p>
           </div>
           
@@ -100,19 +102,19 @@ export default function AuthPage() {
               <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
                 ✓
               </div>
-              <span className="text-gray-700">Свежие готовые блюда каждый день</span>
+              <span className="text-gray-700">{storeSettings?.authPageFeature1 || "Свежие готовые блюда каждый день"}</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
                 ✓
               </div>
-              <span className="text-gray-700">Быстрая доставка в удобное время</span>
+              <span className="text-gray-700">{storeSettings?.authPageFeature2 || "Быстрая доставка в удобное время"}</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
                 ✓
               </div>
-              <span className="text-gray-700">Широкий выбор блюд на любой вкус</span>
+              <span className="text-gray-700">{storeSettings?.authPageFeature3 || "Широкий выбор блюд на любой вкус"}</span>
             </div>
           </div>
         </div>
