@@ -831,6 +831,13 @@ export default function AdminDashboard() {
   
   // Set default tab to first available tab for workers
   const defaultTab = availableTabs.length > 0 ? availableTabs[0] : 'orders';
+  
+  // Update active tab if current tab is not available for worker
+  useEffect(() => {
+    if (!availableTabs.includes(activeTab)) {
+      setActiveTab(defaultTab);
+    }
+  }, [availableTabs, activeTab, defaultTab]);
 
   return (
     <div className="min-h-screen bg-gray-50 admin-dashboard">
