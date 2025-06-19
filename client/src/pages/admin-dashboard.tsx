@@ -1307,6 +1307,27 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Early loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Early access check
+  if (!user || (user.role !== 'admin' && user.role !== 'worker')) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Доступ запрещен</h2>
+          <p className="text-gray-600">Недостаточно прав для доступа к админ-панели</p>
+        </div>
+      </div>
+    );
+  }
+
   // State for forms and filters
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
   const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
@@ -1404,32 +1425,7 @@ export default function AdminDashboard() {
   };
 
   // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
 
-  // Check admin access
-  useEffect(() => {
-    if (user && user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin") {
-      toast({
-        title: "Access Denied",
-        description: "You don't have admin or worker privileges",
-        variant: "destructive",
-      });
-      window.location.href = "/";
-      return;
-    }
-  }, [user, toast]);
 
   // Status color helper function
   const getStatusColor = (status: string) => {

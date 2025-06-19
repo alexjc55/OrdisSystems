@@ -43,9 +43,7 @@ export function AdminProtectedRoute({
 
   return (
     <Route path={path}>
-      {() => {
-        console.log('AdminProtectedRoute:', { user, isLoading, role: user?.role });
-        
+      {() => {        
         if (isLoading) {
           return (
             <div className="flex items-center justify-center min-h-screen">
@@ -55,17 +53,26 @@ export function AdminProtectedRoute({
         }
 
         if (!user) {
-          console.log('No user, redirecting to auth');
           return <Redirect to="/auth" />;
         }
 
         if (user.role !== 'admin' && user.role !== 'worker') {
-          console.log('Invalid role:', user.role, 'redirecting to home');
           return <Redirect to="/" />;
         }
 
-        console.log('Access granted for role:', user.role);
-        return <Component />;
+        try {
+          return <Component />;
+        } catch (error) {
+          console.error('Error rendering admin component:', error);
+          return (
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                <h2 className="text-xl font-semibold mb-2">Ошибка загрузки</h2>
+                <p className="text-gray-600">Произошла ошибка при загрузке админ-панели</p>
+              </div>
+            </div>
+          );
+        }
       }}
     </Route>
   );
