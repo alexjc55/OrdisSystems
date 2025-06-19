@@ -3738,6 +3738,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
   const [isDisplaySettingsOpen, setIsDisplaySettingsOpen] = useState(false);
   const [isTrackingCodeOpen, setIsTrackingCodeOpen] = useState(false);
+  const [isAuthPageOpen, setIsAuthPageOpen] = useState(false);
   
   const form = useForm({
     resolver: zodResolver(storeSettingsSchema),
