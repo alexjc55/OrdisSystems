@@ -787,11 +787,12 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
                   <SelectValue placeholder="Выберите время" />
                 </SelectTrigger>
                 <SelectContent>
-                  {generateAdminDeliveryTimes(storeSettings?.workingHours, editedOrder.deliveryDate).map((timeSlot: any) => (
-                    <SelectItem key={timeSlot.value} value={timeSlot.label}>
-                      {timeSlot.label}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="09:00 - 11:00">09:00 - 11:00</SelectItem>
+                  <SelectItem value="11:00 - 13:00">11:00 - 13:00</SelectItem>
+                  <SelectItem value="13:00 - 15:00">13:00 - 15:00</SelectItem>
+                  <SelectItem value="15:00 - 17:00">15:00 - 17:00</SelectItem>
+                  <SelectItem value="17:00 - 19:00">17:00 - 19:00</SelectItem>
+                  <SelectItem value="19:00 - 21:00">19:00 - 21:00</SelectItem>
                 </SelectContent>
               </Select>
             </div>
