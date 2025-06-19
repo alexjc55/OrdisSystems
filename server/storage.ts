@@ -49,13 +49,14 @@ export interface PaginatedResult<T> {
 
 // Interface for storage operations
 export interface IStorage {
-  // User operations (required for Replit Auth)
+  // User operations (independent auth)
   getUser(id: string): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
   updateUserProfile(id: string, updates: Partial<UpsertUser>): Promise<User>;
   
   // Password management
-  getUserByEmail(email: string): Promise<User | undefined>;
   updatePassword(userId: string, hashedPassword: string): Promise<User>;
   createPasswordResetToken(email: string): Promise<{ token: string; userId: string }>;
   validatePasswordResetToken(token: string): Promise<{ userId: string; isValid: boolean }>;
@@ -111,6 +112,11 @@ export class DatabaseStorage implements IStorage {
   // User operations (required for Replit Auth)
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
     return user;
   }
 
@@ -599,6 +605,7 @@ export class DatabaseStorage implements IStorage {
     const data = await db
       .select({
         id: users.id,
+        username: users.username,
         email: users.email,
         firstName: users.firstName,
         lastName: users.lastName,
@@ -617,7 +624,7 @@ export class DatabaseStorage implements IStorage {
       .from(users)
       .leftJoin(orders, eq(users.id, orders.userId))
       .where(whereClause)
-      .groupBy(users.id, users.email, users.firstName, users.lastName, users.profileImageUrl, users.phone, users.defaultAddress, users.password, users.passwordResetToken, users.passwordResetExpires, users.role, users.createdAt, users.updatedAt)
+      .groupBy(users.id, users.username, users.email, users.firstName, users.lastName, users.profileImageUrl, users.phone, users.defaultAddress, users.password, users.passwordResetToken, users.passwordResetExpires, users.role, users.createdAt, users.updatedAt)
       .orderBy(orderBy)
       .limit(limit)
       .offset(offset);
