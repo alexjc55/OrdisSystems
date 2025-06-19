@@ -32,8 +32,6 @@ const guestOrderSchema = z.object({
   email: z.string().email("Введите корректный email"),
   phone: z.string().min(10, "Введите корректный номер телефона"),
   address: z.string().min(10, "Введите полный адрес доставки"),
-  deliveryDate: z.string().min(1, "Выберите дату доставки"),
-  deliveryTime: z.string().min(1, "Выберите время доставки"),
 });
 
 const registrationSchema = guestOrderSchema.extend({
@@ -175,6 +173,7 @@ export default function Checkout() {
         guestInfo: {
           ...data,
           deliveryDate: selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : "",
+          deliveryTime: selectedGuestTime,
         },
         status: "pending"
       };
@@ -226,7 +225,7 @@ export default function Checkout() {
         deliveryAddress: data.address,
         customerPhone: data.phone,
         deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
-        deliveryTime: data.deliveryTime,
+        deliveryTime: selectedRegisterTime,
         status: "pending"
       };
       
@@ -285,7 +284,7 @@ export default function Checkout() {
         deliveryAddress: formData.address,
         customerPhone: formData.phone,
         deliveryDate: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
-        deliveryTime: formData.deliveryTime,
+        deliveryTime: selectedTime,
         status: "pending"
       };
       
@@ -459,7 +458,7 @@ export default function Checkout() {
 
                       <div>
                         <Label htmlFor="deliveryTime">Время доставки *</Label>
-                        <Select name="deliveryTime" disabled={!selectedDate} required>
+                        <Select value={selectedTime} onValueChange={setSelectedTime} disabled={!selectedDate} required>
                           <SelectTrigger>
                             <SelectValue placeholder="Выберите время" />
                           </SelectTrigger>
@@ -666,7 +665,7 @@ export default function Checkout() {
 
                         <div>
                           <Label htmlFor="registerDeliveryTime">Время доставки *</Label>
-                          <Select name="deliveryTime" disabled={!selectedRegisterDate} required>
+                          <Select value={selectedRegisterTime} onValueChange={setSelectedRegisterTime} disabled={!selectedRegisterDate} required>
                             <SelectTrigger>
                               <SelectValue placeholder="Выберите время" />
                             </SelectTrigger>
@@ -854,7 +853,7 @@ export default function Checkout() {
 
                         <div>
                           <Label htmlFor="guestDeliveryTime">Время доставки *</Label>
-                          <Select name="deliveryTime" disabled={!selectedGuestDate} required>
+                          <Select value={selectedGuestTime} onValueChange={setSelectedGuestTime} disabled={!selectedGuestDate} required>
                             <SelectTrigger>
                               <SelectValue placeholder="Выберите время" />
                             </SelectTrigger>
