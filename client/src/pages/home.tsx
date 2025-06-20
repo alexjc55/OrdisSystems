@@ -242,13 +242,16 @@ export default function Home() {
                   </div>
                 </div>
               )}
+            </div>
 
-              {/* Modern Store Information Cards */}
+            {/* Modern Store Information Cards */}
               {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && storeSettings?.showInfoBlocks !== false && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                  {/* Working Hours */}
-                  {storeSettings?.workingHours && (
-                    <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                  {/* Left Column: Working Hours and Contacts */}
+                  <div className="space-y-6">
+                    {/* Working Hours */}
+                    {storeSettings?.workingHours && (
+                      <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
                       <div className="p-6">
                         <div className="flex items-center gap-3 mb-4">
                           <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full group-hover:scale-110 transition-transform duration-300">
@@ -331,62 +334,65 @@ export default function Home() {
                     </Card>
                   )}
 
-                  {/* Contact Information */}
-                  {(storeSettings?.contactPhone || storeSettings?.contactEmail) && (
-                    <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
-                      <div className="p-6">
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-full group-hover:scale-110 transition-transform duration-300">
-                            <Phone className="h-5 w-5 text-white" />
+                    {/* Contact Information */}
+                    {(storeSettings?.contactPhone || storeSettings?.contactEmail) && (
+                      <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
+                        <div className="p-6">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-full group-hover:scale-110 transition-transform duration-300">
+                              <Phone className="h-5 w-5 text-white" />
+                            </div>
+                            <span className="font-semibold text-lg text-gray-800">{t('contacts')}</span>
                           </div>
-                          <span className="font-semibold text-lg text-gray-800">{t('contacts')}</span>
+                          <div className="space-y-1">
+                            {storeSettings.contactPhone && (
+                              <div className="text-xs sm:text-sm">
+                                <span className="text-gray-600">{t('phone')}:</span>
+                                <br />
+                                <span className="font-medium">{storeSettings.contactPhone}</span>
+                              </div>
+                            )}
+                            {storeSettings.contactEmail && (
+                              <div className="text-xs sm:text-sm">
+                                <span className="text-gray-600">Email:</span>
+                                <br />
+                                <span className="font-medium">{storeSettings.contactEmail}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      <div className="space-y-1">
-                        {storeSettings.contactPhone && (
-                          <div className="text-xs sm:text-sm">
-                            <span className="text-gray-600">{t('phone')}:</span>
-                            <br />
-                            <span className="font-medium">{storeSettings.contactPhone}</span>
-                          </div>
-                        )}
-                        {storeSettings.contactEmail && (
-                          <div className="text-xs sm:text-sm">
-                            <span className="text-gray-600">Email:</span>
-                            <br />
-                            <span className="font-medium">{storeSettings.contactEmail}</span>
-                          </div>
-                        )}
-                        </div>
-                      </div>
-                    </Card>
-                  )}
+                      </Card>
+                    )}
+                  </div>
 
-                  {/* Delivery & Payment */}
+                  {/* Right Column: Delivery & Payment */}
                   {(storeSettings?.deliveryInfo || storeSettings?.paymentInfo) && (
-                    <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
-                      <div className="p-6">
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full group-hover:scale-110 transition-transform duration-300">
-                            <CreditCard className="h-5 w-5 text-white" />
+                    <div>
+                      <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
+                        <div className="p-6">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full group-hover:scale-110 transition-transform duration-300">
+                              <CreditCard className="h-5 w-5 text-white" />
+                            </div>
+                            <span className="font-semibold text-lg text-gray-800">Оплата и доставка</span>
                           </div>
-                          <span className="font-semibold text-lg text-gray-800">Оплата и доставка</span>
+                          <div className="space-y-3">
+                            {storeSettings.deliveryInfo && (
+                              <div className="flex flex-col">
+                                <span className="text-gray-500 text-sm font-medium mb-1">{t('delivery')}:</span>
+                                <span className="text-gray-800 font-semibold">{storeSettings.deliveryInfo}</span>
+                              </div>
+                            )}
+                            {storeSettings.paymentInfo && (
+                              <div className="flex flex-col">
+                                <span className="text-gray-500 text-sm font-medium mb-1">{t('payment')}:</span>
+                                <span className="text-gray-800 font-semibold">{storeSettings.paymentInfo}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div className="space-y-3">
-                          {storeSettings.deliveryInfo && (
-                            <div className="flex flex-col">
-                              <span className="text-gray-500 text-sm font-medium mb-1">{t('delivery')}:</span>
-                              <span className="text-gray-800 font-semibold">{storeSettings.deliveryInfo}</span>
-                            </div>
-                          )}
-                          {storeSettings.paymentInfo && (
-                            <div className="flex flex-col">
-                              <span className="text-gray-500 text-sm font-medium mb-1">{t('payment')}:</span>
-                              <span className="text-gray-800 font-semibold">{storeSettings.paymentInfo}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
+                      </Card>
+                    </div>
                   )}
                 </div>
               )}
