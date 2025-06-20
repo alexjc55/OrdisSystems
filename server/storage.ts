@@ -127,7 +127,7 @@ export interface IStorage {
   createTheme(theme: InsertTheme): Promise<Theme>;
   updateTheme(id: string, theme: Partial<InsertTheme>): Promise<Theme>;
   deleteTheme(id: string): Promise<void>;
-  setActiveTheme(id: string): Promise<Theme>;
+  activateTheme(id: string): Promise<Theme>;
 }
 
 export class DatabaseStorage implements IStorage {
