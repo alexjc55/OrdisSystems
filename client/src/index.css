@@ -5,6 +5,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global container max-width limitation */
+@layer base {
+  body {
+    max-width: 1023px;
+    margin: 0 auto;
+  }
+}
+
 /* RTL Support */
 @layer base {
   html[dir="rtl"] {
