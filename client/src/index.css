@@ -324,6 +324,31 @@
   outline: none !important;
 }
 
+/* Отключаем все интерактивные эффекты для дочерних элементов */
+[data-radix-select-item] *,
+[data-radix-select-item] span,
+[data-radix-select-item] div,
+[data-radix-select-item] text {
+  pointer-events: none !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  outline: none !important;
+  color: inherit !important;
+  transition: none !important;
+}
+
+/* Принудительно наследуем цвет от родителя во всех состояниях */
+[data-radix-select-item]:hover *,
+[data-radix-select-item]:focus *,
+[data-radix-select-item][data-highlighted] *,
+[data-radix-select-item][data-state="checked"] * {
+  color: inherit !important;
+  background: transparent !important;
+  transition: none !important;
+}
+
 [data-radix-select-item]:hover,
 [data-radix-select-item]:focus,
 [data-radix-select-item][data-highlighted] {
