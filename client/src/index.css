@@ -727,18 +727,46 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
   }
   
   /* Button adjustments - exclude carousel dots and other small indicators */
-  button:not(.carousel-dot-modern):not([class*="carousel"]):not([class*="dot"]):not([class*="indicator"]):not([style*="width: 8px"]):not([style*="height: 8px"]):not([class*="embla"]) {
+  button:not(.carousel-dot-modern):not([class*="carousel"]):not([class*="dot"]):not([class*="indicator"]):not([style*="width: 8px"]):not([style*="height: 8px"]):not([class*="embla"]):not([data-carousel="dot"]):not([aria-label*="slide"]) {
     min-height: 44px !important;
     font-size: 0.875rem !important;
   }
   
-  /* Ensure carousel dots maintain their small size */
+  /* Ensure carousel dots maintain their small size - universal rule */
   .carousel-dot-modern,
-  button.carousel-dot-modern {
+  button.carousel-dot-modern,
+  .embla__dot,
+  button[class*="dot"],
+  button[data-carousel="dot"],
+  button[aria-label*="slide"],
+  button[style*="width: 8px"],
+  button[style*="height: 8px"],
+  /* Universal carousel dot override */
+  [class*="carousel"] button[style*="8px"],
+  [class*="carousel"] button:not(.btn):not([class*="btn"]) {
     min-height: 8px !important;
     height: 8px !important;
     width: 8px !important;
     min-width: 8px !important;
+    max-height: 8px !important;
+    max-width: 8px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    border: none !important;
+    outline: none !important;
+  }
+  
+  /* Even more aggressive rule for any button that looks like a dot */
+  button[style*="width: 8px; height: 8px"],
+  button[style*="height: 8px; width: 8px"],
+  button[style*="width:8px"],
+  button[style*="height:8px"] {
+    min-height: 8px !important;
+    height: 8px !important;
+    width: 8px !important;
+    border-radius: 50% !important;
   }
   
   /* Input adjustments */
