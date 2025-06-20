@@ -151,9 +151,15 @@
     border: 1px solid var(--color-primary) !important;
   }
 
-  .btn-outline *, .btn-outline svg {
+  .btn-outline * {
     color: var(--color-primary) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-outline svg {
+    color: var(--color-primary) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   .btn-outline:hover {
@@ -164,9 +170,15 @@
     border-color: var(--color-primary) !important;
   }
 
-  .btn-outline:hover *, .btn-outline:hover svg {
+  .btn-outline:hover * {
     color: var(--color-primary) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-outline:hover svg {
+    color: var(--color-primary) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   /* Ghost Button Variant */
@@ -176,9 +188,15 @@
     border: none !important;
   }
 
-  .btn-ghost *, .btn-ghost svg {
+  .btn-ghost * {
     color: var(--color-gray-700) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-ghost svg {
+    color: var(--color-gray-700) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   .btn-ghost:hover {
@@ -188,9 +206,15 @@
     color: var(--color-gray-700) !important;
   }
 
-  .btn-ghost:hover *, .btn-ghost:hover svg {
+  .btn-ghost:hover * {
     color: var(--color-gray-700) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-ghost:hover svg {
+    color: var(--color-gray-700) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 }
 
