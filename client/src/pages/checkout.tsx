@@ -421,7 +421,26 @@ export default function Checkout() {
                   <div>
                     <h4 className="font-medium">{item.product.name}</h4>
                     <p className="text-sm text-gray-600">
-                      {item.quantity} x {formatCurrency(item.product.price)}
+                      {(() => {
+                        const qty = Math.round(item.quantity * 10) / 10;
+                        const formatQty = (value: number) => value % 1 === 0 ? value.toString() : value.toFixed(1);
+                        
+                        switch (item.product.unit) {
+                          case 'piece': 
+                            return `${formatQty(qty)} шт. x ${formatCurrency(item.product.price)}`;
+                          case 'kg': 
+                            return `${formatQty(qty)} кг x ${formatCurrency(item.product.price)}`;
+                          case '100g': 
+                            if (qty >= 1000) {
+                              return `${formatQty(qty / 1000)} кг x ${formatCurrency(item.product.price)}`;
+                            }
+                            return `${formatQty(qty)} грамм x ${formatCurrency(item.product.price)}`;
+                          case '100ml': 
+                            return `${formatQty(qty)} мл x ${formatCurrency(item.product.price)}`;
+                          default: 
+                            return `${formatQty(qty)} x ${formatCurrency(item.product.price)}`;
+                        }
+                      })()}
                     </p>
                   </div>
                   <div className="font-semibold">

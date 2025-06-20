@@ -199,7 +199,15 @@ export default function CartSidebar() {
                             
                             <div className="text-right">
                               <div className="text-xs text-gray-500">
-                                {formatCurrency(item.product.price)} за {item.product.unit}
+                                {formatCurrency(item.product.price)} за {(() => {
+                                  switch (item.product.unit) {
+                                    case 'piece': return 'шт.';
+                                    case 'kg': return 'кг';
+                                    case '100g': return '100г';
+                                    case '100ml': return '100мл';
+                                    default: return item.product.unit;
+                                  }
+                                })()}
                               </div>
                               <div className="font-bold text-lg text-gray-900">
                                 {formatCurrency(item.totalPrice)}
