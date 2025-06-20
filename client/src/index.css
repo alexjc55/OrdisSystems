@@ -481,6 +481,62 @@ button[role="switch"]:not(.carousel-dot),
   }
 }
 
+/* Universal Button Hover Effects - Consistent shadow/glow without background changes */
+button, [role="button"], .btn, 
+input[type="button"], input[type="submit"], 
+[data-radix-collection-item] {
+  transition: box-shadow 0.2s ease-in-out !important;
+}
+
+/* Prevent background color changes on hover for all buttons */
+button:hover, [role="button"]:hover, .btn:hover,
+input[type="button"]:hover, input[type="submit"]:hover {
+  background-color: inherit !important;
+  background-image: inherit !important;
+}
+
+/* Orange/Primary buttons */
+.bg-orange-500:hover, .bg-primary:hover,
+.from-orange-500:hover, .to-orange-600:hover,
+button[class*="bg-orange"]:hover,
+button[class*="orange-500"]:hover,
+[class*="gradient"][class*="orange"]:hover {
+  box-shadow: 0 8px 25px -5px rgba(249, 115, 22, 0.5) !important;
+}
+
+/* Blue buttons */
+.bg-blue-500:hover, button[class*="bg-blue"]:hover,
+[style*="rgb(59 130 246)"]:hover {
+  box-shadow: 0 8px 25px -5px rgba(59, 130, 246, 0.5) !important;
+}
+
+/* Red/Destructive buttons */
+.bg-red-500:hover, .bg-destructive:hover, 
+button[class*="bg-red"]:hover {
+  box-shadow: 0 8px 25px -5px rgba(239, 68, 68, 0.5) !important;
+}
+
+/* Green buttons */
+.bg-green-500:hover, button[class*="bg-green"]:hover {
+  box-shadow: 0 8px 25px -5px rgba(34, 197, 94, 0.5) !important;
+}
+
+/* Gray/Secondary buttons */
+.bg-gray-100:hover, .bg-gray-200:hover, .bg-secondary:hover,
+button[class*="bg-gray"]:hover {
+  box-shadow: 0 4px 12px -2px rgba(107, 114, 128, 0.3) !important;
+}
+
+/* White/Light buttons */
+.bg-white:hover, .bg-background:hover {
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Gradient buttons - preserve gradient, add shadow */
+.bg-gradient-to-r:hover, [class*="gradient"]:hover {
+  box-shadow: 0 10px 30px -5px rgba(249, 115, 22, 0.4) !important;
+}
+
 /* Navigation menu items */
 nav a, nav button:not(.bg-orange-500):not(.border-orange-500) {
   color: hsl(224, 71.4%, 4.1%) !important;
@@ -490,6 +546,7 @@ nav a:hover, nav a:focus,
 nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg-orange-500):not(.border-orange-500):focus {
   color: hsl(24.6, 95%, 53.1%) !important;
   background-color: hsl(24.6, 95%, 96%) !important;
+  box-shadow: 0 4px 12px -2px rgba(249, 115, 22, 0.2) !important;
 }
 
 /* Tab triggers - preserve original component styling */
