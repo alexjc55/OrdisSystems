@@ -461,7 +461,8 @@ select option:not([selected]):hover {
 }
 
 /* Orange background on hover - no shadow effects */
-[data-radix-select-item][data-highlighted] {
+[data-radix-select-item][data-highlighted],
+[data-radix-select-item]:hover {
   background-color: hsl(24.6, 95%, 53.1%) !important;
   color: white !important;
   box-shadow: none !important;
