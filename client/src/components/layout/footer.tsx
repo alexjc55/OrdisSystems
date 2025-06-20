@@ -17,7 +17,7 @@ export function Footer() {
         <span className="text-white text-sm font-medium">
           Powered by Ordis. 
           <span 
-            className="cursor-pointer hover:underline ml-1"
+            className="cursor-pointer hover:underline ml-1 text-orange-500"
             onClick={handleClick}
           >
             Try it for your business.
