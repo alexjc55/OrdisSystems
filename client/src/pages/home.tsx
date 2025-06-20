@@ -32,7 +32,8 @@ import {
   Plus,
   Settings,
   Package,
-  Users
+  Users,
+  Sparkles
 } from "lucide-react";
 import type { CategoryWithProducts, ProductWithCategory } from "@shared/schema";
 
@@ -483,22 +484,24 @@ export default function Home() {
               {/* Special Offers Section */}
               {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && (
                 <div className="mt-12">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center">
-                      <span className="mr-3 text-2xl">🔥</span>
-                      <h2 className="text-2xl font-poppins font-bold text-gray-900">Специальные предложения</h2>
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center space-md">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary-600 flex items-center justify-center elevation-2">
+                        <Sparkles className="w-6 h-6 text-white" />
+                      </div>
+                      <h2 className="text-display-sm text-neutral-900">Специальные предложения</h2>
                     </div>
                     
-                    {/* Minimalistic Navigation Arrows */}
+                    {/* Modern Navigation Arrows */}
                     {specialOffers.length > slidesPerPage && (
-                      <div className="hidden md:flex items-center gap-2">
+                      <div className="hidden md:flex items-center space-sm">
                         <button
                           onClick={() => {
                             if (carouselApiRef.current) {
                               carouselApiRef.current.scrollPrev();
                             }
                           }}
-                          className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
+                          className="btn-modern btn-primary-modern btn-icon micro-bounce focus-ring"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </button>
@@ -508,7 +511,7 @@ export default function Home() {
                               carouselApiRef.current.scrollNext();
                             }
                           }}
-                          className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
+                          className="btn-modern btn-primary-modern btn-icon micro-bounce focus-ring"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </button>
@@ -573,9 +576,9 @@ export default function Home() {
 
                       </Carousel>
 
-                      {/* Custom Navigation Dots */}
+                      {/* Modern Navigation Dots */}
                       {specialOffers.length > slidesPerPage && (
-                        <div className="flex justify-center mt-6 space-x-2">
+                        <div className="carousel-dots-modern">
                           {[...Array(totalPages)].map((_, index) => {
                             // Calculate current page based on visible slides
                             let currentPage;
@@ -591,8 +594,8 @@ export default function Home() {
                               <button
                                 key={index}
                                 onClick={() => goToSlide(index)}
-                                className={`carousel-dot transition-colors ${
-                                  currentPage === index ? 'bg-orange-500' : 'bg-gray-400'
+                                className={`carousel-dot-modern ${
+                                  currentPage === index ? 'active' : ''
                                 }`}
                               />
                             );

@@ -461,17 +461,15 @@ button[role="switch"][data-state="checked"] > span,
   cursor: pointer !important;
 }
 
-/* Carousel dot hover states - prevent white color on hover */
+/* Legacy carousel dot compatibility */
 .carousel-dot:hover {
   background-color: inherit !important;
 }
 
-/* Ensure inactive dots stay gray on hover */
 .carousel-dot.bg-gray-400:hover {
   background-color: rgb(156 163 175) !important;
 }
 
-/* Ensure active dots stay orange on hover */
 .carousel-dot.bg-orange-500:hover {
   background-color: rgb(249 115 22) !important;
 }
