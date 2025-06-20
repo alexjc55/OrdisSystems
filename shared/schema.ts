@@ -184,6 +184,59 @@ export const storeSettings = pgTable("store_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Themes table for theme management
+export const themes = pgTable("themes", {
+  id: varchar("id", { length: 50 }).primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  description: text("description"),
+  isActive: boolean("is_active").default(false),
+  
+  // Color configuration
+  primaryColor: varchar("primary_color", { length: 20 }).notNull().default("hsl(24.6, 95%, 53.1%)"),
+  primaryDarkColor: varchar("primary_dark_color", { length: 20 }).notNull().default("hsl(20.5, 90%, 48%)"),
+  primaryLightColor: varchar("primary_light_color", { length: 20 }).notNull().default("hsl(24.6, 95%, 96%)"),
+  secondaryColor: varchar("secondary_color", { length: 20 }).notNull().default("hsl(210, 40%, 98%)"),
+  accentColor: varchar("accent_color", { length: 20 }).notNull().default("hsl(210, 40%, 85%)"),
+  
+  // Status colors
+  successColor: varchar("success_color", { length: 20 }).notNull().default("hsl(142, 76%, 36%)"),
+  successLightColor: varchar("success_light_color", { length: 20 }).notNull().default("hsl(142, 76%, 96%)"),
+  warningColor: varchar("warning_color", { length: 20 }).notNull().default("hsl(38, 92%, 50%)"),
+  warningLightColor: varchar("warning_light_color", { length: 20 }).notNull().default("hsl(38, 92%, 96%)"),
+  errorColor: varchar("error_color", { length: 20 }).notNull().default("hsl(0, 84%, 60%)"),
+  errorLightColor: varchar("error_light_color", { length: 20 }).notNull().default("hsl(0, 84%, 96%)"),
+  infoColor: varchar("info_color", { length: 20 }).notNull().default("hsl(221, 83%, 53%)"),
+  infoLightColor: varchar("info_light_color", { length: 20 }).notNull().default("hsl(221, 83%, 96%)"),
+  
+  // Neutral colors
+  whiteColor: varchar("white_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),
+  gray50Color: varchar("gray_50_color", { length: 20 }).notNull().default("hsl(210, 40%, 98%)"),
+  gray100Color: varchar("gray_100_color", { length: 20 }).notNull().default("hsl(210, 40%, 96%)"),
+  gray200Color: varchar("gray_200_color", { length: 20 }).notNull().default("hsl(214, 32%, 91%)"),
+  gray300Color: varchar("gray_300_color", { length: 20 }).notNull().default("hsl(213, 27%, 84%)"),
+  gray400Color: varchar("gray_400_color", { length: 20 }).notNull().default("hsl(215, 20%, 65%)"),
+  gray500Color: varchar("gray_500_color", { length: 20 }).notNull().default("hsl(215, 16%, 47%)"),
+  gray600Color: varchar("gray_600_color", { length: 20 }).notNull().default("hsl(215, 19%, 35%)"),
+  gray700Color: varchar("gray_700_color", { length: 20 }).notNull().default("hsl(215, 25%, 27%)"),
+  gray800Color: varchar("gray_800_color", { length: 20 }).notNull().default("hsl(217, 33%, 17%)"),
+  gray900Color: varchar("gray_900_color", { length: 20 }).notNull().default("hsl(222, 47%, 11%)"),
+  
+  // Typography
+  fontFamilyPrimary: varchar("font_family_primary", { length: 100 }).notNull().default("Poppins, sans-serif"),
+  fontFamilySecondary: varchar("font_family_secondary", { length: 100 }).notNull().default("Inter, sans-serif"),
+  
+  // Shadows for hover effects
+  primaryShadow: varchar("primary_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(255, 102, 0, 0.3)"),
+  successShadow: varchar("success_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(34, 197, 94, 0.3)"),
+  warningShadow: varchar("warning_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(245, 158, 11, 0.3)"),
+  errorShadow: varchar("error_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(239, 68, 68, 0.3)"),
+  infoShadow: varchar("info_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(59, 130, 246, 0.3)"),
+  grayShadow: varchar("gray_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(107, 114, 128, 0.3)"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const categoriesRelations = relations(categories, ({ many }) => ({
   products: many(products),
@@ -273,6 +326,11 @@ export const insertUserAddressSchema = createInsertSchema(userAddresses).omit({
   updatedAt: true,
 });
 
+export const insertThemeSchema = createInsertSchema(themes).omit({
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -288,6 +346,8 @@ export type InsertStoreSettings = z.infer<typeof insertStoreSettingsSchema>;
 export type StoreSettings = typeof storeSettings.$inferSelect;
 export type InsertUserAddress = z.infer<typeof insertUserAddressSchema>;
 export type UserAddress = typeof userAddresses.$inferSelect;
+export type InsertTheme = z.infer<typeof insertThemeSchema>;
+export type Theme = typeof themes.$inferSelect;
 
 // Extended types with relations
 export type ProductWithCategory = Product & {
