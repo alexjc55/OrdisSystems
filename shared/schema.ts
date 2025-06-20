@@ -180,19 +180,6 @@ export const storeSettings = pgTable("store_settings", {
   }),
   defaultLanguage: varchar("default_language", { length: 5 }).default("ru"), // Default site language
   enabledLanguages: jsonb("enabled_languages").default(["ru", "en", "he"]), // Array of enabled language codes
-  activeTheme: varchar("active_theme", { length: 50 }).default("classic"), // Active theme name
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// Themes table
-export const themes = pgTable("themes", {
-  id: serial("id").primaryKey(),
-  name: varchar("name", { length: 50 }).notNull().unique(),
-  displayName: varchar("display_name", { length: 100 }).notNull(),
-  description: text("description"),
-  isBuiltIn: boolean("is_built_in").default(false),
-  colors: jsonb("colors").notNull(), // Color scheme configuration
-  createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
@@ -285,12 +272,6 @@ export const insertUserAddressSchema = createInsertSchema(userAddresses).omit({
   updatedAt: true,
 });
 
-export const insertThemeSchema = createInsertSchema(themes).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -306,8 +287,6 @@ export type InsertStoreSettings = z.infer<typeof insertStoreSettingsSchema>;
 export type StoreSettings = typeof storeSettings.$inferSelect;
 export type InsertUserAddress = z.infer<typeof insertUserAddressSchema>;
 export type UserAddress = typeof userAddresses.$inferSelect;
-export type InsertTheme = z.infer<typeof insertThemeSchema>;
-export type Theme = typeof themes.$inferSelect;
 
 // Extended types with relations
 export type ProductWithCategory = Product & {
@@ -321,120 +300,4 @@ export type OrderWithItems = Order & {
 
 export type CategoryWithProducts = Category & {
   products: Product[];
-};
-
-// Theme color scheme interface
-export interface ThemeColors {
-  primary: string;
-  primaryLight: string;
-  primaryDark: string;
-  secondary: string;
-  accent: string;
-  background: string;
-  surface: string;
-  text: string;
-  textSecondary: string;
-  border: string;
-  success: string;
-  warning: string;
-  error: string;
-}
-
-// Built-in theme definitions
-export const BUILT_IN_THEMES: Record<string, { displayName: string; description: string; colors: ThemeColors }> = {
-  classic: {
-    displayName: "Классическая",
-    description: "Оранжево-серая классическая тема",
-    colors: {
-      primary: "#f97316",
-      primaryLight: "#fb923c",
-      primaryDark: "#ea580c",
-      secondary: "#64748b",
-      accent: "#f59e0b",
-      background: "#ffffff",
-      surface: "#f8fafc",
-      text: "#0f172a",
-      textSecondary: "#64748b",
-      border: "#e2e8f0",
-      success: "#10b981",
-      warning: "#f59e0b",
-      error: "#ef4444"
-    }
-  },
-  elegant: {
-    displayName: "Элегантная",
-    description: "Темно-синяя с золотыми акцентами",
-    colors: {
-      primary: "#1e40af",
-      primaryLight: "#3b82f6",
-      primaryDark: "#1e3a8a",
-      secondary: "#64748b",
-      accent: "#f59e0b",
-      background: "#ffffff",
-      surface: "#f1f5f9",
-      text: "#0f172a",
-      textSecondary: "#475569",
-      border: "#e2e8f0",
-      success: "#10b981",
-      warning: "#f59e0b",
-      error: "#ef4444"
-    }
-  },
-  fresh: {
-    displayName: "Свежая",
-    description: "Зелено-белая природная тема",
-    colors: {
-      primary: "#059669",
-      primaryLight: "#10b981",
-      primaryDark: "#047857",
-      secondary: "#64748b",
-      accent: "#84cc16",
-      background: "#ffffff",
-      surface: "#f0fdf4",
-      text: "#0f172a",
-      textSecondary: "#475569",
-      border: "#d1fae5",
-      success: "#10b981",
-      warning: "#f59e0b",
-      error: "#ef4444"
-    }
-  },
-  modern: {
-    displayName: "Современная",
-    description: "Черно-белая с яркими акцентами",
-    colors: {
-      primary: "#0f172a",
-      primaryLight: "#334155",
-      primaryDark: "#020617",
-      secondary: "#64748b",
-      accent: "#8b5cf6",
-      background: "#ffffff",
-      surface: "#f8fafc",
-      text: "#0f172a",
-      textSecondary: "#64748b",
-      border: "#e2e8f0",
-      success: "#10b981",
-      warning: "#f59e0b",
-      error: "#ef4444"
-    }
-  },
-  warm: {
-    displayName: "Теплая",
-    description: "Коричнево-бежевая уютная тема",
-    colors: {
-      primary: "#92400e",
-      primaryLight: "#d97706",
-      primaryDark: "#78350f",
-      secondary: "#a8a29e",
-      accent: "#dc2626",
-      background: "#fefdf8",
-      surface: "#faf7f0",
-      text: "#1c1917",
-      textSecondary: "#78716c",
-      border: "#e7e5e4",
-      success: "#16a34a",
-      warning: "#ea580c",
-      error: "#dc2626"
-    }
-  }
 };

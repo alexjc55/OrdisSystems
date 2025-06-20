@@ -6,7 +6,6 @@ import {
   orders,
   orderItems,
   storeSettings,
-  themes,
   type User,
   type UpsertUser,
   type UserAddress,
@@ -24,8 +23,6 @@ import {
   type CategoryWithProducts,
   type StoreSettings,
   type InsertStoreSettings,
-  type Theme,
-  type InsertTheme,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull } from "drizzle-orm";
@@ -109,15 +106,6 @@ export interface IStorage {
   // Store settings
   getStoreSettings(): Promise<StoreSettings | undefined>;
   updateStoreSettings(settings: InsertStoreSettings): Promise<StoreSettings>;
-
-  // Theme operations
-  getThemes(): Promise<Theme[]>;
-  getThemeById(id: number): Promise<Theme | undefined>;
-  getThemeByName(name: string): Promise<Theme | undefined>;
-  createTheme(theme: InsertTheme): Promise<Theme>;
-  updateTheme(id: number, theme: Partial<InsertTheme>): Promise<Theme>;
-  deleteTheme(id: number): Promise<void>;
-  setActiveTheme(themeName: string): Promise<StoreSettings>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -776,45 +764,6 @@ export class DatabaseStorage implements IStorage {
         updatedAt: new Date()
       })
       .where(eq(users.id, userId));
-  }
-
-  // Theme operations
-  async getThemes(): Promise<Theme[]> {
-    return await db.select().from(themes).orderBy(themes.name);
-  }
-
-  async getThemeById(id: number): Promise<Theme | undefined> {
-    const result = await db.select().from(themes).where(eq(themes.id, id));
-    return result[0];
-  }
-
-  async getThemeByName(name: string): Promise<Theme | undefined> {
-    const result = await db.select().from(themes).where(eq(themes.name, name));
-    return result[0];
-  }
-
-  async createTheme(theme: InsertTheme): Promise<Theme> {
-    const result = await db.insert(themes).values(theme).returning();
-    return result[0];
-  }
-
-  async updateTheme(id: number, theme: Partial<InsertTheme>): Promise<Theme> {
-    const result = await db.update(themes)
-      .set({ ...theme, updatedAt: new Date() })
-      .where(eq(themes.id, id))
-      .returning();
-    return result[0];
-  }
-
-  async deleteTheme(id: number): Promise<void> {
-    await db.delete(themes).where(eq(themes.id, id));
-  }
-
-  async setActiveTheme(themeName: string): Promise<StoreSettings> {
-    const result = await db.update(storeSettings)
-      .set({ activeTheme: themeName, updatedAt: new Date() })
-      .returning();
-    return result[0];
   }
 }
 

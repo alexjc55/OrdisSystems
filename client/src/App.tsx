@@ -5,8 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ErrorBoundary from "@/components/error-boundary";
 import { AuthProvider } from "@/hooks/use-auth";
-import { ThemeProvider } from "@/hooks/use-themes";
-import { ThemeApplier } from "@/components/theme-provider";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { CustomHtml } from "@/components/custom-html";
 import { WhatsAppChat } from "@/components/layout/whatsapp-chat";
@@ -15,7 +13,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
 import Landing from "@/pages/landing";
-import Home from "@/pages/home-clean";
+import Home from "@/pages/home";
 import AdminDashboard from "@/pages/admin-dashboard";
 import Profile from "@/pages/profile";
 import ChangePasswordPage from "@/pages/change-password";
@@ -91,14 +89,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <ThemeProvider>
-          <TooltipProvider>
-            <LanguageInitializer />
-            <ThemeApplier />
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </ThemeProvider>
+        <TooltipProvider>
+          <LanguageInitializer />
+          <Toaster />
+          <Router />
+        </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

@@ -39,7 +39,6 @@ import { z } from "zod";
 import { formatCurrency, getUnitLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
 import { insertStoreSettingsSchema, type StoreSettings } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import ThemeManager from "@/components/admin/theme-manager";
 import { 
   Package, 
   Plus, 
@@ -2004,12 +2003,6 @@ export default function AdminDashboard() {
               {hasPermission("canManageSettings") && (
                 <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.settings')}</TabsTrigger>
               )}
-              {hasPermission("canManageSettings") && (
-                <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap">
-                  <Palette className="h-4 w-4 mr-1" />
-                  Темы
-                </TabsTrigger>
-              )}
             </TabsList>
           </div>
 
@@ -3395,13 +3388,6 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
-          )}
-
-          {/* Theme Management */}
-          {hasPermission("canManageSettings") && (
-            <TabsContent value="themes" className="space-y-4 sm:space-y-6">
-              <ThemeManager />
-            </TabsContent>
           )}
         </Tabs>
       </div>
