@@ -417,13 +417,17 @@ function applyThemeColors(colors: ThemeColors) {
       }
     }
 
-    /* Animation Classes */
+    /* Smooth Animations */
     .fade-in {
       animation: fadeIn 0.6s ease-out !important;
     }
 
     .slide-up {
       animation: slideUp 0.8s ease-out !important;
+    }
+
+    .scale-in {
+      animation: scaleIn 0.5s ease-out !important;
     }
 
     @keyframes fadeIn {
@@ -434,6 +438,27 @@ function applyThemeColors(colors: ThemeColors) {
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(40px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Smooth theme transitions */
+    * {
+      transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease !important;
+    }
+
+    /* Ensure proper font loading */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    /* Better focus states */
+    button:focus-visible, 
+    input:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid var(--theme-primary) !important;
+      outline-offset: 2px !important;
     }
 
     /* Dark Theme Specific Adjustments */
