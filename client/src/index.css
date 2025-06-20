@@ -460,10 +460,10 @@ select option:not([selected]):hover {
   transition: background-color 0.15s ease !important;
 }
 
-/* Orange hover styling */
+/* No hover styling - keep items clean */
 [data-radix-select-item][data-highlighted] {
-  background-color: hsl(24.6, 95%, 53.1%) !important;
-  color: white !important;
+  background-color: transparent !important;
+  color: #000000 !important;
 }
 
 /* Orange styling only for selected items */
