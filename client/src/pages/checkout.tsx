@@ -91,6 +91,10 @@ const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStar
   if (!workingHours || !selectedDate) return [];
   
   const date = new Date(selectedDate + 'T00:00:00');
+  const today = format(new Date(), "yyyy-MM-dd");
+  const isToday = selectedDate === today;
+  const currentHour = new Date().getHours();
+  
   const dayNames = weekStartDay === 'sunday' 
     ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
     : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -124,6 +128,9 @@ const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStar
         
         // Skip if the interval would be less than 2 hours and we're not at the start
         if (nextHour - hour < 2 && hour !== startHour) continue;
+        
+        // Skip past time slots if today is selected
+        if (isToday && hour <= currentHour) continue;
         
         const timeStr = `${hour.toString().padStart(2, '0')}:00`;
         const endTimeStr = `${nextHour.toString().padStart(2, '0')}:00`;

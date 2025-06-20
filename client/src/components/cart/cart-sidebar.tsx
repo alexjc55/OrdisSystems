@@ -4,11 +4,12 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency, formatQuantity, type ProductUnit } from "@/lib/currency";
-import { X, Plus, Minus, Trash2, ShoppingCart } from "lucide-react";
+import { X, Plus, Minus, Trash2, ShoppingCart, Info } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState } from "react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation } from "@/hooks/use-language";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Calculate delivery fee based on order total and free delivery threshold
 const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number) => {
@@ -140,7 +141,24 @@ export default function CartSidebar() {
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-start mb-2">
                             <div className="flex-1">
-                              <h4 className="font-semibold text-gray-900 text-sm leading-tight">{item.product.name}</h4>
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-semibold text-gray-900 text-sm leading-tight">{item.product.name}</h4>
+                                {item.product.availabilityStatus === 'out_of_stock_today' && (
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger>
+                                        <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-xs">
+                                          <Info className="h-3 w-3" />
+                                          предзаказ
+                                        </div>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p className="text-xs">Товар недоступен для доставки на сегодня,<br/>т.к. его сегодня уже нет в наличии в магазине</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                )}
+                              </div>
                               <p className="text-xs text-gray-500 mt-1 line-clamp-2">{item.product.description}</p>
                             </div>
                             <Button
