@@ -543,7 +543,7 @@ export default function Home() {
                             <button
                               key={index}
                               onClick={() => goToSlide(index)}
-                              className={`w-3 h-3 rounded-full transition-colors border-0 p-0 min-w-0 flex-shrink-0 ${
+                              className={`carousel-dot transition-colors ${
                                 Math.floor(currentSlide / 3) === index ? 'bg-orange-500' : 'bg-gray-400'
                               }`}
                             />
