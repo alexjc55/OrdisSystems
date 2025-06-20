@@ -324,8 +324,11 @@
   box-shadow: var(--shadow-primary) !important;
 }
 
-/* Apply theme system to all button-like elements */
-[role="button"], .button, [class*="btn"], [class*="Button"] {
+/* Apply theme system to all button-like elements but exclude select components */
+[role="button"]:not([role="option"]):not([data-radix-select-item]), 
+.button:not([data-radix-select-item]), 
+[class*="btn"]:not([data-radix-select-item]), 
+[class*="Button"]:not([data-radix-select-item]) {
   font-family: var(--font-family-primary) !important;
   font-weight: var(--font-weight-medium) !important;
   border-radius: var(--border-radius-md) !important;

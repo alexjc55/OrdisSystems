@@ -299,6 +299,9 @@ export default function ThemeManager() {
     );
   }
 
+  const activeTheme = themes?.find(theme => theme.isActive);
+  const inactiveThemes = themes?.filter(theme => !theme.isActive) || [];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
