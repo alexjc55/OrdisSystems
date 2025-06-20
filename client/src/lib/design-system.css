@@ -325,14 +325,29 @@
 }
 
 /* Apply theme system to all button-like elements but exclude select components */
-[role="button"]:not([role="option"]):not([data-radix-select-item]), 
-.button:not([data-radix-select-item]), 
-[class*="btn"]:not([data-radix-select-item]), 
-[class*="Button"]:not([data-radix-select-item]) {
+[role="button"]:not([role="option"]):not([data-radix-select-item]):not([data-radix-select-trigger]):not([data-radix-select-content] *), 
+.button:not([data-radix-select-item]):not([data-radix-select-trigger]):not([data-radix-select-content] *), 
+[class*="btn"]:not([data-radix-select-item]):not([data-radix-select-trigger]):not([data-radix-select-content] *), 
+[class*="Button"]:not([data-radix-select-item]):not([data-radix-select-trigger]):not([data-radix-select-content] *) {
   font-family: var(--font-family-primary) !important;
   font-weight: var(--font-weight-medium) !important;
   border-radius: var(--border-radius-md) !important;
   transition: all var(--transition-base) !important;
+}
+
+/* Completely exclude select components from global button styles */
+[data-radix-select-trigger],
+[data-radix-select-trigger] *,
+[data-radix-select-content],
+[data-radix-select-content] *,
+[data-radix-select-viewport],
+[data-radix-select-viewport] *,
+[data-radix-select-item],
+[data-radix-select-item] * {
+  background: revert !important;
+  color: revert !important;
+  border: revert !important;
+  border-radius: revert !important;
 }
 
 /* Specific overrides for common patterns */

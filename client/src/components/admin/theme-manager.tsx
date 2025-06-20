@@ -260,6 +260,47 @@ export default function ThemeManager() {
     createThemeMutation.mutate(themeData);
   };
 
+  const handleUpdateTheme = (formData: FormData, themeId: string) => {
+    const themeData = {
+      name: formData.get("name") as string,
+      description: formData.get("description") as string,
+      primaryColor: formData.get("primaryColor") as string,
+      primaryDarkColor: formData.get("primaryDarkColor") as string,
+      primaryLightColor: formData.get("primaryLightColor") as string,
+      secondaryColor: formData.get("secondaryColor") as string,
+      accentColor: formData.get("accentColor") as string,
+      successColor: formData.get("successColor") as string,
+      successLightColor: formData.get("successLightColor") as string,
+      warningColor: formData.get("warningColor") as string,
+      warningLightColor: formData.get("warningLightColor") as string,
+      errorColor: formData.get("errorColor") as string,
+      errorLightColor: formData.get("errorLightColor") as string,
+      infoColor: formData.get("infoColor") as string,
+      infoLightColor: formData.get("infoLightColor") as string,
+      whiteColor: formData.get("whiteColor") as string,
+      gray50Color: formData.get("gray50Color") as string,
+      gray100Color: formData.get("gray100Color") as string,
+      gray200Color: formData.get("gray200Color") as string,
+      gray300Color: formData.get("gray300Color") as string,
+      gray400Color: formData.get("gray400Color") as string,
+      gray500Color: formData.get("gray500Color") as string,
+      gray600Color: formData.get("gray600Color") as string,
+      gray700Color: formData.get("gray700Color") as string,
+      gray800Color: formData.get("gray800Color") as string,
+      gray900Color: formData.get("gray900Color") as string,
+      fontFamilyPrimary: formData.get("fontFamilyPrimary") as string,
+      fontFamilySecondary: formData.get("fontFamilySecondary") as string,
+      primaryShadow: formData.get("primaryShadow") as string,
+      successShadow: formData.get("successShadow") as string,
+      warningShadow: formData.get("warningShadow") as string,
+      errorShadow: formData.get("errorShadow") as string,
+      infoShadow: formData.get("infoShadow") as string,
+      grayShadow: formData.get("grayShadow") as string,
+    };
+
+    updateThemeMutation.mutate({ id: themeId, ...themeData });
+  };
+
   const ColorInput = ({ label, name, defaultValue }: { label: string; name: string; defaultValue: string }) => (
     <div className="space-y-2">
       <Label htmlFor={name}>{label}</Label>
@@ -550,6 +591,95 @@ export default function ThemeManager() {
             </Button>
           </CardContent>
         </Card>
+      )}
+
+      {/* Edit Theme Dialog */}
+      {editingTheme && (
+        <Dialog open={!!editingTheme} onOpenChange={() => setEditingTheme(null)}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Редактирование темы: {editingTheme.name}</DialogTitle>
+              <DialogDescription>
+                Настройте цвета и параметры темы оформления
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              handleUpdateTheme(formData, editingTheme.id);
+            }}>
+              <Tabs defaultValue="basic" className="w-full">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="basic">Основное</TabsTrigger>
+                  <TabsTrigger value="brand">Бренд</TabsTrigger>
+                  <TabsTrigger value="status">Статусы</TabsTrigger>
+                  <TabsTrigger value="neutral">Нейтральные</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="basic" className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-name">Название темы</Label>
+                      <Input id="edit-name" name="name" defaultValue={editingTheme.name} required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-description">Описание</Label>
+                      <Textarea id="edit-description" name="description" defaultValue={editingTheme.description || ""} />
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="brand" className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <ColorInput label="Основной цвет" name="primaryColor" defaultValue={editingTheme.primaryColor} />
+                    <ColorInput label="Основной темный" name="primaryDarkColor" defaultValue={editingTheme.primaryDarkColor} />
+                    <ColorInput label="Основной светлый" name="primaryLightColor" defaultValue={editingTheme.primaryLightColor} />
+                    <ColorInput label="Вторичный цвет" name="secondaryColor" defaultValue={editingTheme.secondaryColor} />
+                    <ColorInput label="Акцентный цвет" name="accentColor" defaultValue={editingTheme.accentColor} />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="status" className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <ColorInput label="Успех" name="successColor" defaultValue={editingTheme.successColor} />
+                    <ColorInput label="Успех светлый" name="successLightColor" defaultValue={editingTheme.successLightColor} />
+                    <ColorInput label="Предупреждение" name="warningColor" defaultValue={editingTheme.warningColor} />
+                    <ColorInput label="Предупреждение светлое" name="warningLightColor" defaultValue={editingTheme.warningLightColor} />
+                    <ColorInput label="Ошибка" name="errorColor" defaultValue={editingTheme.errorColor} />
+                    <ColorInput label="Ошибка светлая" name="errorLightColor" defaultValue={editingTheme.errorLightColor} />
+                    <ColorInput label="Информация" name="infoColor" defaultValue={editingTheme.infoColor} />
+                    <ColorInput label="Информация светлая" name="infoLightColor" defaultValue={editingTheme.infoLightColor} />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="neutral" className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <ColorInput label="Белый" name="whiteColor" defaultValue={editingTheme.whiteColor} />
+                    <ColorInput label="Серый 50" name="gray50Color" defaultValue={editingTheme.gray50Color} />
+                    <ColorInput label="Серый 100" name="gray100Color" defaultValue={editingTheme.gray100Color} />
+                    <ColorInput label="Серый 200" name="gray200Color" defaultValue={editingTheme.gray200Color} />
+                    <ColorInput label="Серый 300" name="gray300Color" defaultValue={editingTheme.gray300Color} />
+                    <ColorInput label="Серый 400" name="gray400Color" defaultValue={editingTheme.gray400Color} />
+                    <ColorInput label="Серый 500" name="gray500Color" defaultValue={editingTheme.gray500Color} />
+                    <ColorInput label="Серый 600" name="gray600Color" defaultValue={editingTheme.gray600Color} />
+                    <ColorInput label="Серый 700" name="gray700Color" defaultValue={editingTheme.gray700Color} />
+                    <ColorInput label="Серый 800" name="gray800Color" defaultValue={editingTheme.gray800Color} />
+                    <ColorInput label="Серый 900" name="gray900Color" defaultValue={editingTheme.gray900Color} />
+                  </div>
+                </TabsContent>
+              </Tabs>
+              
+              <div className="flex justify-end gap-2 mt-6">
+                <Button type="button" variant="outline" onClick={() => setEditingTheme(null)}>
+                  Отмена
+                </Button>
+                <Button type="submit" className="btn-primary">
+                  Сохранить изменения
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
