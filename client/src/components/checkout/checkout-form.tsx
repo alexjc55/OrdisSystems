@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCartStore } from "@/lib/cart";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { useShopTranslation } from "@/hooks/use-language";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +26,7 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
   const { items, getTotalPrice, clearCart } = useCartStore();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t } = useShopTranslation();
 
   const [formData, setFormData] = useState({
     deliveryAddress: "",
@@ -56,15 +58,15 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
       queryClient.invalidateQueries({ queryKey: ["/api/orders/my"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
       toast({
-        title: "Заказ создан!",
-        description: "Ваш заказ успешно оформлен и принят в обработку",
+        title: t('checkout.orderCreated'),
+        description: t('checkout.orderCreatedDescription'),
       });
       onSuccess();
     },
     onError: (error: any) => {
       toast({
-        title: "Ошибка",
-        description: error.message || "Не удалось создать заказ",
+        title: t('checkout.orderError'),
+        description: error.message || t('checkout.orderErrorDescription'),
         variant: "destructive",
       });
     },
@@ -132,8 +134,8 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
   const handleSubmit = () => {
     if (!user) {
       toast({
-        title: "Требуется авторизация",
-        description: "Войдите в систему для оформления заказа",
+        title: t('checkout.authRequired'),
+        description: t('checkout.authRequiredDescription'),
         variant: "destructive",
       });
       return;
@@ -141,8 +143,8 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
 
     if (!formData.deliveryAddress || !formData.customerPhone) {
       toast({
-        title: "Заполните обязательные поля",
-        description: "Адрес доставки и телефон обязательны",
+        title: t('checkout.fillRequiredFields'),
+        description: t('checkout.fillRequiredFieldsDescription'),
         variant: "destructive",
       });
       return;
@@ -183,16 +185,16 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Оформление Заказа
+            {t('checkout.orderFormTitle')}
           </CardTitle>
           <CardDescription>
-            Заполните данные для доставки
+            {t('checkout.orderFormDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Order Summary */}
           <div className="space-y-4">
-            <h3 className="font-semibold">Ваш заказ:</h3>
+            <h3 className="font-semibold">{t('checkout.yourOrder')}:</h3>
             <div className="space-y-2">
               {items.map((item) => (
                 <div key={item.product.id} className="flex justify-between items-center text-sm">

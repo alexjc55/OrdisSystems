@@ -103,5 +103,20 @@
     "tryAgain": "Попробуйте еще раз",
     "networkError": "Ошибка сети",
     "serverError": "Ошибка сервера"
+  },
+  "pageNotFound": {
+    "title": "404 Страница не найдена",
+    "description": "Запрашиваемая страница не существует или была перемещена"
+  },
+  "profile": {
+    "title": "Профиль",
+    "personalInfo": "Личная информация",
+    "orders": "Мои заказы",
+    "addresses": "Адреса",
+    "settings": "Настройки",
+    "updateSuccess": "Профиль обновлен",
+    "updateError": "Ошибка обновления профиля",
+    "addressAdded": "Адрес добавлен",
+    "addressError": "Ошибка добавления адреса"
   }
 }
