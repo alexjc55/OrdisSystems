@@ -105,17 +105,8 @@ export default function Home() {
     setSelectedCategoryId(null);
   }, []);
 
-  // Special offers filtering
-  const specialOffers = useMemo(() => {
-    if (!allProducts || allProducts.length === 0) return [];
-    
-    // Filter products with discounts or marked as special offers
-    const offers = allProducts.filter(product => {
-      return product.discount && product.discount > 0;
-    });
-    
-    return offers.slice(0, 6); // Limit to 6 special offers
-  }, [allProducts]);
+  // Get special offers (products marked as special offers)
+  const specialOffers = allProducts?.filter(product => product.isAvailable !== false && product.isSpecialOffer === true) || [];
 
   // Display products logic
   const displayProducts = useMemo(() => {
