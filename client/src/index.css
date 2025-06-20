@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+@import './lib/design-system.css';
 
 @tailwind base;
 @tailwind components;
@@ -66,69 +67,7 @@
     aspect-ratio: 1 / 1 !important;
   }
 
-  /* Button hover fixes - Override all Tailwind utilities */
-  button {
-    transition: box-shadow 0.2s ease-in-out !important;
-  }
 
-  button:hover:not([class*="ghost"]):not([class*="link"]) {
-    background-color: inherit !important;
-    background-image: inherit !important;
-  }
-
-  /* White text on colored buttons */
-  button[class*="bg-orange"], 
-  button[class*="bg-blue"], 
-  button[class*="bg-red"], 
-  button[class*="bg-green"],
-  button[class*="bg-primary"],
-  button[class*="bg-destructive"] {
-    color: white !important;
-  }
-
-  button[class*="bg-orange"] *, 
-  button[class*="bg-blue"] *, 
-  button[class*="bg-red"] *, 
-  button[class*="bg-green"] *,
-  button[class*="bg-primary"] *,
-  button[class*="bg-destructive"] * {
-    color: white !important;
-  }
-
-  /* Button shadow effects on hover */
-  button[class*="bg-orange"]:hover,
-  button[class*="bg-primary"]:hover {
-    box-shadow: 0 8px 25px -5px rgba(249, 115, 22, 0.5) !important;
-    background-color: inherit !important;
-    background-image: inherit !important;
-  }
-
-  button[class*="bg-blue"]:hover {
-    box-shadow: 0 8px 25px -5px rgba(59, 130, 246, 0.5) !important;
-    background-color: inherit !important;
-  }
-
-  button[class*="bg-red"]:hover,
-  button[class*="bg-destructive"]:hover {
-    box-shadow: 0 8px 25px -5px rgba(239, 68, 68, 0.5) !important;
-    background-color: inherit !important;
-  }
-
-  button[class*="bg-green"]:hover {
-    box-shadow: 0 8px 25px -5px rgba(34, 197, 94, 0.5) !important;
-    background-color: inherit !important;
-  }
-
-  button[class*="bg-gray"]:hover,
-  button[class*="bg-secondary"]:hover {
-    box-shadow: 0 4px 12px -2px rgba(107, 114, 128, 0.3) !important;
-    background-color: inherit !important;
-  }
-
-  button[class*="bg-white"]:hover {
-    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1) !important;
-    background-color: inherit !important;
-  }
 }
 
 :root {
