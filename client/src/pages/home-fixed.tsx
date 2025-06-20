@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CustomSelect, CustomSelectItem } from "@/components/ui/custom-select";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation } from "@/hooks/use-language";
@@ -608,29 +608,29 @@ export default function Home() {
               {/* Filter Controls */}
               {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
                 <div className="flex flex-wrap gap-4 mb-6">
-                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder={t('filterByCategory')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t('allCategories')}</SelectItem>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <CustomSelect 
+                    value={categoryFilter} 
+                    onValueChange={setCategoryFilter}
+                    placeholder={t('filterByCategory')}
+                    className="w-48"
+                  >
+                    <CustomSelectItem value="all">{t('allCategories')}</CustomSelectItem>
+                    {categories.map((category) => (
+                      <CustomSelectItem key={category.id} value={category.id.toString()}>
+                        {category.name}
+                      </CustomSelectItem>
+                    ))}
+                  </CustomSelect>
 
-                  <Select value={discountFilter} onValueChange={setDiscountFilter}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder={t('filterByDiscount')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t('allProducts')}</SelectItem>
-                      <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <CustomSelect 
+                    value={discountFilter} 
+                    onValueChange={setDiscountFilter}
+                    placeholder={t('filterByDiscount')}
+                    className="w-48"
+                  >
+                    <CustomSelectItem value="all">{t('allProducts')}</CustomSelectItem>
+                    <CustomSelectItem value="discount">{t('onlyDiscounted')}</CustomSelectItem>
+                  </CustomSelect>
                 </div>
               )}
 

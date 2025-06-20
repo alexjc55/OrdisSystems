@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CustomSelect, CustomSelectItem } from "@/components/ui/custom-select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { X, Save } from "lucide-react";
@@ -150,23 +150,22 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Категория</FormLabel>
-                  <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value.toString()}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Выберите категорию" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
+                  <FormControl>
+                    <CustomSelect 
+                      onValueChange={(value) => field.onChange(parseInt(value))} 
+                      value={field.value.toString()}
+                      placeholder="Выберите категорию"
+                    >
                       {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
+                        <CustomSelectItem key={category.id} value={category.id.toString()}>
                           <span className="flex items-center">
                             <span className="mr-2">{category.icon}</span>
                             {category.name}
                           </span>
-                        </SelectItem>
+                        </CustomSelectItem>
                       ))}
-                    </SelectContent>
-                  </Select>
+                    </CustomSelect>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -216,18 +215,17 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Статус наличия</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Выберите статус" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="in_stock">В наличии</SelectItem>
-                      <SelectItem value="low_stock">Мало</SelectItem>
-                      <SelectItem value="out_of_stock">Нет в наличии</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <CustomSelect 
+                      onValueChange={field.onChange} 
+                      value={field.value}
+                      placeholder="Выберите статус"
+                    >
+                      <CustomSelectItem value="in_stock">В наличии</CustomSelectItem>
+                      <CustomSelectItem value="low_stock">Мало</CustomSelectItem>
+                      <CustomSelectItem value="out_of_stock">Нет в наличии</CustomSelectItem>
+                    </CustomSelect>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
