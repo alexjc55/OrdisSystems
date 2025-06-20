@@ -1773,6 +1773,26 @@ export default function AdminDashboard() {
     }
   });
 
+  const toggleAvailabilityMutation = useMutation({
+    mutationFn: async ({ id, isAvailable }: { id: number; isAvailable: boolean }) => {
+      const response = await fetch(`/api/products/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isAvailable }),
+      });
+      if (!response.ok) throw new Error('Failed to toggle availability');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+    },
+    onError: (error: any) => {
+      console.error("Toggle availability error:", error);
+      toast({ title: "Ошибка", description: "Не удалось обновить наличие", variant: "destructive" });
+    }
+  });
+
   // Category mutations
   const createCategoryMutation = useMutation({
     mutationFn: async (categoryData: any) => {
@@ -3572,6 +3592,49 @@ export default function AdminDashboard() {
         }}
         cancellationReasons={(storeSettings?.cancellationReasons as string[]) || ["Клиент отменил", "Товар отсутствует", "Технические проблемы", "Другое"]}
       />
+
+      {/* Availability Confirmation Dialog */}
+      <AlertDialog open={isAvailabilityDialogOpen} onOpenChange={setIsAvailabilityDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Изменить статус товара</AlertDialogTitle>
+            <AlertDialogDescription>
+              Вы хотите отключить этот товар. Оставить товар доступным для заказа на другой день?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIsAvailabilityDialogOpen(false)}>
+              Отмена
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (productToToggle) {
+                  updateAvailabilityStatusMutation.mutate({
+                    id: productToToggle.id,
+                    availabilityStatus: "completely_unavailable"
+                  });
+                }
+              }}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Нет, полностью отключить
+            </AlertDialogAction>
+            <AlertDialogAction
+              onClick={() => {
+                if (productToToggle) {
+                  updateAvailabilityStatusMutation.mutate({
+                    id: productToToggle.id,
+                    availabilityStatus: "out_of_stock_today"
+                  });
+                }
+              }}
+              className="bg-yellow-500 hover:bg-yellow-600"
+            >
+              Да, доступен на завтра
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
