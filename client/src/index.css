@@ -345,7 +345,7 @@
   color: #ffffff !important;
 }
 
-/* Выбранное состояние - оранжевый текст и черная галочка */
+/* Выбранное состояние - оранжевый текст и оранжевая галочка */
 [data-radix-select-item][data-state="checked"],
 [data-radix-select-content] [data-radix-select-item][data-state="checked"],
 [data-radix-select-viewport] [data-radix-select-item][data-state="checked"],
@@ -355,7 +355,7 @@
   position: relative !important;
 }
 
-/* Галочка для выбранного элемента - черная по умолчанию */
+/* Галочка для активного элемента - оранжевая по умолчанию */
 [data-radix-select-item][data-state="checked"]::after,
 [data-radix-select-content] [data-radix-select-item][data-state="checked"]::after,
 [data-radix-select-viewport] [data-radix-select-item][data-state="checked"]::after,
@@ -365,7 +365,7 @@
   right: 8px !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
-  color: #000000 !important;
+  color: #f97316 !important;
   font-weight: bold !important;
 }
 
