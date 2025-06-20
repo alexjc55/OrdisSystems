@@ -162,6 +162,8 @@ export default function Home() {
     if (carouselApiRef.current) {
       const slideIndex = pageIndex * slidesPerPage;
       carouselApiRef.current.scrollTo(slideIndex);
+      // Update current slide state immediately for visual feedback
+      setCurrentSlide(slideIndex);
     }
   };
 

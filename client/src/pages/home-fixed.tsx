@@ -157,13 +157,16 @@ export default function Home() {
     }
   }, [location, selectedCategoryId]);
   
-  // Calculate total slides for carousel - simplified approach
-  const totalSlides = Math.max(1, specialOffers.length);
+  // Calculate slides per page based on screen size
+  const slidesPerPage = isMobile ? 1 : 3;
+  const totalPages = Math.ceil(specialOffers.length / slidesPerPage);
   
   // Handle carousel navigation
-  const goToSlide = (slideIndex: number) => {
+  const goToSlide = (pageIndex: number) => {
     if (carouselApiRef.current) {
+      const slideIndex = pageIndex * slidesPerPage;
       carouselApiRef.current.scrollTo(slideIndex);
+      // Update current slide state immediately for visual feedback
       setCurrentSlide(slideIndex);
     }
   };
