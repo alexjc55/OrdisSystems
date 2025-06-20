@@ -460,17 +460,21 @@ select option:not([selected]):hover {
   transition: background-color 0.15s ease !important;
 }
 
-/* No hover styling - keep items clean */
+/* Orange background on hover - no shadow effects */
 [data-radix-select-item][data-highlighted] {
-  background-color: transparent !important;
-  color: #000000 !important;
+  background-color: hsl(24.6, 95%, 53.1%) !important;
+  color: white !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
-/* Orange styling only for selected items */
+/* Orange styling for selected items */
 [data-radix-select-item][data-state="checked"] {
   background-color: hsl(24.6, 95%, 53.1%) !important;
   color: white !important;
   font-weight: 500 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
 /* Completely hide all indicators, checkboxes, and icons */
@@ -490,11 +494,26 @@ select option:not([selected]):hover {
   height: 0 !important;
 }
 
-/* Remove focus styling and outlines */
+/* Remove all shadow and glow effects completely */
+[data-radix-select-item],
+[data-radix-select-item]:hover,
 [data-radix-select-item]:focus,
-[data-radix-select-item]:focus-visible {
+[data-radix-select-item]:focus-visible,
+[data-radix-select-item][data-highlighted],
+[data-radix-select-item][data-state="checked"] {
   outline: none !important;
   box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Remove any white backgrounds or overlays */
+[data-radix-select-item] *,
+[data-radix-select-item] span,
+[data-radix-select-item] div {
+  background: transparent !important;
+  backdrop-filter: none !important;
 }
 
 
