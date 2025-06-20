@@ -352,6 +352,35 @@
 [role="option"][aria-selected="true"]:not(:hover) {
   background-color: transparent !important;
   color: #f97316 !important;
+  position: relative !important;
+}
+
+/* Галочка для выбранного элемента */
+[data-radix-select-item][data-state="checked"]:not(:hover)::after,
+[data-radix-select-content] [data-radix-select-item][data-state="checked"]:not(:hover)::after,
+[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:not(:hover)::after,
+[role="option"][aria-selected="true"]:not(:hover)::after {
+  content: "✓" !important;
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: #f97316 !important;
+  font-weight: bold !important;
+}
+
+/* Галочка для выбранного элемента при hover */
+[data-radix-select-item][data-state="checked"]:hover::after,
+[data-radix-select-content] [data-radix-select-item][data-state="checked"]:hover::after,
+[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:hover::after,
+[role="option"][aria-selected="true"]:hover::after {
+  content: "✓" !important;
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: #ffffff !important;
+  font-weight: bold !important;
 }
 
 /* Выбранное состояние при hover - оранжевый фон с белым текстом */
@@ -361,6 +390,7 @@
 [role="option"][aria-selected="true"]:hover {
   background-color: #f97316 !important;
   color: #ffffff !important;
+  position: relative !important;
 }
 
 /* Очищены все дублирующиеся селекторы */
