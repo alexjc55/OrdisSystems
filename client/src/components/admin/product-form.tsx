@@ -6,6 +6,7 @@ import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { useAdminTranslation, useCommonTranslation } from "@/hooks/use-language";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,24 +22,26 @@ interface ProductFormProps {
   onClose: () => void;
 }
 
-const productSchema = z.object({
-  name: z.string().min(1, "Название обязательно"),
-  description: z.string().optional(),
-  categoryId: z.number().min(1, "Выберите категорию"),
-  pricePerKg: z.string().min(1, "Цена обязательна").refine(
-    (val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0,
-    "Цена должна быть положительным числом"
-  ),
-  imageUrl: z.string().url("Неверный формат URL").optional().or(z.literal("")),
-  stockStatus: z.enum(["in_stock", "low_stock", "out_of_stock"]),
-  sortOrder: z.number().default(0),
-});
-
-type ProductFormData = z.infer<typeof productSchema>;
-
 export default function ProductForm({ categories, onClose }: ProductFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t: adminT } = useAdminTranslation();
+  const { t: commonT } = useCommonTranslation();
+
+  const productSchema = z.object({
+    name: z.string().min(1, adminT('products.nameRequired')),
+    description: z.string().optional(),
+    categoryId: z.number().min(1, adminT('products.categoryRequired')),
+    pricePerKg: z.string().min(1, adminT('products.priceRequired')).refine(
+      (val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0,
+      adminT('products.pricePositive')
+    ),
+    imageUrl: z.string().url(adminT('products.invalidUrl')).optional().or(z.literal("")),
+    stockStatus: z.enum(["in_stock", "low_stock", "out_of_stock"]),
+    sortOrder: z.number().default(0),
+  });
+
+  type ProductFormData = z.infer<typeof productSchema>;
 
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
@@ -64,8 +67,8 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
     },
     onSuccess: () => {
       toast({
-        title: "Товар создан",
-        description: "Товар успешно добавлен в каталог",
+        title: adminT('products.productCreated'),
+        description: adminT('products.productCreatedDescription'),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
@@ -75,7 +78,7 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
       if (isUnauthorizedError(error)) {
         toast({
           title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
+          description: commonT('auth.unauthorizedMessage'),
           variant: "destructive",
         });
         setTimeout(() => {
@@ -84,8 +87,8 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
         return;
       }
       toast({
-        title: "Ошибка",
-        description: "Не удалось создать товар. Попробуйте еще раз.",
+        title: commonT('errors.general'),
+        description: adminT('products.createProductError'),
         variant: "destructive",
       });
     },

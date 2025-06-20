@@ -70,7 +70,17 @@
     "login": "У меня уже есть аккаунт",
     "placeOrder": "Оформить заказ",
     "orderTotal": "Сумма заказа",
-    "processing": "Обработка заказа..."
+    "processing": "Обработка заказа...",
+    "orderCreated": "Заказ создан!",
+    "orderCreatedDescription": "Ваш заказ успешно оформлен и принят в обработку",
+    "orderError": "Ошибка",
+    "orderErrorDescription": "Не удалось создать заказ",
+    "authRequired": "Требуется авторизация",
+    "authRequiredDescription": "Войдите в систему для оформления заказа",
+    "fillRequiredFields": "Заполните обязательные поля",
+    "fillRequiredFieldsDescription": "Адрес доставки и телефон обязательны",
+    "orderFormTitle": "Оформление Заказа",
+    "orderFormDescription": "Заполните данные для доставки"
   },
   "orders": {
     "myOrders": "Мои заказы",

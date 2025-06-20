@@ -5,6 +5,7 @@ import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { useAdminTranslation, useCommonTranslation } from "@/hooks/use-language";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,33 +17,35 @@ interface CategoryFormProps {
   onClose: () => void;
 }
 
-const categorySchema = z.object({
-  name: z.string().min(1, "Название категории обязательно").max(255, "Название слишком длинное"),
-  description: z.string().optional(),
-  icon: z.string().optional(),
-  sortOrder: z.number().default(0),
-});
-
-type CategoryFormData = z.infer<typeof categorySchema>;
-
-const commonIcons = [
-  { emoji: "🐟", name: "Рыба" },
-  { emoji: "🥩", name: "Мясо" },
-  { emoji: "🥕", name: "Овощи" },
-  { emoji: "🍎", name: "Фрукты" },
-  { emoji: "🍞", name: "Хлебобулочные" },
-  { emoji: "🥛", name: "Молочные" },
-  { emoji: "🍽️", name: "Готовые блюда" },
-  { emoji: "🥗", name: "Салаты" },
-  { emoji: "🧀", name: "Сыры" },
-  { emoji: "🍖", name: "Деликатесы" },
-  { emoji: "🥜", name: "Орехи" },
-  { emoji: "🍯", name: "Мед" },
-];
-
 export default function CategoryForm({ onClose }: CategoryFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t: adminT } = useAdminTranslation();
+  const { t: commonT } = useCommonTranslation();
+
+  const categorySchema = z.object({
+    name: z.string().min(1, adminT('categories.categoryNameRequired')).max(255, adminT('categories.categoryNameTooLong')),
+    description: z.string().optional(),
+    icon: z.string().optional(),
+    sortOrder: z.number().default(0),
+  });
+
+  type CategoryFormData = z.infer<typeof categorySchema>;
+
+  const commonIcons = [
+    { emoji: "🐟", name: "Рыба" },
+    { emoji: "🥩", name: "Мясо" },
+    { emoji: "🥕", name: "Овощи" },
+    { emoji: "🍎", name: "Фрукты" },
+    { emoji: "🍞", name: "Хлебобулочные" },
+    { emoji: "🥛", name: "Молочные" },
+    { emoji: "🍽️", name: "Готовые блюда" },
+    { emoji: "🥗", name: "Салаты" },
+    { emoji: "🧀", name: "Сыры" },
+    { emoji: "🍖", name: "Деликатесы" },
+    { emoji: "🥜", name: "Орехи" },
+    { emoji: "🍯", name: "Мед" },
+  ];
 
   const form = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
@@ -64,8 +67,8 @@ export default function CategoryForm({ onClose }: CategoryFormProps) {
     },
     onSuccess: () => {
       toast({
-        title: "Категория создана",
-        description: "Категория успешно добавлена в каталог",
+        title: adminT('categories.categoryCreated'),
+        description: adminT('categories.categoryCreatedDescription'),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
       onClose();
@@ -74,7 +77,7 @@ export default function CategoryForm({ onClose }: CategoryFormProps) {
       if (isUnauthorizedError(error)) {
         toast({
           title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
+          description: commonT('auth.unauthorizedMessage'),
           variant: "destructive",
         });
         setTimeout(() => {
@@ -83,8 +86,8 @@ export default function CategoryForm({ onClose }: CategoryFormProps) {
         return;
       }
       toast({
-        title: "Ошибка",
-        description: "Не удалось создать категорию. Попробуйте еще раз.",
+        title: commonT('errors.general'),
+        description: adminT('categories.createCategoryError'),
         variant: "destructive",
       });
     },
