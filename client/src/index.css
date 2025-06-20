@@ -345,11 +345,20 @@
   color: #ffffff !important;
 }
 
-/* Выбранное состояние - максимальная специфичность */
-[data-radix-select-item][data-state="checked"],
-[data-radix-select-content] [data-radix-select-item][data-state="checked"],
-[data-radix-select-viewport] [data-radix-select-item][data-state="checked"],
-[role="option"][aria-selected="true"] {
+/* Выбранное состояние (без hover) - оранжевый текст на белом фоне */
+[data-radix-select-item][data-state="checked"]:not(:hover),
+[data-radix-select-content] [data-radix-select-item][data-state="checked"]:not(:hover),
+[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:not(:hover),
+[role="option"][aria-selected="true"]:not(:hover) {
+  background-color: transparent !important;
+  color: #f97316 !important;
+}
+
+/* Выбранное состояние при hover - оранжевый фон с белым текстом */
+[data-radix-select-item][data-state="checked"]:hover,
+[data-radix-select-content] [data-radix-select-item][data-state="checked"]:hover,
+[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:hover,
+[role="option"][aria-selected="true"]:hover {
   background-color: #f97316 !important;
   color: #ffffff !important;
 }
