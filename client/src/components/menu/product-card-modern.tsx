@@ -95,7 +95,7 @@ export default function ModernProductCard({ product, onCategoryClick }: ProductC
           <div className="aspect-[4/3] overflow-hidden">
             <img 
               src={product.imageUrl} 
-              alt={product.name}
+              alt={product.name || "Product image"}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               loading="lazy"
             />
@@ -125,8 +125,8 @@ export default function ModernProductCard({ product, onCategoryClick }: ProductC
             <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold px-3 py-1.5 text-xs shadow-lg">
               <Star className="w-3 h-3 mr-1" />
               {product.discountType === "percentage" 
-                ? `-${product.discountValue}%` 
-                : `-${formatCurrency(parseFloat(product.discountValue))}`
+                ? `-${product.discountValue || 0}%` 
+                : `-${formatCurrency(parseFloat(product.discountValue || "0"))}`
               }
             </Badge>
           </div>
@@ -149,7 +149,7 @@ export default function ModernProductCard({ product, onCategoryClick }: ProductC
             <Badge 
               variant="outline" 
               className="text-xs font-medium cursor-pointer hover:bg-primary/10 hover:border-primary transition-all duration-200 rounded-full px-3 py-1"
-              onClick={() => onCategoryClick?.(product.category.id)}
+              onClick={() => onCategoryClick?.(product.category?.id || 0)}
             >
               {product.category.name}
             </Badge>
