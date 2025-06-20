@@ -319,7 +319,20 @@
 /* Элементы меню - дефолтные стили с нормальным размером шрифта */
 /* Удалены проблемные глобальные стили для селекта */
 
-/* Тестовые стили удалены */
+/* Оранжевый hover для выпадающих списков */
+[data-radix-select-item][data-highlighted] {
+  background-color: #f97316 !important;
+  color: white !important;
+}
+
+[data-radix-select-item][data-state="checked"][data-highlighted] {
+  background-color: #f97316 !important;
+  color: white !important;
+}
+
+[data-radix-select-item][data-state="checked"][data-highlighted] .lucide {
+  color: white !important;
+}
 
 /* Force blue color for pre-order buttons */
 .bg-blue-600 {
