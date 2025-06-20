@@ -93,7 +93,7 @@
   --primary-foreground: hsl(0, 0%, 98%);
   --secondary: hsl(210, 22%, 22%);
   --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(35, 91%, 51%);
+  --accent: hsl(20, 95%, 55%);
   --accent-foreground: hsl(0, 0%, 98%);
   --success: hsl(142, 51%, 45%);
   --success-foreground: hsl(0, 0%, 98%);
@@ -120,7 +120,7 @@
   --primary-foreground: hsl(0, 0%, 98%);
   --secondary: hsl(240, 3.7%, 15.9%);
   --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(240, 3.7%, 15.9%);
+  --accent: hsl(20, 95%, 55%);
   --accent-foreground: hsl(0, 0%, 98%);
   --success: hsl(142, 51%, 45%);
   --success-foreground: hsl(0, 0%, 98%);
