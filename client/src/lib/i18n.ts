@@ -115,7 +115,7 @@ i18n
     ns: ['common', 'shop', 'admin'],
     
     interpolation: {
-      escapeValue: false, // React already does escaping
+      escapeValue: false,
     },
     
     detection: {
@@ -133,10 +133,29 @@ i18n
       transSupportBasicHtmlNodes: true,
       transKeepBasicHtmlNodesFor: ['br', 'strong', 'i'],
     },
+    
+    // Force synchronous loading
+    partialBundledLanguages: true,
+    debug: false,
+    
+    // Prevent showing keys when translation is missing
+    saveMissing: false,
+    missingKeyHandler: false,
+    
+    // Return fallback for missing translations
+    returnEmptyString: false,
+    returnNull: false,
+    returnObjects: false,
   })
   .then(() => {
     // Apply initial direction
     updateDocumentDirection(initialLang);
+    
+    // Ensure all namespaces are loaded
+    return Promise.all([
+      i18n.loadNamespaces(['common', 'shop', 'admin']),
+      i18n.changeLanguage(initialLang)
+    ]);
   });
 
 // Listen for language changes and update document direction

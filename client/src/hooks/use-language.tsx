@@ -69,5 +69,17 @@ export function useShopTranslation() {
 
 // Hook for admin translations
 export function useAdminTranslation() {
-  return useTranslation('admin');
+  const { t, i18n } = useTranslation('admin');
+  
+  // Enhanced translation function with fallback
+  const enhancedT = (key: string, fallback?: string) => {
+    const translation = t(key);
+    // If translation returns the key itself, use fallback or return empty string
+    if (translation === key) {
+      return fallback || '';
+    }
+    return translation;
+  };
+  
+  return { t: enhancedT, i18n };
 }

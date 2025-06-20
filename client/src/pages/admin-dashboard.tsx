@@ -2074,9 +2074,9 @@ export default function AdminDashboard() {
                         </SelectTrigger>
                         <SelectContent className="bg-white">
                           <SelectItem value="all">{t('products.allProducts', 'Все товары')}</SelectItem>
-                          <SelectItem value="available">{t('products.availableProducts')}</SelectItem>
-                          <SelectItem value="unavailable">{t('products.unavailableProducts')}</SelectItem>
-                          <SelectItem value="with_discount">{t('products.productsWithDiscount')}</SelectItem>
+                          <SelectItem value="available">{t('products.availableProducts', 'Доступные товары')}</SelectItem>
+                          <SelectItem value="unavailable">{t('products.unavailableProducts', 'Недоступные товары')}</SelectItem>
+                          <SelectItem value="with_discount">{t('products.productsWithDiscount', 'Товары со скидкой')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
