@@ -2164,24 +2164,23 @@ export default function AdminDashboard() {
                   <div className="flex flex-col sm:flex-row gap-3 lg:flex-shrink-0">
                     <div className="relative min-w-[180px]">
                       <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <div className="test-default-select">
-                        <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
-                          <SelectTrigger className="pl-10 text-sm">
-                            <SelectValue placeholder={t('products.allCategories', 'Все категории')} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">{t('products.allCategories', 'Все категории')}</SelectItem>
-                            {(categories as any[] || []).map((category: any) => (
-                              <SelectItem 
-                                key={category.id} 
-                                value={category.id.toString()}
-                              >
-                                {category.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
+                        <SelectTrigger className="pl-10 text-sm">
+                          <SelectValue placeholder={t('products.allCategories', 'Все категории')} />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                          <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{t('products.allCategories', 'Все категории')}</SelectItem>
+                          {(categories as any[] || []).map((category: any) => (
+                            <SelectItem 
+                              key={category.id} 
+                              value={category.id.toString()}
+                              className="text-gray-900 hover:bg-gray-100"
+                            >
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="relative min-w-[160px]">
                       <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />

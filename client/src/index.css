@@ -348,21 +348,19 @@
 
 /* Галочка только для активного элемента */
 
-/* Выбранное состояние - оранжевый текст и оранжевая галочка (высший приоритет) */
-[data-radix-select-item][data-state="checked"]:not(:hover),
-[data-radix-select-content] [data-radix-select-item][data-state="checked"]:not(:hover), 
-[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:not(:hover),
-[role="option"][aria-selected="true"]:not(:hover) {
+/* Выбранное состояние - оранжевый текст и оранжевая галочка (максимальная специфичность) */
+[data-radix-select-content] [data-radix-select-item][data-state="checked"],
+[data-radix-select-viewport] [data-radix-select-item][data-state="checked"],
+[data-radix-select-item][data-state="checked"] {
   background-color: transparent !important;
   color: #f97316 !important;
   position: relative !important;
 }
 
-/* Галочка для активного элемента - оранжевая по умолчанию */
-[data-radix-select-item][data-state="checked"]:not(:hover)::after,
-[data-radix-select-content] [data-radix-select-item][data-state="checked"]:not(:hover)::after,
-[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:not(:hover)::after,
-[role="option"][aria-selected="true"]:not(:hover)::after {
+/* Галочка для активного элемента - оранжевая */
+[data-radix-select-content] [data-radix-select-item][data-state="checked"]::after,
+[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]::after,
+[data-radix-select-item][data-state="checked"]::after {
   content: "✓" !important;
   position: absolute !important;
   right: 8px !important;
@@ -390,51 +388,7 @@
   color: #ffffff !important;
 }
 
-/* Полная изоляция тестового селекта - отключаем все глобальные стили */
-.test-default-select * {
-  all: revert !important;
-}
-
-.test-default-select [data-radix-select-content] {
-  background-color: white !important;
-  border: 1px solid #e5e7eb !important;
-  border-radius: 6px !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-  z-index: 50 !important;
-}
-
-.test-default-select [data-radix-select-item] {
-  display: block !important;
-  cursor: pointer !important;
-  padding: 8px 12px !important;
-  font-size: 14px !important;
-  color: #000000 !important;
-  background: white !important;
-  border: none !important;
-  outline: none !important;
-  margin: 0 !important;
-  text-align: left !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-.test-default-select [data-radix-select-item]:hover {
-  background-color: #f3f4f6 !important;
-  color: #000000 !important;
-}
-
-.test-default-select [data-radix-select-item][data-state="checked"] {
-  background-color: #e5e7eb !important;
-  color: #000000 !important;
-}
-
-.test-default-select [data-radix-select-item][data-state="checked"]::after {
-  display: none !important;
-}
-
-.test-default-select [data-radix-select-item]::after {
-  display: none !important;
-}
+/* Убраны тестовые стили */
 
 /* Force blue color for pre-order buttons */
 .bg-blue-600 {
