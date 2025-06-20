@@ -72,5 +72,36 @@
     "operationCompleted": "Operation completed",
     "confirmDelete": "Are you sure you want to delete?",
     "unsavedChanges": "You have unsaved changes"
+  },
+  "auth": {
+    "loginSuccess": "Login successful",
+    "loginWelcome": "Welcome!",
+    "loginError": "Login error",
+    "loginInvalidCredentials": "Invalid username or password",
+    "registerSuccess": "Registration successful",
+    "registerError": "Registration error",
+    "logoutSuccess": "Logged out",
+    "logoutMessage": "Goodbye!",
+    "logoutError": "Logout error",
+    "unauthorized": "Authentication required",
+    "loginRedirect": "Logging in to view profile...",
+    "unauthorizedMessage": "You are logged out. Logging in again...",
+    "backToHome": "Back to Home"
+  },
+  "validation": {
+    "usernameRequired": "Enter username",
+    "passwordRequired": "Enter password",
+    "usernameMinLength": "Username must contain at least 3 characters",
+    "usernameMaxLength": "Username must not exceed 50 characters",
+    "usernameFormat": "Only Latin letters, numbers and underscores",
+    "emailInvalid": "Enter a valid email",
+    "passwordMinLength": "Password must contain at least 6 characters",
+    "passwordMismatch": "Passwords do not match"
+  },
+  "errors": {
+    "general": "An error occurred",
+    "tryAgain": "Try again",
+    "networkError": "Network error",
+    "serverError": "Server error"
   }
 }

@@ -72,5 +72,36 @@
     "operationCompleted": "הפעולה הושלמה",
     "confirmDelete": "האם אתה בטוח שברצונך למחוק?",
     "unsavedChanges": "יש לך שינויים שלא נשמרו"
+  },
+  "auth": {
+    "loginSuccess": "התחברות בוצעה",
+    "loginWelcome": "ברוך הבא!",
+    "loginError": "שגיאת התחברות",
+    "loginInvalidCredentials": "שם משתמש או סיסמה שגויים",
+    "registerSuccess": "הרשמה בוצעה בהצלחה",
+    "registerError": "שגיאת הרשמה",
+    "logoutSuccess": "התנתקות בוצעה",
+    "logoutMessage": "להתראות!",
+    "logoutError": "שגיאת התנתקות",
+    "unauthorized": "נדרש אימות",
+    "loginRedirect": "מתחבר לצפייה בפרופיל...",
+    "unauthorizedMessage": "אתה מנותק. מתחבר שוב...",
+    "backToHome": "חזרה לדף הבית"
+  },
+  "validation": {
+    "usernameRequired": "הזן שם משתמש",
+    "passwordRequired": "הזן סיסמה",
+    "usernameMinLength": "שם המשתמש חייב להכיל לפחות 3 תווים",
+    "usernameMaxLength": "שם המשתמש לא יכול לעלות על 50 תווים",
+    "usernameFormat": "רק אותיות לטיניות, מספרים וקו תחתון",
+    "emailInvalid": "הזן כתובת אימייל חוקית",
+    "passwordMinLength": "הסיסמה חייבת להכיל לפחות 6 תווים",
+    "passwordMismatch": "הסיסמאות אינן תואמות"
+  },
+  "errors": {
+    "general": "אירעה שגיאה",
+    "tryAgain": "נסה שוב",
+    "networkError": "שגיאת רשת",
+    "serverError": "שגיאת שרת"
   }
 }

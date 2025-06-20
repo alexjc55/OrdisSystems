@@ -72,5 +72,36 @@
     "operationCompleted": "Операция выполнена",
     "confirmDelete": "Вы уверены, что хотите удалить?",
     "unsavedChanges": "У вас есть несохранённые изменения"
+  },
+  "auth": {
+    "loginSuccess": "Вход выполнен",
+    "loginWelcome": "Добро пожаловать!",
+    "loginError": "Ошибка входа",
+    "loginInvalidCredentials": "Неверное имя пользователя или пароль",
+    "registerSuccess": "Регистрация успешна",
+    "registerError": "Ошибка регистрации",
+    "logoutSuccess": "Выход выполнен",
+    "logoutMessage": "До свидания!",
+    "logoutError": "Ошибка выхода",
+    "unauthorized": "Требуется авторизация",
+    "loginRedirect": "Вход в систему для просмотра профиля...",
+    "unauthorizedMessage": "You are logged out. Logging in again...",
+    "backToHome": "На главную"
+  },
+  "validation": {
+    "usernameRequired": "Введите имя пользователя",
+    "passwordRequired": "Введите пароль",
+    "usernameMinLength": "Имя пользователя должно содержать минимум 3 символа",
+    "usernameMaxLength": "Имя пользователя не должно превышать 50 символов",
+    "usernameFormat": "Только латинские буквы, цифры и подчеркивание",
+    "emailInvalid": "Введите корректный email",
+    "passwordMinLength": "Пароль должен содержать минимум 6 символов",
+    "passwordMismatch": "Пароли не совпадают"
+  },
+  "errors": {
+    "general": "Произошла ошибка",
+    "tryAgain": "Попробуйте еще раз",
+    "networkError": "Ошибка сети",
+    "serverError": "Ошибка сервера"
   }
 }
