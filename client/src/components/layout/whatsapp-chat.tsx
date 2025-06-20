@@ -25,7 +25,14 @@ export function WhatsAppChat() {
   return (
     <button
       onClick={handleWhatsAppClick}
-      className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-5 shadow-lg transition-all duration-300 hover:scale-110 w-16 h-16 flex items-center justify-center"
+      className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white shadow-lg transition-all duration-300 hover:scale-110 flex items-center justify-center"
+      style={{
+        width: '64px',
+        height: '64px',
+        borderRadius: '50%',
+        padding: '0',
+        border: 'none'
+      }}
       aria-label="Написать в WhatsApp"
       title="Написать в WhatsApp"
     >
