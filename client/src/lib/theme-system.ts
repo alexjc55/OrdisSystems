@@ -219,6 +219,16 @@ export function initializeTheme(): void {
   applyTheme(defaultTheme);
 }
 
+// Force apply orange theme colors immediately
+export function forceApplyOrangeTheme(): void {
+  const root = document.documentElement;
+  root.style.setProperty('--color-primary', 'hsl(24.6, 95%, 53.1%)');
+  root.style.setProperty('--color-primary-dark', 'hsl(20.5, 90%, 48%)');
+  root.style.setProperty('--color-primary-light', 'hsl(24.6, 95%, 96%)');
+  root.style.setProperty('--color-secondary', 'hsl(210, 40%, 98%)');
+  root.style.setProperty('--color-accent', 'hsl(210, 40%, 85%)');
+}
+
 // Button variant mappings
 export const buttonVariants = {
   primary: {
