@@ -7,9 +7,15 @@
 /* Universal Button System - Overrides all other styles */
 @layer utilities {
 
-  .btn-primary *, .btn-primary svg {
+  .btn-primary * {
     color: var(--color-white) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-primary svg {
+    color: var(--color-white) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   .btn-primary:hover {
@@ -19,9 +25,15 @@
     color: var(--color-white) !important;
   }
 
-  .btn-primary:hover *, .btn-primary:hover svg {
+  .btn-primary:hover * {
     color: var(--color-white) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-primary:hover svg {
+    color: var(--color-white) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   /* Secondary Button Variant */
@@ -31,9 +43,15 @@
     border: none !important;
   }
 
-  .btn-secondary *, .btn-secondary svg {
+  .btn-secondary * {
     color: var(--color-gray-700) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-secondary svg {
+    color: var(--color-gray-700) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   .btn-secondary:hover {
@@ -43,9 +61,15 @@
     color: var(--color-gray-700) !important;
   }
 
-  .btn-secondary:hover *, .btn-secondary:hover svg {
+  .btn-secondary:hover * {
     color: var(--color-gray-700) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-secondary:hover svg {
+    color: var(--color-gray-700) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   /* Success Button Variant */
@@ -55,9 +79,15 @@
     border: none !important;
   }
 
-  .btn-success *, .btn-success svg {
+  .btn-success * {
     color: var(--color-white) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-success svg {
+    color: var(--color-white) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   .btn-success:hover {
@@ -67,9 +97,15 @@
     color: var(--color-white) !important;
   }
 
-  .btn-success:hover *, .btn-success:hover svg {
+  .btn-success:hover * {
     color: var(--color-white) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-success:hover svg {
+    color: var(--color-white) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   /* Warning Button Variant */
@@ -79,9 +115,15 @@
     border: none !important;
   }
 
-  .btn-warning *, .btn-warning svg {
+  .btn-warning * {
     color: var(--color-white) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-warning svg {
+    color: var(--color-white) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   .btn-warning:hover {
@@ -91,9 +133,15 @@
     color: var(--color-white) !important;
   }
 
-  .btn-warning:hover *, .btn-warning:hover svg {
+  .btn-warning:hover * {
     color: var(--color-white) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-warning:hover svg {
+    color: var(--color-white) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   /* Error/Destructive Button Variant */
@@ -103,9 +151,15 @@
     border: none !important;
   }
 
-  .btn-error *, .btn-error svg {
+  .btn-error * {
     color: var(--color-white) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-error svg {
+    color: var(--color-white) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   .btn-error:hover {
