@@ -32,7 +32,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
     }
   };
   
-  const [selectedQuantity, setSelectedQuantity] = useState(getDefaultQuantity());
+  const [selectedQuantity, setSelectedQuantity] = useState<number | null>(getDefaultQuantity());
   const { addItem, toggleCart } = useCartStore();
   const { toast } = useToast();
 
@@ -57,9 +57,14 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   };
   
   const discountedPrice = getDiscountedPrice(price);
-  const totalPrice = calculateTotal(discountedPrice, selectedQuantity, unit);
+  const totalPrice = calculateTotal(discountedPrice, selectedQuantity || getDefaultQuantity(), unit);
 
-  const handleQuantityChange = (newQuantity: number) => {
+  const handleQuantityChange = (newQuantity: number | null) => {
+    if (newQuantity === null) {
+      setSelectedQuantity(null);
+      return;
+    }
+    
     let minValue, maxValue, processedQuantity;
     
     switch (unit) {
@@ -91,10 +96,11 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   };
 
   const handleAddToCart = () => {
-    addItem(product, selectedQuantity);
+    const finalQuantity = selectedQuantity || getDefaultQuantity();
+    addItem(product, finalQuantity);
     toast({
       title: "Добавлено в корзину",
-      description: `${product.name} (${formatQuantity(selectedQuantity, unit)}) - ${formatCurrency(totalPrice)}`,
+      description: `${product.name} (${formatQuantity(finalQuantity, unit)}) - ${formatCurrency(totalPrice)}`,
       action: (
         <Button
           size="sm"
@@ -231,38 +237,30 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 className="h-6 w-6 p-0 border-gray-300"
                 onClick={() => {
                   const step = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1;
-                  handleQuantityChange(selectedQuantity - step);
+                  const currentQuantity = selectedQuantity || getDefaultQuantity();
+                  handleQuantityChange(currentQuantity - step);
                 }}
-                disabled={selectedQuantity <= (unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1)}
+                disabled={(selectedQuantity || getDefaultQuantity()) <= (unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1)}
               >
                 <Minus className="h-2 w-2" />
               </Button>
               <Input
                 type="text"
-                value={selectedQuantity}
+                value={selectedQuantity || ''}
                 onChange={(e) => {
                   const value = e.target.value;
-                  const numValue = parseFloat(value);
-                  if (!isNaN(numValue) && numValue > 0) {
-                    handleQuantityChange(numValue);
-                  } else if (value === '') {
-                    // Allow empty input for editing
+                  if (value === '') {
+                    // Allow empty input for manual editing
+                    handleQuantityChange(null);
                   } else {
-                    // Reset to default if invalid
-                    const defaultValue = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 100;
-                    handleQuantityChange(defaultValue);
-                  }
-                }}
-                onBlur={(e) => {
-                  const value = e.target.value;
-                  const numValue = parseFloat(value);
-                  if (isNaN(numValue) || numValue <= 0) {
-                    const defaultValue = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 100;
-                    handleQuantityChange(defaultValue);
+                    const numValue = parseFloat(value);
+                    if (!isNaN(numValue) && numValue > 0) {
+                      handleQuantityChange(numValue);
+                    }
                   }
                 }}
                 className="w-16 text-center text-xs h-6 border-gray-300"
-                placeholder={unit === "piece" ? "1" : unit === "kg" ? "0.1" : "100"}
+                placeholder={unit === "piece" ? "1" : unit === "kg" ? "1" : "100"}
               />
               <Button
                 size="sm"
@@ -270,9 +268,10 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 className="h-6 w-6 p-0 border-gray-300"
                 onClick={() => {
                   const step = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1;
-                  handleQuantityChange(selectedQuantity + step);
+                  const currentQuantity = selectedQuantity || getDefaultQuantity();
+                  handleQuantityChange(currentQuantity + step);
                 }}
-                disabled={selectedQuantity >= (unit === "100g" || unit === "100ml" ? 9999 : 99)}
+                disabled={(selectedQuantity || getDefaultQuantity()) >= (unit === "100g" || unit === "100ml" ? 9999 : 99)}
               >
                 <Plus className="h-2 w-2" />
               </Button>
