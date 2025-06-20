@@ -70,7 +70,7 @@ export default function Header({ onResetView }: HeaderProps) {
           </div>
 
           {/* Right side - Actions */}
-          <div className="flex items-center space-x-2 md:space-x-4 rtl:space-x-reverse flex-shrink-0">
+          <div className="flex items-center gap-1 md:gap-4 rtl:space-x-reverse flex-shrink-0">
             {/* Language Switcher - Hidden on mobile */}
             <div className="hidden md:block">
               <LanguageSwitcher variant="compact" />
@@ -83,7 +83,7 @@ export default function Header({ onResetView }: HeaderProps) {
               onClick={toggleCart}
               className={`relative p-2 transition-all duration-200 ${
                 cartItemsCount > 0 
-                  ? "text-orange-600 hover:text-orange-700 scale-105" 
+                  ? "text-orange-600 hover:text-orange-700" 
                   : "text-gray-600 hover:text-primary"
               }`}
             >
@@ -101,7 +101,7 @@ export default function Header({ onResetView }: HeaderProps) {
             {user ? (
               <>
                 {/* Desktop User Menu */}
-                <div className="hidden md:flex items-center space-x-3">
+                <div className="hidden md:flex items-center">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -159,54 +159,48 @@ export default function Header({ onResetView }: HeaderProps) {
                 </div>
                 
                 {/* Mobile User Avatar */}
-                <div className="md:hidden">
-                  <Button 
-                    variant="ghost" 
-                    className="relative h-8 w-8 rounded-full p-0"
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  >
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
-                      <AvatarFallback>
-                        {user?.firstName?.[0]}{user?.lastName?.[0]}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </div>
+                <Button 
+                  variant="ghost" 
+                  className="relative h-8 w-8 rounded-full p-0 md:hidden"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
+                    <AvatarFallback>
+                      {user?.firstName?.[0]}{user?.lastName?.[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
               </>
             ) : (
               <>
                 {/* Desktop Login Button */}
-                <Link href="/auth" className="hidden md:block">
-                  <Button 
-                    className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-500/50 text-white transition-shadow duration-200"
-                  >
-                    {t('login')}
-                  </Button>
-                </Link>
+                <Button 
+                  className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-500/50 text-white transition-shadow duration-200 hidden md:flex"
+                  onClick={() => window.location.href = '/auth'}
+                >
+                  {t('login')}
+                </Button>
                 
                 {/* Mobile Login Button */}
-                <Link href="/auth" className="md:hidden">
-                  <Button 
-                    size="sm"
-                    className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg text-white transition-shadow duration-200 px-3 py-1 text-sm"
-                  >
-                    {t('login')}
-                  </Button>
-                </Link>
+                <Button 
+                  size="sm"
+                  className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg text-white transition-shadow duration-200 px-2 py-1 text-xs md:hidden"
+                  onClick={() => window.location.href = '/auth'}
+                >
+                  {t('login')}
+                </Button>
+                
+                {/* Mobile Menu Button - Always show when not logged in */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="md:hidden p-2 text-gray-600 hover:text-primary"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
               </>
-            )}
-
-            {/* Mobile Menu Button - Only show when not logged in */}
-            {!user && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="md:hidden p-2 text-gray-600 hover:text-primary"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
             )}
           </div>
         </div>
@@ -235,20 +229,9 @@ export default function Header({ onResetView }: HeaderProps) {
                 <LanguageSwitcher variant="compact" />
               </div>
               
-              {/* User Section */}
+              {/* User Profile Link - Only for logged in users */}
               {user && (
                 <div className="border-t border-gray-200 pt-2 mt-2">
-                  <div className="px-3 py-2">
-                    <p className="text-sm font-medium text-gray-900">
-                      {user?.firstName} {user?.lastName}
-                    </p>
-                    <p className="text-sm text-gray-600">{user?.email}</p>
-                    <Badge variant="secondary" className="w-fit text-xs mt-1">
-                      {user?.role === 'admin' ? t('userRole.admin') : 
-                       user?.role === 'worker' ? t('userRole.worker') : t('userRole.customer')}
-                    </Badge>
-                  </div>
-                  
                   <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button 
                       variant="ghost" 
