@@ -327,13 +327,13 @@
 [data-radix-select-item]:hover,
 [data-radix-select-item]:focus,
 [data-radix-select-item][data-highlighted] {
-  background-color: #f5f5f5 !important;
-  color: #000000 !important;
+  background-color: #f97316 !important;
+  color: #ffffff !important;
 }
 
 [data-radix-select-item][data-state="checked"] {
-  background-color: #f3f4f6 !important;
-  color: #111827 !important;
+  background-color: #f97316 !important;
+  color: #ffffff !important;
 }
 
 /* Native HTML Select Elements */
@@ -371,7 +371,7 @@ select option:not([selected]):hover {
 [data-radix-select-content] [data-radix-select-item],
 [data-radix-select-viewport] [data-radix-select-item] {
   color: #000000 !important;
-  background-color: white !important;
+  background-color: transparent !important;
   transition: background-color 0.15s ease !important;
 }
 
@@ -381,14 +381,14 @@ select option:not([selected]):hover {
 [data-radix-select-viewport] [data-radix-select-item]:hover,
 [data-radix-select-viewport] [data-radix-select-item]:focus,
 [data-radix-select-viewport] [data-radix-select-item][data-highlighted] {
-  background-color: #f5f5f5 !important;
-  color: #000000 !important;
+  background-color: #f97316 !important;
+  color: #ffffff !important;
 }
 
 [data-radix-select-content] [data-radix-select-item][data-state="checked"],
 [data-radix-select-viewport] [data-radix-select-item][data-state="checked"] {
-  background-color: #f3f4f6 !important;
-  color: #111827 !important;
+  background-color: #f97316 !important;
+  color: #ffffff !important;
 }
 
 /* Force override all select styling - highest priority */
@@ -406,15 +406,15 @@ select option:not([selected]):hover {
 [data-radix-select-content] *[data-state="checked"],
 [data-radix-select-viewport] *[data-state="checked"],
 [data-radix-select-item][data-state="checked"] {
-  background-color: #f3f4f6 !important;
-  color: #111827 !important;
+  background-color: #f97316 !important;
+  color: #ffffff !important;
 }
 
 [data-radix-select-content] *:hover:not([data-state="checked"]),
 [data-radix-select-viewport] *:hover:not([data-state="checked"]),
 [data-radix-select-item]:hover:not([data-state="checked"]) {
-  background-color: #f9fafb !important;
-  color: #000000 !important;
+  background-color: #f97316 !important;
+  color: #ffffff !important;
 }
 
 /* Override any button styling that might be affecting selects */
