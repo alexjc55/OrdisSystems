@@ -118,16 +118,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   };
 
   const getAvailabilityBadge = () => {
-    // Only show critical unavailability status
-    if (product.availabilityStatus === 'completely_unavailable' || !product.isAvailable) {
-      return (
-        <Badge variant="destructive" className="bg-red-100 text-red-800 border-red-300">
-          <XCircle className="w-3 h-3 mr-1" />
-          Недоступен
-        </Badge>
-      );
-    }
-    // Don't show "В наличии", "Завтра" or other status badges - they're redundant
+    // Don't show any status badges - unavailable products are filtered out
     return null;
   };
 
@@ -147,9 +138,15 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop';
           }}
         />
-        <div className="absolute top-2 right-2">
-          {getAvailabilityBadge()}
-        </div>
+        
+        {/* Out of stock overlay bar */}
+        {product.availabilityStatus === 'out_of_stock_today' && (
+          <div className="absolute bottom-0 left-0 right-0 bg-red-500 bg-opacity-90 text-white text-center py-2 font-semibold text-sm">
+            Нет в наличии
+          </div>
+        )}
+        
+        {/* Discount badge - only show if it's a special offer */}
         {product.isSpecialOffer && (
           <div className="absolute top-2 left-2">
             <Badge className="bg-orange-500 text-white text-sm px-3 py-1.5 font-semibold shadow-lg">
