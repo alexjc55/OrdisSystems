@@ -460,6 +460,24 @@ button[role="switch"][data-state="checked"] > span,
 .carousel-dot {
   width: 10px !important;
   height: 10px !important;
+  border-radius: 50% !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+/* Carousel dot hover states - prevent white color on hover */
+.carousel-dot:hover {
+  background-color: inherit !important;
+}
+
+/* Ensure inactive dots stay gray on hover */
+.carousel-dot.bg-gray-400:hover {
+  background-color: rgb(156 163 175) !important;
+}
+
+/* Ensure active dots stay orange on hover */
+.carousel-dot.bg-orange-500:hover {
+  background-color: rgb(249 115 22) !important;
 }
 
 /* Ensure switches don't inherit carousel dot styles */
