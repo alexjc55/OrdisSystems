@@ -1482,6 +1482,10 @@ export default function AdminDashboard() {
   const [isCancellationDialogOpen, setIsCancellationDialogOpen] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState<number | null>(null);
 
+  // Availability confirmation dialog state
+  const [isAvailabilityDialogOpen, setIsAvailabilityDialogOpen] = useState(false);
+  const [productToToggle, setProductToToggle] = useState<{ id: number; currentStatus: boolean } | null>(null);
+
   // Pagination state
   const [productsPage, setProductsPage] = useState(1);
   const [ordersPage, setOrdersPage] = useState(1);
@@ -1746,23 +1750,26 @@ export default function AdminDashboard() {
     }
   });
 
-  const toggleAvailabilityMutation = useMutation({
-    mutationFn: async ({ id, isAvailable }: { id: number; isAvailable: boolean }) => {
-      const response = await fetch(`/api/products/${id}`, {
+  const updateAvailabilityStatusMutation = useMutation({
+    mutationFn: async ({ id, availabilityStatus }: { id: number; availabilityStatus: string }) => {
+      const response = await fetch(`/api/products/${id}/availability`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isAvailable }),
+        body: JSON.stringify({ availabilityStatus }),
       });
-      if (!response.ok) throw new Error('Failed to toggle availability');
+      if (!response.ok) throw new Error('Failed to update availability status');
       return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      setIsAvailabilityDialogOpen(false);
+      setProductToToggle(null);
+      toast({ title: "Статус обновлен", description: "Статус доступности товара изменен" });
     },
     onError: (error: any) => {
-      console.error("Toggle availability error:", error);
-      toast({ title: "Ошибка", description: "Не удалось обновить наличие", variant: "destructive" });
+      console.error("Update availability status error:", error);
+      toast({ title: "Ошибка", description: "Не удалось обновить статус доступности", variant: "destructive" });
     }
   });
 
@@ -2256,15 +2263,25 @@ export default function AdminDashboard() {
                               <TableCell className="px-2 sm:px-4 py-2">
                                 <div className="flex items-center gap-2">
                                   <CustomSwitch
-                                    checked={product.isAvailable}
+                                    checked={product.isAvailable && (product.availabilityStatus === "available")}
                                     onChange={(checked) => {
-                                      toggleAvailabilityMutation.mutate({
-                                        id: product.id,
-                                        isAvailable: checked
-                                      });
+                                      if (!checked) {
+                                        setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
+                                        setIsAvailabilityDialogOpen(true);
+                                      } else {
+                                        updateAvailabilityStatusMutation.mutate({
+                                          id: product.id,
+                                          availabilityStatus: "available"
+                                        });
+                                      }
                                     }}
                                     bgColor="bg-green-500"
                                   />
+                                  {product.availabilityStatus === "out_of_stock_today" && (
+                                    <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
+                                      На завтра
+                                    </Badge>
+                                  )}
                                 </div>
                               </TableCell>
                             </TableRow>

@@ -408,6 +408,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch('/api/products/:id/availability', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user || (user.role !== 'admin' && user.role !== 'worker')) {
+        return res.status(403).json({ message: "Insufficient permissions" });
+      }
+
+      const id = parseInt(req.params.id);
+      const { availabilityStatus } = req.body;
+      
+      if (!["available", "out_of_stock_today", "completely_unavailable"].includes(availabilityStatus)) {
+        return res.status(400).json({ message: "Invalid availability status" });
+      }
+
+      const product = await storage.updateProductAvailability(id, availabilityStatus);
+      res.json(product);
+    } catch (error) {
+      console.error("Error updating product availability:", error);
+      res.status(500).json({ message: "Failed to update product availability" });
+    }
+  });
+
   // Order routes
   app.get('/api/orders', isAuthenticated, async (req: any, res) => {
     try {
