@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation } from "@/hooks/use-language";
+import { useIsMobile } from "@/hooks/use-mobile";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import CategoryNav from "@/components/menu/category-nav";
@@ -49,6 +50,7 @@ export default function Home() {
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   // Fetch categories
   const { data: categories = [], isLoading: categoriesLoading } = useQuery<CategoryWithProducts[]>({
@@ -151,14 +153,15 @@ export default function Home() {
     }
   }, [location, selectedCategoryId]);
   
-  // Calculate total slides for carousel - simplified approach
-  const totalSlides = Math.max(1, specialOffers.length);
+  // Calculate slides per page based on screen size
+  const slidesPerPage = isMobile ? 1 : 3;
+  const totalPages = Math.ceil(specialOffers.length / slidesPerPage);
   
   // Handle carousel navigation
-  const goToSlide = (slideIndex: number) => {
+  const goToSlide = (pageIndex: number) => {
     if (carouselApiRef.current) {
+      const slideIndex = pageIndex * slidesPerPage;
       carouselApiRef.current.scrollTo(slideIndex);
-      setCurrentSlide(slideIndex);
     }
   };
 
@@ -505,7 +508,8 @@ export default function Home() {
                           carouselApiRef.current = api;
                           if (api) {
                             api.on('select', () => {
-                              setCurrentSlide(api.selectedScrollSnap());
+                              const currentSlideIndex = api.selectedScrollSnap();
+                              setCurrentSlide(currentSlideIndex);
                             });
                           }
                         }}
@@ -537,17 +541,20 @@ export default function Home() {
                       </Carousel>
 
                       {/* Custom Navigation Dots */}
-                      {specialOffers.length > 1 && (
+                      {specialOffers.length > slidesPerPage && (
                         <div className="flex justify-center mt-6 space-x-2">
-                          {[...Array(Math.ceil(specialOffers.length / 3))].map((_, index) => (
-                            <button
-                              key={index}
-                              onClick={() => goToSlide(index)}
-                              className={`carousel-dot transition-colors ${
-                                Math.floor(currentSlide / 3) === index ? 'bg-orange-500' : 'bg-gray-400'
-                              }`}
-                            />
-                          ))}
+                          {[...Array(totalPages)].map((_, index) => {
+                            const currentPage = Math.floor(currentSlide / slidesPerPage);
+                            return (
+                              <button
+                                key={index}
+                                onClick={() => goToSlide(index)}
+                                className={`carousel-dot transition-colors ${
+                                  currentPage === index ? 'bg-orange-500' : 'bg-gray-400'
+                                }`}
+                              />
+                            );
+                          })}
                         </div>
                       )}
                     </div>
