@@ -87,6 +87,7 @@ const productSchema = z.object({
   unit: z.enum(["100g", "100ml", "piece", "kg"]).default("100g"),
   imageUrl: z.string().optional(),
   isAvailable: z.boolean().default(true),
+  availabilityStatus: z.enum(["available", "out_of_stock_today", "completely_unavailable"]).default("available"),
   isSpecialOffer: z.boolean().default(false),
   discountType: z.string().optional(),
   discountValue: z.string().optional(),
@@ -3683,6 +3684,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       unit: "100g" as ProductUnit,
       imageUrl: "",
       isAvailable: true,
+      availabilityStatus: "available" as const,
       isSpecialOffer: false,
       discountType: "",
       discountValue: "",
@@ -3706,6 +3708,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           unit: (product.unit || "100g") as ProductUnit,
           imageUrl: product.imageUrl || "",
           isAvailable: product.isAvailable ?? true,
+          availabilityStatus: product.availabilityStatus || "available",
           isSpecialOffer: product.isSpecialOffer ?? false,
           discountType: product.discountType || "",
           discountValue: product.discountValue?.toString() || "",
@@ -3719,6 +3722,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           unit: "100g" as ProductUnit,
           imageUrl: "",
           isAvailable: true,
+          availabilityStatus: "available" as const,
           isSpecialOffer: false,
           discountType: "",
           discountValue: "",
@@ -3887,6 +3891,32 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       bgColor="bg-green-500"
                     />
                   </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="availabilityStatus"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">Статус доступности</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder="Выберите статус" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="available" className="text-sm">✅ Доступен</SelectItem>
+                      <SelectItem value="out_of_stock_today" className="text-sm">⏰ Нет на сегодня (доступен завтра)</SelectItem>
+                      <SelectItem value="completely_unavailable" className="text-sm">❌ Полностью недоступен</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription className="text-xs text-gray-500">
+                    Выберите статус доступности товара для заказов
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
