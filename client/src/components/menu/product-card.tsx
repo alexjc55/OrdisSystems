@@ -256,14 +256,9 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             product.availabilityStatus === 'out_of_stock_today' ? (
               <Button
                 onClick={handleAddToCart}
-                className="w-full bg-blue-500 text-white font-medium py-2 px-4 transition-shadow duration-200 hover:shadow-lg hover:shadow-blue-500/50"
-                style={{ backgroundColor: 'rgb(59 130 246)' }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgb(59 130 246)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgb(59 130 246)';
-                }}
+                variant="info"
+                className="w-full"
+                size="lg"
               >
                 <ShoppingCart className="mr-2 h-4 w-4" />
                 Доступен на другой день
@@ -271,8 +266,9 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             ) : (
               <Button
                 onClick={handleAddToCart}
-                className="w-full bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-white font-medium py-2 px-4"
-                style={{ backgroundColor: 'hsl(16, 100%, 60%)', color: 'white' }}
+                variant="default"
+                className="w-full"
+                size="lg"
               >
                 <ShoppingCart className="mr-2 h-4 w-4" />
                 {t('product.addToCart', 'В корзину')}

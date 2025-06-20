@@ -33,12 +33,7 @@ export default memo(function CategoryNav({
           variant={selectedCategoryId === null ? "default" : "secondary"}
           size="sm"
           onClick={handleAllCategoriesClick}
-          className={cn(
-            "flex-shrink-0 text-sm font-medium px-3 py-1.5 h-8",
-            selectedCategoryId === null
-              ? "bg-primary text-white"
-              : "bg-gray-100 text-gray-700"
-          )}
+          className="flex-shrink-0"
         >
           <span className="mr-2">🛍️</span>
           Все
@@ -50,12 +45,7 @@ export default memo(function CategoryNav({
             variant={selectedCategoryId === category.id ? "default" : "secondary"}
             size="sm"
             onClick={() => handleCategoryClick(category.id)}
-            className={cn(
-              "flex-shrink-0 text-sm font-medium px-3 py-1.5 h-8",
-              selectedCategoryId === category.id
-                ? "bg-primary text-white"
-                : "bg-gray-100 text-gray-700"
-            )}
+            className="flex-shrink-0"
           >
             <span className="mr-2">{category.icon || '📦'}</span>
             {category.name}

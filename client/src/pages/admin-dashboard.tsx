@@ -1182,7 +1182,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
         <Button 
           onClick={handleSave}
           disabled={updateOrderMutation.isPending}
-          className="bg-green-600 hover:bg-green-700"
+          variant="success"
         >
           {updateOrderMutation.isPending ? "Сохранение..." : "Сохранить изменения"}
         </Button>
@@ -3632,7 +3632,7 @@ export default function AdminDashboard() {
                   });
                 }
               }}
-              className="bg-blue-500 hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/50 transition-shadow"
+              variant="info"
             >
               Оставить
             </AlertDialogAction>
@@ -6089,7 +6089,8 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               </div>
               <Button 
                 type="submit" 
-                className="text-sm bg-orange-500 hover:bg-orange-600 text-white"
+                variant="default"
+                size="sm"
               >
                 {user ? "Сохранить изменения" : "Создать пользователя"}
               </Button>
