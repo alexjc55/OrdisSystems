@@ -29,7 +29,7 @@ export function WhatsAppChat() {
       style={{
         width: '64px',
         height: '64px',
-        borderRadius: '50%',
+        borderRadius: '50% !important',
         padding: '0',
         border: 'none'
       }}
