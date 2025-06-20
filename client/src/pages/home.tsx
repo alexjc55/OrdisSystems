@@ -143,9 +143,9 @@ export default function Home() {
                 })()}
               </p>
 
-              {/* Compact Store Information */}
+              {/* Store Information Cards - Improved Tablet Layout */}
               {!selectedCategory && searchQuery.length <= 2 && storeSettings && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                   {/* Working Hours */}
                   {storeSettings?.workingHours && (
                     <Card className="p-3 sm:p-4">
@@ -292,7 +292,7 @@ export default function Home() {
                             {category.description || "Вкусные блюда"}
                           </p>
                           <Badge variant="default" className="mt-2 bg-primary">
-                            {category.products.length} блюд
+                            {category.products.length} товаров
                           </Badge>
                         </CardContent>
                       </Card>
