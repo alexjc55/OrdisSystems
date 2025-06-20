@@ -15,7 +15,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
 import Landing from "@/pages/landing";
-import Home from "@/pages/home-modern";
+import Home from "@/pages/home-redesigned";
 import AdminDashboard from "@/pages/admin-dashboard";
 import Profile from "@/pages/profile";
 import ChangePasswordPage from "@/pages/change-password";
