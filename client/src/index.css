@@ -774,20 +774,7 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
     padding: 0.5rem 0.75rem !important;
   }
 
-  /* WhatsApp button override */
-  .whatsapp-button {
-    width: 64px !important;
-    height: 64px !important;
-    min-width: 64px !important;
-    min-height: 64px !important;
-    max-width: 64px !important;
-    max-height: 64px !important;
-    border-radius: 50% !important;
-    padding: 0 !important;
-    border: none !important;
-    font-size: 0.9rem !important;
-    line-height: 1 !important;
-  }
+
   
   /* Input adjustments - exclude quantity inputs in product cards */
   input:not([class*="w-16"]):not([class*="text-center"]), textarea, select {
@@ -930,6 +917,22 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
   input, select, textarea {
     width: 100% !important;
   }
+}
+
+/* WhatsApp button override - maximum specificity */
+button.whatsapp-button.whatsapp-button.whatsapp-button {
+  width: 64px !important;
+  height: 64px !important;
+  min-width: 64px !important;
+  min-height: 64px !important;
+  max-width: 64px !important;
+  max-height: 64px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  border: none !important;
+  font-size: 1rem !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
 }
 
 
