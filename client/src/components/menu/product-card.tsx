@@ -185,7 +185,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             {product.name}
           </h3>
           {product.description && (
-            <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+            <p className="text-base text-gray-600 mb-2 line-clamp-2">
               {product.description}
             </p>
           )}
@@ -218,14 +218,14 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 </span>
               )}
             </div>
-            <span className="text-sm text-gray-500">{getUnitLabel(unit)}</span>
+            <span className="text-base text-gray-500">{getUnitLabel(unit)}</span>
           </div>
         </div>
 
         <div className="space-y-2 mt-auto">
           {/* Quantity Selector */}
           <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-600">
+            <span className="text-sm text-gray-600">
               {unit === "piece" ? 'Кол-во:' : 
                unit === "kg" ? 'Вес (кг):' : 
                unit === "100g" || unit === "100ml" ? 'Граммы:' : 'Кол-во:'}
@@ -281,8 +281,8 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           {/* Total Price */}
           <div className="bg-gray-50 rounded p-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs text-gray-600">Итого:</span>
-              <span className="text-sm font-bold text-gray-900">
+              <span className="text-sm text-gray-600">Итого:</span>
+              <span className="text-base font-bold text-gray-900">
                 {formatCurrency(totalPrice)}
               </span>
             </div>
