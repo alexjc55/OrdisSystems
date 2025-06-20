@@ -112,6 +112,17 @@
 
 /* Universal Button System - Overrides all other styles */
 @layer utilities {
+  /* Apply to all buttons */
+  button, [role="button"], .btn {
+    transition: box-shadow var(--transition-base) !important;
+  }
+
+  /* Prevent background changes on hover for ALL buttons */
+  button:hover, [role="button"]:hover, .btn:hover {
+    background-color: inherit !important;
+    background-image: inherit !important;
+  }
+
   .btn-system {
     display: inline-flex !important;
     align-items: center !important;
@@ -169,14 +180,21 @@
     color: var(--color-white) !important;
   }
 
-  .btn-primary * {
+  .btn-primary *, .btn-primary svg {
     color: var(--color-white) !important;
+    fill: currentColor !important;
   }
 
   .btn-primary:hover {
     background-color: var(--brand-primary) !important;
     background-image: none !important;
     box-shadow: var(--shadow-primary) !important;
+    color: var(--color-white) !important;
+  }
+
+  .btn-primary:hover *, .btn-primary:hover svg {
+    color: var(--color-white) !important;
+    fill: currentColor !important;
   }
 
   /* Secondary Button Variant */
@@ -185,14 +203,21 @@
     color: var(--color-gray-700) !important;
   }
 
-  .btn-secondary * {
+  .btn-secondary *, .btn-secondary svg {
     color: var(--color-gray-700) !important;
+    fill: currentColor !important;
   }
 
   .btn-secondary:hover {
     background-color: var(--color-gray-100) !important;
     background-image: none !important;
     box-shadow: var(--shadow-gray) !important;
+    color: var(--color-gray-700) !important;
+  }
+
+  .btn-secondary:hover *, .btn-secondary:hover svg {
+    color: var(--color-gray-700) !important;
+    fill: currentColor !important;
   }
 
   /* Success Button Variant */
@@ -201,14 +226,21 @@
     color: var(--color-white) !important;
   }
 
-  .btn-success * {
+  .btn-success *, .btn-success svg {
     color: var(--color-white) !important;
+    fill: currentColor !important;
   }
 
   .btn-success:hover {
     background-color: var(--color-success) !important;
     background-image: none !important;
     box-shadow: var(--shadow-success) !important;
+    color: var(--color-white) !important;
+  }
+
+  .btn-success:hover *, .btn-success:hover svg {
+    color: var(--color-white) !important;
+    fill: currentColor !important;
   }
 
   /* Warning Button Variant */
@@ -217,14 +249,21 @@
     color: var(--color-white) !important;
   }
 
-  .btn-warning * {
+  .btn-warning *, .btn-warning svg {
     color: var(--color-white) !important;
+    fill: currentColor !important;
   }
 
   .btn-warning:hover {
     background-color: var(--color-warning) !important;
     background-image: none !important;
     box-shadow: var(--shadow-warning) !important;
+    color: var(--color-white) !important;
+  }
+
+  .btn-warning:hover *, .btn-warning:hover svg {
+    color: var(--color-white) !important;
+    fill: currentColor !important;
   }
 
   /* Error/Destructive Button Variant */
@@ -233,14 +272,21 @@
     color: var(--color-white) !important;
   }
 
-  .btn-error * {
+  .btn-error *, .btn-error svg {
     color: var(--color-white) !important;
+    fill: currentColor !important;
   }
 
   .btn-error:hover {
     background-color: var(--color-error) !important;
     background-image: none !important;
     box-shadow: var(--shadow-error) !important;
+    color: var(--color-white) !important;
+  }
+
+  .btn-error:hover *, .btn-error:hover svg {
+    color: var(--color-white) !important;
+    fill: currentColor !important;
   }
 
   /* Info Button Variant */
@@ -249,14 +295,21 @@
     color: var(--color-white) !important;
   }
 
-  .btn-info * {
+  .btn-info *, .btn-info svg {
     color: var(--color-white) !important;
+    fill: currentColor !important;
   }
 
   .btn-info:hover {
     background-color: var(--color-info) !important;
     background-image: none !important;
     box-shadow: var(--shadow-info) !important;
+    color: var(--color-white) !important;
+  }
+
+  .btn-info:hover *, .btn-info:hover svg {
+    color: var(--color-white) !important;
+    fill: currentColor !important;
   }
 
   /* Outline Button Variant */

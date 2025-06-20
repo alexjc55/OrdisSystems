@@ -2109,7 +2109,7 @@ export default function AdminDashboard() {
                 <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.settings')}</TabsTrigger>
               )}
               {hasPermission("canManageSettings") && (
-                <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.settings')}</TabsTrigger>
+                <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Права доступа</TabsTrigger>
               )}
             </TabsList>
           </div>
