@@ -304,7 +304,7 @@
   }
 }
 
-/* ПОЛНОСТЬЮ ПЕРЕПИСАННЫЕ СТИЛИ ДЛЯ SELECT МЕНЮ */
+/* ПРОСТЫЕ И РАБОТАЮЩИЕ СТИЛИ ДЛЯ SELECT МЕНЮ */
 
 /* Контейнер меню */
 [data-radix-select-content] {
@@ -315,8 +315,8 @@
   z-index: 50 !important;
 }
 
-/* Базовые стили для всех элементов меню */
-*[data-radix-select-item] {
+/* Все элементы меню - базовые стили */
+[data-radix-select-item] {
   color: #000000 !important;
   background-color: transparent !important;
   cursor: pointer !important;
@@ -329,21 +329,20 @@
   position: relative !important;
 }
 
-/* Hover состояние для обычных элементов */
-*[data-radix-select-item]:not([data-state="checked"]):hover {
+/* Hover для всех элементов */
+[data-radix-select-item]:hover {
   background-color: #f97316 !important;
   color: #ffffff !important;
 }
 
-/* АКТИВНЫЙ ЭЛЕМЕНТ - УЛЬТРА СПЕЦИФИЧНОСТЬ */
-html body *[data-radix-select-item][data-state="checked"] {
-  background-color: transparent !important;
+/* Активный элемент без hover - оранжевый текст с галочкой */
+[data-radix-select-item][data-state="checked"] {
   color: #f97316 !important;
-  position: relative !important;
+  background-color: transparent !important;
 }
 
-/* Галочка для активного элемента - УЛЬТРА СПЕЦИФИЧНОСТЬ */
-html body *[data-radix-select-item][data-state="checked"]::after {
+/* Галочка для активного элемента */
+[data-radix-select-item][data-state="checked"]::after {
   content: "✓" !important;
   position: absolute !important;
   right: 8px !important;
@@ -351,17 +350,10 @@ html body *[data-radix-select-item][data-state="checked"]::after {
   transform: translateY(-50%) !important;
   color: #f97316 !important;
   font-weight: bold !important;
-  z-index: 10 !important;
 }
 
-/* Hover на активный элемент */
-html body *[data-radix-select-item][data-state="checked"]:hover {
-  background-color: #f97316 !important;
-  color: #ffffff !important;
-}
-
-/* Белая галочка при hover на активный элемент */
-html body *[data-radix-select-item][data-state="checked"]:hover::after {
+/* При hover на активный элемент - белая галочка */
+[data-radix-select-item][data-state="checked"]:hover::after {
   color: #ffffff !important;
 }
 
