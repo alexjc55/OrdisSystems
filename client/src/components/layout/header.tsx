@@ -71,10 +71,12 @@ export default function Header({ onResetView }: HeaderProps) {
 
           {/* Right side - Actions */}
           <div className="flex items-center gap-1 md:gap-4 rtl:space-x-reverse flex-shrink-0">
-            {/* Language Switcher - Hidden on mobile */}
-            <div className="hidden md:block">
-              <LanguageSwitcher variant="compact" />
-            </div>
+            {/* Language Switcher - Show based on enabled languages */}
+            {storeSettings?.enabledLanguages && storeSettings.enabledLanguages.length > 1 && (
+              <div className="hidden md:block">
+                <LanguageSwitcher variant="compact" />
+              </div>
+            )}
             
             {/* Cart Button - Always visible */}
             <Button 
@@ -97,7 +99,7 @@ export default function Header({ onResetView }: HeaderProps) {
               )}
             </Button>
 
-            {/* User Menu or Login Button */}
+            {/* User Menu or Mobile Menu Button */}
             {user ? (
               <>
                 {/* Desktop User Menu */}
@@ -158,18 +160,14 @@ export default function Header({ onResetView }: HeaderProps) {
                   </DropdownMenu>
                 </div>
                 
-                {/* Mobile User Avatar */}
-                <Button 
-                  variant="ghost" 
-                  className="relative h-8 w-8 rounded-full p-0 md:hidden"
+                {/* Mobile Menu Button for logged in users */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="md:hidden p-2 text-gray-600 hover:text-primary"
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
-                    <AvatarFallback>
-                      {user?.firstName?.[0]}{user?.lastName?.[0]}
-                    </AvatarFallback>
-                  </Avatar>
+                  <Menu className="h-5 w-5" />
                 </Button>
               </>
             ) : (
@@ -177,15 +175,6 @@ export default function Header({ onResetView }: HeaderProps) {
                 {/* Desktop Login Button */}
                 <Button 
                   className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-500/50 text-white transition-shadow duration-200 hidden md:flex"
-                  onClick={() => window.location.href = '/auth'}
-                >
-                  {t('login')}
-                </Button>
-                
-                {/* Mobile Login Button */}
-                <Button 
-                  size="sm"
-                  className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg text-white transition-shadow duration-200 px-2 py-1 text-xs md:hidden"
                   onClick={() => window.location.href = '/auth'}
                 >
                   {t('login')}
@@ -223,11 +212,26 @@ export default function Header({ onResetView }: HeaderProps) {
                 </Link>
               )}
               
-              {/* Language Switcher on Mobile */}
-              <div className="px-3 py-2">
-                <p className="text-xs font-medium text-gray-500 mb-2">{t('language')}</p>
-                <LanguageSwitcher variant="compact" />
-              </div>
+              {/* Language Switcher on Mobile - Only show if multiple languages enabled */}
+              {storeSettings?.enabledLanguages && storeSettings.enabledLanguages.length > 1 && (
+                <div className="px-3 py-2">
+                  <p className="text-xs font-medium text-gray-500 mb-2">{t('language')}</p>
+                  <LanguageSwitcher variant="compact" />
+                </div>
+              )}
+              
+              {/* Login Button for non-logged in users */}
+              {!user && (
+                <div className="border-t border-gray-200 pt-2 mt-2">
+                  <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button 
+                      className="w-full bg-orange-500 hover:bg-orange-500 hover:shadow-lg text-white transition-shadow duration-200 mx-3 my-2"
+                    >
+                      {t('login')}
+                    </Button>
+                  </Link>
+                </div>
+              )}
               
               {/* User Profile Link - Only for logged in users */}
               {user && (
