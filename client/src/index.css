@@ -227,39 +227,6 @@
     }
   }
 
-  /* Force white background on ghost variant buttons with maximum specificity */
-  html body button[class*="ghost"],
-  html body .btn-ghost,
-  html body button.hover\:bg-accent.hover\:text-accent-foreground,
-  html body button.h-auto.p-0.font-medium.text-blue-600.hover\:text-blue-800.hover\:bg-transparent,
-  html body button.h-auto.p-0.font-medium.text-blue-600.hover\:text-blue-800,
-  html body button.h-auto.p-0:not([class*="bg-"]):not([style*="background"]) {
-    background-color: white !important;
-    background-image: none !important;
-  }
-
-  /* Target specific shadcn button classes that have no background */
-  html body button:not([class*="bg-orange"]):not([class*="bg-blue"]):not([class*="bg-red"]):not([class*="bg-green"]):not([class*="bg-yellow"]):not([class*="bg-gray"]):not([class*="bg-white"]):not([style*="background-color"]) {
-    background-color: white !important;
-  }
-
-  /* Universal fallback for any button that might have transparent or undefined background */  
-  html body * button {
-    background-color: white !important;
-  }
-
-  /* Restore proper colors for specific button types */
-  html body button[class*="bg-orange"],
-  html body button[class*="bg-blue"],
-  html body button[class*="bg-red"],
-  html body button[class*="bg-green"],
-  html body button[class*="bg-yellow"],
-  html body button[class*="bg-gray"],
-  html body button.bg-orange-500,
-  html body button.bg-blue-600 {
-    background-color: revert !important;
-  }
-
   /* RTL support preparation */
   .rtl {
     direction: rtl;
