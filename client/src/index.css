@@ -304,57 +304,55 @@
   }
 }
 
-/* ПРОСТЫЕ И РАБОТАЮЩИЕ СТИЛИ ДЛЯ SELECT МЕНЮ */
+/* SELECT МЕНЮ - ФИНАЛЬНАЯ ВЕРСИЯ */
 
-/* Контейнер меню */
+/* Контейнер */
 [data-radix-select-content] {
-  background-color: white !important;
+  background: white !important;
   border: 1px solid #e5e7eb !important;
   border-radius: 6px !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
   z-index: 50 !important;
 }
 
-/* Все элементы меню - базовые стили */
-[data-radix-select-item] {
-  color: #000000 !important;
-  background-color: transparent !important;
+/* Элементы меню - используем div селектор для точности */
+div[data-radix-select-item] {
+  color: black !important;
+  background: transparent !important;
   cursor: pointer !important;
   padding: 8px 12px !important;
   border: none !important;
   outline: none !important;
-  transition: all 0.15s ease !important;
-  display: block !important;
-  width: 100% !important;
   position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
 }
 
-/* Hover для всех элементов */
-[data-radix-select-item]:hover {
-  background-color: #f97316 !important;
-  color: #ffffff !important;
+/* Hover эффект */
+div[data-radix-select-item]:hover,
+div[data-radix-select-item][data-highlighted] {
+  background: #f97316 !important;
+  color: white !important;
 }
 
-/* Активный элемент без hover - оранжевый текст с галочкой */
-[data-radix-select-item][data-state="checked"] {
+/* Выбранный элемент */
+div[data-radix-select-item][data-state="checked"] {
   color: #f97316 !important;
-  background-color: transparent !important;
+  background: transparent !important;
 }
 
-/* Галочка для активного элемента */
-[data-radix-select-item][data-state="checked"]::after {
-  content: "✓" !important;
-  position: absolute !important;
-  right: 8px !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
+/* Галочка */
+div[data-radix-select-item][data-state="checked"]::after {
+  content: "✓";
   color: #f97316 !important;
   font-weight: bold !important;
+  margin-left: auto !important;
 }
 
-/* При hover на активный элемент - белая галочка */
-[data-radix-select-item][data-state="checked"]:hover::after {
-  color: #ffffff !important;
+/* Галочка при hover */
+div[data-radix-select-item][data-state="checked"]:hover::after {
+  color: white !important;
 }
 
 /* Очищены все дублирующиеся селекторы */
