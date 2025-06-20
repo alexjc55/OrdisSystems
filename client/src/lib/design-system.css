@@ -335,19 +335,38 @@
   transition: all var(--transition-base) !important;
 }
 
-/* Completely exclude select components from global button styles */
-[data-radix-select-trigger],
-[data-radix-select-trigger] *,
-[data-radix-select-content],
-[data-radix-select-content] *,
-[data-radix-select-viewport],
-[data-radix-select-viewport] *,
-[data-radix-select-item],
-[data-radix-select-item] * {
-  background: revert !important;
-  color: revert !important;
-  border: revert !important;
-  border-radius: revert !important;
+/* Proper select component styling that works with theme system */
+[data-radix-select-trigger] {
+  background: white !important;
+  color: black !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 6px !important;
+}
+
+[data-radix-select-content] {
+  background: white !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-radix-select-item] {
+  background: transparent !important;
+  color: black !important;
+  padding: 8px 12px !important;
+  cursor: pointer !important;
+}
+
+[data-radix-select-item]:hover,
+[data-radix-select-item][data-highlighted] {
+  background: var(--color-primary) !important;
+  color: white !important;
+}
+
+[data-radix-select-item][data-state="checked"] {
+  background: var(--color-primary) !important;
+  color: white !important;
+  font-weight: 500 !important;
 }
 
 /* Specific overrides for common patterns */
