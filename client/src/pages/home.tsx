@@ -479,9 +479,37 @@ export default function Home() {
               {/* Special Offers Section */}
               {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && (
                 <div className="mt-12">
-                  <div className="flex items-center mb-6">
-                    <span className="mr-3 text-2xl">🔥</span>
-                    <h2 className="text-2xl font-poppins font-bold text-gray-900">Специальные предложения</h2>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center">
+                      <span className="mr-3 text-2xl">🔥</span>
+                      <h2 className="text-2xl font-poppins font-bold text-gray-900">Специальные предложения</h2>
+                    </div>
+                    
+                    {/* Minimalistic Navigation Arrows */}
+                    {specialOffers.length > slidesPerPage && (
+                      <div className="hidden md:flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            if (carouselApiRef.current) {
+                              carouselApiRef.current.scrollPrev();
+                            }
+                          }}
+                          className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (carouselApiRef.current) {
+                              carouselApiRef.current.scrollNext();
+                            }
+                          }}
+                          className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                   
                   {allProductsLoading ? (
@@ -538,8 +566,7 @@ export default function Home() {
                           ))}
                         </CarouselContent>
 
-                        <CarouselPrevious className="hidden md:flex -left-12" />
-                        <CarouselNext className="hidden md:flex -right-12" />
+
                       </Carousel>
 
                       {/* Custom Navigation Dots */}
