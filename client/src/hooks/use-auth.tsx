@@ -36,6 +36,7 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
+  const { t } = useCommonTranslation();
   const {
     data: user,
     error,
@@ -53,14 +54,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/auth/user"], user);
       toast({
-        title: "Вход выполнен",
-        description: "Добро пожаловать!",
+        title: t('auth.loginSuccess'),
+        description: t('auth.loginWelcome'),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Ошибка входа",
-        description: "Неверное имя пользователя или пароль",
+        title: t('auth.loginError'),
+        description: t('auth.loginInvalidCredentials'),
         variant: "destructive",
       });
     },
@@ -74,13 +75,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/auth/user"], user);
       toast({
-        title: "Регистрация успешна",
-        description: "Добро пожаловать!",
+        title: t('auth.registerSuccess'),
+        description: t('auth.loginWelcome'),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Ошибка регистрации",
+        title: t('auth.registerError'),
         description: error.message,
         variant: "destructive",
       });
@@ -94,13 +95,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: () => {
       queryClient.setQueryData(["/api/auth/user"], null);
       toast({
-        title: "Выход выполнен",
-        description: "До свидания!",
+        title: t('auth.logoutSuccess'),
+        description: t('auth.logoutMessage'),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Ошибка выхода",
+        title: t('auth.logoutError'),
         description: error.message,
         variant: "destructive",
       });

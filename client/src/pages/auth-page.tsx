@@ -11,36 +11,38 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-
-const loginSchema = z.object({
-  username: z.string().min(1, "Введите имя пользователя"),
-  password: z.string().min(1, "Введите пароль"),
-});
-
-const registerSchema = z.object({
-  username: z.string()
-    .min(3, "Имя пользователя должно содержать минимум 3 символа")
-    .max(50, "Имя пользователя не должно превышать 50 символов")
-    .regex(/^[a-zA-Z0-9_]+$/, "Только латинские буквы, цифры и подчеркивание"),
-  email: z.string().email("Введите корректный email").optional().or(z.literal("")),
-  password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
-  confirmPassword: z.string(),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  phone: z.string().optional(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Пароли не совпадают",
-  path: ["confirmPassword"],
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
-type RegisterFormData = z.infer<typeof registerSchema>;
+import { useCommonTranslation } from "@/hooks/use-language";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
   const { user, loginMutation, registerMutation } = useAuth();
   const { storeSettings } = useStoreSettings();
+  const { t } = useCommonTranslation();
   const [activeTab, setActiveTab] = useState("login");
+
+  const loginSchema = z.object({
+    username: z.string().min(1, t('validation.usernameRequired')),
+    password: z.string().min(1, t('validation.passwordRequired')),
+  });
+
+  const registerSchema = z.object({
+    username: z.string()
+      .min(3, t('validation.usernameMinLength'))
+      .max(50, t('validation.usernameMaxLength'))
+      .regex(/^[a-zA-Z0-9_]+$/, t('validation.usernameFormat')),
+    email: z.string().email(t('validation.emailInvalid')).optional().or(z.literal("")),
+    password: z.string().min(6, t('validation.passwordMinLength')),
+    confirmPassword: z.string(),
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    phone: z.string().optional(),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t('validation.passwordMismatch'),
+    path: ["confirmPassword"],
+  });
+
+  type LoginFormData = z.infer<typeof loginSchema>;
+  type RegisterFormData = z.infer<typeof registerSchema>;
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -93,7 +95,7 @@ export default function AuthPage() {
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="h-4 w-4" />
-          На главную
+          {t('auth.backToHome')}
         </Button>
       </div>
       
