@@ -2040,7 +2040,7 @@ export default function AdminDashboard() {
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                      placeholder={t('products.searchProducts')}
+                      placeholder={t('products.searchProducts', 'Поиск товаров...')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10 text-sm"
@@ -2051,10 +2051,10 @@ export default function AdminDashboard() {
                       <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
                         <SelectTrigger className="pl-10 text-sm">
-                          <SelectValue placeholder={t('products.allCategories')} />
+                          <SelectValue placeholder={t('products.allCategories', 'Все категории')} />
                         </SelectTrigger>
                         <SelectContent className="bg-white">
-                          <SelectItem value="all">{t('products.allCategories')}</SelectItem>
+                          <SelectItem value="all">{t('products.allCategories', 'Все категории')}</SelectItem>
                           {(categories as any[] || []).map((category: any) => (
                             <SelectItem 
                               key={category.id} 
@@ -2070,7 +2070,7 @@ export default function AdminDashboard() {
                       <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
                         <SelectTrigger className="pl-10 text-sm">
-                          <SelectValue placeholder={t('products.productStatus')} />
+                          <SelectValue placeholder={t('products.productStatus', 'Статус товара')} />
                         </SelectTrigger>
                         <SelectContent className="bg-white">
                           <SelectItem value="all">{t('products.allProducts', 'Все товары')}</SelectItem>
@@ -2439,16 +2439,16 @@ export default function AdminDashboard() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="active">{t('orders.activeOrders', 'Активные заказы')}</SelectItem>
-                      <SelectItem value="delivered">{t('orders.deliveredOrders')}</SelectItem>
-                      <SelectItem value="cancelled">{t('orders.cancelledOrders')}</SelectItem>
-                      <SelectItem value="all">{t('orders.allOrders')}</SelectItem>
+                      <SelectItem value="delivered">{t('orders.deliveredOrders', 'Доставленные заказы')}</SelectItem>
+                      <SelectItem value="cancelled">{t('orders.cancelledOrders', 'Отмененные заказы')}</SelectItem>
+                      <SelectItem value="all">{t('orders.allOrders', 'Все заказы')}</SelectItem>
                     </SelectContent>
                   </Select>
 
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
                     <Input
-                      placeholder={t('orders.searchOrders')}
+                      placeholder={t('orders.searchOrders', 'Поиск заказов...')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-9 text-xs h-8 w-48"
