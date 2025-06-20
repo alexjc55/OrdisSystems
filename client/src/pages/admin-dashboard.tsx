@@ -2427,22 +2427,22 @@ export default function AdminDashboard() {
                       <Card key={category.id} className="group hover:shadow-md transition-shadow duration-200">
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between mb-3">
-                            <div className="flex items-center gap-3 flex-1">
-                              <div className="text-2xl">{category.icon}</div>
-                              <div className="flex-1 min-w-0">
-                                <button
-                                  onClick={() => {
-                                    setEditingCategory(category);
-                                    setIsCategoryFormOpen(true);
-                                  }}
-                                  className="font-medium text-sm hover:text-blue-600 cursor-pointer text-left block w-full truncate"
-                                >
-                                  {category.name}
-                                </button>
-                                {category.description && (
-                                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">{category.description}</p>
-                                )}
-                              </div>
+                            <div className="flex-1 min-w-0 text-left">
+                              <button
+                                onClick={() => {
+                                  setEditingCategory(category);
+                                  setIsCategoryFormOpen(true);
+                                }}
+                                className="font-bold text-lg hover:text-blue-600 cursor-pointer text-left block w-full truncate"
+                              >
+                                {category.name}
+                              </button>
+                              {category.description && (
+                                <p className="text-sm text-gray-500 mt-2 line-clamp-2 text-left">{category.description}</p>
+                              )}
+                            </div>
+                            <div className="flex-shrink-0 ml-4">
+                              <div className="text-4xl">{category.icon}</div>
                             </div>
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                               <Button
