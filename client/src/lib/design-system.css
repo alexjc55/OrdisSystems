@@ -255,7 +255,7 @@
 
   /* Ghost Button Variant */
   .btn-ghost {
-    background-color: transparent !important;
+    background-color: white !important;
     color: var(--color-gray-700) !important;
     border: none !important;
   }
