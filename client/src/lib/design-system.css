@@ -298,11 +298,55 @@
 }
 
 /* Global component overrides */
-.btn, button {
+.btn, button, .btn-system {
   font-family: var(--font-family-primary) !important;
   font-weight: var(--font-weight-medium) !important;
   border-radius: var(--border-radius-md) !important;
   transition: all var(--transition-base) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+}
+
+/* Button sizes */
+.btn-sm {
+  padding: 0.5rem 0.75rem !important;
+  font-size: var(--font-size-sm) !important;
+  line-height: 1.25rem !important;
+}
+
+.btn-base {
+  padding: 0.5rem 1rem !important;
+  font-size: var(--font-size-base) !important;
+  line-height: 1.5rem !important;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem !important;
+  font-size: var(--font-size-lg) !important;
+  line-height: 1.75rem !important;
+}
+
+.btn-icon {
+  padding: 0.5rem !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+}
+
+/* Link variant */
+.btn-link {
+  background-color: transparent !important;
+  color: var(--color-primary) !important;
+  border: none !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px !important;
+}
+
+.btn-link:hover {
+  background-color: transparent !important;
+  color: var(--color-primary-dark) !important;
+  text-decoration: underline !important;
 }
 
 /* Card components */
@@ -372,7 +416,76 @@
   --tw-text-opacity: 1 !important;
 }
 
-/* Ensure all buttons follow the theme system */
+/* Force all buttons to follow the theme system */
 [class*="bg-orange"], [class*="bg-blue"], [class*="bg-green"], [class*="bg-red"] {
   background-color: var(--color-primary) !important;
+}
+
+/* Override Tailwind and other framework buttons */
+[class*="bg-orange"]:hover, [class*="bg-blue"]:hover, [class*="bg-green"]:hover, [class*="bg-red"]:hover {
+  background-color: var(--color-primary) !important;
+  box-shadow: var(--shadow-primary) !important;
+}
+
+/* Apply theme system to all button-like elements */
+[role="button"], .button, [class*="btn"], [class*="Button"] {
+  font-family: var(--font-family-primary) !important;
+  font-weight: var(--font-weight-medium) !important;
+  border-radius: var(--border-radius-md) !important;
+  transition: all var(--transition-base) !important;
+}
+
+/* Specific overrides for common patterns */
+.bg-orange-500, .bg-orange-600, .bg-orange-700 {
+  background-color: var(--color-primary) !important;
+}
+
+.bg-orange-500:hover, .bg-orange-600:hover, .bg-orange-700:hover {
+  background-color: var(--color-primary) !important;
+  box-shadow: var(--shadow-primary) !important;
+}
+
+.text-orange-500, .text-orange-600, .text-orange-700 {
+  color: var(--color-primary) !important;
+}
+
+.border-orange-500, .border-orange-600, .border-orange-700 {
+  border-color: var(--color-primary) !important;
+}
+
+/* Override hover effects on all buttons */
+button:hover, [role="button"]:hover, .btn:hover {
+  transform: none !important;
+  scale: none !important;
+}
+
+/* Comprehensive color overrides for all orange variants */
+.text-orange-500, .text-orange-600, .text-orange-700, .text-orange-800 {
+  color: var(--color-primary) !important;
+}
+
+.hover\:text-orange-500:hover, .hover\:text-orange-600:hover, .hover\:text-orange-700:hover, .hover\:text-orange-800:hover {
+  color: var(--color-primary-dark) !important;
+}
+
+.hover\:text-primary:hover {
+  color: var(--color-primary) !important;
+}
+
+/* Badge color overrides */
+.bg-orange-500, .bg-orange-600, .bg-orange-700 {
+  background-color: var(--color-primary) !important;
+}
+
+.hover\:bg-orange-500:hover, .hover\:bg-orange-600:hover, .hover\:bg-orange-700:hover {
+  background-color: var(--color-primary-dark) !important;
+}
+
+/* Focus and active states */
+.focus\:ring-orange-500:focus {
+  --tw-ring-color: var(--color-primary) !important;
+}
+
+.active\:bg-orange-600:active {
+  background-color: var(--color-primary-dark) !important;
 }
