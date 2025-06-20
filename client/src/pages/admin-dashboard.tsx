@@ -496,9 +496,9 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     },
   });
 
-  // Clean notes from discount metadata for display
+  // Clean notes from metadata for display
   const cleanNotes = (notes: string) => {
-    return notes.replace(/\[DISCOUNTS:.*?\]/g, '').trim();
+    return notes.replace(/\[ORDER_DATA:.*?\]/g, '').replace(/\[DISCOUNTS:.*?\]/g, '').trim();
   };
 
   const [editedOrder, setEditedOrder] = useState({
@@ -510,49 +510,70 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     notes: cleanNotes(order.customerNotes || ''),
   });
 
-  // Extract discount information from order notes
-  const extractDiscountsFromNotes = (notes: string) => {
+  // Extract order metadata (discounts and manual price override) from order notes
+  const extractOrderMetadata = (notes: string) => {
+    // Try new format first
+    const orderDataMatch = notes.match(/\[ORDER_DATA:(.*?)\]/);
+    if (orderDataMatch) {
+      try {
+        const parsed = JSON.parse(orderDataMatch[1]);
+        console.log('Extracted order metadata from notes:', parsed);
+        return {
+          orderDiscount: parsed.orderDiscount || null,
+          itemDiscounts: parsed.itemDiscounts || null,
+          manualPriceOverride: parsed.manualPriceOverride || null
+        };
+      } catch (e) {
+        console.log('Failed to parse order metadata:', e);
+      }
+    }
+    
+    // Fallback to old discount format
     const discountMatch = notes.match(/\[DISCOUNTS:(.*?)\]/);
     if (discountMatch) {
       try {
         const parsed = JSON.parse(discountMatch[1]);
-        console.log('Extracted discounts from notes:', parsed);
-        return parsed;
+        console.log('Extracted discounts from notes (legacy format):', parsed);
+        return {
+          orderDiscount: parsed.orderDiscount || null,
+          itemDiscounts: parsed.itemDiscounts || null,
+          manualPriceOverride: null
+        };
       } catch (e) {
         console.log('Failed to parse discount data:', e);
-        return { orderDiscount: null, itemDiscounts: null };
       }
     }
-    console.log('No discount data found in notes');
-    return { orderDiscount: null, itemDiscounts: null };
+    
+    console.log('No order metadata found in notes');
+    return { orderDiscount: null, itemDiscounts: null, manualPriceOverride: null };
   };
 
-  const savedDiscounts = extractDiscountsFromNotes(order.customerNotes || '');
+  const savedOrderData = extractOrderMetadata(order.customerNotes || '');
   console.log('Order customerNotes:', order.customerNotes);
-  console.log('Saved discounts:', savedDiscounts);
+  console.log('Saved order data:', savedOrderData);
 
   // Discount state
   const [orderDiscount, setOrderDiscount] = useState({
-    type: (savedDiscounts.orderDiscount?.type || 'percentage') as 'percentage' | 'amount',
-    value: savedDiscounts.orderDiscount?.value || 0,
-    reason: savedDiscounts.orderDiscount?.reason || ''
+    type: (savedOrderData.orderDiscount?.type || 'percentage') as 'percentage' | 'amount',
+    value: savedOrderData.orderDiscount?.value || 0,
+    reason: savedOrderData.orderDiscount?.reason || ''
   });
 
   const [itemDiscounts, setItemDiscounts] = useState<{[key: number]: {type: 'percentage' | 'amount', value: number, reason: string}}>(
-    savedDiscounts.itemDiscounts || {}
+    savedOrderData.itemDiscounts || {}
   );
 
   // Manual price override state
   const [manualPriceOverride, setManualPriceOverride] = useState<{enabled: boolean, value: number}>({
-    enabled: false,
-    value: 0
+    enabled: savedOrderData.manualPriceOverride?.enabled || false,
+    value: savedOrderData.manualPriceOverride?.value || 0
   });
 
   // Apply saved discounts to order items when order data is loaded
   useEffect(() => {
-    if (order.items && Object.keys(savedDiscounts.itemDiscounts || {}).length > 0) {
+    if (order.items && Object.keys(savedOrderData.itemDiscounts || {}).length > 0) {
       const updatedItems = editedOrderItems.map((item: any, index: number) => {
-        const discount = savedDiscounts.itemDiscounts[index];
+        const discount = savedOrderData.itemDiscounts[index];
         if (discount) {
           const quantity = parseFloat(item.quantity) || 0;
           const unitPrice = parseFloat(item.pricePerUnit || item.pricePerKg || 0);
@@ -571,7 +592,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
       });
       setEditedOrderItems(updatedItems);
     }
-  }, [order.items]); // Run when order items are loaded
+  }, [order.items, savedOrderData.itemDiscounts]); // Run when order items are loaded
 
   // Helper functions for order items editing
   const getUnitDisplay = (unit: string, quantity: number) => {
