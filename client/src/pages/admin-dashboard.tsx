@@ -2174,12 +2174,13 @@ export default function AdminDashboard() {
                         <SelectTrigger className="pl-10 text-sm">
                           <SelectValue placeholder={t('products.allCategories', 'Все категории')} />
                         </SelectTrigger>
-                        <SelectContent className="bg-white">
-                          <SelectItem value="all">{t('products.allCategories', 'Все категории')}</SelectItem>
+                        <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                          <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{t('products.allCategories', 'Все категории')}</SelectItem>
                           {(categories as any[] || []).map((category: any) => (
                             <SelectItem 
                               key={category.id} 
                               value={category.id.toString()}
+                              className="text-gray-900 hover:bg-gray-100"
                             >
                               {category.name}
                             </SelectItem>
@@ -2193,11 +2194,11 @@ export default function AdminDashboard() {
                         <SelectTrigger className="pl-10 text-sm">
                           <SelectValue placeholder={t('products.productStatus', 'Статус товара')} />
                         </SelectTrigger>
-                        <SelectContent className="bg-white">
-                          <SelectItem value="all">{t('products.allProducts', 'Все товары')}</SelectItem>
-                          <SelectItem value="available">{t('products.availableProducts', 'Доступные товары')}</SelectItem>
-                          <SelectItem value="unavailable">{t('products.unavailableProducts', 'Недоступные товары')}</SelectItem>
-                          <SelectItem value="with_discount">{t('products.productsWithDiscount', 'Товары со скидкой')}</SelectItem>
+                        <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                          <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{t('products.allProducts', 'Все товары')}</SelectItem>
+                          <SelectItem value="available" className="text-gray-900 hover:bg-gray-100">{t('products.availableProducts', 'Доступные товары')}</SelectItem>
+                          <SelectItem value="unavailable" className="text-gray-900 hover:bg-gray-100">{t('products.unavailableProducts', 'Недоступные товары')}</SelectItem>
+                          <SelectItem value="with_discount" className="text-gray-900 hover:bg-gray-100">{t('products.productsWithDiscount', 'Товары со скидкой')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -2273,7 +2274,7 @@ export default function AdminDashboard() {
                                 </Badge>
                               </TableCell>
                               <TableCell className="px-2 sm:px-4 py-2">
-                                <div className="text-xs sm:text-sm">
+                                <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
                                   {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
                                     <div className="space-y-1">
                                       <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
@@ -2632,10 +2633,10 @@ export default function AdminDashboard() {
                                               {order.customerPhone}
                                             </button>
                                           </DropdownMenuTrigger>
-                                          <DropdownMenuContent align="start" className="w-40">
+                                          <DropdownMenuContent align="start" className="w-40 bg-white border border-gray-200 shadow-lg">
                                             <DropdownMenuItem 
                                               onClick={() => window.location.href = `tel:${order.customerPhone}`}
-                                              className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
+                                              className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <Phone className="h-4 w-4 mr-2" />
 {t('orders.call', 'Позвонить')}
@@ -2645,7 +2646,7 @@ export default function AdminDashboard() {
                                                 const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
                                                 window.open(`https://wa.me/${cleanPhone}`, '_blank');
                                               }}
-                                              className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
+                                              className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <MessageCircle className="h-4 w-4 mr-2" />
                                               WhatsApp
@@ -2669,13 +2670,13 @@ export default function AdminDashboard() {
                                       <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)}`}>
                                         <SelectValue />
                                       </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="pending" className="bg-yellow-50 text-yellow-800 hover:bg-yellow-100 focus:bg-yellow-100">Ожидает</SelectItem>
-                                        <SelectItem value="confirmed" className="bg-blue-50 text-blue-800 hover:bg-blue-100 focus:bg-blue-100">Подтвержден</SelectItem>
-                                        <SelectItem value="preparing" className="bg-orange-50 text-orange-800 hover:bg-orange-100 focus:bg-orange-100">Готовится</SelectItem>
-                                        <SelectItem value="ready" className="bg-green-50 text-green-800 hover:bg-green-100 focus:bg-green-100">Готов</SelectItem>
-                                        <SelectItem value="delivered" className="bg-gray-50 text-gray-800 hover:bg-gray-100 focus:bg-gray-100">Доставлен</SelectItem>
-                                        <SelectItem value="cancelled" className="bg-red-50 text-red-800 hover:bg-red-100 focus:bg-red-100">Отменен</SelectItem>
+                                      <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                                        <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">Ожидает</SelectItem>
+                                        <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">Подтвержден</SelectItem>
+                                        <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">Готовится</SelectItem>
+                                        <SelectItem value="ready" className="text-green-800 hover:bg-green-50">Готов</SelectItem>
+                                        <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">Доставлен</SelectItem>
+                                        <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">Отменен</SelectItem>
                                       </SelectContent>
                                     </Select>
                                   </TableCell>
@@ -3237,12 +3238,12 @@ export default function AdminDashboard() {
                                         {user.phone}
                                       </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                      <DropdownMenuItem onClick={() => window.open(`tel:${user.phone}`, '_self')}>
+                                    <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg">
+                                      <DropdownMenuItem onClick={() => window.open(`tel:${user.phone}`, '_self')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
                                         <Phone className="mr-2 h-4 w-4" />
                                         Позвонить
                                       </DropdownMenuItem>
-                                      <DropdownMenuItem onClick={() => window.open(`https://wa.me/${user.phone.replace(/[^\d]/g, '')}`, '_blank')}>
+                                      <DropdownMenuItem onClick={() => window.open(`https://wa.me/${user.phone.replace(/[^\d]/g, '')}`, '_blank')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
                                         <MessageCircle className="mr-2 h-4 w-4" />
                                         WhatsApp
                                       </DropdownMenuItem>
