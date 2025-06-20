@@ -6,10 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/lib/cart";
 import { useToast } from "@/hooks/use-toast";
 import { formatCurrency, formatWeight, calculateTotal, getUnitLabel, formatQuantity, type ProductUnit } from "@/lib/currency";
-import { ShoppingCart, Plus, Minus, Star, Clock, Truck, Heart } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Star, Clock, Truck, Heart, ImageIcon } from "lucide-react";
 import type { ProductWithCategory } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation } from "@/hooks/use-language";
+import defaultProductImage from "@/assets/default-product.svg";
 
 interface ProductCardProps {
   product: ProductWithCategory;
@@ -91,20 +92,20 @@ export default function ModernProductCard({ product, onCategoryClick }: ProductC
     <Card className="product-card group relative overflow-hidden bg-card border border-border hover:border-primary/50 transition-all duration-500">
       {/* Product Image */}
       <div className="relative overflow-hidden">
-        {product.imageUrl ? (
-          <div className="aspect-[4/3] overflow-hidden">
-            <img 
-              src={product.imageUrl} 
-              alt={product.name || "Product image"}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              loading="lazy"
-            />
-          </div>
-        ) : (
-          <div className="aspect-[4/3] bg-gradient-to-br from-muted/50 to-muted flex items-center justify-center">
-            <ShoppingCart className="w-16 h-16 text-muted-foreground/30" />
-          </div>
-        )}
+        <div className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900">
+          <img 
+            src={product.imageUrl || defaultProductImage} 
+            alt={product.name || "Product image"}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            loading="lazy"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              if (target.src !== defaultProductImage) {
+                target.src = defaultProductImage;
+              }
+            }}
+          />
+        </div>
         
         {/* Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
