@@ -546,17 +546,29 @@ export default function Home() {
                       </Carousel>
 
                       {/* Custom Navigation Dots */}
-                      {specialOffers.length > 1 && (
+                      {specialOffers.length > slidesPerPage && (
                         <div className="flex justify-center mt-6 space-x-2">
-                          {[...Array(Math.ceil(specialOffers.length / 3))].map((_, index) => (
-                            <button
-                              key={index}
-                              onClick={() => goToSlide(index)}
-                              className={`w-2 h-2 rounded-full transition-colors ${
-                                Math.floor(currentSlide / 3) === index ? 'bg-primary' : 'bg-gray-300'
-                              }`}
-                            />
-                          ))}
+                          {[...Array(totalPages)].map((_, index) => {
+                            // Calculate current page based on visible slides
+                            let currentPage;
+                            if (isMobile) {
+                              // Mobile: 1 slide per page
+                              currentPage = currentSlide;
+                            } else {
+                              // Desktop/Tablet: 3 slides per page, calculate which page group
+                              currentPage = Math.floor(currentSlide / slidesPerPage);
+                            }
+                            
+                            return (
+                              <button
+                                key={index}
+                                onClick={() => goToSlide(index)}
+                                className={`carousel-dot transition-colors ${
+                                  currentPage === index ? 'bg-orange-500' : 'bg-gray-400'
+                                }`}
+                              />
+                            );
+                          })}
                         </div>
                       )}
                     </div>

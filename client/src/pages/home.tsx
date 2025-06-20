@@ -575,7 +575,16 @@ export default function Home() {
                       {specialOffers.length > slidesPerPage && (
                         <div className="flex justify-center mt-6 space-x-2">
                           {[...Array(totalPages)].map((_, index) => {
-                            const currentPage = Math.floor(currentSlide / slidesPerPage);
+                            // Calculate current page based on visible slides
+                            let currentPage;
+                            if (isMobile) {
+                              // Mobile: 1 slide per page
+                              currentPage = currentSlide;
+                            } else {
+                              // Desktop/Tablet: 3 slides per page, calculate which page group
+                              currentPage = Math.floor(currentSlide / slidesPerPage);
+                            }
+                            
                             return (
                               <button
                                 key={index}
