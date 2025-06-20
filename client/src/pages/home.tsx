@@ -173,12 +173,38 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 overflow-x-hidden pt-16">
       <Header onResetView={handleResetView} />
       
-      {/* Banner Image */}
+      {/* Modern Hero Banner */}
       {storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
-        <div 
-          className="w-full h-32 sm:h-40 lg:h-48 bg-cover bg-center"
-          style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
-        />
+        <div className="relative w-full h-64 sm:h-80 lg:h-96 overflow-hidden">
+          <div 
+            className="absolute inset-0 bg-cover bg-center transform scale-105 hover:scale-100 transition-transform duration-700"
+            style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/30"></div>
+          <div className="relative z-10 h-full flex items-center justify-center">
+            <div className="text-center text-white px-6 max-w-4xl">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+                <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+                  {storeSettings?.storeName || "eDAHouse"}
+                </span>
+              </h1>
+              <p className="text-xl sm:text-2xl lg:text-3xl font-light opacity-90 mb-8">
+                {storeSettings?.welcomeTitle || "Свежие продукты каждый день"}
+              </p>
+              <div className="flex flex-wrap justify-center gap-3">
+                <div className="px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 hover:bg-white/30 transition-colors">
+                  <span className="text-sm font-medium">🚚 Быстрая доставка</span>
+                </div>
+                <div className="px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 hover:bg-white/30 transition-colors">
+                  <span className="text-sm font-medium">🍃 Свежие продукты</span>
+                </div>
+                <div className="px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 hover:bg-white/30 transition-colors">
+                  <span className="text-sm font-medium">⭐ Высокое качество</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
       
       <div className="flex overflow-x-hidden">
@@ -193,62 +219,70 @@ export default function Home() {
           {/* Search Bar */}
           <div className="mb-8">
             <div className="mb-6">
-              {/* Title and Description */}
+              {/* Modern Title and Description */}
               {storeSettings?.showTitleDescription !== false && (
-                <>
-                  <h1 className="text-3xl font-poppins font-bold text-gray-900 mb-4">
-                    {(() => {
-                      try {
-                        if (searchQuery && searchQuery.length > 2) {
-                          return `${t('searchResults')}: "${searchQuery}"`;
+                <div className="text-center mb-12">
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                    <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">
+                      {(() => {
+                        try {
+                          if (searchQuery && searchQuery.length > 2) {
+                            return `${t('searchResults')}: "${searchQuery}"`;
+                          }
+                          if (selectedCategory?.name) {
+                            return selectedCategory.name;
+                          }
+                          if (storeSettings?.welcomeTitle) {
+                            return storeSettings.welcomeTitle;
+                          }
+                          return t('defaultWelcomeTitle');
+                        } catch (error) {
+                          console.error('Error rendering title:', error);
+                          return t('defaultWelcomeTitle');
                         }
-                        if (selectedCategory?.name) {
-                          return selectedCategory.name;
-                        }
-                        if (storeSettings?.welcomeTitle) {
-                          return storeSettings.welcomeTitle;
-                        }
-                        return t('defaultWelcomeTitle');
-                      } catch (error) {
-                        console.error('Error rendering title:', error);
-                        return t('defaultWelcomeTitle');
-                      }
-                    })()}
+                      })()}
+                    </span>
                   </h1>
                   
-                  <p className="text-gray-600 text-lg mb-6">
-                    {(() => {
-                      try {
-                        if (searchQuery && searchQuery.length > 2) {
-                          return `${t('foundItems', { count: displayProducts.length })}`;
+                  <div className="max-w-3xl mx-auto">
+                    <p className="text-xl sm:text-2xl text-gray-600 font-light leading-relaxed mb-8">
+                      {(() => {
+                        try {
+                          if (searchQuery && searchQuery.length > 2) {
+                            return `${t('foundItems', { count: displayProducts.length })}`;
+                          }
+                          if (selectedCategory?.description) {
+                            return selectedCategory.description;
+                          }
+                          if (storeSettings?.storeDescription) {
+                            return storeSettings.storeDescription;
+                          }
+                          return "Свежая домашняя еда на развес - выбирайте по вкусу";
+                        } catch (error) {
+                          console.error('Error rendering description:', error);
+                          return "Свежая домашняя еда на развес - выбирайте по вкусу";
                         }
-                        if (selectedCategory?.description) {
-                          return selectedCategory.description;
-                        }
-                        if (storeSettings?.storeDescription) {
-                          return storeSettings.storeDescription;
-                        }
-                        return "Свежая домашняя еда на развес - выбирайте по вкусу";
-                      } catch (error) {
-                        console.error('Error rendering description:', error);
-                        return "Свежая домашняя еда на развес - выбирайте по вкусу";
-                      }
-                    })()}
-                  </p>
-                </>
+                      })()}
+                    </p>
+                    <div className="w-24 h-1 bg-gradient-to-r from-primary to-orange-500 mx-auto rounded-full"></div>
+                  </div>
+                </div>
               )}
 
-              {/* Compact Store Information */}
+              {/* Modern Store Information Cards */}
               {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && storeSettings?.showInfoBlocks !== false && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                   {/* Working Hours */}
                   {storeSettings?.workingHours && (
-                    <Card className="p-3 sm:p-4">
-                      <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                        <Clock className="h-4 w-4 text-primary" />
-                        <span className="font-medium text-sm sm:text-base">{t('workingHours')}</span>
-                      </div>
-                      <div className="space-y-1">
+                    <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
+                      <div className="p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full group-hover:scale-110 transition-transform duration-300">
+                            <Clock className="h-5 w-5 text-white" />
+                          </div>
+                          <span className="font-semibold text-lg text-gray-800">{t('workingHours')}</span>
+                        </div>
+                        <div className="space-y-2">
                         {(() => {
                           try {
                             const workingHours = storeSettings.workingHours;
@@ -318,6 +352,7 @@ export default function Home() {
                             return <p className="text-gray-500 text-xs">{t('loadingError')}</p>;
                           }
                         })()}
+                        </div>
                       </div>
                     </Card>
                   )}
