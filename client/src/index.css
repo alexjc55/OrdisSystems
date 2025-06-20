@@ -304,11 +304,10 @@
   }
 }
 
-/* СТИЛИ ДЛЯ SELECT МЕНЮ - МАКСИМАЛЬНАЯ СПЕЦИФИЧНОСТЬ */
+/* ПОЛНОСТЬЮ ПЕРЕПИСАННЫЕ СТИЛИ ДЛЯ SELECT МЕНЮ */
 
 /* Контейнер меню */
-[data-radix-select-content],
-[data-radix-select-viewport] {
+[data-radix-select-content] {
   background-color: white !important;
   border: 1px solid #e5e7eb !important;
   border-radius: 6px !important;
@@ -316,11 +315,8 @@
   z-index: 50 !important;
 }
 
-/* Элементы меню - все возможные селекторы */
-[data-radix-select-item],
-[data-radix-select-content] [data-radix-select-item],
-[data-radix-select-viewport] [data-radix-select-item],
-[role="option"] {
+/* Базовые стили для всех элементов меню */
+*[data-radix-select-item] {
   color: #000000 !important;
   background-color: transparent !important;
   cursor: pointer !important;
@@ -330,44 +326,24 @@
   transition: all 0.15s ease !important;
   display: block !important;
   width: 100% !important;
+  position: relative !important;
 }
 
-/* Состояние наведения - максимальная специфичность */
-[data-radix-select-item]:hover,
-[data-radix-select-item][data-highlighted],
-[data-radix-select-content] [data-radix-select-item]:hover,
-[data-radix-select-content] [data-radix-select-item][data-highlighted],
-[data-radix-select-viewport] [data-radix-select-item]:hover,
-[data-radix-select-viewport] [data-radix-select-item][data-highlighted],
-[role="option"]:hover,
-[role="option"][data-highlighted] {
+/* Hover состояние для обычных элементов */
+*[data-radix-select-item]:not([data-state="checked"]):hover {
   background-color: #f97316 !important;
   color: #ffffff !important;
 }
 
-/* Выбранное состояние - максимальная специфичность для сохранения стилей */
-[data-radix-select-content] [data-radix-select-item][data-state="checked"],
-[data-radix-select-viewport] [data-radix-select-item][data-state="checked"],
-[data-radix-select-item][data-state="checked"],
-[role="option"][aria-selected="true"] {
+/* АКТИВНЫЙ ЭЛЕМЕНТ - УЛЬТРА СПЕЦИФИЧНОСТЬ */
+html body *[data-radix-select-item][data-state="checked"] {
   background-color: transparent !important;
   color: #f97316 !important;
   position: relative !important;
 }
 
-/* Принудительное сохранение оранжевого цвета для активного элемента */
-[data-radix-select-content] [data-radix-select-item][data-state="checked"]:not(:hover),
-[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:not(:hover) {
-  background-color: transparent !important;
-  color: #f97316 !important;
-  position: relative !important;
-}
-
-/* Галочка для выбранного элемента - всегда видна с максимальной специфичностью */
-[data-radix-select-content] [data-radix-select-item][data-state="checked"]::after,
-[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]::after,
-[data-radix-select-item][data-state="checked"]::after,
-[role="option"][aria-selected="true"]::after {
+/* Галочка для активного элемента - УЛЬТРА СПЕЦИФИЧНОСТЬ */
+html body *[data-radix-select-item][data-state="checked"]::after {
   content: "✓" !important;
   position: absolute !important;
   right: 8px !important;
@@ -375,29 +351,17 @@
   transform: translateY(-50%) !important;
   color: #f97316 !important;
   font-weight: bold !important;
+  z-index: 10 !important;
 }
 
-/* Принудительное сохранение оранжевой галочки для активного элемента */
-[data-radix-select-content] [data-radix-select-item][data-state="checked"]:not(:hover)::after,
-[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:not(:hover)::after {
-  color: #f97316 !important;
-}
-
-/* При hover на выбранный элемент - оранжевый фон с белым текстом и белой галочкой */
-[data-radix-select-item][data-state="checked"]:hover,
-[data-radix-select-content] [data-radix-select-item][data-state="checked"]:hover,
-[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:hover,
-[role="option"][aria-selected="true"]:hover {
+/* Hover на активный элемент */
+html body *[data-radix-select-item][data-state="checked"]:hover {
   background-color: #f97316 !important;
   color: #ffffff !important;
-  position: relative !important;
 }
 
-/* Белая галочка при hover на выбранный элемент */
-[data-radix-select-item][data-state="checked"]:hover::after,
-[data-radix-select-content] [data-radix-select-item][data-state="checked"]:hover::after,
-[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:hover::after,
-[role="option"][aria-selected="true"]:hover::after {
+/* Белая галочка при hover на активный элемент */
+html body *[data-radix-select-item][data-state="checked"]:hover::after {
   color: #ffffff !important;
 }
 
