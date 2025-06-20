@@ -8,6 +8,7 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { CustomHtml } from "@/components/custom-html";
 import { WhatsAppChat } from "@/components/layout/whatsapp-chat";
+import { Footer } from "@/components/layout/footer";
 import { LanguageInitializer } from "@/components/language-initializer";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -81,6 +82,9 @@ function Router() {
       {storeSettings?.footerHtml && (
         <CustomHtml html={storeSettings.footerHtml} type="footer" />
       )}
+      
+      {/* Ordis Footer */}
+      <Footer />
     </ErrorBoundary>
   );
 }
