@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { useAdminTranslation } from "@/hooks/use-language";
+import { useAdminTranslation, useCommonTranslation } from "@/hooks/use-language";
 import { LANGUAGES } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { apiRequest } from "@/lib/queryClient";
@@ -1421,7 +1421,8 @@ function ItemDiscountDialog({
 export default function AdminDashboard() {
   const { user, isLoading } = useAuth();
   const { toast } = useToast();
-  const { t } = useAdminTranslation();
+  const { t: adminT } = useAdminTranslation();
+  const { t: commonT } = useCommonTranslation();
   const queryClient = useQueryClient();
 
   // Data queries with pagination  
@@ -2478,13 +2479,13 @@ export default function AdminDashboard() {
                                 </AlertDialogTrigger>
                                 <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
                                   <AlertDialogHeader>
-                                    <AlertDialogTitle className="text-sm sm:text-base">Удалить категорию</AlertDialogTitle>
+                                    <AlertDialogTitle className="text-sm sm:text-base">{adminT('categories.deleteCategoryConfirm')}</AlertDialogTitle>
                                     <AlertDialogDescription className="text-xs sm:text-sm">
-                                      Вы уверены, что хотите удалить категорию "{category.name}"? Все товары этой категории также будут удалены.
+                                      {adminT('categories.deleteCategoryWarning').replace('{name}', category.name)}
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                                    <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">Отмена</AlertDialogCancel>
+                                    <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">{commonT('buttons.cancel')}</AlertDialogCancel>
                                     <AlertDialogAction
                                       onClick={() => deleteCategoryMutation.mutate(category.id)}
                                       className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 focus:bg-red-700 data-[state=open]:bg-red-700 transition-colors duration-200 text-xs sm:text-sm"
