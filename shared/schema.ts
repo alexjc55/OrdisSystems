@@ -79,6 +79,7 @@ export const products = pgTable("products", {
   isActive: boolean("is_active").default(true).notNull(),
   isAvailable: boolean("is_available").default(true).notNull(),
   stockStatus: varchar("stock_status", { enum: ["in_stock", "low_stock", "out_of_stock"] }).default("in_stock").notNull(),
+  availabilityStatus: varchar("availability_status", { enum: ["available", "out_of_stock_today", "completely_unavailable"] }).default("available").notNull(),
   isSpecialOffer: boolean("is_special_offer").default(false).notNull(),
   discountType: varchar("discount_type", { enum: ["percentage", "fixed"] }),
   discountValue: decimal("discount_value", { precision: 10, scale: 2 }),

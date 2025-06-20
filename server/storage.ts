@@ -88,6 +88,7 @@ export interface IStorage {
   getProductById(id: number): Promise<ProductWithCategory | undefined>;
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product>;
+  updateProductAvailability(id: number, availabilityStatus: "available" | "out_of_stock_today" | "completely_unavailable"): Promise<Product>;
   deleteProduct(id: number): Promise<void>;
   searchProducts(query: string): Promise<ProductWithCategory[]>;
 
@@ -351,6 +352,19 @@ export class DatabaseStorage implements IStorage {
     const [updatedProduct] = await db
       .update(products)
       .set({ ...product, updatedAt: new Date() })
+      .where(eq(products.id, id))
+      .returning();
+    return updatedProduct;
+  }
+
+  async updateProductAvailability(id: number, availabilityStatus: "available" | "out_of_stock_today" | "completely_unavailable"): Promise<Product> {
+    const [updatedProduct] = await db
+      .update(products)
+      .set({ 
+        availabilityStatus,
+        isActive: availabilityStatus !== "completely_unavailable",
+        updatedAt: new Date() 
+      })
       .where(eq(products.id, id))
       .returning();
     return updatedProduct;
