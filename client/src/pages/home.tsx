@@ -173,38 +173,12 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 overflow-x-hidden pt-16">
       <Header onResetView={handleResetView} />
       
-      {/* Modern Hero Banner */}
+      {/* Banner Image */}
       {storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
-        <div className="relative w-full h-64 sm:h-80 lg:h-96 overflow-hidden">
-          <div 
-            className="absolute inset-0 bg-cover bg-center transform scale-105 hover:scale-100 transition-transform duration-700"
-            style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/30"></div>
-          <div className="relative z-10 h-full flex items-center justify-center">
-            <div className="text-center text-white px-6 max-w-4xl">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-                <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
-                  {storeSettings?.storeName || "eDAHouse"}
-                </span>
-              </h1>
-              <p className="text-xl sm:text-2xl lg:text-3xl font-light opacity-90 mb-8">
-                {storeSettings?.welcomeTitle || "Свежие продукты каждый день"}
-              </p>
-              <div className="flex flex-wrap justify-center gap-3">
-                <div className="px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 hover:bg-white/30 transition-colors">
-                  <span className="text-sm font-medium">🚚 Быстрая доставка</span>
-                </div>
-                <div className="px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 hover:bg-white/30 transition-colors">
-                  <span className="text-sm font-medium">🍃 Свежие продукты</span>
-                </div>
-                <div className="px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 hover:bg-white/30 transition-colors">
-                  <span className="text-sm font-medium">⭐ Высокое качество</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div 
+          className="w-full h-32 sm:h-40 lg:h-48 bg-cover bg-center"
+          style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
+        />
       )}
       
       <div className="flex overflow-x-hidden">
@@ -271,7 +245,7 @@ export default function Home() {
 
               {/* Modern Store Information Cards */}
               {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && storeSettings?.showInfoBlocks !== false && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                   {/* Working Hours */}
                   {storeSettings?.workingHours && (
                     <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
@@ -436,33 +410,63 @@ export default function Home() {
               {/* Category Overview */}
               {categories && categories.length > 0 && (
                 <div className="mb-8">
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg">
-                        <Package className="h-7 w-7 text-white" />
+                  <div className="mb-8">
+                    {/* Desktop and Tablet Layout */}
+                    <div className="hidden md:flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg">
+                          <Package className="h-7 w-7 text-white" />
+                        </div>
+                        <div>
+                          <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                            {t('categories')}
+                          </h2>
+                          <p className="text-gray-600 font-medium">Выберите категорию товаров</p>
+                        </div>
                       </div>
-                      <div>
-                        <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                          {t('categories')}
-                        </h2>
-                        <p className="text-gray-600 font-medium">Выберите категорию блюд</p>
+                      <div className="flex items-center gap-4">
+                        <Badge className="px-4 py-2 bg-gradient-to-r from-primary to-blue-600 text-white font-semibold text-sm shadow-lg">
+                          {categories.length} {categories.length === 1 ? 'категория' : categories.length < 5 ? 'категории' : 'категорий'}
+                        </Badge>
+                        <Button
+                          onClick={() => setSelectedCategoryId(0)}
+                          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                        >
+                          <Package className="mr-2 h-5 w-5" />
+                          {t('allProducts')}
+                        </Button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <Badge className="px-4 py-2 bg-gradient-to-r from-primary to-blue-600 text-white font-semibold text-sm shadow-lg">
-                        {t('categoriesCount', { count: categories.length })}
-                      </Badge>
-                      <Button
-                        onClick={() => setSelectedCategoryId(0)}
-                        className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                      >
-                        <Package className="mr-2 h-5 w-5" />
-                        {t('allProducts')}
-                      </Button>
+
+                    {/* Mobile Layout */}
+                    <div className="md:hidden space-y-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-lg">
+                          <Package className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <h2 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                            {t('categories')}
+                          </h2>
+                          <p className="text-sm text-gray-600 font-medium">Выберите категорию товаров</p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                        <Badge className="px-3 py-1 bg-gradient-to-r from-primary to-blue-600 text-white font-semibold text-sm shadow-lg">
+                          {categories.length} {categories.length === 1 ? 'категория' : categories.length < 5 ? 'категории' : 'категорий'}
+                        </Badge>
+                        <Button
+                          onClick={() => setSelectedCategoryId(0)}
+                          className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg"
+                        >
+                          <Package className="mr-2 h-4 w-4" />
+                          {t('allProducts')}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                   
-                  <div className="grid gap-6 min-w-0" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 min-w-0">
                     {categories.map((category) => (
                       <Card 
                         key={category.id} 
