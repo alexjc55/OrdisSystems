@@ -440,30 +440,29 @@ export default function Home() {
                         className="group cursor-pointer hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden transform hover:scale-105"
                         onClick={() => handleCategorySelect(category.id)}
                       >
-                        <CardContent className="p-6">
-                          <div className="relative">
-                            <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
-                              {category.icon || '📦'}
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between gap-4">
+                            <div className="flex-1">
+                              <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
+                                {category.name}
+                              </h3>
+                              
+                              <p className="text-gray-600 text-sm mb-3 line-clamp-2 leading-relaxed">
+                                {category.description || "Вкусные блюда для вашего стола"}
+                              </p>
+                              
+                              <Badge className="px-3 py-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold text-sm shadow-md">
+                                {category.products.length} блюд
+                              </Badge>
                             </div>
-                            <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                              <div className="w-3 h-3 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full animate-pulse"></div>
-                            </div>
-                          </div>
-                          
-                          <h3 className="font-bold text-xl mb-3 text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
-                            {category.name}
-                          </h3>
-                          
-                          <p className="text-gray-600 mb-4 line-clamp-2 leading-relaxed">
-                            {category.description || "Вкусные блюда для вашего стола"}
-                          </p>
-                          
-                          <div className="flex items-center justify-between">
-                            <Badge className="px-3 py-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold text-sm shadow-md">
-                              {category.products.length} блюд
-                            </Badge>
-                            <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-                              <ChevronRight className="w-4 h-4 text-white" />
+                            
+                            <div className="flex-shrink-0 relative">
+                              <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
+                                {category.icon || '📦'}
+                              </div>
+                              <div className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div className="w-3 h-3 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full animate-pulse"></div>
+                              </div>
                             </div>
                           </div>
                         </CardContent>
