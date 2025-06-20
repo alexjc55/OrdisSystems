@@ -515,8 +515,8 @@ select option:not([selected]):hover {
 
 
 
-/* Fix all link and interactive element visibility */
-a, button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]), [role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]) {
+/* Fix all link and interactive element visibility - but preserve button text colors */
+a:not(button):not([role="button"]) {
   color: inherit !important;
   text-decoration: none !important;
 }
