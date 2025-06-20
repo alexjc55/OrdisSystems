@@ -390,7 +390,40 @@
   color: #ffffff !important;
 }
 
-/* Очищены все дублирующиеся селекторы */
+/* Изоляция тестового селекта от глобальных стилей */
+.test-default-select [data-radix-select-content] {
+  background-color: white !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  z-index: 50 !important;
+}
+
+.test-default-select [data-radix-select-item] {
+  all: unset !important;
+  display: block !important;
+  cursor: pointer !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
+  line-height: 1.5 !important;
+  color: #000000 !important;
+  background: transparent !important;
+}
+
+.test-default-select [data-radix-select-item]:hover {
+  background-color: #f3f4f6 !important;
+  color: #000000 !important;
+}
+
+.test-default-select [data-radix-select-item][data-state="checked"] {
+  background-color: #e5e7eb !important;
+  color: #000000 !important;
+}
+
+.test-default-select [data-radix-select-item][data-state="checked"]::after {
+  display: none !important;
+}
 
 /* Force blue color for pre-order buttons */
 .bg-blue-600 {

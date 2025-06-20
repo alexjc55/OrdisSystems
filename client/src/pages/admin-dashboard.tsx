@@ -2164,23 +2164,24 @@ export default function AdminDashboard() {
                   <div className="flex flex-col sm:flex-row gap-3 lg:flex-shrink-0">
                     <div className="relative min-w-[180px]">
                       <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
-                        <SelectTrigger className="pl-10 text-sm" style={{ all: 'unset', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', paddingLeft: '40px', border: '1px solid #e5e7eb', borderRadius: '6px', backgroundColor: 'white', color: 'black', fontSize: '14px', cursor: 'pointer' }}>
-                          <SelectValue placeholder={t('products.allCategories', 'Все категории')} />
-                        </SelectTrigger>
-                        <SelectContent style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '6px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 50 }}>
-                          <SelectItem value="all" style={{ padding: '8px 12px', cursor: 'pointer', color: 'black' }}>{t('products.allCategories', 'Все категории')}</SelectItem>
-                          {(categories as any[] || []).map((category: any) => (
-                            <SelectItem 
-                              key={category.id} 
-                              value={category.id.toString()}
-                              style={{ padding: '8px 12px', cursor: 'pointer', color: 'black' }}
-                            >
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="test-default-select">
+                        <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
+                          <SelectTrigger className="pl-10 text-sm">
+                            <SelectValue placeholder={t('products.allCategories', 'Все категории')} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">{t('products.allCategories', 'Все категории')}</SelectItem>
+                            {(categories as any[] || []).map((category: any) => (
+                              <SelectItem 
+                                key={category.id} 
+                                value={category.id.toString()}
+                              >
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                     <div className="relative min-w-[160px]">
                       <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
