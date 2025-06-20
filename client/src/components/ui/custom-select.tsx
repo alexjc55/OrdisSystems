@@ -76,7 +76,7 @@ const CustomSelect = React.forwardRef<HTMLDivElement, CustomSelectProps>(
                 key={option.props.value}
                 className={cn(
                   "flex items-center justify-between px-3 py-2 text-sm cursor-pointer transition-colors",
-                  "hover:bg-orange-500 hover:text-white",
+                  "text-black bg-white hover:bg-orange-500 hover:text-white",
                   selectedValue === option.props.value && "bg-orange-500 text-white"
                 )}
                 onClick={() => handleSelect(option.props.value)}
