@@ -2112,6 +2112,18 @@ export default function AdminDashboard() {
               {hasPermission("canManageSettings") && (
                 <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Права доступа</TabsTrigger>
               )}
+              {hasPermission("canManageSettings") && (
+                <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap">
+                  <Palette className="w-4 h-4 mr-1" />
+                  Темы
+                </TabsTrigger>
+              )}
+              {hasPermission("canManageSettings") && (
+                <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap">
+                  <Palette className="h-4 w-4 mr-1" />
+                  Темы
+                </TabsTrigger>
+              )}
             </TabsList>
           </div>
 
@@ -3507,6 +3519,13 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
+
+          {/* Theme Management */}
+          {hasPermission("canManageSettings") && (
+            <TabsContent value="themes" className="space-y-4 sm:space-y-6">
+              <ThemeManager />
+            </TabsContent>
           )}
         </Tabs>
       </div>
