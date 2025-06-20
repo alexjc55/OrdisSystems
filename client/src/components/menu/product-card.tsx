@@ -114,31 +114,31 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   const getAvailabilityBadge = () => {
     if (product.availabilityStatus === 'completely_unavailable' || !product.isAvailable) {
       return (
-        <Badge className="badge-modern badge-error space-xs">
-          <XCircle className="icon-modern w-3 h-3" />
+        <Badge variant="destructive" className="bg-red-100 text-red-800 border-red-300">
+          <XCircle className="w-3 h-3 mr-1" />
           Недоступен
         </Badge>
       );
     }
     if (product.stockStatus === 'low_stock') {
       return (
-        <Badge className="badge-modern badge-warning space-xs">
-          <AlertCircle className="icon-modern w-3 h-3" />
+        <Badge variant="destructive" className="bg-yellow-100 text-yellow-800 border-yellow-300">
+          <AlertCircle className="w-3 h-3 mr-1" />
           Мало
         </Badge>
       );
     }
     if (product.availabilityStatus === 'out_of_stock_today') {
       return (
-        <Badge className="badge-modern badge-warning space-xs">
-          <Clock className="icon-modern w-3 h-3" />
+        <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-300">
+          <Clock className="w-3 h-3 mr-1" />
           Завтра
         </Badge>
       );
     }
     return (
-      <Badge className="badge-modern badge-success space-xs">
-        <CheckCircle2 className="icon-modern w-3 h-3" />
+      <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-300">
+        <CheckCircle2 className="w-3 h-3 mr-1" />
         В наличии
       </Badge>
     );

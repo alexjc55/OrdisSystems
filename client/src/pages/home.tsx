@@ -484,24 +484,22 @@ export default function Home() {
               {/* Special Offers Section */}
               {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && (
                 <div className="mt-12">
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center space-md">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary-600 flex items-center justify-center elevation-2">
-                        <Sparkles className="w-6 h-6 text-white" />
-                      </div>
-                      <h2 className="text-display-sm text-neutral-900">Специальные предложения</h2>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center">
+                      <span className="mr-3 text-2xl">🔥</span>
+                      <h2 className="text-2xl font-poppins font-bold text-gray-900">Специальные предложения</h2>
                     </div>
                     
-                    {/* Modern Navigation Arrows */}
+                    {/* Navigation Arrows */}
                     {specialOffers.length > slidesPerPage && (
-                      <div className="hidden md:flex items-center space-sm">
+                      <div className="hidden md:flex items-center gap-2">
                         <button
                           onClick={() => {
                             if (carouselApiRef.current) {
                               carouselApiRef.current.scrollPrev();
                             }
                           }}
-                          className="btn-modern btn-primary-modern btn-icon micro-bounce focus-ring"
+                          className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </button>
@@ -511,7 +509,7 @@ export default function Home() {
                               carouselApiRef.current.scrollNext();
                             }
                           }}
-                          className="btn-modern btn-primary-modern btn-icon micro-bounce focus-ring"
+                          className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </button>
@@ -576,9 +574,9 @@ export default function Home() {
 
                       </Carousel>
 
-                      {/* Modern Navigation Dots */}
+                      {/* Navigation Dots */}
                       {specialOffers.length > slidesPerPage && (
-                        <div className="carousel-dots-modern">
+                        <div className="flex justify-center mt-6 space-x-2">
                           {[...Array(totalPages)].map((_, index) => {
                             // Calculate current page based on visible slides
                             let currentPage;
@@ -594,8 +592,10 @@ export default function Home() {
                               <button
                                 key={index}
                                 onClick={() => goToSlide(index)}
-                                className={`carousel-dot-modern ${
-                                  currentPage === index ? 'active' : ''
+                                className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                                  currentPage === index 
+                                    ? 'bg-orange-500 w-6' 
+                                    : 'bg-gray-300 hover:bg-gray-400'
                                 }`}
                               />
                             );
