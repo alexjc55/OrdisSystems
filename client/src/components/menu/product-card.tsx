@@ -111,7 +111,21 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
     });
   };
 
-  const getStockBadge = () => {
+  const getAvailabilityBadge = () => {
+    if (product.availabilityStatus === 'out_of_stock_today') {
+      return (
+        <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300">
+          ⏰ Доступен завтра
+        </Badge>
+      );
+    }
+    if (product.availabilityStatus === 'completely_unavailable' || !product.isAvailable) {
+      return (
+        <Badge variant="destructive" className="bg-red-100 text-red-800 border-red-300">
+          ❌ Недоступен
+        </Badge>
+      );
+    }
     if (product.stockStatus === 'low_stock') {
       return (
         <Badge variant="destructive" className="bg-warning text-warning-foreground">
@@ -120,6 +134,12 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
       );
     }
     return null;
+  };
+
+  const isOrderableToday = () => {
+    return product.isAvailable && 
+           product.availabilityStatus !== 'completely_unavailable' && 
+           product.availabilityStatus !== 'out_of_stock_today';
   };
 
   return (
@@ -135,7 +155,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           }}
         />
         <div className="absolute top-2 right-2">
-          {getStockBadge()}
+          {getAvailabilityBadge()}
         </div>
       </div>
       
@@ -241,14 +261,25 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           </div>
 
           {/* Add to Cart Button */}
-          <Button
-            onClick={handleAddToCart}
-            className="w-full bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-white font-medium py-2 px-4"
-            style={{ backgroundColor: 'hsl(16, 100%, 60%)', color: 'white' }}
-          >
-            <ShoppingCart className="mr-2 h-4 w-4" />
-            {t('product.addToCart', 'В корзину')}
-          </Button>
+          {isOrderableToday() ? (
+            <Button
+              onClick={handleAddToCart}
+              className="w-full bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-white font-medium py-2 px-4"
+              style={{ backgroundColor: 'hsl(16, 100%, 60%)', color: 'white' }}
+            >
+              <ShoppingCart className="mr-2 h-4 w-4" />
+              {t('product.addToCart', 'В корзину')}
+            </Button>
+          ) : (
+            <Button
+              disabled
+              className="w-full bg-gray-300 text-gray-500 cursor-not-allowed py-2 px-4"
+            >
+              {product.availabilityStatus === 'out_of_stock_today' 
+                ? "⏰ Доступен завтра" 
+                : "❌ Недоступен"}
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
