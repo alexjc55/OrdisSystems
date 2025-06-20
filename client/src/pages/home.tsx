@@ -425,7 +425,7 @@ export default function Home() {
                     <div className="flex justify-start md:justify-end">
                       <Button
                         onClick={() => setSelectedCategoryId(0)}
-                        className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                        className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white hover:text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                       >
                         <Package className="mr-2 h-5 w-5" />
                         {t('allProducts')}
