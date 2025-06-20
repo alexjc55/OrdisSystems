@@ -897,7 +897,7 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
     font-size: 1rem !important;
   }
   
-  /* Mobile-friendly quantity inputs */
+  /* Consistent quantity inputs across all devices */
   input[class*="w-16"][class*="text-center"] {
     width: 4rem !important;
     min-width: 4rem !important;

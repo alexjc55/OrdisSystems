@@ -234,7 +234,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
               <Button
                 size="sm"
                 variant="outline"
-                className="h-6 w-6 p-0 border-gray-300"
+                className="h-8 w-8 p-0 border-gray-300"
                 onClick={() => {
                   const step = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1;
                   const currentQuantity = selectedQuantity || getDefaultQuantity();
@@ -259,13 +259,13 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                     }
                   }
                 }}
-                className="w-16 text-center text-xs h-6 border-gray-300"
+                className="w-16 text-center text-sm h-8 border-gray-300"
                 placeholder={unit === "piece" ? "1" : unit === "kg" ? "1" : "100"}
               />
               <Button
                 size="sm"
                 variant="outline"
-                className="h-6 w-6 p-0 border-gray-300"
+                className="h-8 w-8 p-0 border-gray-300"
                 onClick={() => {
                   const step = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1;
                   const currentQuantity = selectedQuantity || getDefaultQuantity();
