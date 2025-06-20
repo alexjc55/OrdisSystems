@@ -5,22 +5,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Icon improvements for better visibility */
-@layer base {
-  svg {
-    stroke-width: 1.5;
-    fill: none;
-    stroke: currentColor;
-  }
-  
-  /* Ensure icons are outline style, not filled */
-  .lucide {
-    stroke-width: 1.5;
-    fill: none !important;
-    stroke: currentColor;
-  }
-}
-
 /* Global container max-width limitation */
 @layer base {
   body {
