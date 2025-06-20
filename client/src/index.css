@@ -935,4 +935,11 @@ button.whatsapp-button.whatsapp-button.whatsapp-button {
   box-sizing: border-box !important;
 }
 
+/* Mobile positioning for WhatsApp button */
+@media (max-width: 768px) {
+  button.whatsapp-button.whatsapp-button.whatsapp-button {
+    bottom: 80px !important;
+  }
+}
+
 
