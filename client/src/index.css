@@ -332,8 +332,8 @@
 }
 
 [data-radix-select-item][data-state="checked"] {
-  background-color: hsl(24.6, 95%, 53.1%) !important;
-  color: white !important;
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
 }
 
 /* Native HTML Select Elements */
@@ -356,8 +356,8 @@ select option:focus {
 
 select option:checked,
 select option[selected] {
-  background-color: hsl(24.6, 95%, 53.1%) !important;
-  color: white !important;
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
 }
 
 /* Ensure text never changes to white on hover */
@@ -387,8 +387,8 @@ select option:not([selected]):hover {
 
 [data-radix-select-content] [data-radix-select-item][data-state="checked"],
 [data-radix-select-viewport] [data-radix-select-item][data-state="checked"] {
-  background-color: hsl(24.6, 95%, 53.1%) !important;
-  color: white !important;
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
 }
 
 

@@ -6,17 +6,6 @@
 
 /* Universal Button System - Overrides all other styles */
 @layer utilities {
-  /* Apply to all buttons */
-  button, [role="button"], .btn {
-    transition: box-shadow var(--transition-base) !important;
-  }
-
-  /* Primary Button Variant */
-  .btn-primary {
-    background-color: var(--color-primary) !important;
-    color: var(--color-white) !important;
-    border: none !important;
-  }
 
   .btn-primary *, .btn-primary svg {
     color: var(--color-white) !important;
