@@ -100,8 +100,8 @@ export default function AdminDashboard() {
       <div className="container mx-auto py-8 px-4">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{t.dashboard.title}</h1>
-            <p className="text-gray-600">{t.dashboard.subtitle}</p>
+            <h1 className="text-3xl font-bold text-gray-900">Админ-панель</h1>
+            <p className="text-gray-600">Управление магазином</p>
           </div>
           <LanguageSwitcher />
         </div>
