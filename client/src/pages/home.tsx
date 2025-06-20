@@ -243,18 +243,11 @@ export default function Home() {
           )}
 
           {/* Special Offers Section */}
-          {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && (
-            <div className="mb-4">
-              <p className="text-sm text-gray-500">Debug: Products with special offers: {products.filter(product => product.isSpecialOffer).length}</p>
-              <p className="text-sm text-gray-500">Debug: Products with discount value: {products.filter(product => product.discountValue && Number(product.discountValue) > 0).length}</p>
-            </div>
-          )}
-          
-          {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && products.filter(product => product.isSpecialOffer && product.discountValue && Number(product.discountValue) > 0).length > 0 && (
+          {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && allProducts.filter(product => product.isSpecialOffer && product.discountValue && Number(product.discountValue) > 0).length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">{t('specialOffers')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.filter(product => product.isSpecialOffer && product.discountValue && Number(product.discountValue) > 0).slice(0, 6).map((product) => {
+                {allProducts.filter(product => product.isSpecialOffer && product.discountValue && Number(product.discountValue) > 0).slice(0, 6).map((product) => {
                   const discountValue = Number(product.discountValue) || 0;
                   const price = Number(product.price);
                   const originalPrice = product.discountType === 'percentage' 
@@ -298,13 +291,7 @@ export default function Home() {
                           </div>
                           <Button 
                             onClick={() => {
-                              addToCart({
-                                id: product.id,
-                                name: product.name,
-                                price: product.price,
-                                imageUrl: product.imageUrl || undefined,
-                                quantity: 1
-                              });
+                              addItem(product, 1);
                               toast({
                                 title: t('addedToCart'),
                                 description: `${product.name} ${t('addedToCart')}`,
