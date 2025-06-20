@@ -118,13 +118,13 @@ export default function Profile() {
       setEditingAddress(null);
       setAddressForm({ label: "", address: "", isDefault: false });
       toast({
-        title: "Успешно",
+        title: t("status.success"),
         description: "Адрес обновлен",
       });
     },
     onError: (error) => {
       toast({
-        title: "Ошибка",
+        title: t("status.error"),
         description: "Не удалось обновить адрес",
         variant: "destructive",
       });
@@ -138,13 +138,13 @@ export default function Profile() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
       toast({
-        title: "Успешно",
+        title: t("status.success"),
         description: "Адрес удален",
       });
     },
     onError: (error) => {
       toast({
-        title: "Ошибка",
+        title: t("status.error"),
         description: "Не удалось удалить адрес",
         variant: "destructive",
       });
@@ -158,7 +158,7 @@ export default function Profile() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
       toast({
-        title: "Успешно",
+        title: t("status.success"),
         description: "Адрес по умолчанию изменен",
       });
     },
@@ -172,13 +172,13 @@ export default function Profile() {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       setIsPhoneEditing(false);
       toast({
-        title: "Успешно",
+        title: t("status.success"),
         description: "Телефон обновлен",
       });
     },
     onError: (error) => {
       toast({
-        title: "Ошибка",
+        title: t("status.error"),
         description: "Не удалось обновить телефон",
         variant: "destructive",
       });
@@ -193,13 +193,13 @@ export default function Profile() {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       setIsAvatarDialogOpen(false);
       toast({
-        title: "Успешно",
+        title: t("status.success"),
         description: "Фото профиля обновлено",
       });
     },
     onError: (error) => {
       toast({
-        title: "Ошибка",
+        title: t("status.error"),
         description: "Не удалось обновить фото профиля",
         variant: "destructive",
       });
@@ -214,13 +214,13 @@ export default function Profile() {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       setIsNameEditing(false);
       toast({
-        title: "Успешно",
+        title: t("status.success"),
         description: "Имя обновлено",
       });
     },
     onError: (error) => {
       toast({
-        title: "Ошибка",
+        title: t("status.error"),
         description: "Не удалось обновить имя",
         variant: "destructive",
       });
