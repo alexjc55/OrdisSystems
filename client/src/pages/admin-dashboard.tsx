@@ -1252,16 +1252,11 @@ function UserFormDialog({
           </div>
           <div>
             <Label htmlFor="role">Роль</Label>
-            <Select value={formData.role} onValueChange={(value: 'admin' | 'worker' | 'customer') => setFormData({ ...formData, role: value })}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="customer">Клиент</SelectItem>
-                <SelectItem value="worker">Работник</SelectItem>
-                <SelectItem value="admin">Администратор</SelectItem>
-              </SelectContent>
-            </Select>
+            <CustomSelect value={formData.role} onValueChange={(value: string) => setFormData({ ...formData, role: value as 'admin' | 'worker' | 'customer' })}>
+              <CustomSelectItem value="customer">Клиент</CustomSelectItem>
+              <CustomSelectItem value="worker">Работник</CustomSelectItem>
+              <CustomSelectItem value="admin">Администратор</CustomSelectItem>
+            </CustomSelect>
           </div>
         </div>
         <div className="flex justify-end space-x-2 pt-4">
