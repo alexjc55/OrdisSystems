@@ -2347,6 +2347,7 @@ export default function AdminDashboard() {
                         onClick={() => setProductsPage(1)}
                         disabled={productsPage === 1}
                         title="Первая страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                       >
                         ⟨⟨
                       </Button>
@@ -2356,10 +2357,11 @@ export default function AdminDashboard() {
                         onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
                         disabled={productsPage === 1}
                         title="Предыдущая страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                       >
                         <ChevronLeft className="h-4 w-4" />
                       </Button>
-                      <span className="text-sm font-medium px-3 py-1 bg-white border rounded">
+                      <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
                         {productsPage} из {productsTotalPages}
                       </span>
                       <Button
@@ -2368,6 +2370,7 @@ export default function AdminDashboard() {
                         onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
                         disabled={productsPage === productsTotalPages}
                         title="Следующая страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                       >
                         <ChevronRight className="h-4 w-4" />
                       </Button>
@@ -2377,6 +2380,7 @@ export default function AdminDashboard() {
                         onClick={() => setProductsPage(productsTotalPages)}
                         disabled={productsPage === productsTotalPages}
                         title="Последняя страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                       >
                         ⟩⟩
                       </Button>
@@ -3051,6 +3055,7 @@ export default function AdminDashboard() {
                             onClick={() => setOrdersPage(1)}
                             disabled={ordersResponse.page === 1}
                             title="Первая страница"
+                            className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                           >
                             ⟨⟨
                           </Button>
@@ -3060,10 +3065,11 @@ export default function AdminDashboard() {
                             onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                             disabled={ordersResponse.page === 1}
                             title="Предыдущая страница"
+                            className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                           >
                             <ChevronLeft className="h-4 w-4" />
                           </Button>
-                          <span className="text-sm font-medium px-3 py-1 bg-white border rounded">
+                          <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
                             {ordersResponse.page} из {ordersResponse.totalPages}
                           </span>
                           <Button
@@ -3072,6 +3078,7 @@ export default function AdminDashboard() {
                             onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                             disabled={ordersResponse.page === ordersResponse.totalPages}
                             title="Следующая страница"
+                            className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                           >
                             <ChevronRight className="h-4 w-4" />
                           </Button>
@@ -3081,6 +3088,7 @@ export default function AdminDashboard() {
                             onClick={() => setOrdersPage(ordersResponse.totalPages)}
                             disabled={ordersResponse.page === ordersResponse.totalPages}
                             title="Последняя страница"
+                            className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                           >
                             ⟩⟩
                           </Button>
@@ -3284,6 +3292,7 @@ export default function AdminDashboard() {
                         onClick={() => setUsersPage(1)}
                         disabled={usersPage === 1}
                         title="Первая страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                       >
                         ⟨⟨
                       </Button>
@@ -3293,10 +3302,11 @@ export default function AdminDashboard() {
                         onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
                         disabled={usersPage === 1}
                         title="Предыдущая страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                       >
                         <ChevronLeft className="h-4 w-4" />
                       </Button>
-                      <span className="text-sm font-medium px-3 py-1 bg-white border rounded">
+                      <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
                         {usersPage} из {usersTotalPages}
                       </span>
                       <Button
@@ -3305,6 +3315,7 @@ export default function AdminDashboard() {
                         onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
                         disabled={usersPage === usersTotalPages}
                         title="Следующая страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                       >
                         <ChevronRight className="h-4 w-4" />
                       </Button>
@@ -3314,6 +3325,7 @@ export default function AdminDashboard() {
                         onClick={() => setUsersPage(usersTotalPages)}
                         disabled={usersPage === usersTotalPages}
                         title="Последняя страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                       >
                         ⟩⟩
                       </Button>
