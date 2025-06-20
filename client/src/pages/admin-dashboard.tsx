@@ -2273,11 +2273,11 @@ export default function AdminDashboard() {
                                 </Badge>
                               </TableCell>
                               <TableCell className="px-2 sm:px-4 py-2">
-                                <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer ? 'bg-orange-100 border border-orange-200' : ''}`}>
+                                <div className="text-xs sm:text-sm">
                                   {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
-                                    <div>
+                                    <div className="space-y-1">
                                       <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                      <div className="font-medium text-orange-600">
+                                      <div className="font-semibold text-gray-900">
                                         {formatCurrency(
                                           product.discountType === "percentage"
                                             ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
@@ -2289,9 +2289,9 @@ export default function AdminDashboard() {
                                       </div>
                                     </div>
                                   ) : (
-                                    <div className="font-medium">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                    <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
                                   )}
-                                  <div className="text-gray-500 text-xs">{getUnitLabel(product.unit || "100g")}</div>
+                                  <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
                                 </div>
                               </TableCell>
                               <TableCell className="px-2 sm:px-4 py-2">
