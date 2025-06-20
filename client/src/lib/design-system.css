@@ -410,15 +410,8 @@
 }
 
 /* Force all buttons to follow the theme system */
-[class*="bg-orange"], [class*="bg-blue"], [class*="bg-green"], [class*="bg-red"] {
-  background-color: var(--color-primary) !important;
-}
 
 /* Override Tailwind and other framework buttons */
-[class*="bg-orange"]:hover, [class*="bg-blue"]:hover, [class*="bg-green"]:hover, [class*="bg-red"]:hover {
-  background-color: var(--color-primary) !important;
-  box-shadow: var(--shadow-primary) !important;
-}
 
 /* Apply theme system to all button-like elements but exclude select components */
 [role="button"]:not([role="option"]):not([data-radix-select-item]):not([data-radix-select-trigger]):not([data-radix-select-content] *), 
@@ -465,23 +458,7 @@
   font-weight: 500 !important;
 }
 
-/* Specific overrides for common patterns */
-.bg-orange-500, .bg-orange-600, .bg-orange-700 {
-  background-color: var(--color-primary) !important;
-}
-
-.bg-orange-500:hover, .bg-orange-600:hover, .bg-orange-700:hover {
-  background-color: var(--color-primary) !important;
-  box-shadow: var(--shadow-primary) !important;
-}
-
-.text-orange-500, .text-orange-600, .text-orange-700 {
-  color: var(--color-primary) !important;
-}
-
-.border-orange-500, .border-orange-600, .border-orange-700 {
-  border-color: var(--color-primary) !important;
-}
+/* Specific overrides for common patterns - removed aggressive color overrides */
 
 /* Override hover effects on all buttons */
 button:hover, [role="button"]:hover, .btn:hover {
@@ -489,33 +466,4 @@ button:hover, [role="button"]:hover, .btn:hover {
   scale: none !important;
 }
 
-/* Comprehensive color overrides for all orange variants */
-.text-orange-500, .text-orange-600, .text-orange-700, .text-orange-800 {
-  color: var(--color-primary) !important;
-}
-
-.hover\:text-orange-500:hover, .hover\:text-orange-600:hover, .hover\:text-orange-700:hover, .hover\:text-orange-800:hover {
-  color: var(--color-primary-dark) !important;
-}
-
-.hover\:text-primary:hover {
-  color: var(--color-primary) !important;
-}
-
-/* Badge color overrides */
-.bg-orange-500, .bg-orange-600, .bg-orange-700 {
-  background-color: var(--color-primary) !important;
-}
-
-.hover\:bg-orange-500:hover, .hover\:bg-orange-600:hover, .hover\:bg-orange-700:hover {
-  background-color: var(--color-primary-dark) !important;
-}
-
-/* Focus and active states */
-.focus\:ring-orange-500:focus {
-  --tw-ring-color: var(--color-primary) !important;
-}
-
-.active\:bg-orange-600:active {
-  background-color: var(--color-primary-dark) !important;
-}
+/* Removed comprehensive color overrides that were causing conflicts */
