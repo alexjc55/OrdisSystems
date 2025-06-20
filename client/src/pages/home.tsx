@@ -583,9 +583,9 @@ export default function Home() {
 
               {/* Filter Controls */}
               {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
-                <div className="flex flex-wrap gap-4 mb-6">
+                <div className="flex gap-2 sm:gap-4 mb-6">
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger className="w-48">
+                    <SelectTrigger className="flex-1 min-w-0 text-sm">
                       <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
                     </SelectTrigger>
                     <SelectContent>
@@ -599,7 +599,7 @@ export default function Home() {
                   </Select>
 
                   <Select value={discountFilter} onValueChange={setDiscountFilter}>
-                    <SelectTrigger className="w-48">
+                    <SelectTrigger className="flex-1 min-w-0 text-sm">
                       <SelectValue placeholder={t('filterByDiscount', 'Фильтр по скидке')} />
                     </SelectTrigger>
                     <SelectContent>
