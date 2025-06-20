@@ -2164,37 +2164,36 @@ export default function AdminDashboard() {
                   <div className="flex flex-col sm:flex-row gap-3 lg:flex-shrink-0">
                     <div className="relative min-w-[180px]">
                       <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
-                        <SelectTrigger className="pl-10 text-sm">
-                          <SelectValue placeholder={t('products.allCategories', 'Все категории')} />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                          <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{t('products.allCategories', 'Все категории')}</SelectItem>
-                          {(categories as any[] || []).map((category: any) => (
-                            <SelectItem 
-                              key={category.id} 
-                              value={category.id.toString()}
-                              className="text-gray-900 hover:bg-gray-100"
-                            >
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <CustomSelect 
+                        value={selectedCategoryFilter} 
+                        onValueChange={setSelectedCategoryFilter}
+                        placeholder={t('products.allCategories', 'Все категории')}
+                        className="pl-10 text-sm"
+                      >
+                        <CustomSelectItem value="all">{t('products.allCategories', 'Все категории')}</CustomSelectItem>
+                        {(categories as any[] || []).map((category: any) => (
+                          <CustomSelectItem 
+                            key={category.id} 
+                            value={category.id.toString()}
+                          >
+                            {category.name}
+                          </CustomSelectItem>
+                        ))}
+                      </CustomSelect>
                     </div>
                     <div className="relative min-w-[160px]">
                       <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
-                        <SelectTrigger className="pl-10 text-sm">
-                          <SelectValue placeholder={t('products.productStatus', 'Статус товара')} />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                          <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{t('products.allProducts', 'Все товары')}</SelectItem>
-                          <SelectItem value="available" className="text-gray-900 hover:bg-gray-100">{t('products.availableProducts', 'Доступные товары')}</SelectItem>
-                          <SelectItem value="unavailable" className="text-gray-900 hover:bg-gray-100">{t('products.unavailableProducts', 'Недоступные товары')}</SelectItem>
-                          <SelectItem value="with_discount" className="text-gray-900 hover:bg-gray-100">{t('products.productsWithDiscount', 'Товары со скидкой')}</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <CustomSelect 
+                        value={selectedStatusFilter} 
+                        onValueChange={setSelectedStatusFilter}
+                        placeholder={t('products.productStatus', 'Статус товара')}
+                        className="pl-10 text-sm"
+                      >
+                        <CustomSelectItem value="all">{t('products.allProducts', 'Все товары')}</CustomSelectItem>
+                        <CustomSelectItem value="available">{t('products.availableProducts', 'Доступные товары')}</CustomSelectItem>
+                        <CustomSelectItem value="unavailable">{t('products.unavailableProducts', 'Недоступные товары')}</CustomSelectItem>
+                        <CustomSelectItem value="with_discount">{t('products.productsWithDiscount', 'Товары со скидкой')}</CustomSelectItem>
+                      </CustomSelect>
                     </div>
                   </div>
                 </div>
@@ -2559,17 +2558,17 @@ export default function AdminDashboard() {
 
                 {/* Filters */}
                 <div className="flex gap-3">
-                  <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
-                    <SelectTrigger className="w-40 text-xs h-8">
-                      <SelectValue placeholder={t('orders.filterOrders', 'Фильтр заказов')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">{t('orders.activeOrders', 'Активные заказы')}</SelectItem>
-                      <SelectItem value="delivered">{t('orders.deliveredOrders', 'Доставленные заказы')}</SelectItem>
-                      <SelectItem value="cancelled">{t('orders.cancelledOrders', 'Отмененные заказы')}</SelectItem>
-                      <SelectItem value="all">{t('orders.allOrders', 'Все заказы')}</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <CustomSelect 
+                    value={ordersStatusFilter} 
+                    onValueChange={setOrdersStatusFilter}
+                    placeholder={t('orders.filterOrders', 'Фильтр заказов')}
+                    className="w-40 text-xs h-8"
+                  >
+                    <CustomSelectItem value="active">{t('orders.activeOrders', 'Активные заказы')}</CustomSelectItem>
+                    <CustomSelectItem value="delivered">{t('orders.deliveredOrders', 'Доставленные заказы')}</CustomSelectItem>
+                    <CustomSelectItem value="cancelled">{t('orders.cancelledOrders', 'Отмененные заказы')}</CustomSelectItem>
+                    <CustomSelectItem value="all">{t('orders.allOrders', 'Все заказы')}</CustomSelectItem>
+                  </CustomSelect>
 
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
