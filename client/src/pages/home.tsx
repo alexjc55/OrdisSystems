@@ -586,10 +586,10 @@ export default function Home() {
                 <div className="flex flex-wrap gap-4 mb-6">
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                     <SelectTrigger className="w-48">
-                      <SelectValue placeholder={t('filterByCategory')} />
+                      <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t('allCategories')}</SelectItem>
+                      <SelectItem value="all">{t('allCategories', 'Все категории')}</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
                           {category.name}
@@ -600,11 +600,11 @@ export default function Home() {
 
                   <Select value={discountFilter} onValueChange={setDiscountFilter}>
                     <SelectTrigger className="w-48">
-                      <SelectValue placeholder={t('filterByDiscount')} />
+                      <SelectValue placeholder={t('filterByDiscount', 'Фильтр по скидке')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t('allProducts')}</SelectItem>
-                      <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
+                      <SelectItem value="all">{t('allProducts', 'Все товары')}</SelectItem>
+                      <SelectItem value="discount">{t('onlyDiscounted', 'Только со скидкой')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
