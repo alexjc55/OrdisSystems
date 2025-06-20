@@ -288,6 +288,18 @@
     stroke: currentColor !important;
     stroke-width: 1.5 !important;
   }
+
+  /* More specific selectors for ghost buttons */
+  button.btn-ghost,
+  [class*="btn-ghost"],
+  button[class*="ghost"] {
+    background-color: white !important;
+  }
+
+  /* Extra specificity for shadcn buttons */
+  button.inline-flex.items-center.justify-center.whitespace-nowrap.rounded-md.text-sm.font-medium.ring-offset-background.transition-colors.focus-visible\:outline-none.focus-visible\:ring-2.focus-visible\:ring-ring.focus-visible\:ring-offset-2.disabled\:pointer-events-none.disabled\:opacity-50.hover\:bg-accent.hover\:text-accent-foreground.h-10.px-4.py-2 {
+    background-color: white !important;
+  }
 }
 
 /* Global component overrides */
@@ -480,4 +492,34 @@ button:hover, [role="button"]:hover, .btn:hover {
 
 .hover\:bg-blue-600:hover {
   background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1)) !important;
+}
+
+/* Force white background on all ghost buttons - highest priority */
+button[class*="ghost"]:not([class*="outline"]):not([class*="primary"]):not([class*="secondary"]):not([class*="destructive"]):not([class*="success"]):not([class*="warning"]):not([class*="info"]) {
+  background-color: white !important;
+  background-image: none !important;
+}
+
+/* Target specific ghost button classes used by shadcn */
+.hover\:bg-accent:not(.bg-primary):not(.bg-secondary):not(.bg-destructive) {
+  background-color: white !important;
+}
+
+/* Additional fallback for any transparent backgrounds */
+button.h-auto.p-0:not([class*="primary"]):not([class*="secondary"]):not([class*="destructive"]):not([class*="outline"]) {
+  background-color: white !important;
+}
+
+/* Universal override for any button with transparent or undefined background */
+button:not([class*="bg-orange"]):not([class*="bg-blue"]):not([class*="bg-red"]):not([class*="bg-green"]):not([class*="bg-yellow"]):not([class*="bg-purple"]):not([class*="bg-gray-"]):not([style*="background"]):not([class*="outline"]) {
+  background-color: white !important;
+}
+
+/* Specific targeting of ghost variant buttons in admin */
+.hover\:bg-transparent {
+  background-color: white !important;
+}
+
+.hover\:bg-transparent:hover {
+  background-color: #f3f4f6 !important;
 }
