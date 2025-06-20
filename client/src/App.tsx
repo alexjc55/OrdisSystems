@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import ErrorBoundary from "@/components/error-boundary";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ThemeProvider } from "@/hooks/use-themes";
+import { ThemeApplier } from "@/components/theme-provider";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { CustomHtml } from "@/components/custom-html";
 import { WhatsAppChat } from "@/components/layout/whatsapp-chat";
@@ -93,6 +94,7 @@ function App() {
         <ThemeProvider>
           <TooltipProvider>
             <LanguageInitializer />
+            <ThemeApplier />
             <Toaster />
             <Router />
           </TooltipProvider>
