@@ -359,11 +359,14 @@ export default function Home() {
 
                   {/* Contact Information */}
                   {(storeSettings?.contactPhone || storeSettings?.contactEmail) && (
-                    <Card className="p-3 sm:p-4">
-                      <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                        <Phone className="h-4 w-4 text-primary" />
-                        <span className="font-medium text-sm sm:text-base">{t('contacts')}</span>
-                      </div>
+                    <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
+                      <div className="p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-full group-hover:scale-110 transition-transform duration-300">
+                            <Phone className="h-5 w-5 text-white" />
+                          </div>
+                          <span className="font-semibold text-lg text-gray-800">{t('contacts')}</span>
+                        </div>
                       <div className="space-y-1">
                         {storeSettings.contactPhone && (
                           <div className="text-xs sm:text-sm">
@@ -379,32 +382,35 @@ export default function Home() {
                             <span className="font-medium">{storeSettings.contactEmail}</span>
                           </div>
                         )}
+                        </div>
                       </div>
                     </Card>
                   )}
 
                   {/* Delivery & Payment */}
                   {(storeSettings?.deliveryInfo || storeSettings?.paymentInfo) && (
-                    <Card className="p-3 sm:p-4">
-                      <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                        <CreditCard className="h-4 w-4 text-primary" />
-                        <span className="font-medium text-sm sm:text-base">Оплата и доставка</span>
-                      </div>
-                      <div className="space-y-2">
-                        {storeSettings.deliveryInfo && (
-                          <div className="text-xs sm:text-sm">
-                            <span className="text-gray-600">{t('delivery')}:</span>
-                            <br />
-                            <span className="font-medium">{storeSettings.deliveryInfo}</span>
+                    <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
+                      <div className="p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full group-hover:scale-110 transition-transform duration-300">
+                            <CreditCard className="h-5 w-5 text-white" />
                           </div>
-                        )}
-                        {storeSettings.paymentInfo && (
-                          <div className="text-xs sm:text-sm">
-                            <span className="text-gray-600">{t('payment')}:</span>
-                            <br />
-                            <span className="font-medium">{storeSettings.paymentInfo}</span>
-                          </div>
-                        )}
+                          <span className="font-semibold text-lg text-gray-800">Оплата и доставка</span>
+                        </div>
+                        <div className="space-y-3">
+                          {storeSettings.deliveryInfo && (
+                            <div className="flex flex-col">
+                              <span className="text-gray-500 text-sm font-medium mb-1">{t('delivery')}:</span>
+                              <span className="text-gray-800 font-semibold">{storeSettings.deliveryInfo}</span>
+                            </div>
+                          )}
+                          {storeSettings.paymentInfo && (
+                            <div className="flex flex-col">
+                              <span className="text-gray-500 text-sm font-medium mb-1">{t('payment')}:</span>
+                              <span className="text-gray-800 font-semibold">{storeSettings.paymentInfo}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </Card>
                   )}
