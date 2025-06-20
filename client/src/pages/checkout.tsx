@@ -154,6 +154,37 @@ export default function Checkout() {
   const [orderType, setOrderType] = useState<"guest" | "register" | "login">("register");
   const { storeSettings } = useStoreSettings();
   
+  // Helper functions for future-order validation
+  const getFutureOrderProducts = () => {
+    return items.filter(item => item.product.availabilityStatus === 'out_of_stock_today');
+  };
+
+  const hasFutureOrderProducts = () => {
+    return getFutureOrderProducts().length > 0;
+  };
+
+  const validateDeliveryDateForFutureOrders = (deliveryDate: string | null) => {
+    if (!hasFutureOrderProducts()) return { valid: true };
+    
+    if (!deliveryDate) {
+      return {
+        valid: false,
+        message: "В вашем заказе есть товары доступные для заказа на другой день. Необходимо обязательно указать желаемый день и время доставки."
+      };
+    }
+    
+    const today = format(new Date(), "yyyy-MM-dd");
+    const futureProducts = getFutureOrderProducts();
+    
+    if (deliveryDate === today) {
+      return {
+        valid: false,
+        message: `Товары "${futureProducts.map(item => item.product.name).join(', ')}" в вашем заказе доступны только для заказа на другой день. Либо удалите их из заказа, либо выберите другую дату доставки.`
+      };
+    }
+    
+    return { valid: true };
+  };
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedGuestDate, setSelectedGuestDate] = useState<Date | undefined>(undefined);
@@ -189,15 +220,11 @@ export default function Checkout() {
   const createGuestOrderMutation = useMutation({
     mutationFn: async (data: GuestOrderData) => {
       const deliveryDate = selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : "";
-      const today = format(new Date(), "yyyy-MM-dd");
       
-      // Validate products availability for selected delivery date
-      const unavailableForToday = items.filter(item => 
-        item.product.availabilityStatus === 'out_of_stock_today' && deliveryDate === today
-      );
-      
-      if (unavailableForToday.length > 0) {
-        throw new Error(`Товары "${unavailableForToday.map(item => item.product.name).join(', ')}" недоступны для заказа на сегодня. Выберите другую дату доставки.`);
+      // Enhanced validation for future-order products
+      const validation = validateDeliveryDateForFutureOrders(deliveryDate);
+      if (!validation.valid) {
+        throw new Error(validation.message);
       }
 
       const subtotal = getTotalPrice();
@@ -349,15 +376,11 @@ export default function Checkout() {
   const createAuthenticatedOrderMutation = useMutation({
     mutationFn: async (formData: AuthenticatedOrderData) => {
       const deliveryDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
-      const today = format(new Date(), "yyyy-MM-dd");
       
-      // Validate products availability for selected delivery date
-      const unavailableForToday = items.filter(item => 
-        item.product.availabilityStatus === 'out_of_stock_today' && deliveryDate === today
-      );
-      
-      if (unavailableForToday.length > 0) {
-        throw new Error(`Товары "${unavailableForToday.map(item => item.product.name).join(', ')}" недоступны для заказа на сегодня. Выберите другую дату доставки.`);
+      // Enhanced validation for future-order products
+      const validation = validateDeliveryDateForFutureOrders(deliveryDate);
+      if (!validation.valid) {
+        throw new Error(validation.message);
       }
 
       const subtotal = getTotalPrice();
