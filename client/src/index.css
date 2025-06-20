@@ -316,13 +316,13 @@
   z-index: 50 !important;
 }
 
-/* Элементы меню - все возможные селекторы */
+/* Элементы меню - базовые стили по умолчанию */
 [data-radix-select-item],
 [data-radix-select-content] [data-radix-select-item],
 [data-radix-select-viewport] [data-radix-select-item],
 [role="option"] {
   color: #000000 !important;
-  background-color: transparent !important;
+  background-color: white !important;
   cursor: pointer !important;
   padding: 8px 12px !important;
   border: none !important;
@@ -330,6 +330,11 @@
   transition: all 0.15s ease !important;
   display: block !important;
   width: 100% !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  text-align: left !important;
 }
 
 /* Состояние наведения - максимальная специфичность */
