@@ -343,7 +343,10 @@
 [role="option"][data-highlighted] {
   background-color: #f97316 !important;
   color: #ffffff !important;
+  position: relative !important;
 }
+
+/* Галочка только для активного элемента */
 
 /* Выбранное состояние - оранжевый текст и оранжевая галочка */
 [data-radix-select-item][data-state="checked"],
