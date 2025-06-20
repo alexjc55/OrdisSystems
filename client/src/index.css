@@ -304,10 +304,11 @@
   }
 }
 
-/* СТИЛИ ДЛЯ SELECT МЕНЮ */
+/* СТИЛИ ДЛЯ SELECT МЕНЮ - МАКСИМАЛЬНАЯ СПЕЦИФИЧНОСТЬ */
 
 /* Контейнер меню */
-[data-radix-select-content] {
+[data-radix-select-content],
+[data-radix-select-viewport] {
   background-color: white !important;
   border: 1px solid #e5e7eb !important;
   border-radius: 6px !important;
@@ -315,8 +316,11 @@
   z-index: 50 !important;
 }
 
-/* Элементы меню - базовое состояние */
-[data-radix-select-item] {
+/* Элементы меню - все возможные селекторы */
+[data-radix-select-item],
+[data-radix-select-content] [data-radix-select-item],
+[data-radix-select-viewport] [data-radix-select-item],
+[role="option"] {
   color: #000000 !important;
   background-color: transparent !important;
   cursor: pointer !important;
@@ -324,17 +328,28 @@
   border: none !important;
   outline: none !important;
   transition: all 0.15s ease !important;
+  display: block !important;
+  width: 100% !important;
 }
 
-/* Состояние наведения и подсветки */
+/* Состояние наведения - максимальная специфичность */
 [data-radix-select-item]:hover,
-[data-radix-select-item][data-highlighted] {
+[data-radix-select-item][data-highlighted],
+[data-radix-select-content] [data-radix-select-item]:hover,
+[data-radix-select-content] [data-radix-select-item][data-highlighted],
+[data-radix-select-viewport] [data-radix-select-item]:hover,
+[data-radix-select-viewport] [data-radix-select-item][data-highlighted],
+[role="option"]:hover,
+[role="option"][data-highlighted] {
   background-color: #f97316 !important;
   color: #ffffff !important;
 }
 
-/* Выбранное состояние */
-[data-radix-select-item][data-state="checked"] {
+/* Выбранное состояние - максимальная специфичность */
+[data-radix-select-item][data-state="checked"],
+[data-radix-select-content] [data-radix-select-item][data-state="checked"],
+[data-radix-select-viewport] [data-radix-select-item][data-state="checked"],
+[role="option"][aria-selected="true"] {
   background-color: #f97316 !important;
   color: #ffffff !important;
 }
