@@ -463,6 +463,17 @@ select option:not([selected]):hover {
   color: white !important;
 }
 
+/* Force blue color for pre-order buttons */
+.bg-blue-600 {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1)) !important;
+}
+
+.hover\:bg-blue-600:hover {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1)) !important;
+}
+
 /* Completely hide all indicators, checkboxes, and icons */
 [data-radix-select-item] [data-radix-select-item-indicator],
 [data-radix-select-item-indicator],
