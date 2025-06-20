@@ -304,7 +304,7 @@
   }
 }
 
-/* ЕДИНСТВЕННЫЕ СТИЛИ ДЛЯ SELECT МЕНЮ */
+/* СТИЛИ ДЛЯ SELECT МЕНЮ */
 
 /* Контейнер меню */
 [data-radix-select-content] {
@@ -318,20 +318,22 @@
 /* Элементы меню - базовое состояние */
 [data-radix-select-item] {
   color: #000000 !important;
-  background-color: white !important;
+  background-color: transparent !important;
   cursor: pointer !important;
   padding: 8px 12px !important;
   border: none !important;
   outline: none !important;
+  transition: all 0.15s ease !important;
 }
 
-/* Состояние наведения - оранжевый фон, белый текст */
-[data-radix-select-item]:hover {
+/* Состояние наведения и подсветки */
+[data-radix-select-item]:hover,
+[data-radix-select-item][data-highlighted] {
   background-color: #f97316 !important;
   color: #ffffff !important;
 }
 
-/* Выбранное состояние - оранжевый фон, белый текст */
+/* Выбранное состояние */
 [data-radix-select-item][data-state="checked"] {
   background-color: #f97316 !important;
   color: #ffffff !important;
