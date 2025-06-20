@@ -897,16 +897,30 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
     font-size: 1rem !important;
   }
   
-  /* Consistent quantity inputs across all devices */
+  /* Mobile-optimized quantity inputs - larger for better touch interaction */
   input[class*="w-16"][class*="text-center"] {
-    width: 4rem !important;
-    min-width: 4rem !important;
-    max-width: 4rem !important;
-    height: 2rem !important;
-    min-height: 2rem !important;
-    max-height: 2rem !important;
-    font-size: 0.875rem !important;
-    padding: 0.25rem !important;
+    width: 5rem !important;
+    min-width: 5rem !important;
+    max-width: 5rem !important;
+    height: 2.5rem !important;
+    min-height: 2.5rem !important;
+    max-height: 2.5rem !important;
+    font-size: 1rem !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Desktop version - smaller and more compact */
+  @media (min-width: 768px) {
+    input[class*="w-16"][class*="text-center"] {
+      width: 4rem !important;
+      min-width: 4rem !important;
+      max-width: 4rem !important;
+      height: 2rem !important;
+      min-height: 2rem !important;
+      max-height: 2rem !important;
+      font-size: 0.875rem !important;
+      padding: 0.25rem !important;
+    }
   }
   
   /* Card adjustments */
