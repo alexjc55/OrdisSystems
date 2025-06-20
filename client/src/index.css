@@ -304,9 +304,9 @@
   }
 }
 
-/* GLOBAL SELECT STYLING - All selects site-wide */
+/* ЕДИНСТВЕННЫЕ СТИЛИ ДЛЯ SELECT МЕНЮ */
 
-/* Radix UI Select Components */
+/* Контейнер меню */
 [data-radix-select-content] {
   background-color: white !important;
   border: 1px solid #e5e7eb !important;
@@ -315,208 +315,29 @@
   z-index: 50 !important;
 }
 
+/* Элементы меню - базовое состояние */
 [data-radix-select-item] {
   color: #000000 !important;
-  background-color: transparent !important;
+  background-color: white !important;
   cursor: pointer !important;
   padding: 8px 12px !important;
   border: none !important;
   outline: none !important;
 }
 
-/* Отключаем все интерактивные эффекты для дочерних элементов */
-[data-radix-select-item] *,
-[data-radix-select-item] span,
-[data-radix-select-item] div,
-[data-radix-select-item] text {
-  pointer-events: none !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  text-shadow: none !important;
-  outline: none !important;
-  color: inherit !important;
-  transition: none !important;
-}
-
-/* Принудительно наследуем цвет от родителя во всех состояниях */
-[data-radix-select-item]:hover *,
-[data-radix-select-item]:focus *,
-[data-radix-select-item][data-highlighted] *,
-[data-radix-select-item][data-state="checked"] * {
-  color: inherit !important;
-  background: transparent !important;
-  transition: none !important;
-}
-
-[data-radix-select-item]:hover,
-[data-radix-select-item]:focus,
-[data-radix-select-item][data-highlighted] {
-  background-color: #f97316 !important;
-  color: #ffffff !important;
-}
-
-[data-radix-select-item]:hover *,
-[data-radix-select-item]:focus *,
-[data-radix-select-item][data-highlighted] * {
-  color: #ffffff !important;
-}
-
-[data-radix-select-item][data-state="checked"] {
-  background-color: #f97316 !important;
-  color: #ffffff !important;
-}
-
-[data-radix-select-item][data-state="checked"] * {
-  color: #ffffff !important;
-}
-
-/* Native HTML Select Elements */
-select {
-  color: #000000 !important;
-  background-color: white !important;
-}
-
-select option {
-  color: #000000 !important;
-  background-color: white !important;
-  padding: 8px 12px !important;
-}
-
-select option:hover,
-select option:focus {
-  background-color: #f5f5f5 !important;
-  color: #000000 !important;
-}
-
-select option:checked,
-select option[selected] {
-  background-color: #f3f4f6 !important;
-  color: #111827 !important;
-}
-
-/* Ensure text never changes to white on hover */
-[data-radix-select-item]:not([data-state="checked"]):hover,
-select option:not(:checked):hover,
-select option:not([selected]):hover {
-  color: #000000 !important;
-}
-
-/* Admin panel filter dropdowns - button-based selects */
-[data-radix-select-content] [data-radix-select-item],
-[data-radix-select-viewport] [data-radix-select-item] {
-  color: #000000 !important;
-  background-color: transparent !important;
-  transition: background-color 0.15s ease !important;
-}
-
-[data-radix-select-content] [data-radix-select-item]:hover,
-[data-radix-select-content] [data-radix-select-item]:focus,
-[data-radix-select-content] [data-radix-select-item][data-highlighted],
-[data-radix-select-viewport] [data-radix-select-item]:hover,
-[data-radix-select-viewport] [data-radix-select-item]:focus,
-[data-radix-select-viewport] [data-radix-select-item][data-highlighted] {
-  background-color: #f97316 !important;
-  color: #ffffff !important;
-}
-
-[data-radix-select-content] [data-radix-select-item]:hover *,
-[data-radix-select-content] [data-radix-select-item]:focus *,
-[data-radix-select-content] [data-radix-select-item][data-highlighted] *,
-[data-radix-select-viewport] [data-radix-select-item]:hover *,
-[data-radix-select-viewport] [data-radix-select-item]:focus *,
-[data-radix-select-viewport] [data-radix-select-item][data-highlighted] * {
-  color: #ffffff !important;
-}
-
-[data-radix-select-content] [data-radix-select-item][data-state="checked"],
-[data-radix-select-viewport] [data-radix-select-item][data-state="checked"] {
-  background-color: #f97316 !important;
-  color: #ffffff !important;
-}
-
-[data-radix-select-content] [data-radix-select-item][data-state="checked"] *,
-[data-radix-select-viewport] [data-radix-select-item][data-state="checked"] * {
-  color: #ffffff !important;
-}
-
-/* Force override all select styling - highest priority */
-[data-radix-select-content],
-[data-radix-select-content] *,
-[data-radix-select-viewport],
-[data-radix-select-viewport] *,
-[data-radix-select-item],
-.select-item {
-  background-color: white !important;
-  color: #000000 !important;
-  border: none !important;
-}
-
-[data-radix-select-content] *[data-state="checked"],
-[data-radix-select-viewport] *[data-state="checked"],
-[data-radix-select-item][data-state="checked"] {
-  background-color: #f97316 !important;
-  color: #ffffff !important;
-}
-
-[data-radix-select-content] *:hover:not([data-state="checked"]),
-[data-radix-select-viewport] *:hover:not([data-state="checked"]),
-[data-radix-select-item]:hover:not([data-state="checked"]) {
-  background-color: #f97316 !important;
-  color: #ffffff !important;
-}
-
-[data-radix-select-content] *:hover:not([data-state="checked"]) *,
-[data-radix-select-viewport] *:hover:not([data-state="checked"]) *,
-[data-radix-select-item]:hover:not([data-state="checked"]) * {
-  color: #ffffff !important;
-}
-
-/* Override any button styling that might be affecting selects */
-[data-radix-select-trigger],
-[data-radix-select-trigger] *,
-[role="combobox"] {
-  background-color: white !important;
-  color: #000000 !important;
-  border: 1px solid #d1d5db !important;
-}
-
-/* Ultimate override for select dropdowns */
-[data-radix-popper-content-wrapper],
-[data-radix-popper-content-wrapper] *,
-.select-content,
-.select-content * {
-  background-color: white !important;
-  color: #000000 !important;
-  border: none !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Reset any inherited orange styling from theme system */
-[data-radix-select-content],
-[data-radix-select-viewport] {
-  background: white !important;
-  color: #000000 !important;
-  border: none !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-  font-family: inherit !important;
-}
-
-/* Select component custom styling */
-[data-radix-select-item] {
-  background-color: white !important;
-  color: black !important;
-}
-
+/* Состояние наведения - оранжевый фон, белый текст */
 [data-radix-select-item]:hover {
-  background-color: var(--color-primary) !important;
-  color: white !important;
+  background-color: #f97316 !important;
+  color: #ffffff !important;
 }
 
+/* Выбранное состояние - оранжевый фон, белый текст */
 [data-radix-select-item][data-state="checked"] {
-  background-color: var(--color-primary) !important;
-  color: white !important;
+  background-color: #f97316 !important;
+  color: #ffffff !important;
 }
+
+/* Очищены все дублирующиеся селекторы */
 
 /* Force blue color for pre-order buttons */
 .bg-blue-600 {
