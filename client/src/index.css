@@ -388,32 +388,24 @@
   color: #ffffff !important;
 }
 
-/* Полная изоляция тестового выпадающего меню от всех глобальных стилей */
-.test-dropdown * {
-  all: unset !important;
-  box-sizing: border-box !important;
-}
-
-.test-dropdown {
-  background-color: white !important;
-  border: 1px solid #e5e7eb !important;
-  border-radius: 6px !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-  z-index: 50 !important;
-  font-family: system-ui, -apple-system, sans-serif !important;
+/* Исправляем CSS для тестового селекта - обращаемся к viewport */
+.test-dropdown [data-radix-select-viewport] {
+  padding: 4px !important;
 }
 
 .test-dropdown [data-radix-select-item] {
-  display: block !important;
+  display: flex !important;
+  align-items: center !important;
   cursor: pointer !important;
   padding: 8px 12px !important;
   font-size: 14px !important;
   line-height: 1.4 !important;
   color: #000000 !important;
-  background: white !important;
-  text-align: left !important;
-  width: 100% !important;
+  background-color: white !important;
+  border-radius: 4px !important;
+  margin: 1px 0 !important;
   position: relative !important;
+  min-height: 32px !important;
 }
 
 .test-dropdown [data-radix-select-item]:hover {
@@ -423,7 +415,7 @@
 
 .test-dropdown [data-radix-select-item][data-state="checked"] {
   color: #f97316 !important;
-  background: white !important;
+  background-color: white !important;
 }
 
 .test-dropdown [data-radix-select-item][data-state="checked"]:hover {
