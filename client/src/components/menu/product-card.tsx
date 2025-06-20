@@ -216,26 +216,26 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           </div>
         </div>
 
-        <div className="space-y-3 mt-auto">
+        <div className="space-y-2 mt-auto">
           {/* Quantity Selector */}
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-gray-700">
-              {unit === "piece" ? t('product.quantity', 'Количество:') : 
-               unit === "kg" ? t('product.weight', 'Вес (кг):') : 
-               unit === "100g" || unit === "100ml" ? t('product.grams', 'Граммы:') : t('product.quantity', 'Количество:')}
-            </label>
-            <div className="flex items-center space-x-2">
+            <span className="text-xs text-gray-600">
+              {unit === "piece" ? 'Кол-во:' : 
+               unit === "kg" ? 'Вес (кг):' : 
+               unit === "100g" || unit === "100ml" ? 'Граммы:' : 'Кол-во:'}
+            </span>
+            <div className="flex items-center space-x-1">
               <Button
                 size="sm"
                 variant="outline"
-                className="h-8 w-8 p-0"
+                className="h-6 w-6 p-0 border-gray-300"
                 onClick={() => {
                   const step = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1;
                   handleQuantityChange(selectedQuantity - step);
                 }}
                 disabled={selectedQuantity <= (unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1)}
               >
-                <Minus className="h-3 w-3" />
+                <Minus className="h-2 w-2" />
               </Button>
               <Input
                 type="number"
@@ -247,28 +247,28 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 step={unit === "piece" ? "1" : unit === "kg" ? "0.1" : "1"}
                 min={unit === "piece" ? "1" : unit === "kg" ? "0.1" : "1"}
                 max={unit === "100g" || unit === "100ml" ? "9999" : "99"}
-                className="w-20 text-center text-sm h-8"
+                className="w-12 text-center text-xs h-6 border-gray-300"
               />
               <Button
                 size="sm"
                 variant="outline"
-                className="h-8 w-8 p-0"
+                className="h-6 w-6 p-0 border-gray-300"
                 onClick={() => {
                   const step = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1;
                   handleQuantityChange(selectedQuantity + step);
                 }}
                 disabled={selectedQuantity >= (unit === "100g" || unit === "100ml" ? 9999 : 99)}
               >
-                <Plus className="h-3 w-3" />
+                <Plus className="h-2 w-2" />
               </Button>
             </div>
           </div>
 
           {/* Total Price */}
-          <div className="bg-gray-50 rounded-lg p-3">
+          <div className="bg-gray-50 rounded p-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">{t('product.total', 'Итого:')}:</span>
-              <span className="text-lg font-bold text-gray-900">
+              <span className="text-xs text-gray-600">Итого:</span>
+              <span className="text-sm font-bold text-gray-900">
                 {formatCurrency(totalPrice)}
               </span>
             </div>
@@ -279,28 +279,24 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             product.availabilityStatus === 'out_of_stock_today' ? (
               <Button
                 onClick={handleAddToCart}
-                variant="info"
-                className="w-full"
-                size="lg"
+                className="w-full bg-blue-500 text-white hover:bg-blue-600 h-10 text-sm font-medium"
               >
-                <ShoppingCart className="mr-2 h-4 w-4" />
-                Доступен на другой день
+                <ShoppingCart className="mr-1 h-3 w-3" />
+                Доступен завтра
               </Button>
             ) : (
               <Button
                 onClick={handleAddToCart}
-                variant="default"
-                className="w-full"
-                size="lg"
+                className="w-full bg-orange-500 text-white hover:bg-orange-600 h-10 text-sm font-medium"
               >
-                <ShoppingCart className="mr-2 h-4 w-4" />
-                {t('product.addToCart', 'В корзину')}
+                <ShoppingCart className="mr-1 h-3 w-3" />
+                В корзину
               </Button>
             )
           ) : (
             <Button
               disabled
-              className="w-full bg-gray-300 text-gray-500 cursor-not-allowed py-2 px-4"
+              className="w-full bg-gray-200 text-gray-500 cursor-not-allowed h-10 text-sm"
             >
               ❌ Недоступен
             </Button>
