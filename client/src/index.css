@@ -726,10 +726,19 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
     line-height: 1.75rem !important;
   }
   
-  /* Button adjustments */
-  button {
+  /* Button adjustments - exclude carousel dots and other small indicators */
+  button:not(.carousel-dot-modern):not([class*="carousel"]):not([class*="dot"]):not([class*="indicator"]):not([style*="width: 8px"]):not([style*="height: 8px"]):not([class*="embla"]) {
     min-height: 44px !important;
     font-size: 0.875rem !important;
+  }
+  
+  /* Ensure carousel dots maintain their small size */
+  .carousel-dot-modern,
+  button.carousel-dot-modern {
+    min-height: 8px !important;
+    height: 8px !important;
+    width: 8px !important;
+    min-width: 8px !important;
   }
   
   /* Input adjustments */
