@@ -141,7 +141,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
         
         {/* Out of stock overlay bar */}
         {product.availabilityStatus === 'out_of_stock_today' && (
-          <div className="absolute bottom-0 left-0 right-0 bg-red-500 bg-opacity-90 text-white text-center py-2 font-semibold text-sm">
+          <div className="absolute bottom-0 left-0 right-0 bg-red-500 bg-opacity-90 text-white text-center py-2 font-semibold text-base">
             Закончился на сегодня
           </div>
         )}
