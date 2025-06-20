@@ -149,43 +149,44 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   };
 
   return (
-    <div className="card-modern interactive h-full flex flex-col">
-      <div className="relative overflow-hidden rounded-t-xl">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
+      <div className="relative">
         <img
           src={product.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'}
           alt={product.name}
-          className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+          className="w-full h-48 object-cover"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop';
           }}
         />
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-2 right-2">
           {getAvailabilityBadge()}
         </div>
         {product.isSpecialOffer && (
-          <div className="absolute top-3 left-3">
-            <Badge className="badge-modern badge-primary space-xs">
-              <Star className="icon-modern w-3 h-3 fill-current" />
+          <div className="absolute top-2 left-2">
+            <Badge className="bg-orange-500 text-white">
+              <Star className="w-3 h-3 mr-1" />
               Акция
             </Badge>
           </div>
         )}
       </div>
       
-      <div className="p-6 flex-1 flex flex-col space-lg">
-        <div className="flex-1 space-md">
-          <h3 className="text-display-xs text-balance font-semibold text-neutral-900 mb-2">
+      <CardContent className="p-4 flex-1 flex flex-col">
+        <div className="flex-1">
+          <h3 className="text-lg font-poppins font-semibold text-gray-900 mb-1">
             {product.name}
           </h3>
           {product.description && (
-            <p className="text-sm text-neutral-600 mb-3 text-pretty line-clamp-2 leading-relaxed">
+            <p className="text-sm text-gray-600 mb-2 line-clamp-2">
               {product.description}
             </p>
           )}
           {product.category && (
             <Badge 
-              className="badge-modern badge-neutral micro-bounce mb-3 cursor-pointer"
+              variant="secondary" 
+              className="mb-2 cursor-pointer bg-gray-100 text-gray-700 hover:bg-primary hover:text-primary-foreground transition-colors"
               onClick={() => onCategoryClick?.(product.category.id)}
             >
               {product.category.name}
@@ -305,7 +306,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             </Button>
           )}
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
