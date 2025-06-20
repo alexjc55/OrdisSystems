@@ -99,13 +99,12 @@ export default function Header({ onResetView }: HeaderProps) {
               )}
             </Button>
 
-            {/* User Menu or Mobile Menu Button */}
-            {user ? (
-              <>
-                {/* Desktop User Menu */}
+            {/* Desktop User Menu - Only on desktop */}
+            {user && (
+              <div className="hidden md:block">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full hidden md:flex">
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
                         <AvatarFallback>
@@ -157,38 +156,28 @@ export default function Header({ onResetView }: HeaderProps) {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                
-                {/* Mobile Menu Button for logged in users */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="md:hidden p-2 text-gray-600 hover:text-primary"
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                >
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </>
-            ) : (
-              <>
-                {/* Desktop Login Button */}
-                <Button 
-                  className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-500/50 text-white transition-shadow duration-200 hidden md:flex"
-                  onClick={() => window.location.href = '/auth'}
-                >
-                  {t('login')}
-                </Button>
-                
-                {/* Mobile Menu Button - Only show on mobile when not logged in */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="md:hidden p-2 text-gray-600 hover:text-primary"
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                >
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </>
+              </div>
             )}
+
+            {/* Desktop Login Button - Only when not logged in */}
+            {!user && (
+              <Button 
+                className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-500/50 text-white transition-shadow duration-200 hidden md:flex"
+                onClick={() => window.location.href = '/auth'}
+              >
+                {t('login')}
+              </Button>
+            )}
+                
+            {/* Mobile Menu Button - Always on mobile */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="md:hidden p-2 text-gray-600 hover:text-primary"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
           </div>
         </div>
 
