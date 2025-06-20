@@ -106,6 +106,15 @@ export interface IStorage {
   // Store settings
   getStoreSettings(): Promise<StoreSettings | undefined>;
   updateStoreSettings(settings: InsertStoreSettings): Promise<StoreSettings>;
+
+  // Theme operations
+  getThemes(): Promise<Theme[]>;
+  getThemeById(id: number): Promise<Theme | undefined>;
+  getThemeByName(name: string): Promise<Theme | undefined>;
+  createTheme(theme: InsertTheme): Promise<Theme>;
+  updateTheme(id: number, theme: Partial<InsertTheme>): Promise<Theme>;
+  deleteTheme(id: number): Promise<void>;
+  setActiveTheme(themeName: string): Promise<StoreSettings>;
 }
 
 export class DatabaseStorage implements IStorage {
