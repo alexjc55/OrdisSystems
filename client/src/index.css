@@ -439,22 +439,55 @@ select option:not([selected]):hover {
 
 /* Reset any inherited orange styling from theme system */
 [data-radix-select-content],
-[data-radix-select-content] *,
-[data-radix-select-viewport],
-[data-radix-select-viewport] *,
-[data-radix-select-item],
-[data-radix-select-item] * {
+[data-radix-select-viewport] {
   background: white !important;
   color: #000000 !important;
   border: none !important;
-  box-shadow: none !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
   font-family: inherit !important;
-  font-weight: normal !important;
 }
 
-[data-radix-select-item][data-highlighted] {
-  background-color: #f9fafb !important;
+[data-radix-select-item] {
+  background: white !important;
   color: #000000 !important;
+  border: none !important;
+  font-family: inherit !important;
+  font-weight: normal !important;
+  cursor: pointer !important;
+  padding: 8px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Orange styling for selected and hovered items */
+[data-radix-select-item][data-state="checked"] {
+  background-color: hsl(24.6, 95%, 53.1%) !important;
+  color: white !important;
+}
+
+[data-radix-select-item][data-highlighted]:not([data-state="checked"]) {
+  background-color: hsl(24.6, 95%, 53.1%) !important;
+  color: white !important;
+}
+
+/* Hide any unwanted checkboxes or indicators */
+[data-radix-select-item] [data-radix-select-item-indicator],
+[data-radix-select-item] .select-indicator,
+[data-radix-select-item]::before,
+[data-radix-select-item]::after,
+[data-radix-select-item] svg,
+[data-radix-select-item] .lucide,
+[data-radix-select-item] .icon {
+  display: none !important;
+}
+
+/* Ensure no pseudo elements or icons appear */
+[data-radix-select-item] * {
+  box-sizing: border-box !important;
+}
+
+[data-radix-select-item]:focus {
+  outline: none !important;
 }
 
 
