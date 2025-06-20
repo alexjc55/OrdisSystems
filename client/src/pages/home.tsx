@@ -457,7 +457,7 @@ export default function Home() {
                             </div>
                             
                             <div className="flex-shrink-0 relative">
-                              <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
+                              <div className="text-5xl transform group-hover:scale-110 transition-transform duration-300">
                                 {category.icon || '📦'}
                               </div>
                               <div className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
