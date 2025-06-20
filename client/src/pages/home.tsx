@@ -314,9 +314,8 @@ export default function Home() {
                                   : `${dayNames[group.days[0]]} - ${dayNames[group.days[group.days.length - 1]]}`;
                                 
                                 return (
-                                  <div key={index} className="text-xs sm:text-sm">
+                                  <div key={index} className="text-xs sm:text-sm flex justify-between">
                                     <span className="font-medium">{daysText}:</span>
-                                    <br />
                                     <span className="text-gray-600">{group.hours}</span>
                                   </div>
                                 );
@@ -345,17 +344,15 @@ export default function Home() {
                       </div>
                       <div className="space-y-1">
                         {storeSettings.contactPhone && (
-                          <div className="text-xs sm:text-sm">
+                          <div className="text-xs sm:text-sm flex justify-between">
                             <span className="text-gray-600">{t('phone')}:</span>
-                            <br />
                             <span className="font-medium">{storeSettings.contactPhone}</span>
                           </div>
                         )}
                         {storeSettings.contactEmail && (
-                          <div className="text-xs sm:text-sm">
+                          <div className="text-xs sm:text-sm flex justify-between">
                             <span className="text-gray-600">Email:</span>
-                            <br />
-                            <span className="font-medium">{storeSettings.contactEmail}</span>
+                            <span className="font-medium break-all">{storeSettings.contactEmail}</span>
                           </div>
                         )}
                       </div>
@@ -366,26 +363,26 @@ export default function Home() {
 
               {/* Right Column: Delivery & Payment */}
               {(storeSettings?.deliveryInfo || storeSettings?.paymentInfo) && (
-                <div>
-                  <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
-                    <div className="p-6">
+                <div className="flex">
+                  <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden flex-1 flex flex-col">
+                    <div className="p-6 flex-1 flex flex-col">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full group-hover:scale-110 transition-transform duration-300">
                           <CreditCard className="h-5 w-5 text-white" />
                         </div>
                         <span className="font-semibold text-lg text-gray-800">Оплата и доставка</span>
                       </div>
-                      <div className="space-y-3">
+                      <div className="space-y-4 flex-1">
                         {storeSettings.deliveryInfo && (
-                          <div className="flex flex-col">
-                            <span className="text-gray-500 text-sm font-medium mb-1">{t('delivery')}:</span>
-                            <span className="text-gray-800 font-semibold">{storeSettings.deliveryInfo}</span>
+                          <div>
+                            <span className="text-gray-500 text-sm font-medium block mb-2">{t('delivery')}:</span>
+                            <span className="text-gray-800 font-semibold text-sm leading-relaxed">{storeSettings.deliveryInfo}</span>
                           </div>
                         )}
                         {storeSettings.paymentInfo && (
-                          <div className="flex flex-col">
-                            <span className="text-gray-500 text-sm font-medium mb-1">{t('payment')}:</span>
-                            <span className="text-gray-800 font-semibold">{storeSettings.paymentInfo}</span>
+                          <div>
+                            <span className="text-gray-500 text-sm font-medium block mb-2">{t('payment')}:</span>
+                            <span className="text-gray-800 font-semibold text-sm leading-relaxed">{storeSettings.paymentInfo}</span>
                           </div>
                         )}
                       </div>
