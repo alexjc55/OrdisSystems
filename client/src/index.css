@@ -332,20 +332,7 @@
   width: 100% !important;
 }
 
-/* Состояние наведения - максимальная специфичность */
-[data-radix-select-item]:hover,
-[data-radix-select-item][data-highlighted],
-[data-radix-select-content] [data-radix-select-item]:hover,
-[data-radix-select-content] [data-radix-select-item][data-highlighted],
-[data-radix-select-viewport] [data-radix-select-item]:hover,
-[data-radix-select-viewport] [data-radix-select-item][data-highlighted],
-[role="option"]:hover,
-[role="option"][data-highlighted] {
-  background-color: #f97316 !important;
-  color: #ffffff !important;
-}
-
-/* Выбранное состояние - всегда оранжевый текст и галочка */
+/* Выбранное состояние - МАКСИМАЛЬНЫЙ ПРИОРИТЕТ - всегда оранжевый текст и галочка */
 [data-radix-select-item][data-state="checked"],
 [data-radix-select-content] [data-radix-select-item][data-state="checked"],
 [data-radix-select-viewport] [data-radix-select-item][data-state="checked"],
@@ -355,7 +342,16 @@
   position: relative !important;
 }
 
-/* Галочка для выбранного элемента - всегда видна */
+/* СУПЕР ПРИОРИТЕТ - Выбранный элемент БЕЗ hover остается оранжевым */
+[data-radix-select-item][data-state="checked"]:not(:hover):not([data-highlighted]),
+[data-radix-select-content] [data-radix-select-item][data-state="checked"]:not(:hover):not([data-highlighted]),
+[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:not(:hover):not([data-highlighted]) {
+  background-color: transparent !important;
+  color: #f97316 !important;
+  position: relative !important;
+}
+
+/* Галочка для выбранного элемента - ВСЕГДА видна */
 [data-radix-select-item][data-state="checked"]::after,
 [data-radix-select-content] [data-radix-select-item][data-state="checked"]::after,
 [data-radix-select-viewport] [data-radix-select-item][data-state="checked"]::after,
@@ -369,11 +365,31 @@
   font-weight: bold !important;
 }
 
-/* При hover на выбранный элемент - оранжевый фон с белым текстом и белой галочкой */
+/* СУПЕР ПРИОРИТЕТ - Галочка остается оранжевой без hover */
+[data-radix-select-item][data-state="checked"]:not(:hover):not([data-highlighted])::after,
+[data-radix-select-content] [data-radix-select-item][data-state="checked"]:not(:hover):not([data-highlighted])::after,
+[data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:not(:hover):not([data-highlighted])::after {
+  color: #f97316 !important;
+}
+
+/* Обычные элементы при hover - оранжевый фон */
+[data-radix-select-item]:not([data-state="checked"]):hover,
+[data-radix-select-item]:not([data-state="checked"])[data-highlighted],
+[data-radix-select-content] [data-radix-select-item]:not([data-state="checked"]):hover,
+[data-radix-select-content] [data-radix-select-item]:not([data-state="checked"])[data-highlighted],
+[data-radix-select-viewport] [data-radix-select-item]:not([data-state="checked"]):hover,
+[data-radix-select-viewport] [data-radix-select-item]:not([data-state="checked"])[data-highlighted] {
+  background-color: #f97316 !important;
+  color: #ffffff !important;
+}
+
+/* Выбранный элемент при hover - оранжевый фон с белым текстом */
 [data-radix-select-item][data-state="checked"]:hover,
+[data-radix-select-item][data-state="checked"][data-highlighted],
 [data-radix-select-content] [data-radix-select-item][data-state="checked"]:hover,
+[data-radix-select-content] [data-radix-select-item][data-state="checked"][data-highlighted],
 [data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:hover,
-[role="option"][aria-selected="true"]:hover {
+[data-radix-select-viewport] [data-radix-select-item][data-state="checked"][data-highlighted] {
   background-color: #f97316 !important;
   color: #ffffff !important;
   position: relative !important;
@@ -381,9 +397,11 @@
 
 /* Белая галочка при hover на выбранный элемент */
 [data-radix-select-item][data-state="checked"]:hover::after,
+[data-radix-select-item][data-state="checked"][data-highlighted]::after,
 [data-radix-select-content] [data-radix-select-item][data-state="checked"]:hover::after,
+[data-radix-select-content] [data-radix-select-item][data-state="checked"][data-highlighted]::after,
 [data-radix-select-viewport] [data-radix-select-item][data-state="checked"]:hover::after,
-[role="option"][aria-selected="true"]:hover::after {
+[data-radix-select-viewport] [data-radix-select-item][data-state="checked"][data-highlighted]::after {
   color: #ffffff !important;
 }
 
