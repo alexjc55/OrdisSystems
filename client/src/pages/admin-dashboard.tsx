@@ -3619,7 +3619,7 @@ export default function AdminDashboard() {
                   });
                 }
               }}
-              className="bg-red-500 hover:bg-red-500 hover:shadow-lg hover:shadow-red-500/50 transition-shadow"
+              className="btn-system btn-error"
             >
               Отключить
             </AlertDialogAction>
@@ -3632,7 +3632,7 @@ export default function AdminDashboard() {
                   });
                 }
               }}
-              variant="info"
+              className="btn-system btn-info"
             >
               Оставить
             </AlertDialogAction>
