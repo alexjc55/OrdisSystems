@@ -22,6 +22,7 @@ import ResetPasswordPage from "@/pages/reset-password";
 import Checkout from "@/pages/checkout";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
+import DemoSelects from "@/pages/demo-selects";
 import { ProtectedRoute } from "@/lib/protected-route";
 
 function Router() {
@@ -71,6 +72,7 @@ function Router() {
         <Route path="/forgot-password" component={ForgotPasswordPage} />
         <Route path="/reset-password" component={ResetPasswordPage} />
         <Route path="/landing" component={Landing} />
+        <Route path="/demo" component={DemoSelects} />
         <Route component={NotFound} />
       </Switch>
       

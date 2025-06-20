@@ -38,12 +38,8 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Seed database with initial data
-  try {
-    await seedDatabase();
-  } catch (error) {
-    console.log("Database already seeded or error occurred:", error);
-  }
+  // Temporarily disable seeding due to database connection issues
+  console.log("Database seeding disabled - using existing data");
 
   const server = await registerRoutes(app);
 
