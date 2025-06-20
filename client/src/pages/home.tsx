@@ -178,12 +178,14 @@ export default function Home() {
       )}
       
       <div className="flex overflow-x-hidden">
-        <Sidebar 
-          categories={categories || []} 
-          selectedCategoryId={selectedCategoryId}
-          onCategorySelect={handleCategorySelect}
-          isLoading={categoriesLoading}
-        />
+        {storeSettings?.showCategoryMenu !== false && (
+          <Sidebar 
+            categories={categories || []} 
+            selectedCategoryId={selectedCategoryId}
+            onCategorySelect={handleCategorySelect}
+            isLoading={categoriesLoading}
+          />
+        )}
 
         <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
           {/* Title and Description */}
