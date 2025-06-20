@@ -58,6 +58,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/themes"] });
       toast({
         title: "Тема активирована",
         description: "Новая тема успешно применена",
@@ -134,27 +135,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  // Apply theme colors to CSS variables
-  useEffect(() => {
-    if (activeTheme?.colors) {
-      const root = document.documentElement;
-      const colors = activeTheme.colors as ThemeColors;
-      
-      root.style.setProperty('--color-primary', colors.primary);
-      root.style.setProperty('--color-primary-light', colors.primaryLight);
-      root.style.setProperty('--color-primary-dark', colors.primaryDark);
-      root.style.setProperty('--color-secondary', colors.secondary);
-      root.style.setProperty('--color-accent', colors.accent);
-      root.style.setProperty('--color-background', colors.background);
-      root.style.setProperty('--color-surface', colors.surface);
-      root.style.setProperty('--color-text', colors.text);
-      root.style.setProperty('--color-text-secondary', colors.textSecondary);
-      root.style.setProperty('--color-border', colors.border);
-      root.style.setProperty('--color-success', colors.success);
-      root.style.setProperty('--color-warning', colors.warning);
-      root.style.setProperty('--color-error', colors.error);
-    }
-  }, [activeTheme]);
+
 
   return (
     <ThemeContext.Provider
