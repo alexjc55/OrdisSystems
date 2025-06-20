@@ -388,42 +388,36 @@
   color: #ffffff !important;
 }
 
-/* Исправляем CSS для тестового селекта - обращаемся к viewport */
-.test-dropdown [data-radix-select-viewport] {
-  padding: 4px !important;
-}
-
-.test-dropdown [data-radix-select-item] {
-  display: flex !important;
-  align-items: center !important;
-  cursor: pointer !important;
-  padding: 8px 12px !important;
-  font-size: 14px !important;
-  line-height: 1.4 !important;
-  color: #000000 !important;
+/* Тестовые стили с максимальной специфичностью */
+.test-dropdown .test-item[data-radix-select-item] {
   background-color: white !important;
+  color: black !important;
+  padding: 8px 32px 8px 12px !important;
+  position: relative !important;
+  cursor: pointer !important;
   border-radius: 4px !important;
   margin: 1px 0 !important;
-  position: relative !important;
   min-height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
-.test-dropdown [data-radix-select-item]:hover {
+.test-dropdown .test-item[data-radix-select-item]:hover {
   background-color: #f97316 !important;
-  color: #ffffff !important;
+  color: white !important;
 }
 
-.test-dropdown [data-radix-select-item][data-state="checked"] {
-  color: #f97316 !important;
+.test-dropdown .test-item[data-radix-select-item][data-state="checked"] {
   background-color: white !important;
+  color: #f97316 !important;
 }
 
-.test-dropdown [data-radix-select-item][data-state="checked"]:hover {
+.test-dropdown .test-item[data-radix-select-item][data-state="checked"]:hover {
   background-color: #f97316 !important;
-  color: #ffffff !important;
+  color: white !important;
 }
 
-.test-dropdown [data-radix-select-item][data-state="checked"]::after {
+.test-dropdown .test-item[data-radix-select-item][data-state="checked"]::after {
   content: "✓" !important;
   position: absolute !important;
   right: 8px !important;
@@ -434,8 +428,8 @@
   font-size: 14px !important;
 }
 
-.test-dropdown [data-radix-select-item][data-state="checked"]:hover::after {
-  color: #ffffff !important;
+.test-dropdown .test-item[data-radix-select-item][data-state="checked"]:hover::after {
+  color: white !important;
 }
 
 /* Force blue color for pre-order buttons */

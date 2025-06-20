@@ -2168,12 +2168,14 @@ export default function AdminDashboard() {
                         <SelectTrigger className="pl-10 text-sm">
                           <SelectValue placeholder={t('products.allCategories', 'Все категории')} />
                         </SelectTrigger>
-                        <SelectContent className="test-dropdown">
-                          <SelectItem value="all">{t('products.allCategories', 'Все категории')}</SelectItem>
+                        <SelectContent className="test-dropdown bg-white border border-gray-200 shadow-lg">
+                          <SelectItem value="all" className="test-item" style={{ backgroundColor: 'white', color: 'black' }}>{t('products.allCategories', 'Все категории')}</SelectItem>
                           {(categories as any[] || []).map((category: any) => (
                             <SelectItem 
                               key={category.id} 
                               value={category.id.toString()}
+                              className="test-item"
+                              style={{ backgroundColor: 'white', color: 'black' }}
                             >
                               {category.name}
                             </SelectItem>
