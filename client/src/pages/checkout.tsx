@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -20,7 +21,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { formatCurrency, formatDeliveryTimeRange } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon } from "lucide-react";
+import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
@@ -184,6 +185,16 @@ export default function Checkout() {
     }
     
     return { valid: true };
+  };
+
+  const isTodayAvailableForDelivery = () => {
+    if (!storeSettings?.workingHours) return false;
+    
+    const today = format(new Date(), "yyyy-MM-dd");
+    const todayTimeSlots = generateDeliveryTimes(storeSettings.workingHours, today, storeSettings.weekStartDay);
+    
+    // Check if there are any valid time slots (not just "closed")
+    return todayTimeSlots.some(slot => slot.value !== 'closed');
   };
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -473,7 +484,24 @@ export default function Checkout() {
               {items.map((item) => (
                 <div key={item.product.id} className="flex justify-between items-center">
                   <div>
-                    <h4 className="font-medium">{item.product.name}</h4>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-medium">{item.product.name}</h4>
+                      {item.product.availabilityStatus === 'out_of_stock_today' && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-xs">
+                                <Info className="h-3 w-3" />
+                                предзаказ
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-xs">Товар недоступен для доставки на сегодня,<br/>т.к. его сегодня уже нет в наличии в магазине</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+                    </div>
                     <p className="text-sm text-gray-600">
                       {(() => {
                         const qty = Math.round(item.quantity * 10) / 10;
@@ -660,6 +688,16 @@ export default function Checkout() {
                                       daySchedule.toLowerCase().includes('closed') ||
                                       daySchedule.toLowerCase().includes('выходной')) {
                                     return true;
+                                  }
+                                  
+                                  // Check if today has no available delivery times
+                                  if (date.getTime() === today.getTime()) {
+                                    const todayTimeSlots = generateDeliveryTimes(
+                                      storeSettings.workingHours, 
+                                      format(date, "yyyy-MM-dd"), 
+                                      storeSettings.weekStartDay
+                                    );
+                                    return !todayTimeSlots.some(slot => slot.value !== 'closed');
                                   }
                                 }
                                 
