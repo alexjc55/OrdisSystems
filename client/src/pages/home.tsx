@@ -240,68 +240,74 @@ export default function Home() {
           )}
 
           {/* Special Offers Section */}
-          {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && products.filter(product => product.originalPrice && product.originalPrice > product.price).length > 0 && (
+          {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && products.filter(product => product.isSpecialOffer && product.discountValue && product.discountValue > 0).length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">{t('specialOffers')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.filter(product => product.originalPrice && product.originalPrice > product.price).slice(0, 6).map((product) => (
-                  <Card key={product.id} className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-white overflow-hidden">
-                    <div className="relative">
-                      {product.imageUrl && (
-                        <div className="h-48 overflow-hidden">
-                          <img 
-                            src={product.imageUrl} 
-                            alt={product.name}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                        </div>
-                      )}
-                      {product.originalPrice && product.originalPrice > product.price && (
+                {products.filter(product => product.isSpecialOffer && product.discountValue && product.discountValue > 0).slice(0, 6).map((product) => {
+                  const discountValue = product.discountValue || 0;
+                  const originalPrice = product.discountType === 'percentage' 
+                    ? product.price / (1 - discountValue / 100)
+                    : product.price + discountValue;
+                  const discountPercentage = product.discountType === 'percentage'
+                    ? discountValue
+                    : Math.round((discountValue / originalPrice) * 100);
+
+                  return (
+                    <Card key={product.id} className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-white overflow-hidden">
+                      <div className="relative">
+                        {product.imageUrl && (
+                          <div className="h-48 overflow-hidden">
+                            <img 
+                              src={product.imageUrl} 
+                              alt={product.name}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
+                          </div>
+                        )}
                         <div className="absolute top-3 right-3">
                           <Badge className="bg-red-500 text-white font-bold px-3 py-1">
-                            -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+                            -{Math.round(discountPercentage)}%
                           </Badge>
                         </div>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors">
-                        {product.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl font-bold text-green-600">
-                            {formatCurrency(product.price)}
-                          </span>
-                          {product.originalPrice && product.originalPrice > product.price && (
-                            <span className="text-sm text-gray-500 line-through">
-                              {formatCurrency(product.originalPrice)}
-                            </span>
-                          )}
-                        </div>
-                        <Button 
-                          onClick={() => {
-                            addToCart({
-                              id: product.id,
-                              name: product.name,
-                              price: product.price,
-                              imageUrl: product.imageUrl || undefined,
-                              quantity: 1
-                            });
-                            toast({
-                              title: t('addedToCart'),
-                              description: `${product.name} ${t('addedToCart')}`,
-                            });
-                          }}
-                          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 rounded-lg transition-all duration-200 transform hover:scale-105"
-                        >
-                          {t('addToCart')}
-                        </Button>
                       </div>
-                    </div>
-                  </Card>
-                ))}
+                      <div className="p-4">
+                        <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors">
+                          {product.name}
+                        </h3>
+                        <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xl font-bold text-green-600">
+                              {formatCurrency(product.price)}
+                            </span>
+                            <span className="text-sm text-gray-500 line-through">
+                              {formatCurrency(originalPrice)}
+                            </span>
+                          </div>
+                          <Button 
+                            onClick={() => {
+                              addToCart({
+                                id: product.id,
+                                name: product.name,
+                                price: product.price,
+                                imageUrl: product.imageUrl || undefined,
+                                quantity: 1
+                              });
+                              toast({
+                                title: t('addedToCart'),
+                                description: `${product.name} ${t('addedToCart')}`,
+                              });
+                            }}
+                            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-2 rounded-lg transition-all duration-200 transform hover:scale-105"
+                          >
+                            {t('addToCart')}
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
               </div>
             </div>
           )}
