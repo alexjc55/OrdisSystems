@@ -103,62 +103,60 @@ export default function Header({ onResetView }: HeaderProps) {
             {user ? (
               <>
                 {/* Desktop User Menu */}
-                <div className="hidden md:flex items-center">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
-                          <AvatarFallback>
-                            {user?.firstName?.[0]}{user?.lastName?.[0]}
-                          </AvatarFallback>
-                        </Avatar>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56" align="end" forceMount>
-                      <div className="flex items-center justify-start gap-2 p-2">
-                        <div className="flex flex-col space-y-1 leading-none">
-                          {user?.firstName && (
-                            <p className="font-medium">{user.firstName} {user.lastName}</p>
-                          )}
-                          {user?.email && (
-                            <p className="w-[200px] truncate text-sm text-muted-foreground">
-                              {user.email}
-                            </p>
-                          )}
-                          <Badge variant="secondary" className="w-fit text-xs">
-                            {user?.role === 'admin' ? t('userRole.admin') : 
-                             user?.role === 'worker' ? t('userRole.worker') : t('userRole.customer')}
-                          </Badge>
-                        </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full hidden md:flex">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
+                        <AvatarFallback>
+                          {user?.firstName?.[0]}{user?.lastName?.[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <div className="flex flex-col space-y-1 leading-none">
+                        {user?.firstName && (
+                          <p className="font-medium">{user.firstName} {user.lastName}</p>
+                        )}
+                        {user?.email && (
+                          <p className="w-[200px] truncate text-sm text-muted-foreground">
+                            {user.email}
+                          </p>
+                        )}
+                        <Badge variant="secondary" className="w-fit text-xs">
+                          {user?.role === 'admin' ? t('userRole.admin') : 
+                           user?.role === 'worker' ? t('userRole.worker') : t('userRole.customer')}
+                        </Badge>
                       </div>
-                      <DropdownMenuSeparator />
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile">
+                        <div className="flex items-center">
+                          <User className="mr-2 h-4 w-4" />
+                          <span>{t('profile')}</span>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                    {user?.role === 'admin' && (
                       <DropdownMenuItem asChild>
-                        <Link href="/profile">
+                        <Link href="/admin">
                           <div className="flex items-center">
-                            <User className="mr-2 h-4 w-4" />
-                            <span>{t('profile')}</span>
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>{t('adminPanel')}</span>
                           </div>
                         </Link>
                       </DropdownMenuItem>
-                      {user?.role === 'admin' && (
-                        <DropdownMenuItem asChild>
-                          <Link href="/admin">
-                            <div className="flex items-center">
-                              <Settings className="mr-2 h-4 w-4" />
-                              <span>{t('adminPanel')}</span>
-                            </div>
-                          </Link>
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
-                        <LogOut className="mr-2 h-4 w-4" />
-                        <span>{t('logout')}</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>{t('logout')}</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 
                 {/* Mobile Menu Button for logged in users */}
                 <Button
@@ -180,7 +178,7 @@ export default function Header({ onResetView }: HeaderProps) {
                   {t('login')}
                 </Button>
                 
-                {/* Mobile Menu Button - Always show when not logged in */}
+                {/* Mobile Menu Button - Only show on mobile when not logged in */}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -200,15 +198,15 @@ export default function Header({ onResetView }: HeaderProps) {
             <div className="flex flex-col space-y-2">
               {/* Navigation Links */}
               <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }}>
-                <a className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium block text-start">
+                <span className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium block text-start cursor-pointer">
                   {t('menu')}
-                </a>
+                </span>
               </Link>
               {(user?.role === 'admin' || user?.role === 'worker') && (
                 <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
-                  <a className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium block text-start">
+                  <span className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium block text-start cursor-pointer">
                     {t('admin')}
-                  </a>
+                  </span>
                 </Link>
               )}
               
