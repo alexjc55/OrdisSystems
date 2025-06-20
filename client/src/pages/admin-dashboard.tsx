@@ -2283,30 +2283,23 @@ export default function AdminDashboard() {
                               </TableCell>
                               <TableCell className="px-2 sm:px-4 py-2">
                                 <div className="flex flex-col gap-1">
-                                  <div className="flex items-center gap-2">
-                                    <CustomSwitch
-                                      checked={product.isAvailable && (product.availabilityStatus === "available")}
-                                      onChange={(checked) => {
-                                        if (!checked) {
-                                          setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
-                                          setIsAvailabilityDialogOpen(true);
-                                        } else {
-                                          updateAvailabilityStatusMutation.mutate({
-                                            id: product.id,
-                                            availabilityStatus: "available"
-                                          });
-                                        }
-                                      }}
-                                      bgColor="bg-green-500"
-                                    />
-                                    {product.availabilityStatus === "out_of_stock_today" && (
-                                      <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">
-                                        На завтра
-                                      </Badge>
-                                    )}
-                                  </div>
+                                  <CustomSwitch
+                                    checked={product.isAvailable && (product.availabilityStatus === "available")}
+                                    onChange={(checked) => {
+                                      if (!checked) {
+                                        setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
+                                        setIsAvailabilityDialogOpen(true);
+                                      } else {
+                                        updateAvailabilityStatusMutation.mutate({
+                                          id: product.id,
+                                          availabilityStatus: "available"
+                                        });
+                                      }
+                                    }}
+                                    bgColor="bg-green-500"
+                                  />
                                   {product.availabilityStatus === "out_of_stock_today" && (
-                                    <div className="text-xs text-gray-500 ml-1">
+                                    <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
                                       предзаказ
                                     </div>
                                   )}
@@ -3626,7 +3619,7 @@ export default function AdminDashboard() {
                   });
                 }
               }}
-              className="bg-red-500 hover:bg-red-600"
+              className="bg-red-500 hover:bg-red-500 hover:shadow-lg hover:shadow-red-500/50 transition-shadow"
             >
               Отключить
             </AlertDialogAction>
@@ -3639,7 +3632,7 @@ export default function AdminDashboard() {
                   });
                 }
               }}
-              className="bg-blue-500 hover:bg-blue-600"
+              className="bg-blue-500 hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/50 transition-shadow"
             >
               Оставить
             </AlertDialogAction>
