@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { useCommonTranslation } from "@/hooks/use-language";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -24,6 +25,7 @@ import type { OrderWithItems, UserAddress } from "@shared/schema";
 export default function Profile() {
   const { user, isLoading, isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const { t } = useCommonTranslation();
   const queryClient = useQueryClient();
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
@@ -62,8 +64,8 @@ export default function Profile() {
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       toast({
-        title: "Требуется авторизация",
-        description: "Вход в систему для просмотра профиля...",
+        title: t('auth.unauthorized'),
+        description: t('auth.loginRedirect'),
         variant: "destructive",
       });
       setTimeout(() => {
@@ -93,14 +95,14 @@ export default function Profile() {
       setIsAddressDialogOpen(false);
       setAddressForm({ label: "", address: "", isDefault: false });
       toast({
-        title: "Успешно",
-        description: "Адрес добавлен",
+        title: t('status.success'),
+        description: t('profile.addressAdded'),
       });
     },
     onError: (error) => {
       toast({
-        title: "Ошибка",
-        description: "Не удалось добавить адрес",
+        title: t('status.error'),
+        description: t('profile.addressError'),
         variant: "destructive",
       });
     },

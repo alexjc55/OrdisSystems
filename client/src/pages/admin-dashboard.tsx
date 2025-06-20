@@ -2097,19 +2097,19 @@ export default function AdminDashboard() {
           <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
             <TabsList className="flex w-full overflow-x-auto gap-1 justify-start">
               {hasPermission("canManageProducts") && (
-                <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.products')}</TabsTrigger>
+                <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.products')}</TabsTrigger>
               )}
               {hasPermission("canManageCategories") && (
-                <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.categories')}</TabsTrigger>
+                <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.categories')}</TabsTrigger>
               )}
               {hasPermission("canManageOrders") && (
-                <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.orders')}</TabsTrigger>
+                <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.orders')}</TabsTrigger>
               )}
               {hasPermission("canViewUsers") && (
-                <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.users')}</TabsTrigger>
+                <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.users')}</TabsTrigger>
               )}
               {hasPermission("canViewSettings") && (
-                <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">{t('tabs.settings')}</TabsTrigger>
+                <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.settings')}</TabsTrigger>
               )}
               {hasPermission("canManageSettings") && (
                 <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Права доступа</TabsTrigger>
@@ -2132,10 +2132,10 @@ export default function AdminDashboard() {
                   <div>
                     <CardTitle className="flex items-center gap-2 text-lg sm:text-xl rtl:flex-row-reverse">
                       <Package className="h-4 w-4 sm:h-5 sm:w-5" />
-                      {t('products.title')}
+                      {adminT('products.title')}
                     </CardTitle>
                     <CardDescription className="text-sm">
-                      {t('products.description', 'Полное управление товарами с поиском и фильтрацией')}
+                      {adminT('products.description', 'Полное управление товарами с поиском и фильтрацией')}
                     </CardDescription>
                   </div>
                   <Button 
@@ -2147,7 +2147,7 @@ export default function AdminDashboard() {
                     size="sm"
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                    {t('actions.add')} {t('products.title')}
+                    {adminT('actions.add')} {adminT('products.title')}
                   </Button>
                 </div>
               </CardHeader>
@@ -2157,7 +2157,7 @@ export default function AdminDashboard() {
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                      placeholder={t('products.searchProducts', 'Поиск товаров...')}
+                      placeholder={adminT('products.searchProducts', 'Поиск товаров...')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10 text-sm"
@@ -2168,10 +2168,10 @@ export default function AdminDashboard() {
                       <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
                         <SelectTrigger className="pl-10 text-sm">
-                          <SelectValue placeholder={t('products.allCategories', 'Все категории')} />
+                          <SelectValue placeholder={adminT('products.allCategories', 'Все категории')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">{t('products.allCategories', 'Все категории')}</SelectItem>
+                          <SelectItem value="all">{adminT('products.allCategories', 'Все категории')}</SelectItem>
                           {(categories as any[] || []).map((category: any) => (
                             <SelectItem 
                               key={category.id} 
@@ -2187,13 +2187,13 @@ export default function AdminDashboard() {
                       <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
                         <SelectTrigger className="pl-10 text-sm">
-                          <SelectValue placeholder={t('products.productStatus', 'Статус товара')} />
+                          <SelectValue placeholder={adminT('products.productStatus', 'Статус товара')} />
                         </SelectTrigger>
                         <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                          <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{t('products.allProducts', 'Все товары')}</SelectItem>
-                          <SelectItem value="available" className="text-gray-900 hover:bg-gray-100">{t('products.availableProducts', 'Доступные товары')}</SelectItem>
-                          <SelectItem value="unavailable" className="text-gray-900 hover:bg-gray-100">{t('products.unavailableProducts', 'Недоступные товары')}</SelectItem>
-                          <SelectItem value="with_discount" className="text-gray-900 hover:bg-gray-100">{t('products.productsWithDiscount', 'Товары со скидкой')}</SelectItem>
+                          <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{adminT('products.allProducts', 'Все товары')}</SelectItem>
+                          <SelectItem value="available" className="text-gray-900 hover:bg-gray-100">{adminT('products.availableProducts', 'Доступные товары')}</SelectItem>
+                          <SelectItem value="unavailable" className="text-gray-900 hover:bg-gray-100">{adminT('products.unavailableProducts', 'Недоступные товары')}</SelectItem>
+                          <SelectItem value="with_discount" className="text-gray-900 hover:bg-gray-100">{adminT('products.productsWithDiscount', 'Товары со скидкой')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -2212,7 +2212,7 @@ export default function AdminDashboard() {
                                 onClick={() => handleSort("name")}
                                 className="flex items-center gap-1 hover:text-orange-600 transition-colors"
                               >
-                                {t('products.productName')}
+                                {adminT('products.productName')}
                                 {sortField === "name" && (
                                   sortDirection === "asc" ? 
                                     <ChevronUp className="h-3 w-3" /> : 
@@ -2225,7 +2225,7 @@ export default function AdminDashboard() {
                                 onClick={() => handleSort("category")}
                                 className="flex items-center gap-1 hover:text-orange-600 transition-colors"
                               >
-                                {t('products.productCategory')}
+                                {adminT('products.productCategory')}
                                 {sortField === "category" && (
                                   sortDirection === "asc" ? 
                                     <ChevronUp className="h-3 w-3" /> : 
@@ -2238,7 +2238,7 @@ export default function AdminDashboard() {
                                 onClick={() => handleSort("price")}
                                 className="flex items-center gap-1 hover:text-orange-600 transition-colors"
                               >
-                                {t('products.productPrice')}
+                                {adminT('products.productPrice')}
                                 {sortField === "price" && (
                                   sortDirection === "asc" ? 
                                     <ChevronUp className="h-3 w-3" /> : 
@@ -2246,7 +2246,7 @@ export default function AdminDashboard() {
                                 )}
                               </button>
                             </TableHead>
-                            <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm">{t('products.productStatus')}</TableHead>
+                            <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm">{adminT('products.productStatus')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -2324,12 +2324,12 @@ export default function AdminDashboard() {
                   <div className="text-center py-8">
                     <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      {searchQuery || selectedCategoryFilter !== "all" ? t('common.noResults', 'Товары не найдены') : t('products.noProducts', 'Нет товаров')}
+                      {searchQuery || selectedCategoryFilter !== "all" ? adminT('common.noResults', 'Товары не найдены') : adminT('products.noProducts', 'Нет товаров')}
                     </h3>
                     <p className="text-gray-500 text-sm">
                       {searchQuery || selectedCategoryFilter !== "all" 
-                        ? t('common.tryDifferentSearch', 'Попробуйте изменить критерии поиска или фильтрации')
-                        : t('products.addFirstProduct', 'Начните с добавления первого товара')
+                        ? adminT('common.tryDifferentSearch', 'Попробуйте изменить критерии поиска или фильтрации')
+                        : adminT('products.addFirstProduct', 'Начните с добавления первого товара')
                       }
                     </p>
                   </div>
@@ -2339,7 +2339,7 @@ export default function AdminDashboard() {
                 {productsTotalPages > 1 && (
                   <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
                     <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <span>{t('common.showing', 'Показано')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {t('common.of', 'из')} {productsTotal}</span>
+                      <span>{adminT('common.showing', 'Показано')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {adminT('common.of', 'из')} {productsTotal}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
@@ -2402,10 +2402,10 @@ export default function AdminDashboard() {
                     <div>
                       <CardTitle className="flex items-center gap-2 text-lg sm:text-xl rtl:flex-row-reverse">
                       <Utensils className="h-4 w-4 sm:h-5 sm:w-5" />
-                      {t('categories.title')}
+                      {adminT('categories.title')}
                     </CardTitle>
                     <CardDescription className="text-sm">
-                      {t('categories.description', 'Простое управление категориями')}
+                      {adminT('categories.description', 'Простое управление категориями')}
                     </CardDescription>
                   </div>
                   <Button 
@@ -2417,7 +2417,7 @@ export default function AdminDashboard() {
                     size="sm"
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                    {t('actions.add')} {t('categories.title')}
+                    {adminT('actions.add')} {adminT('categories.title')}
                   </Button>
                 </div>
               </CardHeader>
@@ -2457,7 +2457,7 @@ export default function AdminDashboard() {
                               className="text-xs hover:bg-blue-50 hover:border-blue-300"
                             >
                               <Package className="h-3 w-3 mr-1" />
-{category.products?.length || 0} {t('products.items', 'товаров')}
+{category.products?.length || 0} {adminT('products.items', 'товаров')}
                             </Button>
                             <div className="flex items-center gap-1">
                               <Button
@@ -2499,7 +2499,7 @@ export default function AdminDashboard() {
                                         e.currentTarget.style.borderColor = 'rgb(220 38 38)';
                                       }}
                                     >
-                                      {t('common.delete', 'Удалить')}
+                                      {adminT('common.delete', 'Удалить')}
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -2513,8 +2513,8 @@ export default function AdminDashboard() {
                 ) : (
                   <div className="text-center py-8">
                     <Utensils className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет категорий</h3>
-                    <p className="text-gray-500 text-sm">Начните с добавления первой категории</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">{adminT('categories.noCategories')}</h3>
+                    <p className="text-gray-500 text-sm">{adminT('categories.addFirstCategory')}</p>
                   </div>
                 )}
               </CardContent>
@@ -2530,9 +2530,9 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="text-2xl font-bold flex items-center gap-2 rtl:flex-row-reverse">
                     <ShoppingCart className="h-6 w-6" />
-                    {t('orders.title')}
+                    {adminT('orders.title')}
                   </h1>
-                  <p className="text-gray-600 mt-1">{t('orders.description', 'Управление заказами клиентов')}</p>
+                  <p className="text-gray-600 mt-1">{adminT('orders.description', 'Управление заказами клиентов')}</p>
                 </div>
               
               {/* Controls Row */}
@@ -2546,7 +2546,7 @@ export default function AdminDashboard() {
                     className="text-xs px-3 py-1 h-8"
                   >
                     <Grid3X3 className="h-3 w-3 mr-1" />
-                    {t('common.table', 'Таблица')}
+                    {adminT('common.table', 'Таблица')}
                   </Button>
                   <Button
                     variant={ordersViewMode === "kanban" ? "default" : "ghost"}
@@ -2555,7 +2555,7 @@ export default function AdminDashboard() {
                     className="text-xs px-3 py-1 h-8"
                   >
                     <Columns className="h-3 w-3 mr-1" />
-                    {t('common.kanban', 'Канбан')}
+                    {adminT('common.kanban', 'Канбан')}
                   </Button>
                 </div>
 
@@ -2563,20 +2563,20 @@ export default function AdminDashboard() {
                 <div className="flex gap-3">
                   <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
                     <SelectTrigger className="w-40 text-xs h-8">
-                      <SelectValue placeholder={t('orders.filterOrders', 'Фильтр заказов')} />
+                      <SelectValue placeholder={adminT('orders.filterOrders', 'Фильтр заказов')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="active">{t('orders.activeOrders', 'Активные заказы')}</SelectItem>
-                      <SelectItem value="delivered">{t('orders.deliveredOrders', 'Доставленные заказы')}</SelectItem>
-                      <SelectItem value="cancelled">{t('orders.cancelledOrders', 'Отмененные заказы')}</SelectItem>
-                      <SelectItem value="all">{t('orders.allOrders', 'Все заказы')}</SelectItem>
+                      <SelectItem value="active">{adminT('orders.activeOrders', 'Активные заказы')}</SelectItem>
+                      <SelectItem value="delivered">{adminT('orders.deliveredOrders', 'Доставленные заказы')}</SelectItem>
+                      <SelectItem value="cancelled">{adminT('orders.cancelledOrders', 'Отмененные заказы')}</SelectItem>
+                      <SelectItem value="all">{adminT('orders.allOrders', 'Все заказы')}</SelectItem>
                     </SelectContent>
                   </Select>
 
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
                     <Input
-                      placeholder={t('orders.searchOrders', 'Поиск заказов...')}
+                      placeholder={adminT('orders.searchOrders', 'Поиск заказов...')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-9 text-xs h-8 w-48"
@@ -2602,11 +2602,11 @@ export default function AdminDashboard() {
                             <TableHeader>
                               <TableRow>
                                 <TableHead className="text-xs sm:text-sm w-12 rtl:text-right">№</TableHead>
-                                <TableHead className="text-xs sm:text-sm rtl:text-right">{t('orders.customer', 'Клиент')}</TableHead>
-                                <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-24 rtl:text-right">{t('orders.status', 'Статус')}</TableHead>
-                                <TableHead className="text-xs sm:text-sm w-20 rtl:text-right">{t('orders.total', 'Сумма')}</TableHead>
-                                <TableHead className="text-xs sm:text-sm hidden md:table-cell w-32 rtl:text-right">{t('orders.date', 'Дата и время')}</TableHead>
-                                <TableHead className="text-xs sm:text-sm w-12 rtl:text-right">{t('orders.actions', 'Действия')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm rtl:text-right">{adminT('orders.customer', 'Клиент')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-24 rtl:text-right">{adminT('orders.status', 'Статус')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm w-20 rtl:text-right">{adminT('orders.total', 'Сумма')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm hidden md:table-cell w-32 rtl:text-right">{adminT('orders.date', 'Дата и время')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm w-12 rtl:text-right">{adminT('orders.actions', 'Действия')}</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -2635,7 +2635,7 @@ export default function AdminDashboard() {
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <Phone className="h-4 w-4 mr-2" />
-{t('orders.call', 'Позвонить')}
+{adminT('orders.call', 'Позвонить')}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem 
                                               onClick={() => {
