@@ -2504,8 +2504,51 @@ export default function AdminDashboard() {
                               <Package className="h-3 w-3 mr-1" />
 {category.products?.length || 0} {t('products.items', 'товаров')}
                             </Button>
-                            <div className="text-xs text-gray-500">
-                              ID: {category.id}
+                            <div className="flex items-center gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 hover:bg-blue-50"
+                                onClick={() => {
+                                  setEditingCategory(category);
+                                  setIsCategoryFormOpen(true);
+                                }}
+                              >
+                                <Edit2 className="h-3 w-3 text-blue-600" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-50">
+                                    <Trash2 className="h-3 w-3 text-red-600" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle className="text-sm sm:text-base">Удалить категорию</AlertDialogTitle>
+                                    <AlertDialogDescription className="text-xs sm:text-sm">
+                                      Вы уверены, что хотите удалить категорию "{category.name}"? Все товары этой категории также будут удалены.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                                    <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">Отмена</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => deleteCategoryMutation.mutate(category.id)}
+                                      className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 focus:bg-red-700 data-[state=open]:bg-red-700 transition-colors duration-200 text-xs sm:text-sm"
+                                      style={{ backgroundColor: 'rgb(220 38 38)', borderColor: 'rgb(220 38 38)' }}
+                                      onMouseEnter={(e) => {
+                                        e.currentTarget.style.backgroundColor = 'rgb(185 28 28)';
+                                        e.currentTarget.style.borderColor = 'rgb(185 28 28)';
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        e.currentTarget.style.backgroundColor = 'rgb(220 38 38)';
+                                        e.currentTarget.style.borderColor = 'rgb(220 38 38)';
+                                      }}
+                                    >
+                                      {t('common.delete', 'Удалить')}
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
                             </div>
                           </div>
                         </CardContent>
