@@ -15,6 +15,8 @@ import CategoryNav from "@/components/menu/category-nav";
 import ProductCard from "@/components/menu/product-card";
 import CartSidebar from "@/components/cart/cart-sidebar";
 import { useCartStore } from "@/lib/cart";
+import { formatCurrency } from "@/lib/currency";
+import { useToast } from "@/hooks/use-toast";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { 
   Search, 
@@ -43,9 +45,10 @@ export default function Home() {
   const [discountFilter, setDiscountFilter] = useState("all");
   const carouselApiRef = useRef<any>(null);
   const { user } = useAuth();
-  const { isOpen: isCartOpen } = useCartStore();
+  const { isOpen: isCartOpen, addItem } = useCartStore();
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
+  const { toast } = useToast();
 
   // Fetch categories
   const { data: categories = [], isLoading: categoriesLoading } = useQuery<CategoryWithProducts[]>({
@@ -240,15 +243,23 @@ export default function Home() {
           )}
 
           {/* Special Offers Section */}
-          {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && products.filter(product => product.isSpecialOffer && product.discountValue && product.discountValue > 0).length > 0 && (
+          {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && (
+            <div className="mb-4">
+              <p className="text-sm text-gray-500">Debug: Products with special offers: {products.filter(product => product.isSpecialOffer).length}</p>
+              <p className="text-sm text-gray-500">Debug: Products with discount value: {products.filter(product => product.discountValue && Number(product.discountValue) > 0).length}</p>
+            </div>
+          )}
+          
+          {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && products.filter(product => product.isSpecialOffer && product.discountValue && Number(product.discountValue) > 0).length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">{t('specialOffers')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.filter(product => product.isSpecialOffer && product.discountValue && product.discountValue > 0).slice(0, 6).map((product) => {
-                  const discountValue = product.discountValue || 0;
+                {products.filter(product => product.isSpecialOffer && product.discountValue && Number(product.discountValue) > 0).slice(0, 6).map((product) => {
+                  const discountValue = Number(product.discountValue) || 0;
+                  const price = Number(product.price);
                   const originalPrice = product.discountType === 'percentage' 
-                    ? product.price / (1 - discountValue / 100)
-                    : product.price + discountValue;
+                    ? price / (1 - discountValue / 100)
+                    : price + discountValue;
                   const discountPercentage = product.discountType === 'percentage'
                     ? discountValue
                     : Math.round((discountValue / originalPrice) * 100);
