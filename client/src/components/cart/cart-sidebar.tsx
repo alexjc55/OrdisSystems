@@ -315,7 +315,7 @@ export default function CartSidebar() {
               
               <Button 
                 onClick={handleCheckout}
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-200"
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-500 hover:to-orange-600 hover:shadow-xl hover:shadow-orange-500/50 text-white font-semibold py-3 rounded-xl shadow-lg transition-shadow duration-200"
                 size="lg"
               >
 {t('cart.checkout', 'Оформить заказ')}

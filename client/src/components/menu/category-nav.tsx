@@ -34,10 +34,10 @@ export default memo(function CategoryNav({
           size="sm"
           onClick={handleAllCategoriesClick}
           className={cn(
-            "flex-shrink-0 text-sm font-medium px-3 py-1.5 h-8",
+            "flex-shrink-0 text-sm font-medium px-3 py-1.5 h-8 transition-shadow",
             selectedCategoryId === null
-              ? "bg-primary text-white hover:bg-primary/90"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              ? "bg-primary text-white hover:bg-primary hover:shadow-lg hover:shadow-primary/50"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-100 hover:shadow-lg hover:shadow-gray-300"
           )}
         >
           <span className="mr-2">🛍️</span>
@@ -51,10 +51,10 @@ export default memo(function CategoryNav({
             size="sm"
             onClick={() => handleCategoryClick(category.id)}
             className={cn(
-              "flex-shrink-0 text-sm font-medium px-3 py-1.5 h-8",
+              "flex-shrink-0 text-sm font-medium px-3 py-1.5 h-8 transition-shadow",
               selectedCategoryId === category.id
-                ? "bg-primary text-white hover:bg-primary/90"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-primary text-white hover:bg-primary hover:shadow-lg hover:shadow-primary/50"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-100 hover:shadow-lg hover:shadow-gray-300"
             )}
           >
             <span className="mr-2">{category.icon || '📦'}</span>

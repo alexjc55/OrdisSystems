@@ -442,20 +442,22 @@ export default function Home() {
                         className="group cursor-pointer hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden transform hover:scale-105"
                         onClick={() => handleCategorySelect(category.id)}
                       >
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between gap-4">
-                            <div className="flex-1">
+                        <CardContent className="p-4 h-32 relative">
+                          <div className="flex items-start justify-between gap-4 h-full">
+                            <div className="flex-1 flex flex-col h-full">
                               <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
                                 {category.name}
                               </h3>
                               
-                              <p className="text-gray-600 text-sm mb-3 line-clamp-2 leading-relaxed">
+                              <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed flex-1">
                                 {category.description || "Вкусные блюда для вашего стола"}
                               </p>
                               
-                              <Badge className="px-3 py-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold text-sm shadow-md">
-                                {category.products.length} блюд
-                              </Badge>
+                              <div className="mt-auto">
+                                <Badge className="px-3 py-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold text-sm shadow-md">
+                                  {category.products.length} блюд
+                                </Badge>
+                              </div>
                             </div>
                             
                             <div className="flex-shrink-0 relative">

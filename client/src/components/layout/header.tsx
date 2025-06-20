@@ -152,7 +152,7 @@ export default function Header({ onResetView }: HeaderProps) {
             ) : (
               <Link href="/auth">
                 <Button 
-                  className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-300/50 text-white hidden md:flex transition-all duration-200"
+                  className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-500/50 text-white hidden md:flex transition-shadow duration-200"
                 >
                   {t('login')}
                 </Button>
