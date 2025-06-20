@@ -173,38 +173,12 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 overflow-x-hidden pt-16">
       <Header onResetView={handleResetView} />
       
-      {/* Modern Hero Banner */}
+      {/* Simple Banner Image */}
       {storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
-        <div className="relative w-full h-64 sm:h-80 lg:h-96 overflow-hidden">
-          <div 
-            className="absolute inset-0 bg-cover bg-center transform scale-105 hover:scale-100 transition-transform duration-700"
-            style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/30"></div>
-          <div className="relative z-10 h-full flex items-center justify-center">
-            <div className="text-center text-white px-6 max-w-4xl">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-                <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
-                  {storeSettings?.storeName || "eDAHouse"}
-                </span>
-              </h1>
-              <p className="text-xl sm:text-2xl lg:text-3xl font-light opacity-90 mb-8">
-                {storeSettings?.welcomeTitle || "Свежие продукты каждый день"}
-              </p>
-              <div className="flex flex-wrap justify-center gap-3">
-                <div className="px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 hover:bg-white/30 transition-colors">
-                  <span className="text-sm font-medium">🚚 Быстрая доставка</span>
-                </div>
-                <div className="px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 hover:bg-white/30 transition-colors">
-                  <span className="text-sm font-medium">🍃 Свежие продукты</span>
-                </div>
-                <div className="px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 hover:bg-white/30 transition-colors">
-                  <span className="text-sm font-medium">⭐ Высокое качество</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div 
+          className="w-full h-32 sm:h-40 lg:h-48 bg-cover bg-center"
+          style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
+        />
       )}
       
       <div className="flex overflow-x-hidden">
@@ -436,7 +410,7 @@ export default function Home() {
               {/* Category Overview */}
               {categories && categories.length > 0 && (
                 <div className="mb-8">
-                  <div className="flex items-center justify-between mb-8">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                     <div className="flex items-center gap-4">
                       <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg">
                         <Package className="h-7 w-7 text-white" />
@@ -448,10 +422,7 @@ export default function Home() {
                         <p className="text-gray-600 font-medium">Выберите категорию блюд</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <Badge className="px-4 py-2 bg-gradient-to-r from-primary to-blue-600 text-white font-semibold text-sm shadow-lg">
-                        {t('categoriesCount', { count: categories.length })}
-                      </Badge>
+                    <div className="flex justify-start md:justify-end">
                       <Button
                         onClick={() => setSelectedCategoryId(0)}
                         className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
