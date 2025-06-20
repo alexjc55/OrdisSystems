@@ -71,22 +71,26 @@ const CustomSelect = React.forwardRef<HTMLDivElement, CustomSelectProps>(
 
         {isOpen && (
           <div className="absolute top-full left-0 right-0 z-50 mt-1 max-h-60 overflow-auto rounded-md border bg-white shadow-lg">
-            {options.map((option) => (
-              <div
-                key={option.props.value}
-                className={cn(
-                  "flex items-center justify-between px-3 py-2 text-sm cursor-pointer transition-colors",
-                  "text-black bg-white hover:bg-orange-500 hover:text-white",
-                  selectedValue === option.props.value && "bg-orange-500 text-white"
-                )}
-                onClick={() => handleSelect(option.props.value)}
-              >
-                <span>{option.props.children}</span>
-                {selectedValue === option.props.value && (
-                  <Check className="h-4 w-4" />
-                )}
-              </div>
-            ))}
+            {options.map((option) => {
+              const isSelected = selectedValue === option.props.value;
+              return (
+                <div
+                  key={option.props.value}
+                  className={cn(
+                    "flex items-center justify-between px-3 py-2 text-sm cursor-pointer transition-colors",
+                    isSelected 
+                      ? "bg-orange-500 text-white" 
+                      : "bg-white text-black hover:bg-orange-500 hover:text-white"
+                  )}
+                  onClick={() => handleSelect(option.props.value)}
+                >
+                  <span>{option.props.children}</span>
+                  {isSelected && (
+                    <Check className="h-4 w-4" />
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

@@ -379,28 +379,24 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
               <Eye className="h-3 w-3 mr-1" />
               Детали
             </Button>
-            <Select
+            <CustomSelect
               value={order.status}
-              onValueChange={(newStatus) => {
+              onValueChange={(newStatus: string) => {
                 if (newStatus === 'cancelled') {
                   onCancelOrder(order.id);
                 } else {
                   onStatusChange({ orderId: order.id, status: newStatus });
                 }
               }}
+              className="w-20 h-7 text-xs"
             >
-              <SelectTrigger className="w-20 h-7 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pending">Ожидает</SelectItem>
-                <SelectItem value="confirmed">Подтвержден</SelectItem>
-                <SelectItem value="preparing">Готовится</SelectItem>
-                <SelectItem value="ready">Готов</SelectItem>
-                <SelectItem value="delivered">Доставлен</SelectItem>
-                <SelectItem value="cancelled">Отменен</SelectItem>
-              </SelectContent>
-            </Select>
+              <CustomSelectItem value="pending">Ожидает</CustomSelectItem>
+              <CustomSelectItem value="confirmed">Подтвержден</CustomSelectItem>
+              <CustomSelectItem value="preparing">Готовится</CustomSelectItem>
+              <CustomSelectItem value="ready">Готов</CustomSelectItem>
+              <CustomSelectItem value="delivered">Доставлен</CustomSelectItem>
+              <CustomSelectItem value="cancelled">Отменен</CustomSelectItem>
+            </CustomSelect>
           </div>
         </div>
       </CardContent>
@@ -868,22 +864,18 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
 
             <div>
               <label className="block text-sm font-medium mb-1">Статус заказа</label>
-              <Select
+              <CustomSelect
                 value={editedOrder.status}
-                onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
+                onValueChange={(value: string) => setEditedOrder(prev => ({ ...prev, status: value }))}
+                className="text-sm"
               >
-                <SelectTrigger className="text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pending">Ожидает</SelectItem>
-                  <SelectItem value="confirmed">Подтвержден</SelectItem>
-                  <SelectItem value="preparing">Готовится</SelectItem>
-                  <SelectItem value="ready">Готов</SelectItem>
-                  <SelectItem value="delivered">Доставлен</SelectItem>
-                  <SelectItem value="cancelled">Отменен</SelectItem>
-                </SelectContent>
-              </Select>
+                <CustomSelectItem value="pending">Ожидает</CustomSelectItem>
+                <CustomSelectItem value="confirmed">Подтвержден</CustomSelectItem>
+                <CustomSelectItem value="preparing">Готовится</CustomSelectItem>
+                <CustomSelectItem value="ready">Готов</CustomSelectItem>
+                <CustomSelectItem value="delivered">Доставлен</CustomSelectItem>
+                <CustomSelectItem value="cancelled">Отменен</CustomSelectItem>
+              </CustomSelect>
             </div>
           </div>
         </div>
@@ -915,21 +907,21 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Время</label>
-              <Select
+              <CustomSelect
                 value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
               >
-                <SelectTrigger className="text-sm">
-                  <SelectValue placeholder="Выберите время" />
-                </SelectTrigger>
-                <SelectContent>
+                <CustomSelect className="text-sm">
+                  
+                </CustomSelect>
+                
                   {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
-                    <SelectItem key={slot.value} value={slot.label}>
+                    <CustomSelectItem key={slot.value} value={slot.label}>
                       {slot.label}
-                    </SelectItem>
+                    </CustomSelectItem>
                   ))}
-                </SelectContent>
-              </Select>
+                </CustomSelect>
+              </CustomSelect>
             </div>
           </div>
         </div>
@@ -1057,20 +1049,20 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
                 <span className="text-red-600">-{formatCurrency(calculateOrderDiscount(calculateSubtotal()))}</span>
               </div>
               <div className="grid grid-cols-3 gap-2">
-                <Select
+                <CustomSelect
                   value={orderDiscount.type}
                   onValueChange={(value: 'percentage' | 'amount') => 
                     setOrderDiscount(prev => ({ ...prev, type: value }))
                   }
                 >
-                  <SelectTrigger className="h-8 text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="percentage">%</SelectItem>
-                    <SelectItem value="amount">₪</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <CustomSelect className="h-8 text-xs">
+                    
+                  </CustomSelect>
+                  
+                    <CustomSelectItem value="percentage">%</CustomSelectItem>
+                    <CustomSelectItem value="amount">₪</CustomSelectItem>
+                  </CustomSelect>
+                </CustomSelect>
                 <Input
                   type="number"
                   placeholder="0"
@@ -1336,18 +1328,18 @@ function ItemDiscountDialog({
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2">Тип скидки</label>
-            <Select
+            <CustomSelect
               value={discountType}
               onValueChange={(value: 'percentage' | 'amount') => setDiscountType(value)}
             >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="percentage">Процент (%)</SelectItem>
-                <SelectItem value="amount">Сумма (₪)</SelectItem>
-              </SelectContent>
-            </Select>
+              <CustomSelect>
+                
+              </CustomSelect>
+              
+                <CustomSelectItem value="percentage">Процент (%)</CustomSelectItem>
+                <CustomSelectItem value="amount">Сумма (₪)</CustomSelectItem>
+              </CustomSelect>
+            </CustomSelect>
           </div>
 
           <div>
@@ -2650,7 +2642,7 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell className="hidden sm:table-cell rtl:text-right">
-                                    <Select
+                                    <CustomSelect
                                       value={order.status}
                                       onValueChange={(newStatus) => {
                                         if (newStatus === 'cancelled') {
@@ -2660,18 +2652,18 @@ export default function AdminDashboard() {
                                         }
                                       }}
                                     >
-                                      <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)}`}>
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                                        <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">Ожидает</SelectItem>
-                                        <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">Подтвержден</SelectItem>
-                                        <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">Готовится</SelectItem>
-                                        <SelectItem value="ready" className="text-green-800 hover:bg-green-50">Готов</SelectItem>
-                                        <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">Доставлен</SelectItem>
-                                        <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">Отменен</SelectItem>
-                                      </SelectContent>
-                                    </Select>
+                                      <CustomSelect className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)}`}>
+                                        
+                                      </CustomSelect>
+                                      
+                                        <CustomSelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">Ожидает</CustomSelectItem>
+                                        <CustomSelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">Подтвержден</CustomSelectItem>
+                                        <CustomSelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">Готовится</CustomSelectItem>
+                                        <CustomSelectItem value="ready" className="text-green-800 hover:bg-green-50">Готов</CustomSelectItem>
+                                        <CustomSelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">Доставлен</CustomSelectItem>
+                                        <CustomSelectItem value="cancelled" className="text-red-800 hover:bg-red-50">Отменен</CustomSelectItem>
+                                      </CustomSelect>
+                                    </CustomSelect>
                                   </TableCell>
                                   <TableCell className="font-medium text-xs sm:text-sm rtl:text-right">
                                     {(() => {
@@ -3158,17 +3150,17 @@ export default function AdminDashboard() {
                     />
                   </div>
                   <div className="flex gap-2">
-                    <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
-                      <SelectTrigger className="w-40">
-                        <SelectValue placeholder="Все роли" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Все роли</SelectItem>
-                        <SelectItem value="admin">Администраторы</SelectItem>
-                        <SelectItem value="worker">Сотрудники</SelectItem>
-                        <SelectItem value="customer">Клиенты</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <CustomSelect value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
+                      <CustomSelect className="w-40">
+                        
+                      </CustomSelect>
+                      
+                        <CustomSelectItem value="all">Все роли</CustomSelectItem>
+                        <CustomSelectItem value="admin">Администраторы</CustomSelectItem>
+                        <CustomSelectItem value="worker">Сотрудники</CustomSelectItem>
+                        <CustomSelectItem value="customer">Клиенты</CustomSelectItem>
+                      </CustomSelect>
+                    </CustomSelect>
                     <Button 
                       onClick={() => setIsUserFormOpen(true)}
                       className="bg-orange-500 hover:bg-orange-600 text-white"
@@ -3802,23 +3794,23 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm">Категория</FormLabel>
-                  <Select 
+                  <CustomSelect 
                     onValueChange={(value) => field.onChange(parseInt(value))}
                     value={field.value?.toString()}
                   >
                     <FormControl>
-                      <SelectTrigger className="text-sm">
-                        <SelectValue placeholder="Выберите категорию" />
-                      </SelectTrigger>
+                      <CustomSelect className="text-sm">
+                        
+                      </CustomSelect>
                     </FormControl>
-                    <SelectContent>
+                    
                       {categories?.map((category: any) => (
-                        <SelectItem key={category.id} value={category.id.toString()} className="text-sm">
+                        <CustomSelectItem key={category.id} value={category.id.toString()} className="text-sm">
                           {category.icon} {category.name}
-                        </SelectItem>
+                        </CustomSelectItem>
                       ))}
-                    </SelectContent>
-                  </Select>
+                    </CustomSelect>
+                  </CustomSelect>
                   <FormMessage className="text-xs" />
                 </FormItem>
               )}
@@ -3851,19 +3843,19 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">Единица измерения</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <CustomSelect onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger className="text-sm">
-                          <SelectValue placeholder="Выберите единицу" />
-                        </SelectTrigger>
+                        <CustomSelect className="text-sm">
+                          
+                        </CustomSelect>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="100g" className="text-sm">За 100г</SelectItem>
-                        <SelectItem value="100ml" className="text-sm">За 100мл</SelectItem>
-                        <SelectItem value="piece" className="text-sm">За штуку</SelectItem>
-                        <SelectItem value="kg" className="text-sm">За кг</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      
+                        <CustomSelectItem value="100g" className="text-sm">За 100г</CustomSelectItem>
+                        <CustomSelectItem value="100ml" className="text-sm">За 100мл</CustomSelectItem>
+                        <CustomSelectItem value="piece" className="text-sm">За штуку</CustomSelectItem>
+                        <CustomSelectItem value="kg" className="text-sm">За кг</CustomSelectItem>
+                      </CustomSelect>
+                    </CustomSelect>
                     <FormMessage className="text-xs" />
                   </FormItem>
                 )}
@@ -3896,18 +3888,18 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm">Статус доступности</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <CustomSelect onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger className="text-sm">
-                        <SelectValue placeholder="Выберите статус" />
-                      </SelectTrigger>
+                      <CustomSelect className="text-sm">
+                        
+                      </CustomSelect>
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="available" className="text-sm">✅ Доступен</SelectItem>
-                      <SelectItem value="completely_unavailable" className="text-sm">❌ Не доступен</SelectItem>
-                      <SelectItem value="out_of_stock_today" className="text-sm">📅 Заказ на другой день</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    
+                      <CustomSelectItem value="available" className="text-sm">✅ Доступен</CustomSelectItem>
+                      <CustomSelectItem value="completely_unavailable" className="text-sm">❌ Не доступен</CustomSelectItem>
+                      <CustomSelectItem value="out_of_stock_today" className="text-sm">📅 Заказ на другой день</CustomSelectItem>
+                    </CustomSelect>
+                  </CustomSelect>
                   <FormDescription className="text-xs text-gray-500">
                     Выберите статус доступности товара для заказов
                   </FormDescription>
@@ -3949,20 +3941,20 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm">Тип скидки</FormLabel>
-                        <Select 
+                        <CustomSelect 
                           onValueChange={field.onChange}
                           value={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger className="text-sm">
-                              <SelectValue placeholder="Выберите тип скидки" />
-                            </SelectTrigger>
+                            <CustomSelect className="text-sm">
+                              
+                            </CustomSelect>
                           </FormControl>
-                          <SelectContent>
-                            <SelectItem value="percentage">Процент (%)</SelectItem>
-                            <SelectItem value="fixed">Фиксированная сумма (₪)</SelectItem>
-                          </SelectContent>
-                        </Select>
+                          
+                            <CustomSelectItem value="percentage">Процент (%)</CustomSelectItem>
+                            <CustomSelectItem value="fixed">Фиксированная сумма (₪)</CustomSelectItem>
+                          </CustomSelect>
+                        </CustomSelect>
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
@@ -4488,24 +4480,24 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm">Элементов на странице по умолчанию</FormLabel>
-                <Select 
+                <CustomSelect 
                   onValueChange={(value) => field.onChange(parseInt(value))} 
                   value={field.value?.toString() || "10"}
                 >
                   <FormControl>
-                    <SelectTrigger className="text-sm">
-                      <SelectValue placeholder="Выберите количество" />
-                    </SelectTrigger>
+                    <CustomSelect className="text-sm">
+                      
+                    </CustomSelect>
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="10">10 элементов</SelectItem>
-                    <SelectItem value="15">15 элементов</SelectItem>
-                    <SelectItem value="25">25 элементов</SelectItem>
-                    <SelectItem value="50">50 элементов</SelectItem>
-                    <SelectItem value="100">100 элементов</SelectItem>
-                    <SelectItem value="1000">Все элементы</SelectItem>
-                  </SelectContent>
-                </Select>
+                  
+                    <CustomSelectItem value="10">10 элементов</CustomSelectItem>
+                    <CustomSelectItem value="15">15 элементов</CustomSelectItem>
+                    <CustomSelectItem value="25">25 элементов</CustomSelectItem>
+                    <CustomSelectItem value="50">50 элементов</CustomSelectItem>
+                    <CustomSelectItem value="100">100 элементов</CustomSelectItem>
+                    <CustomSelectItem value="1000">Все элементы</CustomSelectItem>
+                  </CustomSelect>
+                </CustomSelect>
                 <FormDescription className="text-xs text-gray-500">
                   Количество товаров, заказов и пользователей отображаемых на одной странице в админ панели
                 </FormDescription>
@@ -4669,27 +4661,27 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <div className="space-y-4">
                 <h4 className="text-sm font-medium">Язык по умолчанию</h4>
                 <div className="p-3 border rounded-lg bg-gray-50">
-                  <Select 
+                  <CustomSelect 
                     value={form.watch("defaultLanguage") || "ru"}
                     onValueChange={(value) => form.setValue("defaultLanguage", value)}
                   >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
+                    <CustomSelect className="w-full">
+                      
+                    </CustomSelect>
+                    
                       {Object.entries(LANGUAGES).filter(([code]) => {
                         const enabledLanguages = form.watch("enabledLanguages") || ["ru", "en", "he"];
                         return enabledLanguages.includes(code);
                       }).map(([code, info]) => (
-                        <SelectItem key={code} value={code}>
+                        <CustomSelectItem key={code} value={code}>
                           <div className="flex items-center gap-2">
                             <span>{(info as any).flag}</span>
                             <span>{(info as any).name}</span>
                           </div>
-                        </SelectItem>
+                        </CustomSelectItem>
                       ))}
-                    </SelectContent>
-                  </Select>
+                    </CustomSelect>
+                  </CustomSelect>
                 </div>
                 <p className="text-xs text-gray-500">
                   Выберите язык интерфейса по умолчанию для новых посетителей
@@ -4790,17 +4782,17 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm">Первый день недели</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <CustomSelect onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger className="text-sm">
-                      <SelectValue placeholder="Выберите первый день недели" />
-                    </SelectTrigger>
+                    <CustomSelect className="text-sm">
+                      
+                    </CustomSelect>
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="monday">Понедельник</SelectItem>
-                    <SelectItem value="sunday">Воскресенье</SelectItem>
-                  </SelectContent>
-                </Select>
+                  
+                    <CustomSelectItem value="monday">Понедельник</CustomSelectItem>
+                    <CustomSelectItem value="sunday">Воскресенье</CustomSelectItem>
+                  </CustomSelect>
+                </CustomSelect>
                 <FormDescription className="text-xs">
                   Выберите с какого дня недели начинается неделя в вашем регионе
                 </FormDescription>
@@ -4849,56 +4841,56 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <FormLabel className="text-xs text-gray-600">Открытие</FormLabel>
-                        <Select
+                        <CustomSelect
                           value={openTime}
                           onValueChange={(value) => {
                             const currentClose = closeTime || "18:00";
                             form.setValue(`workingHours.${key}` as any, `${value}-${currentClose}`);
                           }}
                         >
-                          <SelectTrigger className="text-xs">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
+                          <CustomSelect className="text-xs">
+                            
+                          </CustomSelect>
+                          
                             {Array.from({ length: 48 }, (_, i) => {
                               const hour = Math.floor(i / 2);
                               const minute = i % 2 === 0 ? "00" : "30";
                               const time = `${hour.toString().padStart(2, "0")}:${minute}`;
                               return (
-                                <SelectItem key={time} value={time}>
+                                <CustomSelectItem key={time} value={time}>
                                   {time}
-                                </SelectItem>
+                                </CustomSelectItem>
                               );
                             })}
-                          </SelectContent>
-                        </Select>
+                          </CustomSelect>
+                        </CustomSelect>
                       </div>
                       
                       <div>
                         <FormLabel className="text-xs text-gray-600">Закрытие</FormLabel>
-                        <Select
+                        <CustomSelect
                           value={closeTime}
                           onValueChange={(value) => {
                             const currentOpen = openTime || "09:00";
                             form.setValue(`workingHours.${key}` as any, `${currentOpen}-${value}`);
                           }}
                         >
-                          <SelectTrigger className="text-xs">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
+                          <CustomSelect className="text-xs">
+                            
+                          </CustomSelect>
+                          
                             {Array.from({ length: 48 }, (_, i) => {
                               const hour = Math.floor(i / 2);
                               const minute = i % 2 === 0 ? "00" : "30";
                               const time = `${hour.toString().padStart(2, "0")}:${minute}`;
                               return (
-                                <SelectItem key={time} value={time}>
+                                <CustomSelectItem key={time} value={time}>
                                   {time}
-                                </SelectItem>
+                                </CustomSelectItem>
                               );
                             })}
-                          </SelectContent>
-                        </Select>
+                          </CustomSelect>
+                        </CustomSelect>
                       </div>
                     </div>
                   )}
@@ -5302,17 +5294,17 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <Layers className="h-4 w-4" />
                       Тип баннера
                     </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <CustomSelect onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger className="text-sm">
-                          <SelectValue placeholder="Выберите тип баннера" />
-                        </SelectTrigger>
+                        <CustomSelect className="text-sm">
+                          
+                        </CustomSelect>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="text">Текстовый баннер</SelectItem>
-                        <SelectItem value="image">Изображение</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      
+                        <CustomSelectItem value="text">Текстовый баннер</CustomSelectItem>
+                        <CustomSelectItem value="image">Изображение</CustomSelectItem>
+                      </CustomSelect>
+                    </CustomSelect>
                     <FormDescription className="text-xs">
                       Выберите между текстовым баннером с фоном или загрузкой изображения
                     </FormDescription>
@@ -6022,18 +6014,18 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm">Роль *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <CustomSelect onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger className="text-sm">
-                        <SelectValue placeholder="Выберите роль" />
-                      </SelectTrigger>
+                      <CustomSelect className="text-sm">
+                        
+                      </CustomSelect>
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="customer">Клиент</SelectItem>
-                      <SelectItem value="worker">Сотрудник</SelectItem>
-                      <SelectItem value="admin">Администратор</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    
+                      <CustomSelectItem value="customer">Клиент</CustomSelectItem>
+                      <CustomSelectItem value="worker">Сотрудник</CustomSelectItem>
+                      <CustomSelectItem value="admin">Администратор</CustomSelectItem>
+                    </CustomSelect>
+                  </CustomSelect>
                   <FormMessage className="text-xs" />
                 </FormItem>
               )}
