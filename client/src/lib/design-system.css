@@ -169,9 +169,15 @@
     color: var(--color-white) !important;
   }
 
-  .btn-error:hover *, .btn-error:hover svg {
+  .btn-error:hover * {
     color: var(--color-white) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-error:hover svg {
+    color: var(--color-white) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   /* Info Button Variant */
@@ -181,9 +187,15 @@
     border: none !important;
   }
 
-  .btn-info *, .btn-info svg {
+  .btn-info * {
     color: var(--color-white) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-info svg {
+    color: var(--color-white) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   .btn-info:hover {
@@ -193,9 +205,15 @@
     color: var(--color-white) !important;
   }
 
-  .btn-info:hover *, .btn-info:hover svg {
+  .btn-info:hover * {
     color: var(--color-white) !important;
-    fill: currentColor !important;
+  }
+  
+  .btn-info:hover svg {
+    color: var(--color-white) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   /* Outline Button Variant */
