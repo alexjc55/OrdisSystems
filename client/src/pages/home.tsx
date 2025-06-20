@@ -436,43 +436,65 @@ export default function Home() {
               {/* Category Overview */}
               {categories && categories.length > 0 && (
                 <div className="mb-8">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center">
-                      <Package className="mr-3 h-6 w-6 text-primary" />
-                      <h2 className="text-2xl font-poppins font-bold text-gray-900">{t('categories')}</h2>
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg">
+                        <Package className="h-7 w-7 text-white" />
+                      </div>
+                      <div>
+                        <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                          {t('categories')}
+                        </h2>
+                        <p className="text-gray-600 font-medium">Выберите категорию блюд</p>
+                      </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <Badge variant="default" className="bg-primary">
+                      <Badge className="px-4 py-2 bg-gradient-to-r from-primary to-blue-600 text-white font-semibold text-sm shadow-lg">
                         {t('categoriesCount', { count: categories.length })}
                       </Badge>
                       <Button
                         onClick={() => setSelectedCategoryId(0)}
-                        className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2"
+                        className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                       >
-                        <Package className="mr-2 h-4 w-4" />
+                        <Package className="mr-2 h-5 w-5" />
                         {t('allProducts')}
                       </Button>
                     </div>
                   </div>
                   
-                  <div className="grid gap-4 min-w-0" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
+                  <div className="grid gap-6 min-w-0" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
                     {categories.map((category) => (
                       <Card 
                         key={category.id} 
-                        className="cursor-pointer hover:shadow-lg transition-shadow"
+                        className="group cursor-pointer hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden transform hover:scale-105"
                         onClick={() => handleCategorySelect(category.id)}
                       >
-                        <CardContent className="p-4 text-center">
-                          <div className="text-4xl mb-3">
-                            {category.icon || '📦'}
+                        <CardContent className="p-6">
+                          <div className="relative">
+                            <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                              {category.icon || '📦'}
+                            </div>
+                            <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <div className="w-3 h-3 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full animate-pulse"></div>
+                            </div>
                           </div>
-                          <h3 className="font-semibold text-lg mb-2">{category.name}</h3>
-                          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                            {category.description || "Вкусные блюда"}
+                          
+                          <h3 className="font-bold text-xl mb-3 text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
+                            {category.name}
+                          </h3>
+                          
+                          <p className="text-gray-600 mb-4 line-clamp-2 leading-relaxed">
+                            {category.description || "Вкусные блюда для вашего стола"}
                           </p>
-                          <Badge variant="default" className="mt-2 bg-primary">
-                            {category.products.length} блюд
-                          </Badge>
+                          
+                          <div className="flex items-center justify-between">
+                            <Badge className="px-3 py-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold text-sm shadow-md">
+                              {category.products.length} блюд
+                            </Badge>
+                            <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+                              <ChevronRight className="w-4 h-4 text-white" />
+                            </div>
+                          </div>
                         </CardContent>
                       </Card>
                     ))}
