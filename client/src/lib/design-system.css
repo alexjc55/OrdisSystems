@@ -469,6 +469,10 @@ button:hover, [role="button"]:hover, .btn:hover {
 /* Removed comprehensive color overrides that were causing conflicts */
 
 /* Specific fix for pre-order button in product card */
+.bg-blue-600 {
+  background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1)) !important;
+}
+
 .hover\:bg-blue-600:hover {
   background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1)) !important;
 }
