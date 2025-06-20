@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/lib/cart";
 import { useToast } from "@/hooks/use-toast";
 import { formatCurrency, formatWeight, calculateTotal, getUnitLabel, formatQuantity, type ProductUnit } from "@/lib/currency";
-import { ShoppingCart, Plus, Minus, Eye } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Eye, Star, Clock, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import type { ProductWithCategory } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation } from "@/hooks/use-language";
@@ -114,19 +114,34 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   const getAvailabilityBadge = () => {
     if (product.availabilityStatus === 'completely_unavailable' || !product.isAvailable) {
       return (
-        <Badge variant="destructive" className="bg-red-100 text-red-800 border-red-300">
-          ❌ Недоступен
+        <Badge className="badge-modern badge-error space-xs">
+          <XCircle className="icon-modern w-3 h-3" />
+          Недоступен
         </Badge>
       );
     }
     if (product.stockStatus === 'low_stock') {
       return (
-        <Badge variant="destructive" className="bg-warning text-warning-foreground">
+        <Badge className="badge-modern badge-warning space-xs">
+          <AlertCircle className="icon-modern w-3 h-3" />
           Мало
         </Badge>
       );
     }
-    return null;
+    if (product.availabilityStatus === 'out_of_stock_today') {
+      return (
+        <Badge className="badge-modern badge-warning space-xs">
+          <Clock className="icon-modern w-3 h-3" />
+          Завтра
+        </Badge>
+      );
+    }
+    return (
+      <Badge className="badge-modern badge-success space-xs">
+        <CheckCircle2 className="icon-modern w-3 h-3" />
+        В наличии
+      </Badge>
+    );
   };
 
   const isOrderable = () => {
@@ -134,36 +149,43 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
-      <div className="relative">
+    <div className="card-modern interactive h-full flex flex-col">
+      <div className="relative overflow-hidden rounded-t-xl">
         <img
           src={product.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'}
           alt={product.name}
-          className="w-full h-48 object-cover"
+          className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop';
           }}
         />
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-3 right-3">
           {getAvailabilityBadge()}
         </div>
+        {product.isSpecialOffer && (
+          <div className="absolute top-3 left-3">
+            <Badge className="badge-modern badge-primary space-xs">
+              <Star className="icon-modern w-3 h-3 fill-current" />
+              Акция
+            </Badge>
+          </div>
+        )}
       </div>
       
-      <CardContent className="p-4 flex-1 flex flex-col">
-        <div className="flex-1">
-          <h3 className="text-lg font-poppins font-semibold text-gray-900 mb-1">
+      <div className="p-6 flex-1 flex flex-col space-lg">
+        <div className="flex-1 space-md">
+          <h3 className="text-display-xs text-balance font-semibold text-neutral-900 mb-2">
             {product.name}
           </h3>
           {product.description && (
-            <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+            <p className="text-sm text-neutral-600 mb-3 text-pretty line-clamp-2 leading-relaxed">
               {product.description}
             </p>
           )}
           {product.category && (
             <Badge 
-              variant="secondary" 
-              className="mb-2 cursor-pointer bg-gray-100 text-gray-700 hover:bg-primary hover:text-primary-foreground transition-colors"
+              className="badge-modern badge-neutral micro-bounce mb-3 cursor-pointer"
               onClick={() => onCategoryClick?.(product.category.id)}
             >
               {product.category.name}
@@ -283,7 +305,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             </Button>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
