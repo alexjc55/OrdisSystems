@@ -542,6 +542,12 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
     savedDiscounts.itemDiscounts || {}
   );
 
+  // Manual price override state
+  const [manualPriceOverride, setManualPriceOverride] = useState<{enabled: boolean, value: number}>({
+    enabled: false,
+    value: 0
+  });
+
   // Apply saved discounts to order items when order data is loaded
   useEffect(() => {
     if (order.items && Object.keys(savedDiscounts.itemDiscounts || {}).length > 0) {
@@ -696,10 +702,19 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
   };
 
   const calculateFinalTotal = () => {
-    const subtotal = calculateSubtotal();
-    const discount = calculateOrderDiscount(subtotal);
+    let subtotal;
+    
+    // Use manual price override if enabled, otherwise calculate from items
+    if (manualPriceOverride.enabled && manualPriceOverride.value > 0) {
+      subtotal = manualPriceOverride.value;
+    } else {
+      subtotal = calculateSubtotal();
+      const discount = calculateOrderDiscount(subtotal);
+      subtotal = subtotal - discount;
+    }
+    
     const deliveryFee = parseFloat(order.deliveryFee || "0");
-    return subtotal - discount + deliveryFee;
+    return subtotal + deliveryFee;
   };
 
   const removeItem = (index: number) => {
@@ -724,23 +739,24 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
   const handleSave = () => {
     const finalTotal = calculateFinalTotal();
     
-    // Store discount information in notes as a workaround
-    const discountInfo = {
+    // Store discount and manual price adjustment information in notes
+    const orderMetadata = {
       orderDiscount: orderDiscount.value > 0 ? orderDiscount : null,
-      itemDiscounts: Object.keys(itemDiscounts).length > 0 ? itemDiscounts : null
+      itemDiscounts: Object.keys(itemDiscounts).length > 0 ? itemDiscounts : null,
+      manualPriceOverride: manualPriceOverride.enabled && manualPriceOverride.value > 0 ? manualPriceOverride : null
     };
     
     const baseNotes = editedOrder.notes || '';
-    const notesWithDiscounts = baseNotes + 
-      (discountInfo.orderDiscount || discountInfo.itemDiscounts ? 
-        `\n[DISCOUNTS:${JSON.stringify(discountInfo)}]` : '');
+    const notesWithMetadata = baseNotes + 
+      (orderMetadata.orderDiscount || orderMetadata.itemDiscounts || orderMetadata.manualPriceOverride ? 
+        `\n[ORDER_DATA:${JSON.stringify(orderMetadata)}]` : '');
     
-    console.log('Saving order with discount info:', discountInfo);
-    console.log('Notes with discounts:', notesWithDiscounts);
+    console.log('Saving order with metadata:', orderMetadata);
+    console.log('Notes with metadata:', notesWithMetadata);
     
     updateOrderMutation.mutate({
       ...editedOrder,
-      customerNotes: notesWithDiscounts,
+      customerNotes: notesWithMetadata,
       items: editedOrderItems,
       totalAmount: finalTotal
     });
@@ -1052,6 +1068,49 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
                   className="h-8 text-xs"
                 />
               </div>
+            </div>
+            
+            {/* Manual Price Adjustment */}
+            <div className="border-t pt-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Ручная корректировка цены:</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={manualPriceOverride.enabled}
+                    onChange={(e) => setManualPriceOverride(prev => ({ 
+                      ...prev, 
+                      enabled: e.target.checked 
+                    }))}
+                    className="sr-only peer"
+                  />
+                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                </label>
+              </div>
+              
+              {manualPriceOverride.enabled && (
+                <div className="space-y-2">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    placeholder="Введите новую сумму заказа"
+                    value={manualPriceOverride.value || ''}
+                    onChange={(e) => setManualPriceOverride(prev => ({ 
+                      ...prev, 
+                      value: parseFloat(e.target.value) || 0 
+                    }))}
+                    className="h-8 text-xs"
+                  />
+                  <p className="text-xs text-orange-600">
+                    * Указанная сумма заменит расчетную стоимость товаров
+                  </p>
+                  {!manualPriceOverride.enabled && (
+                    <p className="text-xs text-gray-500">
+                      Расчетная стоимость: {formatCurrency(calculateSubtotal() - calculateOrderDiscount(calculateSubtotal()))}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
             
             <div className="border-t pt-2 flex justify-between font-semibold">
