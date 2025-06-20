@@ -238,16 +238,31 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 <Minus className="h-2 w-2" />
               </Button>
               <Input
-                type="number"
+                type="text"
                 value={selectedQuantity}
                 onChange={(e) => {
-                  const defaultValue = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 100;
-                  handleQuantityChange(parseFloat(e.target.value) || defaultValue);
+                  const value = e.target.value;
+                  const numValue = parseFloat(value);
+                  if (!isNaN(numValue) && numValue > 0) {
+                    handleQuantityChange(numValue);
+                  } else if (value === '') {
+                    // Allow empty input for editing
+                  } else {
+                    // Reset to default if invalid
+                    const defaultValue = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 100;
+                    handleQuantityChange(defaultValue);
+                  }
                 }}
-                step={unit === "piece" ? "1" : unit === "kg" ? "0.1" : "1"}
-                min={unit === "piece" ? "1" : unit === "kg" ? "0.1" : "1"}
-                max={unit === "100g" || unit === "100ml" ? "9999" : "99"}
-                className="w-12 text-center text-xs h-6 border-gray-300"
+                onBlur={(e) => {
+                  const value = e.target.value;
+                  const numValue = parseFloat(value);
+                  if (isNaN(numValue) || numValue <= 0) {
+                    const defaultValue = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 100;
+                    handleQuantityChange(defaultValue);
+                  }
+                }}
+                className="w-16 text-center text-xs h-6 border-gray-300"
+                placeholder={unit === "piece" ? "1" : unit === "kg" ? "0.1" : "100"}
               />
               <Button
                 size="sm"

@@ -447,35 +447,67 @@ select option:not([selected]):hover {
   font-family: inherit !important;
 }
 
-[data-radix-select-item] {
-  background: transparent !important;
+/* Universal Radix Select Item Styling - force override everything */
+* {
+}
+
+*[data-radix-select-item=""],
+*[data-radix-collection-item=""],
+div[role="option"],
+*[data-state],
+.select-item,
+.radix-select-item {
+  background: white !important;
   color: #000000 !important;
   border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
   font-family: inherit !important;
   font-weight: normal !important;
   cursor: pointer !important;
   padding: 8px 12px !important;
+  margin: 0 !important;
   display: block !important;
   position: relative !important;
   transition: background-color 0.15s ease !important;
 }
 
-/* Orange background on hover - no shadow effects */
-[data-radix-select-item][data-highlighted],
-[data-radix-select-item]:hover {
+/* Universal hover and highlight styles */
+*[data-radix-select-item=""]:hover,
+*[data-radix-select-item=""][data-highlighted],
+*[data-radix-collection-item=""]:hover,
+*[data-radix-collection-item=""][data-highlighted],
+div[role="option"]:hover,
+div[role="option"][data-highlighted],
+div[role="option"][aria-selected="true"],
+*[data-state]:hover,
+*[data-highlighted],
+.select-item:hover,
+.radix-select-item:hover {
   background-color: hsl(24.6, 95%, 53.1%) !important;
   color: white !important;
   box-shadow: none !important;
   text-shadow: none !important;
+  border: none !important;
+  outline: none !important;
 }
 
-/* Orange styling for selected items */
-[data-radix-select-item][data-state="checked"] {
+/* Selected state styling */
+*[data-radix-select-item=""][data-state="checked"],
+*[data-radix-collection-item=""][data-state="checked"],
+div[role="option"][data-state="checked"],
+div[role="option"][aria-selected="true"],
+*[data-state="checked"],
+.select-item[data-state="checked"],
+.radix-select-item[data-state="checked"] {
   background-color: hsl(24.6, 95%, 53.1%) !important;
   color: white !important;
   font-weight: 500 !important;
   box-shadow: none !important;
   text-shadow: none !important;
+  border: none !important;
+  outline: none !important;
 }
 
 /* Completely hide all indicators, checkboxes, and icons */
