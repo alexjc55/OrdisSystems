@@ -563,18 +563,18 @@ export default function Home() {
               {/* Category Header */}
               {selectedCategory && (
                 <div className="mb-6">
-                  <div className="flex items-center gap-3 mb-3">
+                  <div className="flex items-center justify-between gap-4 mb-2">
+                    <h2 className="text-2xl font-bold text-gray-900">{selectedCategory.name}</h2>
                     <Button
                       onClick={handleResetView}
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-1 text-gray-600 hover:text-gray-800 shrink-0"
                     >
                       <ChevronLeft className="h-4 w-4" />
-                      {t('backToCategories')}
+                      <span className="hidden sm:inline">Назад</span>
                     </Button>
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">{selectedCategory.name}</h2>
                   {selectedCategory.description && (
                     <p className="text-gray-600">{selectedCategory.description}</p>
                   )}
