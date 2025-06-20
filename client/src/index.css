@@ -399,12 +399,7 @@ a, button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-roo
   text-decoration: none !important;
 }
 
-a:hover, a:focus,
-button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]):not(.carousel-dot):hover, button:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]):not(.carousel-dot):focus,
-[role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]):not(.carousel-dot):hover, [role="button"]:not(.bg-orange-500):not(.border-orange-500):not([data-radix-switch-root]):not([role="switch"]):not(.carousel-dot):focus {
-  color: hsl(24.6, 95%, 53.1%) !important;
-  background-color: transparent !important;
-}
+/* Removed problematic global hover rule that was making all elements transparent */
 
 /* Preserve switch component styling - override the custom green class */
 .data-\[state\=checked\]\:bg-green-500[data-state="checked"] {
