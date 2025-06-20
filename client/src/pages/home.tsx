@@ -543,8 +543,8 @@ export default function Home() {
                             <button
                               key={index}
                               onClick={() => goToSlide(index)}
-                              className={`w-2 h-2 rounded-full transition-colors ${
-                                Math.floor(currentSlide / 3) === index ? 'bg-primary' : 'bg-gray-300'
+                              className={`w-3 h-3 rounded-full transition-colors border-0 p-0 min-w-0 flex-shrink-0 ${
+                                Math.floor(currentSlide / 3) === index ? 'bg-orange-500' : 'bg-gray-400'
                               }`}
                             />
                           ))}
