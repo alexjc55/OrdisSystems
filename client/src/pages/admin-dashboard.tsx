@@ -39,6 +39,7 @@ import { z } from "zod";
 import { formatCurrency, getUnitLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
 import { insertStoreSettingsSchema, type StoreSettings } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
+import ThemeManager from "@/components/admin/theme-manager";
 import { 
   Package, 
   Plus, 
