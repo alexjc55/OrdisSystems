@@ -727,9 +727,49 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
   }
   
   /* Button adjustments - exclude carousel dots and other small indicators */
-  button:not(.carousel-dot-modern):not([class*="carousel"]):not([class*="dot"]):not([class*="indicator"]):not([style*="width: 8px"]):not([style*="height: 8px"]):not([class*="embla"]):not([data-carousel="dot"]):not([aria-label*="slide"]) {
+  button:not(.carousel-dot-modern):not([class*="carousel"]):not([class*="dot"]):not([class*="indicator"]):not([style*="width: 8px"]):not([style*="height: 8px"]):not([class*="embla"]):not([data-carousel="dot"]):not([aria-label*="slide"]):not([class*="w-2"]):not([class*="h-2"]) {
     min-height: 44px !important;
     font-size: 0.875rem !important;
+  }
+  
+  /* NUCLEAR OPTION: Force carousel dots with maximum CSS specificity */
+  html body div button[style*="width: 8px"],
+  html body div button[style*="height: 8px"],
+  html body div button[class*="w-2"],
+  html body div button[class*="h-2"],
+  html body div .embla__dot,
+  html body div .embla__button,
+  html body div [class*="carousel"] button[style*="8px"],
+  html body button[style*="width: 8px"][style*="height: 8px"] {
+    min-height: 8px !important;
+    height: 8px !important;
+    max-height: 8px !important;
+    width: 8px !important;
+    max-width: 8px !important;
+    min-width: 8px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    margin: 2px !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    border: none !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+  }
+  
+  /* Additional override for any button with w-2 h-2 classes */
+  .w-2.h-2,
+  button.w-2.h-2,
+  html body button.w-2.h-2 {
+    width: 0.5rem !important;
+    height: 0.5rem !important;
+    min-height: 0.5rem !important;
+    max-height: 0.5rem !important;
+    min-width: 0.5rem !important;
+    max-width: 0.5rem !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
   }
   
   /* Ensure carousel dots maintain their small size - universal rule */
@@ -799,6 +839,29 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
     min-height: 8px !important;
     height: 8px !important;
     width: 8px !important;
+    max-height: 8px !important;
+    max-width: 8px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    font-size: 0 !important;
+  }
+
+  /* Force override all button min-height rules for small buttons */
+  button[style*="8px"] {
+    min-height: 8px !important;
+    max-height: 8px !important;
+    height: 8px !important;
+  }
+  
+  /* Universal override for any tiny buttons */
+  button[class*="w-2"][class*="h-2"],
+  button.w-2.h-2 {
+    min-height: 0.5rem !important;
+    height: 0.5rem !important;
+    max-height: 0.5rem !important;
+    width: 0.5rem !important;
+    max-width: 0.5rem !important;
     border-radius: 50% !important;
   }
 
