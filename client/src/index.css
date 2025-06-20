@@ -319,18 +319,30 @@
 /* Элементы меню - дефолтные стили с нормальным размером шрифта */
 /* Удалены проблемные глобальные стили для селекта */
 
-/* Оранжевый hover для выпадающих списков */
-[data-radix-select-item][data-highlighted] {
+/* Оранжевый hover для выпадающих списков - по документации Radix UI */
+[data-radix-select-item][data-highlighted=""] {
   background-color: #f97316 !important;
   color: white !important;
 }
 
-[data-radix-select-item][data-state="checked"][data-highlighted] {
+[data-radix-select-item]:hover {
   background-color: #f97316 !important;
   color: white !important;
 }
 
-[data-radix-select-item][data-state="checked"][data-highlighted] .lucide {
+[data-radix-select-item][data-state="checked"][data-highlighted=""] {
+  background-color: #f97316 !important;
+  color: white !important;
+}
+
+[data-radix-select-item][data-state="checked"]:hover {
+  background-color: #f97316 !important;
+  color: white !important;
+}
+
+/* Галочка при hover */
+[data-radix-select-item][data-highlighted=""] .lucide,
+[data-radix-select-item]:hover .lucide {
   color: white !important;
 }
 
