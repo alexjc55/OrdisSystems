@@ -181,6 +181,18 @@ export default function Checkout() {
 
   const createGuestOrderMutation = useMutation({
     mutationFn: async (data: GuestOrderData) => {
+      const deliveryDate = selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : "";
+      const today = format(new Date(), "yyyy-MM-dd");
+      
+      // Validate products availability for selected delivery date
+      const unavailableForToday = items.filter(item => 
+        item.product.availabilityStatus === 'out_of_stock_today' && deliveryDate === today
+      );
+      
+      if (unavailableForToday.length > 0) {
+        throw new Error(`Товары "${unavailableForToday.map(item => item.product.name).join(', ')}" недоступны для заказа на сегодня. Выберите другую дату доставки.`);
+      }
+
       const subtotal = getTotalPrice();
       const deliveryFeeAmount = calculateDeliveryFee(
         subtotal, 
@@ -200,7 +212,7 @@ export default function Checkout() {
         deliveryFee: deliveryFeeAmount.toString(),
         guestInfo: {
           ...data,
-          deliveryDate: selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : "",
+          deliveryDate,
           deliveryTime: formatDeliveryTimeRange(selectedGuestTime),
           paymentMethod: selectedGuestPaymentMethod,
         },
@@ -329,6 +341,18 @@ export default function Checkout() {
 
   const createAuthenticatedOrderMutation = useMutation({
     mutationFn: async (formData: AuthenticatedOrderData) => {
+      const deliveryDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
+      const today = format(new Date(), "yyyy-MM-dd");
+      
+      // Validate products availability for selected delivery date
+      const unavailableForToday = items.filter(item => 
+        item.product.availabilityStatus === 'out_of_stock_today' && deliveryDate === today
+      );
+      
+      if (unavailableForToday.length > 0) {
+        throw new Error(`Товары "${unavailableForToday.map(item => item.product.name).join(', ')}" недоступны для заказа на сегодня. Выберите другую дату доставки.`);
+      }
+
       const subtotal = getTotalPrice();
       const deliveryFeeAmount = calculateDeliveryFee(
         subtotal, 
@@ -348,7 +372,7 @@ export default function Checkout() {
         deliveryFee: deliveryFeeAmount.toString(),
         deliveryAddress: formData.address,
         customerPhone: formData.phone,
-        deliveryDate: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
+        deliveryDate,
         deliveryTime: formatDeliveryTimeRange(selectedTime),
         paymentMethod: formData.paymentMethod,
         status: "pending"

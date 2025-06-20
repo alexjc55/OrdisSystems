@@ -3605,6 +3605,9 @@ export default function AdminDashboard() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Полностью отключить товар или оставить для заказа на другой день?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Выберите действие для данного товара
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction
