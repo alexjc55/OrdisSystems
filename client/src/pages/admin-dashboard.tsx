@@ -2446,9 +2446,9 @@ export default function AdminDashboard() {
                             </div>
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                               <Button
-                                variant="ghost"
+                                variant="outline"
                                 size="sm"
-                                className="h-8 w-8 p-0 hover:bg-blue-50"
+                                className="h-8 w-8 p-0 bg-white border-blue-200 hover:bg-blue-50"
                                 onClick={() => {
                                   setEditingCategory(category);
                                   setIsCategoryFormOpen(true);
@@ -2458,7 +2458,7 @@ export default function AdminDashboard() {
                               </Button>
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-50">
+                                  <Button variant="outline" size="sm" className="h-8 w-8 p-0 bg-white border-red-200 hover:bg-red-50">
                                     <Trash2 className="h-3 w-3 text-red-600" />
                                   </Button>
                                 </AlertDialogTrigger>
@@ -2542,19 +2542,19 @@ export default function AdminDashboard() {
                 {/* View Mode Toggle */}
                 <div className="flex items-center gap-2 p-1 bg-gray-100 rounded-lg">
                   <Button
-                    variant={ordersViewMode === "table" ? "default" : "ghost"}
+                    variant={ordersViewMode === "table" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setOrdersViewMode("table")}
-                    className="text-xs px-3 py-1 h-8"
+                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode !== "table" ? "bg-white" : ""}`}
                   >
                     <Grid3X3 className="h-3 w-3 mr-1" />
                     {t('common.table', 'Таблица')}
                   </Button>
                   <Button
-                    variant={ordersViewMode === "kanban" ? "default" : "ghost"}
+                    variant={ordersViewMode === "kanban" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setOrdersViewMode("kanban")}
-                    className="text-xs px-3 py-1 h-8"
+                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode !== "kanban" ? "bg-white" : ""}`}
                   >
                     <Columns className="h-3 w-3 mr-1" />
                     {t('common.kanban', 'Канбан')}
@@ -3258,12 +3258,12 @@ export default function AdminDashboard() {
                             <TableRow key={user.id}>
                               <TableCell className="font-medium text-xs sm:text-sm">
                                 <Button
-                                  variant="ghost"
+                                  variant="outline"
                                   onClick={() => {
                                     setEditingUser(user);
                                     setIsUserFormOpen(true);
                                   }}
-                                  className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent"
+                                  className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 bg-white border-0 hover:bg-blue-50"
                                 >
                                   {user.firstName && user.lastName 
                                     ? `${user.firstName} ${user.lastName}`
@@ -3286,8 +3286,8 @@ export default function AdminDashboard() {
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                       <Button
-                                        variant="ghost"
-                                        className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent"
+                                        variant="outline"
+                                        className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 bg-white border-0 hover:bg-blue-50"
                                       >
                                         {user.phone}
                                       </Button>
