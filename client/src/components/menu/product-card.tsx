@@ -118,6 +118,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   };
 
   const getAvailabilityBadge = () => {
+    // Only show critical unavailability status
     if (product.availabilityStatus === 'completely_unavailable' || !product.isAvailable) {
       return (
         <Badge variant="destructive" className="bg-red-100 text-red-800 border-red-300">
@@ -126,28 +127,8 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
         </Badge>
       );
     }
-    if (product.stockStatus === 'low_stock') {
-      return (
-        <Badge variant="destructive" className="bg-yellow-100 text-yellow-800 border-yellow-300">
-          <AlertCircle className="w-3 h-3 mr-1" />
-          Мало
-        </Badge>
-      );
-    }
-    if (product.availabilityStatus === 'out_of_stock_today') {
-      return (
-        <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-300">
-          <Clock className="w-3 h-3 mr-1" />
-          Завтра
-        </Badge>
-      );
-    }
-    return (
-      <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-300">
-        <CheckCircle2 className="w-3 h-3 mr-1" />
-        В наличии
-      </Badge>
-    );
+    // Don't show "В наличии", "Завтра" or other status badges - they're redundant
+    return null;
   };
 
   const isOrderable = () => {
@@ -171,9 +152,9 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
         </div>
         {product.isSpecialOffer && (
           <div className="absolute top-2 left-2">
-            <Badge className="bg-orange-500 text-white">
-              <Star className="w-3 h-3 mr-1" />
-              Акция
+            <Badge className="bg-orange-500 text-white text-sm px-3 py-1.5 font-semibold shadow-lg">
+              <Star className="w-4 h-4 mr-1.5 fill-current" />
+              Скидка
             </Badge>
           </div>
         )}
@@ -208,7 +189,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                   <span className="text-2xl font-bold text-orange-600">
                     {formatCurrency(discountedPrice)}
                   </span>
-                  <Badge className="bg-orange-500 text-white text-xs mt-1 w-fit">
+                  <Badge className="bg-orange-500 text-white text-sm mt-1 w-fit px-2 py-1 font-semibold">
                     {storeSettings?.discountBadgeText || "Скидка"}
                   </Badge>
                 </>
@@ -296,7 +277,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 className="w-full bg-blue-500 text-white hover:bg-blue-600 h-10 text-sm font-medium"
               >
                 <ShoppingCart className="mr-1 h-3 w-3" />
-                Доступен завтра
+                Заказать на завтра
               </Button>
             ) : (
               <Button
