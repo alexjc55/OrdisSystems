@@ -331,8 +331,18 @@
   color: #ffffff !important;
 }
 
+[data-radix-select-item]:hover *,
+[data-radix-select-item]:focus *,
+[data-radix-select-item][data-highlighted] * {
+  color: #ffffff !important;
+}
+
 [data-radix-select-item][data-state="checked"] {
   background-color: #f97316 !important;
+  color: #ffffff !important;
+}
+
+[data-radix-select-item][data-state="checked"] * {
   color: #ffffff !important;
 }
 
@@ -385,9 +395,23 @@ select option:not([selected]):hover {
   color: #ffffff !important;
 }
 
+[data-radix-select-content] [data-radix-select-item]:hover *,
+[data-radix-select-content] [data-radix-select-item]:focus *,
+[data-radix-select-content] [data-radix-select-item][data-highlighted] *,
+[data-radix-select-viewport] [data-radix-select-item]:hover *,
+[data-radix-select-viewport] [data-radix-select-item]:focus *,
+[data-radix-select-viewport] [data-radix-select-item][data-highlighted] * {
+  color: #ffffff !important;
+}
+
 [data-radix-select-content] [data-radix-select-item][data-state="checked"],
 [data-radix-select-viewport] [data-radix-select-item][data-state="checked"] {
   background-color: #f97316 !important;
+  color: #ffffff !important;
+}
+
+[data-radix-select-content] [data-radix-select-item][data-state="checked"] *,
+[data-radix-select-viewport] [data-radix-select-item][data-state="checked"] * {
   color: #ffffff !important;
 }
 
@@ -414,6 +438,12 @@ select option:not([selected]):hover {
 [data-radix-select-viewport] *:hover:not([data-state="checked"]),
 [data-radix-select-item]:hover:not([data-state="checked"]) {
   background-color: #f97316 !important;
+  color: #ffffff !important;
+}
+
+[data-radix-select-content] *:hover:not([data-state="checked"]) *,
+[data-radix-select-viewport] *:hover:not([data-state="checked"]) *,
+[data-radix-select-item]:hover:not([data-state="checked"]) * {
   color: #ffffff !important;
 }
 
