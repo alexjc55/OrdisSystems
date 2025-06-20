@@ -3520,10 +3520,16 @@ export default function AdminDashboard() {
         categories={categories}
         product={editingProduct}
         onSubmit={(data: any) => {
+          // Set isAvailable based on availability status
+          const productData = {
+            ...data,
+            isAvailable: data.availabilityStatus !== 'completely_unavailable'
+          };
+          
           if (editingProduct) {
-            updateProductMutation.mutate({ id: editingProduct.id, ...data });
+            updateProductMutation.mutate({ id: editingProduct.id, ...productData });
           } else {
-            createProductMutation.mutate(data);
+            createProductMutation.mutate(productData);
           }
         }}
         onDelete={(productId: number) => {
@@ -3598,15 +3604,22 @@ export default function AdminDashboard() {
       <AlertDialog open={isAvailabilityDialogOpen} onOpenChange={setIsAvailabilityDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Изменить статус товара</AlertDialogTitle>
-            <AlertDialogDescription>
-              Вы хотите отключить этот товар. Оставить товар доступным для заказа на другой день?
-            </AlertDialogDescription>
+            <AlertDialogTitle>Полностью отключить товар или оставить для заказа на другой день?</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setIsAvailabilityDialogOpen(false)}>
-              Отмена
-            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (productToToggle) {
+                  updateAvailabilityStatusMutation.mutate({
+                    id: productToToggle.id,
+                    availabilityStatus: "out_of_stock_today"
+                  });
+                }
+              }}
+              className="bg-blue-500 hover:bg-blue-600"
+            >
+              Да
+            </AlertDialogAction>
             <AlertDialogAction
               onClick={() => {
                 if (productToToggle) {
@@ -3618,20 +3631,7 @@ export default function AdminDashboard() {
               }}
               className="bg-red-500 hover:bg-red-600"
             >
-              Нет, полностью отключить
-            </AlertDialogAction>
-            <AlertDialogAction
-              onClick={() => {
-                if (productToToggle) {
-                  updateAvailabilityStatusMutation.mutate({
-                    id: productToToggle.id,
-                    availabilityStatus: "out_of_stock_today"
-                  });
-                }
-              }}
-              className="bg-yellow-500 hover:bg-yellow-600"
-            >
-              Да, доступен на завтра
+              Нет
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -3875,28 +3875,6 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
 
             <FormField
               control={form.control}
-              name="isAvailable"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 sm:p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-sm sm:text-base">Товар доступен</FormLabel>
-                    <div className="text-xs sm:text-sm text-gray-500">
-                      Включите, если товар есть в наличии
-                    </div>
-                  </div>
-                  <FormControl>
-                    <CustomSwitch
-                      checked={Boolean(field.value)}
-                      onChange={field.onChange}
-                      bgColor="bg-green-500"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="availabilityStatus"
               render={({ field }) => (
                 <FormItem>
@@ -3909,8 +3887,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="available" className="text-sm">✅ Доступен</SelectItem>
-                      <SelectItem value="out_of_stock_today" className="text-sm">⏰ Нет на сегодня (доступен завтра)</SelectItem>
-                      <SelectItem value="completely_unavailable" className="text-sm">❌ Полностью недоступен</SelectItem>
+                      <SelectItem value="completely_unavailable" className="text-sm">❌ Не доступен</SelectItem>
+                      <SelectItem value="out_of_stock_today" className="text-sm">📅 Заказ на другой день</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription className="text-xs text-gray-500">
