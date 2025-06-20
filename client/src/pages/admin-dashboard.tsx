@@ -1,358 +1,1110 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { CustomSelect, CustomSelectItem } from "@/components/ui/custom-select";
+import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { formatCurrency } from "@/lib/currency";
+import { CustomSelect, CustomSelectItem } from "@/components/ui/custom-select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
-import { Package, Utensils, ShoppingCart, AlertTriangle, TrendingUp, Users, Edit2, Trash2, Plus, UserPlus, ChevronDown, ChevronRight } from "lucide-react";
-import type { CategoryWithProducts, OrderWithItems, ProductWithCategory, Product, Category, User } from "@shared/schema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { formatCurrency, getUnitLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
+import { insertStoreSettingsSchema, type StoreSettings } from "@shared/schema";
+import { 
+  Package, 
+  Plus, 
+  Edit2, 
+  Trash2, 
+  Users, 
+  ShoppingCart, 
+  Utensils,
+  Save,
+  Search,
+  Filter,
+  Menu,
+  ChevronUp,
+  ChevronDown,
+  Store,
+  Upload,
+  Clock,
+  CreditCard,
+  Truck,
+  ChevronLeft,
+  ChevronRight,
+  Grid3X3,
+  Columns,
+  Calendar,
+  MapPin,
+  Phone,
+  Mail,
+  Eye,
+  X,
+  AlertCircle,
+  CheckCircle,
+  FileText
+} from "lucide-react";
+
+// Product schema for form validation
+const productSchema = z.object({
+  name: z.string().min(1, "Название обязательно"),
+  description: z.string().optional(),
+  price: z.string().min(1, "Цена обязательна"),
+  categoryId: z.string().min(1, "Категория обязательна"),
+  unit: z.enum(["100g", "100ml", "piece", "kg"], {
+    errorMap: () => ({ message: "Выберите единицу измерения" })
+  }),
+  isAvailable: z.boolean().default(true),
+  isSpecialOffer: z.boolean().default(false),
+  discountValue: z.string().optional(),
+  image: z.any().optional(),
+});
+
+// Category schema for form validation
+const categorySchema = z.object({
+  name: z.string().min(1, "Название обязательно"),
+  description: z.string().optional(),
+  icon: z.string().default("🍽️"),
+});
+
+// Use the imported store settings schema with extended validation
+const storeSettingsSchema = insertStoreSettingsSchema.extend({
+  contactEmail: z.string().email("Неверный формат email").optional().or(z.literal("")),
+  bottomBanner1Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
+  bottomBanner2Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
+  cancellationReasons: z.array(z.string()).optional(),
+});
+
+// Generate time slots based on store working hours
+const getTimeSlots = (selectedDate = '', workingHours: any = {}, weekStartDay = 'monday') => {
+  if (!selectedDate) return [];
+  
+  const date = new Date(selectedDate + 'T00:00:00');
+  const dayNames = weekStartDay === 'sunday' 
+    ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+    : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  
+  const dayName = dayNames[date.getDay()];
+  const daySchedule = workingHours[dayName];
+  
+  if (!daySchedule || daySchedule.trim() === '' || 
+      daySchedule.toLowerCase().includes('закрыто') || 
+      daySchedule.toLowerCase().includes('closed') ||
+      daySchedule.toLowerCase().includes('выходной')) {
+    return [{
+      value: 'closed',
+      label: 'Выходной день'
+    }];
+  }
+  
+  // Parse working hours (e.g., "09:00-18:00" or "09:00-14:00, 16:00-20:00")
+  const timeSlots: { value: string; label: string }[] = [];
+  const scheduleRanges = daySchedule.split(',').map((range: string) => range.trim());
+  
+  scheduleRanges.forEach((range: string) => {
+    const [start, end] = range.split('-').map((time: string) => time.trim());
+    if (start && end) {
+      const [startHour, startMin] = start.split(':').map(Number);
+      const [endHour, endMin] = end.split(':').map(Number);
+      
+      // Generate 2-hour intervals
+      for (let hour = startHour; hour < endHour; hour += 2) {
+        const nextHour = Math.min(hour + 2, endHour);
+        
+        // Skip if the interval would be less than 2 hours and we're not at the start
+        if (nextHour - hour < 2 && hour !== startHour) continue;
+        
+        const timeStr = `${hour.toString().padStart(2, '0')}:00`;
+        const endTimeStr = `${nextHour.toString().padStart(2, '0')}:00`;
+        
+        timeSlots.push({
+          value: timeStr,
+          label: `${timeStr} - ${endTimeStr}`
+        });
+      }
+    }
+  });
+  
+  return timeSlots;
+};
+
+// OrderCard component for kanban view
+function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { 
+  order: any, 
+  onEdit: (order: any) => void, 
+  onStatusChange: (data: { orderId: number, status: string }) => void,
+  onCancelOrder: (orderId: number) => void 
+}) {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'ready': return 'bg-green-100 text-green-800 border-green-200';
+      case 'delivered': return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  return (
+    <Card className="w-full">
+      <CardContent className="p-3">
+        <div className="space-y-3">
+          <div className="flex items-start justify-between">
+            <div>
+              <h4 className="font-medium text-sm">Заказ #{order.id}</h4>
+              <p className="text-xs text-gray-500">{order.user.email}</p>
+            </div>
+            <Badge className={`text-xs ${getStatusColor(order.status)}`}>
+              {order.status === 'pending' && 'Ожидает'}
+              {order.status === 'confirmed' && 'Подтвержден'}
+              {order.status === 'preparing' && 'Готовится'}
+              {order.status === 'ready' && 'Готов'}
+              {order.status === 'delivered' && 'Доставлен'}
+              {order.status === 'cancelled' && 'Отменен'}
+            </Badge>
+          </div>
+
+          <div className="text-xs space-y-1">
+            <div className="flex justify-between">
+              <span className="text-gray-500">Сумма:</span>
+              <span className="font-medium">{formatCurrency(order.totalAmount)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Время:</span>
+              <span>{new Date(order.createdAt).toLocaleString('ru-RU')}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-6 text-xs flex-1"
+              onClick={() => onEdit(order)}
+            >
+              <Eye className="h-3 w-3 mr-1" />
+              Детали
+            </Button>
+            <Select
+              value={order.status}
+              onValueChange={(newStatus) => {
+                if (newStatus === 'cancelled') {
+                  onCancelOrder(order.id);
+                } else {
+                  onStatusChange({ orderId: order.id, status: newStatus });
+                }
+              }}
+            >
+              <SelectTrigger className="w-20 h-7 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Ожидает</SelectItem>
+                <SelectItem value="confirmed">Подтвержден</SelectItem>
+                <SelectItem value="preparing">Готовится</SelectItem>
+                <SelectItem value="ready">Готов</SelectItem>
+                <SelectItem value="delivered">Доставлен</SelectItem>
+                <SelectItem value="cancelled">Отменен</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Order edit form component
+function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => void, onSave: () => void }) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const { data: storeSettings } = useQuery({
+    queryKey: ["/api/settings"],
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/settings');
+      return await response.json();
+    }
+  });
+  const [editedOrder, setEditedOrder] = useState({
+    deliveryType: order.deliveryType || 'pickup',
+    customerName: order.customerName || '',
+    customerPhone: order.customerPhone || '',
+    deliveryAddress: order.deliveryAddress || '',
+    deliveryDate: order.deliveryDate || '',
+    deliveryTime: order.deliveryTime || '',
+    notes: order.notes || '',
+  });
+
+  const updateOrderMutation = useMutation({
+    mutationFn: async (updateData: any) => {
+      return await apiRequest("PUT", `/api/orders/${order.id}`, updateData);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Заказ обновлен",
+        description: "Изменения сохранены успешно",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
+      onSave();
+      onClose();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Ошибка",
+        description: error.message || "Не удалось обновить заказ",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSave = () => {
+    updateOrderMutation.mutate(editedOrder);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Order Summary */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h3 className="font-medium mb-2">Информация о заказе</h3>
+        <div className="text-sm space-y-1">
+          <div className="flex justify-between">
+            <span>Номер заказа:</span>
+            <span>#{order.id}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Сумма:</span>
+            <span className="font-medium">{formatCurrency(order.totalAmount)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Создан:</span>
+            <span>{new Date(order.createdAt).toLocaleString('ru-RU')}</span>
+          </div>
+          {order.deliveryDate && (
+            <div className="flex justify-between">
+              <span>Дата доставки:</span>
+              <span>{new Date(order.deliveryDate).toLocaleDateString('ru-RU')}</span>
+            </div>
+          )}
+          {order.deliveryTime && (
+            <div className="flex justify-between">
+              <span>Время доставки:</span>
+              <span>{formatDeliveryTimeRange(order.deliveryTime)}</span>
+            </div>
+          )}
+          {order.paymentMethod && (
+            <div className="flex justify-between">
+              <span>Способ оплаты:</span>
+              <span>{order.paymentMethod}</span>
+            </div>
+          )}
+          {order.deliveryAddress && (
+            <div className="flex justify-between">
+              <span>Адрес доставки:</span>
+              <span className="text-right max-w-48 truncate">{order.deliveryAddress}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Order Items */}
+      <div>
+        <h3 className="font-medium mb-3">Состав заказа</h3>
+        <div className="space-y-2">
+          {order.items.map((item: any) => (
+            <div key={item.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+              <div>
+                <span className="font-medium">{item.product.name}</span>
+                <div className="text-sm text-gray-500">
+                  {item.quantity} × {formatCurrency(item.unitPrice)}
+                </div>
+              </div>
+              <span className="font-medium">{formatCurrency(item.totalPrice)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Delivery Information */}
+      <div className="space-y-4">
+        <h3 className="font-medium">Информация о доставке</h3>
+        
+        <div>
+          <label className="text-sm font-medium">Тип получения</label>
+          <Select 
+            value={editedOrder.deliveryType} 
+            onValueChange={(value) => setEditedOrder({...editedOrder, deliveryType: value})}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="pickup">Самовывоз</SelectItem>
+              <SelectItem value="delivery">Доставка</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium">Имя клиента</label>
+          <Input
+            value={editedOrder.customerName}
+            onChange={(e) => setEditedOrder({...editedOrder, customerName: e.target.value})}
+            placeholder="Введите имя"
+          />
+        </div>
+
+        <div>
+          <label className="text-sm font-medium">Телефон</label>
+          <Input
+            value={editedOrder.customerPhone}
+            onChange={(e) => setEditedOrder({...editedOrder, customerPhone: e.target.value})}
+            placeholder="Введите телефон"
+          />
+        </div>
+
+        {editedOrder.deliveryType === 'delivery' && (
+          <div>
+            <label className="text-sm font-medium">Адрес доставки</label>
+            <Textarea
+              value={editedOrder.deliveryAddress}
+              onChange={(e) => setEditedOrder({...editedOrder, deliveryAddress: e.target.value})}
+              placeholder="Введите адрес доставки"
+            />
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="text-sm font-medium">Дата {editedOrder.deliveryType === 'delivery' ? 'доставки' : 'получения'}</label>
+            <Input
+              type="date"
+              value={editedOrder.deliveryDate || ''}
+              onChange={(e) => setEditedOrder({...editedOrder, deliveryDate: e.target.value})}
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium">Время</label>
+            <Select
+              value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
+              onValueChange={(value) => setEditedOrder({...editedOrder, deliveryTime: value})}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Выберите время" />
+              </SelectTrigger>
+              <SelectContent>
+                {getTimeSlots(editedOrder.deliveryDate, storeSettings?.workingHours || {}, storeSettings?.weekStartDay || 'monday').map((slot) => (
+                  <SelectItem key={slot.value} value={slot.label}>
+                    {slot.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium">Примечания</label>
+          <Textarea
+            value={editedOrder.notes}
+            onChange={(e) => setEditedOrder({...editedOrder, notes: e.target.value})}
+            placeholder="Дополнительные заметки"
+          />
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex justify-end gap-3 pt-4 border-t">
+        <Button variant="outline" onClick={onClose}>
+          Отмена
+        </Button>
+        <Button 
+          onClick={handleSave}
+          disabled={updateOrderMutation.isPending}
+          className="bg-green-600 hover:bg-green-700"
+        >
+          {updateOrderMutation.isPending ? "Сохранение..." : "Сохранить изменения"}
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminDashboard() {
   const { user, isLoading, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
-  const [showAddProduct, setShowAddProduct] = useState(false);
-  const [showAddCategory, setShowAddCategory] = useState(false);
-  const [showAddUser, setShowAddUser] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [collapsedCategories, setCollapsedCategories] = useState<Set<number>>(new Set());
-  
-  // Product filtering and search states
-  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>("all");
+
+  // State for forms and filters
+  const [isProductFormOpen, setIsProductFormOpen] = useState(false);
+  const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [editingCategory, setEditingCategory] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState("all");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [activeTab, setActiveTab] = useState("products");
 
-  // Redirect if not authorized
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Требуется авторизация",
-        description: "Вход в систему...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
+  // Orders management state
+  const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
+  const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
+  const [editingOrder, setEditingOrder] = useState<any>(null);
+  const [ordersStatusFilter, setOrdersStatusFilter] = useState("active"); // active, delivered, cancelled, all
+  
+  // Cancellation dialog state
+  const [isCancellationDialogOpen, setIsCancellationDialogOpen] = useState(false);
+  const [orderToCancelId, setOrderToCancelId] = useState<number | null>(null);
+  const [cancellationReason, setCancellationReason] = useState("");
+  const [customCancellationReason, setCustomCancellationReason] = useState("");
 
-    if (!isLoading && user && user.role !== 'admin' && user.role !== 'worker') {
-      toast({
-        title: "Доступ запрещен",
-        description: "Требуются права администратора или работника",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 1000);
-      return;
-    }
-  }, [isAuthenticated, isLoading, user, toast]);
+  // Pagination state
+  const [productsPage, setProductsPage] = useState(1);
+  const [ordersPage, setOrdersPage] = useState(1);
+  const [usersPage, setUsersPage] = useState(1);
 
-  // Data queries
-  const { data: categories } = useQuery<CategoryWithProducts[]>({
+  // Fetch store settings
+  const { data: storeSettings } = useQuery({
+    queryKey: ["/api/settings"],
+    queryFn: async () => {
+      const response = await fetch("/api/settings");
+      if (!response.ok) throw new Error("Failed to fetch settings");
+      return response.json();
+    },
+  });
+
+  // Fetch categories
+  const { data: categories = [] } = useQuery({
     queryKey: ["/api/categories"],
     queryFn: async () => {
-      const res = await fetch("/api/categories", { credentials: "include" });
-      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
-      return res.json();
-    },
-  });
-
-  const { data: allProducts } = useQuery<ProductWithCategory[]>({
-    queryKey: ["/api/products"],
-    queryFn: async () => {
-      const res = await fetch("/api/products", { credentials: "include" });
-      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
-      return res.json();
-    },
-  });
-
-  const { data: orders } = useQuery<OrderWithItems[]>({
-    queryKey: ["/api/orders"],
-    queryFn: async () => {
-      const res = await fetch("/api/orders", { credentials: "include" });
-      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
-      return res.json();
-    },
-  });
-
-  const { data: allUsers } = useQuery<User[]>({
-    queryKey: ["/api/users"],
-    queryFn: async () => {
-      const res = await fetch("/api/users", { credentials: "include" });
-      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
-      return res.json();
-    },
-    enabled: user?.role === 'admin',
-  });
-
-  // Product availability toggle mutation
-  const toggleAvailabilityMutation = useMutation({
-    mutationFn: async ({ productId, isAvailable }: { productId: number; isAvailable: boolean }) => {
-      const response = await apiRequest("PATCH", `/api/products/${productId}`, { isAvailable });
+      const response = await fetch("/api/categories");
+      if (!response.ok) throw new Error("Failed to fetch categories");
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
-      toast({
-        title: "Обновлено",
-        description: "Наличие товара изменено",
+  });
+
+  // Fetch products with pagination
+  const { data: productsResponse, isLoading: productsLoading } = useQuery({
+    queryKey: ["/api/admin/products", productsPage, searchQuery, selectedCategoryFilter, selectedStatusFilter, sortField, sortDirection, storeSettings?.defaultItemsPerPage],
+    queryFn: async () => {
+      const limit = storeSettings?.defaultItemsPerPage || 10;
+      const params = new URLSearchParams({
+        page: productsPage.toString(),
+        limit: limit.toString(),
+        search: searchQuery,
+        categoryId: selectedCategoryFilter !== "all" ? selectedCategoryFilter : "",
+        sortField,
+        sortDirection
       });
-    },
-  });
-
-  // Product CRUD mutations
-  const createProductMutation = useMutation({
-    mutationFn: async (productData: any) => {
-      const response = await apiRequest("POST", "/api/products", productData);
+      const response = await fetch(`/api/admin/products?${params}`);
+      if (!response.ok) throw new Error('Failed to fetch products');
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
-      setShowAddProduct(false);
-      setEditingProduct(null);
-      toast({ title: "Успех", description: "Товар создан" });
-    },
+    enabled: !!storeSettings,
   });
 
-  const updateProductMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: any }) => {
-      const response = await apiRequest("PATCH", `/api/products/${id}`, data);
+  // Fetch orders with pagination and filtering
+  const { data: ordersResponse, isLoading: ordersLoading } = useQuery({
+    queryKey: ["/api/admin/orders", ordersPage, searchQuery, ordersStatusFilter, storeSettings?.defaultItemsPerPage],
+    queryFn: async () => {
+      const limit = storeSettings?.defaultItemsPerPage || 10;
+      let statusParam = "";
+      
+      if (ordersStatusFilter === "active") {
+        statusParam = "pending,confirmed,preparing,ready";
+      } else if (ordersStatusFilter === "delivered") {
+        statusParam = "delivered";
+      } else if (ordersStatusFilter === "cancelled") {
+        statusParam = "cancelled";
+      }
+      
+      const params = new URLSearchParams({
+        page: ordersPage.toString(),
+        limit: limit.toString(),
+        search: searchQuery,
+        status: statusParam,
+        sortField: 'createdAt',
+        sortDirection: 'desc'
+      });
+      const response = await fetch(`/api/admin/orders?${params}`);
+      if (!response.ok) throw new Error('Failed to fetch orders');
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
-      setEditingProduct(null);
-      toast({ title: "Успех", description: "Товар обновлен" });
-    },
+    enabled: !!storeSettings,
   });
 
-  const deleteProductMutation = useMutation({
-    mutationFn: async (id: number) => {
-      await apiRequest("DELETE", `/api/products/${id}`, {});
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
-      toast({ title: "Успех", description: "Товар удален" });
-    },
-  });
-
-  // Category CRUD mutations
-  const createCategoryMutation = useMutation({
-    mutationFn: async (categoryData: any) => {
-      const response = await apiRequest("POST", "/api/categories", categoryData);
+  const { data: usersResponse, isLoading: usersLoading } = useQuery({
+    queryKey: ["/api/admin/users", usersPage, searchQuery, storeSettings?.defaultItemsPerPage],
+    queryFn: async () => {
+      const limit = storeSettings?.defaultItemsPerPage || 10;
+      const params = new URLSearchParams({
+        page: usersPage.toString(),
+        limit: limit.toString(),
+        search: searchQuery
+      });
+      const response = await fetch(`/api/admin/users?${params}`);
+      if (!response.ok) throw new Error('Failed to fetch users');
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
-      setShowAddCategory(false);
-      setEditingCategory(null);
-      toast({ title: "Успех", description: "Категория создана" });
-    },
+    enabled: !!storeSettings,
   });
 
-  const updateCategoryMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: any }) => {
-      const response = await apiRequest("PATCH", `/api/categories/${id}`, data);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
-      setEditingCategory(null);
-      toast({ title: "Успех", description: "Категория обновлена" });
-    },
-  });
+  // Pagination configuration
+  const itemsPerPage = storeSettings?.defaultItemsPerPage || 10;
 
-  const deleteCategoryMutation = useMutation({
-    mutationFn: async (id: number) => {
-      await apiRequest("DELETE", `/api/categories/${id}`, {});
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/categories"] });
-      toast({ title: "Успех", description: "Категория удалена" });
-    },
-  });
+  // Extract data and pagination info
+  const productsData = productsResponse?.data || [];
+  const productsTotalPages = productsResponse?.totalPages || 0;
+  const productsTotal = productsResponse?.total || 0;
 
-  // User CRUD mutations (admin only)
-  const createUserMutation = useMutation({
-    mutationFn: async (userData: any) => {
-      const response = await apiRequest("POST", "/api/users", userData);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
-      setShowAddUser(false);
-      setEditingUser(null);
-      toast({ title: "Успех", description: "Пользователь создан" });
-    },
-  });
+  const ordersData = ordersResponse?.data || [];
+  const ordersTotalPages = ordersResponse?.totalPages || 0;
+  const ordersTotal = ordersResponse?.total || 0;
 
-  const updateUserMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      const response = await apiRequest("PATCH", `/api/users/${id}`, data);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
-      setEditingUser(null);
-      toast({ title: "Успех", description: "Пользователь обновлен" });
-    },
-  });
-
-  const deleteUserMutation = useMutation({
-    mutationFn: async (id: string) => {
-      await apiRequest("DELETE", `/api/users/${id}`, {});
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
-      toast({ title: "Успех", description: "Пользователь удален" });
-    },
-  });
+  const usersData = usersResponse?.data || [];
+  const usersTotalPages = usersResponse?.totalPages || 0;
+  const usersTotal = usersResponse?.total || 0;
 
   // Order status update mutation
   const updateOrderStatusMutation = useMutation({
-    mutationFn: async ({ orderId, status }: { orderId: number; status: string }) => {
-      const response = await apiRequest("PATCH", `/api/orders/${orderId}/status`, { status });
-      return response.json();
+    mutationFn: async ({ orderId, status, cancellationReason }: { orderId: number, status: string, cancellationReason?: string }) => {
+      const payload = status === 'cancelled' && cancellationReason 
+        ? { status, cancellationReason }
+        : { status };
+      return await apiRequest("PUT", `/api/orders/${orderId}/status`, payload);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
-      toast({ title: "Заказ обновлен", description: "Статус заказа изменен" });
+      toast({
+        title: "Статус заказа обновлен",
+        description: "Изменения сохранены успешно",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Ошибка",
+        description: error.message || "Не удалось обновить статус заказа",
+        variant: "destructive",
+      });
     },
   });
 
-  const toggleCategoryCollapse = (categoryId: number) => {
-    const newCollapsed = new Set(collapsedCategories);
-    if (newCollapsed.has(categoryId)) {
-      newCollapsed.delete(categoryId);
-    } else {
-      newCollapsed.add(categoryId);
-    }
-    setCollapsedCategories(newCollapsed);
+  // Handle order cancellation with reason selection
+  const handleOrderCancellation = (orderId: number) => {
+    setOrderToCancelId(orderId);
+    setCancellationReason("");
+    setCustomCancellationReason("");
+    setIsCancellationDialogOpen(true);
   };
 
-  if (isLoading) {
+  // Confirm order cancellation with reason
+  const confirmOrderCancellation = () => {
+    if (!orderToCancelId) return;
+    
+    const finalReason = cancellationReason === "other" ? customCancellationReason : cancellationReason;
+    updateOrderStatusMutation.mutate({ 
+      orderId: orderToCancelId, 
+      status: "cancelled", 
+      cancellationReason: finalReason 
+    });
+    
+    setIsCancellationDialogOpen(false);
+    setOrderToCancelId(null);
+    setCancellationReason("");
+    setCustomCancellationReason("");
+  };
+
+  // Get default cancellation reasons
+  const defaultCancellationReasons = storeSettings?.cancellationReasons || [
+    "Товар недоступен",
+    "Клиент отменил заказ",
+    "Проблемы с доставкой",
+    "Ошибка в заказе",
+    "Технические проблемы"
+  ];
+
+  // Product mutations
+  const createProductMutation = useMutation({
+    mutationFn: async (productData: any) => {
+      const formData = new FormData();
+      Object.keys(productData).forEach(key => {
+        if (productData[key] !== undefined && productData[key] !== null) {
+          formData.append(key, productData[key]);
+        }
+      });
+      
+      const response = await fetch('/api/products', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) throw new Error('Failed to create product');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      setIsProductFormOpen(false);
+      setEditingProduct(null);
+      toast({ title: "Товар создан", description: "Товар успешно добавлен" });
+    },
+    onError: (error: any) => {
+      console.error("Product creation error:", error);
+      toast({ title: "Ошибка", description: "Не удалось создать товар", variant: "destructive" });
+    }
+  });
+
+  const updateProductMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number, data: any }) => {
+      const formData = new FormData();
+      Object.keys(data).forEach(key => {
+        if (data[key] !== undefined && data[key] !== null) {
+          formData.append(key, data[key]);
+        }
+      });
+      
+      const response = await fetch(`/api/products/${id}`, {
+        method: 'PATCH',
+        body: formData,
+      });
+      if (!response.ok) throw new Error('Failed to update product');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      setIsProductFormOpen(false);
+      setEditingProduct(null);
+      toast({ title: "Товар обновлен", description: "Изменения сохранены" });
+    },
+    onError: (error: any) => {
+      console.error("Product update error:", error);
+      toast({ title: "Ошибка", description: "Не удалось обновить товар", variant: "destructive" });
+    }
+  });
+
+  const deleteProductMutation = useMutation({
+    mutationFn: async (productId: number) => {
+      const response = await apiRequest('DELETE', `/api/products/${productId}`, {});
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      toast({ title: "Товар удален", description: "Товар успешно удален" });
+    },
+    onError: (error: any) => {
+      console.error("Product deletion error:", error);
+      toast({ title: "Ошибка", description: "Не удалось удалить товар", variant: "destructive" });
+    }
+  });
+
+  // Category mutations
+  const createCategoryMutation = useMutation({
+    mutationFn: async (categoryData: any) => {
+      const response = await fetch('/api/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(categoryData),
+      });
+      if (!response.ok) throw new Error('Failed to create category');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      setIsCategoryFormOpen(false);
+      setEditingCategory(null);
+      toast({ title: "Категория создана", description: "Категория успешно добавлена" });
+    },
+    onError: (error: any) => {
+      console.error("Category creation error:", error);
+      toast({ title: "Ошибка", description: "Не удалось создать категорию", variant: "destructive" });
+    }
+  });
+
+  const updateCategoryMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number, data: any }) => {
+      const response = await fetch(`/api/categories/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error('Failed to update category');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      setEditingCategory(null);
+      setIsCategoryFormOpen(false);
+      toast({ title: "Категория обновлена", description: "Изменения сохранены" });
+    },
+    onError: (error: any) => {
+      console.error("Category update error:", error);
+      toast({ title: "Ошибка", description: "Не удалось обновить категорию", variant: "destructive" });
+    }
+  });
+
+  const deleteCategoryMutation = useMutation({
+    mutationFn: async (categoryId: number) => {
+      const response = await apiRequest('DELETE', `/api/categories/${categoryId}`, {});
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      toast({ title: "Категория удалена", description: "Категория успешно удалена" });
+    },
+    onError: (error: any) => {
+      console.error("Category deletion error:", error);
+      toast({ title: "Ошибка", description: "Не удалось удалить категорию", variant: "destructive" });
+    }
+  });
+
+  // Store settings mutation
+  const updateStoreSettingsMutation = useMutation({
+    mutationFn: async (settingsData: any) => {
+      const response = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settingsData),
+      });
+      if (!response.ok) throw new Error('Failed to update store settings');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/settings'] });
+      toast({ title: "Настройки сохранены", description: "Настройки магазина успешно обновлены" });
+    },
+    onError: (error: any) => {
+      console.error("Store settings update error:", error);
+      toast({ title: "Ошибка", description: "Не удалось обновить настройки", variant: "destructive" });
+    }
+  });
+
+  if (isLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Загрузка...</p>
+        </div>
       </div>
     );
   }
 
-  if (!user || (user.role !== 'admin' && user.role !== 'worker')) {
+  if (!user || user.email !== "alexjc55@gmail.com") {
     return null;
   }
 
-  // Calculate statistics
-  const totalProducts = allProducts?.length || 0;
-  const availableProducts = allProducts?.filter(p => p.isAvailable).length || 0;
-  const outOfStockProducts = totalProducts - availableProducts;
-  const totalOrders = orders?.length || 0;
-  const pendingOrders = orders?.filter(order => order.status === 'pending').length || 0;
-  const totalRevenue = orders?.reduce((acc, order) => acc + parseFloat(order.totalAmount), 0) || 0;
-  const totalUsers = allUsers?.length || 0;
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
+    <div className="min-h-screen bg-gray-50 admin-dashboard">
+      <Header onResetView={() => {}} />
       
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-poppins font-bold text-gray-900 mb-2">
-            Панель Управления eDAHouse
-          </h1>
-          <p className="text-gray-600">
-            Полное управление рестораном готовой еды на развес
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Панель администратора</h1>
+          <p className="text-gray-600">Управление магазином eDAHouse</p>
         </div>
 
-        {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Всего Блюд</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalProducts}</div>
-              <p className="text-xs text-muted-foreground">
-                {availableProducts} в наличии
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Нет в Наличии</CardTitle>
-              <AlertTriangle className="h-4 w-4 text-red-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-red-600">{outOfStockProducts}</div>
-              <p className="text-xs text-muted-foreground">
-                Требует внимания
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Заказы</CardTitle>
-              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalOrders}</div>
-              <p className="text-xs text-muted-foreground">
-                {pendingOrders} в ожидании
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Выручка</CardTitle>
-              <TrendingUp className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(totalRevenue)}</div>
-              <p className="text-xs text-muted-foreground">
-                Общий оборот
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Tabs defaultValue="products" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="products">Товары</TabsTrigger>
-            <TabsTrigger value="categories">Категории</TabsTrigger>
-            <TabsTrigger value="orders">Заказы</TabsTrigger>
-            {user.role === 'admin' && <TabsTrigger value="users">Пользователи</TabsTrigger>}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full h-auto p-2 gap-2">
+            <TabsTrigger value="products" className="flex-1 h-12">
+              <Package className="h-4 w-4 mr-2" />
+              Товары
+            </TabsTrigger>
+            <TabsTrigger value="orders" className="flex-1 h-12">
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              Заказы
+            </TabsTrigger>
+            <TabsTrigger value="users" className="flex-1 h-12">
+              <Users className="h-4 w-4 mr-2" />
+              Пользователи
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="col-span-2 md:col-span-1 flex-1 h-12">
+              <Store className="h-4 w-4 mr-2" />
+              Настройки
+            </TabsTrigger>
           </TabsList>
 
-          {/* Enhanced Products Management */}
+          {/* Orders Tab Content */}
+          <TabsContent value="orders" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <ShoppingCart className="h-5 w-5" />
+                      Управление заказами клиентов
+                    </CardTitle>
+                    <CardDescription>
+                      Просмотр и управление всеми заказами ({ordersTotal} всего)
+                    </CardDescription>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                      <Button
+                        variant={ordersViewMode === "table" ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => setOrdersViewMode("table")}
+                        className="h-8"
+                      >
+                        <Grid3X3 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant={ordersViewMode === "kanban" ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => setOrdersViewMode("kanban")}
+                        className="h-8"
+                      >
+                        <Columns className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {/* Orders Filters */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Input
+                      placeholder="Поиск заказов..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
+                    <SelectTrigger className="w-full sm:w-[200px]">
+                      <SelectValue placeholder="Фильтр по статусу" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Все заказы</SelectItem>
+                      <SelectItem value="active">Активные</SelectItem>
+                      <SelectItem value="delivered">Доставленные</SelectItem>
+                      <SelectItem value="cancelled">Отмененные</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {ordersLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+                  </div>
+                ) : ordersViewMode === "table" ? (
+                  <div className="rounded-md border overflow-visible">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Заказ</TableHead>
+                          <TableHead>Клиент</TableHead>
+                          <TableHead>Сумма</TableHead>
+                          <TableHead>Статус</TableHead>
+                          <TableHead>Время создания</TableHead>
+                          <TableHead>Действия</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {ordersData.map((order: any) => (
+                          <TableRow key={order.id}>
+                            <TableCell className="font-medium">#{order.id}</TableCell>
+                            <TableCell>{order.user.email}</TableCell>
+                            <TableCell>{formatCurrency(order.totalAmount)}</TableCell>
+                            <TableCell>
+                              <Select
+                                value={order.status}
+                                onValueChange={(newStatus) => {
+                                  if (newStatus === 'cancelled') {
+                                    handleOrderCancellation(order.id);
+                                  } else {
+                                    updateOrderStatusMutation.mutate({ orderId: order.id, status: newStatus });
+                                  }
+                                }}
+                              >
+                                <SelectTrigger className="w-32">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="pending">Ожидает</SelectItem>
+                                  <SelectItem value="confirmed">Подтвержден</SelectItem>
+                                  <SelectItem value="preparing">Готовится</SelectItem>
+                                  <SelectItem value="ready">Готов</SelectItem>
+                                  <SelectItem value="delivered">Доставлен</SelectItem>
+                                  <SelectItem value="cancelled">Отменен</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                            <TableCell>{new Date(order.createdAt).toLocaleString('ru-RU')}</TableCell>
+                            <TableCell>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setEditingOrder(order);
+                                  setIsOrderFormOpen(true);
+                                }}
+                              >
+                                <Eye className="h-4 w-4 mr-1" />
+                                Детали
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  // Kanban view with horizontal scrolling
+                  <div className="overflow-x-auto">
+                    <div className="flex gap-6 pb-4" style={{ minWidth: '1200px' }}>
+                      {/* Pending Column */}
+                      <div className="bg-yellow-50 rounded-lg p-4 min-w-80">
+                        <h3 className="font-semibold text-sm mb-3 text-yellow-800 flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+                          Ожидает ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
+                        </h3>
+                        <div className="space-y-3">
+                          {ordersResponse.data.filter((order: any) => order.status === 'pending').map((order: any) => (
+                            <OrderCard key={order.id} order={order} onEdit={(order) => {
+                              setEditingOrder(order);
+                              setIsOrderFormOpen(true);
+                            }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Confirmed Column */}
+                      <div className="bg-blue-50 rounded-lg p-4 min-w-80">
+                        <h3 className="font-semibold text-sm mb-3 text-blue-800 flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4" />
+                          Подтвержден ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
+                        </h3>
+                        <div className="space-y-3">
+                          {ordersResponse.data.filter((order: any) => order.status === 'confirmed').map((order: any) => (
+                            <OrderCard key={order.id} order={order} onEdit={(order) => {
+                              setEditingOrder(order);
+                              setIsOrderFormOpen(true);
+                            }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Preparing Column */}
+                      <div className="bg-orange-50 rounded-lg p-4 min-w-80">
+                        <h3 className="font-semibold text-sm mb-3 text-orange-800 flex items-center gap-2">
+                          <Utensils className="h-4 w-4" />
+                          Готовится ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
+                        </h3>
+                        <div className="space-y-3">
+                          {ordersResponse.data.filter((order: any) => order.status === 'preparing').map((order: any) => (
+                            <OrderCard key={order.id} order={order} onEdit={(order) => {
+                              setEditingOrder(order);
+                              setIsOrderFormOpen(true);
+                            }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Ready Column */}
+                      <div className="bg-green-50 rounded-lg p-4 min-w-80">
+                        <h3 className="font-semibold text-sm mb-3 text-green-800 flex items-center gap-2">
+                          <Package className="h-4 w-4" />
+                          Готов ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
+                        </h3>
+                        <div className="space-y-3">
+                          {ordersResponse.data.filter((order: any) => order.status === 'ready').map((order: any) => (
+                            <OrderCard key={order.id} order={order} onEdit={(order) => {
+                              setEditingOrder(order);
+                              setIsOrderFormOpen(true);
+                            }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Delivered Column */}
+                      <div className="bg-gray-50 rounded-lg p-4 min-w-80">
+                        <h3 className="font-semibold text-sm mb-3 text-gray-800 flex items-center gap-2">
+                          <Truck className="h-4 w-4" />
+                          Доставлен ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
+                        </h3>
+                        <div className="space-y-3">
+                          {ordersResponse.data.filter((order: any) => order.status === 'delivered').map((order: any) => (
+                            <OrderCard key={order.id} order={order} onEdit={(order) => {
+                              setEditingOrder(order);
+                              setIsOrderFormOpen(true);
+                            }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Cancelled Column */}
+                      <div className="bg-red-50 rounded-lg p-4 min-w-80">
+                        <h3 className="font-semibold text-sm mb-3 text-red-800 flex items-center gap-2">
+                          <X className="h-4 w-4" />
+                          Отменен ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
+                        </h3>
+                        <div className="space-y-3">
+                          {ordersResponse.data.filter((order: any) => order.status === 'cancelled').map((order: any) => (
+                            <OrderCard key={order.id} order={order} onEdit={(order) => {
+                              setEditingOrder(order);
+                              setIsOrderFormOpen(true);
+                            }} onStatusChange={updateOrderStatusMutation.mutate} onCancelOrder={handleOrderCancellation} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Orders Pagination */}
+                {ordersTotalPages > 1 && (
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-t bg-gray-50 mt-4 gap-3">
+                    <div className="flex items-center text-sm text-gray-500 order-2 sm:order-1">
+                      Показано {((ordersPage - 1) * itemsPerPage) + 1}-{Math.min(ordersPage * itemsPerPage, ordersTotal)} из {ordersTotal}
+                    </div>
+                    <div className="flex items-center gap-2 justify-center sm:justify-end order-1 sm:order-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setOrdersPage(Math.max(1, ordersPage - 1))}
+                        disabled={ordersPage === 1}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                        Назад
+                      </Button>
+                      <span className="text-sm font-medium">
+                        {ordersPage} из {ordersTotalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setOrdersPage(Math.min(ordersTotalPages, ordersPage + 1))}
+                        disabled={ordersPage === ordersTotalPages}
+                      >
+                        Вперед
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Products Tab Content */}
           <TabsContent value="products" className="space-y-6">
             <Card>
               <CardHeader>
@@ -360,118 +1112,148 @@ export default function AdminDashboard() {
                   <div>
                     <CardTitle className="flex items-center gap-2">
                       <Package className="h-5 w-5" />
-                      Управление Товарами
+                      Управление товарами
                     </CardTitle>
                     <CardDescription>
-                      Добавление, редактирование товаров и управление наличием с фильтрацией и поиском
+                      Добавление, редактирование и удаление товаров ({productsTotal} всего)
                     </CardDescription>
                   </div>
-                  <Button onClick={() => setShowAddProduct(true)}>
+                  <Button onClick={() => setIsProductFormOpen(true)}>
                     <Plus className="h-4 w-4 mr-2" />
                     Добавить товар
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                {/* Search and Filter Controls */}
-                <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                  <div className="flex-1">
+                {/* Products Filters */}
+                <div className="space-y-4 mb-6">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
                       placeholder="Поиск товаров..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full"
+                      className="pl-10"
                     />
                   </div>
-                  <CustomSelect 
-                    value={selectedCategoryFilter} 
-                    onValueChange={setSelectedCategoryFilter}
-                    className="w-full sm:w-[200px]"
-                  >
-                    <CustomSelectItem value="all">Все категории</CustomSelectItem>
-                    {categories?.map((category) => (
-                      <CustomSelectItem key={category.id} value={category.id.toString()}>
-                        {category.name}
-                      </CustomSelectItem>
-                    ))}
-                  </CustomSelect>
+                  
+                  {/* Category Filter Tabs */}
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">Категории</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                      <Button
+                        variant={selectedCategoryFilter === "all" ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedCategoryFilter("all")}
+                        className="text-xs h-8"
+                      >
+                        Все категории
+                      </Button>
+                      {categories.map((category: any) => (
+                        <Button
+                          key={category.id}
+                          variant={selectedCategoryFilter === category.id.toString() ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setSelectedCategoryFilter(category.id.toString())}
+                          className="text-xs h-8"
+                        >
+                          {category.name}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Status Filter Tabs */}
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">Статус</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      <Button
+                        variant={selectedStatusFilter === "all" ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedStatusFilter("all")}
+                        className="text-xs h-8"
+                      >
+                        Все статусы
+                      </Button>
+                      <Button
+                        variant={selectedStatusFilter === "available" ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedStatusFilter("available")}
+                        className="text-xs h-8"
+                      >
+                        Доступные
+                      </Button>
+                      <Button
+                        variant={selectedStatusFilter === "unavailable" ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedStatusFilter("unavailable")}
+                        className="text-xs h-8"
+                      >
+                        Недоступные
+                      </Button>
+                      <Button
+                        variant={selectedStatusFilter === "with_discount" ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedStatusFilter("with_discount")}
+                        className="text-xs h-8"
+                      >
+                        Со скидкой
+                      </Button>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Products Table */}
-                {(() => {
-                  // Filter products based on search query and selected category
-                  const filteredProducts = allProducts?.filter(product => {
-                    const matchesSearch = searchQuery === "" || 
-                      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      product.description?.toLowerCase().includes(searchQuery.toLowerCase());
-                    
-                    const matchesCategory = selectedCategoryFilter === "all" ||
-                      product.categoryId.toString() === selectedCategoryFilter;
-                    
-                    return matchesSearch && matchesCategory;
-                  }) || [];
-
-                  return filteredProducts.length > 0 ? (
+                {productsLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+                  </div>
+                ) : (
+                  <div className="rounded-md border overflow-visible">
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Изображение</TableHead>
-                          <TableHead>Название</TableHead>
+                          <TableHead>Товар</TableHead>
                           <TableHead>Категория</TableHead>
-                          <TableHead>Цена за 100г</TableHead>
-                          <TableHead>Наличие</TableHead>
+                          <TableHead>Цена</TableHead>
+                          <TableHead>Единица</TableHead>
+                          <TableHead>Статус</TableHead>
                           <TableHead>Действия</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filteredProducts.map((product) => (
+                        {productsData.map((product: any) => (
                           <TableRow key={product.id}>
                             <TableCell>
-                              {product.imageUrl ? (
-                                <img 
-                                  src={product.imageUrl} 
-                                  alt={product.name}
-                                  className="w-12 h-12 object-cover rounded-lg"
-                                />
-                              ) : (
-                                <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                                  <Package className="h-6 w-6 text-gray-400" />
-                                </div>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <div>
-                                <div className="font-medium">{product.name}</div>
-                                {product.description && (
-                                  <div className="text-sm text-gray-500 max-w-xs truncate">
-                                    {product.description}
-                                  </div>
+                              <div className="flex items-center gap-3">
+                                {product.imageUrl && (
+                                  <img 
+                                    src={product.imageUrl} 
+                                    alt={product.name}
+                                    className="w-10 h-10 rounded object-cover"
+                                  />
                                 )}
+                                <div>
+                                  <div className="font-medium">{product.name}</div>
+                                  <div className="text-sm text-gray-500">{product.description}</div>
+                                </div>
                               </div>
                             </TableCell>
-                            <TableCell>
-                              <Badge variant="outline">
-                                {product.category.name}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {formatCurrency(product.pricePerKg)}
-                            </TableCell>
+                            <TableCell>{product.category?.name}</TableCell>
+                            <TableCell>{formatCurrency(product.price)}</TableCell>
+                            <TableCell>{getUnitLabel(product.unit)}</TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
                                 <Switch
                                   checked={product.isAvailable}
                                   onCheckedChange={(checked) => {
-                                    toggleAvailabilityMutation.mutate({
+                                    updateProductMutation.mutate({
                                       id: product.id,
-                                      isAvailable: checked
+                                      data: { isAvailable: checked }
                                     });
                                   }}
-                                  disabled={toggleAvailabilityMutation.isPending}
-                                  className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-200"
                                 />
                                 <span className="text-sm">
-                                  {product.isAvailable ? 'Доступен' : 'Нет в наличии'}
+                                  {product.isAvailable ? 'Доступен' : 'Недоступен'}
                                 </span>
                               </div>
                             </TableCell>
@@ -480,26 +1262,32 @@ export default function AdminDashboard() {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => setEditingProduct(product)}
+                                  onClick={() => {
+                                    setEditingProduct(product);
+                                    setIsProductFormOpen(true);
+                                  }}
                                 >
                                   <Edit2 className="h-4 w-4" />
                                 </Button>
                                 <AlertDialog>
                                   <AlertDialogTrigger asChild>
-                                    <Button variant="outline" size="sm" className="text-red-600">
+                                    <Button variant="outline" size="sm">
                                       <Trash2 className="h-4 w-4" />
                                     </Button>
                                   </AlertDialogTrigger>
                                   <AlertDialogContent>
                                     <AlertDialogHeader>
-                                      <AlertDialogTitle>Удалить товар?</AlertDialogTitle>
+                                      <AlertDialogTitle>Удалить товар</AlertDialogTitle>
                                       <AlertDialogDescription>
-                                        Это действие нельзя отменить. Товар "{product.name}" будет удален навсегда.
+                                        Вы уверены, что хотите удалить товар "{product.name}"? Это действие нельзя отменить.
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                       <AlertDialogCancel>Отмена</AlertDialogCancel>
-                                      <AlertDialogAction onClick={() => deleteProductMutation.mutate(product.id)}>
+                                      <AlertDialogAction
+                                        onClick={() => deleteProductMutation.mutate(product.id)}
+                                        className="bg-red-600 hover:bg-red-700"
+                                      >
                                         Удалить
                                       </AlertDialogAction>
                                     </AlertDialogFooter>
@@ -511,766 +1299,257 @@ export default function AdminDashboard() {
                         ))}
                       </TableBody>
                     </Table>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        {searchQuery || selectedCategoryFilter !== "all" ? "Товары не найдены" : "Нет товаров"}
-                      </h3>
-                      <p className="text-gray-500">
-                        {searchQuery || selectedCategoryFilter !== "all" 
-                          ? "Попробуйте изменить критерии поиска или фильтрации"
-                          : "Начните с добавления первого товара"
-                        }
-                      </p>
+                  </div>
+                )}
+
+                {/* Products Pagination */}
+                {productsTotalPages > 1 && (
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-t bg-gray-50 mt-4 gap-3">
+                    <div className="flex items-center text-sm text-gray-500 order-2 sm:order-1">
+                      Показано {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} из {productsTotal}
                     </div>
-                  );
-                })()}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Categories Management */}
-          <TabsContent value="categories" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Package className="h-5 w-5" />
-                      Управление Товарами
-                    </CardTitle>
-                    <CardDescription>
-                      Добавление, редактирование и удаление товаров
-                    </CardDescription>
-                  </div>
-                  <Button onClick={() => setShowAddProduct(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Добавить товар
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {allProducts && allProducts.length > 0 ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Название</TableHead>
-                        <TableHead>Категория</TableHead>
-                        <TableHead>Цена/кг</TableHead>
-                        <TableHead>Статус</TableHead>
-                        <TableHead>Действия</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {allProducts.map((product) => (
-                        <TableRow key={product.id}>
-                          <TableCell className="font-medium">{product.name}</TableCell>
-                          <TableCell>{product.category.name}</TableCell>
-                          <TableCell>{formatCurrency(parseFloat(product.pricePerKg))}</TableCell>
-                          <TableCell>
-                            <Badge variant={product.isAvailable ? "default" : "destructive"}>
-                              {product.isAvailable ? "Доступен" : "Недоступен"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex gap-2">
-                              <Button variant="outline" size="sm" onClick={() => setEditingProduct(product)}>
-                                <Edit2 className="h-4 w-4" />
-                              </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button variant="outline" size="sm">
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Удалить товар</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Вы уверены, что хотите удалить "{product.name}"? Это действие нельзя отменить.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Отмена</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => deleteProductMutation.mutate(product.id)}>
-                                      Удалить
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                ) : (
-                  <div className="text-center py-8">
-                    <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет товаров</h3>
-                    <p className="text-gray-500">Начните с добавления первого товара</p>
+                    <div className="flex items-center gap-2 justify-center sm:justify-end order-1 sm:order-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setProductsPage(Math.max(1, productsPage - 1))}
+                        disabled={productsPage === 1}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                        Назад
+                      </Button>
+                      <span className="text-sm font-medium">
+                        {productsPage} из {productsTotalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setProductsPage(Math.min(productsTotalPages, productsPage + 1))}
+                        disabled={productsPage === productsTotalPages}
+                      >
+                        Вперед
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 )}
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* Categories Management */}
-          <TabsContent value="categories" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Utensils className="h-5 w-5" />
-                      Управление Категориями
-                    </CardTitle>
-                    <CardDescription>
-                      Добавление, редактирование и удаление категорий
-                    </CardDescription>
-                  </div>
-                  <Button onClick={() => setShowAddCategory(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Добавить категорию
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {categories && categories.length > 0 ? (
-                  <div className="grid gap-4">
-                    {categories.map((category) => (
-                      <div key={category.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <span className="text-2xl">{category.icon}</span>
-                          <div>
-                            <h3 className="font-semibold">{category.name}</h3>
-                            <p className="text-sm text-gray-600">{category.description}</p>
-                            <Badge variant="secondary">{category.products.length} товаров</Badge>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="sm" onClick={() => setEditingCategory(category)}>
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="outline" size="sm">
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Удалить категорию</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Вы уверены, что хотите удалить категорию "{category.name}"? 
-                                  Все товары в этой категории также будут удалены.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Отмена</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => deleteCategoryMutation.mutate(category.id)}>
-                                  Удалить
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Utensils className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет категорий</h3>
-                    <p className="text-gray-500">Начните с добавления первой категории</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Orders Management */}
-          <TabsContent value="orders" className="space-y-6">
+          
+          {/* Users Tab Content */}
+          <TabsContent value="users" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <ShoppingCart className="h-5 w-5" />
-                  Управление Заказами
+                  <Users className="h-5 w-5" />
+                  Управление пользователями
                 </CardTitle>
                 <CardDescription>
-                  Обработка и отслеживание заказов клиентов
+                  Просмотр и управление пользователями системы ({usersTotal} всего)
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {orders && orders.length > 0 ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Заказ</TableHead>
-                        <TableHead>Клиент</TableHead>
-                        <TableHead>Статус</TableHead>
-                        <TableHead>Сумма</TableHead>
-                        <TableHead>Дата</TableHead>
-                        <TableHead>Действия</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {orders.map((order) => (
-                        <TableRow key={order.id}>
-                          <TableCell className="font-medium">#{order.id}</TableCell>
-                          <TableCell>
-                            {order.user?.firstName} {order.user?.lastName}
-                            <div className="text-sm text-gray-500">{order.user?.email}</div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant={
-                              order.status === 'pending' ? 'destructive' :
-                              order.status === 'confirmed' ? 'default' :
-                              order.status === 'preparing' ? 'secondary' :
-                              order.status === 'ready' ? 'outline' :
-                              order.status === 'delivered' ? 'default' : 'destructive'
-                            }>
-                              {order.status === 'pending' ? 'Ожидает' :
-                               order.status === 'confirmed' ? 'Подтвержден' :
-                               order.status === 'preparing' ? 'Готовится' :
-                               order.status === 'ready' ? 'Готов' :
-                               order.status === 'delivered' ? 'Выдан' : 'Отменен'}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>{formatCurrency(parseFloat(order.totalAmount))}</TableCell>
-                          <TableCell>
-                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU') : 'Неизвестно'}
-                          </TableCell>
-                          <TableCell>
-                            <CustomSelect
-                              value={order.status}
-                              onValueChange={(newStatus: string) => 
-                                updateOrderStatusMutation.mutate({
-                                  orderId: order.id,
-                                  status: newStatus
-                                })
-                              }
-                              className="w-[140px]"
-                            >
-                              <CustomSelectItem value="pending">Ожидает</CustomSelectItem>
-                              <CustomSelectItem value="confirmed">Подтвержден</CustomSelectItem>
-                              <CustomSelectItem value="preparing">Готовится</CustomSelectItem>
-                              <CustomSelectItem value="ready">Готов</CustomSelectItem>
-                              <CustomSelectItem value="delivered">Выдан</CustomSelectItem>
-                              <CustomSelectItem value="cancelled">Отменен</CustomSelectItem>
-                            </CustomSelect>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                ) : (
-                  <div className="text-center py-8">
-                    <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет заказов</h3>
-                    <p className="text-gray-500">Заказы будут отображаться здесь</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                {/* Users Search */}
+                <div className="relative mb-6">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="Поиск пользователей..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
 
-          {/* Users Management (Admin Only) */}
-          {user.role === 'admin' && (
-            <TabsContent value="users" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Users className="h-5 w-5" />
-                        Управление Пользователями
-                      </CardTitle>
-                      <CardDescription>
-                        Управление учетными записями и ролями пользователей
-                      </CardDescription>
-                    </div>
-                    <Button onClick={() => setShowAddUser(true)}>
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      Добавить пользователя
-                    </Button>
+                {usersLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  {allUsers && allUsers.length > 0 ? (
+                ) : (
+                  <div className="rounded-md border">
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Имя</TableHead>
+                          <TableHead>Пользователь</TableHead>
                           <TableHead>Email</TableHead>
                           <TableHead>Роль</TableHead>
                           <TableHead>Дата регистрации</TableHead>
-                          <TableHead>Действия</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {allUsers.map((userItem) => (
-                          <TableRow key={userItem.id}>
-                            <TableCell className="font-medium">
-                              {userItem.firstName} {userItem.lastName}
-                            </TableCell>
-                            <TableCell>{userItem.email}</TableCell>
+                        {usersData.map((user: any) => (
+                          <TableRow key={user.id}>
                             <TableCell>
-                              <Badge variant={
-                                userItem.role === 'admin' ? 'default' :
-                                userItem.role === 'worker' ? 'secondary' : 'outline'
-                              }>
-                                {userItem.role === 'admin' ? 'Администратор' :
-                                 userItem.role === 'worker' ? 'Работник' : 'Клиент'}
+                              <div className="flex items-center gap-3">
+                                {user.profileImageUrl && (
+                                  <img 
+                                    src={user.profileImageUrl} 
+                                    alt={user.firstName || user.email}
+                                    className="w-8 h-8 rounded-full object-cover"
+                                  />
+                                )}
+                                <div>
+                                  <div className="font-medium">
+                                    {user.firstName && user.lastName 
+                                      ? `${user.firstName} ${user.lastName}`
+                                      : user.email
+                                    }
+                                  </div>
+                                  {user.firstName && (
+                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                  )}
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>{user.email}</TableCell>
+                            <TableCell>
+                              <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                                {user.role === 'admin' ? 'Администратор' : 
+                                 user.role === 'worker' ? 'Сотрудник' : 'Клиент'}
                               </Badge>
                             </TableCell>
                             <TableCell>
-                              {userItem.createdAt ? new Date(userItem.createdAt).toLocaleDateString('ru-RU') : 'Неизвестно'}
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex gap-2">
-                                <Button variant="outline" size="sm" onClick={() => setEditingUser(userItem)}>
-                                  <Edit2 className="h-4 w-4" />
-                                </Button>
-                                {userItem.id !== user.id && (
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                      <Button variant="outline" size="sm">
-                                        <Trash2 className="h-4 w-4" />
-                                      </Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                      <AlertDialogHeader>
-                                        <AlertDialogTitle>Удалить пользователя</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                          Вы уверены, что хотите удалить пользователя "{userItem.firstName} {userItem.lastName}"?
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter>
-                                        <AlertDialogCancel>Отмена</AlertDialogCancel>
-                                        <AlertDialogAction onClick={() => deleteUserMutation.mutate(userItem.id)}>
-                                          Удалить
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
-                                )}
-                              </div>
+                              {user.createdAt 
+                                ? new Date(user.createdAt).toLocaleDateString('ru-RU')
+                                : '-'
+                              }
                             </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
                     </Table>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">Нет пользователей</h3>
-                      <p className="text-gray-500">Пользователи будут отображаться здесь</p>
+                  </div>
+                )}
+
+                {/* Users Pagination */}
+                {usersTotalPages > 1 && (
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-t bg-gray-50 mt-4 gap-3">
+                    <div className="flex items-center text-sm text-gray-500 order-2 sm:order-1">
+                      Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-          )}
+                    <div className="flex items-center gap-2 justify-center sm:justify-end order-1 sm:order-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUsersPage(Math.max(1, usersPage - 1))}
+                        disabled={usersPage === 1}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                        Назад
+                      </Button>
+                      <span className="text-sm font-medium">
+                        {usersPage} из {usersTotalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUsersPage(Math.min(usersTotalPages, usersPage + 1))}
+                        disabled={usersPage === usersTotalPages}
+                      >
+                        Вперед
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          {/* Settings Tab Content */}
+          <TabsContent value="settings" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Store className="h-5 w-5" />
+                  Настройки магазина
+                </CardTitle>
+                <CardDescription>
+                  Управление настройками магазина и причинами отмены заказов
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Настройки магазина (реализация продолжается)</p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
 
-      {/* Add/Edit Product Dialog */}
-      <ProductFormDialog
-        open={showAddProduct || !!editingProduct}
-        onClose={() => {
-          setShowAddProduct(false);
-          setEditingProduct(null);
-        }}
-        categories={categories || []}
-        product={editingProduct}
-        onSubmit={(data) => {
-          if (editingProduct) {
-            updateProductMutation.mutate({ id: editingProduct.id, data });
-          } else {
-            createProductMutation.mutate(data);
-          }
-        }}
-      />
-
-      {/* Add/Edit Category Dialog */}
-      <CategoryFormDialog
-        open={showAddCategory || !!editingCategory}
-        onClose={() => {
-          setShowAddCategory(false);
-          setEditingCategory(null);
-        }}
-        category={editingCategory}
-        onSubmit={(data) => {
-          if (editingCategory) {
-            updateCategoryMutation.mutate({ id: editingCategory.id, data });
-          } else {
-            createCategoryMutation.mutate(data);
-          }
-        }}
-      />
-
-      {/* Add/Edit User Dialog */}
-      {user.role === 'admin' && (
-        <UserFormDialog
-          open={showAddUser || !!editingUser}
-          onClose={() => {
-            setShowAddUser(false);
-            setEditingUser(null);
-          }}
-          user={editingUser}
-          onSubmit={(data) => {
-            if (editingUser) {
-              updateUserMutation.mutate({ id: editingUser.id, data });
-            } else {
-              createUserMutation.mutate(data);
-            }
-          }}
-        />
-      )}
-    </div>
-  );
-}
-
-// Product Form Dialog Component
-function ProductFormDialog({ 
-  open, 
-  onClose, 
-  categories, 
-  product, 
-  onSubmit 
-}: {
-  open: boolean;
-  onClose: () => void;
-  categories: CategoryWithProducts[];
-  product?: Product | null;
-  onSubmit: (data: any) => void;
-}) {
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    pricePerKg: '',
-    categoryId: '',
-    imageUrl: '',
-    isAvailable: true,
-  });
-
-  useEffect(() => {
-    if (product) {
-      setFormData({
-        name: product.name,
-        description: product.description || '',
-        pricePerKg: product.pricePerKg,
-        categoryId: product.categoryId.toString(),
-        imageUrl: product.imageUrl || '',
-        isAvailable: product.isAvailable,
-      });
-    } else {
-      setFormData({
-        name: '',
-        description: '',
-        pricePerKg: '',
-        categoryId: '',
-        imageUrl: '',
-        isAvailable: true,
-      });
-    }
-  }, [product, open]);
-
-  const handleSubmit = () => {
-    onSubmit({
-      ...formData,
-      categoryId: parseInt(formData.categoryId),
-      pricePerKg: formData.pricePerKg,
-    });
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>{product ? 'Редактировать товар' : 'Добавить товар'}</DialogTitle>
-          <DialogDescription>
-            {product ? 'Изменить информацию о товаре' : 'Создать новый товар в меню'}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="name">Название</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Название блюда"
+      {/* Order Details Dialog */}
+      <Dialog open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              Детали заказа #{editingOrder?.id}
+            </DialogTitle>
+            <DialogDescription>
+              Просмотр и редактирование информации о заказе
+            </DialogDescription>
+          </DialogHeader>
+          {editingOrder && (
+            <OrderEditForm 
+              order={editingOrder} 
+              onClose={() => setIsOrderFormOpen(false)}
+              onSave={() => {}}
             />
-          </div>
-          <div>
-            <Label htmlFor="description">Описание</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Описание блюда"
-            />
-          </div>
-          <div>
-            <Label htmlFor="categoryId">Категория</Label>
-            <CustomSelect value={formData.categoryId} onValueChange={(value: string) => setFormData({ ...formData, categoryId: value })}>
-              {categories.map((category) => (
-                <CustomSelectItem key={category.id} value={category.id.toString()}>
-                  {category.name}
-                </CustomSelectItem>
-              ))}
-            </CustomSelect>
-          </div>
-          <div>
-            <Label htmlFor="pricePerKg">Цена за кг (₪)</Label>
-            <Input
-              id="pricePerKg"
-              type="number"
-              step="0.01"
-              value={formData.pricePerKg}
-              onChange={(e) => setFormData({ ...formData, pricePerKg: e.target.value })}
-              placeholder="0.00"
-            />
-          </div>
-          <ImageUpload
-            value={formData.imageUrl}
-            onChange={(url) => setFormData({ ...formData, imageUrl: url })}
-          />
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="isAvailable"
-              checked={formData.isAvailable}
-              onCheckedChange={(checked) => setFormData({ ...formData, isAvailable: checked })}
-              className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-200"
-            />
-            <Label htmlFor="isAvailable">Доступен в меню</Label>
-          </div>
-        </div>
-        <div className="flex justify-end space-x-2 pt-4">
-          <Button variant="outline" onClick={onClose}>
-            Отмена
-          </Button>
-          <Button 
-            onClick={handleSubmit}
-            disabled={!formData.name || !formData.pricePerKg || !formData.categoryId}
-          >
-            {product ? 'Сохранить' : 'Создать'}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-// Category Form Dialog Component
-function CategoryFormDialog({ 
-  open, 
-  onClose, 
-  category, 
-  onSubmit 
-}: {
-  open: boolean;
-  onClose: () => void;
-  category?: Category | null;
-  onSubmit: (data: any) => void;
-}) {
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    icon: '🍽️',
-  });
-
-  useEffect(() => {
-    if (category) {
-      setFormData({
-        name: category.name,
-        description: category.description || '',
-        icon: category.icon || '🍽️',
-      });
-    } else {
-      setFormData({
-        name: '',
-        description: '',
-        icon: '🍽️',
-      });
-    }
-  }, [category, open]);
-
-  const iconOptions = ['🥗', '🍖', '🍚', '🍲', '🥧', '🍰', '🍽️', '🥘', '🍱', '🥙'];
-
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>{category ? 'Редактировать категорию' : 'Добавить категорию'}</DialogTitle>
-          <DialogDescription>
-            {category ? 'Изменить информацию о категории' : 'Создать новую категорию меню'}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="name">Название</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Название категории"
-            />
-          </div>
-          <div>
-            <Label htmlFor="description">Описание</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Описание категории"
-            />
-          </div>
-          <div>
-            <Label>Иконка</Label>
-            <div className="grid grid-cols-5 gap-2 mt-2">
-              {iconOptions.map((icon) => (
-                <Button
-                  key={icon}
-                  variant={formData.icon === icon ? "default" : "outline"}
-                  className="h-12 text-2xl"
-                  onClick={() => setFormData({ ...formData, icon })}
-                >
-                  {icon}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-end space-x-2 pt-4">
-          <Button variant="outline" onClick={onClose}>
-            Отмена
-          </Button>
-          <Button 
-            onClick={() => onSubmit(formData)}
-            disabled={!formData.name}
-          >
-            {category ? 'Сохранить' : 'Создать'}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-// User Form Dialog Component
-function UserFormDialog({ 
-  open, 
-  onClose, 
-  user, 
-  onSubmit 
-}: {
-  open: boolean;
-  onClose: () => void;
-  user?: User | null;
-  onSubmit: (data: any) => void;
-}) {
-  const [formData, setFormData] = useState({
-    id: '',
-    email: '',
-    firstName: '',
-    lastName: '',
-    role: 'customer' as 'admin' | 'worker' | 'customer',
-  });
-
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        id: user.id,
-        email: user.email || '',
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        role: user.role as 'admin' | 'worker' | 'customer',
-      });
-    } else {
-      setFormData({
-        id: '',
-        email: '',
-        firstName: '',
-        lastName: '',
-        role: 'customer',
-      });
-    }
-  }, [user, open]);
-
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>{user ? 'Редактировать пользователя' : 'Добавить пользователя'}</DialogTitle>
-          <DialogDescription>
-            {user ? 'Изменить информацию о пользователе' : 'Создать новую учетную запись'}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4">
-          {!user && (
-            <div>
-              <Label htmlFor="id">ID пользователя</Label>
-              <Input
-                id="id"
-                value={formData.id}
-                onChange={(e) => setFormData({ ...formData, id: e.target.value })}
-                placeholder="Уникальный ID"
-              />
-            </div>
           )}
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="email@example.com"
-            />
+        </DialogContent>
+      </Dialog>
+
+      {/* Cancellation Reason Dialog */}
+      <Dialog open={isCancellationDialogOpen} onOpenChange={setIsCancellationDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Отмена заказа</DialogTitle>
+            <DialogDescription>
+              Выберите причину отмены заказа #{orderToCancelId}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">Причина отмены</label>
+              <Select value={cancellationReason} onValueChange={setCancellationReason}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Выберите причину" />
+                </SelectTrigger>
+                <SelectContent>
+                  {defaultCancellationReasons.map((reason: string) => (
+                    <SelectItem key={reason} value={reason}>{reason}</SelectItem>
+                  ))}
+                  <SelectItem value="other">Другая причина</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {cancellationReason === "other" && (
+              <div>
+                <label className="text-sm font-medium">Укажите причину</label>
+                <Textarea
+                  value={customCancellationReason}
+                  onChange={(e) => setCustomCancellationReason(e.target.value)}
+                  placeholder="Введите причину отмены"
+                />
+              </div>
+            )}
           </div>
-          <div>
-            <Label htmlFor="firstName">Имя</Label>
-            <Input
-              id="firstName"
-              value={formData.firstName}
-              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-              placeholder="Имя"
-            />
+
+          <div className="flex justify-end gap-3 pt-4">
+            <Button variant="outline" onClick={() => setIsCancellationDialogOpen(false)}>
+              Отмена
+            </Button>
+            <Button 
+              onClick={confirmOrderCancellation}
+              disabled={!cancellationReason || (cancellationReason === "other" && !customCancellationReason.trim())}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Отменить заказ
+            </Button>
           </div>
-          <div>
-            <Label htmlFor="lastName">Фамилия</Label>
-            <Input
-              id="lastName"
-              value={formData.lastName}
-              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-              placeholder="Фамилия"
-            />
-          </div>
-          <div>
-            <Label htmlFor="role">Роль</Label>
-            <CustomSelect value={formData.role} onValueChange={(value: string) => setFormData({ ...formData, role: value as 'admin' | 'worker' | 'customer' })}>
-              <CustomSelectItem value="customer">Клиент</CustomSelectItem>
-              <CustomSelectItem value="worker">Работник</CustomSelectItem>
-              <CustomSelectItem value="admin">Администратор</CustomSelectItem>
-            </CustomSelect>
-          </div>
-        </div>
-        <div className="flex justify-end space-x-2 pt-4">
-          <Button variant="outline" onClick={onClose}>
-            Отмена
-          </Button>
-          <Button 
-            onClick={() => onSubmit(formData)}
-            disabled={!formData.email || (!user && !formData.id)}
-          >
-            {user ? 'Сохранить' : 'Создать'}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
