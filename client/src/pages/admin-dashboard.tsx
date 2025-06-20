@@ -2169,77 +2169,15 @@ export default function AdminDashboard() {
                         <SelectTrigger className="pl-10 text-sm">
                           <SelectValue placeholder={t('products.allCategories', 'Все категории')} />
                         </SelectTrigger>
-                        <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                          <SelectPrimitive.Item 
-                            value="all"
-                            className="relative flex w-full cursor-pointer select-none items-center py-2 px-3 text-sm outline-none"
-                            style={{
-                              backgroundColor: selectedCategoryFilter === 'all' ? 'white' : 'white',
-                              color: selectedCategoryFilter === 'all' ? '#f97316' : 'black',
-                              paddingRight: '32px'
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = '#f97316';
-                              e.currentTarget.style.color = 'white';
-                            }}
-                            onMouseLeave={(e) => {
-                              if (selectedCategoryFilter === 'all') {
-                                e.currentTarget.style.backgroundColor = 'white';
-                                e.currentTarget.style.color = '#f97316';
-                              } else {
-                                e.currentTarget.style.backgroundColor = 'white';
-                                e.currentTarget.style.color = 'black';
-                              }
-                            }}
-                          >
-                            <SelectPrimitive.ItemText>{t('products.allCategories', 'Все категории')}</SelectPrimitive.ItemText>
-                            {selectedCategoryFilter === 'all' && (
-                              <span style={{
-                                position: 'absolute',
-                                right: '8px',
-                                top: '50%',
-                                transform: 'translateY(-50%)',
-                                color: '#f97316',
-                                fontWeight: 'bold'
-                              }}>✓</span>
-                            )}
-                          </SelectPrimitive.Item>
+                        <SelectContent>
+                          <SelectItem value="all">{t('products.allCategories', 'Все категории')}</SelectItem>
                           {(categories as any[] || []).map((category: any) => (
-                            <SelectPrimitive.Item
-                              key={category.id}
+                            <SelectItem 
+                              key={category.id} 
                               value={category.id.toString()}
-                              className="relative flex w-full cursor-pointer select-none items-center py-2 px-3 text-sm outline-none"
-                              style={{
-                                backgroundColor: selectedCategoryFilter === category.id.toString() ? 'white' : 'white',
-                                color: selectedCategoryFilter === category.id.toString() ? '#f97316' : 'black',
-                                paddingRight: '32px'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = '#f97316';
-                                e.currentTarget.style.color = 'white';
-                              }}
-                              onMouseLeave={(e) => {
-                                if (selectedCategoryFilter === category.id.toString()) {
-                                  e.currentTarget.style.backgroundColor = 'white';
-                                  e.currentTarget.style.color = '#f97316';
-                                } else {
-                                  e.currentTarget.style.backgroundColor = 'white';
-                                  e.currentTarget.style.color = 'black';
-                                }
-                              }}
                             >
-                              <SelectPrimitive.ItemText>{category.name}</SelectPrimitive.ItemText>
-                              {selectedCategoryFilter === category.id.toString() && (
-                                <span style={{
-                                  position: 'absolute',
-                                  right: '8px',
-                                  top: '50%',
-                                  transform: 'translateY(-50%)',
-                                  color: '#f97316',
-                                  fontWeight: 'bold'
-                                }}>✓</span>
-                              )}
-                            </SelectPrimitive.Item>
+                              {category.name}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
