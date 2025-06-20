@@ -210,16 +210,16 @@ export const themes = pgTable("themes", {
   
   // Neutral colors
   whiteColor: varchar("white_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),
-  gray50Color: varchar("gray_50_color", { length: 20 }).notNull().default("hsl(210, 40%, 98%)"),
-  gray100Color: varchar("gray_100_color", { length: 20 }).notNull().default("hsl(210, 40%, 96%)"),
-  gray200Color: varchar("gray_200_color", { length: 20 }).notNull().default("hsl(214, 32%, 91%)"),
-  gray300Color: varchar("gray_300_color", { length: 20 }).notNull().default("hsl(213, 27%, 84%)"),
-  gray400Color: varchar("gray_400_color", { length: 20 }).notNull().default("hsl(215, 20%, 65%)"),
-  gray500Color: varchar("gray_500_color", { length: 20 }).notNull().default("hsl(215, 16%, 47%)"),
-  gray600Color: varchar("gray_600_color", { length: 20 }).notNull().default("hsl(215, 19%, 35%)"),
-  gray700Color: varchar("gray_700_color", { length: 20 }).notNull().default("hsl(215, 25%, 27%)"),
-  gray800Color: varchar("gray_800_color", { length: 20 }).notNull().default("hsl(217, 33%, 17%)"),
-  gray900Color: varchar("gray_900_color", { length: 20 }).notNull().default("hsl(222, 47%, 11%)"),
+  gray50Color: varchar("gray50_color", { length: 20 }).notNull().default("hsl(210, 40%, 98%)"),
+  gray100Color: varchar("gray100_color", { length: 20 }).notNull().default("hsl(210, 40%, 96%)"),
+  gray200Color: varchar("gray200_color", { length: 20 }).notNull().default("hsl(214, 32%, 91%)"),
+  gray300Color: varchar("gray300_color", { length: 20 }).notNull().default("hsl(213, 27%, 84%)"),
+  gray400Color: varchar("gray400_color", { length: 20 }).notNull().default("hsl(215, 20%, 65%)"),
+  gray500Color: varchar("gray500_color", { length: 20 }).notNull().default("hsl(215, 16%, 47%)"),
+  gray600Color: varchar("gray600_color", { length: 20 }).notNull().default("hsl(215, 19%, 35%)"),
+  gray700Color: varchar("gray700_color", { length: 20 }).notNull().default("hsl(215, 25%, 27%)"),
+  gray800Color: varchar("gray800_color", { length: 20 }).notNull().default("hsl(217, 33%, 17%)"),
+  gray900Color: varchar("gray900_color", { length: 20 }).notNull().default("hsl(222, 47%, 11%)"),
   
   // Typography
   fontFamilyPrimary: varchar("font_family_primary", { length: 100 }).notNull().default("Poppins, sans-serif"),
