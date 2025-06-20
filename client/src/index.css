@@ -481,62 +481,61 @@ button[role="switch"]:not(.carousel-dot),
   }
 }
 
-/* Button hover effects - shadow only, no background changes */
-button {
+/* Button hover effects with maximum specificity */
+button, .btn {
   transition: box-shadow 0.2s ease-in-out !important;
 }
 
-/* Prevent any background color changes on button hover */
-button:hover {
+/* High specificity rules to override all other hover styles */
+button:hover:not(.ghost):not([class*="link"]) {
   background-color: inherit !important;
   background-image: inherit !important;
 }
 
-/* White text on colored buttons only */
-button[class*="bg-orange"], 
-button[class*="bg-blue"], 
-button[class*="bg-red"], 
-button[class*="bg-green"],
-button[class*="bg-primary"],
-button[class*="bg-destructive"] {
+/* Ensure white text on colored buttons */
+button.bg-primary, button[class*="bg-orange"], button[class*="bg-blue"], 
+button[class*="bg-red"], button[class*="bg-green"], button.bg-destructive,
+button[class*="gradient"] {
   color: white !important;
 }
 
-button[class*="bg-orange"] *, 
-button[class*="bg-blue"] *, 
-button[class*="bg-red"] *, 
-button[class*="bg-green"] *,
-button[class*="bg-primary"] *,
-button[class*="bg-destructive"] * {
+button.bg-primary *, button[class*="bg-orange"] *, button[class*="bg-blue"] *, 
+button[class*="bg-red"] *, button[class*="bg-green"] *, button.bg-destructive *,
+button[class*="gradient"] * {
   color: white !important;
 }
 
-/* Shadow effects on hover for different button colors */
-button[class*="bg-orange"]:hover,
-button[class*="bg-primary"]:hover {
+/* Shadow effects with high specificity */
+button.bg-primary:hover, button[class*="bg-orange"]:hover,
+button[class*="gradient"]:hover {
   box-shadow: 0 8px 25px -5px rgba(249, 115, 22, 0.5) !important;
+  background-color: inherit !important;
+  background-image: inherit !important;
 }
 
 button[class*="bg-blue"]:hover {
   box-shadow: 0 8px 25px -5px rgba(59, 130, 246, 0.5) !important;
+  background-color: inherit !important;
 }
 
-button[class*="bg-red"]:hover,
-button[class*="bg-destructive"]:hover {
+button[class*="bg-red"]:hover, button.bg-destructive:hover {
   box-shadow: 0 8px 25px -5px rgba(239, 68, 68, 0.5) !important;
+  background-color: inherit !important;
 }
 
 button[class*="bg-green"]:hover {
   box-shadow: 0 8px 25px -5px rgba(34, 197, 94, 0.5) !important;
+  background-color: inherit !important;
 }
 
-button[class*="bg-gray"]:hover,
-button[class*="bg-secondary"]:hover {
+button[class*="bg-gray"]:hover, button.bg-secondary:hover {
   box-shadow: 0 4px 12px -2px rgba(107, 114, 128, 0.3) !important;
+  background-color: inherit !important;
 }
 
 button[class*="bg-white"]:hover {
   box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1) !important;
+  background-color: inherit !important;
 }
 
 /* Navigation menu items */
