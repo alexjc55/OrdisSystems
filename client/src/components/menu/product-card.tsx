@@ -186,9 +186,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                   <span className="text-2xl font-bold text-orange-600">
                     {formatCurrency(discountedPrice)}
                   </span>
-                  <Badge className="bg-orange-500 text-white text-sm mt-1 w-fit px-2 py-1 font-semibold">
-                    {storeSettings?.discountBadgeText || "Скидка"}
-                  </Badge>
+
                 </>
               ) : (
                 <span className="text-2xl font-bold text-primary">
