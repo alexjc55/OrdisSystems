@@ -234,6 +234,11 @@
     "orderItems": "פריטים בהזמנה",
     "product": "מוצר",
     "quantity": "כמות",
-    "unitPrice": "מחיר ליחידה"
+    "unitPrice": "מחיר ליחידה",
+    "discount": "הנחה",
+    "total": "סה״כ",
+    "subtotal": "סכום ביניים",
+    "orderDiscount": "הנחת הזמנה",
+    "orderComments": "הערות להזמנה"
   }
 }

@@ -110,7 +110,9 @@
     "newPassword": "Новый пароль",
     "loginSuccess": "Вход выполнен успешно",
     "logoutSuccess": "Выход выполнен",
-    "registrationSuccess": "Регистрация прошла успешно"
+    "registrationSuccess": "Регистрация прошла успешно",
+    "unauthorized": "Не авторизован",
+    "loggedOut": "Вы вышли из системы. Повторный вход..."
   },
   "profile": {
     "title": "Профиль",

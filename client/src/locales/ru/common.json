@@ -243,7 +243,10 @@
     "quantity": "Количество",
     "unitPrice": "Цена за единицу",
     "discount": "Скидка",
-    "total": "Итого"
+    "total": "Итого",
+    "subtotal": "Подытог",
+    "orderDiscount": "Скидка на заказ",
+    "orderComments": "Комментарии к заказу"
   },
   "footer": {
     "poweredBy": "Powered by Ordis.",

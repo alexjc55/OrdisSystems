@@ -166,8 +166,8 @@ export default function CartOverlay() {
     onError: (error) => {
       if (isUnauthorizedError(error)) {
         toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
+          title: t('auth.unauthorized'),
+          description: t('auth.loggedOut'),
           variant: "destructive",
         });
         setTimeout(() => {

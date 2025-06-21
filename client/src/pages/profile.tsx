@@ -1082,12 +1082,12 @@ export default function Profile() {
                         return (
                           <>
                             <div className="flex justify-between">
-                              <span>Подытог:</span>
+                              <span>{t('profile.subtotal')}:</span>
                               <span>{formatCurrency(subtotal)}</span>
                             </div>
                             {orderDiscount && (
                               <div className="flex justify-between text-red-600">
-                                <span>Скидка на заказ:</span>
+                                <span>{t('profile.orderDiscount')}:</span>
                                 <span>
                                   -{orderDiscount.type === 'percentage' ? `${orderDiscount.value}%` : formatCurrency(orderDiscount.value)}
                                   {orderDiscount.type === 'percentage' && ` (${formatCurrency(subtotal - finalSubtotal)})`}
@@ -1095,11 +1095,11 @@ export default function Profile() {
                               </div>
                             )}
                             <div className="flex justify-between">
-                              <span>Доставка:</span>
+                              <span>{t('profile.delivery')}:</span>
                               <span>{formatCurrency(deliveryFee)}</span>
                             </div>
                             <div className="flex justify-between text-lg font-bold border-t pt-2">
-                              <span>Итого:</span>
+                              <span>{t('profile.total')}:</span>
                               <span>{formatCurrency(parseFloat(selectedOrder.totalAmount))}</span>
                             </div>
                           </>
@@ -1113,7 +1113,7 @@ export default function Profile() {
                 {selectedOrder.customerNotes && !selectedOrder.customerNotes.includes('[DISCOUNTS:') && (
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-sm">Комментарии к заказу</CardTitle>
+                      <CardTitle className="text-sm">{t('profile.orderComments')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm">{selectedOrder.customerNotes}</p>

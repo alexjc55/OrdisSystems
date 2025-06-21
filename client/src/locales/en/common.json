@@ -236,6 +236,9 @@
     "quantity": "Quantity",
     "unitPrice": "Unit Price",
     "discount": "Discount",
-    "total": "Total"
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "orderDiscount": "Order Discount",
+    "orderComments": "Order Comments"
   }
 }
