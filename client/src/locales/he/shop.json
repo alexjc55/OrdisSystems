@@ -131,5 +131,8 @@
     "perPiece": "ליחידה"
   },
   "products": "מוצרים",
-  "addedToCart": "נוסף לעגלה"
+  "addedToCart": "נוסף לעגלה",
+  "selectCategoryDescription": "בחר קטגוריית מנות",
+  "defaultCategoryDescription": "מנות טעימות לשולחנכם",
+  "dishesCount": "מנות"
 }

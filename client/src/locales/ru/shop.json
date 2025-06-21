@@ -144,5 +144,8 @@
     "perKg": "за кг",
     "perPiece": "за штуку"
   },
-  "products": "Товары"
+  "products": "Товары",
+  "selectCategoryDescription": "Выберите категорию блюд",
+  "defaultCategoryDescription": "Вкусные блюда для вашего стола",
+  "dishesCount": "блюд"
 }

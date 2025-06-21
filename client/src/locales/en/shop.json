@@ -130,5 +130,8 @@
     "perKg": "per kg",
     "perPiece": "per piece"
   },
-  "products": "Products"
+  "products": "Products",
+  "selectCategoryDescription": "Choose a dish category",
+  "defaultCategoryDescription": "Delicious dishes for your table",
+  "dishesCount": "dishes"
 }
