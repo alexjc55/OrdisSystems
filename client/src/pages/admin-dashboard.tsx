@@ -4673,13 +4673,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <MapPin className="h-5 w-5 text-orange-500" />
                 <h3 className="text-lg font-semibold">{adminT('settings.basicSettingsDescription')}</h3>
                 {isContactsOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 )}
               </div>
             </Button>
@@ -4732,13 +4732,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Upload className="h-5 w-5 text-orange-500" />
                 <h3 className="text-lg font-semibold">{adminT('settings.visualSettings')}</h3>
                 {isVisualsOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 )}
               </div>
             </Button>
@@ -4801,13 +4801,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full rtl:flex-row-reverse">
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Languages className="h-5 w-5 text-orange-500" />
                 <h3 className="text-lg font-semibold">{adminT('settings.languageSettings')}</h3>
                 {isLanguageSettingsOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 )}
               </div>
             </Button>
@@ -4919,13 +4919,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Clock className="h-5 w-5 text-orange-500" />
                 <h3 className="text-lg font-semibold">{adminT('settings.operatingHours')}</h3>
                 {isWorkingHoursOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 )}
               </div>
             </Button>
@@ -5732,13 +5732,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Code className="h-5 w-5 text-orange-500" />
                 <h3 className="text-lg font-semibold">{adminT('settings.trackingCode')}</h3>
                 {isTrackingCodeOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 )}
               </div>
             </Button>
@@ -5802,7 +5802,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className="flex items-center gap-2">
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <User className="h-5 w-5 text-orange-500" />
                 <h3 className="text-lg font-semibold">{adminT('settings.authPage')}</h3>
               </div>
