@@ -110,6 +110,13 @@
   "onlyWithDiscount": "רק עם הנחה",
   "onlyDiscounted": "רק עם הנחה",
   "preOrder": "הזמנה מראש",
+  "preOrderTooltip": "המוצר אינו זמין למשלוח היום, מכיוון שאזל מהמלאי בחנות",
+  "addedToCart": "נוסף לעגלה",
+  "viewCart": "צפה בעגלה",
+  "cart": "עגלה",
+  "discount": "הנחה",
+  "outOfStockToday": "אזל מהמלאי היום",
+  "orderForTomorrow": "הזמנה למחר",
   "units": {
     "kg": "ק\"ג",
     "gram": "גרם",

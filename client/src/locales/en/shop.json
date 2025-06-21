@@ -110,6 +110,13 @@
   "onlyWithDiscount": "Only with Discount",
   "onlyDiscounted": "Only with Discount",
   "preOrder": "Pre-order",
+  "preOrderTooltip": "Product unavailable for delivery today as it's out of stock in the store",
+  "addedToCart": "Added to Cart",
+  "viewCart": "View Cart",
+  "cart": "Cart",
+  "discount": "Discount",
+  "outOfStockToday": "Out of Stock Today",
+  "orderForTomorrow": "Order for Tomorrow",
   "units": {
     "kg": "kg",
     "gram": "gram",

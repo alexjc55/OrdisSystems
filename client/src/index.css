@@ -60,6 +60,38 @@
     padding-inline-end: 1rem;
   }
   
+  /* RTL Cart Sidebar */
+  html[dir="rtl"] .cart-sidebar {
+    left: 0;
+    right: auto;
+  }
+  
+  html[dir="ltr"] .cart-sidebar {
+    right: 0;
+    left: auto;
+  }
+  
+  /* RTL Carousel Navigation */
+  html[dir="rtl"] .carousel-previous {
+    right: -3rem;
+    left: auto;
+  }
+  
+  html[dir="rtl"] .carousel-next {
+    left: -3rem;
+    right: auto;
+  }
+  
+  html[dir="ltr"] .carousel-previous {
+    left: -3rem;
+    right: auto;
+  }
+  
+  html[dir="ltr"] .carousel-next {
+    right: -3rem;
+    left: auto;
+  }
+  
   /* Carousel dots fix for mobile */
   .carousel-dot {
     width: 12px !important;
