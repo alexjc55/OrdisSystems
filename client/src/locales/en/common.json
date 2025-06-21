@@ -133,7 +133,11 @@
     "password": "Password",
     "confirmPassword": "Confirm password",
     "repeatPassword": "Repeat password",
-    "setPassword": "Set password"
+    "setPassword": "Set password",
+    "loginOrContinueAsGuest": "Login or continue as guest",
+    "loginBenefit": "Login to save your data and order history",
+    "continueAsGuest": "Continue as guest",
+    "newCustomer": "New customer? You can register when you login"
   },
   "validation": {
     "usernameRequired": "Enter username",

@@ -133,7 +133,11 @@
     "password": "סיסמה",
     "confirmPassword": "אשר סיסמה",
     "repeatPassword": "חזור על הסיסמה",
-    "setPassword": "הגדר סיסמה"
+    "setPassword": "הגדר סיסמה",
+    "loginOrContinueAsGuest": "התחבר או המשך כאורח",
+    "loginBenefit": "התחבר כדי לשמור את הנתונים שלך והיסטוריית הזמנות",
+    "continueAsGuest": "המשך כאורח",
+    "newCustomer": "לקוח חדש? תוכל להירשם כשתתחבר"
   },
   "validation": {
     "usernameRequired": "הזן שם משתמש",

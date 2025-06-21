@@ -140,7 +140,11 @@
     "unauthorized": "Требуется авторизация",
     "loginRedirect": "Вход в систему для просмотра профиля...",
     "unauthorizedMessage": "You are logged out. Logging in again...",
-    "backToHome": "На главную"
+    "backToHome": "На главную",
+    "loginOrContinueAsGuest": "Войти в аккаунт или продолжить как гость",
+    "loginBenefit": "Войдите в аккаунт для сохранения данных и истории заказов",
+    "continueAsGuest": "Продолжить как гость",
+    "newCustomer": "Новый клиент? При входе вы сможете зарегистрироваться"
   },
   "validation": {
     "usernameRequired": "Введите имя пользователя",
