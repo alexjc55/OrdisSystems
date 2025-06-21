@@ -316,7 +316,7 @@ export default function Checkout() {
       });
       
       if (!registerRes.ok) {
-        throw new Error("Ошибка регистрации");
+        throw new Error(t('auth.registerError'));
       }
 
       // Get the created user data
@@ -326,7 +326,7 @@ export default function Checkout() {
       if (data.address && data.address.trim()) {
         try {
           await apiRequest("POST", "/api/addresses", {
-            label: "Дом",
+            label: t('address.home'),
             address: data.address.trim()
           });
         } catch (error) {
@@ -368,8 +368,8 @@ export default function Checkout() {
       clearCart();
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
-        title: "Регистрация завершена и заказ оформлен!",
-        description: `Заказ №${order.id} принят. Теперь вы можете отслеживать статус в личном кабинете.`,
+        title: t('checkout.registrationAndOrderCompleted'),
+        description: t('checkout.orderAccepted', { orderId: order.id }),
       });
       setLocation("/profile");
     },
@@ -390,13 +390,13 @@ export default function Checkout() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
-        title: "Вход выполнен",
-        description: "Теперь вы можете оформить заказ",
+        title: t('auth.loginSuccess'),
+        description: t('checkout.canNowPlaceOrder'),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Ошибка входа",
+        title: t('auth.loginError'),
         description: error.message,
         variant: "destructive",
       });
@@ -444,8 +444,8 @@ export default function Checkout() {
     onSuccess: (order) => {
       clearCart();
       toast({
-        title: "Заказ оформлен!",
-        description: `Заказ №${order.id} принят в обработку.`,
+        title: t('checkout.orderPlaced'),
+        description: t('checkout.orderAcceptedForProcessing', { orderId: order.id }),
       });
       setLocation("/profile");
     },
