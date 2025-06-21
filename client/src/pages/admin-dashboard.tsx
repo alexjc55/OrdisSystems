@@ -2859,8 +2859,8 @@ export default function AdminDashboard() {
 
                     {/* Kanban View */}
                     {ordersViewMode === "kanban" && (
-                      <div className="overflow-x-auto">
-                        <div className="flex gap-4 min-w-max pb-4 rtl:flex-row-reverse"
+                      <div className="overflow-x-auto kanban-scroll-container">
+                        <div className="flex gap-4 min-w-max pb-4"
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => {
                             e.preventDefault();
@@ -2895,7 +2895,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-yellow-800 flex items-center gap-2">
                               <Clock className="h-4 w-4" />
-                              Ожидает ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
+                              {adminT('orders.statuses.pending', 'Ожидает')} ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'pending').map((order: any) => (
@@ -2930,7 +2930,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-blue-800 flex items-center gap-2">
                               <ShoppingCart className="h-4 w-4" />
-                              Подтвержден ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
+                              {adminT('orders.statuses.confirmed', 'Подтвержден')} ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'confirmed').map((order: any) => (
@@ -2965,7 +2965,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-orange-800 flex items-center gap-2">
                               <Utensils className="h-4 w-4" />
-                              Готовится ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
+                              {adminT('orders.statuses.preparing', 'Готовится')} ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'preparing').map((order: any) => (
@@ -3000,7 +3000,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-green-800 flex items-center gap-2">
                               <Package className="h-4 w-4" />
-                              Готов ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
+                              {adminT('orders.statuses.ready', 'Готов')} ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'ready').map((order: any) => (
