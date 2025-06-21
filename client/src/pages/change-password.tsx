@@ -10,8 +10,10 @@ import { Label } from "@/components/ui/label";
 import { AlertCircle, Check, Lock } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Link } from "wouter";
+import { useCommonTranslation } from "@/hooks/use-language";
 
 export default function ChangePasswordPage() {
+  const { t } = useCommonTranslation();
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [formData, setFormData] = useState({

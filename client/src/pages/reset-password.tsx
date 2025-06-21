@@ -128,15 +128,15 @@ export default function ResetPasswordPage() {
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <Check className="h-12 w-12 text-green-500 mx-auto mb-4" />
-            <CardTitle>Пароль изменен</CardTitle>
+            <CardTitle>{t('auth.passwordChanged')}</CardTitle>
             <CardDescription>
-              Ваш пароль успешно изменен. Теперь вы можете войти с новым паролем
+              {t('auth.passwordChangedDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Link href="/auth">
               <Button className="w-full">
-                Войти в систему
+                {t('auth.loginToSystem')}
               </Button>
             </Link>
           </CardContent>
@@ -150,23 +150,23 @@ export default function ResetPasswordPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Lock className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-          <CardTitle>Сброс пароля</CardTitle>
+          <CardTitle>{t('auth.resetPassword')}</CardTitle>
           <CardDescription>
-            Введите новый пароль для вашего аккаунта
+            {t('auth.enterNewPassword')}
           </CardDescription>
         </CardHeader>
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="newPassword">Новый пароль</Label>
+              <Label htmlFor="newPassword">{t('auth.newPassword')}</Label>
               <Input
                 id="newPassword"
                 type="password"
                 value={formData.newPassword}
                 onChange={(e) => handleInputChange("newPassword", e.target.value)}
                 className={errors.newPassword ? "border-red-500" : ""}
-                placeholder="Минимум 6 символов"
+                placeholder={t('auth.passwordMinChars')}
               />
               {errors.newPassword && (
                 <p className="text-sm text-red-600 mt-1">{errors.newPassword}</p>
@@ -174,7 +174,7 @@ export default function ResetPasswordPage() {
             </div>
 
             <div>
-              <Label htmlFor="confirmPassword">Подтвердите новый пароль</Label>
+              <Label htmlFor="confirmPassword">{t('auth.confirmNewPassword')}</Label>
               <Input
                 id="confirmPassword"
                 type="password"

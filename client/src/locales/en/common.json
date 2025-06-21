@@ -90,7 +90,20 @@
     "backToHome": "Back to Home",
     "passwordReset": "Password Reset",
     "passwordResetSuccess": "Your password has been successfully changed",
-    "passwordResetError": "Failed to reset password"
+    "passwordResetError": "Failed to reset password",
+    "invalidResetLink": "Invalid password reset link",
+    "confirmNewPassword": "Confirm new password",
+    "invalidLink": "Invalid link",
+    "invalidLinkDescription": "The password reset link is invalid or missing",
+    "requestNewLink": "Request new link",
+    "backToLogin": "Back to login",
+    "passwordChanged": "Password changed",
+    "passwordChangedDescription": "Your password has been successfully changed. You can now log in with your new password",
+    "loginToSystem": "Log in to system",
+    "resetPassword": "Reset password",
+    "enterNewPassword": "Enter new password for your account",
+    "newPassword": "New password",
+    "passwordMinChars": "At least 6 characters"
   },
   "validation": {
     "usernameRequired": "Enter username",

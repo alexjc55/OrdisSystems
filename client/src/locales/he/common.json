@@ -90,7 +90,20 @@
     "backToHome": "חזרה לדף הבית",
     "passwordReset": "סיסמה אופסה",
     "passwordResetSuccess": "הסיסמה שלך שונתה בהצלחה",
-    "passwordResetError": "לא ניתן לאפס את הסיסמה"
+    "passwordResetError": "לא ניתן לאפס את הסיסמה",
+    "invalidResetLink": "קישור איפוס סיסמה לא חוקי",
+    "confirmNewPassword": "אשר סיסמה חדשה",
+    "invalidLink": "קישור לא חוקי",
+    "invalidLinkDescription": "קישור איפוס הסיסמה לא חוקי או חסר",
+    "requestNewLink": "בקש קישור חדש",
+    "backToLogin": "חזרה להתחברות",
+    "passwordChanged": "סיסמה שונתה",
+    "passwordChangedDescription": "הסיסמה שלך שונתה בהצלחה. כעת תוכל להתחבר עם הסיסמה החדשה",
+    "loginToSystem": "התחבר למערכת",
+    "resetPassword": "איפוס סיסמה",
+    "enterNewPassword": "הזן סיסמה חדשה לחשבון שלך",
+    "newPassword": "סיסמה חדשה",
+    "passwordMinChars": "לפחות 6 תווים"
   },
   "validation": {
     "usernameRequired": "הזן שם משתמש",
