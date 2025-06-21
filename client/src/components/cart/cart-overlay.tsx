@@ -653,10 +653,10 @@ export default function CartOverlay() {
                   <span>{formatCurrency(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Доставка:</span>
+                  <span>{t('cart.delivery')}:</span>
                   <span>
                     {deliveryFeeAmount === 0 ? (
-                      <span className="text-green-600 font-medium">Бесплатно</span>
+                      <span className="text-green-600 font-medium">{t('checkout.free')}</span>
                     ) : (
                       formatCurrency(deliveryFeeAmount)
                     )}

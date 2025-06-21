@@ -9,7 +9,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="w-screen bg-[#333333] py-4" style={{ marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)' }}>
+    <footer className="w-screen bg-[#333333] py-4" style={{ marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)' }} dir="ltr">
       <div className="max-w-[1023px] mx-auto px-4 flex items-center justify-center gap-3">
         <img 
           src={ordisLogo} 

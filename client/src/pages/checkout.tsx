@@ -155,8 +155,8 @@ export default function Checkout() {
   const { toast } = useToast();
   const [orderType, setOrderType] = useState<"guest" | "register" | "login">("register");
   const { storeSettings } = useStoreSettings();
-  const { language } = useLanguageStore();
-  const dateLocale = getDateLocale(language);
+  const { currentLanguage } = useLanguage();
+  const dateLocale = getDateLocale(currentLanguage);
   
   // Helper functions for future-order validation
   const getFutureOrderProducts = () => {
@@ -693,7 +693,7 @@ export default function Checkout() {
                               )}
                             >
                               <CalendarIcon className="mr-2 h-4 w-4" />
-                              {selectedDate ? format(selectedDate, "dd MMMM yyyy", { locale: ru }) : tShop('checkout.selectDate')}
+                              {selectedDate ? format(selectedDate, "dd MMMM yyyy", { locale: dateLocale }) : tShop('checkout.selectDate')}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
@@ -931,7 +931,7 @@ export default function Checkout() {
                                 )}
                               >
                                 <CalendarIcon className="mr-2 h-4 w-4" />
-                                {selectedRegisterDate ? format(selectedRegisterDate, "dd MMMM yyyy", { locale: ru }) : tShop('checkout.selectDate')}
+                                {selectedRegisterDate ? format(selectedRegisterDate, "dd MMMM yyyy", { locale: dateLocale }) : tShop('checkout.selectDate')}
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="start">
@@ -1166,7 +1166,7 @@ export default function Checkout() {
                                 )}
                               >
                                 <CalendarIcon className="mr-2 h-4 w-4" />
-                                {selectedGuestDate ? format(selectedGuestDate, "dd MMMM yyyy", { locale: ru }) : tShop('checkout.selectDate')}
+                                {selectedGuestDate ? format(selectedGuestDate, "dd MMMM yyyy", { locale: dateLocale }) : tShop('checkout.selectDate')}
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="start">
