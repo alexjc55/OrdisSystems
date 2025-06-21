@@ -96,7 +96,9 @@
     "newPassword": "New Password",
     "loginSuccess": "Login successful",
     "logoutSuccess": "Logout successful",
-    "registrationSuccess": "Registration successful"
+    "registrationSuccess": "Registration successful",
+    "unauthorized": "Unauthorized",
+    "loggedOut": "You are logged out. Logging in again..."
   },
   "profile": {
     "title": "Profile",

@@ -96,7 +96,9 @@
     "newPassword": "סיסמה חדשה",
     "loginSuccess": "הכניסה הצליחה",
     "logoutSuccess": "היציאה הצליחה",
-    "registrationSuccess": "ההרשמה הצליחה"
+    "registrationSuccess": "ההרשמה הצליחה",
+    "unauthorized": "לא מורשה",
+    "loggedOut": "אתה מנותק מהמערכת. מתחבר שוב..."
   },
   "profile": {
     "title": "פרופיל",

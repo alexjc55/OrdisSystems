@@ -240,5 +240,18 @@
     "subtotal": "Subtotal",
     "orderDiscount": "Order Discount",
     "orderComments": "Order Comments"
+  },
+  "validation": {
+    "firstNameMinLength": "First name must be at least 2 characters",
+    "lastNameMinLength": "Last name must be at least 2 characters",
+    "emailInvalid": "Enter a valid email address",
+    "phoneMinLength": "Enter a valid phone number",
+    "addressMinLength": "Enter a full delivery address",
+    "passwordMinLength": "Password must be at least 6 characters",
+    "passwordMismatch": "Passwords do not match",
+    "passwordRequired": "Enter password",
+    "deliveryDateRequired": "Select delivery date",
+    "deliveryTimeRequired": "Select delivery time",
+    "paymentMethodRequired": "Select payment method"
   }
 }

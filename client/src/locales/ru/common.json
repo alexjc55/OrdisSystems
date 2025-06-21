@@ -248,6 +248,19 @@
     "orderDiscount": "Скидка на заказ",
     "orderComments": "Комментарии к заказу"
   },
+  "validation": {
+    "firstNameMinLength": "Имя должно содержать минимум 2 символа",
+    "lastNameMinLength": "Фамилия должна содержать минимум 2 символа",
+    "emailInvalid": "Введите корректный email",
+    "phoneMinLength": "Введите корректный номер телефона",
+    "addressMinLength": "Введите полный адрес доставки",
+    "passwordMinLength": "Пароль должен содержать минимум 6 символов",
+    "passwordMismatch": "Пароли не совпадают",
+    "passwordRequired": "Введите пароль",
+    "deliveryDateRequired": "Выберите дату доставки",
+    "deliveryTimeRequired": "Выберите время доставки",
+    "paymentMethodRequired": "Выберите способ оплаты"
+  },
   "footer": {
     "poweredBy": "Powered by Ordis.",
     "tryBusiness": "Try it for your business."

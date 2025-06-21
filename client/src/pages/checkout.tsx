@@ -53,17 +53,17 @@ const createRegistrationSchema = (t: any) => {
   });
 };
 
-const authSchema = z.object({
-  email: z.string().email("Введите корректный email"),
-  password: z.string().min(1, "Введите пароль"),
+const createAuthSchema = (t: any) => z.object({
+  email: z.string().email(t('validation.emailInvalid')),
+  password: z.string().min(1, t('validation.passwordRequired')),
 });
 
-const authenticatedOrderSchema = z.object({
-  address: z.string().min(10, "Введите полный адрес доставки"),
-  phone: z.string().min(10, "Введите корректный номер телефона"),
-  deliveryDate: z.string().min(1, "Выберите дату доставки"),
-  deliveryTime: z.string().min(1, "Выберите время доставки"),
-  paymentMethod: z.string().min(1, "Выберите способ оплаты"),
+const createAuthenticatedOrderSchema = (t: any) => z.object({
+  address: z.string().min(10, t('validation.addressMinLength')),
+  phone: z.string().min(10, t('validation.phoneMinLength')),
+  deliveryDate: z.string().min(1, t('validation.deliveryDateRequired')),
+  deliveryTime: z.string().min(1, t('validation.deliveryTimeRequired')),
+  paymentMethod: z.string().min(1, t('validation.paymentMethodRequired')),
 });
 
 type GuestOrderData = {
@@ -77,8 +77,17 @@ type RegistrationData = GuestOrderData & {
   password: string;
   confirmPassword: string;
 };
-type AuthData = z.infer<typeof authSchema>;
-type AuthenticatedOrderData = z.infer<typeof authenticatedOrderSchema>;
+type AuthData = {
+  email: string;
+  password: string;
+};
+type AuthenticatedOrderData = {
+  address: string;
+  phone: string;
+  deliveryDate: string;
+  deliveryTime: string;
+  paymentMethod: string;
+};
 
 // Utility functions for delivery date/time generation
 const generateDeliveryDates = (minDeliveryTimeHours: number = 2, maxDeliveryTimeDays: number = 7) => {
@@ -228,6 +237,8 @@ export default function Checkout() {
   
   const guestOrderSchema = createGuestOrderSchema(t);
   const registrationSchema = createRegistrationSchema(t);
+  const authSchema = createAuthSchema(t);
+  const authenticatedOrderSchema = createAuthenticatedOrderSchema(t);
   
   const guestForm = useForm<GuestOrderData>({
     resolver: zodResolver(guestOrderSchema),
