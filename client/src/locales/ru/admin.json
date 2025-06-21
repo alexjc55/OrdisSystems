@@ -36,7 +36,8 @@
     "tryDifferentSearch": "Попробуйте изменить критерии поиска или фильтрации",
     "table": "Таблица",
     "kanban": "Канбан",
-    "searchProducts": "Поиск товаров..."
+    "searchProducts": "Поиск товаров...",
+    "error": "Ошибка"
   },
   "imageUpload": {
     "invalidFormat": "Неверный формат файла",
@@ -123,6 +124,9 @@
     },
     "discountApplied": "Скидка применена",
     "call": "Позвонить",
+    "updated": "Заказ обновлен",
+    "updateSuccess": "Изменения сохранены успешно",
+    "updateError": "Не удалось обновить заказ",
     "activeOrders": "Активные заказы",
     "orderDetails": "Детали заказа",
     "orderNumber": "Номер заказа",

@@ -396,12 +396,12 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pending">Ожидает</SelectItem>
-                <SelectItem value="confirmed">Подтвержден</SelectItem>
-                <SelectItem value="preparing">Готовится</SelectItem>
-                <SelectItem value="ready">Готов</SelectItem>
-                <SelectItem value="delivered">Доставлен</SelectItem>
-                <SelectItem value="cancelled">Отменен</SelectItem>
+                <SelectItem value="pending">{getStatusLabel('pending')}</SelectItem>
+                <SelectItem value="confirmed">{getStatusLabel('confirmed')}</SelectItem>
+                <SelectItem value="preparing">{getStatusLabel('preparing')}</SelectItem>
+                <SelectItem value="ready">{getStatusLabel('ready')}</SelectItem>
+                <SelectItem value="delivered">{getStatusLabel('delivered')}</SelectItem>
+                <SelectItem value="cancelled">{getStatusLabel('cancelled')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -415,6 +415,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
 function OrderEditForm({ order, onClose, onSave, searchPlaceholder }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t: adminT } = useAdminTranslation();
   const { data: storeSettingsData } = useQuery({
     queryKey: ['/api/settings'],
     queryFn: async () => {
@@ -441,7 +442,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder }: { order: a
         daySchedule.toLowerCase().includes('выходной')) {
       return [{
         value: 'closed',
-        label: 'Выходной день'
+        label: 'Closed'
       }];
     }
     
@@ -486,16 +487,16 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder }: { order: a
     },
     onSuccess: () => {
       toast({
-        title: "Заказ обновлен",
-        description: "Изменения сохранены успешно",
+        title: adminT('orders.updated'),
+        description: adminT('orders.updateSuccess'),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
       onSave();
     },
     onError: (error: any) => {
       toast({
-        title: "Ошибка",
-        description: error.message || "Не удалось обновить заказ",
+        title: adminT('common.error'),
+        description: error.message || adminT('orders.updateError'),
         variant: "destructive",
       });
     },
