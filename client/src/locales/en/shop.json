@@ -100,7 +100,9 @@
     "savedAddresses": "Or select from saved addresses:",
     "selectTime": "Select time",
     "selectPaymentMethod": "Select payment method",
-    "deliveryAddressPlaceholder": "Enter delivery address"
+    "deliveryAddressPlaceholder": "Enter delivery address",
+    "enterDeliveryAddress": "Enter delivery address",
+    "enterPhoneNumber": "Enter phone number"
   },
   "orders": {
     "myOrders": "My Orders",

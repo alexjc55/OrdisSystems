@@ -100,7 +100,9 @@
     "savedAddresses": "או בחר מכתובות שמורות:",
     "selectTime": "בחר זמן",
     "selectPaymentMethod": "בחר אמצעי תשלום",
-    "deliveryAddressPlaceholder": "הכנס כתובת משלוח"
+    "deliveryAddressPlaceholder": "הכנס כתובת משלוח",
+    "enterDeliveryAddress": "הכנס כתובת משלוח",
+    "enterPhoneNumber": "הכנס מספר טלפון"
   },
   "orders": {
     "myOrders": "ההזמנות שלי",
