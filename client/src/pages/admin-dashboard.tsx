@@ -412,7 +412,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
 }
 
 // OrderEditForm component
-function OrderEditForm({ order, onClose, onSave, searchPlaceholder, t }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, t: (key: string) => string }) {
+function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { data: storeSettingsData } = useQuery({
@@ -486,16 +486,16 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, t }: { order
     },
     onSuccess: () => {
       toast({
-        title: t('orders.updated'),
-        description: t('orders.updateSuccess'),
+        title: adminT('orders.updated'),
+        description: adminT('orders.updateSuccess'),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
       onSave();
     },
     onError: (error: any) => {
       toast({
-        title: t('common.error'),
-        description: error.message || t('orders.updateError'),
+        title: adminT('common.error'),
+        description: error.message || adminT('orders.updateError'),
         variant: "destructive",
       });
     },
@@ -1176,7 +1176,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, t }: { order
           currentDiscount={itemDiscounts[showDiscountDialog]}
           onClose={() => setShowDiscountDialog(null)}
           onApply={applyItemDiscount}
-          adminT={t}
+          adminT={adminT}
         />
       )}
 
@@ -3218,7 +3218,7 @@ export default function AdminDashboard() {
                       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
                     }}
                     searchPlaceholder={adminT('common.searchProducts')}
-                    t={adminT}
+                    adminT={adminT}
                   />
                 )}
               </DialogContent>
