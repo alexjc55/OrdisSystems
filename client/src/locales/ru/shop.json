@@ -108,7 +108,7 @@
     "enterDeliveryAddress": "Введите адрес доставки",
     "enterPhoneNumber": "Введите номер телефона",
     "registration": "Регистрация",
-    "login": "Вход", 
+    "loginTab": "Вход", 
     "guest": "Гость",
     "registrationBenefit": "Зарегистрируйтесь, чтобы отслеживать статус заказа и сохранять адреса доставки.",
     "orderCreated": "Заказ создан!",

@@ -104,7 +104,7 @@
     "enterDeliveryAddress": "Enter delivery address",
     "enterPhoneNumber": "Enter phone number",
     "registration": "Registration",
-    "login": "Login", 
+    "loginTab": "Login", 
     "guest": "Guest",
     "registrationBenefit": "Register to track your order status and save delivery addresses."
   },
