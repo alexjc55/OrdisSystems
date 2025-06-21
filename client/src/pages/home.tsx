@@ -661,8 +661,8 @@ export default function Home() {
                       <SelectValue placeholder={t('filterByDiscount')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t('allProducts', 'Все товары')}</SelectItem>
-                      <SelectItem value="discount">{t('onlyDiscounted', 'Только со скидкой')}</SelectItem>
+                      <SelectItem value="all">{t('allProducts')}</SelectItem>
+                      <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -736,7 +736,7 @@ export default function Home() {
                     >
                       <img
                         src={storeSettings.bottomBanner1Url}
-                        alt="Баннер 1"
+                        alt={t('banner1')}
                         className="w-full h-64 md:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
@@ -744,7 +744,7 @@ export default function Home() {
                   ) : (
                     <img
                       src={storeSettings.bottomBanner1Url}
-                      alt="Баннер 1"
+                      alt={t('banner1')}
                       className="w-full h-64 md:h-80 object-cover"
                     />
                   )}
@@ -763,7 +763,7 @@ export default function Home() {
                     >
                       <img
                         src={storeSettings.bottomBanner2Url}
-                        alt="Баннер 2"
+                        alt={t('banner2')}
                         className="w-full h-64 md:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
@@ -771,7 +771,7 @@ export default function Home() {
                   ) : (
                     <img
                       src={storeSettings.bottomBanner2Url}
-                      alt="Баннер 2"
+                      alt={t('banner2')}
                       className="w-full h-64 md:h-80 object-cover"
                     />
                   )}
