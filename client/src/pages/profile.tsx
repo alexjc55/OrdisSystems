@@ -412,31 +412,31 @@ export default function Profile() {
                     </div>
                     <div className="text-center">
                       <div className="text-sm font-medium">{user.firstName || user.username}</div>
-                      <div className="text-xs text-gray-500">Нажмите для изменения фото</div>
+                      <div className="text-xs text-gray-500">{t('profile.clickToChangePhoto')}</div>
                     </div>
                   </div>
 
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Имя и Фамилия</label>
+                      <label className="text-sm font-medium text-gray-700">{t('profile.fullName')}</label>
                       <div className="mt-1 flex items-center gap-2">
                         {isNameEditing ? (
                           <div className="space-y-3 w-full">
                             <div>
-                              <Label className="text-xs text-gray-600">Имя</Label>
+                              <Label className="text-xs text-gray-600">{t('profile.firstName')}</Label>
                               <Input
                                 type="text"
-                                placeholder="Введите имя"
+                                placeholder={t('profile.enterFirstName')}
                                 value={nameForm.firstName}
                                 onChange={(e) => setNameForm({ ...nameForm, firstName: e.target.value })}
                                 className="mt-1"
                               />
                             </div>
                             <div>
-                              <Label className="text-xs text-gray-600">Фамилия</Label>
+                              <Label className="text-xs text-gray-600">{t('profile.lastName')}</Label>
                               <Input
                                 type="text"
-                                placeholder="Введите фамилию"
+                                placeholder={t('profile.enterLastName')}
                                 value={nameForm.lastName}
                                 onChange={(e) => setNameForm({ ...nameForm, lastName: e.target.value })}
                                 className="mt-1"
@@ -449,7 +449,7 @@ export default function Profile() {
                                 disabled={updateNameMutation.isPending}
                                 className="bg-orange-500 hover:bg-orange-600 text-white"
                               >
-                                {updateNameMutation.isPending ? "Сохранение..." : "Сохранить"}
+                                {updateNameMutation.isPending ? t('status.saving') : t('actions.save')}
                               </Button>
                               <Button
                                 size="sm"

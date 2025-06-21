@@ -11,8 +11,23 @@
     "worker": "Работник",
     "customer": "Клиент"
   },
+  "address": {
+    "home": "Дом"
+  },
+  "checkout": {
+    "registrationAndOrderCompleted": "Регистрация завершена и заказ оформлен!",
+    "canNowPlaceOrder": "Теперь вы можете оформить заказ",
+    "orderPlaced": "Заказ оформлен!",
+    "orderError": "Ошибка при оформлении заказа",
+    "yourOrder": "Ваш заказ",
+    "orderAccepted": "Заказ №{{orderId}} принят. Теперь вы можете отслеживать статус в личном кабинете",
+    "orderAcceptedForProcessing": "Заказ №{{orderId}} принят в обработку"
+  },
   "navigation": {
     "home": "Главная",
+    "goShopping": "Перейти к покупкам",
+    "backToShopping": "Вернуться к покупкам",
+    "backToHome": "Вернуться на главную",
     "admin": "Админ-панель",
     "profile": "Профиль",
     "logout": "Выйти",

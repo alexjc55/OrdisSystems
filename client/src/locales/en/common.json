@@ -11,8 +11,23 @@
     "worker": "Worker",
     "customer": "Customer"
   },
+  "address": {
+    "home": "Home"
+  },
+  "checkout": {
+    "registrationAndOrderCompleted": "Registration completed and order placed!",
+    "canNowPlaceOrder": "You can now place an order",
+    "orderPlaced": "Order placed!",
+    "orderError": "Error placing order",
+    "yourOrder": "Your order",
+    "orderAccepted": "Order #{{orderId}} accepted. You can now track status in your profile",
+    "orderAcceptedForProcessing": "Order #{{orderId}} accepted for processing"
+  },
   "navigation": {
     "home": "Home",
+    "goShopping": "Go shopping",
+    "backToShopping": "Back to shopping",
+    "backToHome": "Back to home",
     "admin": "Admin Panel",
     "profile": "Profile",
     "logout": "Logout",

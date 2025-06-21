@@ -11,8 +11,23 @@
     "worker": "עובד",
     "customer": "לקוח"
   },
+  "address": {
+    "home": "בית"
+  },
+  "checkout": {
+    "registrationAndOrderCompleted": "הרשמה הושלמה וההזמנה בוצעה!",
+    "canNowPlaceOrder": "כעת תוכל לבצע הזמנה",
+    "orderPlaced": "ההזמנה בוצעה!",
+    "orderError": "שגיאה בביצוע ההזמנה",
+    "yourOrder": "ההזמנה שלך",
+    "orderAccepted": "הזמנה מס' {{orderId}} התקבלה. כעת תוכל לעקוב אחר הסטטוס בפרופיל האישי",
+    "orderAcceptedForProcessing": "הזמנה מס' {{orderId}} התקבלה לעיבוד"
+  },
   "navigation": {
     "home": "בית",
+    "goShopping": "עבור לקנייה",
+    "backToShopping": "חזרה לקנייה",
+    "backToHome": "חזרה לבית",
     "admin": "פאנל ניהול",
     "profile": "פרופיל",
     "logout": "יציאה",
