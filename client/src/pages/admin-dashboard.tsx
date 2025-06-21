@@ -3036,7 +3036,7 @@ export default function AdminDashboard() {
                             >
                               <h3 className="font-semibold text-sm mb-3 text-gray-800 flex items-center gap-2">
                                 <Truck className="h-4 w-4" />
-                                Доставлен ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
+                                {adminT('orders.statuses.delivered', 'Доставлен')} ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
                               </h3>
                               <div className="space-y-3 min-h-24">
                                 {ordersResponse.data.filter((order: any) => order.status === 'delivered').map((order: any) => (
@@ -3070,7 +3070,7 @@ export default function AdminDashboard() {
                             >
                               <h3 className="font-semibold text-sm mb-3 text-red-800 flex items-center gap-2">
                                 <X className="h-4 w-4" />
-                                Отменен ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
+                                {adminT('orders.statuses.cancelled', 'Отменен')} ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
                               </h3>
                               <div className="space-y-3 min-h-24">
                                 {ordersResponse.data.filter((order: any) => order.status === 'cancelled').map((order: any) => (
