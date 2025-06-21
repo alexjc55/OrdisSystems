@@ -113,7 +113,7 @@ export default function CartOverlay() {
         if (userAddresses.length === 0 && deliveryAddress.trim()) {
           promises.push(
             apiRequest("POST", "/api/addresses", {
-              label: "Адрес доставки",
+              label: t('cart.deliveryAddress'),
               address: deliveryAddress.trim(),
               isDefault: true
             }).catch(error => console.log("Failed to save address:", error))
@@ -144,19 +144,19 @@ export default function CartOverlay() {
     onSuccess: () => {
       const savedData = [];
       if (user && userAddresses.length === 0 && deliveryAddress.trim()) {
-        savedData.push("адрес доставки");
+        savedData.push(t('cart.deliveryAddress'));
       }
       if (user && !user.phone && customerPhone.trim()) {
-        savedData.push("телефон");
+        savedData.push(t('cart.phone'));
       }
       
-      let description = "Ваш заказ успешно оформлен и передан в обработку";
+      let description = t('cart.orderSuccess');
       if (savedData.length > 0) {
-        description += `. Ваш ${savedData.join(" и ")} сохранен в профиле для будущих заказов`;
+        description += `. ${t('cart.dataSaved')} ${savedData.join(` ${t('cart.and')} `)}`;
       }
       
       toast({
-        title: "Заказ создан",
+        title: t('cart.orderCreated'),
         description,
       });
       clearCart();
@@ -176,8 +176,8 @@ export default function CartOverlay() {
         return;
       }
       toast({
-        title: "Ошибка при создании заказа",
-        description: "Не удалось создать заказ. Попробуйте еще раз.",
+        title: t('cart.orderError'),
+        description: t('cart.orderErrorDescription'),
         variant: "destructive",
       });
     },
@@ -186,8 +186,8 @@ export default function CartOverlay() {
   const handleCheckout = () => {
     if (items.length === 0) {
       toast({
-        title: "Корзина пуста",
-        description: "Добавьте товары в корзину перед оформлением заказа",
+        title: t('cart.emptyCart'),
+        description: t('cart.emptyCartDescription'),
         variant: "destructive",
       });
       return;
