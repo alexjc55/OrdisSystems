@@ -462,7 +462,7 @@ export default function Profile() {
                                   });
                                 }}
                               >
-                                Отмена
+                                {t('actions.cancel')}
                               </Button>
                             </div>
                           </div>
@@ -471,7 +471,7 @@ export default function Profile() {
                             <div className="text-sm text-gray-900 flex-1">
                               {user.firstName || user.lastName 
                                 ? `${user.firstName || ''} ${user.lastName || ''}`.trim()
-                                : 'Не указано'
+                                : t('profile.notSpecified')
                               }
                             </div>
                             <Button
@@ -493,12 +493,12 @@ export default function Profile() {
                       <div className="mt-1 text-sm text-gray-900">{user.email}</div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Телефон</label>
+                      <label className="text-sm font-medium text-gray-700">{t('profile.phone')}</label>
                       <div className="mt-1">
                         {isPhoneEditing ? (
                           <div className="space-y-3">
                             <div>
-                              <Label className="text-xs text-gray-600">Номер телефона</Label>
+                              <Label className="text-xs text-gray-600">{t('profile.phoneNumber')}</Label>
                               <Input
                                 type="tel"
                                 placeholder="+972-XX-XXX-XXXX"
@@ -514,7 +514,7 @@ export default function Profile() {
                                 disabled={updatePhoneMutation.isPending}
                                 className="bg-orange-500 hover:bg-orange-600 text-white"
                               >
-                                {updatePhoneMutation.isPending ? "Сохранение..." : "Сохранить"}
+                                {updatePhoneMutation.isPending ? t('status.saving') : t('actions.save')}
                               </Button>
                               <Button
                                 size="sm"
@@ -524,14 +524,14 @@ export default function Profile() {
                                   setPhoneForm({ phone: user?.phone || "" });
                                 }}
                               >
-                                Отмена
+                                {t('actions.cancel')}
                               </Button>
                             </div>
                           </div>
                         ) : (
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-gray-900 flex-1">
-                              {user.phone || 'Не указан'}
+                              {user.phone || t('profile.notSpecified')}
                             </span>
                             <Button
                               size="sm"
