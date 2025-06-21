@@ -1407,14 +1407,14 @@ function ItemDiscountDialog({
               }}
               className="text-red-600 hover:text-red-800"
             >
-              Убрать скидку
+              {adminT('orders.removeDiscount')}
             </Button>
           )}
           <Button 
             onClick={handleApply}
             className="bg-green-600 hover:bg-green-700"
           >
-            Применить
+            {adminT('actions.apply')}
           </Button>
         </div>
       </div>

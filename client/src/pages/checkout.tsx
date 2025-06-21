@@ -203,7 +203,7 @@ export default function Checkout() {
     if (deliveryDate === today) {
       return {
         valid: false,
-        message: `Товары "${futureProducts.map(item => item.product.name).join(', ')}" в вашем заказе доступны только для заказа на другой день. Либо удалите их из заказа, либо выберите другую дату доставки.`
+        message: `${t('checkout.futureOrderError', 'Товары "{{products}}" в вашем заказе доступны только для заказа на другой день. Либо удалите их из заказа, либо выберите другую дату доставки.', { products: futureProducts.map(item => item.product.name).join(', ') })}`
       };
     }
     

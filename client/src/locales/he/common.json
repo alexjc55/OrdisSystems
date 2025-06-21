@@ -240,5 +240,18 @@
     "subtotal": "סכום ביניים",
     "orderDiscount": "הנחת הזמנה",
     "orderComments": "הערות להזמנה"
+  },
+  "validation": {
+    "firstNameMinLength": "שם פרטי חייב להכיל לפחות 2 תווים",
+    "lastNameMinLength": "שם משפחה חייב להכיל לפחות 2 תווים",
+    "emailInvalid": "הזן כתובת אימייל תקינה",
+    "phoneMinLength": "הזן מספר טלפון תקין",
+    "addressMinLength": "הזן כתובת משלוח מלאה",
+    "passwordMinLength": "סיסמה חייבת להכיל לפחות 6 תווים",
+    "passwordMismatch": "הסיסמאות אינן תואמות",
+    "passwordRequired": "הזן סיסמה",
+    "deliveryDateRequired": "בחר תאריך משלוח",
+    "deliveryTimeRequired": "בחר זמן משלוח",
+    "paymentMethodRequired": "בחר אמצעי תשלום"
   }
 }
