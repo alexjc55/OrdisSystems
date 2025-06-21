@@ -11,6 +11,10 @@
     "worker": "Работник",
     "customer": "Клиент"
   },
+  "firstName": "Имя",
+  "lastName": "Фамилия",
+  "enterFirstName": "Введите имя",
+  "enterLastName": "Введите фамилию",
   "address": {
     "home": "Дом"
   },

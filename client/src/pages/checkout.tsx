@@ -631,7 +631,7 @@ export default function Checkout() {
                 }}>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="phone">Номер телефона *</Label>
+                      <Label htmlFor="phone">{t('checkout.customerPhone')} *</Label>
                       <Input
                         id="phone"
                         name="phone"
@@ -643,7 +643,7 @@ export default function Checkout() {
                     </div>
                     
                     <div>
-                      <Label htmlFor="address">Адрес доставки *</Label>
+                      <Label htmlFor="address">{t('checkout.deliveryAddress')} *</Label>
                       <Input
                         id="address"
                         name="address"
@@ -824,22 +824,22 @@ export default function Checkout() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="firstName">Имя</Label>
+                          <Label htmlFor="firstName">{t('common.firstName')}</Label>
                           <Input
                             id="firstName"
                             {...registerForm.register("firstName")}
-                            placeholder="Введите имя"
+                            placeholder={t('common.enterFirstName')}
                           />
                           {registerForm.formState.errors.firstName && (
                             <p className="text-sm text-red-600">{registerForm.formState.errors.firstName.message}</p>
                           )}
                         </div>
                         <div>
-                          <Label htmlFor="lastName">Фамилия</Label>
+                          <Label htmlFor="lastName">{t('common.lastName')}</Label>
                           <Input
                             id="lastName"
                             {...registerForm.register("lastName")}
-                            placeholder="Введите фамилию"
+                            placeholder={t('common.enterLastName')}
                           />
                           {registerForm.formState.errors.lastName && (
                             <p className="text-sm text-red-600">{registerForm.formState.errors.lastName.message}</p>
