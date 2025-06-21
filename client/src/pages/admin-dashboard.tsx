@@ -2235,230 +2235,114 @@ export default function AdminDashboard() {
                     <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
-                          <TableRow className={isRTL ? 'flex flex-row-reverse' : ''}>
-                            {!isRTL ? (
-                              <>
-                                <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left">
-                                  <button 
-                                    onClick={() => handleSort("name")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
-                                  >
-                                    {adminT('products.productName')}
-                                    {sortField === "name" && (
-                                      sortDirection === "asc" ? 
-                                        <ChevronUp className="h-3 w-3" /> : 
-                                        <ChevronDown className="h-3 w-3" />
-                                    )}
-                                  </button>
-                                </TableHead>
-                                <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left">
-                                  <button 
-                                    onClick={() => handleSort("category")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
-                                  >
-                                    {adminT('products.productCategory')}
-                                    {sortField === "category" && (
-                                      sortDirection === "asc" ? 
-                                        <ChevronUp className="h-3 w-3" /> : 
-                                        <ChevronDown className="h-3 w-3" />
-                                    )}
-                                  </button>
-                                </TableHead>
-                                <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left">
-                                  <button 
-                                    onClick={() => handleSort("price")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
-                                  >
-                                    {adminT('products.productPrice')}
-                                    {sortField === "price" && (
-                                      sortDirection === "asc" ? 
-                                        <ChevronUp className="h-3 w-3" /> : 
-                                        <ChevronDown className="h-3 w-3" />
-                                    )}
-                                  </button>
-                                </TableHead>
-                                <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left">{adminT('products.productStatus')}</TableHead>
-                              </>
-                            ) : (
-                              <>
-                                <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-right">{adminT('products.productStatus')}</TableHead>
-                                <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-right">
-                                  <button 
-                                    onClick={() => handleSort("price")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
-                                  >
-                                    {adminT('products.productPrice')}
-                                    {sortField === "price" && (
-                                      sortDirection === "asc" ? 
-                                        <ChevronUp className="h-3 w-3" /> : 
-                                        <ChevronDown className="h-3 w-3" />
-                                    )}
-                                  </button>
-                                </TableHead>
-                                <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-right">
-                                  <button 
-                                    onClick={() => handleSort("category")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
-                                  >
-                                    {adminT('products.productCategory')}
-                                    {sortField === "category" && (
-                                      sortDirection === "asc" ? 
-                                        <ChevronUp className="h-3 w-3" /> : 
-                                        <ChevronDown className="h-3 w-3" />
-                                    )}
-                                  </button>
-                                </TableHead>
-                                <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-right">
-                                  <button 
-                                    onClick={() => handleSort("name")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
-                                  >
-                                    {adminT('products.productName')}
-                                    {sortField === "name" && (
-                                      sortDirection === "asc" ? 
-                                        <ChevronUp className="h-3 w-3" /> : 
-                                        <ChevronDown className="h-3 w-3" />
-                                    )}
-                                  </button>
-                                </TableHead>
-                              </>
-                            )}
+                          <TableRow>
+                            <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                              <button 
+                                onClick={() => handleSort("name")}
+                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
+                              >
+                                {adminT('products.productName')}
+                                {sortField === "name" && (
+                                  sortDirection === "asc" ? 
+                                    <ChevronUp className="h-3 w-3" /> : 
+                                    <ChevronDown className="h-3 w-3" />
+                                )}
+                              </button>
+                            </TableHead>
+                            <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                              <button 
+                                onClick={() => handleSort("category")}
+                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
+                              >
+                                {adminT('products.productCategory')}
+                                {sortField === "category" && (
+                                  sortDirection === "asc" ? 
+                                    <ChevronUp className="h-3 w-3" /> : 
+                                    <ChevronDown className="h-3 w-3" />
+                                )}
+                              </button>
+                            </TableHead>
+                            <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                              <button 
+                                onClick={() => handleSort("price")}
+                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
+                              >
+                                {adminT('products.productPrice')}
+                                {sortField === "price" && (
+                                  sortDirection === "asc" ? 
+                                    <ChevronUp className="h-3 w-3" /> : 
+                                    <ChevronDown className="h-3 w-3" />
+                                )}
+                              </button>
+                            </TableHead>
+                            <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('products.productStatus')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {filteredProducts.map((product: any) => (
-                            <TableRow key={product.id} className={isRTL ? 'flex flex-row-reverse' : ''}>
-                              {!isRTL ? (
-                                <>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
-                                    <button
-                                      onClick={() => {
-                                        setEditingProduct(product);
-                                        setIsProductFormOpen(true);
-                                      }}
-                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-left"
-                                    >
-                                      {product.name}
-                                    </button>
-                                  </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
-                                    <Badge variant="outline" className="text-xs">
-                                      {product.category?.name}
-                                    </Badge>
-                                  </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
-                                    <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
-                                      {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
-                                        <div className="space-y-1">
-                                          <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                          <div className="font-semibold text-gray-900">
-                                            {formatCurrency(
-                                              product.discountType === "percentage"
-                                                ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
-                                                : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
-                                            )}
-                                          </div>
-                                          <div className="text-orange-600 text-xs font-medium">
-                                            -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
-                                          </div>
-                                        </div>
-                                      ) : (
-                                        <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                      )}
-                                      <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
+                            <TableRow key={product.id}>
+                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                                <button
+                                  onClick={() => {
+                                    setEditingProduct(product);
+                                    setIsProductFormOpen(true);
+                                  }}
+                                  className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer ${isRTL ? 'text-right' : 'text-left'}`}
+                                >
+                                  {product.name}
+                                </button>
+                              </TableCell>
+                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                                <Badge variant="outline" className="text-xs">
+                                  {product.category?.name}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                                <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
+                                  {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
+                                    <div className="space-y-1">
+                                      <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                      <div className="font-semibold text-gray-900">
+                                        {formatCurrency(
+                                          product.discountType === "percentage"
+                                            ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
+                                            : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
+                                        )}
+                                      </div>
+                                      <div className="text-orange-600 text-xs font-medium">
+                                        -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
+                                      </div>
                                     </div>
-                                  </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
-                                    <div className="flex flex-col gap-1 items-start">
-                                      <CustomSwitch
-                                        checked={product.isAvailable && (product.availabilityStatus === "available")}
-                                        onChange={(checked) => {
-                                          if (!checked) {
-                                            setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
-                                            setIsAvailabilityDialogOpen(true);
-                                          } else {
-                                            updateAvailabilityStatusMutation.mutate({
-                                              id: product.id,
-                                              availabilityStatus: "available"
-                                            });
-                                          }
-                                        }}
-                                        bgColor="bg-green-500"
-                                      />
-                                      {product.availabilityStatus === "out_of_stock_today" && (
-                                        <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
-                                          предзаказ
-                                        </div>
-                                      )}
+                                  ) : (
+                                    <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                  )}
+                                  <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
+                                </div>
+                              </TableCell>
+                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                                <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
+                                  <CustomSwitch
+                                    checked={product.isAvailable && (product.availabilityStatus === "available")}
+                                    onChange={(checked) => {
+                                      if (!checked) {
+                                        setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
+                                        setIsAvailabilityDialogOpen(true);
+                                      } else {
+                                        updateAvailabilityStatusMutation.mutate({
+                                          id: product.id,
+                                          availabilityStatus: "available"
+                                        });
+                                      }
+                                    }}
+                                    bgColor="bg-green-500"
+                                  />
+                                  {product.availabilityStatus === "out_of_stock_today" && (
+                                    <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
+                                      предзаказ
                                     </div>
-                                  </TableCell>
-                                </>
-                              ) : (
-                                <>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
-                                    <div className="flex flex-col gap-1 items-end">
-                                      <CustomSwitch
-                                        checked={product.isAvailable && (product.availabilityStatus === "available")}
-                                        onChange={(checked) => {
-                                          if (!checked) {
-                                            setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
-                                            setIsAvailabilityDialogOpen(true);
-                                          } else {
-                                            updateAvailabilityStatusMutation.mutate({
-                                              id: product.id,
-                                              availabilityStatus: "available"
-                                            });
-                                          }
-                                        }}
-                                        bgColor="bg-green-500"
-                                      />
-                                      {product.availabilityStatus === "out_of_stock_today" && (
-                                        <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
-                                          предзаказ
-                                        </div>
-                                      )}
-                                    </div>
-                                  </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
-                                    <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
-                                      {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
-                                        <div className="space-y-1">
-                                          <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                          <div className="font-semibold text-gray-900">
-                                            {formatCurrency(
-                                              product.discountType === "percentage"
-                                                ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
-                                                : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
-                                            )}
-                                          </div>
-                                          <div className="text-orange-600 text-xs font-medium">
-                                            -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
-                                          </div>
-                                        </div>
-                                      ) : (
-                                        <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                      )}
-                                      <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
-                                    </div>
-                                  </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
-                                    <Badge variant="outline" className="text-xs">
-                                      {product.category?.name}
-                                    </Badge>
-                                  </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
-                                    <button
-                                      onClick={() => {
-                                        setEditingProduct(product);
-                                        setIsProductFormOpen(true);
-                                      }}
-                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-right"
-                                    >
-                                      {product.name}
-                                    </button>
-                                  </TableCell>
-                                </>
-                              )}
+                                  )}
+                                </div>
+                              </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
@@ -2745,26 +2629,13 @@ export default function AdminDashboard() {
                         <div className="w-full">
                           <Table className="rtl:text-right">
                             <TableHeader>
-                              <TableRow className={isRTL ? 'flex flex-row-reverse' : ''}>
-                                {!isRTL ? (
-                                  <>
-                                    <TableHead className="text-xs sm:text-sm w-12 text-left">№</TableHead>
-                                    <TableHead className="text-xs sm:text-sm text-left">{adminT('orders.customer', 'Клиент')}</TableHead>
-                                    <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-24 text-left">{adminT('orders.status', 'Статус')}</TableHead>
-                                    <TableHead className="text-xs sm:text-sm w-20 text-left">{adminT('orders.total', 'Сумма')}</TableHead>
-                                    <TableHead className="text-xs sm:text-sm hidden md:table-cell w-32 text-left">{adminT('orders.date', 'Дата и время')}</TableHead>
-                                    <TableHead className="text-xs sm:text-sm w-12 text-left">{adminT('orders.actions', 'Действия')}</TableHead>
-                                  </>
-                                ) : (
-                                  <>
-                                    <TableHead className="text-xs sm:text-sm w-12 text-right">{adminT('orders.actions', 'Действия')}</TableHead>
-                                    <TableHead className="text-xs sm:text-sm hidden md:table-cell w-32 text-right">{adminT('orders.date', 'Дата и время')}</TableHead>
-                                    <TableHead className="text-xs sm:text-sm w-20 text-right">{adminT('orders.total', 'Сумма')}</TableHead>
-                                    <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-24 text-right">{adminT('orders.status', 'Статус')}</TableHead>
-                                    <TableHead className="text-xs sm:text-sm text-right">{adminT('orders.customer', 'Клиент')}</TableHead>
-                                    <TableHead className="text-xs sm:text-sm w-12 text-right">№</TableHead>
-                                  </>
-                                )}
+                              <TableRow>
+                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>№</TableHead>
+                                <TableHead className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.customer', 'Клиент')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm hidden sm:table-cell w-24 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.status', 'Статус')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm w-20 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.total', 'Сумма')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm hidden md:table-cell w-32 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.date', 'Дата и время')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.actions', 'Действия')}</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
