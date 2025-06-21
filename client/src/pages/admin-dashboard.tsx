@@ -265,7 +265,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                     className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
                   >
                     <Phone className="h-4 w-4 mr-2" />
-                    Позвонить
+                    {adminT('orders.call')}
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={() => {
@@ -326,7 +326,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                       </span>
                     </div>
                     <div className="text-xs text-red-600 font-medium">
-                      Скидка применена
+                      {adminT('orders.discountApplied')}
                     </div>
                   </div>
                 );
@@ -380,7 +380,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
               }}
             >
               <Eye className="h-3 w-3 mr-1" />
-              Детали
+              {adminT('orders.orderDetails')}
             </Button>
             <Select
               value={order.status}

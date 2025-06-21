@@ -104,6 +104,8 @@
       "delivered": "נמסר",
       "cancelled": "מבוטל"
     },
+    "discountApplied": "הנחה הוחלה",
+    "call": "התקשר",
     "activeOrders": "הזמנות פעילות",
     "orderDetails": "פרטי הזמנה",
     "orderNumber": "מספר הזמנה",

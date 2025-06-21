@@ -121,6 +121,8 @@
       "delivered": "Доставлен",
       "cancelled": "Отменен"
     },
+    "discountApplied": "Скидка применена",
+    "call": "Позвонить",
     "activeOrders": "Активные заказы",
     "orderDetails": "Детали заказа",
     "orderNumber": "Номер заказа",

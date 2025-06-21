@@ -96,6 +96,16 @@
     "title": "Orders",
     "description": "Customer order management",
     "filterOrders": "Filter Orders",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "discountApplied": "Discount applied",
+    "call": "Call",
     "activeOrders": "Active Orders",
     "orderDetails": "Order Details",
     "orderNumber": "Order Number",
