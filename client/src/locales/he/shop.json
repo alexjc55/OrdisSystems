@@ -184,6 +184,11 @@
   "enterDeliveryAddress": "הכנס כתובת משלוח... (חובה)",
   "enterPhoneNumber": "+972-XX-XXX-XXXX (חובה)",
   "categories": "קטגוריות",
+  "cart.items": "פריטים",
+  "cart.delivery": "משלוח",
+  "cart.freeDeliveryFrom": "משלוח חינם מ-",
+  "cart.total": "סה״כ",
+  "cart.checkout": "לתשלום",
   "whatsapp": {
     "defaultMessage": "שלום! אני רוצה לדעת יותר על המוצרים שלכם.",
     "writeMessage": "כתוב הודעה בוואטסאפ"
