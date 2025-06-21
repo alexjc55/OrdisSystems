@@ -214,6 +214,11 @@
     "items": "Items",
     "amount": "Amount",
     "more": "more...",
-    "details": "Details"
+    "details": "Details",
+    "noOrders": "No orders",
+    "noOrdersYet": "You haven't made any orders yet",
+    "startShopping": "Start Shopping",
+    "orderDetails": "Order Details",
+    "orderFullInfo": "Complete order information from"
   }
 }

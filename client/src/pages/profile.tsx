@@ -882,7 +882,7 @@ export default function Profile() {
                       className="bg-orange-500 hover:bg-orange-600 text-white"
                       style={{ backgroundColor: 'hsl(16, 100%, 60%)' }}
                     >
-                      Начать покупки
+                      {t('profile.startShopping')}
                     </Button>
                   </div>
                 )}
@@ -895,9 +895,9 @@ export default function Profile() {
         <Dialog open={isOrderDetailsOpen} onOpenChange={setIsOrderDetailsOpen}>
           <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Детали заказа #{selectedOrder?.id}</DialogTitle>
+              <DialogTitle>{t('profile.orderDetails')} #{selectedOrder?.id}</DialogTitle>
               <DialogDescription>
-                Полная информация о заказе от {selectedOrder?.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString('ru-RU', {
+                {t('profile.orderFullInfo')} {selectedOrder?.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString('ru-RU', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
@@ -913,52 +913,52 @@ export default function Profile() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Card>
                     <CardHeader className="pb-3">
-                      <CardTitle className="text-sm">Информация о заказе</CardTitle>
+                      <CardTitle className="text-sm">{t('profile.orderInformation')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Статус:</span>
+                        <span className="text-sm text-gray-600">{t('profile.status')}:</span>
                         {getStatusBadge(selectedOrder.status)}
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Дата создания:</span>
+                        <span className="text-sm text-gray-600">{t('profile.createdDate')}:</span>
                         <span className="text-sm">{selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString('ru-RU') : '—'}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Способ оплаты:</span>
-                        <span className="text-sm">{selectedOrder.paymentMethod === 'cash' ? 'Наличные' : 'Карта'}</span>
+                        <span className="text-sm text-gray-600">{t('profile.paymentMethod')}:</span>
+                        <span className="text-sm">{selectedOrder.paymentMethod === 'cash' ? t('profile.cash') : t('profile.card')}</span>
                       </div>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader className="pb-3">
-                      <CardTitle className="text-sm">Доставка</CardTitle>
+                      <CardTitle className="text-sm">{t('profile.delivery')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Телефон:</span>
+                        <span className="text-sm text-gray-600">{t('profile.phone')}:</span>
                         <span className="text-sm">{selectedOrder.customerPhone}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Адрес:</span>
+                        <span className="text-sm text-gray-600">{t('profile.address')}:</span>
                         <span className="text-sm max-w-48 text-right">{selectedOrder.deliveryAddress}</span>
                       </div>
                       {selectedOrder.deliveryDate && (
                         <div className="flex justify-between">
-                          <span className="text-sm text-gray-600">Дата доставки:</span>
+                          <span className="text-sm text-gray-600">{t('profile.deliveryDate')}:</span>
                           <span className="text-sm">{new Date(selectedOrder.deliveryDate).toLocaleDateString('ru-RU')}</span>
                         </div>
                       )}
                       {selectedOrder.deliveryTime && (
                         <div className="flex justify-between">
-                          <span className="text-sm text-gray-600">Время доставки:</span>
+                          <span className="text-sm text-gray-600">{t('profile.deliveryTime')}:</span>
                           <span className="text-sm">{formatDeliveryTimeRange(selectedOrder.deliveryTime)}</span>
                         </div>
                       )}
                       {selectedOrder.paymentMethod && (
                         <div className="flex justify-between">
-                          <span className="text-sm text-gray-600">Способ оплаты:</span>
+                          <span className="text-sm text-gray-600">{t('profile.paymentMethod')}:</span>
                           <span className="text-sm">{selectedOrder.paymentMethod}</span>
                         </div>
                       )}

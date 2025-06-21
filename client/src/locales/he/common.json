@@ -214,6 +214,11 @@
     "items": "פריטים",
     "amount": "סכום",
     "more": "עוד...",
-    "details": "פרטים"
+    "details": "פרטים",
+    "noOrders": "אין הזמנות",
+    "noOrdersYet": "עדיין לא ביצעת הזמנות",
+    "startShopping": "התחל לקנות",
+    "orderDetails": "פרטי הזמנה",
+    "orderFullInfo": "מידע מלא על ההזמנה מ"
   }
 }

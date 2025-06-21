@@ -221,7 +221,12 @@
     "items": "Товары",
     "amount": "Сумма",
     "more": "еще...",
-    "details": "Подробнее"
+    "details": "Подробнее",
+    "noOrders": "Нет заказов",
+    "noOrdersYet": "Вы еще не делали заказов",
+    "startShopping": "Начать покупки",
+    "orderDetails": "Детали заказа",
+    "orderFullInfo": "Полная информация о заказе от"
   },
   "footer": {
     "poweredBy": "Powered by Ordis.",
