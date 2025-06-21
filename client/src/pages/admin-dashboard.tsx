@@ -2629,7 +2629,7 @@ export default function AdminDashboard() {
                         <div className="w-full">
                           <Table className="rtl:text-right">
                             <TableHeader>
-                              <TableRow>
+                              <TableRow style={isRTL ? { direction: 'rtl' } : {}}>
                                 <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>№</TableHead>
                                 <TableHead className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.customer', 'Клиент')}</TableHead>
                                 <TableHead className={`text-xs sm:text-sm hidden sm:table-cell w-24 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.status', 'Статус')}</TableHead>
@@ -2640,7 +2640,7 @@ export default function AdminDashboard() {
                             </TableHeader>
                             <TableBody>
                               {ordersResponse.data.map((order: any) => (
-                                <TableRow key={order.id} className="hover:bg-gray-50">
+                                <TableRow key={order.id} className="hover:bg-gray-50" style={isRTL ? { direction: 'rtl' } : {}}>
                                   <TableCell className={`font-bold text-xs sm:text-sm text-orange-600 ${isRTL ? 'text-right' : 'text-left'}`}>#{order.id}</TableCell>
                                   <TableCell className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                     <div className="space-y-1">
