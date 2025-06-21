@@ -233,6 +233,8 @@
   },
   "settings": {
     "showSpecialOffers": "Show special offers",
-    "specialOffersDescription": "Section for discounted products"
+    "specialOffersDescription": "Section for discounted products",
+    "showCategoryMenu": "Show category menu",
+    "categoryMenuDescription": "Bottom fixed category menu on mobile devices"
   }
 }

@@ -231,7 +231,9 @@
   },
   "settings": {
     "showSpecialOffers": "הצג הצעות מיוחדות",
-    "specialOffersDescription": "מקטע מוצרים במבצע"
+    "specialOffersDescription": "מקטע מוצרים במבצע",
+    "showCategoryMenu": "הצג תפריט קטגוריות",
+    "categoryMenuDescription": "תפריט קטגוריות קבוע בתחתית במכשירים ניידים"
   },
   "notifications": {
     "success": {

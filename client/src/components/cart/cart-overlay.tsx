@@ -586,7 +586,7 @@ export default function CartOverlay() {
                   {/* Address Selection for logged-in users */}
                   {user && (userAddresses as UserAddress[]).length > 0 && (
                     <div className="space-y-2">
-                      <label className="text-xs text-gray-600">Выберите сохраненный адрес:</label>
+                      <label className="text-xs text-gray-600">{t('cart.selectSavedAddress')}:</label>
                       <Select
                         value={selectedAddressId?.toString() || ""}
                         onValueChange={(value) => {
@@ -604,10 +604,10 @@ export default function CartOverlay() {
                         <SelectContent>
                           {(userAddresses as UserAddress[]).map((addr) => (
                             <SelectItem key={addr.id} value={addr.id.toString()}>
-                              {addr.label}{addr.isDefault ? " (по умолчанию)" : ""}: {addr.address.substring(0, 50)}...
+                              {addr.label}{addr.isDefault ? ` (${t('cart.default')})` : ""}: {addr.address.substring(0, 50)}...
                             </SelectItem>
                           ))}
-                          <SelectItem value="new">+ Новый адрес</SelectItem>
+                          <SelectItem value="new">+ {t('cart.newAddress')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -628,7 +628,7 @@ export default function CartOverlay() {
                 {/* Customer Phone */}
                 <div className="space-y-3">
                   <label className="text-sm font-medium text-gray-700">
-                    Номер телефона *
+                    {t('cart.phoneNumber')} *
                   </label>
                   <Input
                     type="tel"
@@ -682,12 +682,12 @@ export default function CartOverlay() {
                 {createOrderMutation.isPending ? (
                   <div className="flex items-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Оформление...
+                    {t('cart.processing')}
                   </div>
                 ) : (
                   <>
                     <CreditCard className="mr-2 h-4 w-4" />
-                    Оформить заказ
+                    {t('cart.checkout')}
                   </>
                 )}
               </Button>
