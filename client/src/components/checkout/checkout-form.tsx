@@ -281,23 +281,23 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
             
             {storeSettings && (
               <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
-                <strong>Ограничения по времени:</strong>
+                <strong>{t('checkout.timeConstraints')}:</strong>
                 <ul className="mt-1 space-y-1">
-                  <li>• Минимальное время подготовки: {storeSettings.minDeliveryTimeHours} часа</li>
-                  <li>• Максимальный период заказа: {storeSettings.maxDeliveryTimeDays} дня</li>
+                  <li>• {t('checkout.minPrepTime')}: {storeSettings.minDeliveryTimeHours} {t('checkout.hours')}</li>
+                  <li>• {t('checkout.maxOrderPeriod')}: {storeSettings.maxDeliveryTimeDays} {t('checkout.days')}</li>
                 </ul>
               </div>
             )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="deliveryDate">Дата доставки</Label>
+                <Label htmlFor="deliveryDate">{t('checkout.deliveryDate')}</Label>
                 <Select 
                   value={formData.requestedDeliveryDate} 
                   onValueChange={(value) => setFormData({ ...formData, requestedDeliveryDate: value, requestedDeliveryTime: "" })}
                 >
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Выберите дату" />
+                    <SelectValue placeholder={t('selectTime')} />
                   </SelectTrigger>
                   <SelectContent>
                     {availableDates.map((date) => (
@@ -314,14 +314,14 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
               </div>
 
               <div>
-                <Label htmlFor="deliveryTime">Время доставки</Label>
+                <Label htmlFor="deliveryTime">{t('checkout.deliveryTimeLabel')}</Label>
                 <Select 
                   value={formData.requestedDeliveryTime} 
                   onValueChange={(value) => setFormData({ ...formData, requestedDeliveryTime: value })}
                   disabled={!formData.requestedDeliveryDate}
                 >
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Выберите время" />
+                    <SelectValue placeholder={t('selectTime')} />
                   </SelectTrigger>
                   <SelectContent>
                     {availableTimeSlots.map((slot) => (
@@ -339,7 +339,7 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
           <div className="space-y-4">
             <h3 className="font-semibold flex items-center gap-2">
               <CreditCard className="h-4 w-4" />
-              Способ оплаты
+              {t('checkout.paymentMethod')}
             </h3>
             
             <Select 
@@ -350,9 +350,9 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="cash">Наличными при получении</SelectItem>
-                <SelectItem value="card">Картой при получении</SelectItem>
-                <SelectItem value="transfer">Банковский перевод</SelectItem>
+                <SelectItem value="cash">{t('checkout.cashOnDelivery')}</SelectItem>
+                <SelectItem value="card">{t('checkout.cardOnDelivery')}</SelectItem>
+                <SelectItem value="transfer">{t('checkout.bankTransfer')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
