@@ -179,6 +179,21 @@
     "phone": "Phone",
     "phoneNumber": "Phone Number",
     "registrationDate": "Registration Date",
-    "quickActions": "Quick Actions"
+    "quickActions": "Quick Actions",
+    "accountSecurity": "Account Security",
+    "passwordSecurityManagement": "Password and security settings management",
+    "passwordSet": "Password is set. Last change unknown.",
+    "passwordNotSet": "Password not set. It is recommended to set a password for additional security.",
+    "setPassword": "Set Password",
+    "emailAddress": "Email Address",
+    "emailUsageDescription": "Used for system login and password recovery",
+    "securityTips": "Security Tips",
+    "securityTip1": "Use a unique password of at least 6 characters",
+    "securityTip2": "Do not share your password with third parties",
+    "securityTip3": "Update your password regularly",
+    "securityTip4": "If you suspect compromise, change your password immediately",
+    "addressManagement": "Address Management",
+    "manageDeliveryAddresses": "Add and manage delivery addresses",
+    "addAddress": "Add Address"
   }
 }

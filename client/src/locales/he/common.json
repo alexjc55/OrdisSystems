@@ -179,6 +179,21 @@
     "phone": "טלפון",
     "phoneNumber": "מספר טלפון",
     "registrationDate": "תאריך הרשמה",
-    "quickActions": "פעולות מהירות"
+    "quickActions": "פעולות מהירות",
+    "accountSecurity": "אבטחת חשבון",
+    "passwordSecurityManagement": "ניהול סיסמה והגדרות אבטחה",
+    "passwordSet": "סיסמה מוגדרת. שינוי אחרון לא ידוע.",
+    "passwordNotSet": "סיסמה לא מוגדרת. מומלץ להגדיר סיסמה לאבטחה נוספת.",
+    "setPassword": "הגדר סיסמה",
+    "emailAddress": "כתובת אימייל",
+    "emailUsageDescription": "משמש לכניסה למערכת ושחזור סיסמה",
+    "securityTips": "טיפים לאבטחה",
+    "securityTip1": "השתמש בסיסמה ייחודית באורך של לפחות 6 תווים",
+    "securityTip2": "אל תשתף את הסיסמה שלך עם גורמים שלישיים",
+    "securityTip3": "עדכן את הסיסמה שלך באופן קבוע",
+    "securityTip4": "אם יש חשד לפגיעה, שנה את הסיסמה מיד",
+    "addressManagement": "ניהול כתובות",
+    "manageDeliveryAddresses": "הוסף ונהל כתובות משלוח",
+    "addAddress": "הוסף כתובת"
   }
 }

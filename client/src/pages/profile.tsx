@@ -669,27 +669,27 @@ export default function Profile() {
                     <DialogContent className="sm:max-w-[500px]">
                       <DialogHeader>
                         <DialogTitle>
-                          {editingAddress ? "Редактировать адрес" : "Добавить новый адрес"}
+                          {editingAddress ? t('profile.editAddress') : t('profile.addNewAddress')}
                         </DialogTitle>
                         <DialogDescription>
-                          Введите информацию об адресе доставки
+                          {t('profile.enterAddressInfo')}
                         </DialogDescription>
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
-                          <Label htmlFor="label">Название адреса</Label>
+                          <Label htmlFor="label">{t('profile.addressLabel')}</Label>
                           <Input
                             id="label"
-                            placeholder="Дом, Работа, Офис..."
+                            placeholder={t('profile.addressPlaceholder')}
                             value={addressForm.label}
                             onChange={(e) => setAddressForm({ ...addressForm, label: e.target.value })}
                           />
                         </div>
                         <div className="grid gap-2">
-                          <Label htmlFor="address">Полный адрес</Label>
+                          <Label htmlFor="address">{t('profile.fullAddress')}</Label>
                           <Textarea
                             id="address"
-                            placeholder="Улица, дом, квартира, этаж..."
+                            placeholder={t('profile.fullAddressPlaceholder')}
                             value={addressForm.address}
                             onChange={(e) => setAddressForm({ ...addressForm, address: e.target.value })}
                             className="min-h-[80px]"
@@ -702,19 +702,19 @@ export default function Profile() {
                             onCheckedChange={(checked) => setAddressForm({ ...addressForm, isDefault: checked })}
                             className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-300"
                           />
-                          <Label htmlFor="default">Сделать адресом по умолчанию</Label>
+                          <Label htmlFor="default">{t('profile.makeDefaultAddress')}</Label>
                         </div>
                       </div>
                       <DialogFooter>
                         <Button variant="outline" onClick={() => setIsAddressDialogOpen(false)}>
-                          Отмена
+                          {t('actions.cancel')}
                         </Button>
                         <Button 
                           onClick={handleSaveAddress}
                           disabled={!addressForm.label.trim() || !addressForm.address.trim()}
                           className="bg-orange-500 hover:bg-orange-600 text-white"
                         >
-                          {editingAddress ? "Сохранить" : "Добавить"}
+                          {editingAddress ? t('actions.save') : t('actions.add')}
                         </Button>
                       </DialogFooter>
                     </DialogContent>
