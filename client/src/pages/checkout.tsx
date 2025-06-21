@@ -594,7 +594,7 @@ export default function Checkout() {
                     </div>
                     {deliveryFeeAmount > 0 && (
                       <div className="text-xs text-gray-500 text-center">
-                        Бесплатная доставка от {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                        {tShop('cart.freeDeliveryFrom')} {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
                       </div>
                     )}
                     <Separator />
@@ -781,9 +781,9 @@ export default function Checkout() {
                               </SelectItem>
                             )) : (
                               <>
-                                <SelectItem value="cash">Наличными при получении</SelectItem>
-                                <SelectItem value="card">Банковской картой</SelectItem>
-                                <SelectItem value="transfer">Банковский перевод</SelectItem>
+                                <SelectItem value="cash">{tShop('checkout.cashOnDelivery')}</SelectItem>
+                                <SelectItem value="card">{tShop('checkout.cardOnDelivery')}</SelectItem>
+                                <SelectItem value="transfer">{tShop('checkout.bankTransfer')}</SelectItem>
                               </>
                             )
                           }
@@ -1014,8 +1014,8 @@ export default function Checkout() {
                                 </SelectItem>
                               )) : (
                                 <>
-                                  <SelectItem value="cash">Наличными при получении</SelectItem>
-                                  <SelectItem value="card">Банковской картой</SelectItem>
+                                  <SelectItem value="cash">{tShop('checkout.cashOnDelivery')}</SelectItem>
+                                  <SelectItem value="card">{tShop('checkout.cardOnDelivery')}</SelectItem>
                                   <SelectItem value="transfer">Банковский перевод</SelectItem>
                                 </>
                               )
