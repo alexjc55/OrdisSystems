@@ -233,13 +233,13 @@ export default function Checkout() {
   const [guestDatePickerOpen, setGuestDatePickerOpen] = useState(false);
   const [registerDatePickerOpen, setRegisterDatePickerOpen] = useState(false);
 
-  const { t } = useCommonTranslation();
+  const { t: tCommon } = useCommonTranslation();
   const { t: tShop } = useShopTranslation();
   
-  const guestOrderSchema = createGuestOrderSchema(t);
-  const registrationSchema = createRegistrationSchema(t);
-  const authSchema = createAuthSchema(t);
-  const authenticatedOrderSchema = createAuthenticatedOrderSchema(t);
+  const guestOrderSchema = createGuestOrderSchema(tCommon);
+  const registrationSchema = createRegistrationSchema(tCommon);
+  const authSchema = createAuthSchema(tCommon);
+  const authenticatedOrderSchema = createAuthenticatedOrderSchema(tCommon);
   
   const guestForm = useForm<GuestOrderData>({
     resolver: zodResolver(guestOrderSchema),
