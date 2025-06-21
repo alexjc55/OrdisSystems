@@ -1899,8 +1899,8 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       toast({
-        title: "Ошибка",
-        description: error.message || "Не удалось обновить статус заказа",
+        title: commonT("errors.error"),
+        description: error.message || adminT("orders.updateError"),
         variant: "destructive",
       });
     },
@@ -1921,11 +1921,11 @@ export default function AdminDashboard() {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
       setIsUserFormOpen(false);
       setEditingUser(null);
-      toast({ title: "Пользователь создан", description: "Пользователь успешно добавлен" });
+      toast({ title: adminT("users.created"), description: adminT("users.createSuccess") });
     },
     onError: (error: any) => {
       console.error("User creation error:", error);
-      toast({ title: "Ошибка", description: "Не удалось создать пользователя", variant: "destructive" });
+      toast({ title: commonT("errors.error"), description: adminT("users.createError"), variant: "destructive" });
     }
   });
 
@@ -1943,11 +1943,11 @@ export default function AdminDashboard() {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
       setEditingUser(null);
       setIsUserFormOpen(false);
-      toast({ title: "Пользователь обновлен", description: "Изменения сохранены" });
+      toast({ title: adminT("users.updated"), description: adminT("users.updateSuccess") });
     },
     onError: (error: any) => {
       console.error("User update error:", error);
-      toast({ title: "Ошибка", description: "Не удалось обновить пользователя", variant: "destructive" });
+      toast({ title: commonT("errors.error"), description: adminT("users.updateError"), variant: "destructive" });
     }
   });
 

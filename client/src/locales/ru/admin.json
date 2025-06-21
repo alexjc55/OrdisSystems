@@ -209,7 +209,9 @@
     "defaultLanguage": "Язык по умолчанию",
     "availableLanguages": "Доступные языки",
     "enableMultiLanguage": "Многоязычный интерфейс",
-    "saveSettings": "Сохранить настройки"
+    "saveSettings": "Сохранить настройки",
+    "showSpecialOffers": "Показывать спецпредложения",
+    "specialOffersDescription": "Секция товаров со скидками"
   },
   "common": {
     "showing": "Показано",
