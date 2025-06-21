@@ -93,7 +93,10 @@
     "login": "I already have an account",
     "placeOrder": "Place Order",
     "orderTotal": "Order Total",
-    "processing": "Processing order..."
+    "processing": "Processing order...",
+    "registeringAndProcessing": "Registering and processing...",
+    "registerAndPlaceOrder": "Register and place order",
+    "placeOrderAsGuest": "Place order as guest"
   },
   "orders": {
     "myOrders": "My Orders",

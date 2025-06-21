@@ -606,7 +606,7 @@ export default function Checkout() {
         {/* Checkout Form */}
         <Card>
           <CardHeader>
-            <CardTitle>Оформление заказа</CardTitle>
+            <CardTitle>{t('checkout.title')}</CardTitle>
           </CardHeader>
           <CardContent>
             {isAuthenticated ? (
@@ -789,7 +789,7 @@ export default function Checkout() {
                       className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 text-lg shadow-lg"
                       disabled={createAuthenticatedOrderMutation.isPending}
                     >
-                      {createAuthenticatedOrderMutation.isPending ? "Оформляем..." : "Оформить заказ"}
+                      {createAuthenticatedOrderMutation.isPending ? t('checkout.processing') : t('checkout.placeOrder')}
                     </Button>
                   </div>
                 </form>
@@ -1021,7 +1021,7 @@ export default function Checkout() {
                         className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 text-lg shadow-lg"
                         disabled={registerAndOrderMutation.isPending}
                       >
-                        {registerAndOrderMutation.isPending ? "Регистрируем и оформляем..." : "Зарегистрироваться и оформить заказ"}
+                        {registerAndOrderMutation.isPending ? t('checkout.registeringAndProcessing') : t('checkout.registerAndPlaceOrder')}
                       </Button>
                     </div>
                   </form>
@@ -1256,7 +1256,7 @@ export default function Checkout() {
                         className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 text-lg shadow-lg"
                         disabled={createGuestOrderMutation.isPending}
                       >
-                        {createGuestOrderMutation.isPending ? "Оформляем..." : "Оформить заказ как гость"}
+                        {createGuestOrderMutation.isPending ? t('checkout.processing') : t('checkout.placeOrderAsGuest')}
                       </Button>
                     </div>
                   </form>
