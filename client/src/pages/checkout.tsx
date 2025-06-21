@@ -825,22 +825,22 @@ export default function Checkout() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="firstName">{t('common.firstName')}</Label>
+                          <Label htmlFor="firstName">{tCommon('firstName')}</Label>
                           <Input
                             id="firstName"
                             {...registerForm.register("firstName")}
-                            placeholder={t('common.enterFirstName')}
+                            placeholder={tCommon('enterFirstName')}
                           />
                           {registerForm.formState.errors.firstName && (
                             <p className="text-sm text-red-600">{registerForm.formState.errors.firstName.message}</p>
                           )}
                         </div>
                         <div>
-                          <Label htmlFor="lastName">{t('common.lastName')}</Label>
+                          <Label htmlFor="lastName">{tCommon('lastName')}</Label>
                           <Input
                             id="lastName"
                             {...registerForm.register("lastName")}
-                            placeholder={t('common.enterLastName')}
+                            placeholder={tCommon('enterLastName')}
                           />
                           {registerForm.formState.errors.lastName && (
                             <p className="text-sm text-red-600">{registerForm.formState.errors.lastName.message}</p>
@@ -849,7 +849,7 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="email">{t('common.email')}</Label>
+                        <Label htmlFor="email">{tCommon('email')}</Label>
                         <Input
                           id="email"
                           type="email"
@@ -888,12 +888,12 @@ export default function Checkout() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="password">{t('common.password')}</Label>
+                          <Label htmlFor="password">{tCommon('password')}</Label>
                           <Input
                             id="password"
                             type="password"
                             {...registerForm.register("password")}
-                            placeholder={t('common.passwordPlaceholder')}
+                            placeholder={tCommon('passwordPlaceholder')}
                           />
                           {registerForm.formState.errors.password && (
                             <p className="text-sm text-red-600">{registerForm.formState.errors.password.message}</p>
@@ -905,7 +905,7 @@ export default function Checkout() {
                             id="confirmPassword"
                             type="password"
                             {...registerForm.register("confirmPassword")}
-                            placeholder={t('common.confirmPassword')}
+                            placeholder={tCommon('confirmPassword')}
                           />
                           {registerForm.formState.errors.confirmPassword && (
                             <p className="text-sm text-red-600">{registerForm.formState.errors.confirmPassword.message}</p>
@@ -1039,7 +1039,7 @@ export default function Checkout() {
                   <form onSubmit={loginForm.handleSubmit((data) => loginMutation.mutate(data))}>
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="loginEmail">{t('common.email')}</Label>
+                        <Label htmlFor="loginEmail">{tCommon('email')}</Label>
                         <Input
                           id="loginEmail"
                           type="email"
@@ -1052,7 +1052,7 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="loginPassword">{t('common.password')}</Label>
+                        <Label htmlFor="loginPassword">{tCommon('password')}</Label>
                         <Input
                           id="loginPassword"
                           type="password"
@@ -1111,7 +1111,7 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="guestEmail">{t('common.email')}</Label>
+                        <Label htmlFor="guestEmail">{tCommon('email')}</Label>
                         <Input
                           id="guestEmail"
                           type="email"
