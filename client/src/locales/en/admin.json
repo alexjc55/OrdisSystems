@@ -23,8 +23,8 @@
     "apply": "Apply"
   },
   "dashboard": {
-    "title": "Dashboard",
-    "overview": "Overview",
+    "title": "Admin Panel",
+    "overview": "Manage products, categories and orders",
     "statistics": "Statistics",
     "recentOrders": "Recent Orders",
     "totalOrders": "Total Orders",

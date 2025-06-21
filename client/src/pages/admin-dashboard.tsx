@@ -1426,7 +1426,8 @@ export default function AdminDashboard() {
   const { user, isLoading } = useAuth();
   const { toast } = useToast();
   const { t: adminT } = useAdminTranslation();
-  const { t: commonT } = useCommonTranslation();
+  const { t: commonT, i18n } = useCommonTranslation();
+  const isRTL = i18n.language === 'he';
   const queryClient = useQueryClient();
 
   // Data queries with pagination  
@@ -2090,15 +2091,15 @@ export default function AdminDashboard() {
     });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen bg-gray-50 ${isRTL ? 'rtl' : 'ltr'}`}>
       <Header />
       
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         <div className="mb-4 sm:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${isRTL ? 'text-right' : 'text-left'}`}>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Админ-панель</h1>
-              <p className="text-gray-600 text-sm sm:text-base">Управление товарами, категориями и заказами</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{adminT('dashboard.title')}</h1>
+              <p className="text-gray-600 text-sm sm:text-base">{adminT('dashboard.overview')}</p>
             </div>
             <Button
               variant="outline"
@@ -4674,7 +4675,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
                 <MapPin className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">Описание и контакты</h3>
+                <h3 className="text-lg font-semibold">{adminT('settings.basicSettingsDescription')}</h3>
                 {isContactsOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
@@ -4733,7 +4734,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
                 <Upload className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">Визуальное оформление</h3>
+                <h3 className="text-lg font-semibold">{adminT('settings.visualSettings')}</h3>
                 {isVisualsOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (

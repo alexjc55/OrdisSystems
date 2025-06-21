@@ -22,8 +22,8 @@
     "confirm": "אשר"
   },
   "dashboard": {
-    "title": "לוח בקרה",
-    "overview": "סקירה כללית",
+    "title": "פאנל ניהול",
+    "overview": "ניהול מוצרים, קטגוריות והזמנות",
     "statistics": "סטטיסטיקות",
     "recentOrders": "הזמנות אחרונות",
     "totalOrders": "סה\"כ הזמנות",
