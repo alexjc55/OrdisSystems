@@ -78,6 +78,7 @@
   },
   "status": {
     "loading": "טוען...",
+    "signIn": "כניסה",
     "success": "הצלחה",
     "error": "שגיאה",
     "pending": "ממתין",
