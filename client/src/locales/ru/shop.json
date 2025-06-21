@@ -147,5 +147,10 @@
   "products": "Товары",
   "selectCategoryDescription": "Выберите категорию блюд",
   "defaultCategoryDescription": "Вкусные блюда для вашего стола",
-  "dishesCount": "блюд"
+  "dishesCount": "блюд",
+  "selectTime": "Выберите время",
+  "specialRequests": "Особые пожелания...",
+  "selectAddress": "Выберите адрес",
+  "enterDeliveryAddress": "Введите адрес доставки... (обязательно)",
+  "enterPhoneNumber": "+972-XX-XXX-XXXX (обязательно)"
 }

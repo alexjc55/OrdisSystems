@@ -133,5 +133,10 @@
   "products": "Products",
   "selectCategoryDescription": "Choose a dish category",
   "defaultCategoryDescription": "Delicious dishes for your table",
-  "dishesCount": "dishes"
+  "dishesCount": "dishes",
+  "selectTime": "Select time",
+  "specialRequests": "Special requests...",
+  "selectAddress": "Select address",
+  "enterDeliveryAddress": "Enter delivery address... (required)",
+  "enterPhoneNumber": "+972-XX-XXX-XXXX (required)"
 }

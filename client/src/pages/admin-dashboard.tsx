@@ -410,7 +410,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
 }
 
 // OrderEditForm component
-function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => void, onSave: () => void }) {
+function OrderEditForm({ order, onClose, onSave, searchPlaceholder }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { data: storeSettingsData } = useQuery({
@@ -1162,7 +1162,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
         <AddItemDialog 
           onClose={() => setShowAddItem(false)}
           onAdd={addItem}
-          searchPlaceholder={adminT('common.searchProducts')}
+          searchPlaceholder={searchPlaceholder}
         />
       )}
 
@@ -3197,6 +3197,7 @@ export default function AdminDashboard() {
                       setEditingOrder(null);
                       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
                     }}
+                    searchPlaceholder={adminT('common.searchProducts')}
                   />
                 )}
               </DialogContent>

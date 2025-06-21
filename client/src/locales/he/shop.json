@@ -134,5 +134,10 @@
   "addedToCart": "נוסף לעגלה",
   "selectCategoryDescription": "בחר קטגוריית מנות",
   "defaultCategoryDescription": "מנות טעימות לשולחנכם",
-  "dishesCount": "מנות"
+  "dishesCount": "מנות",
+  "selectTime": "בחר זמן",
+  "specialRequests": "בקשות מיוחדות...",
+  "selectAddress": "בחר כתובת",
+  "enterDeliveryAddress": "הכנס כתובת משלוח... (חובה)",
+  "enterPhoneNumber": "+972-XX-XXX-XXXX (חובה)"
 }
