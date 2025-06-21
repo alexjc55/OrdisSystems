@@ -218,6 +218,8 @@
   "checkout.guest": "Guest",
   "checkout.signInToUseData": "Sign in to use saved data and track orders.",
   "checkout.guestWarning": "As a guest, you won't be able to track order status. We recommend registering for full functionality.",
+  "checkout.free": "Free",
+  "checkout.welcomeMessage": "Welcome, {name}! You can track your order status in your profile.",
   "checkout.loginTab": "Login",
   "checkout.registration": "Registration",
   "checkout.registerAndPlaceOrder": "Register and Place Order",

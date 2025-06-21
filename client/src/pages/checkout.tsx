@@ -23,10 +23,19 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { useCommonTranslation, useShopTranslation } from "@/hooks/use-language";
+import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { format } from "date-fns";
-import { ru } from "date-fns/locale";
+import { ru, enUS, he } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+
+const getDateLocale = (language: string) => {
+  switch (language) {
+    case 'en': return enUS;
+    case 'he': return he;
+    case 'ru':
+    default: return ru;
+  }
+};
 
 // Calculate delivery fee based on order total and free delivery threshold
 const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number) => {
@@ -146,6 +155,8 @@ export default function Checkout() {
   const { toast } = useToast();
   const [orderType, setOrderType] = useState<"guest" | "register" | "login">("register");
   const { storeSettings } = useStoreSettings();
+  const { language } = useLanguageStore();
+  const dateLocale = getDateLocale(language);
   
   // Helper functions for future-order validation
   const getFutureOrderProducts = () => {
@@ -610,7 +621,7 @@ export default function Checkout() {
                 <Alert>
                   <CheckCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Добро пожаловать, {user?.firstName}! Вы можете отслеживать статус заказа в личном кабинете.
+                    {tShop('checkout.welcomeMessage').replace('{name}', user?.firstName || '')}
                   </AlertDescription>
                 </Alert>
 

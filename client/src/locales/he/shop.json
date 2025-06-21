@@ -209,6 +209,8 @@
   "checkout.guest": "אורח",
   "checkout.signInToUseData": "התחבר כדי להשתמש בנתונים שמורים ולעקוב אחר הזמנות.",
   "checkout.guestWarning": "כאורח, לא תוכל לעקוב אחר סטטוס ההזמנה. אנו ממליצים להירשם לפונקציונליות מלאה.",
+  "checkout.free": "חינם",
+  "checkout.welcomeMessage": "ברוך הבא, {name}! תוכל לעקוב אחר סטטוס ההזמנה בפרופיל שלך.",
   "checkout.loginTab": "התחבר",
   "checkout.registration": "הרשמה",
   "checkout.registerAndPlaceOrder": "הירשם ובצע הזמנה",

@@ -211,6 +211,8 @@
   "checkout.guest": "Гость",
   "checkout.signInToUseData": "Войдите в аккаунт, чтобы использовать сохраненные данные и отслеживать заказы.",
   "checkout.guestWarning": "Как гость, вы не сможете отслеживать статус заказа. Рекомендуем зарегистрироваться для полного функционала.",
+  "checkout.free": "Бесплатно",
+  "checkout.welcomeMessage": "Добро пожаловать, {name}! Вы можете отслеживать статус заказа в личном кабинете.",
   "checkout.loginTab": "Войти",
   "checkout.registration": "Регистрация",
   "checkout.registerAndPlaceOrder": "Зарегистрироваться и оформить заказ",
