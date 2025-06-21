@@ -740,10 +740,10 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="deliveryTime">Время доставки *</Label>
+                        <Label htmlFor="deliveryTime">{t('checkout.deliveryTime')} *</Label>
                         <Select value={selectedTime} onValueChange={setSelectedTime} disabled={!selectedDate} required>
                           <SelectTrigger>
-                            <SelectValue placeholder="Выберите время" />
+                            <SelectValue placeholder={t('checkout.selectTime')} />
                           </SelectTrigger>
                           <SelectContent>
                             {selectedDate && generateDeliveryTimes(
@@ -761,10 +761,10 @@ export default function Checkout() {
                     </div>
 
                     <div>
-                      <Label htmlFor="paymentMethod">Способ оплаты *</Label>
+                      <Label htmlFor="paymentMethod">{t('checkout.paymentMethod')} *</Label>
                       <Select value={selectedPaymentMethod} onValueChange={setSelectedPaymentMethod} required>
                         <SelectTrigger>
-                          <SelectValue placeholder="Выберите способ оплаты" />
+                          <SelectValue placeholder={t('checkout.selectPaymentMethod')} />
                         </SelectTrigger>
                         <SelectContent>
                           {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 

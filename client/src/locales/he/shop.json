@@ -97,7 +97,10 @@
     "registeringAndProcessing": "נרשם ומעבד...",
     "registerAndPlaceOrder": "הירשם ובצע הזמנה",
     "placeOrderAsGuest": "בצע הזמנה כאורח",
-    "savedAddresses": "או בחר מכתובות שמורות:"
+    "savedAddresses": "או בחר מכתובות שמורות:",
+    "selectTime": "בחר זמן",
+    "selectPaymentMethod": "בחר אמצעי תשלום",
+    "deliveryAddressPlaceholder": "הכנס כתובת משלוח"
   },
   "orders": {
     "myOrders": "ההזמנות שלי",
