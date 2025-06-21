@@ -58,19 +58,19 @@ export default function ResetPasswordPage() {
     const newErrors: Record<string, string> = {};
     
     if (!token) {
-      newErrors.token = "Недействительная ссылка для сброса пароля";
+      newErrors.token = t('auth.invalidResetLink');
     }
     
     if (!formData.newPassword) {
-      newErrors.newPassword = "Введите новый пароль";
+      newErrors.newPassword = t('validation.passwordRequired');
     } else if (formData.newPassword.length < 6) {
-      newErrors.newPassword = "Пароль должен содержать минимум 6 символов";
+      newErrors.newPassword = t('validation.passwordMinLength');
     }
     
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Подтвердите новый пароль";
+      newErrors.confirmPassword = t('auth.confirmNewPassword');
     } else if (formData.newPassword !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Пароли не совпадают";
+      newErrors.confirmPassword = t('validation.passwordMismatch');
     }
     
     if (Object.keys(newErrors).length > 0) {
@@ -98,21 +98,21 @@ export default function ResetPasswordPage() {
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <CardTitle>Недействительная ссылка</CardTitle>
+            <CardTitle>{t('auth.invalidLink')}</CardTitle>
             <CardDescription>
-              Ссылка для сброса пароля недействительна или отсутствует
+              {t('auth.invalidLinkDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <Link href="/forgot-password">
                 <Button className="w-full">
-                  Запросить новую ссылку
+                  {t('auth.requestNewLink')}
                 </Button>
               </Link>
               <Link href="/auth">
                 <Button variant="outline" className="w-full">
-                  Назад к входу
+                  {t('auth.backToLogin')}
                 </Button>
               </Link>
             </div>

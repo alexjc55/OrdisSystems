@@ -87,7 +87,10 @@
     "unauthorized": "נדרש אימות",
     "loginRedirect": "מתחבר לצפייה בפרופיל...",
     "unauthorizedMessage": "אתה מנותק. מתחבר שוב...",
-    "backToHome": "חזרה לדף הבית"
+    "backToHome": "חזרה לדף הבית",
+    "passwordReset": "סיסמה אופסה",
+    "passwordResetSuccess": "הסיסמה שלך שונתה בהצלחה",
+    "passwordResetError": "לא ניתן לאפס את הסיסמה"
   },
   "validation": {
     "usernameRequired": "הזן שם משתמש",

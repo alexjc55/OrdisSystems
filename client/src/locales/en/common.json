@@ -87,7 +87,10 @@
     "unauthorized": "Authentication required",
     "loginRedirect": "Logging in to view profile...",
     "unauthorizedMessage": "You are logged out. Logging in again...",
-    "backToHome": "Back to Home"
+    "backToHome": "Back to Home",
+    "passwordReset": "Password Reset",
+    "passwordResetSuccess": "Your password has been successfully changed",
+    "passwordResetError": "Failed to reset password"
   },
   "validation": {
     "usernameRequired": "Enter username",
