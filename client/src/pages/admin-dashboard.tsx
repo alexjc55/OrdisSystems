@@ -1183,14 +1183,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
       {/* Actions */}
       <div className="flex justify-end gap-3 pt-4 border-t">
         <Button variant="outline" onClick={onClose}>
-          Отмена
+          {adminT('common.cancel')}
         </Button>
         <Button 
           onClick={handleSave}
           disabled={updateOrderMutation.isPending}
           variant="success"
         >
-          {updateOrderMutation.isPending ? "Сохранение..." : "Сохранить изменения"}
+          {updateOrderMutation.isPending ? adminT('common.saving') : adminT('common.saveChanges')}
         </Button>
       </div>
     </div>
