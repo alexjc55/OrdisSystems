@@ -445,7 +445,7 @@ export default function CartOverlay() {
                       </label>
                       <Select value={deliveryTime} onValueChange={setDeliveryTime}>
                         <SelectTrigger className="text-sm">
-                          <SelectValue placeholder="Выберите время" />
+                          <SelectValue placeholder={t('selectTime')} />
                         </SelectTrigger>
                         <SelectContent>
                           {(() => {
@@ -570,7 +570,7 @@ export default function CartOverlay() {
                     Комментарий к заказу (необязательно)
                   </label>
                   <Textarea
-                    placeholder="Особые пожелания..."
+                    placeholder={t('specialRequests')}
                     value={customerNotes}
                     onChange={(e) => setCustomerNotes(e.target.value)}
                     className="min-h-[60px] text-sm"
@@ -599,7 +599,7 @@ export default function CartOverlay() {
                         }}
                       >
                         <SelectTrigger className="text-sm">
-                          <SelectValue placeholder="Выберите адрес" />
+                          <SelectValue placeholder={t('selectAddress')} />
                         </SelectTrigger>
                         <SelectContent>
                           {(userAddresses as UserAddress[]).map((addr) => (
@@ -614,7 +614,7 @@ export default function CartOverlay() {
                   )}
 
                   <Textarea
-                    placeholder="Введите адрес доставки... (обязательно)"
+                    placeholder={t('enterDeliveryAddress')}
                     value={deliveryAddress}
                     onChange={(e) => {
                       setDeliveryAddress(e.target.value);
@@ -632,7 +632,7 @@ export default function CartOverlay() {
                   </label>
                   <Input
                     type="tel"
-                    placeholder="+972-XX-XXX-XXXX (обязательно)"
+                    placeholder={t('enterPhoneNumber')}
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     className={`${!customerPhone.trim() ? 'border-red-300 focus:border-red-500' : ''}`}
