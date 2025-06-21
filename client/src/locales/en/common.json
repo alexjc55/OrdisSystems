@@ -114,7 +114,10 @@
     "noPasswordSet": "You don't have a password yet. Set a password for additional security of your account",
     "currentPassword": "Current password",
     "enterCurrentPassword": "Enter current password",
-    "password": "Password"
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "repeatPassword": "Repeat password",
+    "setPassword": "Set password"
   },
   "validation": {
     "usernameRequired": "Enter username",

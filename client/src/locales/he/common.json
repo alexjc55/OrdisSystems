@@ -114,7 +114,10 @@
     "noPasswordSet": "עדיין אין לך סיסמה. הגדר סיסמה לאבטחה נוספת של החשבון שלך",
     "currentPassword": "סיסמה נוכחית",
     "enterCurrentPassword": "הזן סיסמה נוכחית",
-    "password": "סיסמה"
+    "password": "סיסמה",
+    "confirmPassword": "אשר סיסמה",
+    "repeatPassword": "חזור על הסיסמה",
+    "setPassword": "הגדר סיסמה"
   },
   "validation": {
     "usernameRequired": "הזן שם משתמש",
