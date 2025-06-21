@@ -664,7 +664,7 @@ export default function CartOverlay() {
                 </div>
                 {deliveryFeeAmount > 0 && (
                   <div className="text-xs text-gray-500 text-center">
-                    Бесплатная доставка от {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                    {t('cart.freeDeliveryFrom')} {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
                   </div>
                 )}
                 <Separator />

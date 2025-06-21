@@ -682,7 +682,7 @@ export default function Checkout() {
                               )}
                             >
                               <CalendarIcon className="mr-2 h-4 w-4" />
-                              {selectedDate ? format(selectedDate, "dd MMMM yyyy", { locale: ru }) : "Выберите дату"}
+                              {selectedDate ? format(selectedDate, "dd MMMM yyyy", { locale: ru }) : tShop('checkout.selectDate')}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
@@ -920,7 +920,7 @@ export default function Checkout() {
                                 )}
                               >
                                 <CalendarIcon className="mr-2 h-4 w-4" />
-                                {selectedRegisterDate ? format(selectedRegisterDate, "dd MMMM yyyy", { locale: ru }) : "Выберите дату"}
+                                {selectedRegisterDate ? format(selectedRegisterDate, "dd MMMM yyyy", { locale: ru }) : tShop('checkout.selectDate')}
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="start">
@@ -1155,7 +1155,7 @@ export default function Checkout() {
                                 )}
                               >
                                 <CalendarIcon className="mr-2 h-4 w-4" />
-                                {selectedGuestDate ? format(selectedGuestDate, "dd MMMM yyyy", { locale: ru }) : "Выберите дату"}
+                                {selectedGuestDate ? format(selectedGuestDate, "dd MMMM yyyy", { locale: ru }) : tShop('checkout.selectDate')}
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="start">

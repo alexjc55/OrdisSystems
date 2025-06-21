@@ -19,6 +19,7 @@
   "password": "Пароль",
   "passwordPlaceholder": "Минимум 6 символов",
   "confirmPassword": "Повторите пароль",
+  "signIn": "Войти",
   "address": {
     "home": "Дом"
   },

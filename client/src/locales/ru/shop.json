@@ -200,6 +200,7 @@
   "checkout.deliveryAddressPlaceholder": "Введите адрес доставки...",
   "checkout.savedAddresses": "Сохраненные адреса",
   "checkout.deliveryDate": "Дата доставки",
+  "checkout.selectDate": "Выберите дату",
   "checkout.deliveryTime": "Время доставки", 
   "checkout.selectTime": "Выберите время",
   "checkout.paymentMethod": "Способ оплаты",
