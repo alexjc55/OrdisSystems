@@ -127,11 +127,11 @@ export default function ChangePasswordPage() {
             <div className="flex items-center gap-3">
               <Lock className="h-6 w-6 text-blue-600" />
               <div>
-                <CardTitle>Изменение пароля</CardTitle>
+                <CardTitle>{t('auth.changePassword')}</CardTitle>
                 <CardDescription>
                   {user?.password 
-                    ? "Обновите свой пароль для повышения безопасности" 
-                    : "Установите пароль для вашего аккаунта"
+                    ? t('auth.updatePasswordSecurity') 
+                    : t('auth.setPasswordAccount')
                   }
                 </CardDescription>
               </div>
@@ -143,7 +143,7 @@ export default function ChangePasswordPage() {
               <Alert className="mb-6 border-blue-200 bg-blue-50">
                 <AlertCircle className="h-4 w-4 text-blue-600" />
                 <AlertDescription className="text-blue-800">
-                  У вас еще нет пароля. Установите пароль для дополнительной безопасности вашего аккаунта.
+                  {t('auth.noPasswordSet')}
                 </AlertDescription>
               </Alert>
             )}
@@ -151,14 +151,14 @@ export default function ChangePasswordPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               {user?.password && (
                 <div>
-                  <Label htmlFor="currentPassword">Текущий пароль *</Label>
+                  <Label htmlFor="currentPassword">{t('auth.currentPassword')} *</Label>
                   <Input
                     id="currentPassword"
                     type="password"
                     value={formData.currentPassword}
                     onChange={(e) => handleInputChange("currentPassword", e.target.value)}
                     className={errors.currentPassword ? "border-red-500" : ""}
-                    placeholder="Введите текущий пароль"
+                    placeholder={t('auth.enterCurrentPassword')}
                   />
                   {errors.currentPassword && (
                     <p className="text-sm text-red-600 mt-1">{errors.currentPassword}</p>
@@ -168,7 +168,7 @@ export default function ChangePasswordPage() {
 
               <div>
                 <Label htmlFor="newPassword">
-                  {user?.password ? "Новый пароль *" : "Пароль *"}
+                  {user?.password ? t('auth.newPassword') : t('auth.password')} *
                 </Label>
                 <Input
                   id="newPassword"
@@ -176,7 +176,7 @@ export default function ChangePasswordPage() {
                   value={formData.newPassword}
                   onChange={(e) => handleInputChange("newPassword", e.target.value)}
                   className={errors.newPassword ? "border-red-500" : ""}
-                  placeholder="Минимум 6 символов"
+                  placeholder={t('auth.passwordMinChars')}
                 />
                 {errors.newPassword && (
                   <p className="text-sm text-red-600 mt-1">{errors.newPassword}</p>
@@ -185,7 +185,7 @@ export default function ChangePasswordPage() {
 
               <div>
                 <Label htmlFor="confirmPassword">
-                  {user?.password ? "Подтвердите новый пароль *" : "Подтвердите пароль *"}
+                  {user?.password ? t('auth.confirmNewPassword') : t('auth.confirmPassword')} *
                 </Label>
                 <Input
                   id="confirmPassword"
@@ -193,7 +193,7 @@ export default function ChangePasswordPage() {
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                   className={errors.confirmPassword ? "border-red-500" : ""}
-                  placeholder="Повторите пароль"
+                  placeholder={t('auth.repeatPassword')}
                 />
                 {errors.confirmPassword && (
                   <p className="text-sm text-red-600 mt-1">{errors.confirmPassword}</p>
@@ -207,11 +207,11 @@ export default function ChangePasswordPage() {
                   className="flex-1"
                 >
                   {changePasswordMutation.isPending ? (
-                    "Сохранение..."
+                    t('status.saving')
                   ) : (
                     <>
                       <Check className="h-4 w-4 mr-2" />
-                      {user?.password ? "Изменить пароль" : "Установить пароль"}
+                      {user?.password ? t('auth.changePassword') : t('auth.setPassword')}
                     </>
                   )}
                 </Button>

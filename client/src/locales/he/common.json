@@ -107,7 +107,14 @@
     "passwordChangeSuccess": "הסיסמה שלך שונתה בהצלחה",
     "passwordChangeError": "לא ניתן לשנות את הסיסמה",
     "currentPasswordRequired": "הזן סיסמה נוכחית",
-    "loginRequiredForPasswordChange": "כדי לשנות סיסמה יש להתחבר למערכת"
+    "loginRequiredForPasswordChange": "כדי לשנות סיסמה יש להתחבר למערכת",
+    "changePassword": "שינוי סיסמה",
+    "updatePasswordSecurity": "עדכן את הסיסמה שלך לשיפור האבטחה",
+    "setPasswordAccount": "הגדר סיסמה לחשבון שלך",
+    "noPasswordSet": "עדיין אין לך סיסמה. הגדר סיסמה לאבטחה נוספת של החשבון שלך",
+    "currentPassword": "סיסמה נוכחית",
+    "enterCurrentPassword": "הזן סיסמה נוכחית",
+    "password": "סיסמה"
   },
   "validation": {
     "usernameRequired": "הזן שם משתמש",
