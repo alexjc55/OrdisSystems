@@ -33,7 +33,7 @@ const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliv
   return orderTotal >= freeDeliveryFrom ? 0 : deliveryFee;
 };
 
-// Schema will be created inside component to access translations
+// Schema creation functions (moved inside component)
 const createGuestOrderSchema = (t: any) => z.object({
   firstName: z.string().min(2, tCommon('validation.firstNameMinLength')),
   lastName: z.string().min(2, tCommon('validation.lastNameMinLength')),
@@ -203,7 +203,7 @@ export default function Checkout() {
     if (deliveryDate === today) {
       return {
         valid: false,
-        message: `${tShop('checkout.futureOrderError', { products: futureProducts.map(item => item.product.name).join(', ') })}`
+        message: tShop('checkout.futureOrderError', { products: futureProducts.map(item => item.product.name).join(', ') })
       };
     }
     
@@ -381,7 +381,7 @@ export default function Checkout() {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
         title: tShop('checkout.registrationAndOrderCompleted'),
-        description: tShop('checkout.orderAccepted', { orderId: order.id }),
+        description: `Заказ №${order.id} принят в обработку`,
       });
       setLocation("/profile");
     },
