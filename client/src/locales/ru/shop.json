@@ -131,6 +131,9 @@
   "discount": "Скидка",
   "outOfStockToday": "Закончился на сегодня",
   "orderForTomorrow": "Заказать на завтра",
+  "buttons": {
+    "back": "Назад"
+  },
   "units": {
     "kg": "кг",
     "gram": "грамм",

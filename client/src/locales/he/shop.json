@@ -117,6 +117,9 @@
   "discount": "הנחה",
   "outOfStockToday": "אזל מהמלאי היום",
   "orderForTomorrow": "הזמנה למחר",
+  "buttons": {
+    "back": "חזרה"
+  },
   "units": {
     "kg": "ק\"ג",
     "gram": "גרם",

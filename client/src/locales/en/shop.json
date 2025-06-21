@@ -117,6 +117,9 @@
   "discount": "Discount",
   "outOfStockToday": "Out of Stock Today",
   "orderForTomorrow": "Order for Tomorrow",
+  "buttons": {
+    "back": "Back"
+  },
   "units": {
     "kg": "kg",
     "gram": "gram",

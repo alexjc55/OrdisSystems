@@ -133,7 +133,7 @@ export default function Home() {
     }
 
     if (discountFilter === "discount") {
-      productsToShow = productsToShow.filter(product => product.discount && product.discount > 0);
+      productsToShow = productsToShow.filter(product => product.isSpecialOffer);
     }
 
     return productsToShow;
@@ -221,7 +221,7 @@ export default function Home() {
                   {(() => {
                     try {
                       if (searchQuery && searchQuery.length > 2) {
-                        return `${t('foundItems', { count: displayProducts.length })}`;
+                        return t('foundItems').replace('{count}', displayProducts.length.toString());
                       }
                       if (selectedCategory?.description) {
                         return selectedCategory.description;
