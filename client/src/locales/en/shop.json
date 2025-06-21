@@ -96,7 +96,8 @@
     "processing": "Processing order...",
     "registeringAndProcessing": "Registering and processing...",
     "registerAndPlaceOrder": "Register and place order",
-    "placeOrderAsGuest": "Place order as guest"
+    "placeOrderAsGuest": "Place order as guest",
+    "savedAddresses": "Or select from saved addresses:"
   },
   "orders": {
     "myOrders": "My Orders",

@@ -647,15 +647,15 @@ export default function Checkout() {
                       <Input
                         id="address"
                         name="address"
-                        placeholder="Введите адрес доставки"
+                        placeholder={t('checkout.deliveryAddressPlaceholder')}
                         required
                       />
                       
-                      {addresses && Array.isArray(addresses) && (addresses as any[]).length > 0 && (
+                      {addresses && Array.isArray(addresses) && addresses.length > 0 && (
                         <div className="mt-2">
-                          <Label className="text-sm text-gray-600">Или выберите из сохраненных адресов:</Label>
+                          <Label className="text-sm text-gray-600">{t('checkout.savedAddresses')}</Label>
                           <div className="mt-1 flex flex-wrap gap-2">
-                            {(addresses as any[]).map((addr: any) => (
+                            {addresses.map((addr: any) => (
                               <Button
                                 key={addr.id}
                                 type="button"
@@ -676,7 +676,7 @@ export default function Checkout() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="deliveryDate">Дата доставки *</Label>
+                        <Label htmlFor="deliveryDate">{t('checkout.deliveryDate')} *</Label>
                         <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
                           <PopoverTrigger asChild>
                             <Button

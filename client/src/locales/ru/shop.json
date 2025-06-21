@@ -101,6 +101,7 @@
     "registeringAndProcessing": "Регистрируем и оформляем...",
     "registerAndPlaceOrder": "Зарегистрироваться и оформить заказ",
     "placeOrderAsGuest": "Оформить заказ как гость",
+    "savedAddresses": "Или выберите из сохраненных адресов:",
     "orderCreated": "Заказ создан!",
     "orderCreatedDescription": "Ваш заказ успешно оформлен и принят в обработку",
     "orderError": "Ошибка",

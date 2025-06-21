@@ -93,7 +93,11 @@
     "login": "יש לי כבר חשבון",
     "placeOrder": "בצע הזמנה",
     "orderTotal": "סכום ההזמנה",
-    "processing": "מעבד הזמנה..."
+    "processing": "מעבד הזמנה...",
+    "registeringAndProcessing": "נרשם ומעבד...",
+    "registerAndPlaceOrder": "הירשם ובצע הזמנה",
+    "placeOrderAsGuest": "בצע הזמנה כאורח",
+    "savedAddresses": "או בחר מכתובות שמורות:"
   },
   "orders": {
     "myOrders": "ההזמנות שלי",
