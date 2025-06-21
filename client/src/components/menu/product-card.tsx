@@ -202,9 +202,9 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           {/* Quantity Selector */}
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">
-              {unit === "piece" ? 'Кол-во:' : 
-               unit === "kg" ? 'Вес (кг):' : 
-               unit === "100g" || unit === "100ml" ? 'Граммы:' : 'Кол-во:'}
+              {unit === "piece" ? t('product.quantity', 'Кол-во') + ':' : 
+               unit === "kg" ? t('product.weight', 'Вес (кг)') + ':' : 
+               unit === "100g" || unit === "100ml" ? t('product.grams', 'Граммы') + ':' : t('product.quantity', 'Кол-во') + ':'}
             </span>
             <div className="flex items-center space-x-1">
               <Button
@@ -280,7 +280,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 className="w-full bg-orange-500 text-white hover:bg-orange-600 h-10 text-sm font-medium"
               >
                 <ShoppingCart className="mr-1 h-3 w-3" />
-                {t('addToCart')}
+                {t('product.addToCart', 'Добавить в корзину')}
               </Button>
             )
           ) : (
@@ -288,7 +288,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
               disabled
               className="w-full bg-gray-200 text-gray-500 cursor-not-allowed h-10 text-sm"
             >
-              ❌ Недоступен
+              ❌ {t('product.outOfStock', 'Недоступен')}
             </Button>
           )}
         </div>

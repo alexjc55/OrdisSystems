@@ -92,9 +92,14 @@
     left: auto;
   }
   
-  /* Kanban board scroll positioning */
+  /* Kanban board scroll positioning and RTL support */
   .kanban-scroll-container {
     scroll-behavior: smooth;
+    direction: ltr;
+  }
+  
+  [dir="rtl"] .kanban-scroll-container {
+    direction: ltr;
   }
   
   .kanban-scroll-container::-webkit-scrollbar {
