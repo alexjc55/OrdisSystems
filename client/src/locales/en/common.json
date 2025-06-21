@@ -78,6 +78,7 @@
   },
   "status": {
     "loading": "Loading...",
+    "signIn": "Sign In",
     "success": "Success",
     "error": "Error",
     "pending": "Pending",

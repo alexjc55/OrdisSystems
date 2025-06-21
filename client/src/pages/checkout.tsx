@@ -1063,7 +1063,7 @@ export default function Checkout() {
                         className="w-full"
                         disabled={loginMutation.isPending}
                       >
-                        {loginMutation.isPending ? "Вход..." : "Войти"}
+                        {loginMutation.isPending ? tCommon('loading') : tCommon('signIn')}
                       </Button>
                     </div>
                   </form>
@@ -1081,22 +1081,22 @@ export default function Checkout() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="guestFirstName">Имя</Label>
+                          <Label htmlFor="guestFirstName">{tCommon('firstName')}</Label>
                           <Input
                             id="guestFirstName"
                             {...guestForm.register("firstName")}
-                            placeholder="Введите имя"
+                            placeholder={tCommon('firstName')}
                           />
                           {guestForm.formState.errors.firstName && (
                             <p className="text-sm text-red-600">{guestForm.formState.errors.firstName.message}</p>
                           )}
                         </div>
                         <div>
-                          <Label htmlFor="guestLastName">Фамилия</Label>
+                          <Label htmlFor="guestLastName">{tCommon('lastName')}</Label>
                           <Input
                             id="guestLastName"
                             {...guestForm.register("lastName")}
-                            placeholder="Введите фамилию"
+                            placeholder={tCommon('lastName')}
                           />
                           {guestForm.formState.errors.lastName && (
                             <p className="text-sm text-red-600">{guestForm.formState.errors.lastName.message}</p>
