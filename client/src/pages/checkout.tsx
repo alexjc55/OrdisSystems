@@ -700,6 +700,7 @@ export default function Checkout() {
                             <CalendarComponent
                               mode="single"
                               selected={selectedDate}
+                              locale={dateLocale}
                               onSelect={(date) => {
                                 setSelectedDate(date);
                                 setSelectedTime(""); // Reset time selection when date changes
@@ -938,6 +939,7 @@ export default function Checkout() {
                               <CalendarComponent
                                 mode="single"
                                 selected={selectedRegisterDate}
+                                locale={dateLocale}
                                 onSelect={(date) => {
                                   setSelectedRegisterDate(date);
                                   setSelectedRegisterTime(""); // Reset time selection when date changes
@@ -1173,6 +1175,7 @@ export default function Checkout() {
                               <CalendarComponent
                                 mode="single"
                                 selected={selectedGuestDate}
+                                locale={dateLocale}
                                 onSelect={(date) => {
                                   setSelectedGuestDate(date);
                                   setSelectedGuestTime(""); // Reset time selection when date changes

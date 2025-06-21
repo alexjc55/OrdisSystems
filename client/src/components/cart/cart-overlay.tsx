@@ -649,7 +649,7 @@ export default function CartOverlay() {
             <div className="border-t p-6 space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Подытог:</span>
+                  <span>{t('cart.items')}:</span>
                   <span>{formatCurrency(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -669,7 +669,7 @@ export default function CartOverlay() {
                 )}
                 <Separator />
                 <div className="flex justify-between text-lg font-bold">
-                  <span>Итого:</span>
+                  <span>{t('cart.total')}:</span>
                   <span>{formatCurrency(total)}</span>
                 </div>
               </div>
