@@ -19,7 +19,8 @@
     "search": "Search",
     "filter": "Filter",
     "reset": "Reset",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "apply": "Apply"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -105,6 +106,7 @@
       "cancelled": "Cancelled"
     },
     "discountApplied": "Discount applied",
+    "removeDiscount": "Remove discount",
     "call": "Call",
     "updated": "Order updated",
     "updateSuccess": "Changes saved successfully",

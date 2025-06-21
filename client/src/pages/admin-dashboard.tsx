@@ -5279,9 +5279,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">Показывать спецпредложения</FormLabel>
+                    <FormLabel className="text-sm font-medium">{adminT('settings.showSpecialOffers')}</FormLabel>
                     <FormDescription className="text-xs">
-                      Секция товаров со скидками
+                      {adminT('settings.specialOffersDescription')}
                     </FormDescription>
                   </div>
                   <FormControl>
