@@ -1,12 +1,4 @@
 /**
- * BACKUP VERSION OF ADMIN DASHBOARD - Created June 21, 2025
- * 
- * This is a complete backup of the admin dashboard with:
- * - RTL layout support for Hebrew interface
- * - Comprehensive multi-language functionality
- * - All existing features and UI patterns preserved
- * - Working admin panel with proper styling and functionality
- * 
  * ВАЖНО: НЕ ИЗМЕНЯТЬ ДИЗАЙН АДМИН-ПАНЕЛИ БЕЗ ЯВНОГО ЗАПРОСА!
  * 
  * Правила для разработчика:
@@ -2235,114 +2227,236 @@ export default function AdminDashboard() {
                     <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
-                          <TableRow style={isRTL ? { direction: 'rtl' } : {}}>
-                            <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                              <button 
-                                onClick={() => handleSort("name")}
-                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse justify-end' : ''}`}
-                              >
-                                {adminT('products.productName')}
-                                {sortField === "name" && (
-                                  sortDirection === "asc" ? 
-                                    <ChevronUp className="h-3 w-3" /> : 
-                                    <ChevronDown className="h-3 w-3" />
-                                )}
-                              </button>
-                            </TableHead>
-                            <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                              <button 
-                                onClick={() => handleSort("category")}
-                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse justify-end' : ''}`}
-                              >
-                                {adminT('products.productCategory')}
-                                {sortField === "category" && (
-                                  sortDirection === "asc" ? 
-                                    <ChevronUp className="h-3 w-3" /> : 
-                                    <ChevronDown className="h-3 w-3" />
-                                )}
-                              </button>
-                            </TableHead>
-                            <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                              <button 
-                                onClick={() => handleSort("price")}
-                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse justify-end' : ''}`}
-                              >
-                                {adminT('products.productPrice')}
-                                {sortField === "price" && (
-                                  sortDirection === "asc" ? 
-                                    <ChevronUp className="h-3 w-3" /> : 
-                                    <ChevronDown className="h-3 w-3" />
-                                )}
-                              </button>
-                            </TableHead>
-                            <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('products.productStatus')}</TableHead>
+                          <TableRow>
+                            {/* Dynamically order columns for RTL */}
+                            {isRTL ? (
+                              // RTL order: Status, Price, Category, Name (reversed)
+                              <>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>{adminT('products.productStatus')}</TableHead>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>
+                                  <button 
+                                    onClick={() => handleSort("price")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                  >
+                                    {adminT('products.productPrice')}
+                                    {sortField === "price" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>
+                                  <button 
+                                    onClick={() => handleSort("category")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                  >
+                                    {adminT('products.productCategory')}
+                                    {sortField === "category" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>
+                                  <button 
+                                    onClick={() => handleSort("name")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                  >
+                                    {adminT('products.productName')}
+                                    {sortField === "name" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                              </>
+                            ) : (
+                              // LTR order: Name, Category, Price, Status (normal)
+                              <>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
+                                  <button 
+                                    onClick={() => handleSort("name")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                  >
+                                    {adminT('products.productName')}
+                                    {sortField === "name" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
+                                  <button 
+                                    onClick={() => handleSort("category")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                  >
+                                    {adminT('products.productCategory')}
+                                    {sortField === "category" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
+                                  <button 
+                                    onClick={() => handleSort("price")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                  >
+                                    {adminT('products.productPrice')}
+                                    {sortField === "price" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>{adminT('products.productStatus')}</TableHead>
+                              </>
+                            )}
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {filteredProducts.map((product: any) => (
-                            <TableRow key={product.id} style={isRTL ? { direction: 'rtl' } : {}}>
-                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <button
-                                  onClick={() => {
-                                    setEditingProduct(product);
-                                    setIsProductFormOpen(true);
-                                  }}
-                                  className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer ${isRTL ? 'text-right' : 'text-left'}`}
-                                >
-                                  {product.name}
-                                </button>
-                              </TableCell>
-                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <Badge variant="outline" className="text-xs">
-                                  {product.category?.name}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
-                                  {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
-                                    <div className="space-y-1">
-                                      <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                      <div className="font-semibold text-gray-900">
-                                        {formatCurrency(
-                                          product.discountType === "percentage"
-                                            ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
-                                            : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
-                                        )}
-                                      </div>
-                                      <div className="text-orange-600 text-xs font-medium">
-                                        -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
-                                      </div>
+                            <TableRow key={product.id}>
+                              {/* Dynamically order columns for RTL */}
+                              {isRTL ? (
+                                // RTL order: Status, Price, Category, Name (reversed)
+                                <>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                    <div className="flex flex-col gap-1 items-end">
+                                      <CustomSwitch
+                                        checked={product.isAvailable && (product.availabilityStatus === "available")}
+                                        onChange={(checked) => {
+                                          if (!checked) {
+                                            setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
+                                            setIsAvailabilityDialogOpen(true);
+                                          } else {
+                                            updateAvailabilityStatusMutation.mutate({
+                                              id: product.id,
+                                              availabilityStatus: "available"
+                                            });
+                                          }
+                                        }}
+                                        bgColor="bg-green-500"
+                                      />
+                                      {product.availabilityStatus === "out_of_stock_today" && (
+                                        <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
+                                          предзаказ
+                                        </div>
+                                      )}
                                     </div>
-                                  ) : (
-                                    <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                  )}
-                                  <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
-                                </div>
-                              </TableCell>
-                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
-                                  <CustomSwitch
-                                    checked={product.isAvailable && (product.availabilityStatus === "available")}
-                                    onChange={(checked) => {
-                                      if (!checked) {
-                                        setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
-                                        setIsAvailabilityDialogOpen(true);
-                                      } else {
-                                        updateAvailabilityStatusMutation.mutate({
-                                          id: product.id,
-                                          availabilityStatus: "available"
-                                        });
-                                      }
-                                    }}
-                                    bgColor="bg-green-500"
-                                  />
-                                  {product.availabilityStatus === "out_of_stock_today" && (
-                                    <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
-                                      предзаказ
+                                  </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                    <div className="text-xs sm:text-sm p-2 rounded">
+                                      {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
+                                        <div className="space-y-1">
+                                          <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                          <div className="font-semibold text-gray-900">
+                                            {formatCurrency(
+                                              product.discountType === "percentage"
+                                                ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
+                                                : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
+                                            )}
+                                          </div>
+                                          <div className="text-orange-600 text-xs font-medium">
+                                            -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                      )}
+                                      <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
                                     </div>
-                                  )}
-                                </div>
-                              </TableCell>
+                                  </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                    <Badge variant="outline" className="text-xs">
+                                      {product.category?.name}
+                                    </Badge>
+                                  </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                    <button
+                                      onClick={() => {
+                                        setEditingProduct(product);
+                                        setIsProductFormOpen(true);
+                                      }}
+                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-right"
+                                    >
+                                      {product.name}
+                                    </button>
+                                  </TableCell>
+                                </>
+                              ) : (
+                                // LTR order: Name, Category, Price, Status (normal)
+                                <>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <button
+                                      onClick={() => {
+                                        setEditingProduct(product);
+                                        setIsProductFormOpen(true);
+                                      }}
+                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-left"
+                                    >
+                                      {product.name}
+                                    </button>
+                                  </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <Badge variant="outline" className="text-xs">
+                                      {product.category?.name}
+                                    </Badge>
+                                  </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
+                                      {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
+                                        <div className="space-y-1">
+                                          <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                          <div className="font-semibold text-gray-900">
+                                            {formatCurrency(
+                                              product.discountType === "percentage"
+                                                ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
+                                                : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
+                                            )}
+                                          </div>
+                                          <div className="text-orange-600 text-xs font-medium">
+                                            -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                      )}
+                                      <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
+                                    </div>
+                                  </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <div className="flex flex-col gap-1 items-start">
+                                      <CustomSwitch
+                                        checked={product.isAvailable && (product.availabilityStatus === "available")}
+                                        onChange={(checked) => {
+                                          if (!checked) {
+                                            setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
+                                            setIsAvailabilityDialogOpen(true);
+                                          } else {
+                                            updateAvailabilityStatusMutation.mutate({
+                                              id: product.id,
+                                              availabilityStatus: "available"
+                                            });
+                                          }
+                                        }}
+                                        bgColor="bg-green-500"
+                                      />
+                                      {product.availabilityStatus === "out_of_stock_today" && (
+                                        <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
+                                          предзаказ
+                                        </div>
+                                      )}
+                                    </div>
+                                  </TableCell>
+                                </>
+                              )}
                             </TableRow>
                           ))}
                         </TableBody>
@@ -2629,7 +2743,7 @@ export default function AdminDashboard() {
                         <div className="w-full">
                           <Table className="rtl:text-right">
                             <TableHeader>
-                              <TableRow style={isRTL ? { direction: 'rtl' } : {}}>
+                              <TableRow>
                                 <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>№</TableHead>
                                 <TableHead className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.customer', 'Клиент')}</TableHead>
                                 <TableHead className={`text-xs sm:text-sm hidden sm:table-cell w-24 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.status', 'Статус')}</TableHead>
@@ -2640,7 +2754,7 @@ export default function AdminDashboard() {
                             </TableHeader>
                             <TableBody>
                               {ordersResponse.data.map((order: any) => (
-                                <TableRow key={order.id} className="hover:bg-gray-50" style={isRTL ? { direction: 'rtl' } : {}}>
+                                <TableRow key={order.id} className="hover:bg-gray-50">
                                   <TableCell className={`font-bold text-xs sm:text-sm text-orange-600 ${isRTL ? 'text-right' : 'text-left'}`}>#{order.id}</TableCell>
                                   <TableCell className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                     <div className="space-y-1">
