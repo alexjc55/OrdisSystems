@@ -594,11 +594,11 @@ export default function Profile() {
                     <div className="flex items-center gap-3">
                       <Lock className="h-5 w-5 text-blue-600" />
                       <div>
-                        <h3 className="font-medium">Пароль</h3>
+                        <h3 className="font-medium">{t('auth.password')}</h3>
                         <p className="text-sm text-gray-600">
                           {user.password 
-                            ? "Пароль установлен. Последнее изменение неизвестно." 
-                            : "Пароль не установлен. Рекомендуется установить пароль для дополнительной безопасности."
+                            ? t('profile.passwordSet') 
+                            : t('profile.passwordNotSet')
                           }
                         </p>
                       </div>
@@ -606,7 +606,7 @@ export default function Profile() {
                     <Link href="/change-password">
                       <Button variant="outline">
                         <Lock className="h-4 w-4 mr-2" />
-                        {user.password ? "Изменить пароль" : "Установить пароль"}
+                        {user.password ? t('auth.changePassword') : t('profile.setPassword')}
                       </Button>
                     </Link>
                   </div>
@@ -614,10 +614,10 @@ export default function Profile() {
                   {/* Account Information */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 border rounded-lg">
-                      <h4 className="font-medium mb-2">Email адрес</h4>
+                      <h4 className="font-medium mb-2">{t('profile.emailAddress')}</h4>
                       <p className="text-sm text-gray-600 mb-1">{user.email}</p>
                       <p className="text-xs text-gray-500">
-                        Используется для входа в систему и восстановления пароля
+                        {t('profile.emailUsageDescription')}
                       </p>
                     </div>
                     
@@ -626,12 +626,12 @@ export default function Profile() {
 
                   {/* Security Tips */}
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h4 className="font-medium text-blue-900 mb-2">Советы по безопасности</h4>
+                    <h4 className="font-medium text-blue-900 mb-2">{t('profile.securityTips')}</h4>
                     <ul className="text-sm text-blue-800 space-y-1">
-                      <li>• Используйте уникальный пароль длиной не менее 6 символов</li>
-                      <li>• Не сообщайте свой пароль третьим лицам</li>
-                      <li>• Регулярно обновляйте пароль</li>
-                      <li>• При подозрении на компрометацию немедленно смените пароль</li>
+                      <li>• {t('profile.securityTip1')}</li>
+                      <li>• {t('profile.securityTip2')}</li>
+                      <li>• {t('profile.securityTip3')}</li>
+                      <li>• {t('profile.securityTip4')}</li>
                     </ul>
                   </div>
                 </div>
@@ -645,10 +645,10 @@ export default function Profile() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="h-5 w-5" />
-                  Управление Адресами
+                  {t('profile.addressManagement')}
                 </CardTitle>
                 <CardDescription>
-                  Добавляйте и управляйте адресами доставки
+                  {t('profile.manageDeliveryAddresses')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -663,7 +663,7 @@ export default function Profile() {
                         className="bg-orange-500 hover:bg-orange-600 text-white"
                       >
                         <Plus className="h-4 w-4 mr-2" />
-                        Добавить адрес
+                        {t('profile.addAddress')}
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[500px]">
