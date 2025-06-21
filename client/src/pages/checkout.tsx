@@ -23,7 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { useCommonTranslation } from "@/hooks/use-language";
+import { useCommonTranslation, useShopTranslation } from "@/hooks/use-language";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -234,6 +234,7 @@ export default function Checkout() {
   const [registerDatePickerOpen, setRegisterDatePickerOpen] = useState(false);
 
   const { t } = useCommonTranslation();
+  const { t: tShop } = useShopTranslation();
   
   const guestOrderSchema = createGuestOrderSchema(t);
   const registrationSchema = createRegistrationSchema(t);

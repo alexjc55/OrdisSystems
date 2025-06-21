@@ -343,7 +343,7 @@ export default function CartOverlay() {
 
                 {/* Store Information */}
                 <div className="space-y-4 pt-4">
-                  <h3 className="font-semibold text-gray-900">{t('checkout.deliveryInfo', 'Информация о доставке')}</h3>
+                  <h3 className="font-semibold text-gray-900">{t('checkout.deliveryInfo')}</h3>
                   <div className="grid grid-cols-1 gap-4">
                     {/* Delivery Info */}
                     {storeSettings?.deliveryInfo && (

@@ -106,7 +106,8 @@
     "registration": "הרשמה",
     "loginTab": "כניסה", 
     "guest": "אורח",
-    "registrationBenefit": "הירשם כדי לעקוב אחר סטטוס ההזמנה ולשמור כתובות משלוח."
+    "registrationBenefit": "הירשם כדי לעקוב אחר סטטוס ההזמנה ולשמור כתובות משלוח.",
+    "deliveryInfo": "מידע על משלוח"
   },
   "orders": {
     "myOrders": "ההזמנות שלי",

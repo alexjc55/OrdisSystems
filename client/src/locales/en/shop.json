@@ -106,7 +106,8 @@
     "registration": "Registration",
     "loginTab": "Login", 
     "guest": "Guest",
-    "registrationBenefit": "Register to track your order status and save delivery addresses."
+    "registrationBenefit": "Register to track your order status and save delivery addresses.",
+    "deliveryInfo": "Delivery Information"
   },
   "orders": {
     "myOrders": "My Orders",
