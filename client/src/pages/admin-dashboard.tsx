@@ -82,10 +82,10 @@ import {
 
 // Validation schemas
 const productSchema = z.object({
-  name: z.string().min(1, "Название обязательно"),
+  name: z.string().min(1),
   description: z.string().optional(),
-  categoryId: z.number().min(1, "Выберите категорию"),
-  price: z.string().min(1, "Цена обязательна"),
+  categoryId: z.number().min(1),
+  price: z.string().min(1),
   unit: z.enum(["100g", "100ml", "piece", "kg"]).default("100g"),
   imageUrl: z.string().optional(),
   isAvailable: z.boolean().default(true),
@@ -96,16 +96,16 @@ const productSchema = z.object({
 });
 
 const categorySchema = z.object({
-  name: z.string().min(1, "Название обязательно"),
+  name: z.string().min(1),
   description: z.string().optional(),
   icon: z.string().default("🍽️"),
 });
 
 // Use the imported store settings schema with extended validation
 const storeSettingsSchema = insertStoreSettingsSchema.extend({
-  contactEmail: z.string().email("Неверный формат email").optional().or(z.literal("")),
-  bottomBanner1Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
-  bottomBanner2Link: z.string().url("Неверный формат URL").optional().or(z.literal("")),
+  contactEmail: z.string().email().optional().or(z.literal("")),
+  bottomBanner1Link: z.string().url().optional().or(z.literal("")),
+  bottomBanner2Link: z.string().url().optional().or(z.literal("")),
   cancellationReasons: z.array(z.string()).optional(),
   headerHtml: z.string().optional(),
   footerHtml: z.string().optional(),
@@ -151,7 +151,7 @@ const generateAdminDeliveryTimes = (workingHours: any, selectedDate: string, wee
       daySchedule.toLowerCase().includes('выходной')) {
     return [{
       value: 'closed',
-      label: 'Выходной день'
+      label: 'Closed'
     }];
   }
   
@@ -214,14 +214,16 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
     }
   };
 
+  const { t: adminT } = useAdminTranslation();
+  
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'pending': return 'Ожидает';
-      case 'confirmed': return 'Подтвержден';
-      case 'preparing': return 'Готовится';
-      case 'ready': return 'Готов';
-      case 'delivered': return 'Доставлен';
-      case 'cancelled': return 'Отменен';
+      case 'pending': return adminT('orders.status.pending');
+      case 'confirmed': return adminT('orders.status.confirmed');
+      case 'preparing': return adminT('orders.status.preparing');
+      case 'ready': return adminT('orders.status.ready');
+      case 'delivered': return adminT('orders.status.delivered');
+      case 'cancelled': return adminT('orders.status.cancelled');
       default: return status;
     }
   };

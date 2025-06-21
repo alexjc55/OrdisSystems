@@ -96,6 +96,14 @@
     "title": "הזמנות",
     "description": "ניהול הזמנות לקוחות",
     "filterOrders": "סינון הזמנות",
+    "status": {
+      "pending": "ממתין",
+      "confirmed": "מאושר",
+      "preparing": "בהכנה",
+      "ready": "מוכן",
+      "delivered": "נמסר",
+      "cancelled": "מבוטל"
+    },
     "activeOrders": "הזמנות פעילות",
     "orderDetails": "פרטי הזמנה",
     "orderNumber": "מספר הזמנה",

@@ -113,6 +113,14 @@
     "title": "Заказы",
     "description": "Управление заказами клиентов",
     "filterOrders": "Фильтр заказов",
+    "status": {
+      "pending": "Ожидает",
+      "confirmed": "Подтвержден",
+      "preparing": "Готовится",
+      "ready": "Готов",
+      "delivered": "Доставлен",
+      "cancelled": "Отменен"
+    },
     "activeOrders": "Активные заказы",
     "orderDetails": "Детали заказа",
     "orderNumber": "Номер заказа",
