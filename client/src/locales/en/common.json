@@ -97,7 +97,11 @@
     "usernameFormat": "Only Latin letters, numbers and underscores",
     "emailInvalid": "Enter a valid email",
     "passwordMinLength": "Password must contain at least 6 characters",
-    "passwordMismatch": "Passwords do not match"
+    "passwordMismatch": "Passwords do not match",
+    "firstNameMinLength": "First name must contain at least 2 characters",
+    "lastNameMinLength": "Last name must contain at least 2 characters", 
+    "phoneMinLength": "Enter a valid phone number",
+    "addressMinLength": "Enter a complete delivery address"
   },
   "errors": {
     "general": "An error occurred",

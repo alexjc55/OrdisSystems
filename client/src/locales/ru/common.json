@@ -97,7 +97,11 @@
     "usernameFormat": "Только латинские буквы, цифры и подчеркивание",
     "emailInvalid": "Введите корректный email",
     "passwordMinLength": "Пароль должен содержать минимум 6 символов",
-    "passwordMismatch": "Пароли не совпадают"
+    "passwordMismatch": "Пароли не совпадают",
+    "firstNameMinLength": "Имя должно содержать минимум 2 символа",
+    "lastNameMinLength": "Фамилия должна содержать минимум 2 символа",
+    "phoneMinLength": "Введите корректный номер телефона",
+    "addressMinLength": "Введите полный адрес доставки"
   },
   "errors": {
     "general": "Произошла ошибка",

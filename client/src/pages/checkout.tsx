@@ -224,6 +224,11 @@ export default function Checkout() {
   const [guestDatePickerOpen, setGuestDatePickerOpen] = useState(false);
   const [registerDatePickerOpen, setRegisterDatePickerOpen] = useState(false);
 
+  const { t } = useCommonTranslation();
+  
+  const guestOrderSchema = createGuestOrderSchema(t);
+  const registrationSchema = createRegistrationSchema(t);
+  
   const guestForm = useForm<GuestOrderData>({
     resolver: zodResolver(guestOrderSchema),
   });

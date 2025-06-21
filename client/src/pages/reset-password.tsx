@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Lock, Check, AlertCircle } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { useCommonTranslation } from "@/hooks/use-language";
 
 export default function ResetPasswordPage() {
+  const { t } = useCommonTranslation();
   const [location] = useLocation();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -37,14 +39,14 @@ export default function ResetPasswordPage() {
     onSuccess: () => {
       setSuccess(true);
       toast({
-        title: "Пароль сброшен",
-        description: "Ваш пароль успешно изменен",
+        title: t('auth.passwordReset'),
+        description: t('auth.passwordResetSuccess'),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Ошибка",
-        description: error.message || "Не удалось сбросить пароль",
+        title: t('status.error'),
+        description: error.message || t('auth.passwordResetError'),
         variant: "destructive",
       });
     },

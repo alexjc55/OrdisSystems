@@ -97,7 +97,11 @@
     "usernameFormat": "רק אותיות לטיניות, מספרים וקו תחתון",
     "emailInvalid": "הזן כתובת אימייל חוקית",
     "passwordMinLength": "הסיסמה חייבת להכיל לפחות 6 תווים",
-    "passwordMismatch": "הסיסמאות אינן תואמות"
+    "passwordMismatch": "הסיסמאות אינן תואמות",
+    "firstNameMinLength": "השם חייב להכיל לפחות 2 תווים",
+    "lastNameMinLength": "המשפחה חייבת להכיל לפחות 2 תווים",
+    "phoneMinLength": "הזן מספר טלפון חוקי",
+    "addressMinLength": "הזן כתובת משלוח מלאה"
   },
   "errors": {
     "general": "אירעה שגיאה",
