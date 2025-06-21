@@ -486,16 +486,16 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, t }: { order
     },
     onSuccess: () => {
       toast({
-        title: adminT('orders.updated'),
-        description: adminT('orders.updateSuccess'),
+        title: t('orders.updated'),
+        description: t('orders.updateSuccess'),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
       onSave();
     },
     onError: (error: any) => {
       toast({
-        title: adminT('common.error'),
-        description: error.message || adminT('orders.updateError'),
+        title: t('common.error'),
+        description: error.message || t('orders.updateError'),
         variant: "destructive",
       });
     },
@@ -1176,7 +1176,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, t }: { order
           currentDiscount={itemDiscounts[showDiscountDialog]}
           onClose={() => setShowDiscountDialog(null)}
           onApply={applyItemDiscount}
-          adminT={adminT}
+          adminT={t}
         />
       )}
 
@@ -3218,6 +3218,7 @@ export default function AdminDashboard() {
                       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
                     }}
                     searchPlaceholder={adminT('common.searchProducts')}
+                    t={adminT}
                   />
                 )}
               </DialogContent>
