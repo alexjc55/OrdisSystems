@@ -35,35 +35,35 @@ const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliv
 
 // Schema will be created inside component to access translations
 const createGuestOrderSchema = (t: any) => z.object({
-  firstName: z.string().min(2, t('validation.firstNameMinLength')),
-  lastName: z.string().min(2, t('validation.lastNameMinLength')),
-  email: z.string().email(t('validation.emailInvalid')),
-  phone: z.string().min(10, t('validation.phoneMinLength')),
-  address: z.string().min(10, t('validation.addressMinLength')),
+  firstName: z.string().min(2, tCommon('validation.firstNameMinLength')),
+  lastName: z.string().min(2, tCommon('validation.lastNameMinLength')),
+  email: z.string().email(tCommon('validation.emailInvalid')),
+  phone: z.string().min(10, tCommon('validation.phoneMinLength')),
+  address: z.string().min(10, tCommon('validation.addressMinLength')),
 });
 
 const createRegistrationSchema = (t: any) => {
   const guestSchema = createGuestOrderSchema(t);
   return guestSchema.extend({
-    password: z.string().min(6, t('validation.passwordMinLength')),
+    password: z.string().min(6, tCommon('validation.passwordMinLength')),
     confirmPassword: z.string()
   }).refine((data) => data.password === data.confirmPassword, {
-    message: t('validation.passwordMismatch'),
+    message: tCommon('validation.passwordMismatch'),
     path: ["confirmPassword"],
   });
 };
 
 const createAuthSchema = (t: any) => z.object({
-  email: z.string().email(t('validation.emailInvalid')),
-  password: z.string().min(1, t('validation.passwordRequired')),
+  email: z.string().email(tCommon('validation.emailInvalid')),
+  password: z.string().min(1, tCommon('validation.passwordRequired')),
 });
 
 const createAuthenticatedOrderSchema = (t: any) => z.object({
-  address: z.string().min(10, t('validation.addressMinLength')),
-  phone: z.string().min(10, t('validation.phoneMinLength')),
-  deliveryDate: z.string().min(1, t('validation.deliveryDateRequired')),
-  deliveryTime: z.string().min(1, t('validation.deliveryTimeRequired')),
-  paymentMethod: z.string().min(1, t('validation.paymentMethodRequired')),
+  address: z.string().min(10, tCommon('validation.addressMinLength')),
+  phone: z.string().min(10, tCommon('validation.phoneMinLength')),
+  deliveryDate: z.string().min(1, tCommon('validation.deliveryDateRequired')),
+  deliveryTime: z.string().min(1, tCommon('validation.deliveryTimeRequired')),
+  paymentMethod: z.string().min(1, tCommon('validation.paymentMethodRequired')),
 });
 
 type GuestOrderData = {
@@ -328,7 +328,7 @@ export default function Checkout() {
       });
       
       if (!registerRes.ok) {
-        throw new Error(t('auth.registerError'));
+        throw new Error(tCommon('auth.registerError'));
       }
 
       // Get the created user data
@@ -338,7 +338,7 @@ export default function Checkout() {
       if (data.address && data.address.trim()) {
         try {
           await apiRequest("POST", "/api/addresses", {
-            label: t('address.home'),
+            label: tCommon('address.home'),
             address: data.address.trim()
           });
         } catch (error) {
@@ -402,13 +402,13 @@ export default function Checkout() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
-        title: t('auth.loginSuccess'),
+        title: tCommon('auth.loginSuccess'),
         description: tShop('checkout.canNowPlaceOrder'),
       });
     },
     onError: (error: Error) => {
       toast({
-        title: t('auth.loginError'),
+        title: tCommon('auth.loginError'),
         description: error.message,
         variant: "destructive",
       });
@@ -476,10 +476,10 @@ export default function Checkout() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <ShoppingCart className="h-12 w-12 text-gray-400 mb-4" />
-            <h2 className="text-xl font-semibold mb-2">{t('cart.empty')}</h2>
-            <p className="text-gray-600 mb-4">{t('cart.emptyDescription')}</p>
+            <h2 className="text-xl font-semibold mb-2">{tCommon('cart.empty')}</h2>
+            <p className="text-gray-600 mb-4">{tCommon('cart.emptyDescription')}</p>
             <Button onClick={() => setLocation("/")}>
-              {t('navigation.goShopping')}
+              {tCommon('navigation.goShopping')}
             </Button>
           </CardContent>
         </Card>
@@ -497,7 +497,7 @@ export default function Checkout() {
           className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
         >
           <ArrowLeft className="h-4 w-4" />
-          {t('navigation.backToShopping')}
+          {tCommon('navigation.backToShopping')}
         </Button>
       </div>
 
