@@ -1162,6 +1162,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
         <AddItemDialog 
           onClose={() => setShowAddItem(false)}
           onAdd={addItem}
+          searchPlaceholder={adminT('common.searchProducts')}
         />
       )}
 

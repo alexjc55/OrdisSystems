@@ -35,7 +35,8 @@
     "noResults": "No results found",
     "tryDifferentSearch": "Try changing search criteria or filters",
     "table": "Table",
-    "kanban": "Kanban"
+    "kanban": "Kanban",
+    "searchProducts": "Search products..."
   },
   "products": {
     "title": "Products",

@@ -35,7 +35,8 @@
     "noResults": "לא נמצאו תוצאות",
     "tryDifferentSearch": "נסה לשנות את קריטריוני החיפוש או הסינון",
     "table": "טבלה",
-    "kanban": "קנבן"
+    "kanban": "קנבן",
+    "searchProducts": "חיפוש מוצרים..."
   },
   "products": {
     "title": "מוצרים",
