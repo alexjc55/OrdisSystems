@@ -221,6 +221,18 @@
     "viewReports": "צפייה בדוחות",
     "accessAdmin": "גישה לניהול"
   },
+  "users": {
+    "created": "משתמש נוצר",
+    "createSuccess": "משתמש נוסף בהצלחה",
+    "createError": "יצירת משתמש נכשלה",
+    "updated": "משתמש עודכן",
+    "updateSuccess": "שינויים נשמרו",
+    "updateError": "עדכון משתמש נכשל"
+  },
+  "settings": {
+    "showSpecialOffers": "הצג הצעות מיוחדות",
+    "specialOffersDescription": "מקטע מוצרים במבצע"
+  },
   "notifications": {
     "success": {
       "saved": "נשמר בהצלחה",

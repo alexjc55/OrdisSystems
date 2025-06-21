@@ -222,5 +222,17 @@
     "manageSettings": "Manage Settings",
     "viewReports": "View Reports",
     "accessAdmin": "Access Admin"
+  },
+  "users": {
+    "created": "User created",
+    "createSuccess": "User successfully added",
+    "createError": "Failed to create user",
+    "updated": "User updated",
+    "updateSuccess": "Changes saved",
+    "updateError": "Failed to update user"
+  },
+  "settings": {
+    "showSpecialOffers": "Show special offers",
+    "specialOffersDescription": "Section for discounted products"
   }
 }

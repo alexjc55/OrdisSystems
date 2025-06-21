@@ -5301,9 +5301,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">Показывать меню категорий</FormLabel>
+                    <FormLabel className="text-sm font-medium">{adminT('settings.showCategoryMenu')}</FormLabel>
                     <FormDescription className="text-xs">
-                      Нижнее фиксированное меню категорий на мобильных устройствах
+                      {adminT('settings.categoryMenuDescription')}
                     </FormDescription>
                   </div>
                   <FormControl>

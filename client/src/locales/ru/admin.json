@@ -180,7 +180,13 @@
     "workerUsers": "Сотрудники",
     "customerUsers": "Клиенты",
     "activeUsers": "Активные пользователи",
-    "inactiveUsers": "Неактивные пользователи"
+    "inactiveUsers": "Неактивные пользователи",
+    "created": "Пользователь создан",
+    "createSuccess": "Пользователь успешно добавлен",
+    "createError": "Не удалось создать пользователя",
+    "updated": "Пользователь обновлен",
+    "updateSuccess": "Изменения сохранены",
+    "updateError": "Не удалось обновить пользователя"
   },
   "settings": {
     "title": "Настройки",
@@ -211,7 +217,9 @@
     "enableMultiLanguage": "Многоязычный интерфейс",
     "saveSettings": "Сохранить настройки",
     "showSpecialOffers": "Показывать спецпредложения",
-    "specialOffersDescription": "Секция товаров со скидками"
+    "specialOffersDescription": "Секция товаров со скидками",
+    "showCategoryMenu": "Показывать меню категорий",
+    "categoryMenuDescription": "Нижнее фиксированное меню категорий на мобильных устройствах"
   },
   "common": {
     "showing": "Показано",
