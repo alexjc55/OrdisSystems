@@ -103,5 +103,9 @@
     "tryAgain": "נסה שוב",
     "networkError": "שגיאת רשת",
     "serverError": "שגיאת שרת"
+  },
+  "footer": {
+    "poweredBy": "Powered by Ordis.",
+    "tryBusiness": "Try it for your business."
   }
 }

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useLanguage } from "@/hooks/use-language";
+import { useLanguage, useCommonTranslation } from "@/hooks/use-language";
 import { Languages, Globe } from "lucide-react";
 
 interface LanguageSwitcherProps {

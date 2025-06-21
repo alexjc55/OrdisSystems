@@ -1,6 +1,9 @@
 import ordisLogo from "@assets/logo-white_1750456267684.png";
+import { useCommonTranslation } from "@/hooks/use-language";
 
 export function Footer() {
+  const { t } = useCommonTranslation();
+  
   const handleClick = () => {
     window.open("https://ordis.co.il", "_blank", "noopener,noreferrer");
   };
@@ -15,12 +18,12 @@ export function Footer() {
           onClick={handleClick}
         />
         <span className="text-white text-sm font-medium">
-          Powered by Ordis. 
+          {t('footer.poweredBy')} 
           <span 
             className="cursor-pointer hover:underline ml-1 text-orange-500"
             onClick={handleClick}
           >
-            Try it for your business.
+            {t('footer.tryBusiness')}
           </span>
         </span>
       </div>

@@ -118,5 +118,9 @@
     "updateError": "Ошибка обновления профиля",
     "addressAdded": "Адрес добавлен",
     "addressError": "Ошибка добавления адреса"
+  },
+  "footer": {
+    "poweredBy": "Powered by Ordis.",
+    "tryBusiness": "Try it for your business."
   }
 }
