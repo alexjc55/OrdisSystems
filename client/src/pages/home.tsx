@@ -426,7 +426,7 @@ export default function Home() {
                         <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                           {t('categories')}
                         </h2>
-                        <p className="text-gray-600 font-medium">{t('selectCategoryDescription', 'Выберите категорию блюд')}</p>
+                        <p className="text-gray-600 font-medium">{t('selectCategoryDescription')}</p>
                       </div>
                     </div>
                     <div className="flex justify-start md:justify-end mt-6 md:mt-0">
@@ -455,12 +455,12 @@ export default function Home() {
                               </h3>
                               
                               <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed flex-1">
-                                {category.description || t('defaultCategoryDescription', 'Вкусные блюда для вашего стола')}
+                                {category.description || t('defaultCategoryDescription')}
                               </p>
                               
                               <div className="mt-auto">
                                 <Badge className="px-3 py-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold text-sm shadow-md">
-                                  {category.products.length} {t('dishesCount', 'блюд')}
+                                  {category.products.length} {t('dishesCount')}
                                 </Badge>
                               </div>
                             </div>
@@ -647,7 +647,7 @@ export default function Home() {
                       <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t('allCategories', 'Все категории')}</SelectItem>
+                      <SelectItem value="all">{t('allCategories')}</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
                           {category.name}
@@ -658,7 +658,7 @@ export default function Home() {
 
                   <Select value={discountFilter} onValueChange={setDiscountFilter}>
                     <SelectTrigger className="flex-1 min-w-0 text-sm">
-                      <SelectValue placeholder={t('filterByDiscount', 'Фильтр по скидке')} />
+                      <SelectValue placeholder={t('filterByDiscount')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t('allProducts', 'Все товары')}</SelectItem>
