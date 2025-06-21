@@ -38,7 +38,11 @@ const getDateLocale = (language: string) => {
 };
 
 // Calculate delivery fee based on order total and free delivery threshold
-const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number) => {
+const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number | null) => {
+  // If no free delivery threshold is set, always charge delivery fee
+  if (!freeDeliveryFrom || freeDeliveryFrom <= 0) {
+    return deliveryFee;
+  }
   return orderTotal >= freeDeliveryFrom ? 0 : deliveryFee;
 };
 
@@ -569,10 +573,11 @@ export default function Checkout() {
               <Separator />
               {(() => {
                 const subtotal = getTotalPrice();
+                const freeDeliveryThreshold = storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null;
                 const deliveryFeeAmount = calculateDeliveryFee(
                   subtotal, 
                   parseFloat(storeSettings?.deliveryFee || "15.00"), 
-                  parseFloat(storeSettings?.freeDeliveryFrom || "50.00")
+                  freeDeliveryThreshold
                 );
                 const total = subtotal + deliveryFeeAmount;
 
@@ -592,10 +597,10 @@ export default function Checkout() {
                         )}
                       </span>
                     </div>
-                    {deliveryFeeAmount > 0 && (
+                    {deliveryFeeAmount > 0 && freeDeliveryThreshold && freeDeliveryThreshold > 0 && (
                       <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
                         <div className="text-lg font-bold text-green-700">
-                          {tShop('cart.freeDeliveryFrom')} {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                          {tShop('cart.freeDeliveryFrom')} {formatCurrency(freeDeliveryThreshold)}
                         </div>
                         <div className="text-sm text-green-600 mt-1">
                           🚚 {tShop('cart.freeDeliveryBenefit')}
