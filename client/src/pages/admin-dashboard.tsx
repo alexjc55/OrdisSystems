@@ -2093,12 +2093,12 @@ export default function AdminDashboard() {
     });
 
   return (
-    <div className={`min-h-screen bg-gray-50 ${isRTL ? 'rtl' : 'ltr'}`}>
+    <div className={`min-h-screen bg-gray-50`} dir={isRTL ? 'rtl' : 'ltr'}>
       <Header />
       
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         <div className="mb-4 sm:mb-8">
-          <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${isRTL ? 'text-right' : 'text-left'}`}>
+          <div className={`flex flex-col sm:flex-row sm:items-center ${isRTL ? 'sm:flex-row-reverse' : ''} justify-between gap-4`}>
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{adminT('dashboard.title')}</h1>
               <p className="text-gray-600 text-sm sm:text-base">{adminT('dashboard.overview')}</p>
@@ -2116,7 +2116,7 @@ export default function AdminDashboard() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
           <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
-            <TabsList className="flex w-full overflow-x-auto gap-1 justify-start">
+            <TabsList className={`flex w-full overflow-x-auto gap-1 ${isRTL ? 'justify-end' : 'justify-start'}`}>
               {hasPermission("canManageProducts") && (
                 <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.products')}</TabsTrigger>
               )}
@@ -2228,10 +2228,10 @@ export default function AdminDashboard() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm">
+                            <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                               <button 
                                 onClick={() => handleSort("name")}
-                                className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                               >
                                 {adminT('products.productName')}
                                 {sortField === "name" && (
@@ -2241,10 +2241,10 @@ export default function AdminDashboard() {
                                 )}
                               </button>
                             </TableHead>
-                            <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm">
+                            <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                               <button 
                                 onClick={() => handleSort("category")}
-                                className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                               >
                                 {adminT('products.productCategory')}
                                 {sortField === "category" && (
@@ -2254,10 +2254,10 @@ export default function AdminDashboard() {
                                 )}
                               </button>
                             </TableHead>
-                            <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm">
+                            <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                               <button 
                                 onClick={() => handleSort("price")}
-                                className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                               >
                                 {adminT('products.productPrice')}
                                 {sortField === "price" && (
@@ -2267,29 +2267,29 @@ export default function AdminDashboard() {
                                 )}
                               </button>
                             </TableHead>
-                            <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm">{adminT('products.productStatus')}</TableHead>
+                            <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('products.productStatus')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {filteredProducts.map((product: any) => (
                             <TableRow key={product.id}>
-                              <TableCell className="px-2 sm:px-4 py-2">
+                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                                 <button
                                   onClick={() => {
                                     setEditingProduct(product);
                                     setIsProductFormOpen(true);
                                   }}
-                                  className="font-medium text-xs sm:text-sm text-left hover:text-orange-600 transition-colors cursor-pointer"
+                                  className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer ${isRTL ? 'text-right' : 'text-left'}`}
                                 >
                                   {product.name}
                                 </button>
                               </TableCell>
-                              <TableCell className="px-2 sm:px-4 py-2">
+                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                                 <Badge variant="outline" className="text-xs">
                                   {product.category?.name}
                                 </Badge>
                               </TableCell>
-                              <TableCell className="px-2 sm:px-4 py-2">
+                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                                 <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
                                   {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
                                     <div className="space-y-1">
