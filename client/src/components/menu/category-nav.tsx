@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { memo, useCallback } from "react";
+import { useShopTranslation } from "@/hooks/use-language";
 import type { CategoryWithProducts } from "@shared/schema";
 
 interface CategoryNavProps {
@@ -18,6 +19,8 @@ export default memo(function CategoryNav({
   selectedCategoryId,
   onCategorySelect
 }: CategoryNavProps) {
+  const { t } = useShopTranslation();
+  
   const handleAllCategoriesClick = useCallback(() => {
     onCategorySelect(null);
   }, [onCategorySelect]);
@@ -36,7 +39,7 @@ export default memo(function CategoryNav({
           className="flex-shrink-0"
         >
           <span className="mr-2">🛍️</span>
-          Все
+          {t('allCategories')}
         </Button>
         
         {categories.map((category) => (

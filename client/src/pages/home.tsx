@@ -496,7 +496,12 @@ export default function Home() {
                         <button
                           onClick={() => {
                             if (carouselApiRef.current) {
-                              carouselApiRef.current.scrollPrev();
+                              const isRTL = document.documentElement.dir === 'rtl';
+                              if (isRTL) {
+                                carouselApiRef.current.scrollNext();
+                              } else {
+                                carouselApiRef.current.scrollPrev();
+                              }
                             }
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
@@ -506,7 +511,12 @@ export default function Home() {
                         <button
                           onClick={() => {
                             if (carouselApiRef.current) {
-                              carouselApiRef.current.scrollNext();
+                              const isRTL = document.documentElement.dir === 'rtl';
+                              if (isRTL) {
+                                carouselApiRef.current.scrollPrev();
+                              } else {
+                                carouselApiRef.current.scrollNext();
+                              }
                             }
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
@@ -620,7 +630,7 @@ export default function Home() {
                       className="flex items-center gap-1 text-gray-600 hover:text-gray-800 shrink-0"
                     >
                       <ChevronLeft className="h-4 w-4" />
-                      <span className="hidden sm:inline">Назад</span>
+                      <span className="hidden sm:inline">{t('buttons.back', 'Назад')}</span>
                     </Button>
                   </div>
                   {selectedCategory.description && (

@@ -95,7 +95,7 @@ export default function CartSidebar() {
     <div className="fixed inset-0 z-50 overflow-hidden">
       <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setCartOpen(false)} />
       
-      <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl">
+      <div className="absolute top-0 h-full w-full max-w-md bg-white shadow-xl right-0 rtl:right-auto rtl:left-0">
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex items-center justify-between border-b p-4">
