@@ -12,7 +12,11 @@ import { useShopTranslation } from "@/hooks/use-language";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Calculate delivery fee based on order total and free delivery threshold
-const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number) => {
+const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number | null) => {
+  // If no free delivery threshold is set, always charge delivery fee
+  if (!freeDeliveryFrom || freeDeliveryFrom <= 0) {
+    return deliveryFee;
+  }
   return orderTotal >= freeDeliveryFrom ? 0 : deliveryFee;
 };
 
@@ -249,10 +253,11 @@ export default function CartSidebar() {
               <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl p-4 border border-orange-200">
                 {(() => {
                   const subtotal = getTotalPrice();
+                  const freeDeliveryThreshold = storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null;
                   const deliveryFeeAmount = calculateDeliveryFee(
                     subtotal, 
                     parseFloat(storeSettings?.deliveryFee || "15.00"), 
-                    parseFloat(storeSettings?.freeDeliveryFrom || "50.00")
+                    freeDeliveryThreshold
                   );
                   const total = subtotal + deliveryFeeAmount;
 
@@ -272,9 +277,9 @@ export default function CartSidebar() {
                           )}
                         </span>
                       </div>
-                      {deliveryFeeAmount > 0 && (
+                      {deliveryFeeAmount > 0 && freeDeliveryThreshold && freeDeliveryThreshold > 0 && (
                         <div className="text-xs text-gray-500 text-center">
-                          {t('cart.freeDeliveryFrom')} {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                          {t('cart.freeDeliveryFrom')} {formatCurrency(freeDeliveryThreshold)}
                         </div>
                       )}
                       <Separator />
