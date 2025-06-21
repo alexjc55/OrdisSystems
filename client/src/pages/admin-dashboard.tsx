@@ -2719,7 +2719,7 @@ export default function AdminDashboard() {
                                               </span>
                                             </div>
                                             <div className="text-xs text-red-600 font-medium">
-                                              {t('discount')}
+                                              скидка
                                             </div>
                                           </div>
                                         );
@@ -2733,10 +2733,10 @@ export default function AdminDashboard() {
                                         return (
                                           <div className="space-y-1">
                                             <div className="text-xs text-gray-600">
-                                              {t('products')}: {formatCurrency(subtotal)}
+                                              Товары: {formatCurrency(subtotal)}
                                             </div>
                                             <div className="text-xs text-gray-600">
-                                              {t('delivery')}: {formatCurrency(deliveryFee)}
+                                              Доставка: {formatCurrency(deliveryFee)}
                                             </div>
                                             <div className="font-medium">
                                               {formatCurrency(order.totalAmount)}
