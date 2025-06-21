@@ -894,7 +894,7 @@ export default function Checkout() {
                           )}
                         </div>
                         <div>
-                          <Label htmlFor="confirmPassword">Подтвердите пароль</Label>
+                          <Label htmlFor="confirmPassword">{tCommon('confirmPassword')}</Label>
                           <Input
                             id="confirmPassword"
                             type="password"
@@ -1026,7 +1026,7 @@ export default function Checkout() {
                   <Alert>
                     <CheckCircle className="h-4 w-4" />
                     <AlertDescription>
-                      Войдите в аккаунт, чтобы использовать сохраненные данные и отслеживать заказы.
+                      {tShop('checkout.signInToUseData')}
                     </AlertDescription>
                   </Alert>
 
@@ -1073,7 +1073,7 @@ export default function Checkout() {
                   <Alert>
                     <AlertTriangle className="h-4 w-4" />
                     <AlertDescription>
-                      Как гость, вы не сможете отслеживать статус заказа. Рекомендуем зарегистрироваться для полного функционала.
+                      {tShop('checkout.guestWarning')}
                     </AlertDescription>
                   </Alert>
 

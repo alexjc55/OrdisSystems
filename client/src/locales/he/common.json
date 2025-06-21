@@ -19,6 +19,7 @@
   "password": "סיסמה",
   "passwordPlaceholder": "מינימום 6 תווים",
   "confirmPassword": "אשר סיסמה",
+  "signIn": "התחבר",
   "address": {
     "home": "בית"
   },

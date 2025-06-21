@@ -19,6 +19,7 @@
   "password": "Password",
   "passwordPlaceholder": "Minimum 6 characters",
   "confirmPassword": "Confirm password",
+  "signIn": "Sign In",
   "address": {
     "home": "Home"
   },
