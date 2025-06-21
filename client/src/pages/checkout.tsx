@@ -914,7 +914,7 @@ export default function Checkout() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="registerDeliveryDate">Дата доставки *</Label>
+                          <Label htmlFor="registerDeliveryDate">{t('checkout.deliveryDate')} *</Label>
                           <Popover open={registerDatePickerOpen} onOpenChange={setRegisterDatePickerOpen}>
                             <PopoverTrigger asChild>
                               <Button
@@ -968,10 +968,10 @@ export default function Checkout() {
                         </div>
 
                         <div>
-                          <Label htmlFor="registerDeliveryTime">Время доставки *</Label>
+                          <Label htmlFor="registerDeliveryTime">{t('checkout.deliveryTime')} *</Label>
                           <Select value={selectedRegisterTime} onValueChange={setSelectedRegisterTime} disabled={!selectedRegisterDate} required>
                             <SelectTrigger>
-                              <SelectValue placeholder="Выберите время" />
+                              <SelectValue placeholder={t('checkout.selectTime')} />
                             </SelectTrigger>
                             <SelectContent>
                               {selectedRegisterDate && generateDeliveryTimes(
@@ -989,14 +989,14 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="registerPaymentMethod">Способ оплаты *</Label>
+                        <Label htmlFor="registerPaymentMethod">{t('checkout.paymentMethod')} *</Label>
                         <Select 
                           value={selectedRegisterPaymentMethod} 
                           onValueChange={setSelectedRegisterPaymentMethod} 
                           required
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Выберите способ оплаты" />
+                            <SelectValue placeholder={t('checkout.selectPaymentMethod')} />
                           </SelectTrigger>
                           <SelectContent>
                             {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
@@ -1149,7 +1149,7 @@ export default function Checkout() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="guestDeliveryDate">Дата доставки *</Label>
+                          <Label htmlFor="guestDeliveryDate">{t('checkout.deliveryDate')} *</Label>
                           <Popover open={guestDatePickerOpen} onOpenChange={setGuestDatePickerOpen}>
                             <PopoverTrigger asChild>
                               <Button
