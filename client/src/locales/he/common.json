@@ -11,6 +11,14 @@
     "worker": "עובד",
     "customer": "לקוח"
   },
+  "firstName": "שם פרטי",
+  "lastName": "שם משפחה",
+  "enterFirstName": "הכנס שם פרטי",
+  "enterLastName": "הכנס שם משפחה",
+  "email": "אימייל",
+  "password": "סיסמה",
+  "passwordPlaceholder": "מינימום 6 תווים",
+  "confirmPassword": "אשר סיסמה",
   "address": {
     "home": "בית"
   },

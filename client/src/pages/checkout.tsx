@@ -848,7 +848,7 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email">{t('common.email')}</Label>
                         <Input
                           id="email"
                           type="email"
@@ -887,7 +887,7 @@ export default function Checkout() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="password">Пароль</Label>
+                          <Label htmlFor="password">{t('common.password')}</Label>
                           <Input
                             id="password"
                             type="password"

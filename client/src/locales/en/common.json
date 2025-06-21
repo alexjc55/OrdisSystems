@@ -11,6 +11,14 @@
     "worker": "Worker",
     "customer": "Customer"
   },
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "enterFirstName": "Enter first name", 
+  "enterLastName": "Enter last name",
+  "email": "Email",
+  "password": "Password",
+  "passwordPlaceholder": "Minimum 6 characters",
+  "confirmPassword": "Confirm password",
   "address": {
     "home": "Home"
   },

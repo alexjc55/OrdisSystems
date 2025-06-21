@@ -12,9 +12,13 @@
     "customer": "Клиент"
   },
   "firstName": "Имя",
-  "lastName": "Фамилия",
+  "lastName": "Фамилия", 
   "enterFirstName": "Введите имя",
   "enterLastName": "Введите фамилию",
+  "email": "Email",
+  "password": "Пароль",
+  "passwordPlaceholder": "Минимум 6 символов",
+  "confirmPassword": "Повторите пароль",
   "address": {
     "home": "Дом"
   },
