@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency, formatQuantity, formatWeight, type ProductUnit } from "@/lib/currency";
+import { useShopTranslation } from "@/hooks/use-language";
 import { X, Plus, Minus, Trash2, CreditCard, Clock, MapPin, Phone, User } from "lucide-react";
 
 // Calculate delivery fee based on order total and free delivery threshold

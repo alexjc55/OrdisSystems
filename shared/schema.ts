@@ -237,6 +237,18 @@ export const themes = pgTable("themes", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Multilingual translations table for database content
+export const translations = pgTable("translations", {
+  id: serial("id").primaryKey(),
+  entityType: varchar("entity_type").notNull(), // "category", "product", "store_settings"
+  entityId: varchar("entity_id").notNull(), // ID of the entity being translated
+  field: varchar("field").notNull(), // "name", "description", etc.
+  language: varchar("language", { length: 2 }).notNull(), // "ru", "en", "he"
+  value: text("value").notNull(), // The translated text
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const categoriesRelations = relations(categories, ({ many }) => ({
   products: many(products),
