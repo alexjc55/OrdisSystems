@@ -669,10 +669,10 @@ export default function Checkout() {
                                 size="sm"
                                 onClick={() => {
                                   const input = document.getElementById("address") as HTMLInputElement;
-                                  if (input) input.value = String(addr.address || '');
+                                  if (input) input.value = addr?.address ? String(addr.address) : '';
                                 }}
                               >
-                                {String(addr.label ? `${addr.label}: ${addr.address}` : addr.address || '')}
+                                {String(addr?.label ? `${addr.label}: ${addr.address || ''}` : (addr?.address || ''))}
                               </Button>
                             ))}
                           </div>

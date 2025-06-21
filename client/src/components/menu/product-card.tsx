@@ -111,7 +111,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           className="ml-2"
         >
           <Eye className="h-4 w-4 mr-1" />
-          {t('cart')}
+          {t('viewCart')}
         </Button>
       ),
     });
