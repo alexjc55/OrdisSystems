@@ -33,38 +33,7 @@ const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliv
   return orderTotal >= freeDeliveryFrom ? 0 : deliveryFee;
 };
 
-// Schema creation functions (moved inside component)
-const createGuestOrderSchema = (t: any) => z.object({
-  firstName: z.string().min(2, tCommon('validation.firstNameMinLength')),
-  lastName: z.string().min(2, tCommon('validation.lastNameMinLength')),
-  email: z.string().email(tCommon('validation.emailInvalid')),
-  phone: z.string().min(10, tCommon('validation.phoneMinLength')),
-  address: z.string().min(10, tCommon('validation.addressMinLength')),
-});
-
-const createRegistrationSchema = (t: any) => {
-  const guestSchema = createGuestOrderSchema(t);
-  return guestSchema.extend({
-    password: z.string().min(6, tCommon('validation.passwordMinLength')),
-    confirmPassword: z.string()
-  }).refine((data) => data.password === data.confirmPassword, {
-    message: tCommon('validation.passwordMismatch'),
-    path: ["confirmPassword"],
-  });
-};
-
-const createAuthSchema = (t: any) => z.object({
-  email: z.string().email(tCommon('validation.emailInvalid')),
-  password: z.string().min(1, tCommon('validation.passwordRequired')),
-});
-
-const createAuthenticatedOrderSchema = (t: any) => z.object({
-  address: z.string().min(10, tCommon('validation.addressMinLength')),
-  phone: z.string().min(10, tCommon('validation.phoneMinLength')),
-  deliveryDate: z.string().min(1, tCommon('validation.deliveryDateRequired')),
-  deliveryTime: z.string().min(1, tCommon('validation.deliveryTimeRequired')),
-  paymentMethod: z.string().min(1, tCommon('validation.paymentMethodRequired')),
-});
+// Schemas will be created inside component after translation hooks
 
 type GuestOrderData = {
   firstName: string;
@@ -203,7 +172,7 @@ export default function Checkout() {
     if (deliveryDate === today) {
       return {
         valid: false,
-        message: tShop('checkout.futureOrderError', { products: futureProducts.map(item => item.product.name).join(', ') })
+        message: `Товары для будущих заказов: ${futureProducts.map(item => item.product.name).join(', ')}`
       };
     }
     
@@ -236,10 +205,35 @@ export default function Checkout() {
   const { t: tCommon } = useCommonTranslation();
   const { t: tShop } = useShopTranslation();
   
-  const guestOrderSchema = createGuestOrderSchema(tCommon);
-  const registrationSchema = createRegistrationSchema(tCommon);
-  const authSchema = createAuthSchema(tCommon);
-  const authenticatedOrderSchema = createAuthenticatedOrderSchema(tCommon);
+  // Create schemas inside component with access to translation functions
+  const guestOrderSchema = z.object({
+    firstName: z.string().min(2, tCommon('validation.firstNameMinLength')),
+    lastName: z.string().min(2, tCommon('validation.lastNameMinLength')),
+    email: z.string().email(tCommon('validation.emailInvalid')),
+    phone: z.string().min(10, tCommon('validation.phoneMinLength')),
+    address: z.string().min(10, tCommon('validation.addressMinLength')),
+  });
+
+  const registrationSchema = guestOrderSchema.extend({
+    password: z.string().min(6, tCommon('validation.passwordMinLength')),
+    confirmPassword: z.string()
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: tCommon('validation.passwordMismatch'),
+    path: ["confirmPassword"],
+  });
+
+  const authSchema = z.object({
+    email: z.string().email(tCommon('validation.emailInvalid')),
+    password: z.string().min(1, tCommon('validation.passwordRequired')),
+  });
+
+  const authenticatedOrderSchema = z.object({
+    address: z.string().min(10, tCommon('validation.addressMinLength')),
+    phone: z.string().min(10, tCommon('validation.phoneMinLength')),
+    deliveryDate: z.string().min(1, tCommon('validation.deliveryDateRequired')),
+    deliveryTime: z.string().min(1, tCommon('validation.deliveryTimeRequired')),
+    paymentMethod: z.string().min(1, tCommon('validation.paymentMethodRequired')),
+  });
   
   const guestForm = useForm<GuestOrderData>({
     resolver: zodResolver(guestOrderSchema),
@@ -457,7 +451,7 @@ export default function Checkout() {
       clearCart();
       toast({
         title: tShop('checkout.orderPlaced'),
-        description: tShop('checkout.orderAcceptedForProcessing', { orderId: order.id }),
+        description: `Заказ №${order.id} принят в обработку`,
       });
       setLocation("/profile");
     },
@@ -656,20 +650,23 @@ export default function Checkout() {
                         <div className="mt-2">
                           <Label className="text-sm text-gray-600">{tShop('checkout.savedAddresses')}</Label>
                           <div className="mt-1 flex flex-wrap gap-2">
-                            {(addresses as any[]).map((addr: any) => (
-                              <Button
-                                key={addr.id}
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                  const input = document.getElementById("address") as HTMLInputElement;
-                                  if (input) input.value = addr.address;
-                                }}
-                              >
-                                {addr.label ? `${addr.label}: ${addr.address}` : addr.address}
-                              </Button>
-                            ))}
+                            {addresses.map((addr: any) => {
+                              const displayText = addr.label ? `${addr.label}: ${addr.address}` : addr.address;
+                              return (
+                                <Button
+                                  key={addr.id}
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    const input = document.getElementById("address") as HTMLInputElement;
+                                    if (input) input.value = addr.address;
+                                  }}
+                                >
+                                  {displayText}
+                                </Button>
+                              );
+                            })}
                           </div>
                         </div>
                       )}
