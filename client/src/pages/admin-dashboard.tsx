@@ -412,10 +412,9 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
 }
 
 // OrderEditForm component
-function OrderEditForm({ order, onClose, onSave, searchPlaceholder }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string }) {
+function OrderEditForm({ order, onClose, onSave, searchPlaceholder, t }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, t: (key: string) => string }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { t: adminT } = useAdminTranslation();
   const { data: storeSettingsData } = useQuery({
     queryKey: ['/api/settings'],
     queryFn: async () => {
@@ -1177,6 +1176,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder }: { order: a
           currentDiscount={itemDiscounts[showDiscountDialog]}
           onClose={() => setShowDiscountDialog(null)}
           onApply={applyItemDiscount}
+          adminT={adminT}
         />
       )}
 
@@ -1299,13 +1299,15 @@ function ItemDiscountDialog({
   item, 
   currentDiscount, 
   onClose, 
-  onApply 
+  onApply,
+  adminT 
 }: { 
   itemIndex: number;
   item: any;
   currentDiscount?: {type: 'percentage' | 'amount', value: number, reason: string};
   onClose: () => void;
   onApply: (index: number, type: 'percentage' | 'amount', value: number, reason: string) => void;
+  adminT: (key: string) => string;
 }) {
   const [discountType, setDiscountType] = useState<'percentage' | 'amount'>(currentDiscount?.type || 'percentage');
   const [discountValue, setDiscountValue] = useState(currentDiscount?.value || 0);
