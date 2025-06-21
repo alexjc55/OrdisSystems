@@ -2805,7 +2805,7 @@ export default function AdminDashboard() {
                                       )}
                                     </div>
                                   </TableCell>
-                                  <TableCell className="rtl:text-right">
+                                  <TableCell className={`${isRTL ? 'text-right' : 'text-left'}`}>
                                     <Button 
                                       variant="outline" 
                                       size="sm" 
@@ -2825,11 +2825,11 @@ export default function AdminDashboard() {
                         </div>
                         
                         {/* Pagination for table view */}
-                        <div className="flex items-center justify-between px-4 py-3 border-t">
-                          <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <div className={`flex items-center justify-between px-4 py-3 border-t ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          <div className={`flex items-center gap-2 text-sm text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>
                             <span>Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}</span>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <Button
                               variant="outline"
                               size="sm"
