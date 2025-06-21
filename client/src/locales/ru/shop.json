@@ -105,6 +105,8 @@
     "selectTime": "Выберите время",
     "selectPaymentMethod": "Выберите способ оплаты",
     "deliveryAddressPlaceholder": "Введите адрес доставки",
+    "enterDeliveryAddress": "Введите адрес доставки",
+    "enterPhoneNumber": "Введите номер телефона",
     "orderCreated": "Заказ создан!",
     "orderCreatedDescription": "Ваш заказ успешно оформлен и принят в обработку",
     "orderError": "Ошибка",

@@ -655,7 +655,7 @@ export default function Checkout() {
                         <div className="mt-2">
                           <Label className="text-sm text-gray-600">{t('checkout.savedAddresses')}</Label>
                           <div className="mt-1 flex flex-wrap gap-2">
-                            {addresses.map((addr: any) => (
+                            {(addresses as any[]).map((addr: any) => (
                               <Button
                                 key={addr.id}
                                 type="button"
@@ -1203,10 +1203,10 @@ export default function Checkout() {
                         </div>
 
                         <div>
-                          <Label htmlFor="guestDeliveryTime">Время доставки *</Label>
+                          <Label htmlFor="guestDeliveryTime">{t('checkout.deliveryTime')} *</Label>
                           <Select value={selectedGuestTime} onValueChange={setSelectedGuestTime} disabled={!selectedGuestDate} required>
                             <SelectTrigger>
-                              <SelectValue placeholder="Выберите время" />
+                              <SelectValue placeholder={t('checkout.selectTime')} />
                             </SelectTrigger>
                             <SelectContent>
                               {selectedGuestDate && generateDeliveryTimes(
@@ -1224,14 +1224,14 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="guestPaymentMethod">Способ оплаты *</Label>
+                        <Label htmlFor="guestPaymentMethod">{t('checkout.paymentMethod')} *</Label>
                         <Select 
                           value={selectedGuestPaymentMethod} 
                           onValueChange={setSelectedGuestPaymentMethod} 
                           required
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Выберите способ оплаты" />
+                            <SelectValue placeholder={t('checkout.selectPaymentMethod')} />
                           </SelectTrigger>
                           <SelectContent>
                             {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
