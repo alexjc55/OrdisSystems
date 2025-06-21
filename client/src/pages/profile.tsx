@@ -581,10 +581,10 @@ export default function Profile() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5" />
-                  Безопасность аккаунта
+                  {t('profile.accountSecurity')}
                 </CardTitle>
                 <CardDescription>
-                  Управление паролем и настройками безопасности
+                  {t('profile.passwordSecurityManagement')}
                 </CardDescription>
               </CardHeader>
               <CardContent>

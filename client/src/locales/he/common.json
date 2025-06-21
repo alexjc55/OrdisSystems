@@ -28,6 +28,7 @@
     "goShopping": "עבור לקנייה",
     "backToShopping": "חזרה לקנייה",
     "backToHome": "חזרה לבית",
+    "goToMenu": "עבור לתפריט",
     "admin": "פאנל ניהול",
     "profile": "פרופיל",
     "logout": "יציאה",
@@ -157,5 +158,27 @@
   "footer": {
     "poweredBy": "Powered by Ordis.",
     "tryBusiness": "Try it for your business."
+  },
+  "profile": {
+    "title": "פרופיל",
+    "personalInfo": "מידע אישי",
+    "orders": "ההזמנות שלי",
+    "addresses": "כתובות", 
+    "settings": "הגדרות",
+    "updateSuccess": "הפרופיל עודכן",
+    "updateError": "שגיאה בעדכון הפרופיל",
+    "addressAdded": "כתובת נוספה",
+    "addressError": "שגיאת כתובת",
+    "clickToChangePhoto": "לחץ לשינוי תמונה",
+    "fullName": "שם מלא",
+    "firstName": "שם פרטי",
+    "lastName": "שם משפחה",
+    "enterFirstName": "הזן שם פרטי",
+    "enterLastName": "הזן שם משפחה",
+    "notSpecified": "לא צוין",
+    "phone": "טלפון",
+    "phoneNumber": "מספר טלפון",
+    "registrationDate": "תאריך הרשמה",
+    "quickActions": "פעולות מהירות"
   }
 }

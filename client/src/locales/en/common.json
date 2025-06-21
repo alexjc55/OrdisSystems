@@ -28,6 +28,7 @@
     "goShopping": "Go shopping",
     "backToShopping": "Back to shopping",
     "backToHome": "Back to home",
+    "goToMenu": "Go to menu",
     "admin": "Admin Panel",
     "profile": "Profile",
     "logout": "Logout",
@@ -157,5 +158,27 @@
   "footer": {
     "poweredBy": "Powered by Ordis.",
     "tryBusiness": "Try it for your business."
+  },
+  "profile": {
+    "title": "Profile",
+    "personalInfo": "Personal Information",
+    "orders": "My Orders",
+    "addresses": "Addresses", 
+    "settings": "Settings",
+    "updateSuccess": "Profile updated",
+    "updateError": "Profile update error",
+    "addressAdded": "Address added",
+    "addressError": "Address error",
+    "clickToChangePhoto": "Click to change photo",
+    "fullName": "Full Name",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "enterFirstName": "Enter first name",
+    "enterLastName": "Enter last name",
+    "notSpecified": "Not specified",
+    "phone": "Phone",
+    "phoneNumber": "Phone Number",
+    "registrationDate": "Registration Date",
+    "quickActions": "Quick Actions"
   }
 }
