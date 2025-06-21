@@ -101,7 +101,7 @@ export default function CartSidebar() {
           <div className="flex items-center justify-between border-b p-4">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <ShoppingCart className="h-5 w-5" />
-              {t('cart.title', 'Корзина')} ({items.length})
+              {t('cart.title')} ({items.length})
             </h2>
             <Button
               variant="ghost"
@@ -119,10 +119,10 @@ export default function CartSidebar() {
               <div className="flex h-full items-center justify-center p-6">
                 <div className="text-center">
                   <ShoppingCart className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">{t('cart.empty', 'Корзина пуста')}</h3>
-                  <p className="text-gray-500 mb-4">{t('cart.emptyDescription', 'Добавьте товары для оформления заказа')}</p>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">{t('cart.empty')}</h3>
+                  <p className="text-gray-500 mb-4">{t('cart.emptyDescription')}</p>
                   <Button onClick={() => setCartOpen(false)}>
-                    {t('cart.continueShopping', 'Продолжить покупки')}
+                    {t('cart.continueShopping')}
                   </Button>
                 </div>
               </div>
@@ -257,14 +257,14 @@ export default function CartSidebar() {
                   return (
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span>{t('cart.items', 'Товары')}:</span>
+                        <span>{t('cart.items')}:</span>
                         <span>{formatCurrency(subtotal)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span>{t('cart.delivery', 'Доставка')}:</span>
+                        <span>{t('cart.delivery')}:</span>
                         <span>
                           {deliveryFeeAmount === 0 ? (
-                            <span className="text-green-600 font-medium">{t('cart.free', 'Бесплатно')}</span>
+                            <span className="text-green-600 font-medium">{t('cart.free')}</span>
                           ) : (
                             formatCurrency(deliveryFeeAmount)
                           )}
@@ -272,12 +272,12 @@ export default function CartSidebar() {
                       </div>
                       {deliveryFeeAmount > 0 && (
                         <div className="text-xs text-gray-500 text-center">
-                          {t('cart.freeDeliveryFrom', 'Бесплатная доставка от')} {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                          {t('cart.freeDeliveryFrom')} {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
                         </div>
                       )}
                       <Separator />
                       <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold text-gray-700">{t('cart.total', 'Итого')}:</span>
+                        <span className="text-lg font-semibold text-gray-700">{t('cart.total')}:</span>
                         <span className="text-2xl font-bold text-orange-600">{formatCurrency(total)}</span>
                       </div>
                     </div>
