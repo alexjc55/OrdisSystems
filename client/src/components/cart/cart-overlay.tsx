@@ -199,8 +199,8 @@ export default function CartOverlay() {
     // Проверяем обязательные поля
     if (!deliveryAddress.trim()) {
       toast({
-        title: "Заполните адрес доставки",
-        description: "Адрес доставки обязателен для оформления заказа",
+        title: t('cart.fillDeliveryAddress'),
+        description: t('cart.deliveryAddressRequired'),
         variant: "destructive",
       });
       return;
@@ -208,8 +208,8 @@ export default function CartOverlay() {
 
     if (!customerPhone.trim()) {
       toast({
-        title: "Заполните номер телефона",
-        description: "Номер телефона обязателен для оформления заказа",
+        title: t('cart.fillPhoneNumber'),
+        description: t('cart.phoneNumberRequired'),
         variant: "destructive",
       });
       return;

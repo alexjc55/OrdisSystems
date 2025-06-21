@@ -202,9 +202,9 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           {/* Quantity Selector */}
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">
-              {unit === "piece" ? t('product.quantity', 'Кол-во') + ':' : 
-               unit === "kg" ? t('product.weight', 'Вес (кг)') + ':' : 
-               unit === "100g" || unit === "100ml" ? t('product.grams', 'Граммы') + ':' : t('product.quantity', 'Кол-во') + ':'}
+              {unit === "piece" ? t('product.quantity') + ':' : 
+               unit === "kg" ? t('product.weight') + ':' : 
+               unit === "100g" || unit === "100ml" ? t('product.grams') + ':' : t('product.quantity') + ':'}
             </span>
             <div className="flex items-center space-x-1">
               <Button

@@ -143,5 +143,24 @@
   "whatsapp": {
     "defaultMessage": "Hello! I would like to know more about your products.",
     "writeMessage": "Write to WhatsApp"
+  },
+  "cart": {
+    "deliveryAddress": "Delivery address",
+    "phone": "phone",
+    "orderSuccess": "Your order has been successfully created and sent for processing",
+    "dataSaved": "Your data has been saved to your profile for future orders:",
+    "and": "and",
+    "orderCreated": "Order created",
+    "orderError": "Error creating order",
+    "orderErrorDescription": "Failed to create order. Please try again.",
+    "emptyCart": "Cart is empty",
+    "emptyCartDescription": "Add products to cart before placing an order",
+    "fillDeliveryAddress": "Fill delivery address",
+    "deliveryAddressRequired": "Delivery address is required to place an order",
+    "fillPhoneNumber": "Fill phone number",
+    "phoneNumberRequired": "Phone number is required to place an order",
+    "title": "Cart",
+    "empty": "Cart is empty",
+    "emptyDescription": "Add products to cart to place an order"
   }
 }
