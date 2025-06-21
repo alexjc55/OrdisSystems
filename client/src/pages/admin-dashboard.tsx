@@ -2352,7 +2352,7 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
-                                    <div className="text-xs sm:text-sm p-2 rounded">
+                                    <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
                                       {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
                                         <div className="space-y-1">
                                           <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
@@ -2744,82 +2744,858 @@ export default function AdminDashboard() {
                           <Table className="rtl:text-right">
                             <TableHeader>
                               <TableRow>
-                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>№</TableHead>
-                                <TableHead className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.customer', 'Клиент')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm hidden sm:table-cell w-24 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.status', 'Статус')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-20 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.total', 'Сумма')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm hidden md:table-cell w-32 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.date', 'Дата и время')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.actions', 'Действия')}</TableHead>
+                                {/* Dynamically order columns for RTL */}
+                                {isRTL ? (
+                                  // RTL order: Actions, Date, Total, Status, Customer, № (reversed)
+                                  <>
+                                    <TableHead className="text-xs sm:text-sm w-12 text-right">{adminT('orders.actions', 'Действия')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm hidden md:table-cell w-32 text-right">{adminT('orders.date', 'Дата и время')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm w-20 text-right">{adminT('orders.total', 'Сумма')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-24 text-right">{adminT('orders.status', 'Статус')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm text-right">{adminT('orders.customer', 'Клиент')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm w-12 text-right">№</TableHead>
+                                  </>
+                                ) : (
+                                  // LTR order: №, Customer, Status, Total, Date, Actions (normal)
+                                  <>
+                                    <TableHead className="text-xs sm:text-sm w-12 text-left">№</TableHead>
+                                    <TableHead className="text-xs sm:text-sm text-left">{adminT('orders.customer', 'Клиент')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-24 text-left">{adminT('orders.status', 'Статус')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm w-20 text-left">{adminT('orders.total', 'Сумма')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm hidden md:table-cell w-32 text-left">{adminT('orders.date', 'Дата и время')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm w-12 text-left">{adminT('orders.actions', 'Действия')}</TableHead>
+                                  </>
+                                )}
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {ordersResponse.data.map((order: any) => (
                                 <TableRow key={order.id} className="hover:bg-gray-50">
-                                  <TableCell className={`font-bold text-xs sm:text-sm text-orange-600 ${isRTL ? 'text-right' : 'text-left'}`}>#{order.id}</TableCell>
-                                  <TableCell className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                                    <div className="space-y-1">
-                                      <div className="font-medium">
-                                        {order.user?.firstName && order.user?.lastName 
-                                          ? `${order.user.firstName} ${order.user.lastName}`
-                                          : order.user?.email || "—"
-                                        }
-                                      </div>
-                                      {order.customerPhone && (
-                                        <DropdownMenu>
-                                          <DropdownMenuTrigger asChild>
-                                            <button className="text-blue-600 text-xs hover:text-blue-800 flex items-center gap-1 cursor-pointer">
-                                              <Phone className="h-3 w-3" />
-                                              {order.customerPhone}
-                                            </button>
-                                          </DropdownMenuTrigger>
-                                          <DropdownMenuContent align="start" className="w-40 bg-white border border-gray-200 shadow-lg">
-                                            <DropdownMenuItem 
-                                              onClick={() => window.location.href = `tel:${order.customerPhone}`}
-                                              className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
-                                            >
-                                              <Phone className="h-4 w-4 mr-2" />
-{adminT('orders.call', 'Позвонить')}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem 
-                                              onClick={() => {
-                                                const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
-                                                window.open(`https://wa.me/${cleanPhone}`, '_blank');
-                                              }}
-                                              className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
-                                            >
-                                              <MessageCircle className="h-4 w-4 mr-2" />
-                                              WhatsApp
-                                            </DropdownMenuItem>
-                                          </DropdownMenuContent>
-                                        </DropdownMenu>
-                                      )}
-                                    </div>
-                                  </TableCell>
-                                  <TableCell className={`hidden sm:table-cell ${isRTL ? 'text-right' : 'text-left'}`}>
-                                    <Select
-                                      value={order.status}
-                                      onValueChange={(newStatus) => {
-                                        if (newStatus === 'cancelled') {
-                                          handleOrderCancellation(order.id);
+                                  {/* Dynamically order columns for RTL */}
+                                  {isRTL ? (
+                                    // RTL order: Actions, Date, Total, Status, Customer, № (reversed)
+                                    <>
+                                      <TableCell className="text-right">
+                                        <Button 
+                                          variant="outline" 
+                                          size="sm" 
+                                          className="text-xs h-8 px-2"
+                                          onClick={() => {
+                                            setEditingOrder(order);
+                                            setIsOrderFormOpen(true);
+                                          }}
+                                        >
+                                          <Eye className="h-3 w-3" />
+                                        </Button>
+                                      </TableCell>
+                                      <TableCell className="text-xs sm:text-sm hidden md:table-cell text-right">
+                                        <div className="space-y-1">
+                                          <div className="flex items-center gap-1 flex-row-reverse">
+                                            <Calendar className="h-3 w-3 text-gray-400" />
+                                            <span className="font-medium">Создан:</span>
+                                          </div>
+                                          <div className="text-xs text-gray-600">
+                                            {new Date(order.createdAt).toLocaleDateString('ru-RU')} {new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                                          </div>
+                                          {order.deliveryDate && (
+                                            <>
+                                              <div className="flex items-center gap-1 mt-2 flex-row-reverse">
+                                                <Clock className="h-3 w-3 text-blue-400" />
+                                                <span className="font-medium text-blue-600">Доставка:</span>
+                                              </div>
+                                              <div className="text-xs text-blue-600">
+                                                {new Date(order.deliveryDate).toLocaleDateString('ru-RU')} {order.deliveryTime || ''}
+                                              </div>
+                                            </>
+                                          )}
+                                        </div>
+                                      </TableCell>
+                                      <TableCell className="font-medium text-xs sm:text-sm text-right">
+                                        {(() => {
+                                          // Extract discount information from order notes
+                                          const extractDiscounts = (notes: string) => {
+                                            const discountMatch = notes?.match(/\[DISCOUNTS:(.*?)\]/);
+                                            if (discountMatch) {
+                                              try {
+                                                return JSON.parse(discountMatch[1]);
+                                              } catch (e) {
+                                                return { orderDiscount: null, itemDiscounts: null };
+                                              }
+                                            }
+                                            return { orderDiscount: null, itemDiscounts: null };
+                                          };
+
+                                          const discounts = extractDiscounts(order.customerNotes || '');
+                                          const hasOrderDiscount = discounts.orderDiscount && discounts.orderDiscount.value > 0;
+                                          const hasItemDiscounts = discounts.itemDiscounts && Object.keys(discounts.itemDiscounts).length > 0;
+                                          
+                                          if (hasOrderDiscount || hasItemDiscounts) {
+                                            // Calculate original total before discounts
+                                            let originalTotal = parseFloat(order.totalAmount);
+                                            
+                                            // Apply reverse order discount calculation
+                                            if (hasOrderDiscount) {
+                                              if (discounts.orderDiscount.type === 'percentage') {
+                                                originalTotal = originalTotal / (1 - discounts.orderDiscount.value / 100);
+                                              } else {
+                                                originalTotal = originalTotal + discounts.orderDiscount.value;
+                                              }
+                                            }
+                                            
+                                            return (
+                                              <div className="space-y-1">
+                                                <div className="flex flex-col gap-1">
+                                                  <span className="text-xs text-gray-500 line-through">
+                                                    {formatCurrency(originalTotal)}
+                                                  </span>
+                                                  <span className="font-medium text-green-600">
+                                                    {formatCurrency(order.totalAmount)}
+                                                  </span>
+                                                </div>
+                                                <div className="text-xs text-red-600 font-medium">
+                                                  скидка
+                                                </div>
+                                              </div>
+                                            );
+                                          }
+                                          
+                                          // Show detailed breakdown for orders with delivery fee
+                                          const deliveryFee = parseFloat(order.deliveryFee || "0");
+                                          const subtotal = parseFloat(order.totalAmount) - deliveryFee;
+                                          
+                                          if (deliveryFee > 0) {
+                                            return (
+                                              <div className="space-y-1">
+                                                <div className="text-xs text-gray-600">
+                                                  Товары: {formatCurrency(subtotal)}
+                                                </div>
+                                                <div className="text-xs text-gray-600">
+                                                  Доставка: {formatCurrency(deliveryFee)}
+                                                </div>
+                                                <div className="font-medium">
+                                                  {formatCurrency(order.totalAmount)}
+                                                </div>
+                                              </div>
+                                            );
+                                          } else if (deliveryFee === 0 && order.deliveryFee !== undefined) {
+                                            return (
+                                              <div className="space-y-1">
+                                                <div className="text-xs text-gray-600">
+                                                  Товары: {formatCurrency(subtotal)}
+                                                </div>
+                                                <div className="text-xs text-green-600">
+                                                  Доставка: Бесплатно
+                                                </div>
+                                                <div className="font-medium">
+                                                  {formatCurrency(order.totalAmount)}
+                                                </div>
+                                              </div>
+                                            );
+                                          }
+                                          
+                                          return formatCurrency(order.totalAmount);
+                                        })()}
+                                      </TableCell>
+                                      <TableCell className="hidden sm:table-cell text-right">
+                                        <Select
+                                          value={order.status}
+                                          onValueChange={(newStatus) => {
+                                            if (newStatus === 'cancelled') {
+                                              handleOrderCancellation(order.id);
+                                            } else {
+                                              updateOrderStatusMutation.mutate({ orderId: order.id, status: newStatus });
+                                            }
+                                          }}
+                                        >
+                                          <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} text-right`}>
+                                            <SelectValue />
+                                          </SelectTrigger>
+                                          <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                                            <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">Ожидает</SelectItem>
+                                            <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">Подтвержден</SelectItem>
+                                            <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">Готовится</SelectItem>
+                                            <SelectItem value="ready" className="text-green-800 hover:bg-green-50">Готов</SelectItem>
+                                            <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">Доставлен</SelectItem>
+                                            <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">Отменен</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                      </TableCell>
+                                      <TableCell className="text-xs sm:text-sm text-right">
+                                        <div className="space-y-1">
+                                          <div className="font-medium">
+                                            {order.user?.firstName && order.user?.lastName 
+                                              ? `${order.user.firstName} ${order.user.lastName}`
+                                              : order.user?.email || "—"
+                                            }
+                                          </div>
+                                          {order.customerPhone && (
+                                            <DropdownMenu>
+                                              <DropdownMenuTrigger asChild>
+                                                <button className="text-blue-600 text-xs hover:text-blue-800 flex items-center gap-1 cursor-pointer">
+                                                  <Phone className="h-3 w-3" />
+                                                  {order.customerPhone}
+                                                </button>
+                                              </DropdownMenuTrigger>
+                                              <DropdownMenuContent align="start" className="w-40 bg-white border border-gray-200 shadow-lg">
+                                                <DropdownMenuItem 
+                                                  onClick={() => window.location.href = `tel:${order.customerPhone}`}
+                                                  className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
+                                                >
+                                                  <Phone className="h-4 w-4 mr-2" />
+                                                  {adminT('orders.call', 'Позвонить')}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem 
+                                                  onClick={() => {
+                                                    const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
+                                                    window.open(`https://wa.me/${cleanPhone}`, '_blank');
+                                                  }}
+                                                  className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
+                                                >
+                                                  <MessageCircle className="h-4 w-4 mr-2" />
+                                                  WhatsApp
+                                                </DropdownMenuItem>
+                                              </DropdownMenuContent>
+                                            </DropdownMenu>
+                                          )}
+                                        </div>
+                                      </TableCell>
+                                      <TableCell className="font-bold text-xs sm:text-sm text-orange-600 text-right">#{order.id}</TableCell>
+                                    </>
+                                  ) : (
+                                    // LTR order: №, Customer, Status, Total, Date, Actions (normal)
+                                    <>
+                                      <TableCell className="font-bold text-xs sm:text-sm text-orange-600 text-left">#{order.id}</TableCell>
+                                      <TableCell className="text-xs sm:text-sm text-left">
+                                        <div className="space-y-1">
+                                          <div className="font-medium">
+                                            {order.user?.firstName && order.user?.lastName 
+                                              ? `${order.user.firstName} ${order.user.lastName}`
+                                              : order.user?.email || "—"
+                                            }
+                                          </div>
+                                          {order.customerPhone && (
+                                            <DropdownMenu>
+                                              <DropdownMenuTrigger asChild>
+                                                <button className="text-blue-600 text-xs hover:text-blue-800 flex items-center gap-1 cursor-pointer">
+                                                  <Phone className="h-3 w-3" />
+                                                  {order.customerPhone}
+                                                </button>
+                                              </DropdownMenuTrigger>
+                                              <DropdownMenuContent align="start" className="w-40 bg-white border border-gray-200 shadow-lg">
+                                                <DropdownMenuItem 
+                                                  onClick={() => window.location.href = `tel:${order.customerPhone}`}
+                                                  className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
+                                                >
+                                                  <Phone className="h-4 w-4 mr-2" />
+                                                  {adminT('orders.call', 'Позвонить')}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem 
+                                                  onClick={() => {
+                                                    const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
+                                                    window.open(`https://wa.me/${cleanPhone}`, '_blank');
+                                                  }}
+                                                  className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
+                                                >
+                                                  <MessageCircle className="h-4 w-4 mr-2" />
+                                                  WhatsApp
+                                                </DropdownMenuItem>
+                                              </DropdownMenuContent>
+                                            </DropdownMenu>
+                                          )}
+                                        </div>
+                                      </TableCell>
+                                      <TableCell className="hidden sm:table-cell text-left">
+                                        <Select
+                                          value={order.status}
+                                          onValueChange={(newStatus) => {
+                                            if (newStatus === 'cancelled') {
+                                              handleOrderCancellation(order.id);
+                                            } else {
+                                              updateOrderStatusMutation.mutate({ orderId: order.id, status: newStatus });
+                                            }
+                                          }}
+                                        >
+                                          <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} text-left`}>
+                                            <SelectValue />
+                                          </SelectTrigger>
+                                          <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                                            <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">Ожидает</SelectItem>
+                                            <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">Подтвержден</SelectItem>
+                                            <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">Готовится</SelectItem>
+                                            <SelectItem value="ready" className="text-green-800 hover:bg-green-50">Готов</SelectItem>
+                                            <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">Доставлен</SelectItem>
+                                            <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">Отменен</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                      </TableCell>
+                                      <TableCell className="font-medium text-xs sm:text-sm text-left">
+                                        {(() => {
+                                          // Extract discount information from order notes
+                                          const extractDiscounts = (notes: string) => {
+                                            const discountMatch = notes?.match(/\[DISCOUNTS:(.*?)\]/);
+                                            if (discountMatch) {
+                                              try {
+                                                return JSON.parse(discountMatch[1]);
+                                              } catch (e) {
+                                                return { orderDiscount: null, itemDiscounts: null };
+                                              }
+                                            }
+                                            return { orderDiscount: null, itemDiscounts: null };
+                                          };
+
+                                          const discounts = extractDiscounts(order.customerNotes || '');
+                                          const hasOrderDiscount = discounts.orderDiscount && discounts.orderDiscount.value > 0;
+                                          const hasItemDiscounts = discounts.itemDiscounts && Object.keys(discounts.itemDiscounts).length > 0;
+                                          
+                                          if (hasOrderDiscount || hasItemDiscounts) {
+                                            // Calculate original total before discounts
+                                            let originalTotal = parseFloat(order.totalAmount);
+                                            
+                                            // Apply reverse order discount calculation
+                                            if (hasOrderDiscount) {
+                                              if (discounts.orderDiscount.type === 'percentage') {
+                                                originalTotal = originalTotal / (1 - discounts.orderDiscount.value / 100);
+                                              } else {
+                                                originalTotal = originalTotal + discounts.orderDiscount.value;
+                                              }
+                                            }
+                                            
+                                            return (
+                                              <div className="space-y-1">
+                                                <div className="flex flex-col gap-1">
+                                                  <span className="text-xs text-gray-500 line-through">
+                                                    {formatCurrency(originalTotal)}
+                                                  </span>
+                                                  <span className="font-medium text-green-600">
+                                                    {formatCurrency(order.totalAmount)}
+                                                  </span>
+                                                </div>
+                                                <div className="text-xs text-red-600 font-medium">
+                                                  скидка
+                                                </div>
+                                              </div>
+                                            );
+                                          }
+                                          
+                                          // Show detailed breakdown for orders with delivery fee
+                                          const deliveryFee = parseFloat(order.deliveryFee || "0");
+                                          const subtotal = parseFloat(order.totalAmount) - deliveryFee;
+                                          
+                                          if (deliveryFee > 0) {
+                                            return (
+                                              <div className="space-y-1">
+                                                <div className="text-xs text-gray-600">
+                                                  Товары: {formatCurrency(subtotal)}
+                                                </div>
+                                                <div className="text-xs text-gray-600">
+                                                  Доставка: {formatCurrency(deliveryFee)}
+                                                </div>
+                                                <div className="font-medium">
+                                                  {formatCurrency(order.totalAmount)}
+                                                </div>
+                                              </div>
+                                            );
+                                          } else if (deliveryFee === 0 && order.deliveryFee !== undefined) {
+                                            return (
+                                              <div className="space-y-1">
+                                                <div className="text-xs text-gray-600">
+                                                  Товары: {formatCurrency(subtotal)}
+                                                </div>
+                                                <div className="text-xs text-green-600">
+                                                  Доставка: Бесплатно
+                                                </div>
+                                                <div className="font-medium">
+                                                  {formatCurrency(order.totalAmount)}
+                                                </div>
+                                              </div>
+                                            );
+                                          }
+                                          
+                                          return formatCurrency(order.totalAmount);
+                                        })()}
+                                      </TableCell>
+                                      <TableCell className="text-xs sm:text-sm hidden md:table-cell text-left">
+                                        <div className="space-y-1">
+                                          <div className="flex items-center gap-1">
+                                            <Calendar className="h-3 w-3 text-gray-400" />
+                                            <span className="font-medium">Создан:</span>
+                                          </div>
+                                          <div className="text-xs text-gray-600">
+                                            {new Date(order.createdAt).toLocaleDateString('ru-RU')} {new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                                          </div>
+                                          {order.deliveryDate && (
+                                            <>
+                                              <div className="flex items-center gap-1 mt-2">
+                                                <Clock className="h-3 w-3 text-blue-400" />
+                                                <span className="font-medium text-blue-600">Доставка:</span>
+                                              </div>
+                                              <div className="text-xs text-blue-600">
+                                                {new Date(order.deliveryDate).toLocaleDateString('ru-RU')} {order.deliveryTime || ''}
+                                              </div>
+                                            </>
+                                          )}
+                                        </div>
+                                      </TableCell>
+                                      <TableCell className="text-left">
+                                        <Button 
+                                          variant="outline" 
+                                          size="sm" 
+                                          className="text-xs h-8 px-2"
+                                          onClick={() => {
+                                            setEditingOrder(order);
+                                            setIsOrderFormOpen(true);
+                                          }}
+                                        >
+                                          <Eye className="h-3 w-3" />
+                                        </Button>
+                                      </TableCell>
+                                    </>
+                                  )}
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                        
+                        {/* Pagination for table view */}
+                        <div className={`flex items-center justify-between px-4 py-3 border-t ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          <div className={`flex items-center gap-2 text-sm text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>
+                            <span>Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}</span>
+                          </div>
+                          <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setOrdersPage(1)}
+                              disabled={ordersResponse.page === 1}
+                              title="Первая страница"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                            >
+                              ⟨⟨
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setOrdersPage(Math.max(1, ordersResponse.page - 1))}
+                              disabled={ordersResponse.page === 1}
+                              title="Предыдущая страница"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                            >
+                              ⟨
+                            </Button>
+                            <span className="px-3 py-1 text-sm bg-orange-500 text-white rounded border border-orange-500">
+                              {ordersResponse.page}
+                            </span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setOrdersPage(Math.min(ordersResponse.totalPages, ordersResponse.page + 1))}
+                              disabled={ordersResponse.page === ordersResponse.totalPages}
+                              title="Следующая страница"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                            >
+                              ⟩
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setOrdersPage(ordersResponse.totalPages)}
+                              disabled={ordersResponse.page === ordersResponse.totalPages}
+                              title="Последняя страница"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                            >
+                              ⟩⟩
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Kanban View */}
+                    {ordersViewMode === "kanban" && (
+                      <div className="space-y-6">
+                        {/* Kanban Columns */}
+                        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 ${isRTL ? 'rtl' : ''}`}>
+                          {[
+                            { status: 'pending', label: 'Ожидает', color: 'bg-yellow-50 border-yellow-200' },
+                            { status: 'confirmed', label: 'Подтвержден', color: 'bg-blue-50 border-blue-200' },
+                            { status: 'preparing', label: 'Готовится', color: 'bg-orange-50 border-orange-200' },
+                            { status: 'ready', label: 'Готов', color: 'bg-green-50 border-green-200' },
+                            { status: 'delivered', label: 'Доставлен', color: 'bg-gray-50 border-gray-200' },
+                            { status: 'cancelled', label: 'Отменен', color: 'bg-red-50 border-red-200' }
+                          ].map((column) => {
+                            const columnOrders = ordersResponse.data.filter((order: any) => order.status === column.status);
+                            return (
+                              <div key={column.status} className={`${column.color} rounded-lg border p-4`}>
+                                <h3 className="font-semibold text-sm mb-3 text-center">{column.label} ({columnOrders.length})</h3>
+                                <div className="space-y-3">
+                                  {columnOrders.map((order: any) => (
+                                    <DraggableOrderCard
+                                      key={order.id}
+                                      order={order}
+                                      onEdit={(order) => {
+                                        setEditingOrder(order);
+                                        setIsOrderFormOpen(true);
+                                      }}
+                                      onStatusChange={({ orderId, status }) => {
+                                        if (status === 'cancelled') {
+                                          handleOrderCancellation(orderId);
                                         } else {
-                                          updateOrderStatusMutation.mutate({ orderId: order.id, status: newStatus });
+                                          updateOrderStatusMutation.mutate({ orderId, status });
                                         }
                                       }}
-                                    >
-                                      <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} ${isRTL ? 'text-right' : 'text-left'}`}>
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                                        <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">Ожидает</SelectItem>
-                                        <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">Подтвержден</SelectItem>
-                                        <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">Готовится</SelectItem>
-                                        <SelectItem value="ready" className="text-green-800 hover:bg-green-50">Готов</SelectItem>
-                                        <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">Доставлен</SelectItem>
-                                        <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">Отменен</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </TableCell>
-                                  <TableCell className={`font-medium text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                                      onCancelOrder={handleOrderCancellation}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-center py-8">
+                    <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500">Нет заказов</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Order Form Dialog */}
+            <Dialog open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen}>
+              <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-white">
+                <DialogHeader>
+                  <DialogTitle>{editingOrder ? `${adminT('orders.editOrder', 'Редактировать заказ')} #${editingOrder.id}` : adminT('orders.addOrder', 'Добавить заказ')}</DialogTitle>
+                </DialogHeader>
+                <OrderEditForm
+                  order={editingOrder}
+                  onClose={() => {
+                    setIsOrderFormOpen(false);
+                    setEditingOrder(null);
+                  }}
+                  onSave={() => {
+                    setIsOrderFormOpen(false);
+                    setEditingOrder(null);
+                    queryClient.invalidateQueries({ queryKey: ['/api/admin/orders'] });
+                  }}
+                  searchPlaceholder={adminT('orders.searchProducts', 'Поиск товаров...')}
+                  adminT={adminT}
+                />
+              </DialogContent>
+            </Dialog>
+          </TabsContent>
+
+          {/* Users Tab */}
+          <TabsContent value="users" className="space-y-4">
+            {hasPermission('manage_users') ? (
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
+                    <h2 className="text-lg font-semibold">Управление пользователями</h2>
+                    
+                    <div className="flex gap-3">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                        <Input
+                          placeholder="Поиск пользователей..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="pl-10 w-64"
+                        />
+                      </div>
+
+                      <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
+                        <SelectTrigger className="w-40">
+                          <SelectValue placeholder="Роль" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Все роли</SelectItem>
+                          <SelectItem value="admin">Админ</SelectItem>
+                          <SelectItem value="manager">Менеджер</SelectItem>
+                          <SelectItem value="user">Пользователь</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      <Button onClick={() => setIsUserFormOpen(true)}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Добавить пользователя
+                      </Button>
+                    </div>
+                  </div>
+
+                  {usersData && usersData.length > 0 ? (
+                    <div className="border rounded-lg">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Пользователь</TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>Роль</TableHead>
+                            <TableHead>Действия</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {usersData.map((user: any) => (
+                            <TableRow key={user.id}>
+                              <TableCell>
+                                <div>
+                                  <div className="font-medium">
+                                    {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.username}
+                                  </div>
+                                  {user.phone && <div className="text-sm text-gray-500">{user.phone}</div>}
+                                </div>
+                              </TableCell>
+                              <TableCell>{user.email}</TableCell>
+                              <TableCell>
+                                <Badge variant={user.role === 'admin' ? 'default' : user.role === 'manager' ? 'secondary' : 'outline'}>
+                                  {user.role === 'admin' ? 'Админ' : user.role === 'manager' ? 'Менеджер' : 'Пользователь'}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setEditingUser(user);
+                                    setIsUserFormOpen(true);
+                                  }}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                      
+                      {/* Pagination */}
+                      <div className="flex items-center justify-between px-4 py-3 border-t">
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <span>Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setUsersPage(1)}
+                            disabled={usersPage === 1}
+                            title="Первая страница"
+                          >
+                            ⟨⟨
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
+                            disabled={usersPage === 1}
+                            title="Предыдущая страница"
+                          >
+                            ⟨
+                          </Button>
+                          <span className="px-3 py-1 text-sm bg-orange-500 text-white rounded">
+                            {usersPage} из {usersTotalPages}
+                          </span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
+                            disabled={usersPage === usersTotalPages}
+                            title="Следующая страница"
+                          >
+                            ⟩
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setUsersPage(usersTotalPages)}
+                            disabled={usersPage === usersTotalPages}
+                            title="Последняя страница"
+                          >
+                            ⟩⟩
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500">Нет пользователей</p>
+                    </div>
+                  )}
+                  
+                  {/* Pagination info */}
+                  <div className="flex items-center justify-between px-4 py-3 border-t">
+                    <div className="flex items-center gap-2 text-sm text-gray-700">
+                      <span>Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUsersPage(1)}
+                        disabled={usersPage === 1}
+                        title="Первая страница"
+                      >
+                        ⟨⟨
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
+                        disabled={usersPage === 1}
+                        title="Предыдущая страница"
+                      >
+                        ⟨
+                      </Button>
+                      <span className="px-3 py-1 text-sm bg-orange-500 text-white rounded">
+                        {usersPage} из {usersTotalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
+                        disabled={usersPage === usersTotalPages}
+                        title="Следующая страница"
+                      >
+                        ⟩
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUsersPage(usersTotalPages)}
+                        disabled={usersPage === usersTotalPages}
+                        title="Последняя страница"
+                      >
+                        ⟩⟩
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-center py-8">
+                    <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500">{adminT('common.noPermission', 'Нет доступа')}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* Settings Tab */}
+          <TabsContent value="settings" className="space-y-4">
+            <StoreSettingsForm
+              storeSettings={storeSettings}
+              onSubmit={updateStoreSettingsMutation.mutate}
+              isLoading={updateStoreSettingsMutation.isPending}
+            />
+
+            {hasPermission('manage_settings') && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Общие настройки</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="min-order">Минимальная сумма заказа (₪)</Label>
+                      <Input
+                        id="min-order"
+                        type="number"
+                        value={storeSettings?.minimumOrderValue || 0}
+                        onChange={(e) => updateStoreSettingsMutation.mutate({
+                          ...storeSettings,
+                          minimumOrderValue: parseFloat(e.target.value)
+                        })}
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="delivery-fee">Стоимость доставки (₪)</Label>
+                      <Input
+                        id="delivery-fee"
+                        type="number"
+                        value={storeSettings?.deliveryFee || 0}
+                        onChange={(e) => updateStoreSettingsMutation.mutate({
+                          ...storeSettings,
+                          deliveryFee: parseFloat(e.target.value)
+                        })}
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="free-delivery">Бесплатная доставка от (₪)</Label>
+                      <Input
+                        id="free-delivery"
+                        type="number"
+                        value={storeSettings?.freeDeliveryThreshold || 0}
+                        onChange={(e) => updateStoreSettingsMutation.mutate({
+                          ...storeSettings,
+                          freeDeliveryThreshold: parseFloat(e.target.value)
+                        })}
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="tax-rate">Налог (%)</Label>
+                      <Input
+                        id="tax-rate"
+                        type="number"
+                        value={storeSettings?.taxRate || 0}
+                        onChange={(e) => updateStoreSettingsMutation.mutate({
+                          ...storeSettings,
+                          taxRate: parseFloat(e.target.value)
+                        })}
+                        min="0"
+                        max="100"
+                        step="0.01"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="currency">Валюта</Label>
+                      <Input
+                        id="currency"
+                        value={storeSettings?.currency || '₪'}
+                        onChange={(e) => updateStoreSettingsMutation.mutate({
+                          ...storeSettings,
+                          currency: e.target.value
+                        })}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="timezone">Часовой пояс</Label>
+                      <Input
+                        id="timezone"
+                        value={storeSettings?.timezone || 'Asia/Jerusalem'}
+                        onChange={(e) => updateStoreSettingsMutation.mutate({
+                          ...storeSettings,
+                          timezone: e.target.value
+                        })}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
+
+        {/* Form Dialogs */}
+        {hasPermission('manage_products') && (
+          <ProductFormDialog
                                     {(() => {
                                       // Extract discount information from order notes
                                       const extractDiscounts = (notes: string) => {
