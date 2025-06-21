@@ -38,6 +38,20 @@
     "kanban": "Канбан",
     "searchProducts": "Поиск товаров..."
   },
+  "imageUpload": {
+    "invalidFormat": "Неверный формат файла",
+    "pleaseSelectImage": "Пожалуйста, выберите изображение",
+    "fileTooLarge": "Файл слишком большой",
+    "maxSize5MB": "Размер файла не должен превышать 5MB",
+    "uploaded": "Изображение загружено",
+    "uploadSuccess": "Изображение успешно загружено",
+    "uploadError": "Ошибка загрузки",
+    "uploadFailed": "Не удалось загрузить изображение",
+    "image": "Изображение",
+    "remove": "Удалить",
+    "clickToUpload": "Нажмите для загрузки изображения",
+    "supportedFormats": "PNG, JPG, GIF до 5MB"
+  },
   "products": {
     "title": "Товары",
     "description": "Полное управление товарами с поиском и фильтрацией",

@@ -126,10 +126,10 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
         >
           <ImageIcon className="h-12 w-12 text-gray-400 mb-2" />
           <p className="text-gray-600 text-center">
-            Нажмите для загрузки изображения
+            {t('imageUpload.clickToUpload')}
           </p>
           <p className="text-gray-400 text-sm">
-            PNG, JPG, GIF до 5MB
+            {t('imageUpload.supportedFormats')}
           </p>
         </div>
       )}

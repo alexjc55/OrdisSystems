@@ -38,6 +38,20 @@
     "kanban": "קנבן",
     "searchProducts": "חיפוש מוצרים..."
   },
+  "imageUpload": {
+    "invalidFormat": "פורמט קובץ לא חוקי",
+    "pleaseSelectImage": "אנא בחר תמונה",
+    "fileTooLarge": "הקובץ גדול מדי",
+    "maxSize5MB": "גודל הקובץ לא צריך לעלות על 5MB",
+    "uploaded": "התמונה הועלתה",
+    "uploadSuccess": "התמונה הועלתה בהצלחה",
+    "uploadError": "שגיאת העלאה",
+    "uploadFailed": "העלאת התמונה נכשלה",
+    "image": "תמונה",
+    "remove": "הסר",
+    "clickToUpload": "לחץ להעלאת תמונה",
+    "supportedFormats": "PNG, JPG, GIF עד 5MB"
+  },
   "products": {
     "title": "מוצרים",
     "description": "ניהול מוצרים מלא עם חיפוש וסינון",

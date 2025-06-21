@@ -38,6 +38,20 @@
     "kanban": "Kanban",
     "searchProducts": "Search products..."
   },
+  "imageUpload": {
+    "invalidFormat": "Invalid file format",
+    "pleaseSelectImage": "Please select an image",
+    "fileTooLarge": "File too large",
+    "maxSize5MB": "File size should not exceed 5MB",
+    "uploaded": "Image uploaded",
+    "uploadSuccess": "Image uploaded successfully",
+    "uploadError": "Upload error",
+    "uploadFailed": "Failed to upload image",
+    "image": "Image",
+    "remove": "Remove",
+    "clickToUpload": "Click to upload image",
+    "supportedFormats": "PNG, JPG, GIF up to 5MB"
+  },
   "products": {
     "title": "Products",
     "description": "Complete product management with search and filtering",

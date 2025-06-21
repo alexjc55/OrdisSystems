@@ -152,5 +152,6 @@
   "specialRequests": "Особые пожелания...",
   "selectAddress": "Выберите адрес",
   "enterDeliveryAddress": "Введите адрес доставки... (обязательно)",
-  "enterPhoneNumber": "+972-XX-XXX-XXXX (обязательно)"
+  "enterPhoneNumber": "+972-XX-XXX-XXXX (обязательно)",
+  "categories": "Категории"
 }

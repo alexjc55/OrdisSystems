@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useShopTranslation } from "@/hooks/use-language";
 import type { CategoryWithProducts } from "@shared/schema";
 
 interface SidebarProps {
@@ -21,12 +22,13 @@ export default function Sidebar({
   onCategorySelect,
   isLoading = false
 }: SidebarProps) {
+  const { t } = useShopTranslation();
   if (isLoading) {
     return (
       <aside className="hidden lg:block w-64 bg-white shadow-sm border-r border-gray-200">
         <div className="p-6">
           <h2 className="text-lg font-poppins font-semibold text-gray-900 mb-4">
-            Категории
+{t('categories')}
           </h2>
           <div className="space-y-2">
             {[...Array(5)].map((_, i) => (
@@ -48,7 +50,7 @@ export default function Sidebar({
     <aside className="hidden lg:block w-64 bg-white shadow-sm border-r border-gray-200">
       <div className="p-6">
         <h2 className="text-lg font-poppins font-semibold text-gray-900 mb-4">
-          Категории
+{t('categories')}
         </h2>
         <ScrollArea className="h-[calc(100vh-8rem)]">
           <nav className="space-y-1">
