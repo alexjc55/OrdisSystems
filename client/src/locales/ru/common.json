@@ -28,6 +28,7 @@
     "goShopping": "Перейти к покупкам",
     "backToShopping": "Вернуться к покупкам",
     "backToHome": "Вернуться на главную",
+    "goToMenu": "Перейти к меню",
     "admin": "Админ-панель",
     "profile": "Профиль",
     "logout": "Выйти",
@@ -174,7 +175,18 @@
     "updateSuccess": "Профиль обновлен",
     "updateError": "Ошибка обновления профиля",
     "addressAdded": "Адрес добавлен",
-    "addressError": "Ошибка добавления адреса"
+    "addressError": "Ошибка добавления адреса",
+    "clickToChangePhoto": "Нажмите для изменения фото",
+    "fullName": "Имя и Фамилия",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "enterFirstName": "Введите имя",
+    "enterLastName": "Введите фамилию",
+    "notSpecified": "Не указано",
+    "phone": "Телефон",
+    "phoneNumber": "Номер телефона",
+    "registrationDate": "Дата регистрации",
+    "quickActions": "Быстрые действия"
   },
   "footer": {
     "poweredBy": "Powered by Ordis.",

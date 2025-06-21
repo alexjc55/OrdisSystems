@@ -548,7 +548,7 @@ export default function Profile() {
                       </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Дата регистрации</label>
+                      <label className="text-sm font-medium text-gray-700">{t('profile.registrationDate')}</label>
                       <div className="mt-1 text-sm text-gray-900">
                         {new Date(user.createdAt || '').toLocaleDateString('ru-RU')}
                       </div>
@@ -557,17 +557,17 @@ export default function Profile() {
                 </div>
 
                 <div className="mt-6 pt-6 border-t">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Быстрые действия</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">{t('profile.quickActions')}</h3>
                   <div className="flex gap-4">
                     <Button 
                       onClick={() => window.location.href = '/'}
                       className="bg-orange-500 hover:bg-orange-600 text-white"
                       style={{ backgroundColor: 'hsl(16, 100%, 60%)' }}
                     >
-                      Перейти к меню
+                      {t('navigation.goToMenu')}
                     </Button>
                     <Button variant="outline" onClick={() => window.location.href = '/api/logout'}>
-                      Выйти из аккаунта
+                      {t('auth.logout')}
                     </Button>
                   </div>
                 </div>
