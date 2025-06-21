@@ -497,7 +497,7 @@ export default function CartOverlay() {
                             const minDeliveryTime = isToday ? now.getHours() + minHours : startHour;
                             
                             const timeSlots = [
-                              { value: "asap", label: "Как можно скорее", start: 0, end: 24 },
+                              { value: "asap", label: t('cart.asap'), start: 0, end: 24 },
                               { value: "10:00-12:00", label: "10:00 - 12:00", start: 10, end: 12 },
                               { value: "12:00-14:00", label: "12:00 - 14:00", start: 12, end: 14 },
                               { value: "14:00-16:00", label: "14:00 - 16:00", start: 14, end: 16 },
@@ -530,11 +530,11 @@ export default function CartOverlay() {
                       <div className="text-center space-y-3">
                         <div className="flex items-center justify-center gap-2 mb-3">
                           <User className="h-5 w-5 text-orange-600" />
-                          <h3 className="font-medium text-gray-900">Войти в аккаунт или продолжить как гость</h3>
+                          <h3 className="font-medium text-gray-900">{t('auth.loginOrContinueAsGuest')}</h3>
                         </div>
                         
                         <p className="text-sm text-gray-600">
-                          Войдите в аккаунт для сохранения данных и истории заказов
+                          {t('auth.loginBenefit')}
                         </p>
                         
                         <div className="flex gap-2">
@@ -542,7 +542,7 @@ export default function CartOverlay() {
                             onClick={() => window.location.href = '/api/login'}
                             className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
                           >
-                            Войти в аккаунт
+                            {t('auth.login')}
                           </Button>
                           <Button
                             variant="outline"
@@ -552,12 +552,12 @@ export default function CartOverlay() {
                               // Пользователь может заполнить форму дальше
                             }}
                           >
-                            Продолжить как гость
+                            {t('auth.continueAsGuest')}
                           </Button>
                         </div>
                         
                         <p className="text-xs text-gray-500">
-                          Новый клиент? При входе вы сможете зарегистрироваться
+                          {t('auth.newCustomer')}
                         </p>
                       </div>
                     </CardContent>
@@ -567,7 +567,7 @@ export default function CartOverlay() {
                 {/* Order Notes */}
                 <div className="space-y-3">
                   <label className="text-sm font-medium text-gray-700">
-                    Комментарий к заказу (необязательно)
+                    {t('cart.orderNotes')}
                   </label>
                   <Textarea
                     placeholder={t('specialRequests')}
@@ -580,7 +580,7 @@ export default function CartOverlay() {
                 {/* Delivery Address */}
                 <div className="space-y-3">
                   <label className="text-sm font-medium text-gray-700">
-                    Адрес доставки *
+                    {t('cart.deliveryAddress')} *
                   </label>
                   
                   {/* Address Selection for logged-in users */}
