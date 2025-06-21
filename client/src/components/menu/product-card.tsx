@@ -142,7 +142,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
         {/* Out of stock overlay bar */}
         {product.availabilityStatus === 'out_of_stock_today' && (
           <div className="absolute bottom-0 left-0 right-0 bg-red-500 bg-opacity-90 text-white text-center py-2 font-semibold text-base">
-            Закончился на сегодня
+            {t('outOfStockToday')}
           </div>
         )}
         
@@ -151,7 +151,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           <div className="absolute top-2 left-2">
             <Badge className="bg-orange-500 text-white text-sm px-3 py-1.5 font-semibold shadow-lg">
               <Star className="w-4 h-4 mr-1.5 fill-current" />
-              Скидка
+              {t('discount')}
             </Badge>
           </div>
         )}
@@ -257,7 +257,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           {/* Total Price */}
           <div className="bg-gray-50 rounded p-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Итого:</span>
+              <span className="text-sm text-gray-600">{t('total')}:</span>
               <span className="text-base font-bold text-gray-900">
                 {formatCurrency(totalPrice)}
               </span>
@@ -272,7 +272,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 className="w-full bg-blue-500 text-white hover:bg-blue-600 h-10 text-sm font-medium"
               >
                 <ShoppingCart className="mr-1 h-3 w-3" />
-                Заказать на завтра
+                {t('orderForTomorrow')}
               </Button>
             ) : (
               <Button
@@ -280,7 +280,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 className="w-full bg-orange-500 text-white hover:bg-orange-600 h-10 text-sm font-medium"
               >
                 <ShoppingCart className="mr-1 h-3 w-3" />
-                В корзину
+                {t('addToCart')}
               </Button>
             )
           ) : (
