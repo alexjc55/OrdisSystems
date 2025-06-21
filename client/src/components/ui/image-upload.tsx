@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useAdminTranslation } from "@/hooks/use-language";
 import { Upload, X, Image as ImageIcon } from "lucide-react";
 
 interface ImageUploadProps {
@@ -16,6 +17,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
   const [preview, setPreview] = useState<string | null>(value || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { t } = useAdminTranslation();
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -24,8 +26,8 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
     // Validate file type
     if (!file.type.startsWith('image/')) {
       toast({
-        title: "Неверный формат файла",
-        description: "Пожалуйста, выберите изображение",
+        title: t('imageUpload.invalidFormat'),
+        description: t('imageUpload.pleaseSelectImage'),
         variant: "destructive",
       });
       return;
@@ -34,8 +36,8 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
     // Validate file size (5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast({
-        title: "Файл слишком большой",
-        description: "Размер файла не должен превышать 5MB",
+        title: t('imageUpload.fileTooLarge'),
+        description: t('imageUpload.maxSize5MB'),
         variant: "destructive",
       });
       return;
@@ -64,14 +66,14 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
       onChange(imageUrl);
       
       toast({
-        title: "Изображение загружено",
-        description: "Изображение успешно загружено",
+        title: t('imageUpload.uploaded'),
+        description: t('imageUpload.uploadSuccess'),
       });
     } catch (error) {
       console.error('Upload error:', error);
       toast({
-        title: "Ошибка загрузки",
-        description: "Не удалось загрузить изображение",
+        title: t('imageUpload.uploadError'),
+        description: t('imageUpload.uploadFailed'),
         variant: "destructive",
       });
     } finally {
@@ -93,7 +95,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
 
   return (
     <div className="space-y-4">
-      <Label>Изображение</Label>
+      <Label>{t('imageUpload.image')}</Label>
       
       {preview ? (
         <div className="relative">
@@ -112,7 +114,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
                 disabled={disabled}
               >
                 <X className="h-4 w-4 mr-1" />
-                Удалить
+{t('imageUpload.remove')}
               </Button>
             </div>
           </div>
