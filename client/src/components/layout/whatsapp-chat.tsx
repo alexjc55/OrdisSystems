@@ -25,7 +25,7 @@ export function WhatsAppChat() {
   return (
     <button
       onClick={handleWhatsAppClick}
-      className="whatsapp-button fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white shadow-lg transition-all duration-300 hover:scale-110 flex items-center justify-center"
+      className="whatsapp-button fixed bottom-6 z-50 bg-green-500 hover:bg-green-600 text-white shadow-lg transition-all duration-300 hover:scale-110 flex items-center justify-center"
       aria-label="Написать в WhatsApp"
       title="Написать в WhatsApp"
     >

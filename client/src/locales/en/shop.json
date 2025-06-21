@@ -103,5 +103,18 @@
     "defaultAddress": "Default Address",
     "editProfile": "Edit Profile",
     "saveChanges": "Save Changes"
+  },
+  "specialOffers": "Special Offers",
+  "allCategories": "All Categories",
+  "backToShopping": "Back to Shopping",
+  "onlyWithDiscount": "Only with Discount",
+  "preOrder": "Pre-order",
+  "units": {
+    "kg": "kg",
+    "gram": "gram",
+    "grams": "grams",
+    "piece": "pcs",
+    "per100g": "per 100g",
+    "perKg": "per kg"
   }
 }

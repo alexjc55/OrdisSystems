@@ -117,5 +117,18 @@
     "defaultAddress": "Адрес по умолчанию",
     "editProfile": "Редактировать профиль",
     "saveChanges": "Сохранить изменения"
+  },
+  "specialOffers": "Специальные предложения",
+  "allCategories": "Все категории",
+  "backToShopping": "Вернуться к покупкам",
+  "onlyWithDiscount": "Только со скидкой",
+  "preOrder": "Предзаказ",
+  "units": {
+    "kg": "кг",
+    "gram": "грамм",
+    "grams": "граммов",
+    "piece": "шт",
+    "per100g": "за 100 грамм",
+    "perKg": "за кг"
   }
 }

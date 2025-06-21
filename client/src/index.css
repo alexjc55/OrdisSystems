@@ -933,6 +933,14 @@ button.whatsapp-button.whatsapp-button.whatsapp-button {
   font-size: 1rem !important;
   line-height: 1 !important;
   box-sizing: border-box !important;
+  right: 1.5rem !important;
+  left: auto !important;
+}
+
+/* RTL positioning for WhatsApp button */
+html[dir="rtl"] button.whatsapp-button.whatsapp-button.whatsapp-button {
+  right: auto !important;
+  left: 1.5rem !important;
 }
 
 /* Mobile positioning for WhatsApp button */

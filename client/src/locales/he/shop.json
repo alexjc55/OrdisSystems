@@ -103,5 +103,18 @@
     "defaultAddress": "כתובת ברירת מחדל",
     "editProfile": "ערוך פרופיל",
     "saveChanges": "שמור שינויים"
+  },
+  "specialOffers": "הצעות מיוחדות",
+  "allCategories": "כל הקטגוריות",
+  "backToShopping": "חזרה לקניות",
+  "onlyWithDiscount": "רק עם הנחה",
+  "preOrder": "הזמנה מראש",
+  "units": {
+    "kg": "ק\"ג",
+    "gram": "גרם",
+    "grams": "גרמים",
+    "piece": "יח'",
+    "per100g": "ל-100 גרם",
+    "perKg": "לק\"ג"
   }
 }
