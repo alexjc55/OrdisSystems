@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
+import { useCommonTranslation } from "@/hooks/use-language";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -32,21 +33,25 @@ const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliv
   return orderTotal >= freeDeliveryFrom ? 0 : deliveryFee;
 };
 
-const guestOrderSchema = z.object({
-  firstName: z.string().min(2, "Имя должно содержать минимум 2 символа"),
-  lastName: z.string().min(2, "Фамилия должна содержать минимум 2 символа"),
-  email: z.string().email("Введите корректный email"),
-  phone: z.string().min(10, "Введите корректный номер телефона"),
-  address: z.string().min(10, "Введите полный адрес доставки"),
+// Schema will be created inside component to access translations
+const createGuestOrderSchema = (t: any) => z.object({
+  firstName: z.string().min(2, t('validation.firstNameMinLength')),
+  lastName: z.string().min(2, t('validation.lastNameMinLength')),
+  email: z.string().email(t('validation.emailInvalid')),
+  phone: z.string().min(10, t('validation.phoneMinLength')),
+  address: z.string().min(10, t('validation.addressMinLength')),
 });
 
-const registrationSchema = guestOrderSchema.extend({
-  password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Пароли не совпадают",
-  path: ["confirmPassword"],
-});
+const createRegistrationSchema = (t: any) => {
+  const guestSchema = createGuestOrderSchema(t);
+  return guestSchema.extend({
+    password: z.string().min(6, t('validation.passwordMinLength')),
+    confirmPassword: z.string()
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t('validation.passwordMismatch'),
+    path: ["confirmPassword"],
+  });
+};
 
 const authSchema = z.object({
   email: z.string().email("Введите корректный email"),
@@ -61,8 +66,17 @@ const authenticatedOrderSchema = z.object({
   paymentMethod: z.string().min(1, "Выберите способ оплаты"),
 });
 
-type GuestOrderData = z.infer<typeof guestOrderSchema>;
-type RegistrationData = z.infer<typeof registrationSchema>;
+type GuestOrderData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+};
+type RegistrationData = GuestOrderData & {
+  password: string;
+  confirmPassword: string;
+};
 type AuthData = z.infer<typeof authSchema>;
 type AuthenticatedOrderData = z.infer<typeof authenticatedOrderSchema>;
 
@@ -109,7 +123,7 @@ const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStar
       daySchedule.toLowerCase().includes('выходной')) {
     return [{
       value: 'closed',
-      label: 'Выходной день'
+      label: 'Closed' // Will be translated in component
     }];
   }
   

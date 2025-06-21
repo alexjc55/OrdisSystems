@@ -17,6 +17,7 @@ export function LanguageSwitcher({
   showText = true 
 }: LanguageSwitcherProps) {
   const { currentLanguage, currentLanguageInfo, languages, changeLanguage } = useLanguage();
+  const { t } = useCommonTranslation();
   const [isOpen, setIsOpen] = useState(false);
   
   // Only show enabled languages
@@ -97,7 +98,7 @@ export function LanguageSwitcher({
       <PopoverContent className="w-auto p-2" align="end">
         <div className="space-y-1">
           <div className="text-sm font-medium text-gray-700 mb-2">
-            Choose Language
+            {t('chooseLanguage')}
           </div>
           {Object.entries(availableLanguages).map(([code, info]) => (
             <Button

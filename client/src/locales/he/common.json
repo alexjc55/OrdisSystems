@@ -1,7 +1,8 @@
 {
   "menu": "תפריט",
   "admin": "ניהול",
-  "profile": "פרופיל", 
+  "profile": "פרופיל",
+  "chooseLanguage": "בחר שפה", 
   "adminPanel": "לוח בקרה",
   "logout": "התנתקות",
   "login": "כניסה לחשבון",
