@@ -127,5 +127,6 @@
     "piece": "pcs",
     "per100g": "per 100g",
     "perKg": "per kg"
-  }
+  },
+  "products": "Products"
 }

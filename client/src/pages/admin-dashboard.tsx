@@ -2863,7 +2863,11 @@ export default function AdminDashboard() {
                         className="overflow-x-auto kanban-scroll-container"
                         ref={(el) => {
                           if (el && ordersViewMode === "kanban") {
-                            el.scrollLeft = 0;
+                            setTimeout(() => {
+                              if (el) {
+                                el.scrollLeft = 0;
+                              }
+                            }, 100);
                           }
                         }}
                       >
