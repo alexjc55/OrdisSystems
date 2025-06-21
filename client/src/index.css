@@ -967,6 +967,18 @@ button.whatsapp-button.whatsapp-button.whatsapp-button {
   box-sizing: border-box !important;
   right: 1.5rem !important;
   left: auto !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Force circular styling on all possible elements */
+button.whatsapp-button.whatsapp-button.whatsapp-button,
+button.whatsapp-button.whatsapp-button.whatsapp-button::before,
+button.whatsapp-button.whatsapp-button.whatsapp-button::after,
+button.whatsapp-button.whatsapp-button.whatsapp-button * {
+  border-radius: 50% !important;
 }
 
 /* RTL positioning for WhatsApp button */
