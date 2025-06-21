@@ -149,7 +149,7 @@ export default function CartSidebar() {
                                       <TooltipTrigger>
                                         <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-xs">
                                           <Info className="h-3 w-3" />
-                                          предзаказ
+                                          {t('preOrder')}
                                         </div>
                                       </TooltipTrigger>
                                       <TooltipContent>

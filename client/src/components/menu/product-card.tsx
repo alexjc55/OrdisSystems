@@ -99,8 +99,8 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
     const finalQuantity = selectedQuantity || getDefaultQuantity();
     addItem(product, finalQuantity);
     toast({
-      title: "Добавлено в корзину",
-      description: `${product.name} (${formatQuantity(finalQuantity, unit)}) - ${formatCurrency(totalPrice)}`,
+      title: t('addedToCart'),
+      description: `${product.name} (${formatQuantity(finalQuantity, unit, t)}) - ${formatCurrency(totalPrice)}`,
       action: (
         <Button
           size="sm"
@@ -111,7 +111,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           className="ml-2"
         >
           <Eye className="h-4 w-4 mr-1" />
-          Корзина
+          {t('cart')}
         </Button>
       ),
     });

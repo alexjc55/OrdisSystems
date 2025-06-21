@@ -71,7 +71,7 @@ export function calculateTotal(price: number | string, quantity: number | string
   return roundUpToNearestTenAgorot(total);
 }
 
-export function formatQuantity(quantity: number | string, unit: ProductUnit): string {
+export function formatQuantity(quantity: number | string, unit: ProductUnit, t?: (key: string) => string): string {
   const quantityNum = typeof quantity === 'string' ? parseFloat(quantity) : quantity;
   if (isNaN(quantityNum)) return '0';
   
@@ -79,19 +79,19 @@ export function formatQuantity(quantity: number | string, unit: ProductUnit): st
     case "100g":
       // For 100g products, quantity is already in grams
       if (quantityNum >= 1000) {
-        return `${(quantityNum / 1000).toFixed(2)} кг`;
+        return `${(quantityNum / 1000).toFixed(2)} ${t ? t('units.kg') : 'кг'}`;
       }
-      return `${quantityNum.toFixed(0)}г`;
+      return `${quantityNum.toFixed(0)}${t ? t('units.g') : 'г'}`;
     case "100ml":
       // For 100ml products, quantity is already in ml
       if (quantityNum >= 1000) {
-        return `${(quantityNum / 1000).toFixed(2)} л`;
+        return `${(quantityNum / 1000).toFixed(2)} ${t ? t('units.l') : 'л'}`;
       }
-      return `${quantityNum.toFixed(0)}мл`;
+      return `${quantityNum.toFixed(0)}${t ? t('units.ml') : 'мл'}`;
     case "piece":
-      return `${quantityNum.toFixed(0)} шт`;
+      return `${quantityNum.toFixed(0)} ${t ? t('units.piece') : 'шт'}`;
     case "kg":
-      return `${quantityNum.toFixed(2)} кг`;
+      return `${quantityNum.toFixed(2)} ${t ? t('units.kg') : 'кг'}`;
     default:
       return quantityNum.toString();
   }
