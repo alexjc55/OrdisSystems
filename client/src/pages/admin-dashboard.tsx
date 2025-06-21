@@ -1864,7 +1864,21 @@ export default function AdminDashboard() {
   // Store settings mutation
   const updateStoreSettingsMutation = useMutation({
     mutationFn: async (settingsData: any) => {
-      const response = await apiRequest('PUT', '/api/settings', settingsData);
+      // Clean up empty numeric fields to prevent database errors
+      const cleanedData = { ...settingsData };
+      
+      // Convert empty strings to null for numeric fields
+      if (cleanedData.deliveryFee === '') {
+        cleanedData.deliveryFee = null;
+      }
+      if (cleanedData.freeDeliveryFrom === '') {
+        cleanedData.freeDeliveryFrom = null;
+      }
+      if (cleanedData.minimumOrderAmount === '') {
+        cleanedData.minimumOrderAmount = null;
+      }
+      
+      const response = await apiRequest('PUT', '/api/settings', cleanedData);
       return await response.json();
     },
     onSuccess: () => {
