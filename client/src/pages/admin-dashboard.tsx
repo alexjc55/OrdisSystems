@@ -4551,7 +4551,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="storeName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">Название магазина</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.storeName')}</FormLabel>
                 <FormControl>
                   <Input placeholder="eDAHouse" {...field} className="text-sm" />
                 </FormControl>
@@ -4565,7 +4565,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="welcomeTitle"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">Заголовок на главной странице</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.welcomeTitle')}</FormLabel>
                 <FormControl>
                   <Input placeholder="Добро пожаловать в наш магазин" {...field} className="text-sm" />
                 </FormControl>
@@ -4579,7 +4579,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="contactPhone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">Телефон</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.storePhone')}</FormLabel>
                 <FormControl>
                   <Input placeholder="+972-XX-XXX-XXXX" {...field} className="text-sm" />
                 </FormControl>
@@ -4593,7 +4593,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="contactEmail"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">Email</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.contactEmail')}</FormLabel>
                 <FormControl>
                   <Input placeholder="info@edahouse.com" type="email" {...field} className="text-sm" />
                 </FormControl>
@@ -5066,7 +5066,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
                 <Truck className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">Доставка и оплата</h3>
+                <h3 className="text-lg font-semibold">{adminT('settings.deliverySettings')}</h3>
                 {isDeliveryPaymentOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
@@ -5186,7 +5186,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
                 <Eye className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">Настройки отображения</h3>
+                <h3 className="text-lg font-semibold">{adminT('settings.displaySettings')}</h3>
                 {isDisplaySettingsOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
@@ -5938,7 +5938,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             className="bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200"
           >
             <Save className="mr-2 h-4 w-4" />
-            {isLoading ? "Сохранение..." : "Сохранить настройки"}
+            {isLoading ? adminT('common.loading') : adminT('settings.saveSettings')}
           </Button>
         </div>
       </form>
