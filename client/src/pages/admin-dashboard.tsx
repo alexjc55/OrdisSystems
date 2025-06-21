@@ -4606,7 +4606,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <FormItem>
                 <FormLabel className="text-sm">Стоимость доставки (₪)</FormLabel>
                 <FormControl>
-                  <Input placeholder="15.00" {...field} className="text-sm" />
+                  <Input {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -4620,7 +4620,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <FormItem>
                 <FormLabel className="text-sm">Бесплатная доставка от (₪)</FormLabel>
                 <FormControl>
-                  <Input placeholder="100.00" {...field} className="text-sm" />
+                  <Input {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
