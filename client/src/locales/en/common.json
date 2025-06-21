@@ -194,6 +194,16 @@
     "securityTip4": "If you suspect compromise, change your password immediately",
     "addressManagement": "Address Management",
     "manageDeliveryAddresses": "Add and manage delivery addresses",
-    "addAddress": "Add Address"
+    "addAddress": "Add Address",
+    "editAddress": "Edit Address",
+    "addNewAddress": "Add New Address",
+    "enterAddressInfo": "Enter delivery address information",
+    "addressLabel": "Address Label",
+    "addressPlaceholder": "Home, Work, Office...",
+    "fullAddress": "Full Address",
+    "fullAddressPlaceholder": "Street, house, apartment, floor...",
+    "makeDefaultAddress": "Make default address",
+    "default": "Default",
+    "makeDefault": "Make Default"
   }
 }

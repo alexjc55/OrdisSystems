@@ -732,7 +732,7 @@ export default function Profile() {
                                 <h4 className="font-medium text-gray-900">{address.label}</h4>
                                 {address.isDefault && (
                                   <Badge variant="outline" className="text-orange-600 border-orange-300">
-                                    По умолчанию
+                                    {t('profile.default')}
                                   </Badge>
                                 )}
                               </div>
@@ -746,7 +746,7 @@ export default function Profile() {
                                   onClick={() => setDefaultAddressMutation.mutate(address.id)}
                                   disabled={setDefaultAddressMutation.isPending}
                                 >
-                                  Сделать основным
+                                  {t('profile.makeDefault')}
                                 </Button>
                               )}
                               <Button
@@ -774,8 +774,8 @@ export default function Profile() {
                 ) : (
                   <div className="text-center py-8">
                     <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет сохраненных адресов</h3>
-                    <p className="text-gray-600 mb-4">Добавьте адрес доставки для быстрого оформления заказов</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">{t('profile.noSavedAddresses')}</h3>
+                    <p className="text-gray-600 mb-4">{t('profile.addAddressForQuickOrders')}</p>
                   </div>
                 )}
               </CardContent>
@@ -788,7 +788,7 @@ export default function Profile() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5" />
-                  История Заказов
+                  {t('profile.orderHistory')}
                 </CardTitle>
                 <CardDescription>
                   Все ваши заказы и их статусы

@@ -201,7 +201,17 @@
     "securityTip4": "При подозрении на компрометацию немедленно смените пароль",
     "addressManagement": "Управление Адресами",
     "manageDeliveryAddresses": "Добавляйте и управляйте адресами доставки",
-    "addAddress": "Добавить адрес"
+    "addAddress": "Добавить адрес",
+    "editAddress": "Редактировать адрес",
+    "addNewAddress": "Добавить новый адрес",
+    "enterAddressInfo": "Введите информацию об адресе доставки",
+    "addressLabel": "Название адреса",
+    "addressPlaceholder": "Дом, Работа, Офис...",
+    "fullAddress": "Полный адрес",
+    "fullAddressPlaceholder": "Улица, дом, квартира, этаж...",
+    "makeDefaultAddress": "Сделать адресом по умолчанию",
+    "default": "По умолчанию",
+    "makeDefault": "Сделать основным"
   },
   "footer": {
     "poweredBy": "Powered by Ordis.",

@@ -194,6 +194,16 @@
     "securityTip4": "אם יש חשד לפגיעה, שנה את הסיסמה מיד",
     "addressManagement": "ניהול כתובות",
     "manageDeliveryAddresses": "הוסף ונהל כתובות משלוח",
-    "addAddress": "הוסף כתובת"
+    "addAddress": "הוסף כתובת",
+    "editAddress": "ערוך כתובת",
+    "addNewAddress": "הוסף כתובת חדשה",
+    "enterAddressInfo": "הזן פרטי כתובת משלוח",
+    "addressLabel": "תווית כתובת",
+    "addressPlaceholder": "בית, עבודה, משרד...",
+    "fullAddress": "כתובת מלאה",
+    "fullAddressPlaceholder": "רחוב, מספר בית, דירה, קומה...",
+    "makeDefaultAddress": "הפוך לכתובת ברירת מחדל",
+    "default": "ברירת מחדל",
+    "makeDefault": "הפוך לברירת מחדל"
   }
 }
