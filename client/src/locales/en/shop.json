@@ -124,7 +124,12 @@
     "kg": "kg", 
     "per100g": "100g",
     "per100ml": "100ml",
-    "per": "per"
+    "per": "per",
+    "g": "g",
+    "ml": "ml",
+    "l": "l",
+    "perPiece": "per pc",
+    "perKg": "per kg"
   },
   "auth": {
     "welcome": "Welcome",
