@@ -568,14 +568,14 @@ export default function Checkout() {
                 return (
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span>Товары:</span>
+                      <span>{tShop('cart.items')}:</span>
                       <span>{formatCurrency(subtotal)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Доставка:</span>
+                      <span>{tShop('cart.delivery')}:</span>
                       <span>
                         {deliveryFeeAmount === 0 ? (
-                          <span className="text-green-600 font-medium">Бесплатно</span>
+                          <span className="text-green-600 font-medium">{tShop('checkout.free')}</span>
                         ) : (
                           formatCurrency(deliveryFeeAmount)
                         )}
@@ -588,7 +588,7 @@ export default function Checkout() {
                     )}
                     <Separator />
                     <div className="flex justify-between items-center text-lg font-bold">
-                      <span>Итого:</span>
+                      <span>{tShop('cart.total')}:</span>
                       <span>{formatCurrency(total)}</span>
                     </div>
                   </div>

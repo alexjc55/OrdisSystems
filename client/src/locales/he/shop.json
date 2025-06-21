@@ -175,16 +175,6 @@
   "buttons": {
     "back": "חזרה"
   },
-  "units": {
-    "kg": "ק\"ג",
-    "gram": "גרם", 
-    "grams": "גרמים",
-    "piece": "יח'",
-    "per100g": "ל-100 גרם",
-    "per100ml": "ל-100 מ\"ל",
-    "perKg": "לק\"ג",
-    "perPiece": "ליחידה"
-  },
   "products": "מוצרים",
   "addedToCart": "נוסף לעגלה",
   "selectCategoryDescription": "בחר קטגוריית מנות",
