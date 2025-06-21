@@ -1016,7 +1016,7 @@ export default function Checkout() {
                                 <>
                                   <SelectItem value="cash">{tShop('checkout.cashOnDelivery')}</SelectItem>
                                   <SelectItem value="card">{tShop('checkout.cardOnDelivery')}</SelectItem>
-                                  <SelectItem value="transfer">Банковский перевод</SelectItem>
+                                  <SelectItem value="transfer">{tShop('checkout.bankTransfer')}</SelectItem>
                                 </>
                               )
                             }
@@ -1064,7 +1064,7 @@ export default function Checkout() {
                           id="loginPassword"
                           type="password"
                           {...loginForm.register("password")}
-                          placeholder="Введите пароль"
+                          placeholder={tCommon('passwordPlaceholder')}
                         />
                         {loginForm.formState.errors.password && (
                           <p className="text-sm text-red-600">{loginForm.formState.errors.password.message}</p>
@@ -1250,9 +1250,9 @@ export default function Checkout() {
                                 </SelectItem>
                               )) : (
                                 <>
-                                  <SelectItem value="cash">Наличными при получении</SelectItem>
-                                  <SelectItem value="card">Банковской картой</SelectItem>
-                                  <SelectItem value="transfer">Банковский перевод</SelectItem>
+                                  <SelectItem value="cash">{tShop('checkout.cashOnDelivery')}</SelectItem>
+                                  <SelectItem value="card">{tShop('checkout.cardOnDelivery')}</SelectItem>
+                                  <SelectItem value="transfer">{tShop('checkout.bankTransfer')}</SelectItem>
                                 </>
                               )
                             }
