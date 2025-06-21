@@ -545,16 +545,16 @@ export default function Checkout() {
                         
                         switch (item.product.unit) {
                           case 'piece': 
-                            return `${formatQty(qty)} шт. x ${formatCurrency(item.product.price)}`;
+                            return `${formatQty(qty)} ${tShop('units.piece')} x ${formatCurrency(item.product.price)}`;
                           case 'kg': 
-                            return `${formatQty(qty)} кг x ${formatCurrency(item.product.price)}`;
+                            return `${formatQty(qty)} ${tShop('units.kg')} x ${formatCurrency(item.product.price)}`;
                           case '100g': 
                             if (qty >= 1000) {
-                              return `${formatQty(qty / 1000)} кг x ${formatCurrency(item.product.price)}`;
+                              return `${formatQty(qty / 1000)} ${tShop('units.kg')} x ${formatCurrency(item.product.price)}`;
                             }
-                            return `${formatQty(qty)} грамм x ${formatCurrency(item.product.price)}`;
+                            return `${formatQty(qty)} ${tShop('units.g')} x ${formatCurrency(item.product.price)}`;
                           case '100ml': 
-                            return `${formatQty(qty)} мл x ${formatCurrency(item.product.price)}`;
+                            return `${formatQty(qty)} ${tShop('units.ml')} x ${formatCurrency(item.product.price)}`;
                           default: 
                             return `${formatQty(qty)} x ${formatCurrency(item.product.price)}`;
                         }
