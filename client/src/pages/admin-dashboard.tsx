@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
+import { useLanguage } from "@/hooks/use-language";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -448,6 +449,8 @@ export default function AdminDashboard() {
   const { user, isLoading, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { currentLanguage } = useLanguage();
+  const isRTL = currentLanguage === 'he';
 
   // State for forms and filters
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
@@ -811,7 +814,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 admin-dashboard">
+    <div className={`min-h-screen bg-gray-50 admin-dashboard ${isRTL ? 'font-hebrew' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
       <Header onResetView={() => {}} />
       
       <div className="container mx-auto px-4 py-8">
