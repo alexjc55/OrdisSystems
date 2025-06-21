@@ -1,11 +1,13 @@
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "wouter";
+import { useShopTranslation } from "@/hooks/use-language";
 
 export function WhatsAppChat() {
   const { storeSettings } = useStoreSettings();
   const { user } = useAuth();
   const [location] = useLocation();
+  const { t } = useShopTranslation();
 
   // Don't show if not enabled/configured or if on admin dashboard
   if (!storeSettings?.showWhatsAppChat || 
@@ -16,7 +18,7 @@ export function WhatsAppChat() {
 
   const handleWhatsAppClick = () => {
     const phoneNumber = storeSettings.whatsappPhoneNumber?.replace(/[^\d+]/g, ''); // Clean phone number
-    const defaultMessage = storeSettings.whatsappDefaultMessage || "Здравствуйте! Я хотел бы узнать больше о ваших товарах.";
+    const defaultMessage = storeSettings.whatsappDefaultMessage || t('whatsapp.defaultMessage');
     const message = encodeURIComponent(defaultMessage);
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
     window.open(whatsappUrl, '_blank');
@@ -26,8 +28,8 @@ export function WhatsAppChat() {
     <button
       onClick={handleWhatsAppClick}
       className="whatsapp-button fixed bottom-6 z-50 bg-green-500 hover:bg-green-600 text-white shadow-lg transition-all duration-300 hover:scale-110 flex items-center justify-center"
-      aria-label="Написать в WhatsApp"
-      title="Написать в WhatsApp"
+      aria-label={t('whatsapp.writeMessage')}
+      title={t('whatsapp.writeMessage')}
     >
       <svg 
         className="h-8 w-8" 

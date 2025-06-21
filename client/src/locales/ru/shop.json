@@ -153,5 +153,9 @@
   "selectAddress": "Выберите адрес",
   "enterDeliveryAddress": "Введите адрес доставки... (обязательно)",
   "enterPhoneNumber": "+972-XX-XXX-XXXX (обязательно)",
-  "categories": "Категории"
+  "categories": "Категории",
+  "whatsapp": {
+    "defaultMessage": "Здравствуйте! Я хотел бы узнать больше о ваших товарах.",
+    "writeMessage": "Написать в WhatsApp"
+  }
 }
