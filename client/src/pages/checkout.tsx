@@ -203,7 +203,7 @@ export default function Checkout() {
     if (deliveryDate === today) {
       return {
         valid: false,
-        message: `${t('checkout.futureOrderError', 'Товары "{{products}}" в вашем заказе доступны только для заказа на другой день. Либо удалите их из заказа, либо выберите другую дату доставки.', { products: futureProducts.map(item => item.product.name).join(', ') })}`
+        message: `${tShop('checkout.futureOrderError', { products: futureProducts.map(item => item.product.name).join(', ') })}`
       };
     }
     
@@ -380,8 +380,8 @@ export default function Checkout() {
       clearCart();
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
-        title: t('checkout.registrationAndOrderCompleted'),
-        description: t('checkout.orderAccepted', { orderId: order.id }),
+        title: tShop('checkout.registrationAndOrderCompleted'),
+        description: tShop('checkout.orderAccepted', { orderId: order.id }),
       });
       setLocation("/profile");
     },
@@ -403,7 +403,7 @@ export default function Checkout() {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
         title: t('auth.loginSuccess'),
-        description: t('checkout.canNowPlaceOrder'),
+        description: tShop('checkout.canNowPlaceOrder'),
       });
     },
     onError: (error: Error) => {
@@ -456,8 +456,8 @@ export default function Checkout() {
     onSuccess: (order) => {
       clearCart();
       toast({
-        title: t('checkout.orderPlaced'),
-        description: t('checkout.orderAcceptedForProcessing', { orderId: order.id }),
+        title: tShop('checkout.orderPlaced'),
+        description: tShop('checkout.orderAcceptedForProcessing', { orderId: order.id }),
       });
       setLocation("/profile");
     },
@@ -801,15 +801,15 @@ export default function Checkout() {
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="register" className="flex items-center gap-1">
                     <UserPlus className="h-4 w-4" />
-                    {t('checkout.registration')}
+                    {tShop('checkout.registration')}
                   </TabsTrigger>
                   <TabsTrigger value="login" className="flex items-center gap-1">
                     <UserCheck className="h-4 w-4" />
-                    {t('checkout.loginTab')}
+                    {tShop('checkout.loginTab')}
                   </TabsTrigger>
                   <TabsTrigger value="guest" className="flex items-center gap-1">
                     <User className="h-4 w-4" />
-                    {t('checkout.guest')}
+                    {tShop('checkout.guest')}
                   </TabsTrigger>
                 </TabsList>
 
