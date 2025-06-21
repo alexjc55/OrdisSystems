@@ -168,7 +168,6 @@
   "preOrderTooltip": "המוצר אינו זמין למשלוח היום, מכיוון שאזל מהמלאי בחנות",
   "addedToCart": "נוסף לעגלה",
   "viewCart": "צפה בעגלה",
-  "cart": "עגלה",
   "discount": "הנחה",
   "outOfStockToday": "אזל מהמלאי היום",
   "orderForTomorrow": "הזמנה למחר",
@@ -226,25 +225,6 @@
   "whatsapp": {
     "defaultMessage": "שלום! אני רוצה לדעת יותר על המוצרים שלכם.",
     "writeMessage": "כתוב הודעה בוואטסאפ"
-  },
-  "cart": {
-    "deliveryAddress": "כתובת משלוח",
-    "phone": "טלפון",
-    "orderSuccess": "ההזמנה שלך נוצרה בהצלחה ונשלחה לעיבוד",
-    "dataSaved": "הנתונים שלך נשמרו בפרופיל להזמנות עתידיות:",
-    "and": "ו",
-    "orderCreated": "הזמנה נוצרה",
-    "orderError": "שגיאה ביצירת הזמנה",
-    "orderErrorDescription": "לא ניתן ליצור הזמנה. נסה שוב.",
-    "emptyCart": "עגלת קניות ריקה",
-    "emptyCartDescription": "הוסף מוצרים לעגלה לפני ביצוע ההזמנה",
-    "fillDeliveryAddress": "מלא כתובת משלוח",
-    "deliveryAddressRequired": "כתובת משלוח נדרשת לביצוע ההזמנה",
-    "fillPhoneNumber": "מלא מספר טלפון",
-    "phoneNumberRequired": "מספר טלפון נדרש לביצוע ההזמנה",
-    "title": "עגלת קניות",
-    "empty": "עגלת קניות ריקה",
-    "emptyDescription": "הוסף מוצרים לעגלה לביצוע הזמנה"
   },
   "checkout": {
     "orderCreated": "הזמנה נוצרה",
