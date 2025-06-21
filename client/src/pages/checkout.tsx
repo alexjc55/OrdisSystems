@@ -528,11 +528,11 @@ export default function Checkout() {
                             <TooltipTrigger>
                               <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-xs">
                                 <Info className="h-3 w-3" />
-                                предзаказ
+                                {tShop('preOrder')}
                               </div>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p className="text-xs">Товар недоступен для доставки на сегодня,<br/>т.к. его сегодня уже нет в наличии в магазине</p>
+                              <p className="text-xs">{tShop('preOrderTooltip')}</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
@@ -593,8 +593,13 @@ export default function Checkout() {
                       </span>
                     </div>
                     {deliveryFeeAmount > 0 && (
-                      <div className="text-xs text-gray-500 text-center">
-                        {tShop('cart.freeDeliveryFrom')} {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                        <div className="text-lg font-bold text-green-700">
+                          {tShop('cart.freeDeliveryFrom')} {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                        </div>
+                        <div className="text-sm text-green-600 mt-1">
+                          🚚 {tShop('cart.freeDeliveryBenefit')}
+                        </div>
                       </div>
                     )}
                     <Separator />
