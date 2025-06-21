@@ -1888,11 +1888,11 @@ export default function AdminDashboard() {
         return { ...oldData };
       });
       queryClient.invalidateQueries({ queryKey: ['/api/settings'] });
-      toast({ title: "Настройки сохранены", description: "Права доступа обновлены" });
+      toast({ title: adminT('settings.saved'), description: adminT('settings.saveSuccess') });
     },
     onError: (error: any) => {
       console.error("Store settings update error:", error);
-      toast({ title: "Ошибка", description: "Не удалось обновить настройки", variant: "destructive" });
+      toast({ title: adminT('common.error'), description: adminT('settings.saveError'), variant: "destructive" });
     }
   });
 
@@ -3478,10 +3478,10 @@ export default function AdminDashboard() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                       <Store className="h-4 w-4 sm:h-5 sm:w-5" />
-                      Настройки магазина
+                      {adminT('settings.title')}
                     </CardTitle>
                     <CardDescription className="text-sm">
-                      Управление информацией о магазине
+                      {adminT('settings.description')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -4607,7 +4607,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="deliveryFee"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">Стоимость доставки (₪)</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.deliveryFee')}</FormLabel>
                 <FormControl>
                   <Input {...field} className="text-sm" />
                 </FormControl>
@@ -4621,7 +4621,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="freeDeliveryFrom"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">Бесплатная доставка от (₪)</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.freeDeliveryFrom')}</FormLabel>
                 <FormControl>
                   <Input {...field} className="text-sm" />
                 </FormControl>

@@ -286,7 +286,8 @@
     "filter": "סינון",
     "all": "הכל",
     "active": "פעיל",
-    "inactive": "לא פעיל"
+    "inactive": "לא פעיל",
+    "error": "שגיאה"
   },
   "permissions": {
     "title": "הרשאות",

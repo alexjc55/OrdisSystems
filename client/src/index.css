@@ -47,6 +47,26 @@
   .ms-auto {
     margin-inline-start: auto;
   }
+
+  /* RTL Form Support */
+  .rtl {
+    direction: rtl;
+  }
+  
+  .rtl .flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+  
+  .rtl .ml-auto {
+    margin-left: 0;
+    margin-right: auto;
+  }
+  
+  .rtl .mr-2 {
+    margin-right: 0;
+    margin-left: 0.5rem;
+  }
+}
   
   .me-auto {
     margin-inline-end: auto;
@@ -134,9 +154,6 @@
     flex-shrink: 0 !important;
     aspect-ratio: 1 / 1 !important;
   }
-
-
-}
 
 :root {
   --background: hsl(0, 0%, 100%);

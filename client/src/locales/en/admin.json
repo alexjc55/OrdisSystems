@@ -288,7 +288,8 @@
     "filter": "Filter",
     "all": "All",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "error": "Error"
   },
   "permissions": {
     "title": "Permissions",
