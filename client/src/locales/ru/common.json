@@ -211,7 +211,17 @@
     "fullAddressPlaceholder": "Улица, дом, квартира, этаж...",
     "makeDefaultAddress": "Сделать адресом по умолчанию",
     "default": "По умолчанию",
-    "makeDefault": "Сделать основным"
+    "makeDefault": "Сделать основным",
+    "noSavedAddresses": "Нет сохраненных адресов",
+    "addAddressForQuickOrders": "Добавьте адрес доставки для быстрого оформления заказов",
+    "orderHistory": "История Заказов",
+    "allOrdersAndStatuses": "Все ваши заказы и их статусы",
+    "order": "Заказ",
+    "date": "Дата",
+    "items": "Товары",
+    "amount": "Сумма",
+    "more": "еще...",
+    "details": "Подробнее"
   },
   "footer": {
     "poweredBy": "Powered by Ordis.",

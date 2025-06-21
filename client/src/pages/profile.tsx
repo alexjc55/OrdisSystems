@@ -791,7 +791,7 @@ export default function Profile() {
                   {t('profile.orderHistory')}
                 </CardTitle>
                 <CardDescription>
-                  Все ваши заказы и их статусы
+                  {t('profile.allOrdersAndStatuses')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -799,11 +799,11 @@ export default function Profile() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Заказ</TableHead>
-                        <TableHead>Дата</TableHead>
-                        <TableHead>Статус</TableHead>
-                        <TableHead>Товары</TableHead>
-                        <TableHead>Сумма</TableHead>
+                        <TableHead>{t('profile.order')}</TableHead>
+                        <TableHead>{t('profile.date')}</TableHead>
+                        <TableHead>{t('status.status')}</TableHead>
+                        <TableHead>{t('profile.items')}</TableHead>
+                        <TableHead>{t('profile.amount')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -833,11 +833,11 @@ export default function Profile() {
                                 ))}
                                 {order.items.length > 2 && (
                                   <div className="text-xs text-gray-500">
-                                    +{order.items.length - 2} еще...
+                                    +{order.items.length - 2} {t('profile.more')}
                                   </div>
                                 )}
                                 <div className="text-xs text-orange-600 mt-1">
-                                  Подробнее →
+                                  {t('profile.details')} →
                                 </div>
                               </button>
                             </div>
@@ -875,8 +875,8 @@ export default function Profile() {
                 ) : (
                   <div className="text-center py-8">
                     <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет заказов</h3>
-                    <p className="text-gray-500 mb-4">Вы еще не делали заказов</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">{t('profile.noOrders')}</h3>
+                    <p className="text-gray-500 mb-4">{t('profile.noOrdersYet')}</p>
                     <Button 
                       onClick={() => window.location.href = '/'}
                       className="bg-orange-500 hover:bg-orange-600 text-white"

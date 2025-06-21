@@ -204,6 +204,16 @@
     "fullAddressPlaceholder": "Street, house, apartment, floor...",
     "makeDefaultAddress": "Make default address",
     "default": "Default",
-    "makeDefault": "Make Default"
+    "makeDefault": "Make Default",
+    "noSavedAddresses": "No saved addresses",
+    "addAddressForQuickOrders": "Add a delivery address for quick order placement",
+    "orderHistory": "Order History",
+    "allOrdersAndStatuses": "All your orders and their statuses",
+    "order": "Order",
+    "date": "Date",
+    "items": "Items",
+    "amount": "Amount",
+    "more": "more...",
+    "details": "Details"
   }
 }

@@ -204,6 +204,16 @@
     "fullAddressPlaceholder": "רחוב, מספר בית, דירה, קומה...",
     "makeDefaultAddress": "הפוך לכתובת ברירת מחדל",
     "default": "ברירת מחדל",
-    "makeDefault": "הפוך לברירת מחדל"
+    "makeDefault": "הפוך לברירת מחדל",
+    "noSavedAddresses": "אין כתובות שמורות",
+    "addAddressForQuickOrders": "הוסף כתובת משלוח להזמנות מהירות",
+    "orderHistory": "היסטוריית הזמנות",
+    "allOrdersAndStatuses": "כל ההזמנות והסטטוסים שלך",
+    "order": "הזמנה",
+    "date": "תאריך",
+    "items": "פריטים",
+    "amount": "סכום",
+    "more": "עוד...",
+    "details": "פרטים"
   }
 }
