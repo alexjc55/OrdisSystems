@@ -102,7 +102,11 @@
     "selectPaymentMethod": "Select payment method",
     "deliveryAddressPlaceholder": "Enter delivery address",
     "enterDeliveryAddress": "Enter delivery address",
-    "enterPhoneNumber": "Enter phone number"
+    "enterPhoneNumber": "Enter phone number",
+    "registration": "Registration",
+    "login": "Login", 
+    "guest": "Guest",
+    "registrationBenefit": "Register to track your order status and save delivery addresses."
   },
   "orders": {
     "myOrders": "My Orders",

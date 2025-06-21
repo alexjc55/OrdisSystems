@@ -800,15 +800,15 @@ export default function Checkout() {
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="register" className="flex items-center gap-1">
                     <UserPlus className="h-4 w-4" />
-                    Регистрация
+                    {t('checkout.registration')}
                   </TabsTrigger>
                   <TabsTrigger value="login" className="flex items-center gap-1">
                     <UserCheck className="h-4 w-4" />
-                    Вход
+                    {t('checkout.login')}
                   </TabsTrigger>
                   <TabsTrigger value="guest" className="flex items-center gap-1">
                     <User className="h-4 w-4" />
-                    Гость
+                    {t('checkout.guest')}
                   </TabsTrigger>
                 </TabsList>
 
@@ -816,7 +816,7 @@ export default function Checkout() {
                   <Alert>
                     <CheckCircle className="h-4 w-4" />
                     <AlertDescription>
-                      Зарегистрируйтесь, чтобы отслеживать статус заказа и сохранять адреса доставки.
+                      {t('checkout.registrationBenefit')}
                     </AlertDescription>
                   </Alert>
 

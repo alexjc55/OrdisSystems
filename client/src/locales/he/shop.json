@@ -102,7 +102,11 @@
     "selectPaymentMethod": "בחר אמצעי תשלום",
     "deliveryAddressPlaceholder": "הכנס כתובת משלוח",
     "enterDeliveryAddress": "הכנס כתובת משלוח",
-    "enterPhoneNumber": "הכנס מספר טלפון"
+    "enterPhoneNumber": "הכנס מספר טלפון",
+    "registration": "הרשמה",
+    "login": "כניסה", 
+    "guest": "אורח",
+    "registrationBenefit": "הירשם כדי לעקוב אחר סטטוס ההזמנה ולשמור כתובות משלוח."
   },
   "orders": {
     "myOrders": "ההזמנות שלי",

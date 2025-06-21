@@ -66,17 +66,8 @@ export function useCommonTranslation() {
 export function useShopTranslation() {
   const { t, i18n } = useTranslation('shop');
   
-  // Enhanced translation function with fallback
-  const enhancedT = (key: string, fallback?: string) => {
-    const translation = t(key);
-    // If translation returns the key itself, use fallback or return empty string
-    if (translation === key) {
-      return fallback || '';
-    }
-    return translation;
-  };
-  
-  return { t: enhancedT, i18n };
+  // Use original t function without fallback interference
+  return { t, i18n };
 }
 
 // Hook for admin translations
