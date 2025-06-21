@@ -152,6 +152,11 @@ i18n
     updateMissing: false,
   })
   .then(() => {
+    console.log('i18next initialized successfully');
+    console.log('Current language:', i18n.language);
+    console.log('Available resources:', Object.keys(i18n.store.data));
+    console.log('Shop namespace for ru:', i18n.store.data.ru?.shop);
+    
     // Apply initial direction
     updateDocumentDirection(initialLang);
     
