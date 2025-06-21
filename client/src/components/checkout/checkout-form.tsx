@@ -201,7 +201,7 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
                   <div className="flex-1">
                     <div className="font-medium">{item.product.name}</div>
                     <div className="text-gray-600">
-                      {formatWeight(item.quantity)} × {formatCurrency(parseFloat(item.product.pricePerKg))}/кг
+                      {formatWeight(item.quantity)} × {formatCurrency(parseFloat(item.product.pricePerKg))}/kg
                     </div>
                   </div>
                   <div className="font-medium">{formatCurrency(item.totalPrice)}</div>
@@ -211,14 +211,14 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
             <Separator />
             <div className="space-y-1">
               <div className="flex justify-between">
-                <span>Стоимость товаров:</span>
+                <span>{t('checkout.itemsTotal')}:</span>
                 <span>{formatCurrency(totalAmount)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Доставка:</span>
+                <span>{t('checkout.delivery')}:</span>
                 <span>
                   {deliveryFeeAmount === 0 ? (
-                    <span className="text-green-600 font-medium">Бесплатно</span>
+                    <span className="text-green-600 font-medium">{t('checkout.free')}</span>
                   ) : (
                     formatCurrency(deliveryFeeAmount)
                   )}
@@ -226,12 +226,12 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
               </div>
               {deliveryFeeAmount > 0 && (
                 <div className="text-xs text-gray-500 text-center">
-                  Бесплатная доставка от {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                  {t('checkout.freeDeliveryFrom')} {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
                 </div>
               )}
               <Separator />
               <div className="flex justify-between font-semibold text-lg">
-                <span>Итого:</span>
+                <span>{t('checkout.total')}:</span>
                 <span>{formatCurrency(finalTotal)}</span>
               </div>
             </div>
@@ -243,29 +243,29 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
           <div className="space-y-4">
             <h3 className="font-semibold flex items-center gap-2">
               <MapPin className="h-4 w-4" />
-              Информация о доставке
+              {t('checkout.deliveryInfo')}
             </h3>
             
             <div className="grid gap-4">
               <div>
-                <Label htmlFor="deliveryAddress">Адрес доставки *</Label>
+                <Label htmlFor="deliveryAddress">{t('checkout.deliveryAddress')} *</Label>
                 <Textarea
                   id="deliveryAddress"
                   value={formData.deliveryAddress}
                   onChange={(e) => setFormData({ ...formData, deliveryAddress: e.target.value })}
-                  placeholder="Улица, дом, квартира, подъезд, этаж"
+                  placeholder={t('enterDeliveryAddress')}
                   className="mt-1"
                 />
               </div>
 
               <div>
-                <Label htmlFor="customerPhone">Телефон *</Label>
+                <Label htmlFor="customerPhone">{t('checkout.phone')} *</Label>
                 <Input
                   id="customerPhone"
                   type="tel"
                   value={formData.customerPhone}
                   onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-                  placeholder="+972-XX-XXX-XXXX"
+                  placeholder={t('enterPhoneNumber')}
                   className="mt-1"
                 />
               </div>
@@ -276,7 +276,7 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
           <div className="space-y-4">
             <h3 className="font-semibold flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              Желаемое время доставки (по возможности)
+              {t('checkout.deliveryTime')}
             </h3>
             
             {storeSettings && (

@@ -280,7 +280,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 className="w-full bg-orange-500 text-white hover:bg-orange-600 h-10 text-sm font-medium"
               >
                 <ShoppingCart className="mr-1 h-3 w-3" />
-                {t('product.addToCart', 'Добавить в корзину')}
+                {t('product.addToCart')}
               </Button>
             )
           ) : (
@@ -288,7 +288,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
               disabled
               className="w-full bg-gray-200 text-gray-500 cursor-not-allowed h-10 text-sm"
             >
-              ❌ {t('product.outOfStock', 'Недоступен')}
+              ❌ {t('product.outOfStock')}
             </Button>
           )}
         </div>
