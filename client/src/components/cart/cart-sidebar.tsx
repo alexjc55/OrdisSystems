@@ -211,20 +211,20 @@ export default function CartSidebar() {
                                 </Button>
                               </div>
                               <div className="text-xs text-gray-500">
-                                {item.product.unit === "piece" ? "шт" : 
-                                 item.product.unit === "kg" ? "кг" : 
-                                 item.product.unit === "100g" ? "100г" : "100мл"}
+                                {item.product.unit === "piece" ? t('units.piece') : 
+                                 item.product.unit === "kg" ? t('units.kg') : 
+                                 item.product.unit === "100g" ? t('units.per100g') : t('units.per100ml')}
                               </div>
                             </div>
                             
                             <div className="text-right">
                               <div className="text-xs text-gray-500">
-                                {formatCurrency(item.product.price)} за {(() => {
+                                {formatCurrency(item.product.price)} {t('units.per')} {(() => {
                                   switch (item.product.unit) {
-                                    case 'piece': return 'шт.';
-                                    case 'kg': return 'кг';
-                                    case '100g': return '100г';
-                                    case '100ml': return '100мл';
+                                    case 'piece': return t('units.piece');
+                                    case 'kg': return t('units.kg');
+                                    case '100g': return t('units.per100g');
+                                    case '100ml': return t('units.per100ml');
                                     default: return item.product.unit;
                                   }
                                 })()}

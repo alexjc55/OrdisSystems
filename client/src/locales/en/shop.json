@@ -119,6 +119,13 @@
     "noOrders": "You have no orders yet",
     "trackOrder": "Track Order"
   },
+  "units": {
+    "piece": "pcs",
+    "kg": "kg", 
+    "per100g": "100g",
+    "per100ml": "100ml",
+    "per": "per"
+  },
   "auth": {
     "welcome": "Welcome",
     "signIn": "Sign In",
