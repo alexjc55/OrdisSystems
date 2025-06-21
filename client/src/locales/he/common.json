@@ -219,6 +219,21 @@
     "noOrdersYet": "עדיין לא ביצעת הזמנות",
     "startShopping": "התחל לקנות",
     "orderDetails": "פרטי הזמנה",
-    "orderFullInfo": "מידע מלא על ההזמנה מ"
+    "orderFullInfo": "מידע מלא על ההזמנה מ",
+    "orderInformation": "מידע על ההזמנה",
+    "status": "סטטוס",
+    "createdDate": "תאריך יצירה",
+    "paymentMethod": "אמצעי תשלום",
+    "cash": "מזומן",
+    "card": "כרטיס",
+    "delivery": "משלוח",
+    "phone": "טלפון",
+    "address": "כתובת",
+    "deliveryDate": "תאריך משלוח",
+    "deliveryTime": "זמן משלוח",
+    "orderItems": "פריטים בהזמנה",
+    "product": "מוצר",
+    "quantity": "כמות",
+    "unitPrice": "מחיר ליחידה"
   }
 }

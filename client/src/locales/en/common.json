@@ -219,6 +219,23 @@
     "noOrdersYet": "You haven't made any orders yet",
     "startShopping": "Start Shopping",
     "orderDetails": "Order Details",
-    "orderFullInfo": "Complete order information from"
+    "orderFullInfo": "Complete order information from",
+    "orderInformation": "Order Information",
+    "status": "Status",
+    "createdDate": "Created Date",
+    "paymentMethod": "Payment Method",
+    "cash": "Cash",
+    "card": "Card",
+    "delivery": "Delivery",
+    "phone": "Phone",
+    "address": "Address",
+    "deliveryDate": "Delivery Date",
+    "deliveryTime": "Delivery Time",
+    "orderItems": "Order Items",
+    "product": "Product",
+    "quantity": "Quantity",
+    "unitPrice": "Unit Price",
+    "discount": "Discount",
+    "total": "Total"
   }
 }

@@ -969,17 +969,17 @@ export default function Profile() {
                 {/* Order Items */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-sm">Товары в заказе</CardTitle>
+                    <CardTitle className="text-sm">{t('profile.orderItems')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Товар</TableHead>
-                          <TableHead>Количество</TableHead>
-                          <TableHead>Цена за единицу</TableHead>
-                          <TableHead>Скидка</TableHead>
-                          <TableHead className="text-right">Итого</TableHead>
+                          <TableHead>{t('profile.product')}</TableHead>
+                          <TableHead>{t('profile.quantity')}</TableHead>
+                          <TableHead>{t('profile.unitPrice')}</TableHead>
+                          <TableHead>{t('profile.discount')}</TableHead>
+                          <TableHead className="text-right">{t('profile.total')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -1012,10 +1012,10 @@ export default function Profile() {
                                 {(() => {
                                   const unit = (item.product.unit || "100g") as ProductUnit;
                                   switch (unit) {
-                                    case 'piece': return `${formatCurrency(item.product.price)} за шт.`;
-                                    case 'kg': return `${formatCurrency(item.product.price)} за кг`;
-                                    case '100g': return `${formatCurrency(item.product.price)} за 100г`;
-                                    case '100ml': return `${formatCurrency(item.product.price)} за 100мл`;
+                                    case 'piece': return `${formatCurrency(item.product.price)} ${t('units.perPiece')}`;
+                                    case 'kg': return `${formatCurrency(item.product.price)} ${t('units.perKg')}`;
+                                    case '100g': return `${formatCurrency(item.product.price)} ${t('units.per100g')}`;
+                                    case '100ml': return `${formatCurrency(item.product.price)} ${t('units.per100ml')}`;
                                     default: return formatCurrency(item.product.price);
                                   }
                                 })()}
