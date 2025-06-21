@@ -22,6 +22,8 @@ export default function CartSidebar() {
   const [editingQuantity, setEditingQuantity] = useState<{[key: number]: string}>({});
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
+  
+
 
   const handleQuantityChange = (productId: number, newQuantity: number, unit: ProductUnit) => {
     if (newQuantity <= 0) {

@@ -142,20 +142,13 @@ i18n
     saveMissing: false,
     missingKeyHandler: false,
     
-    // Return fallback for missing translations
+    // Return fallback for missing translations  
     returnEmptyString: false,
     returnNull: false,
     returnObjects: false,
-    
-    // Force key display when translation is missing (for debugging)
-    saveMissingTo: 'current',
-    updateMissing: false,
   })
   .then(() => {
-    console.log('i18next initialized successfully');
-    console.log('Current language:', i18n.language);
-    console.log('Available resources:', Object.keys(i18n.store.data));
-    console.log('Shop namespace for ru:', i18n.store.data.ru?.shop);
+
     
     // Apply initial direction
     updateDocumentDirection(initialLang);
