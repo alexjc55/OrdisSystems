@@ -1194,7 +1194,7 @@ function OrderEditForm({ order, onClose, onSave }: { order: any, onClose: () => 
 }
 
 // Add Item Dialog Component
-function AddItemDialog({ onClose, onAdd }: { onClose: () => void, onAdd: (product: any, quantity: number) => void }) {
+function AddItemDialog({ onClose, onAdd, searchPlaceholder }: { onClose: () => void, onAdd: (product: any, quantity: number) => void, searchPlaceholder: string }) {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -1220,7 +1220,7 @@ function AddItemDialog({ onClose, onAdd }: { onClose: () => void, onAdd: (produc
         {/* Search */}
         <div className="mb-4">
           <Input
-            placeholder="Поиск товаров..."
+            placeholder={searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="mb-3"
