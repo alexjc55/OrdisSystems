@@ -11,15 +11,20 @@
     "edit": "ערוך",
     "delete": "מחק",
     "save": "שמור",
+    "saving": "שומר...",
+    "saveChanges": "שמור שינויים",
     "cancel": "ביטול",
     "update": "עדכן",
     "create": "צור",
     "view": "צפה",
     "close": "סגור",
     "search": "חיפוש",
+    "searchProducts": "חיפוש מוצרים...",
     "filter": "סינון",
     "reset": "איפוס",
-    "confirm": "אשר"
+    "confirm": "אשר",
+    "apply": "החל",
+    "error": "שגיאה"
   },
   "dashboard": {
     "title": "פאנל ניהול",

@@ -3198,10 +3198,10 @@ export default function AdminDashboard() {
               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="text-lg font-semibold">
-                    {editingOrder ? `Заказ #${editingOrder.id}` : 'Новый заказ'}
+                    {editingOrder ? `${adminT('orders.order')} #${editingOrder.id}` : adminT('orders.newOrder')}
                   </DialogTitle>
                   <DialogDescription>
-                    {editingOrder ? 'Просмотр и редактирование заказа' : 'Создание нового заказа'}
+                    {editingOrder ? adminT('orders.editOrderDescription') : adminT('orders.createOrderDescription')}
                   </DialogDescription>
                 </DialogHeader>
                 
