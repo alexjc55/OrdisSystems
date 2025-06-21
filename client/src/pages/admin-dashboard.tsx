@@ -4384,6 +4384,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   onSubmit: (data: any) => void;
   isLoading: boolean;
 }) {
+  const { t: adminT } = useAdminTranslation();
+  const { i18n } = useCommonTranslation();
+  const isRTL = i18n.language === 'he';
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
   const [isVisualsOpen, setIsVisualsOpen] = useState(false);
@@ -4521,7 +4524,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-8 ${isRTL ? 'rtl' : 'ltr'}`}>
         {/* Основная информация */}
         <Collapsible open={isBasicInfoOpen} onOpenChange={setIsBasicInfoOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
@@ -4529,9 +4532,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Store className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">Основная информация</h3>
+                <h3 className="text-lg font-semibold">{adminT('settings.basicSettings')}</h3>
                 {isBasicInfoOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
