@@ -451,7 +451,7 @@ export default function Checkout() {
     },
     onError: (error: Error) => {
       toast({
-        title: "Ошибка при оформлении заказа",
+        title: t('checkout.orderError'),
         description: error.message,
         variant: "destructive",
       });
@@ -464,10 +464,10 @@ export default function Checkout() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <ShoppingCart className="h-12 w-12 text-gray-400 mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Корзина пуста</h2>
-            <p className="text-gray-600 mb-4">Добавьте товары для оформления заказа</p>
+            <h2 className="text-xl font-semibold mb-2">{t('cart.empty')}</h2>
+            <p className="text-gray-600 mb-4">{t('cart.emptyDescription')}</p>
             <Button onClick={() => setLocation("/")}>
-              Перейти к покупкам
+              {t('navigation.goShopping')}
             </Button>
           </CardContent>
         </Card>
@@ -485,7 +485,7 @@ export default function Checkout() {
           className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
         >
           <ArrowLeft className="h-4 w-4" />
-          Вернуться к покупкам
+          {t('navigation.backToShopping')}
         </Button>
       </div>
 
@@ -495,7 +495,7 @@ export default function Checkout() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ShoppingCart className="h-5 w-5" />
-              Ваш заказ
+              {t('checkout.yourOrder')}
             </CardTitle>
           </CardHeader>
           <CardContent>
