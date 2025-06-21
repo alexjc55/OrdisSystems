@@ -2227,114 +2227,244 @@ export default function AdminDashboard() {
                     <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
-                          <TableRow>
-                            <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                              <button 
-                                onClick={() => handleSort("name")}
-                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
-                              >
-                                {adminT('products.productName')}
-                                {sortField === "name" && (
-                                  sortDirection === "asc" ? 
-                                    <ChevronUp className="h-3 w-3" /> : 
-                                    <ChevronDown className="h-3 w-3" />
-                                )}
-                              </button>
-                            </TableHead>
-                            <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                              <button 
-                                onClick={() => handleSort("category")}
-                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
-                              >
-                                {adminT('products.productCategory')}
-                                {sortField === "category" && (
-                                  sortDirection === "asc" ? 
-                                    <ChevronUp className="h-3 w-3" /> : 
-                                    <ChevronDown className="h-3 w-3" />
-                                )}
-                              </button>
-                            </TableHead>
-                            <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                              <button 
-                                onClick={() => handleSort("price")}
-                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
-                              >
-                                {adminT('products.productPrice')}
-                                {sortField === "price" && (
-                                  sortDirection === "asc" ? 
-                                    <ChevronUp className="h-3 w-3" /> : 
-                                    <ChevronDown className="h-3 w-3" />
-                                )}
-                              </button>
-                            </TableHead>
-                            <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('products.productStatus')}</TableHead>
+                          <TableRow className={isRTL ? 'flex-row-reverse' : ''}>
+                            {isRTL ? (
+                              <>
+                                <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-right">{adminT('products.productStatus')}</TableHead>
+                                <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-right">
+                                  <button 
+                                    onClick={() => handleSort("price")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                  >
+                                    {adminT('products.productPrice')}
+                                    {sortField === "price" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-right">
+                                  <button 
+                                    onClick={() => handleSort("category")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                  >
+                                    {adminT('products.productCategory')}
+                                    {sortField === "category" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-right">
+                                  <button 
+                                    onClick={() => handleSort("name")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                  >
+                                    {adminT('products.productName')}
+                                    {sortField === "name" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                              </>
+                            ) : (
+                              <>
+                                <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left">
+                                  <button 
+                                    onClick={() => handleSort("name")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                  >
+                                    {adminT('products.productName')}
+                                    {sortField === "name" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left">
+                                  <button 
+                                    onClick={() => handleSort("category")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                  >
+                                    {adminT('products.productCategory')}
+                                    {sortField === "category" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className="min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left">
+                                  <button 
+                                    onClick={() => handleSort("price")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                  >
+                                    {adminT('products.productPrice')}
+                                    {sortField === "price" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left">{adminT('products.productStatus')}</TableHead>
+                              </>
+                            )}
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {filteredProducts.map((product: any) => (
                             <TableRow key={product.id}>
-                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <button
-                                  onClick={() => {
-                                    setEditingProduct(product);
-                                    setIsProductFormOpen(true);
-                                  }}
-                                  className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer ${isRTL ? 'text-right' : 'text-left'}`}
-                                >
-                                  {product.name}
-                                </button>
-                              </TableCell>
-                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <Badge variant="outline" className="text-xs">
-                                  {product.category?.name}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
-                                  {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
-                                    <div className="space-y-1">
-                                      <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                      <div className="font-semibold text-gray-900">
-                                        {formatCurrency(
-                                          product.discountType === "percentage"
-                                            ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
-                                            : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
-                                        )}
-                                      </div>
-                                      <div className="text-orange-600 text-xs font-medium">
-                                        -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
-                                      </div>
+                              {isRTL ? (
+                                <>
+                                  {/* Status Column - First in RTL */}
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                    <div className="flex flex-col gap-1 items-end">
+                                      <CustomSwitch
+                                        checked={product.isAvailable && (product.availabilityStatus === "available")}
+                                        onChange={(checked) => {
+                                          if (!checked) {
+                                            setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
+                                            setIsAvailabilityDialogOpen(true);
+                                          } else {
+                                            updateAvailabilityStatusMutation.mutate({
+                                              id: product.id,
+                                              availabilityStatus: "available"
+                                            });
+                                          }
+                                        }}
+                                        bgColor="bg-green-500"
+                                      />
+                                      {product.availabilityStatus === "out_of_stock_today" && (
+                                        <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
+                                          предзаказ
+                                        </div>
+                                      )}
                                     </div>
-                                  ) : (
-                                    <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                  )}
-                                  <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
-                                </div>
-                              </TableCell>
-                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
-                                  <CustomSwitch
-                                    checked={product.isAvailable && (product.availabilityStatus === "available")}
-                                    onChange={(checked) => {
-                                      if (!checked) {
-                                        setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
-                                        setIsAvailabilityDialogOpen(true);
-                                      } else {
-                                        updateAvailabilityStatusMutation.mutate({
-                                          id: product.id,
-                                          availabilityStatus: "available"
-                                        });
-                                      }
-                                    }}
-                                    bgColor="bg-green-500"
-                                  />
-                                  {product.availabilityStatus === "out_of_stock_today" && (
-                                    <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
-                                      предзаказ
+                                  </TableCell>
+                                  
+                                  {/* Price Column - Second in RTL */}
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                    <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
+                                      {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
+                                        <div className="space-y-1">
+                                          <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                          <div className="font-semibold text-gray-900">
+                                            {formatCurrency(
+                                              product.discountType === "percentage"
+                                                ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
+                                                : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
+                                            )}
+                                          </div>
+                                          <div className="text-orange-600 text-xs font-medium">
+                                            -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                      )}
+                                      <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
                                     </div>
-                                  )}
-                                </div>
-                              </TableCell>
+                                  </TableCell>
+                                  
+                                  {/* Category Column - Third in RTL */}
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                    <Badge variant="outline" className="text-xs">
+                                      {product.category?.name}
+                                    </Badge>
+                                  </TableCell>
+                                  
+                                  {/* Product Name - Last in RTL (appears first) */}
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                    <button
+                                      onClick={() => {
+                                        setEditingProduct(product);
+                                        setIsProductFormOpen(true);
+                                      }}
+                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-right"
+                                    >
+                                      {product.name}
+                                    </button>
+                                  </TableCell>
+                                </>
+                              ) : (
+                                <>
+                                  {/* Product Name - First in LTR */}
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <button
+                                      onClick={() => {
+                                        setEditingProduct(product);
+                                        setIsProductFormOpen(true);
+                                      }}
+                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-left"
+                                    >
+                                      {product.name}
+                                    </button>
+                                  </TableCell>
+                                  
+                                  {/* Category Column - Second in LTR */}
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <Badge variant="outline" className="text-xs">
+                                      {product.category?.name}
+                                    </Badge>
+                                  </TableCell>
+                                  
+                                  {/* Price Column - Third in LTR */}
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
+                                      {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
+                                        <div className="space-y-1">
+                                          <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                          <div className="font-semibold text-gray-900">
+                                            {formatCurrency(
+                                              product.discountType === "percentage"
+                                                ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
+                                                : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
+                                            )}
+                                          </div>
+                                          <div className="text-orange-600 text-xs font-medium">
+                                            -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                      )}
+                                      <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
+                                    </div>
+                                  </TableCell>
+                                  
+                                  {/* Status Column - Last in LTR */}
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <div className="flex flex-col gap-1 items-start">
+                                      <CustomSwitch
+                                        checked={product.isAvailable && (product.availabilityStatus === "available")}
+                                        onChange={(checked) => {
+                                          if (!checked) {
+                                            setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
+                                            setIsAvailabilityDialogOpen(true);
+                                          } else {
+                                            updateAvailabilityStatusMutation.mutate({
+                                              id: product.id,
+                                              availabilityStatus: "available"
+                                            });
+                                          }
+                                        }}
+                                        bgColor="bg-green-500"
+                                      />
+                                      {product.availabilityStatus === "out_of_stock_today" && (
+                                        <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
+                                          предзаказ
+                                        </div>
+                                      )}
+                                    </div>
+                                  </TableCell>
+                                </>
+                              )}
                             </TableRow>
                           ))}
                         </TableBody>
@@ -2622,81 +2752,284 @@ export default function AdminDashboard() {
                           <Table className="rtl:text-right">
                             <TableHeader>
                               <TableRow>
-                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>№</TableHead>
-                                <TableHead className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.customer', 'Клиент')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm hidden sm:table-cell w-24 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.status', 'Статус')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-20 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.total', 'Сумма')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm hidden md:table-cell w-32 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.date', 'Дата и время')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.actions', 'Действия')}</TableHead>
+                                {isRTL ? (
+                                  <>
+                                    <TableHead className="text-xs sm:text-sm w-12 text-right">{adminT('orders.actions', 'Действия')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm hidden md:table-cell w-32 text-right">{adminT('orders.date', 'Дата и время')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm w-20 text-right">{adminT('orders.total', 'Сумма')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-24 text-right">{adminT('orders.status', 'Статус')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm text-right">{adminT('orders.customer', 'Клиент')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm w-12 text-right">№</TableHead>
+                                  </>
+                                ) : (
+                                  <>
+                                    <TableHead className="text-xs sm:text-sm w-12 text-left">№</TableHead>
+                                    <TableHead className="text-xs sm:text-sm text-left">{adminT('orders.customer', 'Клиент')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-24 text-left">{adminT('orders.status', 'Статус')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm w-20 text-left">{adminT('orders.total', 'Сумма')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm hidden md:table-cell w-32 text-left">{adminT('orders.date', 'Дата и время')}</TableHead>
+                                    <TableHead className="text-xs sm:text-sm w-12 text-left">{adminT('orders.actions', 'Действия')}</TableHead>
+                                  </>
+                                )}
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {ordersResponse.data.map((order: any) => (
                                 <TableRow key={order.id} className="hover:bg-gray-50">
-                                  <TableCell className={`font-bold text-xs sm:text-sm text-orange-600 ${isRTL ? 'text-right' : 'text-left'}`}>#{order.id}</TableCell>
-                                  <TableCell className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                                    <div className="space-y-1">
-                                      <div className="font-medium">
-                                        {order.user?.firstName && order.user?.lastName 
-                                          ? `${order.user.firstName} ${order.user.lastName}`
-                                          : order.user?.email || "—"
-                                        }
-                                      </div>
-                                      {order.customerPhone && (
-                                        <DropdownMenu>
-                                          <DropdownMenuTrigger asChild>
-                                            <button className="text-blue-600 text-xs hover:text-blue-800 flex items-center gap-1 cursor-pointer">
-                                              <Phone className="h-3 w-3" />
-                                              {order.customerPhone}
-                                            </button>
-                                          </DropdownMenuTrigger>
-                                          <DropdownMenuContent align="start" className="w-40 bg-white border border-gray-200 shadow-lg">
-                                            <DropdownMenuItem 
-                                              onClick={() => window.location.href = `tel:${order.customerPhone}`}
-                                              className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
-                                            >
-                                              <Phone className="h-4 w-4 mr-2" />
-{adminT('orders.call', 'Позвонить')}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem 
-                                              onClick={() => {
-                                                const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
-                                                window.open(`https://wa.me/${cleanPhone}`, '_blank');
-                                              }}
-                                              className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
-                                            >
-                                              <MessageCircle className="h-4 w-4 mr-2" />
-                                              WhatsApp
-                                            </DropdownMenuItem>
-                                          </DropdownMenuContent>
-                                        </DropdownMenu>
-                                      )}
-                                    </div>
-                                  </TableCell>
-                                  <TableCell className={`hidden sm:table-cell ${isRTL ? 'text-right' : 'text-left'}`}>
-                                    <Select
-                                      value={order.status}
-                                      onValueChange={(newStatus) => {
-                                        if (newStatus === 'cancelled') {
-                                          handleOrderCancellation(order.id);
-                                        } else {
-                                          updateOrderStatusMutation.mutate({ orderId: order.id, status: newStatus });
-                                        }
-                                      }}
-                                    >
-                                      <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} ${isRTL ? 'text-right' : 'text-left'}`}>
-                                        <SelectValue />
-                                      </SelectTrigger>
-                                      <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                                        <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">Ожидает</SelectItem>
-                                        <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">Подтвержден</SelectItem>
-                                        <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">Готовится</SelectItem>
-                                        <SelectItem value="ready" className="text-green-800 hover:bg-green-50">Готов</SelectItem>
-                                        <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">Доставлен</SelectItem>
-                                        <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">Отменен</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </TableCell>
+                                  {isRTL ? (
+                                    <>
+                                      {/* Actions - First in RTL */}
+                                      <TableCell className="text-right">
+                                        <Button 
+                                          variant="outline" 
+                                          size="sm" 
+                                          className="text-xs h-8 px-2"
+                                          onClick={() => {
+                                            setEditingOrder(order);
+                                            setIsOrderFormOpen(true);
+                                          }}
+                                        >
+                                          <Eye className="h-3 w-3" />
+                                        </Button>
+                                      </TableCell>
+                                      
+                                      {/* Date - Second in RTL */}
+                                      <TableCell className="text-xs sm:text-sm hidden md:table-cell text-right">
+                                        <div className="space-y-1">
+                                          <div className="flex items-center gap-1 flex-row-reverse">
+                                            <Calendar className="h-3 w-3 text-gray-400" />
+                                            <span className="font-medium">Создан:</span>
+                                          </div>
+                                          <div className="text-xs text-gray-600">
+                                            {new Date(order.createdAt).toLocaleDateString('ru-RU')} {new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                                          </div>
+                                          {order.deliveryDate && (
+                                            <>
+                                              <div className="flex items-center gap-1 mt-2 flex-row-reverse">
+                                                <Clock className="h-3 w-3 text-blue-400" />
+                                                <span className="font-medium text-blue-600">Доставка:</span>
+                                              </div>
+                                              <div className="text-xs text-blue-600">
+                                                {new Date(order.deliveryDate).toLocaleDateString('ru-RU')} {order.deliveryTime}
+                                              </div>
+                                            </>
+                                          )}
+                                        </div>
+                                      </TableCell>
+                                      
+                                      {/* Total - Third in RTL */}
+                                      <TableCell className="text-xs sm:text-sm text-right">
+                                        {(() => {
+                                          if (order.manualPriceAdjustment !== null && order.manualPriceAdjustment !== undefined) {
+                                            return formatCurrency(order.manualPriceAdjustment);
+                                          }
+                                          
+                                          return formatCurrency(order.totalAmount);
+                                        })()}
+                                      </TableCell>
+                                      
+                                      {/* Status - Fourth in RTL */}
+                                      <TableCell className="hidden sm:table-cell text-right">
+                                        <Select
+                                          value={order.status}
+                                          onValueChange={(newStatus) => {
+                                            if (newStatus === 'cancelled') {
+                                              handleOrderCancellation(order.id);
+                                            } else {
+                                              updateOrderStatusMutation.mutate({ orderId: order.id, status: newStatus });
+                                            }
+                                          }}
+                                        >
+                                          <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} text-right`}>
+                                            <SelectValue />
+                                          </SelectTrigger>
+                                          <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                                            <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">Ожидает</SelectItem>
+                                            <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">Подтвержден</SelectItem>
+                                            <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">Готовится</SelectItem>
+                                            <SelectItem value="ready" className="text-green-800 hover:bg-green-50">Готов</SelectItem>
+                                            <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">Доставлен</SelectItem>
+                                            <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">Отменен</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                      </TableCell>
+                                      
+                                      {/* Customer - Fifth in RTL */}
+                                      <TableCell className="text-xs sm:text-sm text-right">
+                                        <div className="space-y-1">
+                                          <div className="font-medium">
+                                            {order.user?.firstName && order.user?.lastName 
+                                              ? `${order.user.firstName} ${order.user.lastName}`
+                                              : order.user?.email || "—"
+                                            }
+                                          </div>
+                                          {order.customerPhone && (
+                                            <DropdownMenu>
+                                              <DropdownMenuTrigger asChild>
+                                                <button className="text-blue-600 text-xs hover:text-blue-800 flex items-center gap-1 cursor-pointer flex-row-reverse">
+                                                  <Phone className="h-3 w-3" />
+                                                  {order.customerPhone}
+                                                </button>
+                                              </DropdownMenuTrigger>
+                                              <DropdownMenuContent align="start" className="w-40 bg-white border border-gray-200 shadow-lg">
+                                                <DropdownMenuItem 
+                                                  onClick={() => window.location.href = `tel:${order.customerPhone}`}
+                                                  className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
+                                                >
+                                                  <Phone className="h-4 w-4 mr-2" />
+                                                  {adminT('orders.call', 'Позвонить')}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem 
+                                                  onClick={() => {
+                                                    const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
+                                                    window.open(`https://wa.me/${cleanPhone}`, '_blank');
+                                                  }}
+                                                  className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
+                                                >
+                                                  <MessageCircle className="h-4 w-4 mr-2" />
+                                                  WhatsApp
+                                                </DropdownMenuItem>
+                                              </DropdownMenuContent>
+                                            </DropdownMenu>
+                                          )}
+                                        </div>
+                                      </TableCell>
+                                      
+                                      {/* Order Number - Last in RTL (appears first) */}
+                                      <TableCell className="font-bold text-xs sm:text-sm text-orange-600 text-right">#{order.id}</TableCell>
+                                    </>
+                                  ) : (
+                                    <>
+                                      {/* Order Number - First in LTR */}
+                                      <TableCell className="font-bold text-xs sm:text-sm text-orange-600 text-left">#{order.id}</TableCell>
+                                      
+                                      {/* Customer - Second in LTR */}
+                                      <TableCell className="text-xs sm:text-sm text-left">
+                                        <div className="space-y-1">
+                                          <div className="font-medium">
+                                            {order.user?.firstName && order.user?.lastName 
+                                              ? `${order.user.firstName} ${order.user.lastName}`
+                                              : order.user?.email || "—"
+                                            }
+                                          </div>
+                                          {order.customerPhone && (
+                                            <DropdownMenu>
+                                              <DropdownMenuTrigger asChild>
+                                                <button className="text-blue-600 text-xs hover:text-blue-800 flex items-center gap-1 cursor-pointer">
+                                                  <Phone className="h-3 w-3" />
+                                                  {order.customerPhone}
+                                                </button>
+                                              </DropdownMenuTrigger>
+                                              <DropdownMenuContent align="start" className="w-40 bg-white border border-gray-200 shadow-lg">
+                                                <DropdownMenuItem 
+                                                  onClick={() => window.location.href = `tel:${order.customerPhone}`}
+                                                  className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
+                                                >
+                                                  <Phone className="h-4 w-4 mr-2" />
+                                                  {adminT('orders.call', 'Позвонить')}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem 
+                                                  onClick={() => {
+                                                    const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
+                                                    window.open(`https://wa.me/${cleanPhone}`, '_blank');
+                                                  }}
+                                                  className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
+                                                >
+                                                  <MessageCircle className="h-4 w-4 mr-2" />
+                                                  WhatsApp
+                                                </DropdownMenuItem>
+                                              </DropdownMenuContent>
+                                            </DropdownMenu>
+                                          )}
+                                        </div>
+                                      </TableCell>
+                                      
+                                      {/* Status - Third in LTR */}
+                                      <TableCell className="hidden sm:table-cell text-left">
+                                          value={order.status}
+                                          onValueChange={(newStatus) => {
+                                            if (newStatus === 'cancelled') {
+                                              handleOrderCancellation(order.id);
+                                            } else {
+                                              updateOrderStatusMutation.mutate({ orderId: order.id, status: newStatus });
+                                            }
+                                          }}
+                                        >
+                                          <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} text-left`}>
+                                            <SelectValue />
+                                          </SelectTrigger>
+                                          <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                                            <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">Ожидает</SelectItem>
+                                            <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">Подтвержден</SelectItem>
+                                            <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">Готовится</SelectItem>
+                                            <SelectItem value="ready" className="text-green-800 hover:bg-green-50">Готов</SelectItem>
+                                            <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">Доставлен</SelectItem>
+                                            <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">Отменен</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                      </TableCell>
+                                      
+                                      {/* Total - Fourth in LTR */}
+                                      <TableCell className="text-xs sm:text-sm text-left">
+                                        {(() => {
+                                          if (order.manualPriceAdjustment !== null && order.manualPriceAdjustment !== undefined) {
+                                            return formatCurrency(order.manualPriceAdjustment);
+                                          }
+                                          
+                                          return formatCurrency(order.totalAmount);
+                                        })()}
+                                      </TableCell>
+                                      
+                                      {/* Date - Fifth in LTR */}
+                                      <TableCell className="text-xs sm:text-sm hidden md:table-cell text-left">
+                                        <div className="space-y-1">
+                                          <div className="flex items-center gap-1">
+                                            <Calendar className="h-3 w-3 text-gray-400" />
+                                            <span className="font-medium">Создан:</span>
+                                          </div>
+                                          <div className="text-xs text-gray-600">
+                                            {new Date(order.createdAt).toLocaleDateString('ru-RU')} {new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                                          </div>
+                                          {order.deliveryDate && (
+                                            <>
+                                              <div className="flex items-center gap-1 mt-2">
+                                                <Clock className="h-3 w-3 text-blue-400" />
+                                                <span className="font-medium text-blue-600">Доставка:</span>
+                                              </div>
+                                              <div className="text-xs text-blue-600">
+                                                {new Date(order.deliveryDate).toLocaleDateString('ru-RU')} {order.deliveryTime}
+                                              </div>
+                                            </>
+                                          )}
+                                        </div>
+                                      </TableCell>
+                                      
+                                      {/* Actions - Last in LTR */}
+                                      <TableCell className="text-left">
+                                        <Button 
+                                          variant="outline" 
+                                          size="sm" 
+                                          className="text-xs h-8 px-2"
+                                          onClick={() => {
+                                            setEditingOrder(order);
+                                            setIsOrderFormOpen(true);
+                                          }}
+                                        >
+                                          <Eye className="h-3 w-3" />
+                                        </Button>
+                                      </TableCell>
+                                    </>
+                                  )}
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Kanban View */}
+                    {ordersViewMode === "kanban" && (
                                   <TableCell className={`font-medium text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                     {(() => {
                                       // Extract discount information from order notes
