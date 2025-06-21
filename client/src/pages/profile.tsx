@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { useCommonTranslation } from "@/hooks/use-language";
+import { useCommonTranslation, useShopTranslation } from "@/hooks/use-language";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -26,6 +26,7 @@ export default function Profile() {
   const { user, isLoading, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const { t } = useCommonTranslation();
+  const { t: tShop } = useShopTranslation();
   const queryClient = useQueryClient();
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
@@ -828,7 +829,7 @@ export default function Profile() {
                               >
                                 {order.items.slice(0, 2).map((item, index) => (
                                   <div key={index} className="text-sm">
-                                    {item.product.name} ({formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit)})
+                                    {item.product.name} ({formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit, tShop)})
                                   </div>
                                 ))}
                                 {order.items.length > 2 && (
@@ -1006,7 +1007,7 @@ export default function Profile() {
                                 </div>
                               </TableCell>
                               <TableCell>
-                                {formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit)}
+                                {formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit, tShop)}
                               </TableCell>
                               <TableCell>
                                 {(() => {
