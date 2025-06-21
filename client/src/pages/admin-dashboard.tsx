@@ -2622,19 +2622,19 @@ export default function AdminDashboard() {
                           <Table className="rtl:text-right">
                             <TableHeader>
                               <TableRow>
-                                <TableHead className="text-xs sm:text-sm w-12 rtl:text-right">№</TableHead>
-                                <TableHead className="text-xs sm:text-sm rtl:text-right">{adminT('orders.customer', 'Клиент')}</TableHead>
-                                <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-24 rtl:text-right">{adminT('orders.status', 'Статус')}</TableHead>
-                                <TableHead className="text-xs sm:text-sm w-20 rtl:text-right">{adminT('orders.total', 'Сумма')}</TableHead>
-                                <TableHead className="text-xs sm:text-sm hidden md:table-cell w-32 rtl:text-right">{adminT('orders.date', 'Дата и время')}</TableHead>
-                                <TableHead className="text-xs sm:text-sm w-12 rtl:text-right">{adminT('orders.actions', 'Действия')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>№</TableHead>
+                                <TableHead className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.customer', 'Клиент')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm hidden sm:table-cell w-24 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.status', 'Статус')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm w-20 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.total', 'Сумма')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm hidden md:table-cell w-32 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.date', 'Дата и время')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.actions', 'Действия')}</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {ordersResponse.data.map((order: any) => (
                                 <TableRow key={order.id} className="hover:bg-gray-50">
-                                  <TableCell className="font-bold text-xs sm:text-sm text-orange-600 rtl:text-right">#{order.id}</TableCell>
-                                  <TableCell className="text-xs sm:text-sm rtl:text-right">
+                                  <TableCell className={`font-bold text-xs sm:text-sm text-orange-600 ${isRTL ? 'text-right' : 'text-left'}`}>#{order.id}</TableCell>
+                                  <TableCell className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                     <div className="space-y-1">
                                       <div className="font-medium">
                                         {order.user?.firstName && order.user?.lastName 
@@ -2783,9 +2783,9 @@ export default function AdminDashboard() {
                                       return formatCurrency(order.totalAmount);
                                     })()}
                                   </TableCell>
-                                  <TableCell className="text-xs sm:text-sm hidden md:table-cell">
+                                  <TableCell className={`text-xs sm:text-sm hidden md:table-cell ${isRTL ? 'text-right' : 'text-left'}`}>
                                     <div className="space-y-1">
-                                      <div className="flex items-center gap-1">
+                                      <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                                         <Calendar className="h-3 w-3 text-gray-400" />
                                         <span className="font-medium">Создан:</span>
                                       </div>
@@ -2794,7 +2794,7 @@ export default function AdminDashboard() {
                                       </div>
                                       {order.deliveryDate && (
                                         <>
-                                          <div className="flex items-center gap-1 mt-2">
+                                          <div className={`flex items-center gap-1 mt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                                             <Clock className="h-3 w-3 text-blue-400" />
                                             <span className="font-medium text-blue-600">Доставка:</span>
                                           </div>

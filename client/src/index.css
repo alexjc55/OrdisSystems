@@ -47,38 +47,73 @@
   .ms-auto {
     margin-inline-start: auto;
   }
-
-  /* RTL Form Support */
-  .rtl {
-    direction: rtl;
+  
+  /* RTL-specific utility classes */
+  [dir="rtl"] .rtl\:text-right {
+    text-align: right;
   }
   
-  .rtl .flex-row-reverse {
+  [dir="rtl"] .rtl\:flex-row-reverse {
     flex-direction: row-reverse;
   }
   
-  .rtl .ml-auto {
-    margin-left: 0;
-    margin-right: auto;
+  [dir="rtl"] .rtl\:justify-end {
+    justify-content: flex-end;
   }
   
-  .rtl .mr-2 {
-    margin-right: 0;
+  [dir="rtl"] .rtl\:items-end {
+    align-items: flex-end;
+  }
+  
+  [dir="rtl"] .rtl\:pr-10 {
+    padding-right: 2.5rem;
+  }
+  
+  [dir="rtl"] .rtl\:pl-0 {
+    padding-left: 0;
+  }
+  
+  [dir="rtl"] .rtl\:mr-2 {
+    margin-right: 0.5rem;
+    margin-left: 0;
+  }
+  
+  [dir="rtl"] .rtl\:ml-2 {
     margin-left: 0.5rem;
+    margin-right: 0;
   }
 }
-  
-  .me-auto {
-    margin-inline-end: auto;
-  }
-  
-  .ps-4 {
-    padding-inline-start: 1rem;
-  }
-  
-  .pe-4 {
-    padding-inline-end: 1rem;
-  }
+
+/* RTL Form Support */
+.rtl {
+  direction: rtl;
+}
+
+.rtl .flex-row-reverse {
+  flex-direction: row-reverse;
+}
+
+.rtl .ml-auto {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.rtl .mr-2 {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+.me-auto {
+  margin-inline-end: auto;
+}
+
+.ps-4 {
+  padding-inline-start: 1rem;
+}
+
+.pe-4 {
+  padding-inline-end: 1rem;
+}
   
   /* RTL Cart Sidebar */
   html[dir="rtl"] .cart-sidebar {
