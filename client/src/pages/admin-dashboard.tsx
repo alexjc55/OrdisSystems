@@ -2167,7 +2167,7 @@ export default function AdminDashboard() {
                     className="bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto"
                     size="sm"
                   >
-                    <Plus className="mr-2 h-4 w-4" />
+                    <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                     {adminT('actions.add')} {adminT('products.title')}
                   </Button>
                 </div>
@@ -2176,19 +2176,19 @@ export default function AdminDashboard() {
                 {/* Search and Filter Controls */}
                 <div className="flex flex-col lg:flex-row gap-3">
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Search className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                     <Input
                       placeholder={adminT('products.searchProducts', 'Поиск товаров...')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 text-sm"
+                      className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}
                     />
                   </div>
                   <div className="flex flex-col sm:flex-row gap-3 lg:flex-shrink-0">
                     <div className="relative min-w-[180px]">
-                      <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                       <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
-                        <SelectTrigger className="pl-10 text-sm">
+                        <SelectTrigger className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
                           <SelectValue placeholder={adminT('products.allCategories', 'Все категории')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -2205,9 +2205,9 @@ export default function AdminDashboard() {
                       </Select>
                     </div>
                     <div className="relative min-w-[160px]">
-                      <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                       <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
-                        <SelectTrigger className="pl-10 text-sm">
+                        <SelectTrigger className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
                           <SelectValue placeholder={adminT('products.productStatus', 'Статус товара')} />
                         </SelectTrigger>
                         <SelectContent className="bg-white border border-gray-200 shadow-lg">
@@ -2311,8 +2311,8 @@ export default function AdminDashboard() {
                                   <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
                                 </div>
                               </TableCell>
-                              <TableCell className="px-2 sm:px-4 py-2">
-                                <div className="flex flex-col gap-1">
+                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                                <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
                                   <CustomSwitch
                                     checked={product.isAvailable && (product.availabilityStatus === "available")}
                                     onChange={(checked) => {
@@ -2673,7 +2673,7 @@ export default function AdminDashboard() {
                                       )}
                                     </div>
                                   </TableCell>
-                                  <TableCell className="hidden sm:table-cell rtl:text-right">
+                                  <TableCell className={`hidden sm:table-cell ${isRTL ? 'text-right' : 'text-left'}`}>
                                     <Select
                                       value={order.status}
                                       onValueChange={(newStatus) => {
@@ -2684,7 +2684,7 @@ export default function AdminDashboard() {
                                         }
                                       }}
                                     >
-                                      <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)}`}>
+                                      <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} ${isRTL ? 'text-right' : 'text-left'}`}>
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent className="bg-white border border-gray-200 shadow-lg">
@@ -2697,7 +2697,7 @@ export default function AdminDashboard() {
                                       </SelectContent>
                                     </Select>
                                   </TableCell>
-                                  <TableCell className="font-medium text-xs sm:text-sm rtl:text-right">
+                                  <TableCell className={`font-medium text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                     {(() => {
                                       // Extract discount information from order notes
                                       const extractDiscounts = (notes: string) => {
