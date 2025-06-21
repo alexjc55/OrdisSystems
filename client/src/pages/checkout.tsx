@@ -861,7 +861,7 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="phone">Номер телефона *</Label>
+                        <Label htmlFor="phone">{t('checkout.customerPhone')} *</Label>
                         <Input
                           id="phone"
                           type="tel"
@@ -874,11 +874,11 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="address">Адрес доставки *</Label>
+                        <Label htmlFor="address">{t('checkout.deliveryAddress')} *</Label>
                         <Input
                           id="address"
                           {...registerForm.register("address")}
-                          placeholder="Введите полный адрес"
+                          placeholder={t('checkout.deliveryAddressPlaceholder')}
                         />
                         {registerForm.formState.errors.address && (
                           <p className="text-sm text-red-600">{registerForm.formState.errors.address.message}</p>
@@ -892,7 +892,7 @@ export default function Checkout() {
                             id="password"
                             type="password"
                             {...registerForm.register("password")}
-                            placeholder="Минимум 6 символов"
+                            placeholder={t('common.passwordPlaceholder')}
                           />
                           {registerForm.formState.errors.password && (
                             <p className="text-sm text-red-600">{registerForm.formState.errors.password.message}</p>
@@ -904,7 +904,7 @@ export default function Checkout() {
                             id="confirmPassword"
                             type="password"
                             {...registerForm.register("confirmPassword")}
-                            placeholder="Повторите пароль"
+                            placeholder={t('common.confirmPassword')}
                           />
                           {registerForm.formState.errors.confirmPassword && (
                             <p className="text-sm text-red-600">{registerForm.formState.errors.confirmPassword.message}</p>
@@ -1038,7 +1038,7 @@ export default function Checkout() {
                   <form onSubmit={loginForm.handleSubmit((data) => loginMutation.mutate(data))}>
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="loginEmail">Email</Label>
+                        <Label htmlFor="loginEmail">{t('common.email')}</Label>
                         <Input
                           id="loginEmail"
                           type="email"
@@ -1051,7 +1051,7 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="loginPassword">Пароль</Label>
+                        <Label htmlFor="loginPassword">{t('common.password')}</Label>
                         <Input
                           id="loginPassword"
                           type="password"
@@ -1110,7 +1110,7 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="guestEmail">Email</Label>
+                        <Label htmlFor="guestEmail">{t('common.email')}</Label>
                         <Input
                           id="guestEmail"
                           type="email"
@@ -1123,7 +1123,7 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="guestPhone">Номер телефона *</Label>
+                        <Label htmlFor="guestPhone">{t('checkout.customerPhone')} *</Label>
                         <Input
                           id="guestPhone"
                           type="tel"
@@ -1136,11 +1136,11 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="guestAddress">Адрес доставки *</Label>
+                        <Label htmlFor="guestAddress">{t('checkout.deliveryAddress')} *</Label>
                         <Input
                           id="guestAddress"
                           {...guestForm.register("address")}
-                          placeholder="Введите полный адрес"
+                          placeholder={t('checkout.deliveryAddressPlaceholder')}
                         />
                         {guestForm.formState.errors.address && (
                           <p className="text-sm text-red-600">{guestForm.formState.errors.address.message}</p>
