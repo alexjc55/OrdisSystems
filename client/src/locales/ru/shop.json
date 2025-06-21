@@ -175,6 +175,7 @@
   "discount": "Скидка",
   "outOfStockToday": "Закончился на сегодня",
   "orderForTomorrow": "Заказать на завтра",
+  "total": "Итого",
   "buttons": {
     "back": "Назад"
   },

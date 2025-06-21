@@ -59,15 +59,42 @@ export function useLanguage() {
 
 // Hook for common translations
 export function useCommonTranslation() {
-  return useTranslation('common');
+  const { t, i18n } = useTranslation('common');
+  
+  // Enhanced translation function with debugging
+  const enhancedT = (key: string, fallback?: string) => {
+    const translation = t(key);
+    console.log(`Common translation - Key: ${key}, Translation: ${translation}`);
+    
+    // If translation returns the key itself, it means translation is missing
+    if (translation === key) {
+      console.warn(`Missing common translation for key: ${key}`);
+      return fallback || key;
+    }
+    return translation;
+  };
+  
+  return { t: enhancedT, i18n };
 }
 
 // Hook for shop translations  
 export function useShopTranslation() {
   const { t, i18n } = useTranslation('shop');
   
-  // Use original t function without fallback interference
-  return { t, i18n };
+  // Enhanced translation function with debugging
+  const enhancedT = (key: string, fallback?: string) => {
+    const translation = t(key);
+    console.log(`Shop translation - Key: ${key}, Translation: ${translation}`);
+    
+    // If translation returns the key itself, it means translation is missing
+    if (translation === key) {
+      console.warn(`Missing shop translation for key: ${key}`);
+      return fallback || key;
+    }
+    return translation;
+  };
+  
+  return { t: enhancedT, i18n };
 }
 
 // Hook for admin translations
