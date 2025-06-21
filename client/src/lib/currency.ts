@@ -24,7 +24,18 @@ export function roundUpToNearestTenAgorot(amount: number): number {
   return Math.ceil(amount * 10) / 10;
 }
 
-export function getUnitLabel(unit: ProductUnit): string {
+export function getUnitLabel(unit: ProductUnit, t?: (key: string, fallback?: string) => string): string {
+  if (t) {
+    const labels = {
+      "100g": t('units.per100g', 'за 100г'),
+      "100ml": t('units.per100ml', 'за 100мл'), 
+      "piece": t('units.perPiece', 'за штуку'),
+      "kg": t('units.perKg', 'за кг')
+    };
+    return labels[unit];
+  }
+  
+  // Fallback without translation
   const labels = {
     "100g": "за 100г",
     "100ml": "за 100мл", 
@@ -34,7 +45,18 @@ export function getUnitLabel(unit: ProductUnit): string {
   return labels[unit];
 }
 
-export function getUnitShortLabel(unit: ProductUnit): string {
+export function getUnitShortLabel(unit: ProductUnit, t?: (key: string, fallback?: string) => string): string {
+  if (t) {
+    const labels = {
+      "100g": t('units.per100g', '100г'),
+      "100ml": t('units.per100ml', '100мл'),
+      "piece": t('units.piece', 'шт'),
+      "kg": t('units.kg', 'кг')
+    };
+    return labels[unit];
+  }
+  
+  // Fallback without translation
   const labels = {
     "100g": "100г",
     "100ml": "100мл",

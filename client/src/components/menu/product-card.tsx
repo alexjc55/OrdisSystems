@@ -194,7 +194,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 </span>
               )}
             </div>
-            <span className="text-base text-gray-500">{getUnitLabel(unit)}</span>
+            <span className="text-base text-gray-500">{getUnitLabel(unit, t)}</span>
           </div>
         </div>
 

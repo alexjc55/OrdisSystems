@@ -126,7 +126,9 @@
     "grams": "grams",
     "piece": "pcs",
     "per100g": "per 100g",
-    "perKg": "per kg"
+    "per100ml": "per 100ml",
+    "perKg": "per kg",
+    "perPiece": "per piece"
   },
   "products": "Products"
 }
