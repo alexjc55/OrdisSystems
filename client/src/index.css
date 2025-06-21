@@ -1074,4 +1074,42 @@ html[dir="rtl"] button.whatsapp-button.whatsapp-button.whatsapp-button {
   }
 }
 
+/* RTL Table Column Order Reversal for Admin Dashboard */
+[dir="rtl"] .admin-dashboard table {
+  direction: rtl;
+}
+
+[dir="rtl"] .admin-dashboard th,
+[dir="rtl"] .admin-dashboard td {
+  text-align: right;
+  direction: ltr; /* Keep cell content LTR for proper display */
+}
+
+/* Use CSS flexbox to reverse column order in RTL */
+[dir="rtl"] .admin-dashboard thead tr,
+[dir="rtl"] .admin-dashboard tbody tr {
+  display: flex;
+  flex-direction: row-reverse;
+  width: 100%;
+}
+
+[dir="rtl"] .admin-dashboard th,
+[dir="rtl"] .admin-dashboard td {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+[dir="rtl"] .admin-dashboard .flex {
+  flex-direction: row-reverse;
+}
+
+/* Ensure Hebrew font for RTL admin dashboard */
+[dir="rtl"] .admin-dashboard {
+  font-family: 'Noto Sans Hebrew', 'Arial Hebrew', sans-serif;
+}
+
 
