@@ -190,6 +190,14 @@
     "maxOrderPeriod": "Maximum order period",
     "days": "days",
     "deliveryDate": "Delivery Date",
-    "deliveryTimeLabel": "Delivery Time"
+    "deliveryTimeLabel": "Delivery Time",
+    "paymentMethod": "Payment Method",
+    "cashOnDelivery": "Cash on Delivery",
+    "cardOnDelivery": "Card on Delivery",
+    "bankTransfer": "Bank Transfer",
+    "orderNotes": "Order Notes",
+    "orderNotesPlaceholder": "Additional requests or comments...",
+    "processing": "Processing...",
+    "orderFor": "Order for"
   }
 }

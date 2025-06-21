@@ -359,12 +359,12 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
 
           {/* Additional Notes */}
           <div className="space-y-2">
-            <Label htmlFor="customerNotes">Комментарий к заказу</Label>
+            <Label htmlFor="customerNotes">{t('checkout.orderNotes')}</Label>
             <Textarea
               id="customerNotes"
               value={formData.customerNotes}
               onChange={(e) => setFormData({ ...formData, customerNotes: e.target.value })}
-              placeholder="Дополнительные пожелания или комментарии..."
+              placeholder={t('checkout.orderNotesPlaceholder')}
             />
           </div>
 
@@ -376,14 +376,14 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
               className="flex-1"
               disabled={createOrderMutation.isPending}
             >
-              Отмена
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleSubmit}
               className="flex-1 bg-orange-500 hover:bg-orange-600"
               disabled={createOrderMutation.isPending || !formData.deliveryAddress || !formData.customerPhone}
             >
-              {createOrderMutation.isPending ? "Оформление..." : `Заказать за ${formatCurrency(finalTotal)}`}
+              {createOrderMutation.isPending ? t('checkout.processing') : `${t('checkout.orderFor')} ${formatCurrency(finalTotal)}`}
             </Button>
           </div>
         </CardContent>

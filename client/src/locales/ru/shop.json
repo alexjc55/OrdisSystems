@@ -204,6 +204,14 @@
     "maxOrderPeriod": "Максимальный период заказа",
     "days": "дня",
     "deliveryDate": "Дата доставки",
-    "deliveryTimeLabel": "Время доставки"
+    "deliveryTimeLabel": "Время доставки",
+    "paymentMethod": "Способ оплаты",
+    "cashOnDelivery": "Наличными при получении",
+    "cardOnDelivery": "Картой при получении",
+    "bankTransfer": "Банковский перевод",
+    "orderNotes": "Комментарий к заказу",
+    "orderNotesPlaceholder": "Дополнительные пожелания или комментарии...",
+    "processing": "Оформление...",
+    "orderFor": "Заказать за"
   }
 }

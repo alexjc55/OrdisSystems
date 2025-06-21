@@ -229,10 +229,10 @@ export default function Home() {
                       if (storeSettings?.storeDescription) {
                         return storeSettings.storeDescription;
                       }
-                      return "Свежая домашняя еда на развес - выбирайте по вкусу";
+                      return t('defaultStoreDescription');
                     } catch (error) {
                       console.error('Error rendering description:', error);
-                      return "Свежая домашняя еда на развес - выбирайте по вкусу";
+                      return t('defaultStoreDescription');
                     }
                   })()}
                 </p>
