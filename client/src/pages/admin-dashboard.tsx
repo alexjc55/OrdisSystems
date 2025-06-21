@@ -4803,7 +4803,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full rtl:flex-row-reverse">
                 <Languages className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">Настройки языка</h3>
+                <h3 className="text-lg font-semibold">{adminT('settings.languageSettings')}</h3>
                 {isLanguageSettingsOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
@@ -4921,7 +4921,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
                 <Clock className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">Часы работы</h3>
+                <h3 className="text-lg font-semibold">{adminT('settings.operatingHours')}</h3>
                 {isWorkingHoursOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
@@ -5734,7 +5734,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
                 <Code className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">Код отслеживания</h3>
+                <h3 className="text-lg font-semibold">{adminT('settings.trackingCode')}</h3>
                 {isTrackingCodeOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
@@ -5804,7 +5804,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className="flex items-center gap-2">
                 <User className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">Страница авторизации</h3>
+                <h3 className="text-lg font-semibold">{adminT('settings.authPage')}</h3>
               </div>
               {isAuthPageOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>

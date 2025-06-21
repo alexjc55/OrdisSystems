@@ -191,6 +191,13 @@
   "settings": {
     "title": "Настройки",
     "storeSettings": "Настройки магазина",
+    "basicSettings": "Основные настройки",
+    "basicSettingsDescription": "Описание и контакты",
+    "visualSettings": "Визуальное оформление",
+    "languageSettings": "Настройки языка",
+    "operatingHours": "Часы работы",
+    "trackingCode": "Код отслеживания",
+    "authPage": "Страница авторизации",
     "storeName": "Название магазина",
     "storeDescription": "Описание магазина",
     "storeAddress": "Адрес магазина",
