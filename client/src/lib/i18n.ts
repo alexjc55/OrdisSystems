@@ -146,6 +146,10 @@ i18n
     returnEmptyString: false,
     returnNull: false,
     returnObjects: false,
+    
+    // Force key display when translation is missing (for debugging)
+    saveMissingTo: 'current',
+    updateMissing: false,
   })
   .then(() => {
     // Apply initial direction

@@ -804,7 +804,7 @@ export default function Checkout() {
                   </TabsTrigger>
                   <TabsTrigger value="login" className="flex items-center gap-1">
                     <UserCheck className="h-4 w-4" />
-                    {t('checkout.login')}
+                    {t('checkout.loginTab')}
                   </TabsTrigger>
                   <TabsTrigger value="guest" className="flex items-center gap-1">
                     <User className="h-4 w-4" />
