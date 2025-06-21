@@ -463,7 +463,7 @@ export default function Checkout() {
     },
     onError: (error: Error) => {
       toast({
-        title: t('checkout.orderError'),
+        title: tShop('checkout.orderError'),
         description: error.message,
         variant: "destructive",
       });
@@ -507,7 +507,7 @@ export default function Checkout() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ShoppingCart className="h-5 w-5" />
-              {t('checkout.yourOrder')}
+              {tShop('checkout.yourOrder')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -607,7 +607,7 @@ export default function Checkout() {
         {/* Checkout Form */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('checkout.title')}</CardTitle>
+            <CardTitle>{tShop('checkout.title')}</CardTitle>
           </CardHeader>
           <CardContent>
             {isAuthenticated ? (
@@ -632,7 +632,7 @@ export default function Checkout() {
                 }}>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="phone">{t('checkout.customerPhone')} *</Label>
+                      <Label htmlFor="phone">{tShop('checkout.customerPhone')} *</Label>
                       <Input
                         id="phone"
                         name="phone"
@@ -644,17 +644,17 @@ export default function Checkout() {
                     </div>
                     
                     <div>
-                      <Label htmlFor="address">{t('checkout.deliveryAddress')} *</Label>
+                      <Label htmlFor="address">{tShop('checkout.deliveryAddress')} *</Label>
                       <Input
                         id="address"
                         name="address"
-                        placeholder={t('checkout.deliveryAddressPlaceholder')}
+                        placeholder={tShop('checkout.deliveryAddressPlaceholder')}
                         required
                       />
                       
                       {addresses && Array.isArray(addresses) && addresses.length > 0 && (
                         <div className="mt-2">
-                          <Label className="text-sm text-gray-600">{t('checkout.savedAddresses')}</Label>
+                          <Label className="text-sm text-gray-600">{tShop('checkout.savedAddresses')}</Label>
                           <div className="mt-1 flex flex-wrap gap-2">
                             {(addresses as any[]).map((addr: any) => (
                               <Button
@@ -677,7 +677,7 @@ export default function Checkout() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="deliveryDate">{t('checkout.deliveryDate')} *</Label>
+                        <Label htmlFor="deliveryDate">{tShop('checkout.deliveryDate')} *</Label>
                         <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
                           <PopoverTrigger asChild>
                             <Button
@@ -741,10 +741,10 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="deliveryTime">{t('checkout.deliveryTime')} *</Label>
+                        <Label htmlFor="deliveryTime">{tShop('checkout.deliveryTime')} *</Label>
                         <Select value={selectedTime} onValueChange={setSelectedTime} disabled={!selectedDate} required>
                           <SelectTrigger>
-                            <SelectValue placeholder={t('checkout.selectTime')} />
+                            <SelectValue placeholder={tShop('checkout.selectTime')} />
                           </SelectTrigger>
                           <SelectContent>
                             {selectedDate && generateDeliveryTimes(
@@ -762,10 +762,10 @@ export default function Checkout() {
                     </div>
 
                     <div>
-                      <Label htmlFor="paymentMethod">{t('checkout.paymentMethod')} *</Label>
+                      <Label htmlFor="paymentMethod">{tShop('checkout.paymentMethod')} *</Label>
                       <Select value={selectedPaymentMethod} onValueChange={setSelectedPaymentMethod} required>
                         <SelectTrigger>
-                          <SelectValue placeholder={t('checkout.selectPaymentMethod')} />
+                          <SelectValue placeholder={tShop('checkout.selectPaymentMethod')} />
                         </SelectTrigger>
                         <SelectContent>
                           {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
@@ -790,7 +790,7 @@ export default function Checkout() {
                       className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 text-lg shadow-lg"
                       disabled={createAuthenticatedOrderMutation.isPending}
                     >
-                      {createAuthenticatedOrderMutation.isPending ? t('checkout.processing') : t('checkout.placeOrder')}
+                      {createAuthenticatedOrderMutation.isPending ? tShop('checkout.processing') : tShop('checkout.placeOrder')}
                     </Button>
                   </div>
                 </form>
@@ -817,7 +817,7 @@ export default function Checkout() {
                   <Alert>
                     <CheckCircle className="h-4 w-4" />
                     <AlertDescription>
-                      {t('checkout.registrationBenefit')}
+                      {tShop('checkout.registrationBenefit')}
                     </AlertDescription>
                   </Alert>
 
@@ -862,7 +862,7 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="phone">{t('checkout.customerPhone')} *</Label>
+                        <Label htmlFor="phone">{tShop('checkout.customerPhone')} *</Label>
                         <Input
                           id="phone"
                           type="tel"
@@ -875,11 +875,11 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="address">{t('checkout.deliveryAddress')} *</Label>
+                        <Label htmlFor="address">{tShop('checkout.deliveryAddress')} *</Label>
                         <Input
                           id="address"
                           {...registerForm.register("address")}
-                          placeholder={t('checkout.deliveryAddressPlaceholder')}
+                          placeholder={tShop('checkout.deliveryAddressPlaceholder')}
                         />
                         {registerForm.formState.errors.address && (
                           <p className="text-sm text-red-600">{registerForm.formState.errors.address.message}</p>
@@ -915,7 +915,7 @@ export default function Checkout() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="registerDeliveryDate">{t('checkout.deliveryDate')} *</Label>
+                          <Label htmlFor="registerDeliveryDate">{tShop('checkout.deliveryDate')} *</Label>
                           <Popover open={registerDatePickerOpen} onOpenChange={setRegisterDatePickerOpen}>
                             <PopoverTrigger asChild>
                               <Button
@@ -969,10 +969,10 @@ export default function Checkout() {
                         </div>
 
                         <div>
-                          <Label htmlFor="registerDeliveryTime">{t('checkout.deliveryTime')} *</Label>
+                          <Label htmlFor="registerDeliveryTime">{tShop('checkout.deliveryTime')} *</Label>
                           <Select value={selectedRegisterTime} onValueChange={setSelectedRegisterTime} disabled={!selectedRegisterDate} required>
                             <SelectTrigger>
-                              <SelectValue placeholder={t('checkout.selectTime')} />
+                              <SelectValue placeholder={tShop('checkout.selectTime')} />
                             </SelectTrigger>
                             <SelectContent>
                               {selectedRegisterDate && generateDeliveryTimes(
@@ -990,14 +990,14 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="registerPaymentMethod">{t('checkout.paymentMethod')} *</Label>
+                        <Label htmlFor="registerPaymentMethod">{tShop('checkout.paymentMethod')} *</Label>
                         <Select 
                           value={selectedRegisterPaymentMethod} 
                           onValueChange={setSelectedRegisterPaymentMethod} 
                           required
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder={t('checkout.selectPaymentMethod')} />
+                            <SelectValue placeholder={tShop('checkout.selectPaymentMethod')} />
                           </SelectTrigger>
                           <SelectContent>
                             {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
@@ -1022,7 +1022,7 @@ export default function Checkout() {
                         className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 text-lg shadow-lg"
                         disabled={registerAndOrderMutation.isPending}
                       >
-                        {registerAndOrderMutation.isPending ? t('checkout.registeringAndProcessing') : t('checkout.registerAndPlaceOrder')}
+                        {registerAndOrderMutation.isPending ? tShop('checkout.registeringAndProcessing') : tShop('checkout.registerAndPlaceOrder')}
                       </Button>
                     </div>
                   </form>
@@ -1124,7 +1124,7 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="guestPhone">{t('checkout.customerPhone')} *</Label>
+                        <Label htmlFor="guestPhone">{tShop('checkout.customerPhone')} *</Label>
                         <Input
                           id="guestPhone"
                           type="tel"
@@ -1137,11 +1137,11 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="guestAddress">{t('checkout.deliveryAddress')} *</Label>
+                        <Label htmlFor="guestAddress">{tShop('checkout.deliveryAddress')} *</Label>
                         <Input
                           id="guestAddress"
                           {...guestForm.register("address")}
-                          placeholder={t('checkout.deliveryAddressPlaceholder')}
+                          placeholder={tShop('checkout.deliveryAddressPlaceholder')}
                         />
                         {guestForm.formState.errors.address && (
                           <p className="text-sm text-red-600">{guestForm.formState.errors.address.message}</p>
@@ -1150,7 +1150,7 @@ export default function Checkout() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="guestDeliveryDate">{t('checkout.deliveryDate')} *</Label>
+                          <Label htmlFor="guestDeliveryDate">{tShop('checkout.deliveryDate')} *</Label>
                           <Popover open={guestDatePickerOpen} onOpenChange={setGuestDatePickerOpen}>
                             <PopoverTrigger asChild>
                               <Button
@@ -1204,10 +1204,10 @@ export default function Checkout() {
                         </div>
 
                         <div>
-                          <Label htmlFor="guestDeliveryTime">{t('checkout.deliveryTime')} *</Label>
+                          <Label htmlFor="guestDeliveryTime">{tShop('checkout.deliveryTime')} *</Label>
                           <Select value={selectedGuestTime} onValueChange={setSelectedGuestTime} disabled={!selectedGuestDate} required>
                             <SelectTrigger>
-                              <SelectValue placeholder={t('checkout.selectTime')} />
+                              <SelectValue placeholder={tShop('checkout.selectTime')} />
                             </SelectTrigger>
                             <SelectContent>
                               {selectedGuestDate && generateDeliveryTimes(
@@ -1225,14 +1225,14 @@ export default function Checkout() {
                       </div>
 
                       <div>
-                        <Label htmlFor="guestPaymentMethod">{t('checkout.paymentMethod')} *</Label>
+                        <Label htmlFor="guestPaymentMethod">{tShop('checkout.paymentMethod')} *</Label>
                         <Select 
                           value={selectedGuestPaymentMethod} 
                           onValueChange={setSelectedGuestPaymentMethod} 
                           required
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder={t('checkout.selectPaymentMethod')} />
+                            <SelectValue placeholder={tShop('checkout.selectPaymentMethod')} />
                           </SelectTrigger>
                           <SelectContent>
                             {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
@@ -1257,7 +1257,7 @@ export default function Checkout() {
                         className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 text-lg shadow-lg"
                         disabled={createGuestOrderMutation.isPending}
                       >
-                        {createGuestOrderMutation.isPending ? t('checkout.processing') : t('checkout.placeOrderAsGuest')}
+                        {createGuestOrderMutation.isPending ? tShop('checkout.processing') : tShop('checkout.placeOrderAsGuest')}
                       </Button>
                     </div>
                   </form>
