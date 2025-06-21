@@ -103,7 +103,11 @@
     "resetPassword": "איפוס סיסמה",
     "enterNewPassword": "הזן סיסמה חדשה לחשבון שלך",
     "newPassword": "סיסמה חדשה",
-    "passwordMinChars": "לפחות 6 תווים"
+    "passwordMinChars": "לפחות 6 תווים",
+    "passwordChangeSuccess": "הסיסמה שלך שונתה בהצלחה",
+    "passwordChangeError": "לא ניתן לשנות את הסיסמה",
+    "currentPasswordRequired": "הזן סיסמה נוכחית",
+    "loginRequiredForPasswordChange": "כדי לשנות סיסמה יש להתחבר למערכת"
   },
   "validation": {
     "usernameRequired": "הזן שם משתמש",

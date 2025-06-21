@@ -30,8 +30,8 @@ export default function ChangePasswordPage() {
     },
     onSuccess: () => {
       toast({
-        title: "Пароль изменен",
-        description: "Ваш пароль успешно изменен",
+        title: t('auth.passwordChanged'),
+        description: t('auth.passwordChangeSuccess'),
       });
       setFormData({
         currentPassword: "",
@@ -42,8 +42,8 @@ export default function ChangePasswordPage() {
     },
     onError: (error: any) => {
       toast({
-        title: "Ошибка",
-        description: error.message || "Не удалось изменить пароль",
+        title: t('status.error'),
+        description: error.message || t('auth.passwordChangeError'),
         variant: "destructive",
       });
     },
@@ -56,19 +56,19 @@ export default function ChangePasswordPage() {
     
     // Validation
     if (!formData.currentPassword && user?.password) {
-      newErrors.currentPassword = "Введите текущий пароль";
+      newErrors.currentPassword = t('auth.currentPasswordRequired');
     }
     
     if (!formData.newPassword) {
-      newErrors.newPassword = "Введите новый пароль";
+      newErrors.newPassword = t('validation.passwordRequired');
     } else if (formData.newPassword.length < 6) {
-      newErrors.newPassword = "Пароль должен содержать минимум 6 символов";
+      newErrors.newPassword = t('validation.passwordMinLength');
     }
     
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Подтвердите новый пароль";
+      newErrors.confirmPassword = t('auth.confirmNewPassword');
     } else if (formData.newPassword !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Пароли не совпадают";
+      newErrors.confirmPassword = t('validation.passwordMismatch');
     }
     
     if (Object.keys(newErrors).length > 0) {
@@ -96,14 +96,14 @@ export default function ChangePasswordPage() {
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <CardTitle>Доступ запрещен</CardTitle>
+            <CardTitle>{t('messages.accessDenied')}</CardTitle>
             <CardDescription>
-              Для изменения пароля необходимо войти в систему
+              {t('auth.loginRequiredForPasswordChange')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Link href="/auth">
-              <Button className="w-full">Войти</Button>
+              <Button className="w-full">{t('actions.login')}</Button>
             </Link>
           </CardContent>
         </Card>
@@ -117,7 +117,7 @@ export default function ChangePasswordPage() {
         <div className="mb-6">
           <Link href="/">
             <Button variant="outline" className="mb-4">
-              ← Назад на главную
+              ← {t('navigation.backToHome')}
             </Button>
           </Link>
         </div>

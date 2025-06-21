@@ -103,7 +103,11 @@
     "resetPassword": "Reset password",
     "enterNewPassword": "Enter new password for your account",
     "newPassword": "New password",
-    "passwordMinChars": "At least 6 characters"
+    "passwordMinChars": "At least 6 characters",
+    "passwordChangeSuccess": "Your password has been successfully changed",
+    "passwordChangeError": "Failed to change password",
+    "currentPasswordRequired": "Enter current password",
+    "loginRequiredForPasswordChange": "You need to log in to change your password"
   },
   "validation": {
     "usernameRequired": "Enter username",
