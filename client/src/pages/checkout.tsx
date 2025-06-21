@@ -650,23 +650,20 @@ export default function Checkout() {
                         <div className="mt-2">
                           <Label className="text-sm text-gray-600">{tShop('checkout.savedAddresses')}</Label>
                           <div className="mt-1 flex flex-wrap gap-2">
-                            {addresses.map((addr: any) => {
-                              const displayText = addr.label ? `${addr.label}: ${addr.address}` : addr.address;
-                              return (
-                                <Button
-                                  key={addr.id}
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => {
-                                    const input = document.getElementById("address") as HTMLInputElement;
-                                    if (input) input.value = addr.address;
-                                  }}
-                                >
-                                  {displayText}
-                                </Button>
-                              );
-                            })}
+                            {addresses.map((addr: any, index: number) => (
+                              <Button
+                                key={index}
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  const input = document.getElementById("address") as HTMLInputElement;
+                                  if (input) input.value = String(addr.address || '');
+                                }}
+                              >
+                                {String(addr.label ? `${addr.label}: ${addr.address}` : addr.address || '')}
+                              </Button>
+                            ))}
                           </div>
                         </div>
                       )}
