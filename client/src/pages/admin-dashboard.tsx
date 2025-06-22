@@ -950,7 +950,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
             onClick={() => setShowAddItem(true)}
             className="text-xs"
           >
-            <Plus className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+            <Plus className={`h-3 w-3 ${isRTL ? 'ml-2' : 'mr-2'}`} />
             {adminT('orders.addProduct', 'Добавить товар')}
           </Button>
         </div>
@@ -1168,6 +1168,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
           onAdd={addItem}
           searchPlaceholder={searchPlaceholder}
           adminT={adminT}
+          isRTL={isRTL}
         />
       )}
 
@@ -2242,7 +2243,7 @@ export default function AdminDashboard() {
                     className={`bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-1' : 'sm:order-2'}`}
                     size="sm"
                   >
-                    <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                    <Plus className={`h-4 w-4 ${isRTL ? 'ml-3' : 'mr-3'}`} />
                     {adminT('actions.add')} {adminT('products.title')}
                   </Button>
                 </div>
@@ -2634,7 +2635,7 @@ export default function AdminDashboard() {
                     className={`bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-1' : 'sm:order-2'}`}
                     size="sm"
                   >
-                    <Plus className={`${isRTL ? 'ml-2' : 'mr-2'} h-4 w-4`} />
+                    <Plus className={`${isRTL ? 'ml-3' : 'mr-3'} h-4 w-4`} />
                     {adminT('actions.add')} {adminT('categories.title')}
                   </Button>
                 </div>
@@ -3467,7 +3468,7 @@ export default function AdminDashboard() {
                       onClick={() => setIsUserFormOpen(true)}
                       className="bg-orange-500 hover:bg-orange-600 text-white"
                     >
-                      <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                      <Plus className={`h-4 w-4 ${isRTL ? 'ml-3' : 'mr-3'}`} />
                       {adminT('users.addUser', 'Добавить пользователя')}
                     </Button>
                   </div>
