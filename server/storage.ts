@@ -333,7 +333,6 @@ export class DatabaseStorage implements IStorage {
         .innerJoin(categories, eq(productCategories.categoryId, categories.id))
         .where(and(
           eq(products.isActive, true),
-          ne(products.stockStatus, 'out_of_stock'),
           eq(productCategories.categoryId, categoryId)
         ))
         .orderBy(products.sortOrder, products.name);
