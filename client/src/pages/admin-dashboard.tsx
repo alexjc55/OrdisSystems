@@ -159,8 +159,8 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
         </div>
 
         {/* Bottom section */}
-        <div className="mt-auto pb-3 md:pb-1">
-          <div className="flex justify-start">
+        <div className="mt-auto pt-2">
+          <div className="flex justify-start mb-3 md:mb-1">
             <button
               onClick={(e) => {
                 e.stopPropagation();
