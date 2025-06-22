@@ -2116,7 +2116,7 @@ export default function AdminDashboard() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
           <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
-            <TabsList className={`flex w-full overflow-x-auto gap-1 ${isRTL ? 'justify-end' : 'justify-start'}`}>
+            <TabsList className={`admin-tabs-list flex w-full overflow-x-auto gap-1 ${isRTL ? 'justify-end flex-row-reverse' : 'justify-start'}`} dir={isRTL ? 'rtl' : 'ltr'}>
               {hasPermission("canManageProducts") && (
                 <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.products')}</TabsTrigger>
               )}

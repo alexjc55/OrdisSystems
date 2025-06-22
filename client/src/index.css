@@ -324,6 +324,15 @@
     height: auto !important;
   }
 
+  /* RTL support for admin tabs */
+  .admin-tabs-list[dir="rtl"] {
+    direction: rtl !important;
+  }
+
+  .admin-tabs-list[dir="rtl"] .admin-tabs-trigger {
+    text-align: right !important;
+  }
+
   .admin-tabs-trigger {
     flex: 1 1 calc(50% - 0.25rem) !important;
     min-width: calc(50% - 0.25rem) !important;
