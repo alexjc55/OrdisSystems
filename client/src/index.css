@@ -468,7 +468,7 @@
       direction: rtl !important;
     }
     
-    /* Only apply RTL to mobile devices with rtl-scroll-container */
+    /* Force RTL on containers and all nested elements */
     .rtl-scroll-container {
       direction: rtl !important;
     }
@@ -482,6 +482,34 @@
     .rtl-scroll-container table td {
       direction: rtl !important;
       text-align: right !important;
+    }
+    
+    /* Force RTL on all table elements including Radix UI components */
+    .rtl-scroll-container table tbody,
+    .rtl-scroll-container table thead,
+    .rtl-scroll-container table tr {
+      direction: rtl !important;
+    }
+    
+    /* Override any inline styles or component library styles */
+    .rtl-scroll-container [role="table"],
+    .rtl-scroll-container [role="row"],
+    .rtl-scroll-container [role="cell"],
+    .rtl-scroll-container [role="columnheader"] {
+      direction: rtl !important;
+      text-align: right !important;
+    }
+    
+    /* Force RTL on all child elements */
+    .rtl-scroll-container * {
+      direction: rtl !important;
+    }
+    
+    /* Exception for input fields and buttons to maintain readability */
+    .rtl-scroll-container input,
+    .rtl-scroll-container button,
+    .rtl-scroll-container select {
+      direction: rtl !important;
     }
   }
 
