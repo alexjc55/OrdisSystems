@@ -83,7 +83,7 @@ export interface IStorage {
   setDefaultAddress(userId: string, addressId: number): Promise<void>;
 
   // Category operations
-  getCategories(includeInactive?: boolean): Promise<CategoryWithProducts[]>;
+  getCategories(includeInactive?: boolean): Promise<Category[]>;
   getCategoryById(id: number): Promise<Category | undefined>;
   createCategory(category: InsertCategory): Promise<Category>;
   updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category>;
@@ -91,14 +91,14 @@ export interface IStorage {
   updateCategoryOrders(categoryOrders: { id: number; sortOrder: number }[]): Promise<void>;
 
   // Product operations
-  getProducts(categoryId?: number): Promise<ProductWithCategory[]>;
-  getProductsPaginated(params: PaginationParams): Promise<PaginatedResult<ProductWithCategory>>;
-  getProductById(id: number): Promise<ProductWithCategory | undefined>;
+  getProducts(categoryId?: number): Promise<ProductWithCategories[]>;
+  getProductsPaginated(params: PaginationParams): Promise<PaginatedResult<ProductWithCategories>>;
+  getProductById(id: number): Promise<ProductWithCategories | undefined>;
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product>;
   updateProductAvailability(id: number, availabilityStatus: "available" | "out_of_stock_today" | "completely_unavailable"): Promise<Product>;
   deleteProduct(id: number): Promise<void>;
-  searchProducts(query: string): Promise<ProductWithCategory[]>;
+  searchProducts(query: string): Promise<ProductWithCategories[]>;
 
   // Order operations
   getOrders(userId?: string): Promise<OrderWithItems[]>;
@@ -231,17 +231,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Category operations
-  async getCategories(includeInactive = false): Promise<CategoryWithProducts[]> {
-    return await db.query.categories.findMany({
-      with: {
-        products: {
-          where: includeInactive ? undefined : eq(products.isActive, true),
-          orderBy: [products.sortOrder, products.name],
-        },
-      },
-      where: includeInactive ? undefined : eq(categories.isActive, true),
-      orderBy: [categories.sortOrder, categories.name],
-    });
+  async getCategories(includeInactive = false): Promise<Category[]> {
+    return await db
+      .select()
+      .from(categories)
+      .where(includeInactive ? undefined : eq(categories.isActive, true))
+      .orderBy(categories.sortOrder, categories.name);
   }
 
   async getCategoryById(id: number): Promise<Category | undefined> {
@@ -283,54 +278,159 @@ export class DatabaseStorage implements IStorage {
   async getProducts(categoryId?: number): Promise<ProductWithCategories[]> {
     if (categoryId) {
       // Get products for specific category via junction table
-      const productIds = await db
-        .select({ productId: productCategories.productId })
-        .from(productCategories)
-        .where(eq(productCategories.categoryId, categoryId));
-      
-      if (productIds.length === 0) return [];
-      
-      const productsData = await db.query.products.findMany({
-        with: {
-          productCategories: {
-            with: {
-              category: true
-            }
-          }
-        },
-        where: and(
+      const productsWithCategories = await db
+        .select({
+          id: products.id,
+          name: products.name,
+          description: products.description,
+          price: products.price,
+          unit: products.unit,
+          imageUrl: products.imageUrl,
+          stockStatus: products.stockStatus,
+          availabilityStatus: products.availabilityStatus,
+          isActive: products.isActive,
+          sortOrder: products.sortOrder,
+          createdAt: products.createdAt,
+          updatedAt: products.updatedAt,
+          isDiscounted: products.isDiscounted,
+          discountType: products.discountType,
+          discountValue: products.discountValue,
+          categoryId: categories.id,
+          categoryName: categories.name,
+          categoryDescription: categories.description,
+          categoryIcon: categories.icon,
+          categoryIsActive: categories.isActive,
+          categorySortOrder: categories.sortOrder,
+          categoryCreatedAt: categories.createdAt,
+          categoryUpdatedAt: categories.updatedAt,
+        })
+        .from(products)
+        .innerJoin(productCategories, eq(products.id, productCategories.productId))
+        .innerJoin(categories, eq(productCategories.categoryId, categories.id))
+        .where(and(
           eq(products.isActive, true),
           ne(products.stockStatus, 'out_of_stock'),
-          inArray(products.id, productIds.map(p => p.productId))
-        ),
-        orderBy: [products.sortOrder, products.name],
-      });
+          eq(productCategories.categoryId, categoryId)
+        ))
+        .orderBy(products.sortOrder, products.name);
 
-      return productsData.map(product => ({
-        ...product,
-        categories: product.productCategories.map(pc => pc.category)
-      }));
+      // Group by product and collect categories
+      const productMap = new Map<number, ProductWithCategories>();
+      for (const row of productsWithCategories) {
+        if (!productMap.has(row.id)) {
+          productMap.set(row.id, {
+            id: row.id,
+            name: row.name,
+            description: row.description,
+            price: row.price,
+            unit: row.unit,
+            imageUrl: row.imageUrl,
+            stockStatus: row.stockStatus,
+            availabilityStatus: row.availabilityStatus,
+            isActive: row.isActive,
+            sortOrder: row.sortOrder,
+            createdAt: row.createdAt,
+            updatedAt: row.updatedAt,
+            isDiscounted: row.isDiscounted,
+            discountType: row.discountType,
+            discountValue: row.discountValue,
+            categories: []
+          });
+        }
+        
+        const product = productMap.get(row.id)!;
+        if (!product.categories.some(c => c.id === row.categoryId)) {
+          product.categories.push({
+            id: row.categoryId,
+            name: row.categoryName,
+            description: row.categoryDescription,
+            icon: row.categoryIcon,
+            isActive: row.categoryIsActive,
+            sortOrder: row.categorySortOrder,
+            createdAt: row.categoryCreatedAt,
+            updatedAt: row.categoryUpdatedAt,
+          });
+        }
+      }
+      
+      return Array.from(productMap.values());
     } else {
       // Get all active products with their categories
-      const productsData = await db.query.products.findMany({
-        with: {
-          productCategories: {
-            with: {
-              category: true
-            }
-          }
-        },
-        where: and(
+      const productsWithCategories = await db
+        .select({
+          id: products.id,
+          name: products.name,
+          description: products.description,
+          price: products.price,
+          unit: products.unit,
+          imageUrl: products.imageUrl,
+          stockStatus: products.stockStatus,
+          availabilityStatus: products.availabilityStatus,
+          isActive: products.isActive,
+          sortOrder: products.sortOrder,
+          createdAt: products.createdAt,
+          updatedAt: products.updatedAt,
+          isDiscounted: products.isDiscounted,
+          discountType: products.discountType,
+          discountValue: products.discountValue,
+          categoryId: categories.id,
+          categoryName: categories.name,
+          categoryDescription: categories.description,
+          categoryIcon: categories.icon,
+          categoryIsActive: categories.isActive,
+          categorySortOrder: categories.sortOrder,
+          categoryCreatedAt: categories.createdAt,
+          categoryUpdatedAt: categories.updatedAt,
+        })
+        .from(products)
+        .innerJoin(productCategories, eq(products.id, productCategories.productId))
+        .innerJoin(categories, eq(productCategories.categoryId, categories.id))
+        .where(and(
           eq(products.isActive, true),
           ne(products.stockStatus, 'out_of_stock')
-        ),
-        orderBy: [products.sortOrder, products.name],
-      });
+        ))
+        .orderBy(products.sortOrder, products.name);
 
-      return productsData.map(product => ({
-        ...product,
-        categories: product.productCategories.map(pc => pc.category)
-      }));
+      // Group by product and collect categories
+      const productMap = new Map<number, ProductWithCategories>();
+      for (const row of productsWithCategories) {
+        if (!productMap.has(row.id)) {
+          productMap.set(row.id, {
+            id: row.id,
+            name: row.name,
+            description: row.description,
+            price: row.price,
+            unit: row.unit,
+            imageUrl: row.imageUrl,
+            stockStatus: row.stockStatus,
+            availabilityStatus: row.availabilityStatus,
+            isActive: row.isActive,
+            sortOrder: row.sortOrder,
+            createdAt: row.createdAt,
+            updatedAt: row.updatedAt,
+            isDiscounted: row.isDiscounted,
+            discountType: row.discountType,
+            discountValue: row.discountValue,
+            categories: []
+          });
+        }
+        
+        const product = productMap.get(row.id)!;
+        if (!product.categories.some(c => c.id === row.categoryId)) {
+          product.categories.push({
+            id: row.categoryId,
+            name: row.categoryName,
+            description: row.categoryDescription,
+            icon: row.categoryIcon,
+            isActive: row.categoryIsActive,
+            sortOrder: row.categorySortOrder,
+            createdAt: row.categoryCreatedAt,
+            updatedAt: row.categoryUpdatedAt,
+          });
+        }
+      }
+      
+      return Array.from(productMap.values());
     }
   }
 

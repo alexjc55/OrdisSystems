@@ -260,25 +260,9 @@ export const translations = pgTable("translations", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Relations
-export const categoriesRelations = relations(categories, ({ many }) => ({
-  productCategories: many(productCategories),
-}));
-
+// Relations - Simplified to avoid Drizzle ORM issues
 export const productsRelations = relations(products, ({ many }) => ({
-  productCategories: many(productCategories),
   orderItems: many(orderItems),
-}));
-
-export const productCategoriesRelations = relations(productCategories, ({ one }) => ({
-  product: one(products, {
-    fields: [productCategories.productId],
-    references: [products.id],
-  }),
-  category: one(categories, {
-    fields: [productCategories.categoryId],
-    references: [categories.id],
-  }),
 }));
 
 export const usersRelations = relations(users, ({ many }) => ({
