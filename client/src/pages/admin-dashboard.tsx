@@ -143,14 +143,37 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
           >
             <Edit2 className="h-3.5 w-3.5" />
           </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => onDelete(category.id)}
-            className="h-7 w-7 p-0 text-slate-400 hover:text-red-500 hover:bg-red-50/70 rounded-lg backdrop-blur-sm transition-all duration-200 border border-transparent hover:border-red-200/50"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 w-7 p-0 text-slate-400 hover:text-red-500 hover:bg-red-50/70 rounded-lg backdrop-blur-sm transition-all duration-200 border border-transparent hover:border-red-200/50"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className={isRTL ? "rtl" : ""}>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{adminT('categories.deleteConfirmTitle')}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {category.products && category.products.length > 0 ? 
+                    adminT('categories.deleteWithProductsWarning').replace('{{categoryName}}', category.name).replace('{{productCount}}', category.products.length.toString()) :
+                    adminT('categories.deleteConfirmDesc').replace('{{categoryName}}', category.name)
+                  }
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className={isRTL ? "flex-row-reverse" : ""}>
+                <AlertDialogCancel>{adminT('common.cancel')}</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => onDelete(category.id)}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  {adminT('common.delete')}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
