@@ -277,7 +277,7 @@ export default function Home() {
                         </div>
                         <span className="font-semibold text-lg text-gray-800">{t('workingHours')}</span>
                       </div>
-                      <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'md:mr-12 md:pl-4' : 'md:ml-12 md:pr-4'}`}>
+                      <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
                       {(() => {
                         try {
                           const workingHours = storeSettings.workingHours;
@@ -365,7 +365,7 @@ export default function Home() {
                         </div>
                         <span className="font-semibold text-lg text-gray-800">{t('contacts')}</span>
                       </div>
-                      <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'md:mr-12 md:pl-4' : 'md:ml-12 md:pr-4'}`}>
+                      <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
                         {storeSettings.contactPhone && (
                           <div className="text-base sm:text-lg flex justify-between">
                             <span className="text-gray-700 font-semibold">{t('phone')}:</span>
@@ -395,7 +395,7 @@ export default function Home() {
                         </div>
                         <span className="font-semibold text-lg text-gray-800">Оплата и доставка</span>
                       </div>
-                      <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'md:mr-12 md:pl-4' : 'md:ml-12 md:pr-4'}`}>
+                      <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
                         {storeSettings.deliveryInfo && (
                           <div>
                             <span className="text-gray-700 text-base font-semibold block mb-2">{t('delivery')}:</span>
