@@ -47,8 +47,16 @@
     letter-spacing: 0.01em;
   }
   
-  /* Force center alignment for specific text elements */
+  /* Force center alignment for specific text elements with higher specificity */
+  [dir="rtl"] .force-center-text,
+  [dir="ltr"] .force-center-text,
   .force-center-text {
+    text-align: center !important;
+  }
+  
+  /* Specific override for empty state messages */
+  [dir="rtl"] .text-center h3.force-center-text,
+  [dir="rtl"] .text-center p.force-center-text {
     text-align: center !important;
   }
 }
