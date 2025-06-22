@@ -103,7 +103,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing p-1.5 -m-1.5 text-gray-400 hover:text-gray-600 hover:bg-white/70 rounded-lg transition-all duration-200 backdrop-blur-sm border border-transparent hover:border-gray-200/50"
+            className="cursor-grab active:cursor-grabbing p-1.5 -m-1.5 text-gray-400 hover:text-gray-600 hover:bg-white/70 rounded-lg transition-all duration-200 backdrop-blur-sm border border-transparent hover:border-gray-200/50 relative z-10"
           >
             <GripVertical className="h-3.5 w-3.5" />
           </div>
