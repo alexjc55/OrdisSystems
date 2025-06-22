@@ -175,10 +175,17 @@ export default function Home() {
   const goToSlide = (pageIndex: number) => {
     if (carouselApiRef.current) {
       const slideIndex = pageIndex * slidesPerPage;
-      console.log('Going to slide:', slideIndex, 'for page:', pageIndex);
+      console.log('Going to slide:', slideIndex, 'for page:', pageIndex, 'total slides:', carouselApiRef.current.scrollSnapList().length);
       
-      // Use Embla's scrollTo method
-      carouselApiRef.current.scrollTo(slideIndex);
+      // Use scrollTo with proper index validation
+      if (slideIndex < carouselApiRef.current.scrollSnapList().length) {
+        carouselApiRef.current.scrollTo(slideIndex);
+        console.log('Scrolled to slide:', slideIndex);
+      } else {
+        console.warn('Invalid slide index:', slideIndex);
+      }
+    } else {
+      console.warn('Carousel API not available');
     }
   };
 
@@ -560,15 +567,17 @@ export default function Home() {
                         opts={{
                           align: "start",
                           loop: false,
-                          slidesToScroll: 1,
+                          slidesToScroll: isMobile ? 1 : 3,
+                          skipSnaps: false,
                         }}
                         className="w-full mx-auto"
                         setApi={(api) => {
                           carouselApiRef.current = api;
                           if (api) {
-                            console.log('Carousel API set:', api);
+                            console.log('Carousel API set, available methods:', Object.getOwnPropertyNames(api));
                             api.on('select', () => {
                               const currentSlideIndex = api.selectedScrollSnap();
+                              console.log('Carousel selected slide:', currentSlideIndex);
                               setCurrentSlide(currentSlideIndex);
                             });
                           }
