@@ -8,6 +8,7 @@ import {
   serial,
   decimal,
   integer,
+  unique,
   boolean,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
@@ -66,12 +67,11 @@ export const categories = pgTable("categories", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Products table
+// Products table (removed categoryId - now using many-to-many relation)
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
-  categoryId: integer("category_id").references(() => categories.id).notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   unit: varchar("unit", { length: 20 }).default("100g").notNull(), // "100g", "100ml", "piece", "kg"
   pricePerKg: decimal("price_per_kg", { precision: 10, scale: 2 }).notNull(), // For backward compatibility
@@ -87,6 +87,17 @@ export const products = pgTable("products", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+// Product categories junction table (many-to-many)
+export const productCategories = pgTable("product_categories", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").references(() => products.id, { onDelete: "cascade" }).notNull(),
+  categoryId: integer("category_id").references(() => categories.id, { onDelete: "cascade" }).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  // Ensure unique product-category combinations
+  uniq: unique().on(table.productId, table.categoryId),
+}));
 
 // Orders table
 export const orders = pgTable("orders", {
@@ -251,15 +262,23 @@ export const translations = pgTable("translations", {
 
 // Relations
 export const categoriesRelations = relations(categories, ({ many }) => ({
-  products: many(products),
+  productCategories: many(productCategories),
 }));
 
-export const productsRelations = relations(products, ({ one, many }) => ({
+export const productsRelations = relations(products, ({ many }) => ({
+  productCategories: many(productCategories),
+  orderItems: many(orderItems),
+}));
+
+export const productCategoriesRelations = relations(productCategories, ({ one }) => ({
+  product: one(products, {
+    fields: [productCategories.productId],
+    references: [products.id],
+  }),
   category: one(categories, {
-    fields: [products.categoryId],
+    fields: [productCategories.categoryId],
     references: [categories.id],
   }),
-  orderItems: many(orderItems),
 }));
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -308,6 +327,12 @@ export const insertProductSchema = createInsertSchema(products).omit({
   unit: z.enum(["100g", "100ml", "piece", "kg"]).default("100g"),
   discountType: z.enum(["percentage", "fixed"]).nullable().optional(),
   discountValue: z.string().nullable().optional(),
+  categoryIds: z.array(z.number()).optional(), // Array of category IDs for many-to-many
+});
+
+export const insertProductCategorySchema = createInsertSchema(productCategories).omit({
+  id: true,
+  createdAt: true,
 });
 
 export const insertOrderSchema = createInsertSchema(orders).omit({
@@ -362,6 +387,11 @@ export type InsertTheme = z.infer<typeof insertThemeSchema>;
 export type Theme = typeof themes.$inferSelect;
 
 // Extended types with relations
+export type InsertProductCategory = z.infer<typeof insertProductCategorySchema>;
+export type ProductCategory = typeof productCategories.$inferSelect;
+export type ProductWithCategories = Product & {
+  categories: Category[];
+};
 export type ProductWithCategory = Product & {
   category: Category;
 };
