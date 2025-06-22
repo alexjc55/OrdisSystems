@@ -4202,10 +4202,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="100g" className="text-sm">За 100г</SelectItem>
-                        <SelectItem value="100ml" className="text-sm">За 100мл</SelectItem>
-                        <SelectItem value="piece" className="text-sm">За штуку</SelectItem>
-                        <SelectItem value="kg" className="text-sm">За кг</SelectItem>
+                        <SelectItem value="100g" className="text-sm">{adminT('products.dialog.unit100g')}</SelectItem>
+                        <SelectItem value="100ml" className="text-sm">{adminT('products.dialog.unit100ml')}</SelectItem>
+                        <SelectItem value="piece" className="text-sm">{adminT('products.dialog.unitPiece')}</SelectItem>
+                        <SelectItem value="kg" className="text-sm">{adminT('products.dialog.unitKg')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage className="text-xs" />
@@ -4247,13 +4247,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="available" className="text-sm">✅ Доступен</SelectItem>
-                      <SelectItem value="completely_unavailable" className="text-sm">❌ Не доступен</SelectItem>
-                      <SelectItem value="out_of_stock_today" className="text-sm">📅 Заказ на другой день</SelectItem>
+                      <SelectItem value="available" className="text-sm">{adminT('products.dialog.statusAvailable')}</SelectItem>
+                      <SelectItem value="completely_unavailable" className="text-sm">{adminT('products.dialog.statusUnavailable')}</SelectItem>
+                      <SelectItem value="out_of_stock_today" className="text-sm">{adminT('products.dialog.statusOutOfStock')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription className="text-xs text-gray-500">
-                    Выберите статус доступности товара для заказов
+                    {adminT('products.dialog.statusDescription')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -4266,9 +4266,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 sm:p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm sm:text-base">Специальное предложение</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">{adminT('products.dialog.specialOfferLabel')}</FormLabel>
                     <div className="text-xs sm:text-sm text-gray-500">
-                      Товар будет отображаться в разделе "Специальные предложения"
+                      {adminT('products.dialog.specialOfferDescription')}
                     </div>
                   </div>
                   <FormControl>
@@ -4284,7 +4284,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
 
             {isSpecialOffer && (
               <div className="space-y-4 p-4 border rounded-lg bg-orange-50">
-                <h4 className="text-sm font-medium text-orange-800">Настройки скидки</h4>
+                <h4 className="text-sm font-medium text-orange-800">{adminT('products.dialog.discountSettings')}</h4>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
@@ -4292,19 +4292,19 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     name="discountType"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm">Тип скидки</FormLabel>
+                        <FormLabel className="text-sm">{adminT('products.dialog.discountTypeLabel')}</FormLabel>
                         <Select 
                           onValueChange={field.onChange}
                           value={field.value}
                         >
                           <FormControl>
                             <SelectTrigger className="text-sm">
-                              <SelectValue placeholder="Выберите тип скидки" />
+                              <SelectValue placeholder={adminT('products.dialog.discountTypePlaceholder')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="percentage">Процент (%)</SelectItem>
-                            <SelectItem value="fixed">Фиксированная сумма (₪)</SelectItem>
+                            <SelectItem value="percentage">{adminT('products.dialog.discountTypePercent')}</SelectItem>
+                            <SelectItem value="fixed">{adminT('products.dialog.discountTypeFixed')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage className="text-xs" />

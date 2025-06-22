@@ -121,7 +121,21 @@
       "deleteConfirm": "האם אתה בטוח שברצונך למחוק את המוצר הזה? פעולה זו אינה ניתנת לביטול.",
       "createButton": "צור",
       "saveButton": "שמור",
-      "cancelButton": "ביטול"
+      "cancelButton": "ביטול",
+      "unit100g": "ל-100 גרם",
+      "unit100ml": "ל-100 מ\"ל",
+      "unitPiece": "ליחידה",
+      "unitKg": "לק\"ג",
+      "statusAvailable": "✅ זמין",
+      "statusUnavailable": "❌ לא זמין",
+      "statusOutOfStock": "📅 הזמנה ליום אחר",
+      "statusDescription": "בחר סטטוס זמינות המוצר להזמנות",
+      "specialOfferDescription": "המוצר יוצג בקטגוריית \"הצעות מיוחדות\"",
+      "discountSettings": "הגדרות הנחה",
+      "discountTypePlaceholder": "בחר סוג הנחה",
+      "discountTypePercent": "אחוזים (%)",
+      "discountTypeFixed": "סכום קבוע (₪)",
+      "recommendedSize": "גודל מומלץ: 400×300 פיקסלים (יחס 4:3)"
     }
   },
   "categories": {

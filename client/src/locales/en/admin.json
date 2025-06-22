@@ -121,7 +121,21 @@
       "deleteConfirm": "Are you sure you want to delete this product? This action cannot be undone.",
       "createButton": "Create",
       "saveButton": "Save",
-      "cancelButton": "Cancel"
+      "cancelButton": "Cancel",
+      "unit100g": "Per 100g",
+      "unit100ml": "Per 100ml",
+      "unitPiece": "Per piece",
+      "unitKg": "Per kg",
+      "statusAvailable": "✅ Available",
+      "statusUnavailable": "❌ Unavailable",
+      "statusOutOfStock": "📅 Order for another day",
+      "statusDescription": "Select product availability status for orders",
+      "specialOfferDescription": "Product will be displayed in the \"Special Offers\" section",
+      "discountSettings": "Discount Settings",
+      "discountTypePlaceholder": "Select discount type",
+      "discountTypePercent": "Percentage (%)",
+      "discountTypeFixed": "Fixed amount (₪)",
+      "recommendedSize": "Recommended size: 400×300 pixels (4:3 ratio)"
     }
   },
   "categories": {
