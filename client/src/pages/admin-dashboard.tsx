@@ -92,88 +92,98 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 h-[160px] flex flex-col"
+      className="group relative overflow-hidden bg-gradient-to-br from-white via-gray-50/30 to-white border border-gray-200/80 rounded-xl shadow-sm hover:shadow-lg hover:shadow-gray-900/[0.08] transition-all duration-300 h-[180px] flex flex-col backdrop-blur-sm hover:border-gray-300/60"
     >
+      {/* Subtle gradient overlay for depth */}
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-gray-100/10 pointer-events-none" />
+      
       {/* Header with drag handle and actions */}
-      <div className="flex items-center justify-between p-2 pb-0">
+      <div className="relative flex items-center justify-between p-3 pb-2">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing p-1 -m-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+          className="cursor-grab active:cursor-grabbing p-1.5 -m-1.5 text-gray-400 hover:text-gray-600 hover:bg-white/70 rounded-lg transition-all duration-200 backdrop-blur-sm border border-transparent hover:border-gray-200/50"
         >
-          <GripVertical className="h-3 w-3" />
+          <GripVertical className="h-3.5 w-3.5" />
         </div>
         
-        <div className="flex gap-1">
+        <div className="flex gap-1.5">
           <Button
             size="sm"
             variant="ghost"
             onClick={() => {
               updateCategoryMutation.mutate({ id: category.id, isActive: !category.isActive });
             }}
-            className={`h-6 w-6 p-0 ${category.isActive ? 'text-green-600 hover:text-green-700 hover:bg-green-50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'}`}
+            className={`h-7 w-7 p-0 rounded-lg backdrop-blur-sm transition-all duration-200 border border-transparent ${category.isActive ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50/70 hover:border-emerald-200/50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50/70 hover:border-gray-200/50'}`}
             title={category.isActive ? 'Скрыть категорию' : 'Показать категорию'}
           >
-            {category.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+            {category.isActive ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
           </Button>
           <Button
             size="sm"
             variant="ghost"
             onClick={() => onEdit(category)}
-            className="h-6 w-6 p-0 text-gray-400 hover:text-blue-600 hover:bg-blue-50"
+            className="h-7 w-7 p-0 text-slate-500 hover:text-blue-600 hover:bg-blue-50/70 rounded-lg backdrop-blur-sm transition-all duration-200 border border-transparent hover:border-blue-200/50"
           >
-            <Edit2 className="h-3 w-3" />
+            <Edit2 className="h-3.5 w-3.5" />
           </Button>
           <Button
             size="sm"
             variant="ghost"
             onClick={() => onDelete(category.id)}
-            className="h-6 w-6 p-0 text-gray-400 hover:text-red-600 hover:bg-red-50"
+            className="h-7 w-7 p-0 text-slate-400 hover:text-red-500 hover:bg-red-50/70 rounded-lg backdrop-blur-sm transition-all duration-200 border border-transparent hover:border-red-200/50"
           >
-            <Trash2 className="h-3 w-3" />
+            <Trash2 className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>
 
-      {/* Category content - grows to fill available space */}
-      <div className="flex-1 px-2 pt-1 pb-2 flex flex-col">
+      {/* Category content */}
+      <div className="relative flex-1 px-3 pt-1 pb-3 flex flex-col">
         {/* Category name and icon */}
         <div className="flex items-start gap-3 mb-3">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-base text-gray-900 truncate group-hover:text-blue-600 transition-colors leading-tight">
+            <h3 className="font-semibold text-base text-gray-800 truncate group-hover:text-slate-700 transition-colors leading-tight tracking-wide">
               {category.name}
             </h3>
             {category.description && (
-              <p className="text-xs text-gray-500 mt-1 line-clamp-2 leading-4 max-h-8 overflow-hidden">
+              <p className="text-xs text-gray-500/90 mt-1.5 line-clamp-2 leading-relaxed max-h-8 overflow-hidden">
                 {category.description}
               </p>
             )}
           </div>
           
-          <div className="text-4xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-200">
+          <div className="text-4xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm">
             {category.icon || '📦'}
           </div>
         </div>
 
-        {/* Bottom section - always at bottom */}
+        {/* Bottom section */}
         <div className="mt-auto">
-          {/* Product count */}
-          <div className="mb-2">
+          <div className="flex justify-start">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveTab('products');
                 setSelectedCategory(category.id.toString());
               }}
-              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-500 text-white border border-orange-600 shadow-sm hover:bg-orange-600 transition-colors duration-200"
+              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-orange-500 to-orange-600 text-white border border-orange-600/20 shadow-md hover:shadow-lg hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-200 backdrop-blur-sm"
             >
-              {category.products?.length || 0} товаров
+              <span className="mr-1.5 font-bold">{category.products?.length || 0}</span>
+              <span className="text-orange-100 font-medium">товаров</span>
             </button>
           </div>
-          
-
         </div>
       </div>
+
+      {/* Inactive state overlay */}
+      {!category.isActive && (
+        <div className="absolute inset-0 bg-gray-100/80 backdrop-blur-[2px] rounded-xl flex items-center justify-center">
+          <div className="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-200/60 shadow-sm">
+            <span className="text-sm font-medium text-gray-600">Скрыто</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
