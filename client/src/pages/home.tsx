@@ -55,6 +55,8 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [discountFilter, setDiscountFilter] = useState("all");
   const carouselApiRef = useRef<any>(null);
@@ -173,14 +175,34 @@ export default function Home() {
   
   // Handle carousel navigation
   const goToSlide = (pageIndex: number) => {
-    console.log('Going to page:', pageIndex, 'current slide:', currentSlide);
-    if (isMobile) {
-      // Mobile: each page is one slide
-      setCurrentSlide(pageIndex);
-    } else {
-      // Desktop: calculate slide index based on page
-      const slideIndex = pageIndex * slidesPerPage;
-      setCurrentSlide(slideIndex);
+    console.log('Going to page:', pageIndex, 'current page:', Math.floor(currentSlide / slidesPerPage));
+    setCurrentSlide(pageIndex);
+  };
+
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(0);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    
+    const currentPage = Math.floor(currentSlide / slidesPerPage);
+    
+    if (isLeftSwipe && currentPage < totalPages - 1) {
+      goToSlide(currentPage + 1);
+    }
+    if (isRightSwipe && currentPage > 0) {
+      goToSlide(currentPage - 1);
     }
   };
 
@@ -573,30 +595,39 @@ export default function Home() {
                   ) : (
                     <div className="w-full relative">
                       {/* Custom Carousel Implementation */}
-                      <div className="overflow-hidden">
+                      <div 
+                        className="overflow-hidden"
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                      >
                         <div 
                           className="flex transition-transform duration-300 ease-in-out"
                           style={{
-                            transform: `translateX(-${Math.floor(currentSlide / slidesPerPage) * 100}%)`,
+                            transform: `translateX(-${currentSlide * 100}%)`,
                             width: `${totalPages * 100}%`
                           }}
                         >
-                          {specialOffers.map((product, index) => (
-                            <div 
-                              key={product.id} 
-                              className="flex-shrink-0"
-                              style={{
-                                width: `${100 / (totalPages * slidesPerPage)}%`
-                              }}
-                            >
-                              <div className="relative flex-1 flex px-1">
-                                <div className="transform scale-90 origin-center w-full relative">
-                                  <ProductCard 
-                                    product={product} 
-                                    onCategoryClick={handleCategorySelect}
-                                  />
-                                </div>
-                              </div>
+                          {Array.from({ length: totalPages }).map((_, pageIndex) => (
+                            <div key={pageIndex} className="flex" style={{ width: `${100 / totalPages}%` }}>
+                              {specialOffers
+                                .slice(pageIndex * slidesPerPage, (pageIndex + 1) * slidesPerPage)
+                                .map((product) => (
+                                  <div 
+                                    key={product.id} 
+                                    className="flex-shrink-0"
+                                    style={{ width: `${100 / slidesPerPage}%` }}
+                                  >
+                                    <div className="relative flex-1 flex px-1">
+                                      <div className="transform scale-90 origin-center w-full relative">
+                                        <ProductCard 
+                                          product={product} 
+                                          onCategoryClick={handleCategorySelect}
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
                             </div>
                           ))}
                         </div>

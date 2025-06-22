@@ -77,7 +77,7 @@ export function LanguageSwitcher({
                     : "text-gray-700 hover:bg-orange-50 hover:text-orange-600"
                 }`}
               >
-                <span className="text-base mr-2 rtl:mr-0 rtl:ml-2">{info.flag}</span>
+                <span className={`${info.flagClass} inline-block mr-2 rtl:mr-0 rtl:ml-2`}></span>
                 <span className="text-xs">{info.nativeName}</span>
               </button>
             ))}
