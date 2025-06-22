@@ -2075,7 +2075,12 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
-      // Убираем уведомление при успешном перетаскивании - оно не нужно
+      // Краткое уведомление об успешном изменении порядка
+      toast({ 
+        title: adminT('categories.title'),
+        description: "Порядок категорий обновлен",
+        duration: 2000 
+      });
     },
     onError: (error: any) => {
       console.error("Category reordering error:", error);
