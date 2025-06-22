@@ -105,6 +105,17 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
           <Button
             size="sm"
             variant="ghost"
+            onClick={() => {
+              updateCategoryMutation.mutate({ id: category.id, isActive: !category.isActive });
+            }}
+            className={`h-6 w-6 p-0 ${category.isActive ? 'text-green-600 hover:text-green-700 hover:bg-green-50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'}`}
+            title={category.isActive ? 'Скрыть категорию' : 'Показать категорию'}
+          >
+            {category.isActive ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
             onClick={() => onEdit(category)}
             className="h-6 w-6 p-0 text-gray-400 hover:text-blue-600 hover:bg-blue-50"
           >
@@ -158,22 +169,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
             </div>
           </div>
           
-          {/* Status and toggle */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1">
-              <div className={`w-1.5 h-1.5 rounded-full ${category.isActive ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-              <span className="text-xs text-gray-500 font-medium">
-                {category.isActive ? 'Активна' : 'Отключена'}
-              </span>
-            </div>
-            <Switch
-              checked={category.isActive ?? true}
-              onCheckedChange={(checked) => {
-                updateCategoryMutation.mutate({ id: category.id, isActive: checked });
-              }}
-              className="scale-75"
-            />
-          </div>
+
         </div>
       </div>
     </div>
@@ -210,6 +206,7 @@ import {
   Phone,
   User,
   Eye,
+  EyeOff,
   X,
   MessageCircle,
   Code,
