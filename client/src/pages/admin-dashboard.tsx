@@ -141,19 +141,19 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
       {/* Category content */}
       <div className="relative flex-1 px-3 pt-1 pb-3 flex flex-col">
         {/* Category name and icon */}
-        <div className="flex items-start gap-3 mb-3">
+        <div className="flex items-start gap-3 mb-4">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-base text-gray-800 truncate group-hover:text-slate-700 transition-colors leading-tight tracking-wide">
+            <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1">
               {category.name}
             </h3>
             {category.description && (
-              <p className="text-xs text-gray-500/90 mt-1.5 line-clamp-2 leading-relaxed max-h-8 overflow-hidden">
+              <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed max-h-8 overflow-hidden">
                 {category.description}
               </p>
             )}
           </div>
           
-          <div className="text-4xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm">
+          <div className="text-3xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
             {category.icon || '📦'}
           </div>
         </div>
@@ -167,10 +167,10 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
                 setActiveTab('products');
                 setSelectedCategory(category.id.toString());
               }}
-              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-orange-500 to-orange-600 text-white border border-orange-600/20 shadow-md hover:shadow-lg hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-200 backdrop-blur-sm"
+              className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200 hover:bg-orange-50 hover:text-orange-700 hover:border-orange-200 transition-all duration-200"
             >
-              <span className="mr-1.5 font-bold">{category.products?.length || 0}</span>
-              <span className="text-orange-100 font-medium">товаров</span>
+              <span className="mr-1 font-semibold">{category.products?.length || 0}</span>
+              <span>товаров</span>
             </button>
           </div>
         </div>
