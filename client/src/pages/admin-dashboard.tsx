@@ -140,14 +140,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
 
       {/* Main content with two containers */}
       <div className="relative flex-1 px-3 pt-1 pb-3 flex items-start gap-4">
-        {/* Left container - Icon */}
-        <div className="flex-shrink-0 pt-1">
-          <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
-            {category.icon || '📦'}
-          </div>
-        </div>
-        
-        {/* Right container - Text content */}
+        {/* Left container - Text content */}
         <div className="flex-1 min-w-0 flex flex-col h-full">
           {/* Category name and description */}
           <div className="flex-1">
@@ -174,6 +167,13 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
               <span className="font-semibold">{category.products?.length || 0}</span>
               <span>{adminT('categories.products')}</span>
             </button>
+          </div>
+        </div>
+        
+        {/* Right container - Icon */}
+        <div className="flex-shrink-0 pt-1">
+          <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
+            {category.icon || '📦'}
           </div>
         </div>
       </div>
