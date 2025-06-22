@@ -3670,13 +3670,15 @@ export default function AdminDashboard() {
                 {/* Basic Store Information */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                      <Store className="h-4 w-4 sm:h-5 sm:w-5" />
-                      {adminT('settings.title')}
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      {adminT('settings.description')}
-                    </CardDescription>
+                    <div className={isRTL ? 'text-right' : 'text-left'}>
+                      <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                        <Store className="h-4 w-4 sm:h-5 sm:w-5" />
+                        {adminT('settings.title')}
+                      </CardTitle>
+                      <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {adminT('settings.description')}
+                      </CardDescription>
+                    </div>
                 </CardHeader>
                 <CardContent>
                   <StoreSettingsForm
@@ -3695,13 +3697,15 @@ export default function AdminDashboard() {
             <TabsContent value="settings" className="space-y-4 sm:space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
-                    Настройки системы
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    Управление правами доступа для сотрудников
-                  </CardDescription>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                      <Settings className="h-5 w-5" />
+                      Настройки системы
+                    </CardTitle>
+                    <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                      Управление правами доступа для сотрудников
+                    </CardDescription>
+                  </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Worker Permissions Section */}
