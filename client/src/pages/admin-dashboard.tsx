@@ -1200,7 +1200,17 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
 }
 
 // Add Item Dialog Component
-function AddItemDialog({ onClose, onAdd, searchPlaceholder }: { onClose: () => void, onAdd: (product: any, quantity: number) => void, searchPlaceholder: string }) {
+function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT }: { onClose: () => void, onAdd: (product: any, quantity: number) => void, searchPlaceholder: string, adminT: (key: string) => string }) {
+  
+  function getUnitDisplay(unit: string) {
+    switch (unit) {
+      case 'piece': return adminT('products.units.piece');
+      case 'kg': return adminT('products.units.kg');
+      case '100g': return adminT('products.units.per100g');
+      case '100ml': return adminT('products.units.per100ml');
+      default: return '';
+    }
+  }
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -1283,16 +1293,6 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder }: { onClose: () => v
       </div>
     </div>
   );
-
-  function getUnitDisplay(unit: string) {
-    switch (unit) {
-      case 'piece': return adminT('products.units.piece');
-      case 'kg': return adminT('products.units.kg');
-      case '100g': return adminT('products.units.per100g');
-      case '100ml': return adminT('products.units.per100ml');
-      default: return '';
-    }
-  }
 }
 
 // Item Discount Dialog Component
@@ -2051,6 +2051,16 @@ export default function AdminDashboard() {
     return null;
   }
 
+  function getUnitDisplay(unit: string) {
+    switch (unit) {
+      case 'piece': return adminT('products.units.piece');
+      case 'kg': return adminT('products.units.kg');
+      case '100g': return adminT('products.units.per100g');
+      case '100ml': return adminT('products.units.per100ml');
+      default: return '';
+    }
+  }
+
   const filteredProducts = (productsData as any[] || [])
     .filter((product: any) => {
       const matchesSearch = !searchQuery || 
@@ -2419,8 +2429,8 @@ export default function AdminDashboard() {
                                     <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
                                       {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
                                         <div className="space-y-1">
-                                          <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                          <div className="font-semibold text-gray-900">
+                                          <div className="text-gray-400 line-through text-xs" dir="ltr">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                          <div className="font-semibold text-gray-900" dir="ltr">
                                             {formatCurrency(
                                               product.discountType === "percentage"
                                                 ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
@@ -2432,9 +2442,9 @@ export default function AdminDashboard() {
                                           </div>
                                         </div>
                                       ) : (
-                                        <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                        <div className="font-semibold text-gray-900" dir="ltr">{formatCurrency(product.price || product.pricePerKg)}</div>
                                       )}
-                                      <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
+                                      <div className="text-gray-500 text-xs mt-1">{getUnitDisplay(product.unit || "100g")}</div>
                                     </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
@@ -2477,8 +2487,8 @@ export default function AdminDashboard() {
                                     <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
                                       {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
                                         <div className="space-y-1">
-                                          <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                          <div className="font-semibold text-gray-900">
+                                          <div className="text-gray-400 line-through text-xs" dir="ltr">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                          <div className="font-semibold text-gray-900" dir="ltr">
                                             {formatCurrency(
                                               product.discountType === "percentage"
                                                 ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
@@ -2490,9 +2500,9 @@ export default function AdminDashboard() {
                                           </div>
                                         </div>
                                       ) : (
-                                        <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                        <div className="font-semibold text-gray-900" dir="ltr">{formatCurrency(product.price || product.pricePerKg)}</div>
                                       )}
-                                      <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
+                                      <div className="text-gray-500 text-xs mt-1">{getUnitDisplay(product.unit || "100g")}</div>
                                     </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-left">
