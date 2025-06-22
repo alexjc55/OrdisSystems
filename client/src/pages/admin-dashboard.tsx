@@ -4020,8 +4020,6 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
 }) {
   return (
     <div
-      role="switch"
-      aria-checked={checked}
       onClick={() => {
         try {
           onChange(!checked);
@@ -4029,13 +4027,17 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
           console.error('Switch toggle error:', error);
         }
       }}
-      className={`custom-switch h-6 w-11 rounded-full cursor-pointer transition-colors ${
+      className={`cursor-pointer transition-colors rounded-full relative flex items-center ${
         checked ? bgColor : 'bg-gray-200'
-      } relative flex items-center`}
-      style={{ padding: '2px' }}
+      }`}
+      style={{ 
+        width: '44px', 
+        height: '24px',
+        padding: '2px'
+      }}
     >
       <div
-        className="h-5 w-5 bg-white rounded-full transition-transform shadow-md border border-gray-200"
+        className="bg-white rounded-full transition-transform shadow-md border border-gray-200"
         style={{ 
           width: '20px', 
           height: '20px',
