@@ -132,9 +132,15 @@
       "statusDescription": "Select product availability status for orders",
       "specialOfferDescription": "Product will be displayed in the \"Special Offers\" section",
       "discountSettings": "Discount Settings",
+      "discountTypeLabel": "Discount Type",
       "discountTypePlaceholder": "Select discount type",
       "discountTypePercent": "Percentage (%)",
       "discountTypeFixed": "Fixed amount (₪)",
+      "discountValueLabel": "Discount Amount",
+      "fixedDiscountInfo": "Fixed discount applies per",
+      "unitPiece": "piece",
+      "unitKg": "kg",
+      "unit100gml": "100g/100ml",
       "recommendedSize": "Recommended size: 400×300 pixels (4:3 ratio)"
     }
   },

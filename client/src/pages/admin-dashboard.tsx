@@ -4227,7 +4227,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
-                    Рекомендуемый размер: 400×300 пикселей (соотношение 4:3)
+                    {adminT('products.dialog.recommendedSize')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -4318,7 +4318,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm">
-                          Размер скидки {discountType === "percentage" ? "(%)" : "(₪)"}
+                          {adminT('products.dialog.discountValueLabel')} {discountType === "percentage" ? "(%)" : "(₪)"}
                         </FormLabel>
                         <FormControl>
                           <Input 
@@ -4378,7 +4378,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 <div></div>
               )}
               
-              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Button 
                   type="button" 
                   variant="outline" 
@@ -4389,9 +4389,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 </Button>
                 <Button 
                   type="submit" 
-                  className="text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200"
+                  className="text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2"
                 >
-                  <Save className="mr-2 h-4 w-4" />
+                  <Save className="h-4 w-4" />
                   {product ? adminT('products.dialog.saveButton') : adminT('products.dialog.createButton')}
                 </Button>
               </div>

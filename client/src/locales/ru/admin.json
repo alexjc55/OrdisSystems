@@ -146,6 +146,10 @@
       "discountTypePercent": "Процент (%)",
       "discountTypeFixed": "Фиксированная сумма (₪)",
       "discountValueLabel": "Размер скидки",
+      "fixedDiscountInfo": "Фиксированная скидка применяется за",
+      "unitPiece": "штуку",
+      "unitKg": "кг", 
+      "unit100gml": "100г/100мл",
       "recommendedSize": "Рекомендуемый размер: 400×300 пикселей (соотношение 4:3)"
     }
   },

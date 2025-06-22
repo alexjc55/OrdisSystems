@@ -132,9 +132,15 @@
       "statusDescription": "בחר סטטוס זמינות המוצר להזמנות",
       "specialOfferDescription": "המוצר יוצג בקטגוריית \"הצעות מיוחדות\"",
       "discountSettings": "הגדרות הנחה",
+      "discountTypeLabel": "סוג הנחה",
       "discountTypePlaceholder": "בחר סוג הנחה",
       "discountTypePercent": "אחוזים (%)",
       "discountTypeFixed": "סכום קבוע (₪)",
+      "discountValueLabel": "סכום הנחה",
+      "fixedDiscountInfo": "הנחה קבועה חלה על",
+      "unitPiece": "יחידה",
+      "unitKg": "ק\"ג",
+      "unit100gml": "100 גרם/100 מ\"ל",
       "recommendedSize": "גודל מומלץ: 400×300 פיקסלים (יחס 4:3)"
     }
   },
