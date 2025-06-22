@@ -139,9 +139,9 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
       </div>
 
       {/* Category content */}
-      <div className="relative flex-1 px-3 pt-1 pb-6 md:pb-3 flex flex-col">
+      <div className="relative flex-1 px-3 pt-0 pb-4 md:pb-3 flex flex-col">
         {/* Category name and icon */}
-        <div className="flex items-start gap-3 mb-4">
+        <div className="flex items-start gap-3 mb-2">
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1">
               {category.name}
@@ -159,7 +159,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
         </div>
 
         {/* Bottom section */}
-        <div className="mt-auto pt-2">
+        <div className="mt-auto pt-1">
           <div className="flex justify-start">
             <button
               onClick={(e) => {
