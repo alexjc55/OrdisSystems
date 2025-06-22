@@ -86,7 +86,9 @@ import {
   Type,
   Palette,
   Settings,
-  Languages
+  Languages,
+  FolderOpen,
+  Shield
 } from "lucide-react";
 
 // Validation schemas
@@ -2128,28 +2130,95 @@ export default function AdminDashboard() {
             <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
             <TabsList className={`flex w-full overflow-x-auto gap-1 ${isRTL ? 'justify-end' : 'justify-start'}`}>
               {hasPermission("canManageProducts") && (
-                <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.products')}</TabsTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
+                      <Package className="h-4 w-4 xl:hidden" />
+                      <span className="hidden xl:inline">{adminT('tabs.products')}</span>
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className="xl:hidden">
+                    <p>{adminT('tabs.products')}</p>
+                  </TooltipContent>
+                </Tooltip>
               )}
               {hasPermission("canManageCategories") && (
-                <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.categories')}</TabsTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
+                      <FolderOpen className="h-4 w-4 xl:hidden" />
+                      <span className="hidden xl:inline">{adminT('tabs.categories')}</span>
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className="xl:hidden">
+                    <p>{adminT('tabs.categories')}</p>
+                  </TooltipContent>
+                </Tooltip>
               )}
               {hasPermission("canManageOrders") && (
-                <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.orders')}</TabsTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
+                      <ShoppingCart className="h-4 w-4 xl:hidden" />
+                      <span className="hidden xl:inline">{adminT('tabs.orders')}</span>
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className="xl:hidden">
+                    <p>{adminT('tabs.orders')}</p>
+                  </TooltipContent>
+                </Tooltip>
               )}
               {hasPermission("canViewUsers") && (
-                <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.users')}</TabsTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
+                      <Users className="h-4 w-4 xl:hidden" />
+                      <span className="hidden xl:inline">{adminT('tabs.users')}</span>
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className="xl:hidden">
+                    <p>{adminT('tabs.users')}</p>
+                  </TooltipContent>
+                </Tooltip>
               )}
               {hasPermission("canViewSettings") && (
-                <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.settings')}</TabsTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
+                      <Settings className="h-4 w-4 xl:hidden" />
+                      <span className="hidden xl:inline">{adminT('tabs.settings')}</span>
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className="xl:hidden">
+                    <p>{adminT('tabs.settings')}</p>
+                  </TooltipContent>
+                </Tooltip>
               )}
               {hasPermission("canManageSettings") && (
-                <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Права доступа</TabsTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
+                      <Shield className="h-4 w-4 xl:hidden" />
+                      <span className="hidden xl:inline">{adminT('tabs.permissions')}</span>
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className="xl:hidden">
+                    <p>{adminT('tabs.permissions')}</p>
+                  </TooltipContent>
+                </Tooltip>
               )}
               {hasPermission("canManageSettings") && (
-                <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap">
-                  <Palette className="w-4 h-4 mr-1" />
-                  Темы
-                </TabsTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
+                      <Palette className="h-4 w-4 xl:hidden" />
+                      <span className="hidden xl:inline">{adminT('tabs.themes')}</span>
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className="xl:hidden">
+                    <p>{adminT('tabs.themes')}</p>
+                  </TooltipContent>
+                </Tooltip>
               )}
             </TabsList>
           </div>
