@@ -2895,7 +2895,7 @@ export default function AdminDashboard() {
                               className="text-xs hover:bg-blue-50 hover:border-blue-300"
                             >
                               <Package className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
-                              {category.products?.length || 0} {adminT('products.items', 'товаров')}
+                              {category.products?.length || 0} {adminT('products.items')}
                             </Button>
                             <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                               <Button

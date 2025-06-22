@@ -94,6 +94,7 @@
       "per100g": "по 100г",
       "per100ml": "по 100мл"
     },
+    "items": "товаров",
     "productsWithDiscount": "Товары со скидкой",
     "noProducts": "Нет товаров",
     "addFirstProduct": "Начните с добавления первого товара",
