@@ -201,13 +201,22 @@ export default function AuthPage() {
 
   // Preserve language selection when navigating to auth page
   useEffect(() => {
-    // Force language persistence on auth page load
+    // Optimize language restoration to prevent loading delays
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage && savedLanguage !== currentLanguage) {
-      console.log('Auth page: restoring saved language', savedLanguage);
-      changeLanguage(savedLanguage as any);
+      // Use requestIdleCallback for non-blocking language change
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(() => {
+          changeLanguage(savedLanguage as any);
+        });
+      } else {
+        // Fallback for browsers without requestIdleCallback
+        setTimeout(() => {
+          changeLanguage(savedLanguage as any);
+        }, 0);
+      }
     }
-  }, [currentLanguage, changeLanguage]);
+  }, []); // Remove dependencies to run only once
 
   const onLogin = async (data: LoginFormData) => {
     try {
@@ -332,7 +341,7 @@ export default function AuthPage() {
                   
                   <Button
                     type="submit"
-                    className="w-full"
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white"
                     disabled={loginMutation.isPending}
                   >
                     {loginMutation.isPending ? (
@@ -438,7 +447,7 @@ export default function AuthPage() {
                   
                   <Button
                     type="submit"
-                    className="w-full"
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white"
                     disabled={registerMutation.isPending}
                   >
                     {registerMutation.isPending ? (
