@@ -65,12 +65,14 @@ import { CSS } from '@dnd-kit/utilities';
 let updateCategoryMutation: any;
 
 // Sortable Category Item Component
-function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: { 
+function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setActiveTab, setSelectedCategory }: { 
   category: any, 
   onEdit: (category: any) => void, 
   onDelete: (id: number) => void, 
   adminT: (key: string) => string,
-  isRTL: boolean 
+  isRTL: boolean,
+  setActiveTab: (tab: string) => void,
+  setSelectedCategory: (category: string) => void
 }) {
   const {
     attributes,
