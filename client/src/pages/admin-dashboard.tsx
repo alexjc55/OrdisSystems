@@ -2050,20 +2050,6 @@ export default function AdminDashboard() {
           const isMobile = window.innerWidth <= 768;
           
           if (isMobile && element.classList.contains('rtl-scroll-container')) {
-            // Force RTL direction on all table elements
-            const table = element.querySelector('table');
-            if (table) {
-              table.style.direction = 'rtl';
-              // Force RTL on all table children
-              const allElements = table.querySelectorAll('*');
-              allElements.forEach((el: Element) => {
-                (el as HTMLElement).style.direction = 'rtl';
-                if (el.tagName === 'TH' || el.tagName === 'TD') {
-                  (el as HTMLElement).style.textAlign = 'right';
-                }
-              });
-            }
-            
             // For RTL scroll containers on mobile, scroll to start (0) to show first column
             element.scrollLeft = 0;
           } else if (isMobile) {
@@ -2090,37 +2076,20 @@ export default function AdminDashboard() {
     };
   }, [isRTL, activeTab, productsData, usersData, ordersResponse]);
 
-  // Additional effect to force RTL styling after table renders
+  // Additional effect to ensure tables have proper RTL scroll positioning
   useEffect(() => {
     if (isRTL && (productsData || usersData || ordersResponse)) {
-      const applyRTL = () => {
+      const resetScrollPosition = () => {
         const rtlContainers = document.querySelectorAll('.rtl-scroll-container');
         rtlContainers.forEach((container) => {
-          const table = container.querySelector('table');
-          if (table) {
-            // Force RTL direction
-            table.setAttribute('dir', 'rtl');
-            table.style.direction = 'rtl';
-            
-            // Apply to all table elements
-            const cells = table.querySelectorAll('th, td');
-            cells.forEach((cell) => {
-              (cell as HTMLElement).style.direction = 'rtl';
-              (cell as HTMLElement).style.textAlign = 'right';
-            });
-            
-            const rows = table.querySelectorAll('tr');
-            rows.forEach((row) => {
-              (row as HTMLElement).style.direction = 'rtl';
-            });
-          }
+          const element = container as HTMLElement;
+          // Reset scroll position to start (left edge for RTL)
+          element.scrollLeft = 0;
         });
       };
       
-      // Apply immediately and after a small delay
-      applyRTL();
-      setTimeout(applyRTL, 50);
-      setTimeout(applyRTL, 200);
+      // Apply scroll positioning after data loads
+      setTimeout(resetScrollPosition, 100);
     }
   }, [isRTL, productsData, usersData, ordersResponse, activeTab]);
 
