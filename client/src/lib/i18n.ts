@@ -21,19 +21,19 @@ export const LANGUAGES = {
     name: 'Русский', 
     nativeName: 'Русский',
     dir: 'ltr',
-    flag: '🇷🇺'
+    flag: 'RU'
   },
   en: { 
     name: 'English', 
     nativeName: 'English',
     dir: 'ltr',
-    flag: '🇺🇸'
+    flag: 'EN'
   },
   he: { 
     name: 'Hebrew', 
     nativeName: 'עברית',
     dir: 'rtl',
-    flag: '🇮🇱'
+    flag: 'HE'
   }
 } as const;
 

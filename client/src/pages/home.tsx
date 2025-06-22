@@ -175,7 +175,18 @@ export default function Home() {
   const goToSlide = (pageIndex: number) => {
     if (carouselApiRef.current) {
       const slideIndex = pageIndex * slidesPerPage;
-      carouselApiRef.current.scrollTo(slideIndex);
+      console.log('Going to slide:', slideIndex, 'for page:', pageIndex, 'API methods:', Object.keys(carouselApiRef.current));
+      
+      // Try different API methods
+      if (typeof carouselApiRef.current.scrollTo === 'function') {
+        carouselApiRef.current.scrollTo(slideIndex);
+      } else if (typeof carouselApiRef.current.goTo === 'function') {
+        carouselApiRef.current.goTo(slideIndex);
+      } else if (typeof carouselApiRef.current.scrollToIndex === 'function') {
+        carouselApiRef.current.scrollToIndex(slideIndex);
+      } else {
+        console.log('No suitable API method found');
+      }
     }
   };
 
@@ -517,7 +528,7 @@ export default function Home() {
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          <ChevronLeft className="h-4 w-4" />
+                          <ChevronLeft className={`h-4 w-4 ${currentLanguage === 'he' ? 'rotate-180' : ''}`} />
                         </button>
                         <button
                           onClick={() => {
@@ -532,7 +543,7 @@ export default function Home() {
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          <ChevronRight className="h-4 w-4" />
+                          <ChevronRight className={`h-4 w-4 ${currentLanguage === 'he' ? 'rotate-180' : ''}`} />
                         </button>
                       </div>
                     )}
@@ -563,6 +574,7 @@ export default function Home() {
                         setApi={(api) => {
                           carouselApiRef.current = api;
                           if (api) {
+                            console.log('Carousel API set:', api);
                             api.on('select', () => {
                               const currentSlideIndex = api.selectedScrollSnap();
                               setCurrentSlide(currentSlideIndex);
@@ -608,7 +620,10 @@ export default function Home() {
                             return (
                               <button
                                 key={index}
-                                onClick={() => goToSlide(index)}
+                                onClick={() => {
+                                  console.log('Dot clicked:', index, 'current page:', currentPage);
+                                  goToSlide(index);
+                                }}
                                 className={`w-2 h-2 rounded-full transition-all duration-200 ${
                                   currentPage === index 
                                     ? 'bg-orange-500 w-6' 
