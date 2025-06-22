@@ -46,6 +46,11 @@
     line-height: 1.6;
     letter-spacing: 0.01em;
   }
+  
+  /* Force center alignment for specific text elements */
+  .force-center-text {
+    text-align: center !important;
+  }
 }
 
 /* RTL Utilities */
