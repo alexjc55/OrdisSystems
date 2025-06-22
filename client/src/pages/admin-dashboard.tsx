@@ -138,11 +138,19 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
         </div>
       </div>
 
-      {/* Category content */}
-      <div className="relative flex-1 px-3 pt-1 pb-3 flex flex-col">
-        {/* Category name and icon */}
-        <div className="flex items-start gap-3 mb-4">
-          <div className="flex-1 min-w-0">
+      {/* Main content with two containers */}
+      <div className="relative flex-1 px-3 pt-1 pb-3 flex items-start gap-4">
+        {/* Left container - Icon */}
+        <div className="flex-shrink-0 pt-1">
+          <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
+            {category.icon || '📦'}
+          </div>
+        </div>
+        
+        {/* Right container - Text content */}
+        <div className="flex-1 min-w-0 flex flex-col h-full">
+          {/* Category name and description */}
+          <div className="flex-1">
             <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1">
               {category.name}
             </h3>
@@ -152,15 +160,9 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
               </p>
             )}
           </div>
-          
-          <div className="text-3xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
-            {category.icon || '📦'}
-          </div>
-        </div>
 
-        {/* Bottom section */}
-        <div className="mt-auto pb-1">
-          <div className="flex justify-start">
+          {/* Product count button at bottom */}
+          <div className="mt-auto pt-3">
             <button
               onClick={(e) => {
                 e.stopPropagation();
