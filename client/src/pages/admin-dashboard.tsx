@@ -38,7 +38,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { formatCurrency, getUnitLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
-import { insertStoreSettingsSchema, type StoreSettings } from "@shared/schema";
+import { insertStoreSettingsSchema, type StoreSettings, type CategoryWithCount } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
 import {
@@ -66,8 +66,8 @@ let updateCategoryMutation: any;
 
 // Sortable Category Item Component
 function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setActiveTab, setSelectedCategory }: { 
-  category: any, 
-  onEdit: (category: any) => void, 
+  category: CategoryWithCount, 
+  onEdit: (category: CategoryWithCount) => void, 
   onDelete: (id: number) => void, 
   adminT: (key: string) => string,
   isRTL: boolean,
@@ -118,7 +118,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
             className="cursor-pointer"
           >
             <span className="text-xs font-medium text-white hover:text-white transition-colors bg-orange-500 hover:bg-orange-600 px-2.5 py-1 rounded-full backdrop-blur-sm shadow-sm">
-              {category.products?.length || 0} {adminT('categories.products')}
+              {category.productCount || 0} {adminT('categories.products')}
             </span>
           </div>
         </div>
@@ -157,8 +157,8 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
               <AlertDialogHeader>
                 <AlertDialogTitle>{adminT('categories.deleteConfirmTitle')}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  {category.products && category.products.length > 0 ? 
-                    adminT('categories.deleteWithProductsWarning').replace('{{categoryName}}', category.name).replace('{{productCount}}', category.products.length.toString()) :
+                  {category.productCount && category.productCount > 0 ? 
+                    adminT('categories.deleteWithProductsWarning').replace('{{categoryName}}', category.name).replace('{{productCount}}', category.productCount.toString()) :
                     adminT('categories.deleteConfirmDesc').replace('{{categoryName}}', category.name)
                   }
                 </AlertDialogDescription>
@@ -1796,7 +1796,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery<CategoryWithCount[]>({
     queryKey: ["/api/categories", "includeInactive"],
     queryFn: async () => {
       const response = await fetch('/api/categories?includeInactive=true');
