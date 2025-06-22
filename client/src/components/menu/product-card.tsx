@@ -167,14 +167,24 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
               {product.description}
             </p>
           )}
-          {product.category && (
-            <Badge 
-              variant="secondary" 
-              className="mb-2 cursor-pointer bg-gray-100 text-gray-700 hover:bg-primary hover:text-primary-foreground transition-colors"
-              onClick={() => onCategoryClick?.(product.category.id)}
-            >
-              {product.category.name}
-            </Badge>
+          {product.categories && product.categories.length > 0 && (
+            <div className="mb-2 flex flex-wrap gap-1">
+              {product.categories.slice(0, 2).map((category) => (
+                <Badge 
+                  key={category.id}
+                  variant="secondary" 
+                  className="cursor-pointer bg-gray-100 text-gray-700 hover:bg-primary hover:text-primary-foreground transition-colors text-xs"
+                  onClick={() => onCategoryClick?.(category.id)}
+                >
+                  {category.name}
+                </Badge>
+              ))}
+              {product.categories.length > 2 && (
+                <Badge variant="secondary" className="bg-gray-100 text-gray-500 text-xs">
+                  +{product.categories.length - 2}
+                </Badge>
+              )}
+            </div>
           )}
           <div className="flex items-center justify-between mb-3">
             <div className="flex flex-col">
