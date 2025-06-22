@@ -123,7 +123,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
           </div>
         </div>
         
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5 relative z-10">
           <Button
             size="sm"
             variant="ghost"
