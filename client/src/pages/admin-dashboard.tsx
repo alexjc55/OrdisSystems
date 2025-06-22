@@ -131,7 +131,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
               updateCategoryMutation.mutate({ id: category.id, isActive: !category.isActive });
             }}
             className={`h-7 w-7 p-0 rounded-lg backdrop-blur-sm transition-all duration-200 border border-transparent ${category.isActive ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50/70 hover:border-emerald-200/50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50/70 hover:border-gray-200/50'}`}
-            title={category.isActive ? 'Скрыть категорию' : 'Показать категорию'}
+            title={category.isActive ? adminT('categories.hideCategory') : adminT('categories.showCategory')}
           >
             {category.isActive ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
           </Button>
@@ -183,7 +183,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
       {!category.isActive && (
         <div className="absolute inset-0 bg-gray-100/80 backdrop-blur-[2px] rounded-xl flex items-center justify-center">
           <div className="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-200/60 shadow-sm">
-            <span className="text-sm font-medium text-gray-600">Скрыто</span>
+            <span className="text-sm font-medium text-gray-600">{adminT('categories.hidden')}</span>
           </div>
         </div>
       )}
