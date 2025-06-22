@@ -139,7 +139,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
       </div>
 
       {/* Category content */}
-      <div className="relative flex-1 px-3 pt-1 pb-3 flex flex-col">
+      <div className="relative flex-1 px-3 pt-1 pb-6 md:pb-3 flex flex-col">
         {/* Category name and icon */}
         <div className="flex items-start gap-3 mb-4">
           <div className="flex-1 min-w-0">
@@ -160,7 +160,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
 
         {/* Bottom section */}
         <div className="mt-auto pt-2">
-          <div className="flex justify-start mb-3 md:mb-1">
+          <div className="flex justify-start">
             <button
               onClick={(e) => {
                 e.stopPropagation();
