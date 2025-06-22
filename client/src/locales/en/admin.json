@@ -326,6 +326,18 @@
     "updateSuccess": "Changes saved",
     "updateError": "Failed to update user"
   },
+  "categoryNames": {
+    "Салаты": "Salads",
+    "Мясо": "Meat",
+    "Рыба": "Fish", 
+    "Гарниры": "Side Dishes",
+    "Супы": "Soups",
+    "Выпечка": "Bakery",
+    "Соусы": "Sauces",
+    "Закуски": "Appetizers",
+    "Десерты": "Desserts",
+    "Напитки": "Drinks"
+  },
   "settings": {
     "showSpecialOffers": "Show special offers",
     "specialOffersDescription": "Section for discounted products",
