@@ -236,6 +236,26 @@
     aspect-ratio: 1 / 1 !important;
   }
 
+  /* Custom Switch Component - Admin Dashboard Only */
+  .custom-switch {
+    width: 44px !important;
+    height: 24px !important;
+    min-width: 44px !important;
+    min-height: 24px !important;
+    max-width: 44px !important;
+    max-height: 24px !important;
+    overflow: hidden !important;
+  }
+
+  .custom-switch > div {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    max-width: 20px !important;
+    max-height: 20px !important;
+  }
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(20, 14.3%, 4.1%);

@@ -4029,14 +4029,20 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
           console.error('Switch toggle error:', error);
         }
       }}
-      className={`h-6 w-11 rounded-full cursor-pointer transition-colors ${
+      className={`custom-switch h-6 w-11 rounded-full cursor-pointer transition-colors ${
         checked ? bgColor : 'bg-gray-200'
-      } relative flex items-center p-0.5`}
+      } relative flex items-center`}
+      style={{ padding: '2px' }}
     >
       <div
         className={`h-5 w-5 bg-white rounded-full transition-transform shadow-md border border-gray-200 ${
           checked ? 'translate-x-4' : 'translate-x-0'
         }`}
+        style={{ 
+          width: '20px', 
+          height: '20px',
+          transform: checked ? 'translateX(20px)' : 'translateX(0px)'
+        }}
       />
     </div>
   );
