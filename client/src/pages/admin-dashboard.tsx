@@ -137,20 +137,21 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
 
       {/* Category content - grows to fill available space */}
       <div className="flex-1 px-2 pt-1 pb-2 flex flex-col">
-        {/* Category name and icon */}
-        <div className="flex items-start gap-3 mb-3">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-base text-gray-900 truncate group-hover:text-blue-600 transition-colors leading-tight">
-              {category.name}
-            </h3>
-            {category.description && (
-              <p className="text-xs text-gray-500 mt-1 line-clamp-2 leading-4 max-h-8 overflow-hidden">
-                {category.description}
-              </p>
-            )}
-          </div>
-          
-          <div className="text-6xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-200">
+        {/* Category name */}
+        <div className="mb-4">
+          <h3 className="font-semibold text-base text-gray-900 truncate group-hover:text-blue-600 transition-colors leading-tight">
+            {category.name}
+          </h3>
+          {category.description && (
+            <p className="text-xs text-gray-500 mt-1 line-clamp-2 leading-4 max-h-8 overflow-hidden">
+              {category.description}
+            </p>
+          )}
+        </div>
+
+        {/* Icon in center */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-6xl transform group-hover:scale-110 transition-transform duration-200">
             {category.icon || '📦'}
           </div>
         </div>
@@ -170,8 +171,6 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
               <span className="truncate">{category.products?.length || 0} товаров</span>
             </button>
           </div>
-          
-
         </div>
       </div>
     </div>
@@ -3091,6 +3090,8 @@ export default function AdminDashboard() {
                               onDelete={(id) => deleteCategoryMutation.mutate(id)}
                               adminT={adminT}
                               isRTL={isRTL}
+                              setActiveTab={setActiveTab}
+                              setSelectedCategory={setSelectedCategory}
                             />
                           ))}
                         </div>
