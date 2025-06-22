@@ -357,7 +357,7 @@
   }
 
   /* Hide text on smaller screens, show only icons */
-  @media (max-width: 768px) {
+  @media (max-width: 1200px) {
     .admin-tab-text {
       display: none !important;
     }
@@ -369,10 +369,15 @@
   }
 
   /* Show text on larger screens */
-  @media (min-width: 769px) {
+  @media (min-width: 1201px) {
     .admin-tab-text {
       display: inline !important;
     }
+  }
+
+  /* Ensure icons are always visible */
+  .admin-tabs-list .admin-tabs-trigger .lucide {
+    display: inline-block !important;
   }
 
   .admin-tabs-trigger {
