@@ -1132,29 +1132,3 @@ html[dir="rtl"] button.whatsapp-button.whatsapp-button.whatsapp-button {
 }
 
 
-
-/* RTL Carousel Support */
-.rtl-carousel {
-  direction: rtl;
-}
-
-.rtl-carousel .embla {
-  direction: rtl;
-}
-
-.rtl-carousel .embla__container {
-  direction: rtl;
-}
-
-.rtl-carousel .embla__slide {
-  direction: ltr;
-}
-
-/* Fix carousel content direction for RTL */
-.rtl-carousel [data-carousel-content] {
-  direction: rtl;
-}
-
-.rtl-carousel [data-carousel-item] > * {
-  direction: ltr;
-}
