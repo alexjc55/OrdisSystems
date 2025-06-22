@@ -53,7 +53,7 @@ import {
   Save,
   Search,
   Filter,
-  Menu,
+
   ChevronUp,
   ChevronDown,
   Store,
