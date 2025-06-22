@@ -509,32 +509,22 @@ export default function Home() {
                         <button
                           onClick={() => {
                             if (carouselApiRef.current) {
-                              const isRTL = currentLanguage === 'he';
-                              if (isRTL) {
-                                carouselApiRef.current.scrollNext();
-                              } else {
-                                carouselApiRef.current.scrollPrev();
-                              }
+                              carouselApiRef.current.scrollPrev();
                             }
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          <ChevronLeft className={`h-4 w-4 ${currentLanguage === 'he' ? 'transform rotate-180' : ''}`} />
+                          <ChevronLeft className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => {
                             if (carouselApiRef.current) {
-                              const isRTL = currentLanguage === 'he';
-                              if (isRTL) {
-                                carouselApiRef.current.scrollPrev();
-                              } else {
-                                carouselApiRef.current.scrollNext();
-                              }
+                              carouselApiRef.current.scrollNext();
                             }
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          <ChevronRight className={`h-4 w-4 ${currentLanguage === 'he' ? 'transform rotate-180' : ''}`} />
+                          <ChevronRight className="h-4 w-4" />
                         </button>
                       </div>
                     )}
@@ -554,8 +544,9 @@ export default function Home() {
                       ))}
                     </div>
                   ) : (
-                    <div className="w-full relative">
+                    <div className={`w-full relative ${currentLanguage === 'he' ? 'rtl-carousel' : ''}`}>
                       <Carousel
+                        key={currentLanguage} // Force re-render on language change
                         opts={{
                           align: "start",
                           loop: false,
