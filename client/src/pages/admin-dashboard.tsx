@@ -86,51 +86,92 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-3 p-4 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+      className="group relative overflow-hidden bg-gradient-to-br from-white to-gray-50/50 border border-gray-200/60 rounded-2xl shadow-sm hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1"
     >
-      <div
-        {...attributes}
-        {...listeners}
-        className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600"
-      >
-        <GripVertical className="h-5 w-5" />
-      </div>
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
-      {/* Category Icon */}
-      <div className="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-2xl">
-        {category.icon || '📂'}
-      </div>
-      
-      <div className="flex-1 min-w-0">
-        <div className="font-semibold text-lg text-gray-900">{category.name}</div>
-        {category.description && (
-          <div className="text-sm text-gray-600 mt-1 truncate">{category.description}</div>
-        )}
-        <div className="flex items-center gap-2 mt-2">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-            <Package className="w-3 h-3 mr-1" />
-            {category.products?.length || 0} {adminT('categories.productsCount')}
-          </span>
+      {/* Content */}
+      <div className="relative p-6">
+        {/* Header with drag handle */}
+        <div className="flex items-start justify-between mb-4">
+          <div
+            {...attributes}
+            {...listeners}
+            className="cursor-grab active:cursor-grabbing p-2 -m-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <GripVertical className="h-4 w-4" />
+          </div>
+          
+          <div className="flex gap-1">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => onEdit(category)}
+              className="h-8 w-8 p-0 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full"
+            >
+              <Edit2 className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => onDelete(category.id)}
+              className="h-8 w-8 p-0 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </Button>
+          </div>
         </div>
-      </div>
-      
-      <div className="flex gap-2">
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => onEdit(category)}
-          className="h-9 w-9 p-0 hover:bg-blue-50 hover:border-blue-200"
-        >
-          <Edit2 className="h-4 w-4 text-blue-600" />
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => onDelete(category.id)}
-          className="h-9 w-9 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-200"
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+
+        {/* Category icon and info */}
+        <div className="flex items-center gap-4 mb-4">
+          <div className="relative">
+            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+              {category.icon || '📦'}
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-md">
+              <div className="w-2 h-2 bg-white rounded-full"></div>
+            </div>
+          </div>
+          
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+              {category.name}
+            </h3>
+            {category.description && (
+              <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                {category.description}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-sm">
+                <Package className="w-4 h-4 text-white" />
+              </div>
+            </div>
+            <div>
+              <div className="text-lg font-bold text-gray-900">
+                {category.products?.length || 0}
+              </div>
+              <div className="text-xs text-gray-500 -mt-1">
+                {adminT('categories.productsCount')}
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-xs text-gray-500 font-medium">Active</span>
+          </div>
+        </div>
+
+        {/* Bottom accent */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
     </div>
   );
@@ -3022,7 +3063,7 @@ export default function AdminDashboard() {
                         items={(categories as any[]).map((cat: any) => cat.id)}
                         strategy={verticalListSortingStrategy}
                       >
-                        <div className="space-y-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                           {(categories as any[] || []).map((category: any) => (
                             <SortableCategoryItem
                               key={category.id}
