@@ -21,7 +21,7 @@ export default function Header({ onResetView }: HeaderProps) {
   const { items, toggleCart } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useCommonTranslation();
-
+  const { currentLanguage, changeLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
 
   const cartItemsCount = items.length; // Count unique products, not total quantity
@@ -201,26 +201,64 @@ export default function Header({ onResetView }: HeaderProps) {
                 </Link>
               )}
               
-              {/* Language Switcher on Mobile - Only show if multiple languages enabled */}
-              {storeSettings?.enabledLanguages && storeSettings.enabledLanguages.length > 1 && (
-                <div className="px-4 py-3 mx-2 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg">
-                  <p className="text-base font-semibold text-white mb-3 flex items-center">
-                    <svg className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.724 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z" clipRule="evenodd" />
-                    </svg>
-                    {t('language')}
-                  </p>
-                  <LanguageSwitcher variant="compact" />
+              {/* Language Switcher */}
+              <div className="border-t border-gray-200 pt-4 mt-4">
+                <div className="px-4">
+                  <span className="text-sm font-medium text-gray-700 block mb-3">{t('language')}</span>
+                  <div className="flex flex-col space-y-2">
+                    <button
+                      onClick={() => {
+                        changeLanguage('ru');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`flex items-center px-3 py-2 rounded-lg text-left transition-colors ${
+                        currentLanguage === 'ru' 
+                          ? 'bg-blue-50 text-blue-600 font-medium' 
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span className="text-lg mr-3 rtl:ml-3 rtl:mr-0">🇷🇺</span>
+                      <span>Русский</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        changeLanguage('en');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`flex items-center px-3 py-2 rounded-lg text-left transition-colors ${
+                        currentLanguage === 'en' 
+                          ? 'bg-blue-50 text-blue-600 font-medium' 
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span className="text-lg mr-3 rtl:ml-3 rtl:mr-0">🇺🇸</span>
+                      <span>English</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        changeLanguage('he');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`flex items-center px-3 py-2 rounded-lg text-left transition-colors ${
+                        currentLanguage === 'he' 
+                          ? 'bg-blue-50 text-blue-600 font-medium' 
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span className="text-lg mr-3 rtl:ml-3 rtl:mr-0">🇮🇱</span>
+                      <span>עברית</span>
+                    </button>
+                  </div>
                 </div>
-              )}
+              </div>
               
               {/* Login Button for non-logged in users */}
               {!user && (
                 <div className="border-t border-gray-200 pt-4 mt-4">
                   <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>
-                    <div className="flex items-center px-4 py-3 mx-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer">
+                    <div className="flex items-center px-4 py-3 mx-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
                       <User className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
-                      <span className="text-base font-semibold">{t('login')}</span>
+                      <span className="font-medium">{t('login')}</span>
                     </div>
                   </Link>
                 </div>
@@ -228,23 +266,23 @@ export default function Header({ onResetView }: HeaderProps) {
               
               {/* User Profile Link - Only for logged in users */}
               {user && (
-                <div className="border-t border-gray-200 pt-4 mt-4 space-y-3">
+                <div className="border-t border-gray-200 pt-4 mt-4 space-y-2">
                   <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
-                    <div className="flex items-center px-4 py-3 mx-2 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer">
+                    <div className="flex items-center px-4 py-3 mx-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors cursor-pointer">
                       <User className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
-                      <span className="text-base font-semibold">{t('navigation.profile')}</span>
+                      <span className="font-medium">{t('navigation.profile')}</span>
                     </div>
                   </Link>
                   
                   <div 
-                    className="flex items-center px-4 py-3 mx-2 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer"
+                    className="flex items-center px-4 py-3 mx-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors cursor-pointer"
                     onClick={() => {
                       logoutMutation.mutate();
                       setIsMobileMenuOpen(false);
                     }}
                   >
                     <LogOut className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
-                    <span className="text-base font-semibold">{t('logout')}</span>
+                    <span className="font-medium">{t('logout')}</span>
                   </div>
                 </div>
               )}
