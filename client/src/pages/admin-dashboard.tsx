@@ -2908,9 +2908,22 @@ export default function AdminDashboard() {
                               </>
                             )}
                           </div>
-                          <div className={`flex items-center justify-between ${isRTL ? '' : ''}`}>
+                          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                             {isRTL ? (
                               <>
+                                {/* RTL: Счетчик товаров слева, кнопки справа */}
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedCategoryFilter(category.id.toString());
+                                    setActiveTab("products");
+                                  }}
+                                  className="text-xs hover:bg-blue-50 hover:border-blue-300"
+                                >
+                                  <Package className="h-3 w-3 ml-1" />
+                                  {category.products?.length || 0} {adminT('products.items')}
+                                </Button>
                                 <div className="flex items-center gap-1">
                                   <Button
                                     variant="ghost"
@@ -2958,21 +2971,10 @@ export default function AdminDashboard() {
                                     </AlertDialogContent>
                                   </AlertDialog>
                                 </div>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => {
-                                    setSelectedCategoryFilter(category.id.toString());
-                                    setActiveTab("products");
-                                  }}
-                                  className="text-xs hover:bg-blue-50 hover:border-blue-300"
-                                >
-                                  <Package className="h-3 w-3 ml-1" />
-                                  {category.products?.length || 0} {adminT('products.items')}
-                                </Button>
                               </>
                             ) : (
                               <>
+                                {/* LTR: Счетчик товаров слева, кнопки справа */}
                                 <Button
                                   variant="outline"
                                   size="sm"
