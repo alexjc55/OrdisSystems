@@ -2038,6 +2038,20 @@ export default function AdminDashboard() {
     setIsCancellationDialogOpen(true);
   };
 
+  // RTL table scroll fix - scroll to right for RTL tables
+  useEffect(() => {
+    if (isRTL) {
+      const tableContainers = document.querySelectorAll('.table-container');
+      tableContainers.forEach((container) => {
+        const element = container as HTMLElement;
+        // Scroll to the right for RTL tables
+        setTimeout(() => {
+          element.scrollLeft = element.scrollWidth - element.clientWidth;
+        }, 100);
+      });
+    }
+  }, [isRTL, activeTab, productsData, usersData, ordersResponse]);
+
   if (isLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
