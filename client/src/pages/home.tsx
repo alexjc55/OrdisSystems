@@ -549,7 +549,7 @@ export default function Home() {
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          <ChevronLeft className="h-4 w-4" />
+                          <ChevronLeft className={`h-4 w-4 ${currentLanguage === 'he' ? 'transform rotate-180' : ''}`} />
                         </button>
                         <button
                           onClick={() => {
@@ -569,7 +569,7 @@ export default function Home() {
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          <ChevronRight className="h-4 w-4" />
+                          <ChevronRight className={`h-4 w-4 ${currentLanguage === 'he' ? 'transform rotate-180' : ''}`} />
                         </button>
                       </div>
                     )}
@@ -633,25 +633,17 @@ export default function Home() {
                       {specialOffers.length > slidesPerPage && (
                         <div className="flex justify-center mt-6 space-x-2">
                           {[...Array(totalPages)].map((_, index) => {
-                            // Calculate current page based on visible slides
-                            let currentPage;
-                            if (isMobile) {
-                              // Mobile: 1 slide per page
-                              currentPage = currentSlide;
-                            } else {
-                              // Desktop/Tablet: 3 slides per page, calculate which page group
-                              currentPage = Math.floor(currentSlide / slidesPerPage);
-                            }
+                            const isActive = currentSlide === index;
                             
                             return (
                               <button
                                 key={index}
                                 onClick={() => {
-                                  console.log('Dot clicked:', index, 'current page:', currentPage);
+                                  console.log('Dot clicked:', index, 'current slide:', currentSlide);
                                   goToSlide(index);
                                 }}
                                 className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                                  currentPage === index 
+                                  isActive 
                                     ? 'bg-orange-500 w-6' 
                                     : 'bg-gray-300 hover:bg-gray-400'
                                 }`}

@@ -20,12 +20,15 @@ export function useLanguage() {
   const currentLanguage = (i18n.language || 'ru') as Language;
   const currentLanguageInfo = LANGUAGES[currentLanguage] || LANGUAGES.ru;
   
-  // Get enabled languages from database settings
+  // Get enabled languages from database settings with fixed order (Hebrew first)
   const getEnabledLanguages = () => {
+    const languageOrder = ['he', 'ru', 'en']; // Hebrew first as requested
+    
     if (storeSettings?.enabledLanguages && Array.isArray(storeSettings.enabledLanguages)) {
       const enabledLangs: Record<string, any> = {};
-      storeSettings.enabledLanguages.forEach((lang: string) => {
-        if (LANGUAGES[lang as keyof typeof LANGUAGES]) {
+      // Maintain order by iterating through languageOrder
+      languageOrder.forEach((lang) => {
+        if (storeSettings.enabledLanguages?.includes(lang) && LANGUAGES[lang as keyof typeof LANGUAGES]) {
           enabledLangs[lang] = LANGUAGES[lang as keyof typeof LANGUAGES];
         }
       });
