@@ -185,20 +185,47 @@ export default function Header({ onResetView }: HeaderProps) {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 py-4 bg-gradient-to-b from-gray-50 to-white">
             <div className="flex flex-col space-y-3">
-              {/* Navigation Links */}
-              <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }}>
-                <div className="flex items-center px-4 py-3 mx-2 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer">
-                  <Utensils className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
-                  <span className="text-base font-semibold">{t('menu')}</span>
-                </div>
-              </Link>
-              {(user?.role === 'admin' || user?.role === 'worker') && (
-                <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className="flex items-center px-4 py-3 mx-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg transform hover:scale-105 transition-all duration-200 cursor-pointer">
-                    <Settings className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
-                    <span className="text-base font-semibold">{t('admin')}</span>
+              {/* Navigation Links - First Row */}
+              {!user ? (
+                /* Not logged in - single Menu button full width */
+                <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }}>
+                  <div className="flex items-center justify-center px-4 py-3 mx-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
+                    <Utensils className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
+                    <span className="font-semibold">{t('menu')}</span>
                   </div>
                 </Link>
+              ) : (user?.role === 'admin' || user?.role === 'worker') ? (
+                /* Admin/Worker - Menu and Management buttons side by side */
+                <div className="flex space-x-2 mx-2">
+                  <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }} className="flex-1">
+                    <div className="flex items-center justify-center px-3 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
+                      <Utensils className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                      <span className="font-semibold text-sm">{t('menu')}</span>
+                    </div>
+                  </Link>
+                  <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
+                    <div className="flex items-center justify-center px-3 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                      <span className="font-semibold text-sm">{t('admin')}</span>
+                    </div>
+                  </Link>
+                </div>
+              ) : (
+                /* Regular user - Menu and Profile buttons side by side */
+                <div className="flex space-x-2 mx-2">
+                  <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }} className="flex-1">
+                    <div className="flex items-center justify-center px-3 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
+                      <Utensils className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                      <span className="font-semibold text-sm">{t('menu')}</span>
+                    </div>
+                  </Link>
+                  <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
+                    <div className="flex items-center justify-center px-3 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer">
+                      <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                      <span className="font-semibold text-sm">{t('navigation.profile')}</span>
+                    </div>
+                  </Link>
+                </div>
               )}
               
               {/* Language Switcher */}
@@ -256,7 +283,7 @@ export default function Header({ onResetView }: HeaderProps) {
               {!user && (
                 <div className="border-t border-gray-200 pt-4 mt-4">
                   <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>
-                    <div className="flex items-center px-4 py-3 mx-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
+                    <div className="flex items-center px-4 py-3 mx-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors cursor-pointer">
                       <User className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
                       <span className="font-medium">{t('login')}</span>
                     </div>
@@ -264,16 +291,9 @@ export default function Header({ onResetView }: HeaderProps) {
                 </div>
               )}
               
-              {/* User Profile Link - Only for logged in users */}
+              {/* Logout Button - Only for logged in users */}
               {user && (
-                <div className="border-t border-gray-200 pt-4 mt-4 space-y-2">
-                  <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
-                    <div className="flex items-center px-4 py-3 mx-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors cursor-pointer">
-                      <User className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
-                      <span className="font-medium">{t('navigation.profile')}</span>
-                    </div>
-                  </Link>
-                  
+                <div className="border-t border-gray-200 pt-4 mt-4">
                   <div 
                     className="flex items-center px-4 py-3 mx-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors cursor-pointer"
                     onClick={() => {
