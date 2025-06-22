@@ -950,8 +950,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
             onClick={() => setShowAddItem(true)}
             className="text-xs"
           >
-            <Plus className="h-3 w-3 mr-1" />
-            Добавить товар
+            <Plus className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+            {adminT('orders.addProduct', 'Добавить товар')}
           </Button>
         </div>
         <div className="border rounded-lg overflow-hidden">
@@ -3467,8 +3467,8 @@ export default function AdminDashboard() {
                       onClick={() => setIsUserFormOpen(true)}
                       className="bg-orange-500 hover:bg-orange-600 text-white"
                     >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Добавить пользователя
+                      <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                      {adminT('users.addUser', 'Добавить пользователя')}
                     </Button>
                   </div>
                 </div>
