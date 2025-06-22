@@ -414,7 +414,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
 }
 
 // OrderEditForm component
-function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string }) {
+function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRTL }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { data: storeSettingsData } = useQuery({
@@ -1202,7 +1202,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
 }
 
 // Add Item Dialog Component
-function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT }: { onClose: () => void, onAdd: (product: any, quantity: number) => void, searchPlaceholder: string, adminT: (key: string) => string }) {
+function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { onClose: () => void, onAdd: (product: any, quantity: number) => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
   
   function getUnitDisplay(unit: string) {
     switch (unit) {
@@ -3417,6 +3417,7 @@ export default function AdminDashboard() {
                     }}
                     searchPlaceholder={adminT('common.searchProducts')}
                     adminT={adminT}
+                    isRTL={isRTL}
                   />
                 )}
               </DialogContent>
