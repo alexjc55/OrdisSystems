@@ -2404,9 +2404,9 @@ export default function AdminDashboard() {
                                 <>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
                                     <div className="flex flex-col gap-1 items-end">
-                                      <CustomSwitch
+                                      <Switch
                                         checked={product.isAvailable && (product.availabilityStatus === "available")}
-                                        onChange={(checked) => {
+                                        onCheckedChange={(checked) => {
                                           if (!checked) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
@@ -2417,7 +2417,7 @@ export default function AdminDashboard() {
                                             });
                                           }
                                         }}
-                                        bgColor="bg-green-500"
+                                        className="switch-green"
                                       />
                                       {product.availabilityStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
@@ -2508,9 +2508,9 @@ export default function AdminDashboard() {
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-left">
                                     <div className="flex flex-col gap-1 items-start">
-                                      <CustomSwitch
+                                      <Switch
                                         checked={product.isAvailable && (product.availabilityStatus === "available")}
-                                        onChange={(checked) => {
+                                        onCheckedChange={(checked) => {
                                           if (!checked) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
@@ -2521,7 +2521,7 @@ export default function AdminDashboard() {
                                             });
                                           }
                                         }}
-                                        bgColor="bg-green-500"
+                                        className="switch-green"
                                       />
                                       {product.availabilityStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
@@ -4037,11 +4037,13 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
       }}
     >
       <div
-        className="bg-white rounded-full transition-transform shadow-md border border-gray-200"
+        className="bg-white rounded-full shadow-md transform transition-transform border border-gray-200"
         style={{ 
           width: '20px', 
           height: '20px',
-          transform: checked ? 'translateX(20px)' : 'translateX(0px)'
+          transform: checked ? 'translateX(20px)' : 'translateX(0px)',
+          position: 'relative',
+          zIndex: 1
         }}
       />
     </div>
