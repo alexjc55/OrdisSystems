@@ -2921,7 +2921,7 @@ export default function AdminDashboard() {
                                   }}
                                   className="text-xs hover:bg-blue-50 hover:border-blue-300"
                                 >
-                                  <Package className="h-3 w-3 ml-1" />
+                                  <Package className="h-3 w-3 ml-2" />
                                   {category.products?.length || 0} {adminT('products.items')}
                                 </Button>
                                 <div className="flex items-center gap-1">
