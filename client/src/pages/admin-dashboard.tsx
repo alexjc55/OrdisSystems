@@ -1,12 +1,4 @@
 /**
- * BACKUP VERSION OF ADMIN DASHBOARD - Created June 21, 2025
- * 
- * This is a complete backup of the admin dashboard with:
- * - RTL layout support for Hebrew interface
- * - Comprehensive multi-language functionality
- * - All existing features and UI patterns preserved
- * - Working admin panel with proper styling and functionality
- * 
  * ВАЖНО: НЕ ИЗМЕНЯТЬ ДИЗАЙН АДМИН-ПАНЕЛИ БЕЗ ЯВНОГО ЗАПРОСА!
  * 
  * Правила для разработчика:
@@ -32,7 +24,6 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -87,8 +78,8 @@ import {
   Palette,
   Settings,
   Languages,
-  FolderOpen,
-  Shield
+  Layers3,
+  UserCheck
 } from "lucide-react";
 
 // Validation schemas
@@ -808,14 +799,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
           <div className="space-y-2 text-sm">
             <div><strong>№ заказа:</strong> #{order.id}</div>
             <div><strong>Дата создания:</strong> {new Date(order.createdAt).toLocaleString('ru-RU')}</div>
-            <div><strong>Сумма товаров:</strong> {formatCurrency(parseFloat(order.totalAmount) - parseFloat(order.deliveryFee || "0"))}</div>
-            <div><strong>Доставка:</strong> {
+            <div><strong>{adminT('orders.subtotal')}:</strong> {formatCurrency(parseFloat(order.totalAmount) - parseFloat(order.deliveryFee || "0"))}</div>
+            <div><strong>{adminT('orders.deliveryFee')}:</strong> {
               parseFloat(order.deliveryFee || "0") === 0 ? 
-                <span className="text-green-600 font-medium">Бесплатно</span> : 
+                <span className="text-green-600 font-medium">{adminT('common.free')}</span> : 
                 formatCurrency(order.deliveryFee || "0")
             }</div>
-            <div><strong>Итого:</strong> {formatCurrency(order.totalAmount)}</div>
-            <div><strong>Клиент:</strong> {order.user?.firstName && order.user?.lastName 
+            <div><strong>{adminT('orders.orderTotal')}:</strong> {formatCurrency(order.totalAmount)}</div>
+            <div><strong>{adminT('orders.customer')}:</strong> {order.user?.firstName && order.user?.lastName 
               ? `${order.user.firstName} ${order.user.lastName}`
               : order.user?.email || "—"}</div>
             {order.deliveryDate && (
@@ -971,7 +962,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
                 <TableHead className="text-xs w-32">Количество</TableHead>
                 <TableHead className="text-xs w-20">Цена</TableHead>
                 <TableHead className="text-xs w-24">Сумма</TableHead>
-                <TableHead className="text-xs w-20">Скидка</TableHead>
+                <TableHead className="text-xs w-20">{adminT('orders.discount')}</TableHead>
                 <TableHead className="text-xs w-16">Действия</TableHead>
               </TableRow>
             </TableHeader>
@@ -1046,18 +1037,18 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
 
         {/* Order Total Summary */}
         <div className="bg-gray-50 p-4 rounded-lg">
-          <h4 className="font-medium mb-3">Итого по заказу</h4>
+          <h4 className="font-medium mb-3">{adminT('orders.orderSummary')}</h4>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span>Сумма товаров:</span>
+              <span>{adminT('orders.subtotal')}:</span>
               <span>{formatCurrency(calculateSubtotal())}</span>
             </div>
             
             <div className="flex justify-between">
-              <span>Доставка:</span>
+              <span>{adminT('orders.deliveryFee')}:</span>
               <span>
                 {parseFloat(order.deliveryFee || "0") === 0 ? (
-                  <span className="text-green-600 font-medium">Бесплатно</span>
+                  <span className="text-green-600 font-medium">{adminT('common.free')}</span>
                 ) : (
                   formatCurrency(order.deliveryFee || "0")
                 )}
@@ -1395,11 +1386,11 @@ function ItemDiscountDialog({
             <div className="bg-gray-50 p-3 rounded">
               <div className="text-sm space-y-1">
                 <div className="flex justify-between">
-                  <span>Скидка:</span>
+                  <span>{adminT('orders.discount')}:</span>
                   <span className="text-red-600">-{formatCurrency(discountAmount)}</span>
                 </div>
                 <div className="flex justify-between font-medium">
-                  <span>Итого:</span>
+                  <span>{adminT('orders.orderTotal')}:</span>
                   <span>{formatCurrency(finalPrice)}</span>
                 </div>
               </div>
@@ -2125,100 +2116,101 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <TooltipProvider>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
-            <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
-            <TabsList className={`flex w-full overflow-x-auto gap-1 ${isRTL ? 'justify-end' : 'justify-start'}`}>
-              {hasPermission("canManageProducts") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
-                      <Package className="h-4 w-4 xl:hidden" />
-                      <span className="hidden xl:inline">{adminT('tabs.products')}</span>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
+          <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
+            <TabsList className={`admin-tabs-list ${isRTL ? 'rtl-tabs-reverse' : ''} flex w-full overflow-x-auto gap-1`}>
+              {isRTL ? (
+                // RTL order: reverse the tab order
+                <>
+                  {hasPermission("canManageSettings") && (
+                    <TabsTrigger value="themes" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <Palette className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">{adminT('tabs.themes')}</span>
                     </TabsTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent className="xl:hidden">
-                    <p>{adminT('tabs.products')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {hasPermission("canManageCategories") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
-                      <FolderOpen className="h-4 w-4 xl:hidden" />
-                      <span className="hidden xl:inline">{adminT('tabs.categories')}</span>
+                  )}
+                  {hasPermission("canManageSettings") && (
+                    <TabsTrigger value="settings" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <UserCheck className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">{adminT('tabs.permissions')}</span>
                     </TabsTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent className="xl:hidden">
-                    <p>{adminT('tabs.categories')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {hasPermission("canManageOrders") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
-                      <ShoppingCart className="h-4 w-4 xl:hidden" />
-                      <span className="hidden xl:inline">{adminT('tabs.orders')}</span>
+                  )}
+                  {hasPermission("canViewSettings") && (
+                    <TabsTrigger value="store" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <Settings className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">{adminT('tabs.settings')}</span>
                     </TabsTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent className="xl:hidden">
-                    <p>{adminT('tabs.orders')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {hasPermission("canViewUsers") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
-                      <Users className="h-4 w-4 xl:hidden" />
-                      <span className="hidden xl:inline">{adminT('tabs.users')}</span>
+                  )}
+                  {hasPermission("canViewUsers") && (
+                    <TabsTrigger value="users" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <Users className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">{adminT('tabs.users')}</span>
                     </TabsTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent className="xl:hidden">
-                    <p>{adminT('tabs.users')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {hasPermission("canViewSettings") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
-                      <Settings className="h-4 w-4 xl:hidden" />
-                      <span className="hidden xl:inline">{adminT('tabs.settings')}</span>
+                  )}
+                  {hasPermission("canManageOrders") && (
+                    <TabsTrigger value="orders" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <ShoppingCart className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">{adminT('tabs.orders')}</span>
                     </TabsTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent className="xl:hidden">
-                    <p>{adminT('tabs.settings')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {hasPermission("canManageSettings") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
-                      <Shield className="h-4 w-4 xl:hidden" />
-                      <span className="hidden xl:inline">{adminT('tabs.permissions')}</span>
+                  )}
+                  {hasPermission("canManageCategories") && (
+                    <TabsTrigger value="categories" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <Layers3 className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">{adminT('tabs.categories')}</span>
                     </TabsTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent className="xl:hidden">
-                    <p>{adminT('tabs.permissions')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {hasPermission("canManageSettings") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap xl:inline-flex xl:gap-2">
-                      <Palette className="h-4 w-4 xl:hidden" />
-                      <span className="hidden xl:inline">{adminT('tabs.themes')}</span>
+                  )}
+                  {hasPermission("canManageProducts") && (
+                    <TabsTrigger value="products" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <Package className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">{adminT('tabs.products')}</span>
                     </TabsTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent className="xl:hidden">
-                    <p>{adminT('tabs.themes')}</p>
-                  </TooltipContent>
-                </Tooltip>
+                  )}
+                </>
+              ) : (
+                // LTR order: normal order
+                <>
+                  {hasPermission("canManageProducts") && (
+                    <TabsTrigger value="products" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <Package className="w-4 h-4 mr-1" />
+                      <span className="admin-tab-text">{adminT('tabs.products')}</span>
+                    </TabsTrigger>
+                  )}
+                  {hasPermission("canManageCategories") && (
+                    <TabsTrigger value="categories" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <Layers3 className="w-4 h-4 mr-1" />
+                      <span className="admin-tab-text">{adminT('tabs.categories')}</span>
+                    </TabsTrigger>
+                  )}
+                  {hasPermission("canManageOrders") && (
+                    <TabsTrigger value="orders" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <ShoppingCart className="w-4 h-4 mr-1" />
+                      <span className="admin-tab-text">{adminT('tabs.orders')}</span>
+                    </TabsTrigger>
+                  )}
+                  {hasPermission("canViewUsers") && (
+                    <TabsTrigger value="users" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <Users className="w-4 h-4 mr-1" />
+                      <span className="admin-tab-text">{adminT('tabs.users')}</span>
+                    </TabsTrigger>
+                  )}
+                  {hasPermission("canViewSettings") && (
+                    <TabsTrigger value="store" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <Settings className="w-4 h-4 mr-1" />
+                      <span className="admin-tab-text">{adminT('tabs.settings')}</span>
+                    </TabsTrigger>
+                  )}
+                  {hasPermission("canManageSettings") && (
+                    <TabsTrigger value="settings" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <UserCheck className="w-4 h-4 mr-1" />
+                      <span className="admin-tab-text">{adminT('tabs.permissions')}</span>
+                    </TabsTrigger>
+                  )}
+                  {hasPermission("canManageSettings") && (
+                    <TabsTrigger value="themes" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                      <Palette className="w-4 h-4 mr-1" />
+                      <span className="admin-tab-text">{adminT('tabs.themes')}</span>
+                    </TabsTrigger>
+                  )}
+                </>
               )}
             </TabsList>
           </div>
@@ -2307,113 +2299,235 @@ export default function AdminDashboard() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                              <button 
-                                onClick={() => handleSort("name")}
-                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
-                              >
-                                {adminT('products.productName')}
-                                {sortField === "name" && (
-                                  sortDirection === "asc" ? 
-                                    <ChevronUp className="h-3 w-3" /> : 
-                                    <ChevronDown className="h-3 w-3" />
-                                )}
-                              </button>
-                            </TableHead>
-                            <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                              <button 
-                                onClick={() => handleSort("category")}
-                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
-                              >
-                                {adminT('products.productCategory')}
-                                {sortField === "category" && (
-                                  sortDirection === "asc" ? 
-                                    <ChevronUp className="h-3 w-3" /> : 
-                                    <ChevronDown className="h-3 w-3" />
-                                )}
-                              </button>
-                            </TableHead>
-                            <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                              <button 
-                                onClick={() => handleSort("price")}
-                                className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
-                              >
-                                {adminT('products.productPrice')}
-                                {sortField === "price" && (
-                                  sortDirection === "asc" ? 
-                                    <ChevronUp className="h-3 w-3" /> : 
-                                    <ChevronDown className="h-3 w-3" />
-                                )}
-                              </button>
-                            </TableHead>
-                            <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('products.productStatus')}</TableHead>
+                            {/* Dynamically order columns for RTL */}
+                            {isRTL ? (
+                              // RTL order: Status, Price, Category, Name (reversed)
+                              <>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>{adminT('products.productStatus')}</TableHead>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>
+                                  <button 
+                                    onClick={() => handleSort("price")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                  >
+                                    {adminT('products.productPrice')}
+                                    {sortField === "price" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>
+                                  <button 
+                                    onClick={() => handleSort("category")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                  >
+                                    {adminT('products.productCategory')}
+                                    {sortField === "category" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>
+                                  <button 
+                                    onClick={() => handleSort("name")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                  >
+                                    {adminT('products.productName')}
+                                    {sortField === "name" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                              </>
+                            ) : (
+                              // LTR order: Name, Category, Price, Status (normal)
+                              <>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
+                                  <button 
+                                    onClick={() => handleSort("name")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                  >
+                                    {adminT('products.productName')}
+                                    {sortField === "name" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
+                                  <button 
+                                    onClick={() => handleSort("category")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                  >
+                                    {adminT('products.productCategory')}
+                                    {sortField === "category" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
+                                  <button 
+                                    onClick={() => handleSort("price")}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                  >
+                                    {adminT('products.productPrice')}
+                                    {sortField === "price" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>{adminT('products.productStatus')}</TableHead>
+                              </>
+                            )}
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {filteredProducts.map((product: any) => (
                             <TableRow key={product.id}>
-                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <button
-                                  onClick={() => {
-                                    setEditingProduct(product);
-                                    setIsProductFormOpen(true);
-                                  }}
-                                  className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer ${isRTL ? 'text-right' : 'text-left'}`}
-                                >
-                                  {product.name}
-                                </button>
-                              </TableCell>
-                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <Badge variant="outline" className="text-xs">
-                                  {product.category?.name}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
-                                  {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
-                                    <div className="space-y-1">
-                                      <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                      <div className="font-semibold text-gray-900">
-                                        {formatCurrency(
-                                          product.discountType === "percentage"
-                                            ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
-                                            : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
-                                        )}
-                                      </div>
-                                      <div className="text-orange-600 text-xs font-medium">
-                                        -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
-                                      </div>
+                              {/* Dynamically order columns for RTL */}
+                              {isRTL ? (
+                                // RTL order: Status, Price, Category, Name (reversed)
+                                <>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                    <div className="flex flex-col gap-1 items-end">
+                                      <CustomSwitch
+                                        checked={product.isAvailable && (product.availabilityStatus === "available")}
+                                        onChange={(checked) => {
+                                          if (!checked) {
+                                            setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
+                                            setIsAvailabilityDialogOpen(true);
+                                          } else {
+                                            updateAvailabilityStatusMutation.mutate({
+                                              id: product.id,
+                                              availabilityStatus: "available"
+                                            });
+                                          }
+                                        }}
+                                        bgColor="bg-green-500"
+                                      />
+                                      {product.availabilityStatus === "out_of_stock_today" && (
+                                        <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
+                                          предзаказ
+                                        </div>
+                                      )}
                                     </div>
-                                  ) : (
-                                    <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                  )}
-                                  <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
-                                </div>
-                              </TableCell>
-                              <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
-                                  <CustomSwitch
-                                    checked={product.isAvailable && (product.availabilityStatus === "available")}
-                                    onChange={(checked) => {
-                                      if (!checked) {
-                                        setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
-                                        setIsAvailabilityDialogOpen(true);
-                                      } else {
-                                        updateAvailabilityStatusMutation.mutate({
-                                          id: product.id,
-                                          availabilityStatus: "available"
-                                        });
-                                      }
-                                    }}
-                                    bgColor="bg-green-500"
-                                  />
-                                  {product.availabilityStatus === "out_of_stock_today" && (
-                                    <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
-                                      предзаказ
+                                  </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                    <div className="text-xs sm:text-sm p-2 rounded">
+                                      {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
+                                        <div className="space-y-1">
+                                          <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                          <div className="font-semibold text-gray-900">
+                                            {formatCurrency(
+                                              product.discountType === "percentage"
+                                                ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
+                                                : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
+                                            )}
+                                          </div>
+                                          <div className="text-orange-600 text-xs font-medium">
+                                            -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                      )}
+                                      <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
                                     </div>
-                                  )}
-                                </div>
-                              </TableCell>
+                                  </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                    <Badge variant="outline" className="text-xs">
+                                      {product.category?.name}
+                                    </Badge>
+                                  </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                    <button
+                                      onClick={() => {
+                                        setEditingProduct(product);
+                                        setIsProductFormOpen(true);
+                                      }}
+                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-right"
+                                    >
+                                      {product.name}
+                                    </button>
+                                  </TableCell>
+                                </>
+                              ) : (
+                                // LTR order: Name, Category, Price, Status (normal)
+                                <>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <button
+                                      onClick={() => {
+                                        setEditingProduct(product);
+                                        setIsProductFormOpen(true);
+                                      }}
+                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-left"
+                                    >
+                                      {product.name}
+                                    </button>
+                                  </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <Badge variant="outline" className="text-xs">
+                                      {product.category?.name}
+                                    </Badge>
+                                  </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
+                                      {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
+                                        <div className="space-y-1">
+                                          <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                          <div className="font-semibold text-gray-900">
+                                            {formatCurrency(
+                                              product.discountType === "percentage"
+                                                ? parseFloat(product.price || product.pricePerKg || "0") * (1 - parseFloat(product.discountValue) / 100)
+                                                : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
+                                            )}
+                                          </div>
+                                          <div className="text-orange-600 text-xs font-medium">
+                                            -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className="font-semibold text-gray-900">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                      )}
+                                      <div className="text-gray-500 text-xs mt-1">{getUnitLabel(product.unit || "100g")}</div>
+                                    </div>
+                                  </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <div className="flex flex-col gap-1 items-start">
+                                      <CustomSwitch
+                                        checked={product.isAvailable && (product.availabilityStatus === "available")}
+                                        onChange={(checked) => {
+                                          if (!checked) {
+                                            setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
+                                            setIsAvailabilityDialogOpen(true);
+                                          } else {
+                                            updateAvailabilityStatusMutation.mutate({
+                                              id: product.id,
+                                              availabilityStatus: "available"
+                                            });
+                                          }
+                                        }}
+                                        bgColor="bg-green-500"
+                                      />
+                                      {product.availabilityStatus === "out_of_stock_today" && (
+                                        <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
+                                          предзаказ
+                                        </div>
+                                      )}
+                                    </div>
+                                  </TableCell>
+                                </>
+                              )}
                             </TableRow>
                           ))}
                         </TableBody>
@@ -3749,8 +3863,7 @@ export default function AdminDashboard() {
               <ThemeManager />
             </TabsContent>
           )}
-          </Tabs>
-        </TooltipProvider>
+        </Tabs>
       </div>
 
       {/* Product Form Dialog */}
