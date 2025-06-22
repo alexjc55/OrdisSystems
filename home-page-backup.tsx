@@ -1,12 +1,14 @@
 /**
- * BACKUP VERSION OF HOME PAGE - Created June 21, 2025
+ * BACKUP VERSION OF HOME PAGE - Updated June 22, 2025
  * 
  * This is a complete backup of the home page with:
  * - Multi-language support (Russian, English, Hebrew)
- * - RTL layout support for Hebrew interface
+ * - RTL layout support for Hebrew interface with proper Swiper carousel
  * - Product filtering and search functionality
  * - Shopping cart integration
  * - Mobile-responsive design
+ * - Swiper carousel with full RTL support replacing Embla
+ * - Improved information block alignment and spacing
  * - All existing features and UI patterns preserved
  */
 
@@ -20,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { useShopTranslation } from "@/hooks/use-language";
+import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
@@ -30,7 +32,13 @@ import CartSidebar from "@/components/cart/cart-sidebar";
 import { useCartStore } from "@/lib/cart";
 import { formatCurrency } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import { 
   Search, 
   Clock, 
@@ -57,13 +65,14 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [discountFilter, setDiscountFilter] = useState("all");
-  const carouselApiRef = useRef<any>(null);
+  const swiperRef = useRef<any>(null);
   const { user } = useAuth();
   const { isOpen: isCartOpen, addItem } = useCartStore();
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const { currentLanguage } = useLanguage();
 
   // Fetch categories
   const { data: categories = [], isLoading: categoriesLoading } = useQuery<CategoryWithProducts[]>({
@@ -82,76 +91,15 @@ export default function Home() {
     enabled: selectedCategoryId !== null,
   });
 
-  // Search products
-  const { data: searchResults = [], isLoading: searchLoading } = useQuery<ProductWithCategory[]>({
-    queryKey: ["/api/products/search", searchQuery],
-    queryFn: () => fetch(`/api/products/search?q=${encodeURIComponent(searchQuery)}`).then(res => res.json()),
-    enabled: searchQuery.length > 2,
-  });
-
+  // Get selected category info
   const selectedCategory = useMemo(() => {
+    if (selectedCategoryId === 0) {
+      return { id: 0, name: t('allProducts'), description: t('allProductsDesc'), products: [] };
+    }
     return categories.find(cat => cat.id === selectedCategoryId);
-  }, [categories, selectedCategoryId]);
+  }, [selectedCategoryId, categories, t]);
 
-  const handleCategorySelect = useCallback((categoryId: number | null) => {
-    setSelectedCategoryId(categoryId);
-    setSearchQuery("");
-    
-    // Navigate to appropriate URL
-    if (categoryId === 0) {
-      navigate('/all-products');
-    } else if (categoryId !== null) {
-      navigate(`/category/${categoryId}`);
-    } else {
-      navigate('/');
-    }
-  }, [navigate]);
-
-  const handleResetView = useCallback(() => {
-    setSelectedCategoryId(null);
-    setSearchQuery("");
-    setCategoryFilter("all");
-    setDiscountFilter("all");
-    navigate('/');
-  }, [navigate]);
-
-  const handleSearch = useCallback((query: string) => {
-    setSearchQuery(query);
-    setSelectedCategoryId(null);
-  }, []);
-
-  // Get special offers (products marked as special offers)
-  const specialOffers = allProducts?.filter(product => product.isAvailable !== false && product.isSpecialOffer === true) || [];
-
-  // Display products logic
-  const displayProducts = useMemo(() => {
-    let productsToShow: ProductWithCategory[] = [];
-
-    if (searchQuery && searchQuery.length > 2) {
-      productsToShow = searchResults;
-    } else if (selectedCategoryId === 0) {
-      // Show all products
-      productsToShow = allProducts;
-    } else if (selectedCategoryId !== null && products) {
-      productsToShow = products;
-    } else {
-      productsToShow = [];
-    }
-
-    // Apply filters if any
-    if (categoryFilter !== "all") {
-      const categoryId = parseInt(categoryFilter);
-      productsToShow = productsToShow.filter(product => product.categoryId === categoryId);
-    }
-
-    if (discountFilter === "discount") {
-      productsToShow = productsToShow.filter(product => product.isSpecialOffer);
-    }
-
-    return productsToShow;
-  }, [searchQuery, searchResults, selectedCategoryId, allProducts, products, categoryFilter, discountFilter]);
-
-  // URL parameters handling
+  // Handle category selection from URL
   useEffect(() => {
     const pathParts = location.split('/');
     if (pathParts[1] === 'category' && pathParts[2]) {
@@ -166,94 +114,133 @@ export default function Home() {
     }
   }, [location, selectedCategoryId]);
   
-  // Calculate slides per page based on screen size
+  // For swiper carousel
   const slidesPerPage = isMobile ? 1 : 3;
-  const totalPages = Math.ceil(specialOffers.length / slidesPerPage);
+  const totalSlides = (storeSettings?.specialOffers || []).length;
+  const totalPages = Math.ceil(totalSlides / slidesPerPage);
   
-  // Handle carousel navigation
+  // Handle swiper navigation
   const goToSlide = (pageIndex: number) => {
-    if (carouselApiRef.current) {
+    if (swiperRef.current && swiperRef.current.swiper) {
       const slideIndex = pageIndex * slidesPerPage;
-      carouselApiRef.current.scrollTo(slideIndex);
-      // Update current slide state immediately for visual feedback
-      setCurrentSlide(slideIndex);
+      swiperRef.current.swiper.slideTo(slideIndex);
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden pt-16">
-      <Header onResetView={handleResetView} />
-      
-      {/* Simple Banner Image */}
-      {storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
-        <div 
-          className="w-full h-32 sm:h-40 lg:h-48 bg-cover bg-center"
-          style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
-        />
-      )}
-      
-      <div className="flex overflow-x-hidden">
-        {storeSettings?.showCategoryMenu !== false && (
-          <Sidebar 
-            categories={categories || []} 
-            selectedCategoryId={selectedCategoryId}
-            onCategorySelect={handleCategorySelect}
-            isLoading={categoriesLoading}
-          />
-        )}
+  // Get special offers with proper pricing
+  const specialOffers = useMemo(() => {
+    if (!storeSettings?.specialOffers || !Array.isArray(storeSettings.specialOffers)) {
+      return [];
+    }
+    
+    return storeSettings.specialOffers
+      .map((offerId: number) => allProducts.find(p => p.id === offerId))
+      .filter(Boolean) as ProductWithCategory[];
+  }, [allProducts, storeSettings?.specialOffers]);
 
-        <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
-          {/* Title and Description */}
-          {storeSettings?.showTitleDescription !== false && (
-            <div className="text-center mb-12">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">
-                  {(() => {
-                    try {
-                      if (searchQuery && searchQuery.length > 2) {
-                        return `${t('searchResults')}: "${searchQuery}"`;
-                      }
-                      if (selectedCategory?.name) {
-                        return selectedCategory.name;
-                      }
-                      if (storeSettings?.welcomeTitle) {
-                        return storeSettings.welcomeTitle;
-                      }
-                      return t('defaultWelcomeTitle');
-                    } catch (error) {
-                      console.error('Error rendering title:', error);
-                      return t('defaultWelcomeTitle');
-                    }
-                  })()}
-                </span>
+  // Get filtered products for search and category views
+  const filteredProducts = useMemo(() => {
+    let productsToFilter: ProductWithCategory[] = [];
+    
+    if (searchQuery.length > 2) {
+      productsToFilter = allProducts.filter(product => 
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    } else if (selectedCategoryId === 0) {
+      productsToFilter = allProducts;
+    } else if (selectedCategoryId !== null && products) {
+      productsToFilter = products;
+    }
+
+    // Apply category filter
+    if (categoryFilter !== "all" && categoryFilter !== "") {
+      const filterCategoryId = parseInt(categoryFilter);
+      if (!isNaN(filterCategoryId)) {
+        productsToFilter = productsToFilter.filter(product => product.categoryId === filterCategoryId);
+      }
+    }
+
+    // Apply discount filter
+    if (discountFilter !== "all") {
+      if (discountFilter === "with_discount") {
+        productsToFilter = productsToFilter.filter(product => 
+          product.originalPrice && product.originalPrice > product.price
+        );
+      } else if (discountFilter === "no_discount") {
+        productsToFilter = productsToFilter.filter(product => 
+          !product.originalPrice || product.originalPrice <= product.price
+        );
+      }
+    }
+
+    return productsToFilter;
+  }, [allProducts, products, selectedCategoryId, searchQuery, categoryFilter, discountFilter]);
+
+  // Handle category selection
+  const handleCategorySelect = useCallback((categoryId: number | null) => {
+    if (categoryId === null) {
+      setSelectedCategoryId(null);
+      navigate('/');
+    } else if (categoryId === 0) {
+      setSelectedCategoryId(0);
+      navigate('/all-products');
+    } else {
+      setSelectedCategoryId(categoryId);
+      navigate(`/category/${categoryId}`);
+    }
+    setSearchQuery(""); // Clear search when selecting category
+  }, [navigate]);
+
+  // Handle reset view
+  const handleResetView = useCallback(() => {
+    setSelectedCategoryId(null);
+    setSearchQuery("");
+    setCategoryFilter("all");
+    setDiscountFilter("all");
+    navigate('/');
+  }, [navigate]);
+
+  // Handle add to cart
+  const handleAddToCart = useCallback((product: ProductWithCategory, quantity: number = 1) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      image: product.image,
+      quantity: quantity
+    });
+    
+    toast({
+      title: t('addedToCart'),
+      description: `${product.name} ${t('addedToCartDesc')}`,
+    });
+  }, [addItem, toast, t]);
+
+  const isLoading = categoriesLoading || allProductsLoading || (selectedCategoryId !== null && productsLoading);
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <Sidebar />
+      {isCartOpen && <CartSidebar />}
+      
+      <main className="pt-16 lg:ml-64">
+        <div className="max-w-6xl mx-auto p-6">
+          {/* Hero Section with Welcome Message */}
+          {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && (
+            <div className="text-center mb-12 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-8 shadow-sm">
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                {storeSettings.welcomeTitle || t('welcome')}
               </h1>
-              
-              <div className="max-w-3xl mx-auto">
-                <p className="text-xl sm:text-2xl text-gray-600 font-light leading-relaxed mb-8">
-                  {(() => {
-                    try {
-                      if (searchQuery && searchQuery.length > 2) {
-                        return t('foundItems').replace('{count}', displayProducts.length.toString());
-                      }
-                      if (selectedCategory?.description) {
-                        return selectedCategory.description;
-                      }
-                      if (storeSettings?.storeDescription) {
-                        return storeSettings.storeDescription;
-                      }
-                      return t('defaultStoreDescription');
-                    } catch (error) {
-                      console.error('Error rendering description:', error);
-                      return t('defaultStoreDescription');
-                    }
-                  })()}
+              {storeSettings.welcomeSubtitle && (
+                <p className="text-xl text-gray-700 max-w-2xl mx-auto leading-relaxed">
+                  {storeSettings.welcomeSubtitle}
                 </p>
-                <div className="w-24 h-1 bg-gradient-to-r from-primary to-orange-500 mx-auto rounded-full"></div>
-              </div>
+              )}
             </div>
           )}
-
-
 
           {/* Modern Store Information Cards */}
           {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && storeSettings?.showInfoBlocks !== false && (
@@ -270,7 +257,7 @@ export default function Home() {
                         </div>
                         <span className="font-semibold text-lg text-gray-800">{t('workingHours')}</span>
                       </div>
-                      <div className="space-y-2">
+                      <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'md:mr-16 md:pl-8' : 'md:ml-16 md:pr-8'}`}>
                       {(() => {
                         try {
                           const workingHours = storeSettings.workingHours;
@@ -280,7 +267,7 @@ export default function Home() {
 
                           const dayNames: Record<string, string> = {
                             monday: t('days.mon'),
-                            tuesday: t('days.tue'), 
+                            tuesday: t('days.tue'),
                             wednesday: t('days.wed'),
                             thursday: t('days.thu'),
                             friday: t('days.fri'),
@@ -288,14 +275,11 @@ export default function Home() {
                             sunday: t('days.sun')
                           };
 
-                          // Define day order based on store settings
-                          const dayOrder = storeSettings?.weekStartDay === 'sunday' 
-                            ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-                            : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-                          
+                          // Filter out empty entries and sort by day order
+                          const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
                           const validEntries = dayOrder
-                            .filter(day => workingHours[day] && typeof workingHours[day] === 'string' && workingHours[day].trim() !== '')
-                            .map(day => [day, workingHours[day]]);
+                            .map(day => [day, workingHours[day]] as const)
+                            .filter(([_, hours]) => hours && typeof hours === 'string' && hours.trim() !== '');
 
                           if (validEntries.length === 0) {
                             return <p className="text-gray-500 text-xs">{t('notSpecified')}</p>;
@@ -358,7 +342,7 @@ export default function Home() {
                         </div>
                         <span className="font-semibold text-lg text-gray-800">{t('contacts')}</span>
                       </div>
-                      <div className="space-y-1">
+                      <div className={`space-y-1 px-0 ${currentLanguage === 'he' ? 'md:mr-16 md:pl-8' : 'md:ml-16 md:pr-8'}`}>
                         {storeSettings.contactPhone && (
                           <div className="text-xs sm:text-sm flex justify-between">
                             <span className="text-gray-600">{t('phone')}:</span>
@@ -388,7 +372,7 @@ export default function Home() {
                         </div>
                         <span className="font-semibold text-lg text-gray-800">Оплата и доставка</span>
                       </div>
-                      <div className="space-y-4 flex-1">
+                      <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'md:mr-16 md:pl-8' : 'md:ml-16 md:pr-8'}`}>
                         {storeSettings.deliveryInfo && (
                           <div>
                             <span className="text-gray-500 text-sm font-medium block mb-2">{t('delivery')}:</span>
@@ -417,210 +401,118 @@ export default function Home() {
                 type="text"
                 placeholder={t('searchPlaceholder')}
                 value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10 bg-white border-gray-300"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               />
             </div>
           </div>
 
-          {/* Special Offers or Category View */}
+          {/* Category Navigation */}
           {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && (
-            <div>
-              {/* Category Overview */}
-              {categories && categories.length > 0 && (
-                <div className="mb-8">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg">
-                        <Package className="h-7 w-7 text-white" />
-                      </div>
-                      <div>
-                        <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                          {t('categories')}
-                        </h2>
-                        <p className="text-gray-600 font-medium">{t('selectCategoryDescription')}</p>
-                      </div>
-                    </div>
-                    <div className="flex justify-start md:justify-end mt-6 md:mt-0">
-                      <Button
-                        onClick={() => setSelectedCategoryId(0)}
-                        className="w-full md:w-auto bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 !text-white hover:!text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                      >
-                        <Package className="mr-2 h-5 w-5" />
-                        {t('allProducts')}
-                      </Button>
-                    </div>
+            <CategoryNav
+              categories={categories}
+              selectedCategoryId={selectedCategoryId}
+              onCategorySelect={handleCategorySelect}
+              className="mb-8"
+            />
+          )}
+
+          {/* Special Offers Section */}
+          {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && specialOffers.length > 0 && (
+            <div className="mb-12">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg">
+                    <Sparkles className="h-6 w-6 text-white" />
                   </div>
-                  
-                  <div className="grid gap-6 min-w-0" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-                    {categories.map((category) => (
-                      <Card 
-                        key={category.id} 
-                        className="group cursor-pointer hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden transform hover:scale-105"
-                        onClick={() => handleCategorySelect(category.id)}
-                      >
-                        <CardContent className="p-4 h-32 relative">
-                          <div className="flex items-start justify-between gap-4 h-full">
-                            <div className="flex-1 flex flex-col h-full">
-                              <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
-                                {category.name}
-                              </h3>
-                              
-                              <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed flex-1">
-                                {category.description || t('defaultCategoryDescription')}
-                              </p>
-                              
-                              <div className="mt-auto">
-                                <Badge className="px-3 py-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold text-sm shadow-md">
-                                  {category.products.length} {t('dishesCount')}
-                                </Badge>
-                              </div>
-                            </div>
-                            
-                            <div className="flex-shrink-0 relative">
-                              <div className="text-5xl transform group-hover:scale-110 transition-transform duration-300">
-                                {category.icon || '📦'}
-                              </div>
-                              <div className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div className="w-3 h-3 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full animate-pulse"></div>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">{t('specialOffers')}</h2>
                 </div>
-              )}
-
-              {/* Special Offers Section */}
-              {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && (
-                <div className="mt-12">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center">
-                      <span className="mr-3 text-2xl">🔥</span>
-                      <h2 className="text-2xl font-poppins font-bold text-gray-900">{t('specialOffers')}</h2>
-                    </div>
-                    
-                    {/* Navigation Arrows */}
-                    {specialOffers.length > slidesPerPage && (
-                      <div className="hidden md:flex items-center gap-2">
-                        <button
-                          onClick={() => {
-                            if (carouselApiRef.current) {
-                              const isRTL = document.documentElement.dir === 'rtl';
-                              if (isRTL) {
-                                carouselApiRef.current.scrollNext();
-                              } else {
-                                carouselApiRef.current.scrollPrev();
-                              }
-                            }
-                          }}
-                          className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (carouselApiRef.current) {
-                              const isRTL = document.documentElement.dir === 'rtl';
-                              if (isRTL) {
-                                carouselApiRef.current.scrollPrev();
-                              } else {
-                                carouselApiRef.current.scrollNext();
-                              }
-                            }
-                          }}
-                          className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </button>
-                      </div>
-                    )}
+                
+                {/* Navigation info */}
+                <div className="flex items-center gap-4">
+                  <div className="text-sm text-gray-500">
+                    {Math.min(slidesPerPage, specialOffers.length)} {t('of')} {specialOffers.length}
                   </div>
                   
-                  {allProductsLoading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {[...Array(6)].map((_, i) => (
-                        <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
-                          <div className="w-full h-48 bg-gray-200"></div>
-                          <div className="p-4 space-y-3">
-                            <div className="h-4 bg-gray-200 rounded"></div>
-                            <div className="h-3 bg-gray-200 rounded w-3/4"></div>
-                            <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="w-full relative">
-                      <Carousel
-                        opts={{
-                          align: "start",
-                          loop: false,
-                          slidesToScroll: 1,
-                        }}
-                        className="w-full mx-auto"
-                        setApi={(api) => {
-                          carouselApiRef.current = api;
-                          if (api) {
-                            api.on('select', () => {
-                              const currentSlideIndex = api.selectedScrollSnap();
-                              setCurrentSlide(currentSlideIndex);
-                            });
-                          }
-                        }}
+                  {/* Navigation Arrows */}
+                  {specialOffers.length > slidesPerPage && (
+                    <div className="hidden md:flex items-center gap-2">
+                      <button
+                        className="swiper-button-prev-custom w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                       >
-                        <CarouselContent className="ml-0 flex items-stretch gap-2.5">
-                          {specialOffers.map((product) => (
-                            <CarouselItem 
-                              key={product.id} 
-                              className="min-w-0 shrink-0 grow-0 basis-full md:basis-1/3 flex flex-col flex-shrink-0 pl-[0px] pr-[0px]"
-                            >
-                              <div className="relative flex-1 flex">
-                                <div className="transform scale-90 origin-center w-full relative">
-                                  <ProductCard 
-                                    product={product} 
-                                    onCategoryClick={handleCategorySelect}
-                                  />
-                                </div>
-                              </div>
-                            </CarouselItem>
-                          ))}
-                        </CarouselContent>
-
-
-                      </Carousel>
-
-                      {/* Navigation Dots */}
-                      {specialOffers.length > slidesPerPage && (
-                        <div className="flex justify-center mt-6 space-x-2">
-                          {[...Array(totalPages)].map((_, index) => {
-                            // Calculate current page based on visible slides
-                            let currentPage;
-                            if (isMobile) {
-                              // Mobile: 1 slide per page
-                              currentPage = currentSlide;
-                            } else {
-                              // Desktop/Tablet: 3 slides per page, calculate which page group
-                              currentPage = Math.floor(currentSlide / slidesPerPage);
-                            }
-                            
-                            return (
-                              <button
-                                key={index}
-                                onClick={() => goToSlide(index)}
-                                className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                                  currentPage === index 
-                                    ? 'bg-orange-500 w-6' 
-                                    : 'bg-gray-300 hover:bg-gray-400'
-                                }`}
-                              />
-                            );
-                          })}
-                        </div>
-                      )}
+                        {currentLanguage === 'he' ? 
+                          <ChevronRight className="h-4 w-4" /> : 
+                          <ChevronLeft className="h-4 w-4" />
+                        }
+                      </button>
+                      <button
+                        className="swiper-button-next-custom w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
+                      >
+                        {currentLanguage === 'he' ? 
+                          <ChevronLeft className="h-4 w-4" /> : 
+                          <ChevronRight className="h-4 w-4" />
+                        }
+                      </button>
                     </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Products Display */}
+              {isMobile ? (
+                <div className="grid grid-cols-1 gap-6">
+                  {specialOffers.map((product) => (
+                    <div key={product.id} className="relative">
+                      <ProductCard 
+                        product={product} 
+                        onCategoryClick={handleCategorySelect}
+                      />
+                      <Badge className="absolute top-2 left-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-2 py-1 text-xs font-medium shadow-lg">
+                        {t('specialOffer')}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="w-full relative">
+                  <Swiper
+                    key={currentLanguage}
+                    ref={swiperRef}
+                    modules={[Navigation, Pagination]}
+                    spaceBetween={16}
+                    slidesPerView={isMobile ? 1 : 3}
+                    slidesPerGroup={isMobile ? 1 : 3}
+                    dir={currentLanguage === 'he' ? 'rtl' : 'ltr'}
+                    navigation={{
+                      prevEl: '.swiper-button-prev-custom',
+                      nextEl: '.swiper-button-next-custom',
+                    }}
+                    pagination={{
+                      el: '.swiper-pagination-custom',
+                      clickable: true,
+                      bulletClass: 'swiper-pagination-bullet-custom',
+                      bulletActiveClass: 'swiper-pagination-bullet-active-custom',
+                    }}
+                    onSlideChange={(swiper) => {
+                      setCurrentSlide(swiper.activeIndex);
+                    }}
+                    className="w-full pb-12"
+                  >
+                    {specialOffers.map((product) => (
+                      <SwiperSlide key={product.id}>
+                        <div className="p-1">
+                          <ProductCard 
+                            product={product} 
+                            onCategoryClick={handleCategorySelect}
+                          />
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+
+                  {/* Custom Pagination */}
+                  {specialOffers.length > slidesPerPage && (
+                    <div className="swiper-pagination-custom flex justify-center mt-6 space-x-2"></div>
                   )}
                 </div>
               )}
@@ -638,11 +530,9 @@ export default function Home() {
                     <Button
                       onClick={handleResetView}
                       variant="ghost"
-                      size="sm"
-                      className="flex items-center gap-1 text-gray-600 hover:text-gray-800 shrink-0"
+                      className="text-gray-600 hover:text-gray-900"
                     >
-                      <ChevronLeft className="h-4 w-4" />
-                      <span className="hidden sm:inline">{t('buttons.back', 'Назад')}</span>
+                      {t('backToHome')}
                     </Button>
                   </div>
                   {selectedCategory.description && (
@@ -651,12 +541,22 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Filter Controls */}
-              {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
-                <div className="flex gap-2 sm:gap-4 mb-6">
+              {/* Search Results Header */}
+              {searchQuery.length > 2 && (
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    {t('searchResults')} "{searchQuery}"
+                  </h2>
+                  <p className="text-gray-600">{filteredProducts.length} {t('productsFound')}</p>
+                </div>
+              )}
+
+              {/* Filters */}
+              {(selectedCategoryId === 0 || searchQuery.length > 2) && (
+                <div className="flex flex-wrap gap-4 mb-6">
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger className="flex-1 min-w-0 text-sm">
-                      <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder={t('selectCategory')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t('allCategories')}</SelectItem>
@@ -669,21 +569,22 @@ export default function Home() {
                   </Select>
 
                   <Select value={discountFilter} onValueChange={setDiscountFilter}>
-                    <SelectTrigger className="flex-1 min-w-0 text-sm">
+                    <SelectTrigger className="w-[200px]">
                       <SelectValue placeholder={t('filterByDiscount')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t('allProducts')}</SelectItem>
-                      <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
+                      <SelectItem value="with_discount">{t('withDiscount')}</SelectItem>
+                      <SelectItem value="no_discount">{t('withoutDiscount')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               )}
 
               {/* Products Grid */}
-              {(productsLoading || searchLoading) ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {[...Array(8)].map((_, i) => (
+              {isLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {[...Array(6)].map((_, i) => (
                     <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
                       <div className="w-full h-48 bg-gray-200"></div>
                       <div className="p-4 space-y-3">
@@ -694,9 +595,9 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-              ) : displayProducts.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {displayProducts.map((product) => (
+              ) : filteredProducts.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredProducts.map((product) => (
                     <ProductCard
                       key={product.id}
                       product={product}
@@ -706,96 +607,25 @@ export default function Home() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <div className="text-gray-400 mb-4">
-                    <Package className="mx-auto h-12 w-12" />
-                  </div>
+                  <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    {searchQuery ? t('noSearchResults') : t('noProductsFound')}
+                    {searchQuery.length > 2 ? t('noProductsFound') : t('noProductsInCategory')}
                   </h3>
-                  <p className="text-gray-500">
-                    {searchQuery ? t('tryDifferentSearch') : t('checkBackLater')}
+                  <p className="text-gray-500 mb-4">
+                    {searchQuery.length > 2 
+                      ? t('tryDifferentSearch') 
+                      : t('selectDifferentCategory')
+                    }
                   </p>
+                  <Button onClick={handleResetView} variant="outline">
+                    {t('backToHome')}
+                  </Button>
                 </div>
               )}
             </div>
           )}
-        </main>
-      </div>
-
-      {/* Mobile Category Navigation */}
-      {storeSettings?.showCategoryMenu !== false && (
-        <CategoryNav 
-          categories={categories || []}
-          selectedCategoryId={selectedCategoryId}
-          onCategorySelect={handleCategorySelect}
-        />
-      )}
-
-      {/* Bottom Banners */}
-      {storeSettings?.showBottomBanners && (storeSettings?.bottomBanner1Url || storeSettings?.bottomBanner2Url) && (
-        <div className="mt-16 mb-8 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Banner 1 */}
-              {storeSettings?.bottomBanner1Url && (
-                <div className="relative overflow-hidden rounded-lg shadow-lg group">
-                  {storeSettings?.bottomBanner1Link ? (
-                    <a 
-                      href={storeSettings.bottomBanner1Link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block"
-                    >
-                      <img
-                        src={storeSettings.bottomBanner1Url}
-                        alt={t('banner1')}
-                        className="w-full h-64 md:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
-                    </a>
-                  ) : (
-                    <img
-                      src={storeSettings.bottomBanner1Url}
-                      alt={t('banner1')}
-                      className="w-full h-64 md:h-80 object-cover"
-                    />
-                  )}
-                </div>
-              )}
-
-              {/* Banner 2 */}
-              {storeSettings?.bottomBanner2Url && (
-                <div className="relative overflow-hidden rounded-lg shadow-lg group">
-                  {storeSettings?.bottomBanner2Link ? (
-                    <a 
-                      href={storeSettings.bottomBanner2Link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block"
-                    >
-                      <img
-                        src={storeSettings.bottomBanner2Url}
-                        alt={t('banner2')}
-                        className="w-full h-64 md:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
-                    </a>
-                  ) : (
-                    <img
-                      src={storeSettings.bottomBanner2Url}
-                      alt={t('banner2')}
-                      className="w-full h-64 md:h-80 object-cover"
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
         </div>
-      )}
-
-      {/* Cart Sidebar */}
-      <CartSidebar />
+      </main>
     </div>
   );
 }
