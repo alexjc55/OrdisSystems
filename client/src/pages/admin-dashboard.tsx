@@ -86,23 +86,31 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-3 p-3 bg-white border rounded-lg shadow-sm"
+      className="flex items-center gap-3 p-4 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow"
     >
       <div
         {...attributes}
         {...listeners}
         className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600"
       >
-        <GripVertical className="h-4 w-4" />
+        <GripVertical className="h-5 w-5" />
       </div>
       
-      <div className="flex-1">
-        <div className="font-medium">{category.name}</div>
+      {/* Category Icon */}
+      <div className="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-2xl">
+        {category.icon || '📂'}
+      </div>
+      
+      <div className="flex-1 min-w-0">
+        <div className="font-semibold text-lg text-gray-900">{category.name}</div>
         {category.description && (
-          <div className="text-sm text-gray-500">{category.description}</div>
+          <div className="text-sm text-gray-600 mt-1 truncate">{category.description}</div>
         )}
-        <div className="text-xs text-gray-400 mt-1">
-          {adminT('categories.productsCount')}: {category.products?.length || 0}
+        <div className="flex items-center gap-2 mt-2">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+            <Package className="w-3 h-3 mr-1" />
+            {category.products?.length || 0} {adminT('categories.productsCount')}
+          </span>
         </div>
       </div>
       
@@ -111,17 +119,17 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
           size="sm"
           variant="outline"
           onClick={() => onEdit(category)}
-          className="h-8 w-8 p-0"
+          className="h-9 w-9 p-0 hover:bg-blue-50 hover:border-blue-200"
         >
-          <Edit2 className="h-3 w-3" />
+          <Edit2 className="h-4 w-4 text-blue-600" />
         </Button>
         <Button
           size="sm"
           variant="outline"
           onClick={() => onDelete(category.id)}
-          className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+          className="h-9 w-9 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-200"
         >
-          <Trash2 className="h-3 w-3" />
+          <Trash2 className="h-4 w-4" />
         </Button>
       </div>
     </div>
@@ -129,7 +137,6 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
 }
 
 import { 
-  Package, 
   Plus, 
   Edit2, 
   Edit,
@@ -1990,7 +1997,6 @@ export default function AdminDashboard() {
 
   const reorderCategoriesMutation = useMutation({
     mutationFn: async (categoryOrders: { id: number; sortOrder: number }[]) => {
-      console.log('Sending category reorder data:', categoryOrders);
       const response = await fetch('/api/categories/reorder', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
