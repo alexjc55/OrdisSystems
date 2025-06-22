@@ -4035,9 +4035,7 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
       style={{ padding: '2px' }}
     >
       <div
-        className={`h-5 w-5 bg-white rounded-full transition-transform shadow-md border border-gray-200 ${
-          checked ? 'translate-x-4' : 'translate-x-0'
-        }`}
+        className="h-5 w-5 bg-white rounded-full transition-transform shadow-md border border-gray-200"
         style={{ 
           width: '20px', 
           height: '20px',
