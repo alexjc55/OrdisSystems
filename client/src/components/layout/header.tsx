@@ -230,7 +230,7 @@ export default function Header({ onResetView }: HeaderProps) {
               
               {/* Language Switcher */}
               {(() => {
-                const languages = [
+                const languages: Array<{ code: 'ru' | 'en' | 'he', flag: string, name: string }> = [
                   { code: 'ru', flag: '🇷🇺', name: 'Русский' },
                   { code: 'en', flag: '🇺🇸', name: 'English' },
                   { code: 'he', flag: '🇮🇱', name: 'עברית' }
@@ -239,16 +239,25 @@ export default function Header({ onResetView }: HeaderProps) {
                 // Don't show language switcher if only 1 language
                 if (languages.length <= 1) return null;
                 
-                // Layout logic: 2 languages = 1 row, 3 languages = 1 row, 4+ languages = 2 rows
-                const shouldUseGrid = languages.length >= 2;
-                const gridCols = languages.length === 2 ? 'grid-cols-2' : 
-                                languages.length === 3 ? 'grid-cols-3' : 'grid-cols-2';
+                // Layout logic: 
+                // 1 language = hidden (not shown)
+                // 2 languages = 1 row with 2 columns
+                // 3 languages = 1 row with 3 columns
+                // 4 languages = 2 rows with 2 columns each
+                let gridCols;
+                if (languages.length === 2) {
+                  gridCols = 'grid-cols-2';
+                } else if (languages.length === 3) {
+                  gridCols = 'grid-cols-3';
+                } else {
+                  gridCols = 'grid-cols-2'; // 4+ languages, 2 per row
+                }
                 
                 return (
                   <div className="border-t border-gray-200 pt-4 mt-4">
                     <div className="px-4">
                       <span className="text-sm font-medium text-gray-700 block mb-3">{t('language')}</span>
-                      <div className={shouldUseGrid ? `grid ${gridCols} gap-2` : 'flex flex-col space-y-2'}>
+                      <div className={`grid ${gridCols} gap-2`}>
                         {languages.map((lang) => (
                           <button
                             key={lang.code}
