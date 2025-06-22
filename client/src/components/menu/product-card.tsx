@@ -7,12 +7,12 @@ import { useCartStore } from "@/lib/cart";
 import { useToast } from "@/hooks/use-toast";
 import { formatCurrency, formatWeight, calculateTotal, getUnitLabel, formatQuantity, type ProductUnit } from "@/lib/currency";
 import { ShoppingCart, Plus, Minus, Eye, Star, Clock, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
-import type { ProductWithCategory } from "@shared/schema";
+import type { ProductWithCategories } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation } from "@/hooks/use-language";
 
 interface ProductCardProps {
-  product: ProductWithCategory;
+  product: ProductWithCategories;
   onCategoryClick?: (categoryId: number) => void;
 }
 

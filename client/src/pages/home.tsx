@@ -53,7 +53,7 @@ import {
   Users,
   Sparkles
 } from "lucide-react";
-import type { CategoryWithProducts, ProductWithCategory } from "@shared/schema";
+import type { CategoryWithProducts, ProductWithCategories } from "@shared/schema";
 
 export default function Home() {
   const params = useParams();
@@ -78,19 +78,19 @@ export default function Home() {
   });
 
   // Fetch all products for special offers and search
-  const { data: allProducts = [], isLoading: allProductsLoading } = useQuery<ProductWithCategory[]>({
+  const { data: allProducts = [], isLoading: allProductsLoading } = useQuery<ProductWithCategories[]>({
     queryKey: ["/api/products"],
   });
 
   // Fetch products for selected category
-  const { data: products = [], isLoading: productsLoading } = useQuery<ProductWithCategory[]>({
+  const { data: products = [], isLoading: productsLoading } = useQuery<ProductWithCategories[]>({
     queryKey: ["/api/products", selectedCategoryId],
     queryFn: () => fetch(`/api/products?categoryId=${selectedCategoryId}`).then(res => res.json()),
     enabled: selectedCategoryId !== null,
   });
 
   // Search products
-  const { data: searchResults = [], isLoading: searchLoading } = useQuery<ProductWithCategory[]>({
+  const { data: searchResults = [], isLoading: searchLoading } = useQuery<ProductWithCategories[]>({
     queryKey: ["/api/products/search", searchQuery],
     queryFn: () => fetch(`/api/products/search?q=${encodeURIComponent(searchQuery)}`).then(res => res.json()),
     enabled: searchQuery.length > 2,
@@ -141,7 +141,7 @@ export default function Home() {
 
   // Display products logic
   const displayProducts = useMemo(() => {
-    let productsToShow: ProductWithCategory[] = [];
+    let productsToShow: ProductWithCategories[] = [];
 
     if (searchQuery && searchQuery.length > 2) {
       productsToShow = searchResults;
@@ -157,7 +157,9 @@ export default function Home() {
     // Apply filters if any
     if (categoryFilter !== "all") {
       const categoryId = parseInt(categoryFilter);
-      productsToShow = productsToShow.filter(product => product.categoryId === categoryId);
+      productsToShow = productsToShow.filter(product => 
+        product.categories?.some(cat => cat.id === categoryId)
+      );
     }
 
     if (discountFilter === "discount") {
