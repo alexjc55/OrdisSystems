@@ -98,9 +98,32 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   const handleAddToCart = () => {
     const finalQuantity = selectedQuantity || getDefaultQuantity();
     addItem(product, finalQuantity);
+    
+    // Format quantity with proper unit display
+    const getQuantityDisplay = (qty: number, productUnit: ProductUnit) => {
+      const roundedQty = Math.round(qty * 10) / 10;
+      const formatQty = (value: number) => value % 1 === 0 ? value.toString() : value.toFixed(1);
+      
+      switch (productUnit) {
+        case 'piece': 
+          return `${formatQty(roundedQty)} ${t('units.piece')}`;
+        case 'kg': 
+          return `${formatQty(roundedQty)} ${t('units.kg')}`;
+        case '100g': 
+          if (roundedQty >= 1000) {
+            return `${formatQty(roundedQty / 1000)} ${t('units.kg')}`;
+          }
+          return `${formatQty(roundedQty)} ${t('units.g')}`;
+        case '100ml': 
+          return `${formatQty(roundedQty)} ${t('units.ml')}`;
+        default: 
+          return formatQty(roundedQty);
+      }
+    };
+    
     toast({
       title: t('addedToCart'),
-      description: `${product.name} (${formatQuantity(finalQuantity, unit, t)}) - ${formatCurrency(totalPrice)}`,
+      description: `${product.name} (${getQuantityDisplay(finalQuantity, unit)}) - ${formatCurrency(totalPrice)}`,
       action: (
         <Button
           size="sm"
