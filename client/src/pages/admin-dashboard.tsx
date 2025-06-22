@@ -3091,6 +3091,8 @@ export default function AdminDashboard() {
                               onDelete={(id) => deleteCategoryMutation.mutate(id)}
                               adminT={adminT}
                               isRTL={isRTL}
+                              setActiveTab={setActiveTab}
+                              setSelectedCategory={setSelectedCategory}
                             />
                           ))}
                         </div>
