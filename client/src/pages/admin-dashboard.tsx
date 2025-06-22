@@ -41,160 +41,13 @@ import { formatCurrency, getUnitLabel, formatDeliveryTimeRange, type ProductUnit
 import { insertStoreSettingsSchema, type StoreSettings } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import {
-  useSortable,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-
-// Define updateCategoryMutation outside components for proper scope
-let updateCategoryMutation: any;
-
-// Sortable Category Item Component
-function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setActiveTab, setSelectedCategory }: { 
-  category: any, 
-  onEdit: (category: any) => void, 
-  onDelete: (id: number) => void, 
-  adminT: (key: string) => string,
-  isRTL: boolean,
-  setActiveTab: (tab: string) => void,
-  setSelectedCategory: (category: string) => void
-}) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: category.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    zIndex: transform ? 1000 : 'auto',
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="group relative overflow-hidden bg-gradient-to-br from-white via-gray-50/30 to-white border border-gray-200/80 rounded-xl shadow-sm hover:shadow-lg hover:shadow-gray-900/[0.08] transition-all duration-300 h-[180px] flex flex-col backdrop-blur-sm hover:border-gray-300/60"
-    >
-      {/* Subtle gradient overlay for depth */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-gray-100/10 pointer-events-none" />
-      
-      {/* Header with drag handle and actions */}
-      <div className="relative flex items-center justify-between p-3 pb-2">
-        <div
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing p-1.5 -m-1.5 text-gray-400 hover:text-gray-600 hover:bg-white/70 rounded-lg transition-all duration-200 backdrop-blur-sm border border-transparent hover:border-gray-200/50"
-        >
-          <GripVertical className="h-3.5 w-3.5" />
-        </div>
-        
-        <div className="flex gap-1.5">
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => {
-              updateCategoryMutation.mutate({ id: category.id, isActive: !category.isActive });
-            }}
-            className={`h-7 w-7 p-0 rounded-lg backdrop-blur-sm transition-all duration-200 border border-transparent ${category.isActive ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50/70 hover:border-emerald-200/50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50/70 hover:border-gray-200/50'}`}
-            title={category.isActive ? 'Скрыть категорию' : 'Показать категорию'}
-          >
-            {category.isActive ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => onEdit(category)}
-            className="h-7 w-7 p-0 text-slate-500 hover:text-blue-600 hover:bg-blue-50/70 rounded-lg backdrop-blur-sm transition-all duration-200 border border-transparent hover:border-blue-200/50"
-          >
-            <Edit2 className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => onDelete(category.id)}
-            className="h-7 w-7 p-0 text-slate-400 hover:text-red-500 hover:bg-red-50/70 rounded-lg backdrop-blur-sm transition-all duration-200 border border-transparent hover:border-red-200/50"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Category content */}
-      <div className="relative flex-1 px-3 pt-2 pb-4 md:pb-3 flex flex-col">
-        {/* Category icon - positioned absolutely */}
-        <div className="absolute top-2 right-3 text-4xl md:text-3xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80 z-10">
-          {category.icon || '📦'}
-        </div>
-
-        {/* Category name and description */}
-        <div className="pr-12 mb-2">
-          <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1">
-            {category.name}
-          </h3>
-          {category.description && (
-            <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed max-h-8 overflow-hidden">
-              {category.description}
-            </p>
-          )}
-        </div>
-
-        {/* Bottom section */}
-        <div className="mt-auto pt-1">
-          <div className="flex justify-start">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setActiveTab('products');
-                setSelectedCategory(category.id.toString());
-              }}
-              className={`inline-flex items-center px-3 py-1 md:py-1.5 rounded-md text-xs font-medium bg-orange-500 text-white border border-orange-600 hover:bg-orange-600 hover:border-orange-700 transition-all duration-200 shadow-sm ${isRTL ? 'gap-1.5' : 'gap-1'}`}
-            >
-              <span className="font-semibold">{category.products?.length || 0}</span>
-              <span>{adminT('categories.products')}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Inactive state overlay */}
-      {!category.isActive && (
-        <div className="absolute inset-0 bg-gray-100/80 backdrop-blur-[2px] rounded-xl flex items-center justify-center">
-          <div className="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-200/60 shadow-sm">
-            <span className="text-sm font-medium text-gray-600">Скрыто</span>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 import { 
-  Package,
+  Package, 
   Plus, 
   Edit2, 
   Edit,
   Trash2, 
-  Users,
-  GripVertical, 
+  Users, 
   ShoppingCart, 
   Utensils,
   Save,
@@ -217,7 +70,6 @@ import {
   Phone,
   User,
   Eye,
-  EyeOff,
   X,
   MessageCircle,
   Code,
@@ -1605,7 +1457,6 @@ export default function AdminDashboard() {
   const [editingCategory, setEditingCategory] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
-  const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStatusFilter, setSelectedStatusFilter] = useState("all");
 
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
@@ -1660,49 +1511,10 @@ export default function AdminDashboard() {
   const [editingUser, setEditingUser] = useState<any>(null);
   const [usersRoleFilter, setUsersRoleFilter] = useState("all");
 
-  // Drag and drop sensors
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  // Handle category drag end
-  const handleCategoryDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      const categoriesArray = categories as any[];
-      const oldIndex = categoriesArray.findIndex((category: any) => category.id === active.id);
-      const newIndex = categoriesArray.findIndex((category: any) => category.id === over.id);
-
-      if (oldIndex !== -1 && newIndex !== -1) {
-        const newCategories = arrayMove(categoriesArray, oldIndex, newIndex);
-        
-        // Create category orders array with new sort order
-        const categoryOrders = newCategories.map((category: any, index: number) => ({
-          id: category.id,
-          sortOrder: index + 1
-        }));
-
-        // Execute mutation to update database
-        reorderCategoriesMutation.mutate(categoryOrders);
-      }
-    }
-  };
-
   // Reset pagination when filters change
   useEffect(() => {
     setProductsPage(1);
-  }, [searchQuery, selectedCategoryFilter, selectedCategory, selectedStatusFilter]);
-
-  // Update category filter when selectedCategory changes
-  useEffect(() => {
-    if (selectedCategory !== "all") {
-      setSelectedCategoryFilter(selectedCategory);
-    }
-  }, [selectedCategory]);
+  }, [searchQuery, selectedCategoryFilter, selectedStatusFilter]);
 
   useEffect(() => {
     setOrdersPage(1);
@@ -1764,12 +1576,7 @@ export default function AdminDashboard() {
   };
 
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
-    queryKey: ["/api/categories", "includeInactive"],
-    queryFn: async () => {
-      const response = await fetch('/api/categories?includeInactive=true');
-      if (!response.ok) throw new Error('Failed to fetch categories');
-      return await response.json();
-    }
+    queryKey: ["/api/categories"]
   });
 
   const { data: productsResponse, isLoading: productsLoading } = useQuery({
@@ -1853,29 +1660,6 @@ export default function AdminDashboard() {
   const usersData = usersResponse?.data || [];
   const usersTotalPages = usersResponse?.totalPages || 0;
   const usersTotal = usersResponse?.total || 0;
-
-  // Category mutations
-  updateCategoryMutation = useMutation({
-    mutationFn: async ({ id, ...categoryData }: any) => {
-      const response = await fetch(`/api/categories/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(categoryData),
-      });
-      if (!response.ok) throw new Error('Failed to update category');
-      return await response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
-      setEditingCategory(null);
-      setIsCategoryFormOpen(false);
-      toast({ title: adminT('categories.notifications.categoryUpdated'), description: adminT('categories.notifications.categoryUpdatedDesc') });
-    },
-    onError: (error: any) => {
-      console.error("Category update error:", error);
-      toast({ title: adminT('common.error'), description: adminT('categories.notifications.updateError'), variant: "destructive" });
-    }
-  });
 
   // Product mutations
   const createProductMutation = useMutation({
@@ -2036,7 +1820,7 @@ export default function AdminDashboard() {
       return await response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
       setIsCategoryFormOpen(false);
       setEditingCategory(null);
       toast({ title: adminT('categories.notifications.categoryCreated'), description: adminT('categories.notifications.categoryCreatedDesc') });
@@ -2047,38 +1831,40 @@ export default function AdminDashboard() {
     }
   });
 
+  const updateCategoryMutation = useMutation({
+    mutationFn: async ({ id, ...categoryData }: any) => {
+      const response = await fetch(`/api/categories/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(categoryData),
+      });
+      if (!response.ok) throw new Error('Failed to update category');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      setEditingCategory(null);
+      setIsCategoryFormOpen(false);
+      toast({ title: adminT('categories.notifications.categoryUpdated'), description: adminT('categories.notifications.categoryUpdatedDesc') });
+    },
+    onError: (error: any) => {
+      console.error("Category update error:", error);
+      toast({ title: adminT('common.error'), description: adminT('categories.notifications.updateError'), variant: "destructive" });
+    }
+  });
+
   const deleteCategoryMutation = useMutation({
     mutationFn: async (categoryId: number) => {
       const response = await apiRequest('DELETE', `/api/categories/${categoryId}`, {});
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
       toast({ title: adminT('categories.notifications.categoryDeleted'), description: adminT('categories.notifications.categoryDeletedDesc') });
     },
     onError: (error: any) => {
       console.error("Category deletion error:", error);
       toast({ title: adminT('common.error'), description: adminT('categories.notifications.deleteError'), variant: "destructive" });
-    }
-  });
-
-  const reorderCategoriesMutation = useMutation({
-    mutationFn: async (categoryOrders: { id: number; sortOrder: number }[]) => {
-      const response = await fetch('/api/categories/reorder', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ categoryOrders }),
-      });
-      if (!response.ok) throw new Error('Failed to reorder categories');
-      return await response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
-      toast({ title: adminT('categories.notifications.orderUpdated'), description: adminT('categories.notifications.orderUpdatedDesc') });
-    },
-    onError: (error: any) => {
-      console.error("Category reordering error:", error);
-      toast({ title: adminT('common.error'), description: adminT('categories.notifications.reorderError'), variant: "destructive" });
     }
   });
 
@@ -2934,109 +2720,54 @@ export default function AdminDashboard() {
                 
                 {/* Products Pagination */}
                 {productsTotalPages > 1 && (
-                  <div className="px-4 py-3 border-t bg-gray-50">
-                    {/* Mobile: Stack info and controls */}
-                    <div className="sm:hidden space-y-2">
-                      <div className="text-center text-xs text-gray-600">
-                        {adminT('common.showing', 'Показано')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {adminT('common.of', 'из')} {productsTotal}
-                      </div>
-                      <div className="flex items-center justify-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setProductsPage(1)}
-                          disabled={productsPage === 1}
-                          title="Первая страница"
-                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          ⟨⟨
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
-                          disabled={productsPage === 1}
-                          title="Предыдущая страница"
-                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                        </Button>
-                        <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
-                          {productsPage}/{productsTotalPages}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
-                          disabled={productsPage === productsTotalPages}
-                          title="Следующая страница"
-                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setProductsPage(productsTotalPages)}
-                          disabled={productsPage === productsTotalPages}
-                          title="Последняя страница"
-                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          ⟩⟩
-                        </Button>
-                      </div>
+                  <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
+                    <div className="flex items-center gap-2 text-sm text-gray-700">
+                      <span>{adminT('common.showing', 'Показано')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {adminT('common.of', 'из')} {productsTotal}</span>
                     </div>
-                    
-                    {/* Desktop: Original layout */}
-                    <div className="hidden sm:flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <span>{adminT('common.showing', 'Показано')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {adminT('common.of', 'из')} {productsTotal}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setProductsPage(1)}
-                          disabled={productsPage === 1}
-                          title="Первая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                        >
-                          ⟨⟨
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
-                          disabled={productsPage === 1}
-                          title="Предыдущая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                        </Button>
-                        <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
-                          {productsPage} из {productsTotalPages}
-                        </span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
-                          disabled={productsPage === productsTotalPages}
-                          title="Следующая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setProductsPage(productsTotalPages)}
-                          disabled={productsPage === productsTotalPages}
-                          title="Последняя страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                        >
-                          ⟩⟩
-                        </Button>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setProductsPage(1)}
+                        disabled={productsPage === 1}
+                        title="Первая страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                      >
+                        ⟨⟨
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
+                        disabled={productsPage === 1}
+                        title="Предыдущая страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                        {productsPage} из {productsTotalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
+                        disabled={productsPage === productsTotalPages}
+                        title="Следующая страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setProductsPage(productsTotalPages)}
+                        disabled={productsPage === productsTotalPages}
+                        title="Последняя страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                      >
+                        ⟩⟩
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -3075,44 +2806,98 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 {(categories as any[] || []).length > 0 ? (
-                  <div className="space-y-4" style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
-                    <div className="text-sm text-gray-600 mb-4">
-                      {adminT('categories.dragToReorder', 'Перетащите категории для изменения порядка отображения')}
-                    </div>
-                    <DndContext 
-                      sensors={sensors}
-                      collisionDetection={closestCenter}
-                      onDragEnd={handleCategoryDragEnd}
-                    >
-                      <SortableContext 
-                        items={(categories as any[]).map((cat: any) => cat.id)}
-                        strategy={verticalListSortingStrategy}
-                      >
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                          {(categories as any[] || []).map((category: any) => (
-                            <SortableCategoryItem
-                              key={category.id}
-                              category={category}
-                              onEdit={(category) => {
-                                setEditingCategory(category);
-                                setIsCategoryFormOpen(true);
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {(categories as any[] || []).map((category: any) => (
+                      <Card key={category.id} className="group hover:shadow-md transition-shadow duration-200 h-[140px] flex flex-col">
+                        <CardContent className="p-4 flex flex-col h-full">
+                          <div className="flex items-start justify-between mb-2 flex-1">
+                            <div className="flex-1 min-w-0 text-left pr-2">
+                              <button
+                                onClick={() => {
+                                  setEditingCategory(category);
+                                  setIsCategoryFormOpen(true);
+                                }}
+                                className="font-bold text-base hover:text-blue-600 cursor-pointer text-left block w-full truncate leading-tight"
+                              >
+                                {category.name}
+                              </button>
+                              {category.description && (
+                                <p className="text-xs text-gray-500 mt-1 line-clamp-1 text-left">{category.description}</p>
+                              )}
+                            </div>
+                            <div className="flex-shrink-0">
+                              <div className="text-2xl">{category.icon}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between mt-auto">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedCategoryFilter(category.id.toString());
+                                setActiveTab("products");
                               }}
-                              onDelete={(id) => deleteCategoryMutation.mutate(id)}
-                              adminT={adminT}
-                              isRTL={isRTL}
-                              setActiveTab={setActiveTab}
-                              setSelectedCategory={setSelectedCategory}
-                            />
-                          ))}
-                        </div>
-                      </SortableContext>
-                    </DndContext>
+                              className="text-xs hover:bg-blue-50 hover:border-blue-300 h-7"
+                            >
+                              <Package className="h-3 w-3 mr-1" />
+{category.products?.length || 0} {adminT('products.items', 'товаров')}
+                            </Button>
+                            <div className="flex items-center gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 hover:bg-blue-50"
+                                onClick={() => {
+                                  setEditingCategory(category);
+                                  setIsCategoryFormOpen(true);
+                                }}
+                              >
+                                <Edit2 className="h-3 w-3 text-blue-600" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-50">
+                                    <Trash2 className="h-3 w-3 text-red-600" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle className="text-sm sm:text-base">{adminT('categories.deleteCategoryConfirm')}</AlertDialogTitle>
+                                    <AlertDialogDescription className="text-xs sm:text-sm">
+                                      {adminT('categories.deleteCategoryWarning').replace('{name}', category.name)}
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                                    <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">{commonT('buttons.cancel')}</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => deleteCategoryMutation.mutate(category.id)}
+                                      className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 focus:bg-red-700 data-[state=open]:bg-red-700 transition-colors duration-200 text-xs sm:text-sm"
+                                      style={{ backgroundColor: 'rgb(220 38 38)', borderColor: 'rgb(220 38 38)' }}
+                                      onMouseEnter={(e) => {
+                                        e.currentTarget.style.backgroundColor = 'rgb(185 28 28)';
+                                        e.currentTarget.style.borderColor = 'rgb(185 28 28)';
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        e.currentTarget.style.backgroundColor = 'rgb(220 38 38)';
+                                        e.currentTarget.style.borderColor = 'rgb(220 38 38)';
+                                      }}
+                                    >
+                                      {adminT('common.delete', 'Удалить')}
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
                 ) : (
-                  <div className={`text-center py-8 ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <div className="text-center py-8">
                     <Utensils className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className={`text-lg font-medium text-gray-900 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.noCategories', 'Нет категорий')}</h3>
-                    <p className={`text-gray-500 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.addFirstCategory', 'Начните с добавления первой категории')}</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">{adminT('categories.noCategories')}</h3>
+                    <p className="text-gray-500 text-sm">{adminT('categories.addFirstCategory')}</p>
                   </div>
                 )}
               </CardContent>
@@ -3703,109 +3488,54 @@ export default function AdminDashboard() {
 
                     {/* Orders Pagination */}
                     {ordersResponse?.totalPages > 1 && (
-                      <div className="px-4 py-3 border-t bg-gray-50 mt-4">
-                        {/* Mobile: Stack info and controls */}
-                        <div className="sm:hidden space-y-2">
-                          <div className="text-center text-xs text-gray-600">
-                            Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}
-                          </div>
-                          <div className="flex items-center justify-center gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setOrdersPage(1)}
-                              disabled={ordersResponse.page === 1}
-                              title="Первая страница"
-                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                            >
-                              ⟨⟨
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
-                              disabled={ordersResponse.page === 1}
-                              title="Предыдущая страница"
-                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                            >
-                              <ChevronLeft className="h-4 w-4" />
-                            </Button>
-                            <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
-                              {ordersResponse.page}/{ordersResponse.totalPages}
-                            </span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
-                              disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Следующая страница"
-                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                            >
-                              <ChevronRight className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setOrdersPage(ordersResponse.totalPages)}
-                              disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Последняя страница"
-                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                            >
-                              ⟩⟩
-                            </Button>
-                          </div>
+                      <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50 mt-4">
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <span>Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}</span>
                         </div>
-                        
-                        {/* Desktop: Original layout */}
-                        <div className="hidden sm:flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-sm text-gray-700">
-                            <span>Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setOrdersPage(1)}
-                              disabled={ordersResponse.page === 1}
-                              title="Первая страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                            >
-                              ⟨⟨
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
-                              disabled={ordersResponse.page === 1}
-                              title="Предыдущая страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                            >
-                              <ChevronLeft className="h-4 w-4" />
-                            </Button>
-                            <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
-                              {ordersResponse.page} из {ordersResponse.totalPages}
-                            </span>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
-                              disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Следующая страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                            >
-                              <ChevronRight className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setOrdersPage(ordersResponse.totalPages)}
-                              disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Последняя страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                            >
-                              ⟩⟩
-                            </Button>
-                          </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setOrdersPage(1)}
+                            disabled={ordersResponse.page === 1}
+                            title="Первая страница"
+                            className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          >
+                            ⟨⟨
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
+                            disabled={ordersResponse.page === 1}
+                            title="Предыдущая страница"
+                            className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                            {ordersResponse.page} из {ordersResponse.totalPages}
+                          </span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
+                            disabled={ordersResponse.page === ordersResponse.totalPages}
+                            title="Следующая страница"
+                            className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setOrdersPage(ordersResponse.totalPages)}
+                            disabled={ordersResponse.page === ordersResponse.totalPages}
+                            title="Последняя страница"
+                            className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          >
+                            ⟩⟩
+                          </Button>
                         </div>
                       </div>
                     )}
@@ -4054,109 +3784,54 @@ export default function AdminDashboard() {
                 
                 {/* Users Pagination */}
                 {usersTotalPages > 1 && (
-                  <div className="px-4 py-3 border-t bg-gray-50">
-                    {/* Mobile: Stack info and controls */}
-                    <div className="sm:hidden space-y-2">
-                      <div className="text-center text-xs text-gray-600">
-                        Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}
-                      </div>
-                      <div className="flex items-center justify-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setUsersPage(1)}
-                          disabled={usersPage === 1}
-                          title="Первая страница"
-                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          ⟨⟨
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
-                          disabled={usersPage === 1}
-                          title="Предыдущая страница"
-                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                        </Button>
-                        <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
-                          {usersPage}/{usersTotalPages}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
-                          disabled={usersPage === usersTotalPages}
-                          title="Следующая страница"
-                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setUsersPage(usersTotalPages)}
-                          disabled={usersPage === usersTotalPages}
-                          title="Последняя страница"
-                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          ⟩⟩
-                        </Button>
-                      </div>
+                  <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50">
+                    <div className="flex items-center gap-2 text-sm text-gray-700">
+                      <span>Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}</span>
                     </div>
-                    
-                    {/* Desktop: Original layout */}
-                    <div className="hidden sm:flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <span>Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setUsersPage(1)}
-                          disabled={usersPage === 1}
-                          title="Первая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                        >
-                          ⟨⟨
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
-                          disabled={usersPage === 1}
-                          title="Предыдущая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                        </Button>
-                        <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
-                          {usersPage} из {usersTotalPages}
-                        </span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
-                          disabled={usersPage === usersTotalPages}
-                          title="Следующая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setUsersPage(usersTotalPages)}
-                          disabled={usersPage === usersTotalPages}
-                          title="Последняя страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                        >
-                          ⟩⟩
-                        </Button>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUsersPage(1)}
+                        disabled={usersPage === 1}
+                        title="Первая страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                      >
+                        ⟨⟨
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
+                        disabled={usersPage === 1}
+                        title="Предыдущая страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                        {usersPage} из {usersTotalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
+                        disabled={usersPage === usersTotalPages}
+                        title="Следующая страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUsersPage(usersTotalPages)}
+                        disabled={usersPage === usersTotalPages}
+                        title="Последняя страница"
+                        className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                      >
+                        ⟩⟩
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -4915,10 +4590,6 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
 }
 
 function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
-  const { t: adminT } = useAdminTranslation();
-  const { i18n } = useCommonTranslation();
-  const isRTL = i18n.language === 'he';
-  
   const form = useForm({
     resolver: zodResolver(categorySchema),
     defaultValues: {
@@ -4951,12 +4622,12 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px] mx-4 max-h-[90vh] overflow-y-auto">
-        <DialogHeader className={isRTL ? 'text-right' : 'text-left'}>
-          <DialogTitle className={`text-lg sm:text-xl ${isRTL ? 'text-right' : 'text-left'}`}>
-            {category ? adminT('categories.editTitle', 'Редактировать категорию') : adminT('categories.addTitle', 'Добавить категорию')}
+        <DialogHeader>
+          <DialogTitle className="text-lg sm:text-xl">
+            {category ? "Редактировать категорию" : "Добавить категорию"}
           </DialogTitle>
-          <DialogDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-            {category ? adminT('categories.editDescription', 'Обновите информацию о категории') : adminT('categories.addDescription', 'Добавьте новую категорию товаров')}
+          <DialogDescription className="text-sm">
+            {category ? "Обновите информацию о категории" : "Добавьте новую категорию товаров"}
           </DialogDescription>
         </DialogHeader>
         
@@ -4967,16 +4638,11 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name', 'Название категории')}</FormLabel>
+                  <FormLabel className="text-sm">Название категории</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder={adminT('categories.fields.namePlaceholder', 'Введите название категории')} 
-                      {...field} 
-                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                      dir={isRTL ? 'rtl' : 'ltr'}
-                    />
+                    <Input placeholder="Введите название категории" {...field} className="text-sm" />
                   </FormControl>
-                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -4986,16 +4652,15 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description', 'Описание')}</FormLabel>
+                  <FormLabel className="text-sm">Описание</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder={adminT('categories.fields.descriptionPlaceholder', 'Введите описание категории')}
-                      className={`resize-none text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                      dir={isRTL ? 'rtl' : 'ltr'}
+                      placeholder="Введите описание категории"
+                      className="resize-none text-sm"
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -5012,20 +4677,20 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                 
                 return (
                   <FormItem>
-                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.icon', 'Иконка категории')}</FormLabel>
+                    <FormLabel className="text-sm">Иконка категории</FormLabel>
                     <div className="space-y-3">
                       {/* Current selected icon display */}
-                      <div className={`flex items-center gap-3 p-3 border rounded-lg bg-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div className="flex items-center gap-3 p-3 border rounded-lg bg-gray-50">
                         <span className="text-2xl">{field.value}</span>
                         <div className="flex-1">
-                          <div className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.selectedIcon', 'Выбранная иконка')}</div>
-                          <div className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.clickToSelect', 'Нажмите на иконку ниже для выбора')}</div>
+                          <div className="text-sm font-medium">Выбранная иконка</div>
+                          <div className="text-xs text-gray-500">Нажмите на иконку ниже для выбора</div>
                         </div>
                       </div>
                       
                       {/* Icon grid selector */}
                       <div>
-                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.popularIcons', 'Популярные иконки')}:</div>
+                        <div className="text-xs text-gray-600 mb-2">Популярные иконки:</div>
                         <div className="grid grid-cols-8 gap-2">
                           {commonIcons.map((icon) => (
                             <Button
@@ -5047,21 +4712,20 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                       
                       {/* Custom icon input */}
                       <div>
-                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.customIcon', 'Или введите свою иконку')}:</div>
+                        <div className="text-xs text-gray-600 mb-2">Или введите свою иконку:</div>
                         <FormControl>
                           <Input 
-                            placeholder={adminT('categories.iconPlaceholder', '🍽️ Введите эмодзи')}
+                            placeholder="🍽️ Введите эмодзи"
                             value={field.value}
                             onChange={(e) => field.onChange(e.target.value)}
-                            className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                            dir={isRTL ? 'rtl' : 'ltr'}
+                            className="text-sm"
                           />
                         </FormControl>
                       </div>
                       
                       {/* Image upload option */}
                       <div>
-                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.uploadImage', 'Или загрузите изображение')}:</div>
+                        <div className="text-xs text-gray-600 mb-2">Или загрузите изображение:</div>
                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-orange-300 transition-colors">
                           <ImageUpload
                             value=""
@@ -5071,33 +4735,25 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                               }
                             }}
                           />
-                          <div className={`text-xs text-gray-400 mt-2 text-center ${isRTL ? 'text-right' : 'text-left'}`}>
-                            {adminT('categories.recommendedSize', 'Рекомендуемый размер: 64×64 пикселей')}
+                          <div className="text-xs text-gray-400 mt-2 text-center">
+                            Рекомендуемый размер: 64×64 пикселей
                           </div>
                         </div>
                       </div>
                     </div>
-                    <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 );
               }}
             />
 
-            <div className={`flex flex-col sm:flex-row justify-end gap-3 ${isRTL ? 'sm:flex-row-reverse rtl:space-x-reverse' : 'space-x-4'}`}>
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={onClose} 
-                className={`text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200 ${isRTL ? 'ml-4' : ''}`}
-              >
-                {adminT('actions.cancel', 'Отмена')}
+            <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
+              <Button type="button" variant="outline" onClick={onClose} className="text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">
+                Отмена
               </Button>
-              <Button 
-                type="submit" 
-                className={`text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
-              >
-                <Save className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                {category ? adminT('actions.update', 'Обновить') : adminT('actions.create', 'Создать')}  
+              <Button type="submit" className="text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200">
+                <Save className="mr-2 h-4 w-4" />
+                {category ? "Обновить" : "Создать"}  
               </Button>
             </div>
           </form>
