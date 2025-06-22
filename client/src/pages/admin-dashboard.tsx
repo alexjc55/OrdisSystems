@@ -2496,7 +2496,7 @@ export default function AdminDashboard() {
                                                 : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
                                             )}
                                           </div>
-                                          <div className="text-orange-600 text-xs font-medium">
+                                          <div className="text-orange-600 text-xs font-medium" dir="ltr">
                                             -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
                                           </div>
                                         </div>
