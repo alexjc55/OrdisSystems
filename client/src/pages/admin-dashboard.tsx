@@ -137,6 +137,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
 }
 
 import { 
+  Package,
   Plus, 
   Edit2, 
   Edit,
