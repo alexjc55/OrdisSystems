@@ -325,11 +325,12 @@
   }
 
   /* RTL support for admin tabs */
-  .admin-tabs-list[dir="rtl"] {
+  .rtl-tabs-reverse {
+    flex-direction: row-reverse !important;
     direction: rtl !important;
   }
 
-  .admin-tabs-list[dir="rtl"] .admin-tabs-trigger {
+  .rtl-tabs-reverse .admin-tabs-trigger {
     text-align: right !important;
   }
 

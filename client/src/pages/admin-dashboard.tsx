@@ -2116,7 +2116,7 @@ export default function AdminDashboard() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
           <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
-            <TabsList className={`admin-tabs-list flex w-full overflow-x-auto gap-1 ${isRTL ? 'justify-start' : 'justify-start'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+            <TabsList className={`admin-tabs-list ${isRTL ? 'rtl-tabs-reverse' : ''} flex w-full overflow-x-auto gap-1`}>
               {isRTL ? (
                 // RTL order: reverse the tab order
                 <>
