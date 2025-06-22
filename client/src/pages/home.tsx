@@ -55,8 +55,6 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [discountFilter, setDiscountFilter] = useState("all");
   const carouselApiRef = useRef<any>(null);
@@ -267,7 +265,7 @@ export default function Home() {
                 {storeSettings?.workingHours && (
                   <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
                     <div className="p-6">
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full group-hover:scale-110 transition-transform duration-300">
                           <Clock className="h-5 w-5 text-white" />
                         </div>
@@ -355,7 +353,7 @@ export default function Home() {
                 {(storeSettings?.contactPhone || storeSettings?.contactEmail) && (
                   <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
                     <div className="p-6">
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-full group-hover:scale-110 transition-transform duration-300">
                           <Phone className="h-5 w-5 text-white" />
                         </div>
@@ -385,7 +383,7 @@ export default function Home() {
                 <div className="flex">
                   <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden flex-1 flex flex-col">
                     <div className="p-6 flex-1 flex flex-col">
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full group-hover:scale-110 transition-transform duration-300">
                           <CreditCard className="h-5 w-5 text-white" />
                         </div>
@@ -556,52 +554,42 @@ export default function Home() {
                       ))}
                     </div>
                   ) : (
-                    <div className="w-full relative overflow-hidden">
-                      <div 
-                        className="flex transition-transform duration-300 ease-in-out"
-                        style={{
-                          transform: `translateX(-${currentSlide * (100 / slidesPerPage)}%)`,
-                          width: `${(specialOffers.length / slidesPerPage) * 100}%`
+                    <div className="w-full relative">
+                      <Carousel
+                        opts={{
+                          align: "start",
+                          loop: false,
+                          dragFree: false,
+                          containScroll: "trimSnaps",
+                          skipSnaps: false,
                         }}
-                        onTouchStart={(e) => {
-                          const touch = e.touches[0];
-                          setTouchStart(touch.clientX);
-                        }}
-                        onTouchMove={(e) => {
-                          if (!touchStart) return;
-                          const touch = e.touches[0];
-                          setTouchEnd(touch.clientX);
-                        }}
-                        onTouchEnd={() => {
-                          if (!touchStart || !touchEnd) return;
-                          
-                          const distance = touchStart - touchEnd;
-                          const isLeftSwipe = distance > 50;
-                          const isRightSwipe = distance < -50;
-
-                          if (isLeftSwipe && currentSlide < totalSlides - slidesPerPage) {
-                            setCurrentSlide(prev => Math.min(prev + 1, totalSlides - slidesPerPage));
+                        className="w-full"
+                        setApi={(api) => {
+                          carouselApiRef.current = api;
+                          if (api) {
+                            api.on('select', () => {
+                              const currentSlideIndex = api.selectedScrollSnap();
+                              setCurrentSlide(currentSlideIndex);
+                            });
                           }
-                          if (isRightSwipe && currentSlide > 0) {
-                            setCurrentSlide(prev => Math.max(prev - 1, 0));
-                          }
-                          
-                          setTouchStart(null);
-                          setTouchEnd(null);
                         }}
                       >
-                        {specialOffers.map((product) => (
-                          <div 
-                            key={product.id}
-                            className={`flex-shrink-0 px-2 ${isMobile ? 'w-full' : 'w-1/3'}`}
-                          >
-                            <ProductCard 
-                              product={product} 
-                              onCategoryClick={handleCategorySelect}
-                            />
-                          </div>
-                        ))}
-                      </div>
+                        <CarouselContent className="-ml-2 md:-ml-4">
+                          {specialOffers.map((product) => (
+                            <CarouselItem 
+                              key={product.id} 
+                              className="pl-2 md:pl-4 basis-full md:basis-1/3"
+                            >
+                              <div className="p-1">
+                                <ProductCard 
+                                  product={product} 
+                                  onCategoryClick={handleCategorySelect}
+                                />
+                              </div>
+                            </CarouselItem>
+                          ))}
+                        </CarouselContent>
+                      </Carousel>
 
                       {/* Navigation Dots */}
                       {specialOffers.length > slidesPerPage && (
