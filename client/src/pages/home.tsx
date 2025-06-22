@@ -55,8 +55,6 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [discountFilter, setDiscountFilter] = useState("all");
   const carouselApiRef = useRef<any>(null);
@@ -175,34 +173,9 @@ export default function Home() {
   
   // Handle carousel navigation
   const goToSlide = (pageIndex: number) => {
-    console.log('Going to page:', pageIndex, 'current page:', Math.floor(currentSlide / slidesPerPage));
-    setCurrentSlide(pageIndex);
-  };
-
-  // Touch handlers for mobile swipe
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(0);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
-    
-    const currentPage = Math.floor(currentSlide / slidesPerPage);
-    
-    if (isLeftSwipe && currentPage < totalPages - 1) {
-      goToSlide(currentPage + 1);
-    }
-    if (isRightSwipe && currentPage > 0) {
-      goToSlide(currentPage - 1);
+    if (carouselApiRef.current) {
+      const slideIndex = pageIndex * slidesPerPage;
+      carouselApiRef.current.scrollTo(slideIndex);
     }
   };
 
@@ -533,17 +506,12 @@ export default function Home() {
                       <div className="hidden md:flex items-center gap-2">
                         <button
                           onClick={() => {
-                            const isRTL = currentLanguage === 'he';
-                            
-                            if (isRTL) {
-                              // RTL: left arrow goes to next page
-                              if (currentSlide < totalPages - 1) {
-                                goToSlide(currentSlide + 1);
-                              }
-                            } else {
-                              // LTR: left arrow goes to previous page
-                              if (currentSlide > 0) {
-                                goToSlide(currentSlide - 1);
+                            if (carouselApiRef.current) {
+                              const isRTL = currentLanguage === 'he';
+                              if (isRTL) {
+                                carouselApiRef.current.scrollNext();
+                              } else {
+                                carouselApiRef.current.scrollPrev();
                               }
                             }
                           }}
@@ -553,17 +521,12 @@ export default function Home() {
                         </button>
                         <button
                           onClick={() => {
-                            const isRTL = currentLanguage === 'he';
-                            
-                            if (isRTL) {
-                              // RTL: right arrow goes to previous page
-                              if (currentSlide > 0) {
-                                goToSlide(currentSlide - 1);
-                              }
-                            } else {
-                              // LTR: right arrow goes to next page
-                              if (currentSlide < totalPages - 1) {
-                                goToSlide(currentSlide + 1);
+                            if (carouselApiRef.current) {
+                              const isRTL = currentLanguage === 'he';
+                              if (isRTL) {
+                                carouselApiRef.current.scrollPrev();
+                              } else {
+                                carouselApiRef.current.scrollNext();
                               }
                             }
                           }}
@@ -590,58 +553,54 @@ export default function Home() {
                     </div>
                   ) : (
                     <div className="w-full relative">
-                      {/* Custom Carousel Implementation */}
-                      <div 
-                        className="overflow-hidden"
-                        onTouchStart={handleTouchStart}
-                        onTouchMove={handleTouchMove}
-                        onTouchEnd={handleTouchEnd}
+                      <Carousel
+                        opts={{
+                          align: "start",
+                          loop: false,
+                          skipSnaps: false,
+                          slidesToScroll: isMobile ? 1 : 3,
+                        }}
+                        className="w-full"
+                        setApi={(api) => {
+                          carouselApiRef.current = api;
+                          if (api) {
+                            api.on('select', () => {
+                              const currentSlideIndex = api.selectedScrollSnap();
+                              setCurrentSlide(currentSlideIndex);
+                            });
+                          }
+                        }}
                       >
-                        <div 
-                          className="flex transition-transform duration-300 ease-in-out"
-                          style={{
-                            transform: `translateX(-${currentSlide * 100}%)`,
-                            width: `${totalPages * 100}%`
-                          }}
-                        >
-                          {Array.from({ length: totalPages }).map((_, pageIndex) => (
-                            <div key={pageIndex} className="flex" style={{ width: `${100 / totalPages}%` }}>
-                              {specialOffers
-                                .slice(pageIndex * slidesPerPage, (pageIndex + 1) * slidesPerPage)
-                                .map((product) => (
-                                  <div 
-                                    key={product.id} 
-                                    className="flex-shrink-0"
-                                    style={{ width: `${100 / slidesPerPage}%` }}
-                                  >
-                                    <div className="relative flex-1 flex px-1">
-                                      <div className="transform scale-90 origin-center w-full relative">
-                                        <ProductCard 
-                                          product={product} 
-                                          onCategoryClick={handleCategorySelect}
-                                        />
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))}
-                            </div>
+                        <CarouselContent className="ml-0">
+                          {specialOffers.map((product) => (
+                            <CarouselItem 
+                              key={product.id} 
+                              className={`pl-4 ${isMobile ? 'basis-full' : 'basis-1/3'}`}
+                            >
+                              <div className="relative flex-1 flex">
+                                <div className="transform scale-90 origin-center w-full relative">
+                                  <ProductCard 
+                                    product={product} 
+                                    onCategoryClick={handleCategorySelect}
+                                  />
+                                </div>
+                              </div>
+                            </CarouselItem>
                           ))}
-                        </div>
-                      </div>
+                        </CarouselContent>
+                      </Carousel>
 
                       {/* Navigation Dots */}
                       {specialOffers.length > slidesPerPage && (
                         <div className="flex justify-center mt-6 space-x-2">
                           {[...Array(totalPages)].map((_, index) => {
-                            const isActive = currentSlide === index;
+                            const currentPage = Math.floor(currentSlide / slidesPerPage);
+                            const isActive = currentPage === index;
                             
                             return (
                               <button
                                 key={index}
-                                onClick={() => {
-                                  console.log('Dot clicked:', index, 'current slide:', currentSlide);
-                                  goToSlide(index);
-                                }}
+                                onClick={() => goToSlide(index)}
                                 className={`w-2 h-2 rounded-full transition-all duration-200 ${
                                   isActive 
                                     ? 'bg-orange-500 w-6' 
