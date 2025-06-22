@@ -240,7 +240,8 @@
     "preparingOrders": "הזמנות בהכנה",
     "readyOrders": "הזמנות מוכנות",
     "deliveredOrders": "הזמנות שנמסרו",
-    "cancelledOrders": "הזמנות שבוטלו"
+    "cancelledOrders": "הזמנות שבוטלו",
+    "addProduct": "הוסף מוצר"
   },
   "users": {
     "title": "משתמשים",

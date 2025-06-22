@@ -241,7 +241,8 @@
     "preparingOrders": "Preparing Orders",
     "readyOrders": "Ready Orders",
     "deliveredOrders": "Delivered Orders",
-    "cancelledOrders": "Cancelled Orders"
+    "cancelledOrders": "Cancelled Orders",
+    "addProduct": "Add Product"
   },
   "users": {
     "title": "Users",
