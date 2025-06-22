@@ -117,7 +117,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
             }}
             className="cursor-pointer"
           >
-            <span className="text-xs font-medium text-orange-600 hover:text-orange-700 transition-colors bg-orange-50/80 px-2.5 py-1 rounded-full backdrop-blur-sm border border-orange-200/50">
+            <span className="text-xs font-medium text-white hover:text-white transition-colors bg-orange-500 hover:bg-orange-600 px-2.5 py-1 rounded-full backdrop-blur-sm shadow-sm">
               {category.products?.length || 0} {adminT('categories.products')}
             </span>
           </div>
