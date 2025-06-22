@@ -72,6 +72,94 @@ export default function AuthPage() {
     return messages[currentLanguage]?.[key as MessageKey] || messages.ru[key as MessageKey];
   };
 
+  // Dynamic UI text based on current language
+  const getAuthText = (key: string) => {
+    const authTexts: Record<string, Record<string, string>> = {
+      ru: {
+        title: "Вход в систему",
+        description: "Войдите в свой аккаунт или создайте новый",
+        login: "Вход",
+        register: "Регистрация",
+        username: "Имя пользователя",
+        usernamePlaceholder: "Введите имя пользователя",
+        usernameRegPlaceholder: "Выберите имя пользователя",
+        password: "Пароль",
+        passwordPlaceholder: "Введите пароль",
+        createPasswordPlaceholder: "Создайте пароль",
+        confirmPassword: "Подтвердите пароль",
+        confirmPasswordPlaceholder: "Повторите пароль",
+        email: "Email",
+        emailPlaceholder: "Введите email (необязательно)",
+        firstName: "Имя",
+        firstNamePlaceholder: "Ваше имя",
+        lastName: "Фамилия",
+        lastNamePlaceholder: "Ваша фамилия",
+        phone: "Телефон",
+        phonePlaceholder: "Номер телефона",
+        loginButton: "Войти",
+        registerButton: "Зарегистрироваться",
+        loggingIn: "Вход...",
+        registering: "Регистрация...",
+        backToHome: "Вернуться на главную"
+      },
+      en: {
+        title: "Sign In",
+        description: "Sign in to your account or create a new one",
+        login: "Login",
+        register: "Register",
+        username: "Username",
+        usernamePlaceholder: "Enter username",
+        usernameRegPlaceholder: "Choose username",
+        password: "Password",
+        passwordPlaceholder: "Enter password",
+        createPasswordPlaceholder: "Create password",
+        confirmPassword: "Confirm Password",
+        confirmPasswordPlaceholder: "Repeat password",
+        email: "Email",
+        emailPlaceholder: "Enter email (optional)",
+        firstName: "First Name",
+        firstNamePlaceholder: "Your first name",
+        lastName: "Last Name",
+        lastNamePlaceholder: "Your last name",
+        phone: "Phone",
+        phonePlaceholder: "Phone number",
+        loginButton: "Sign In",
+        registerButton: "Register",
+        loggingIn: "Signing in...",
+        registering: "Registering...",
+        backToHome: "Back to Home"
+      },
+      he: {
+        title: "כניסה למערכת",
+        description: "התחבר לחשבון שלך או צור חשבון חדש",
+        login: "כניסה",
+        register: "הרשמה",
+        username: "שם משתמש",
+        usernamePlaceholder: "הכנס שם משתמש",
+        usernameRegPlaceholder: "בחר שם משתמש",
+        password: "סיסמה",
+        passwordPlaceholder: "הכנס סיסמה",
+        createPasswordPlaceholder: "צור סיסמה",
+        confirmPassword: "אשר סיסמה",
+        confirmPasswordPlaceholder: "חזור על הסיסמה",
+        email: "אימייל",
+        emailPlaceholder: "הכנס אימייל (אופציונלי)",
+        firstName: "שם פרטי",
+        firstNamePlaceholder: "השם הפרטי שלך",
+        lastName: "שם משפחה",
+        lastNamePlaceholder: "שם המשפחה שלך",
+        phone: "טלפון",
+        phonePlaceholder: "מספר טלפון",
+        loginButton: "כניסה",
+        registerButton: "הירשם",
+        loggingIn: "מתחבר...",
+        registering: "נרשם...",
+        backToHome: "חזרה לבית"
+      }
+    };
+    return authTexts[currentLanguage]?.[key] || authTexts.ru[key] || key;
+  };
+
   const loginSchema = z.object({
     username: z.string().min(1, getValidationMessage('usernameRequired')),
     password: z.string().min(1, getValidationMessage('passwordRequired')),
@@ -156,7 +244,7 @@ export default function AuthPage() {
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="h-4 w-4" />
-          {t('auth.backToHome')}
+          {getAuthText('backToHome')}
         </Button>
       </div>
       
@@ -198,26 +286,26 @@ export default function AuthPage() {
         {/* Auth Forms */}
         <Card className="w-full max-w-md mx-auto">
           <CardHeader>
-            <CardTitle>{t('auth.title')}</CardTitle>
+            <CardTitle>{getAuthText('title')}</CardTitle>
             <CardDescription>
-              {t('auth.description')}
+              {getAuthText('description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">{t('auth.login')}</TabsTrigger>
-                <TabsTrigger value="register">{t('auth.register')}</TabsTrigger>
+                <TabsTrigger value="login">{getAuthText('login')}</TabsTrigger>
+                <TabsTrigger value="register">{getAuthText('register')}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="login" className="space-y-4">
                 <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="username">{t('auth.username')}</Label>
+                    <Label htmlFor="username">{getAuthText('username')}</Label>
                     <Input
                       id="username"
                       {...loginForm.register("username")}
-                      placeholder={t('auth.usernamePlaceholder')}
+                      placeholder={getAuthText('usernamePlaceholder')}
                     />
                     {loginForm.formState.errors.username && (
                       <p className="text-sm text-red-600">
@@ -227,12 +315,12 @@ export default function AuthPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="password">{t('auth.password')}</Label>
+                    <Label htmlFor="password">{getAuthText('password')}</Label>
                     <Input
                       id="password"
                       type="password"
                       {...loginForm.register("password")}
-                      placeholder={t('auth.passwordPlaceholder')}
+                      placeholder={getAuthText('passwordPlaceholder')}
                     />
                     {loginForm.formState.errors.password && (
                       <p className="text-sm text-red-600">
@@ -249,10 +337,10 @@ export default function AuthPage() {
                     {loginMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t('auth.loggingIn')}
+                        {getAuthText('loggingIn')}
                       </>
                     ) : (
-                      t('auth.loginButton')
+                      getAuthText('loginButton')
                     )}
                   </Button>
                 </form>
@@ -261,11 +349,11 @@ export default function AuthPage() {
               <TabsContent value="register" className="space-y-4">
                 <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="reg-username">{t('auth.username')} *</Label>
+                    <Label htmlFor="reg-username">{getAuthText('username')} *</Label>
                     <Input
                       id="reg-username"
                       {...registerForm.register("username")}
-                      placeholder={t('auth.usernameRegPlaceholder')}
+                      placeholder={getAuthText('usernameRegPlaceholder')}
                     />
                     {registerForm.formState.errors.username && (
                       <p className="text-sm text-red-600">
