@@ -196,6 +196,7 @@
   "categories": {
     "title": "Категории",
     "description": "Простое управление категориями",
+    "products": "товаров",
     "addCategory": "Добавить категорию",
     "editCategory": "Редактировать категорию",
     "deleteCategory": "Удалить категорию",

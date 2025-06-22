@@ -187,6 +187,7 @@
   "categories": {
     "title": "Categories",
     "description": "Simple category management",
+    "products": "products",
     "addCategory": "Add Category",
     "editCategory": "Edit Category",
     "deleteCategory": "Delete Category",

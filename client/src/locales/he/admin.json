@@ -185,8 +185,9 @@
     "uploading": "מעלה..."
   },
   "categories": {
-    "title": "קטגוריות",
+    "title": "קטגוריות", 
     "description": "ניהול קטגוריות פשוט",
+    "products": "מוצרים",
     "addCategory": "הוסף קטגוריה",
     "editCategory": "ערוך קטגוריה",
     "deleteCategory": "מחק קטגוריה",
