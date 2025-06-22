@@ -174,15 +174,19 @@ export default function Home() {
   // Handle carousel navigation
   const goToSlide = (pageIndex: number) => {
     if (carouselApiRef.current) {
-      const slideIndex = pageIndex * slidesPerPage;
-      console.log('Going to slide:', slideIndex, 'for page:', pageIndex, 'total slides:', carouselApiRef.current.scrollSnapList().length);
+      // For mobile: each page is one slide
+      // For desktop: need to calculate based on slidesPerPage
+      const slideIndex = isMobile ? pageIndex : pageIndex * slidesPerPage;
+      const totalSlides = carouselApiRef.current.scrollSnapList().length;
+      
+      console.log('Going to slide:', slideIndex, 'for page:', pageIndex, 'total slides:', totalSlides, 'slides per page:', slidesPerPage);
       
       // Use scrollTo with proper index validation
-      if (slideIndex < carouselApiRef.current.scrollSnapList().length) {
+      if (slideIndex < totalSlides) {
         carouselApiRef.current.scrollTo(slideIndex);
         console.log('Scrolled to slide:', slideIndex);
       } else {
-        console.warn('Invalid slide index:', slideIndex);
+        console.warn('Invalid slide index:', slideIndex, 'max allowed:', totalSlides - 1);
       }
     } else {
       console.warn('Carousel API not available');
@@ -567,7 +571,7 @@ export default function Home() {
                         opts={{
                           align: "start",
                           loop: false,
-                          slidesToScroll: isMobile ? 1 : 3,
+                          slidesToScroll: 1,
                           skipSnaps: false,
                         }}
                         className="w-full mx-auto"
