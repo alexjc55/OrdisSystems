@@ -148,10 +148,10 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
         
         {/* Discount badge - only show if it's a special offer */}
         {product.isSpecialOffer && (
-          <div className="absolute top-2 left-2">
+          <div className="absolute top-2 left-2 rtl:left-auto rtl:right-2">
             <Badge className="bg-orange-500 text-white text-sm px-3 py-1.5 font-semibold shadow-lg">
-              <Star className="w-4 h-4 mr-1.5 fill-current" />
-              {t('discount')}
+              <Star className="w-4 h-4 mr-1.5 rtl:mr-0 rtl:ml-1.5 fill-current" />
+              {storeSettings?.discountBadgeText || 'Скидка'}
             </Badge>
           </div>
         )}
