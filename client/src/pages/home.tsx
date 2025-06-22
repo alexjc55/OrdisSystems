@@ -488,7 +488,7 @@ export default function Home() {
                               
                               <div className="mt-auto">
                                 <Badge className="px-3 py-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold text-sm shadow-md">
-                                  {category.products.length} {t('dishesCount')}
+                                  {products?.filter(p => p.categories?.some(c => c.id === category.id)).length || 0} {t('dishesCount')}
                                 </Badge>
                               </div>
                             </div>
