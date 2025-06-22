@@ -1286,10 +1286,10 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder }: { onClose: () => v
 
   function getUnitDisplay(unit: string) {
     switch (unit) {
-      case 'piece': return 'шт.';
-      case 'kg': return 'кг';
-      case '100g': return 'по 100г';
-      case '100ml': return 'по 100мл';
+      case 'piece': return adminT('products.units.piece');
+      case 'kg': return adminT('products.units.kg');
+      case '100g': return adminT('products.units.per100g');
+      case '100ml': return adminT('products.units.per100ml');
       default: return '';
     }
   }

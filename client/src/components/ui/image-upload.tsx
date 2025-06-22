@@ -151,7 +151,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
           disabled={disabled || uploading}
           className="flex-1"
         >
-          <Upload className="h-4 w-4 mr-2" />
+          <Upload className="h-4 w-4 ltr:mr-2 rtl:ml-2" />
           {uploading ? t('imageUpload.uploading') : t('imageUpload.selectFile')}
         </Button>
         

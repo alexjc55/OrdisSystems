@@ -87,6 +87,12 @@
     "unavailableProducts": "Unavailable Products",
     "preorder": "pre-order",
     "per100g": "per 100g",
+    "units": {
+      "piece": "pcs.",
+      "kg": "kg",
+      "per100g": "per 100g",
+      "per100ml": "per 100ml"
+    },
     "productsWithDiscount": "Products with Discount",
     "noProducts": "No Products",
     "addFirstProduct": "Start by adding your first product",

@@ -87,6 +87,12 @@
     "unavailableProducts": "מוצרים לא זמינים",
     "preorder": "הזמנה מראש",
     "per100g": "ל-100 גרם",
+    "units": {
+      "piece": "יח'",
+      "kg": "ק\"ג",
+      "per100g": "ל-100 גרם",
+      "per100ml": "ל-100 מ\"ל"
+    },
     "productsWithDiscount": "מוצרים בהנחה",
     "noProducts": "אין מוצרים",
     "addFirstProduct": "התחל בהוספת המוצר הראשון שלך",

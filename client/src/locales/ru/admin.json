@@ -88,6 +88,12 @@
     "unavailableProducts": "Недоступные товары",
     "preorder": "предзаказ",
     "per100g": "за 100г",
+    "units": {
+      "piece": "шт.",
+      "kg": "кг",
+      "per100g": "по 100г",
+      "per100ml": "по 100мл"
+    },
     "productsWithDiscount": "Товары со скидкой",
     "noProducts": "Нет товаров",
     "addFirstProduct": "Начните с добавления первого товара",
