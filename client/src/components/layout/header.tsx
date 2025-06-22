@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCartStore } from "@/lib/cart";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
@@ -23,8 +23,29 @@ export default function Header({ onResetView }: HeaderProps) {
   const { t } = useCommonTranslation();
   const { currentLanguage, changeLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const cartItemsCount = items.length; // Count unique products, not total quantity
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isMobileMenuOpen &&
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [isMobileMenuOpen]);
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
@@ -183,7 +204,7 @@ export default function Header({ onResetView }: HeaderProps) {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4 bg-gradient-to-b from-gray-50 to-white">
+          <div ref={mobileMenuRef} className="md:hidden border-t border-gray-200 py-4 bg-gradient-to-b from-gray-50 to-white">
             {/* Close button */}
             <div className="flex justify-end px-4 pb-3">
               <Button
