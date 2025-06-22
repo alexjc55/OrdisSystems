@@ -12,6 +12,8 @@
     "worker": "Работник",
     "customer": "Клиент"
   },
+  "active": "Активный",
+  "inactive": "Неактивный",
   "firstName": "Имя",
   "lastName": "Фамилия", 
   "enterFirstName": "Введите имя",

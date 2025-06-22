@@ -1751,7 +1751,12 @@ export default function AdminDashboard() {
   };
 
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
-    queryKey: ["/api/categories"]
+    queryKey: ["/api/categories", "includeInactive"],
+    queryFn: async () => {
+      const response = await fetch('/api/categories?includeInactive=true');
+      if (!response.ok) throw new Error('Failed to fetch categories');
+      return await response.json();
+    }
   });
 
   const { data: productsResponse, isLoading: productsLoading } = useQuery({

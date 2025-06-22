@@ -12,6 +12,8 @@
     "worker": "Worker",
     "customer": "Customer"
   },
+  "active": "Active",
+  "inactive": "Inactive",
   "firstName": "First Name",
   "lastName": "Last Name",
   "enterFirstName": "Enter first name", 
