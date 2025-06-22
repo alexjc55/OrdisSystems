@@ -11,33 +11,85 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { useCommonTranslation } from "@/hooks/use-language";
+import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
   const { user, loginMutation, registerMutation } = useAuth();
   const { storeSettings } = useStoreSettings();
   const { t } = useCommonTranslation();
+  const { currentLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState("login");
 
+  // Dynamic validation messages based on current language
+  const getValidationMessage = (key: string) => {
+    type MessageKey = 'usernameRequired' | 'passwordRequired' | 'usernameMinLength' | 'passwordMinLength' | 'emailInvalid' | 'firstNameRequired' | 'lastNameRequired' | 'phoneRequired' | 'confirmPasswordRequired' | 'passwordMismatch' | 'usernameMaxLength' | 'usernameFormat';
+    
+    const messages: Record<string, Record<MessageKey, string>> = {
+      ru: {
+        usernameRequired: "Введите имя пользователя",
+        passwordRequired: "Введите пароль",
+        usernameMinLength: "Имя пользователя должно содержать минимум 3 символа",
+        usernameMaxLength: "Имя пользователя не должно превышать 50 символов",
+        usernameFormat: "Имя пользователя может содержать только буквы, цифры и _",
+        passwordMinLength: "Пароль должен содержать минимум 6 символов",
+        emailInvalid: "Введите корректный email",
+        firstNameRequired: "Введите имя",
+        lastNameRequired: "Введите фамилию",
+        phoneRequired: "Введите номер телефона",
+        confirmPasswordRequired: "Подтвердите пароль",
+        passwordMismatch: "Пароли не совпадают"
+      },
+      en: {
+        usernameRequired: "Enter username",
+        passwordRequired: "Enter password",
+        usernameMinLength: "Username must be at least 3 characters",
+        usernameMaxLength: "Username must not exceed 50 characters",
+        usernameFormat: "Username can only contain letters, numbers and _",
+        passwordMinLength: "Password must be at least 6 characters",
+        emailInvalid: "Enter a valid email",
+        firstNameRequired: "Enter first name",
+        lastNameRequired: "Enter last name",
+        phoneRequired: "Enter phone number",
+        confirmPasswordRequired: "Confirm password",
+        passwordMismatch: "Passwords do not match"
+      },
+      he: {
+        usernameRequired: "הכנס שם משתמש",
+        passwordRequired: "הכנס סיסמה",
+        usernameMinLength: "שם המשתמש חייב להכיל לפחות 3 תווים",
+        usernameMaxLength: "שם המשתמש לא יכול לעלות על 50 תווים",
+        usernameFormat: "שם המשתמש יכול להכיל רק אותיות, מספרים ו_",
+        passwordMinLength: "הסיסמה חייבת להכיל לפחות 6 תווים",
+        emailInvalid: "הכנס אימייל תקין",
+        firstNameRequired: "הכנס שם פרטי",
+        lastNameRequired: "הכנס שם משפחה",
+        phoneRequired: "הכנס מספר טלפון",
+        confirmPasswordRequired: "אשר סיסמה",
+        passwordMismatch: "הסיסמאות לא תואמות"
+      }
+    };
+    return messages[currentLanguage]?.[key as MessageKey] || messages.ru[key as MessageKey];
+  };
+
   const loginSchema = z.object({
-    username: z.string().min(1, t('validation.usernameRequired')),
-    password: z.string().min(1, t('validation.passwordRequired')),
+    username: z.string().min(1, getValidationMessage('usernameRequired')),
+    password: z.string().min(1, getValidationMessage('passwordRequired')),
   });
 
   const registerSchema = z.object({
     username: z.string()
-      .min(3, t('validation.usernameMinLength'))
-      .max(50, t('validation.usernameMaxLength'))
-      .regex(/^[a-zA-Z0-9_]+$/, t('validation.usernameFormat')),
-    email: z.string().email(t('validation.emailInvalid')).optional().or(z.literal("")),
-    password: z.string().min(6, t('validation.passwordMinLength')),
+      .min(3, getValidationMessage('usernameMinLength'))
+      .max(50, getValidationMessage('usernameMaxLength'))
+      .regex(/^[a-zA-Z0-9_]+$/, getValidationMessage('usernameFormat')),
+    email: z.string().email(getValidationMessage('emailInvalid')).optional().or(z.literal("")),
+    password: z.string().min(6, getValidationMessage('passwordMinLength')),
     confirmPassword: z.string(),
     firstName: z.string().optional(),
     lastName: z.string().optional(),
     phone: z.string().optional(),
   }).refine((data) => data.password === data.confirmPassword, {
-    message: t('validation.passwordMismatch'),
+    message: getValidationMessage('passwordMismatch'),
     path: ["confirmPassword"],
   });
 
