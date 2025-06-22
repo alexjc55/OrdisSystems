@@ -196,15 +196,15 @@ export default function Header({ onResetView }: HeaderProps) {
                 </Link>
               ) : (user?.role === 'admin' || user?.role === 'worker') ? (
                 /* Admin/Worker - Menu and Management buttons side by side */
-                <div className="flex space-x-2 mx-2">
+                <div className="flex space-x-3 px-4">
                   <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }} className="flex-1">
-                    <div className="flex items-center justify-center px-3 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
+                    <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
                       <Utensils className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                       <span className="font-semibold text-sm">{t('menu')}</span>
                     </div>
                   </Link>
                   <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
-                    <div className="flex items-center justify-center px-3 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer">
+                    <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer">
                       <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                       <span className="font-semibold text-sm">{t('admin')}</span>
                     </div>
@@ -212,15 +212,15 @@ export default function Header({ onResetView }: HeaderProps) {
                 </div>
               ) : (
                 /* Regular user - Menu and Profile buttons side by side */
-                <div className="flex space-x-2 mx-2">
+                <div className="flex space-x-3 px-4">
                   <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }} className="flex-1">
-                    <div className="flex items-center justify-center px-3 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
+                    <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
                       <Utensils className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                       <span className="font-semibold text-sm">{t('menu')}</span>
                     </div>
                   </Link>
                   <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
-                    <div className="flex items-center justify-center px-3 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer">
+                    <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer">
                       <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                       <span className="font-semibold text-sm">{t('navigation.profile')}</span>
                     </div>
