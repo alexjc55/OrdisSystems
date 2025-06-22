@@ -128,12 +128,16 @@ export default function Home() {
   }, []);
 
   // Get special offers (products marked as special offers from active categories only)
-  const specialOffers = allProducts?.filter(product => {
-    const productCategory = categories.find(cat => cat.id === product.categoryId);
-    return product.isAvailable !== false && 
-           product.isSpecialOffer === true && 
-           productCategory?.isActive !== false;
-  }) || [];
+  const specialOffers = useMemo(() => {
+    if (!allProducts || !categories) return [];
+    
+    return allProducts.filter(product => {
+      const productCategory = categories.find(cat => cat.id === product.categoryId);
+      return product.isAvailable !== false && 
+             product.isSpecialOffer === true && 
+             productCategory?.isActive !== false;
+    });
+  }, [allProducts, categories]);
 
   // Display products logic
   const displayProducts = useMemo(() => {

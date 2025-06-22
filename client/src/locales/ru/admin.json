@@ -45,7 +45,13 @@
     "kanban": "Канбан",
     "searchProducts": "Поиск товаров...",
     "error": "Ошибка",
-    "free": "Бесплатно"
+    "free": "Бесплатно",
+    "specialOffers": "Специальные предложения",
+    "search": "Поиск блюд...",
+    "allCategories": "Все категории",
+    "noSearchResults": "Ничего не найдено",
+    "noProductsFound": "Нет товаров",
+    "checkBackLater": "Попробуйте позже"
   },
   "imageUpload": {
     "invalidFormat": "Неверный формат файла",

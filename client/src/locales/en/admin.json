@@ -44,7 +44,13 @@
     "table": "Table",
     "kanban": "Kanban",
     "searchProducts": "Search products...",
-    "free": "Free"
+    "free": "Free",
+    "specialOffers": "Special Offers",
+    "search": "Search dishes...",
+    "allCategories": "All Categories",
+    "noSearchResults": "Nothing found",
+    "noProductsFound": "No products",
+    "checkBackLater": "Check back later"
   },
   "imageUpload": {
     "invalidFormat": "Invalid file format",

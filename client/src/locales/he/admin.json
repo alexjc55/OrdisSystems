@@ -44,7 +44,13 @@
     "table": "טבלה",
     "kanban": "קנבן",
     "searchProducts": "חיפוש מוצרים...",
-    "free": "חינם"
+    "free": "חינם",
+    "specialOffers": "הצעות מיוחדות",
+    "search": "חיפוש מנות...",
+    "allCategories": "כל הקטגוריות",
+    "noSearchResults": "לא נמצא כלום",
+    "noProductsFound": "אין מוצרים",
+    "checkBackLater": "בדוק שוב מאוחר יותר"
   },
   "imageUpload": {
     "invalidFormat": "פורמט קובץ לא חוקי",
