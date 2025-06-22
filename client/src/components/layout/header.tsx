@@ -229,55 +229,48 @@ export default function Header({ onResetView }: HeaderProps) {
               )}
               
               {/* Language Switcher */}
-              <div className="border-t border-gray-200 pt-4 mt-4">
-                <div className="px-4">
-                  <span className="text-sm font-medium text-gray-700 block mb-3">{t('language')}</span>
-                  <div className="flex flex-col space-y-2">
-                    <button
-                      onClick={() => {
-                        changeLanguage('ru');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className={`flex items-center px-3 py-2 rounded-lg text-left transition-colors ${
-                        currentLanguage === 'ru' 
-                          ? 'bg-blue-50 text-blue-600 font-medium' 
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <span className="text-lg mr-3 rtl:ml-3 rtl:mr-0">🇷🇺</span>
-                      <span>Русский</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        changeLanguage('en');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className={`flex items-center px-3 py-2 rounded-lg text-left transition-colors ${
-                        currentLanguage === 'en' 
-                          ? 'bg-blue-50 text-blue-600 font-medium' 
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <span className="text-lg mr-3 rtl:ml-3 rtl:mr-0">🇺🇸</span>
-                      <span>English</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        changeLanguage('he');
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className={`flex items-center px-3 py-2 rounded-lg text-left transition-colors ${
-                        currentLanguage === 'he' 
-                          ? 'bg-blue-50 text-blue-600 font-medium' 
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <span className="text-lg mr-3 rtl:ml-3 rtl:mr-0">🇮🇱</span>
-                      <span>עברית</span>
-                    </button>
+              {(() => {
+                const languages = [
+                  { code: 'ru', flag: '🇷🇺', name: 'Русский' },
+                  { code: 'en', flag: '🇺🇸', name: 'English' },
+                  { code: 'he', flag: '🇮🇱', name: 'עברית' }
+                ];
+                
+                // Don't show language switcher if only 1 language
+                if (languages.length <= 1) return null;
+                
+                // Layout logic: 2 languages = 1 row, 3 languages = 1 row, 4+ languages = 2 rows
+                const shouldUseGrid = languages.length >= 2;
+                const gridCols = languages.length === 2 ? 'grid-cols-2' : 
+                                languages.length === 3 ? 'grid-cols-3' : 'grid-cols-2';
+                
+                return (
+                  <div className="border-t border-gray-200 pt-4 mt-4">
+                    <div className="px-4">
+                      <span className="text-sm font-medium text-gray-700 block mb-3">{t('language')}</span>
+                      <div className={shouldUseGrid ? `grid ${gridCols} gap-2` : 'flex flex-col space-y-2'}>
+                        {languages.map((lang) => (
+                          <button
+                            key={lang.code}
+                            onClick={() => {
+                              changeLanguage(lang.code);
+                              setIsMobileMenuOpen(false);
+                            }}
+                            className={`flex items-center justify-center px-3 py-2 rounded-lg transition-colors ${
+                              currentLanguage === lang.code 
+                                ? 'bg-blue-50 text-blue-600 font-medium' 
+                                : 'text-gray-700 hover:bg-gray-50'
+                            }`}
+                          >
+                            <span className="text-lg mr-2 rtl:ml-2 rtl:mr-0">{lang.flag}</span>
+                            <span className="text-sm">{lang.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                );
+              })()}
               
               {/* Login Button for non-logged in users */}
               {!user && (
