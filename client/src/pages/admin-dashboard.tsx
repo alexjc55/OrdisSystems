@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -2116,99 +2117,198 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
-          <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
-            <TabsList className={`admin-tabs-list ${isRTL ? 'rtl-tabs-reverse' : ''} flex w-full overflow-x-auto gap-1`}>
+        <TooltipProvider>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
+            <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
+              <TabsList className={`admin-tabs-list ${isRTL ? 'rtl-tabs-reverse' : ''} flex w-full overflow-x-auto gap-1`}>
               {isRTL ? (
                 // RTL order: reverse the tab order
                 <>
                   {hasPermission("canManageSettings") && (
-                    <TabsTrigger value="themes" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <Palette className="w-4 h-4 ml-1" />
-                      <span className="admin-tab-text">{adminT('tabs.themes')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="themes" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <Palette className="w-4 h-4 ml-1" />
+                          <span className="admin-tab-text">{adminT('tabs.themes')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.themes')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   {hasPermission("canManageSettings") && (
-                    <TabsTrigger value="settings" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <UserCheck className="w-4 h-4 ml-1" />
-                      <span className="admin-tab-text">{adminT('tabs.permissions')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="settings" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <UserCheck className="w-4 h-4 ml-1" />
+                          <span className="admin-tab-text">{adminT('tabs.permissions')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.permissions')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   {hasPermission("canViewSettings") && (
-                    <TabsTrigger value="store" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <Settings className="w-4 h-4 ml-1" />
-                      <span className="admin-tab-text">{adminT('tabs.settings')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="store" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <Settings className="w-4 h-4 ml-1" />
+                          <span className="admin-tab-text">{adminT('tabs.settings')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.settings')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   {hasPermission("canViewUsers") && (
-                    <TabsTrigger value="users" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <Users className="w-4 h-4 ml-1" />
-                      <span className="admin-tab-text">{adminT('tabs.users')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="users" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <Users className="w-4 h-4 ml-1" />
+                          <span className="admin-tab-text">{adminT('tabs.users')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.users')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   {hasPermission("canManageOrders") && (
-                    <TabsTrigger value="orders" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <ShoppingCart className="w-4 h-4 ml-1" />
-                      <span className="admin-tab-text">{adminT('tabs.orders')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="orders" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <ShoppingCart className="w-4 h-4 ml-1" />
+                          <span className="admin-tab-text">{adminT('tabs.orders')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.orders')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   {hasPermission("canManageCategories") && (
-                    <TabsTrigger value="categories" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <Layers3 className="w-4 h-4 ml-1" />
-                      <span className="admin-tab-text">{adminT('tabs.categories')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="categories" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <Layers3 className="w-4 h-4 ml-1" />
+                          <span className="admin-tab-text">{adminT('tabs.categories')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.categories')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   {hasPermission("canManageProducts") && (
-                    <TabsTrigger value="products" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <Package className="w-4 h-4 ml-1" />
-                      <span className="admin-tab-text">{adminT('tabs.products')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="products" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <Package className="w-4 h-4 ml-1" />
+                          <span className="admin-tab-text">{adminT('tabs.products')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.products')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                 </>
               ) : (
                 // LTR order: normal order
                 <>
                   {hasPermission("canManageProducts") && (
-                    <TabsTrigger value="products" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <Package className="w-4 h-4 mr-1" />
-                      <span className="admin-tab-text">{adminT('tabs.products')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="products" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <Package className="w-4 h-4 mr-1" />
+                          <span className="admin-tab-text">{adminT('tabs.products')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.products')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   {hasPermission("canManageCategories") && (
-                    <TabsTrigger value="categories" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <Layers3 className="w-4 h-4 mr-1" />
-                      <span className="admin-tab-text">{adminT('tabs.categories')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="categories" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <Layers3 className="w-4 h-4 mr-1" />
+                          <span className="admin-tab-text">{adminT('tabs.categories')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.categories')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   {hasPermission("canManageOrders") && (
-                    <TabsTrigger value="orders" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <ShoppingCart className="w-4 h-4 mr-1" />
-                      <span className="admin-tab-text">{adminT('tabs.orders')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="orders" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <ShoppingCart className="w-4 h-4 mr-1" />
+                          <span className="admin-tab-text">{adminT('tabs.orders')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.orders')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   {hasPermission("canViewUsers") && (
-                    <TabsTrigger value="users" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <Users className="w-4 h-4 mr-1" />
-                      <span className="admin-tab-text">{adminT('tabs.users')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="users" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <Users className="w-4 h-4 mr-1" />
+                          <span className="admin-tab-text">{adminT('tabs.users')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.users')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   {hasPermission("canViewSettings") && (
-                    <TabsTrigger value="store" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <Settings className="w-4 h-4 mr-1" />
-                      <span className="admin-tab-text">{adminT('tabs.settings')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="store" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <Settings className="w-4 h-4 mr-1" />
+                          <span className="admin-tab-text">{adminT('tabs.settings')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.settings')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   {hasPermission("canManageSettings") && (
-                    <TabsTrigger value="settings" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <UserCheck className="w-4 h-4 mr-1" />
-                      <span className="admin-tab-text">{adminT('tabs.permissions')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="settings" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <UserCheck className="w-4 h-4 mr-1" />
+                          <span className="admin-tab-text">{adminT('tabs.permissions')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.permissions')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   {hasPermission("canManageSettings") && (
-                    <TabsTrigger value="themes" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
-                      <Palette className="w-4 h-4 mr-1" />
-                      <span className="admin-tab-text">{adminT('tabs.themes')}</span>
-                    </TabsTrigger>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="themes" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
+                          <Palette className="w-4 h-4 mr-1" />
+                          <span className="admin-tab-text">{adminT('tabs.themes')}</span>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{adminT('tabs.themes')}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                 </>
               )}
@@ -3864,7 +3964,7 @@ export default function AdminDashboard() {
             </TabsContent>
           )}
         </Tabs>
-      </div>
+      </TooltipProvider>
 
       {/* Product Form Dialog */}
       <ProductFormDialog
