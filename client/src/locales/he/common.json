@@ -12,6 +12,8 @@
     "worker": "עובד",
     "customer": "לקוח"
   },
+  "active": "פעיל",
+  "inactive": "לא פעיל",
   "firstName": "שם פרטי",
   "lastName": "שם משפחה",
   "enterFirstName": "הכנס שם פרטי",

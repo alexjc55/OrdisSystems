@@ -1841,6 +1841,29 @@ export default function AdminDashboard() {
   const usersTotalPages = usersResponse?.totalPages || 0;
   const usersTotal = usersResponse?.total || 0;
 
+  // Category mutations
+  const updateCategoryMutation = useMutation({
+    mutationFn: async ({ id, ...categoryData }: any) => {
+      const response = await fetch(`/api/categories/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(categoryData),
+      });
+      if (!response.ok) throw new Error('Failed to update category');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
+      setEditingCategory(null);
+      setIsCategoryFormOpen(false);
+      toast({ title: adminT('categories.notifications.categoryUpdated'), description: adminT('categories.notifications.categoryUpdatedDesc') });
+    },
+    onError: (error: any) => {
+      console.error("Category update error:", error);
+      toast({ title: adminT('common.error'), description: adminT('categories.notifications.updateError'), variant: "destructive" });
+    }
+  });
+
   // Product mutations
   const createProductMutation = useMutation({
     mutationFn: async (productData: any) => {
@@ -2000,7 +2023,7 @@ export default function AdminDashboard() {
       return await response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
       setIsCategoryFormOpen(false);
       setEditingCategory(null);
       toast({ title: adminT('categories.notifications.categoryCreated'), description: adminT('categories.notifications.categoryCreatedDesc') });
@@ -2011,35 +2034,13 @@ export default function AdminDashboard() {
     }
   });
 
-  const updateCategoryMutation = useMutation({
-    mutationFn: async ({ id, ...categoryData }: any) => {
-      const response = await fetch(`/api/categories/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(categoryData),
-      });
-      if (!response.ok) throw new Error('Failed to update category');
-      return await response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
-      setEditingCategory(null);
-      setIsCategoryFormOpen(false);
-      toast({ title: adminT('categories.notifications.categoryUpdated'), description: adminT('categories.notifications.categoryUpdatedDesc') });
-    },
-    onError: (error: any) => {
-      console.error("Category update error:", error);
-      toast({ title: adminT('common.error'), description: adminT('categories.notifications.updateError'), variant: "destructive" });
-    }
-  });
-
   const deleteCategoryMutation = useMutation({
     mutationFn: async (categoryId: number) => {
       const response = await apiRequest('DELETE', `/api/categories/${categoryId}`, {});
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
       toast({ title: adminT('categories.notifications.categoryDeleted'), description: adminT('categories.notifications.categoryDeletedDesc') });
     },
     onError: (error: any) => {
