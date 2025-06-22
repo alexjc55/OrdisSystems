@@ -38,7 +38,7 @@ export default memo(function CategoryNav({
           onClick={handleAllCategoriesClick}
           className="flex-shrink-0"
         >
-          <span className="mr-2">🛍️</span>
+          <span className="mr-2 rtl:mr-0 rtl:ml-2">🛍️</span>
           {t('allCategories')}
         </Button>
         
@@ -50,7 +50,7 @@ export default memo(function CategoryNav({
             onClick={() => handleCategoryClick(category.id)}
             className="flex-shrink-0"
           >
-            <span className="mr-2">{category.icon || '📦'}</span>
+            <span className="mr-2 rtl:mr-0 rtl:ml-2">{category.icon || '📦'}</span>
             {category.name}
           </Button>
         ))}

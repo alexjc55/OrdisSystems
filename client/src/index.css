@@ -102,6 +102,16 @@
   [dir="rtl"] .rtl\:right-2 {
     right: 0.5rem;
   }
+  
+  [dir="rtl"] .rtl\:ml-2 {
+    margin-left: 0.5rem;
+    margin-right: 0;
+  }
+  
+  [dir="rtl"] .rtl\:ml-3 {
+    margin-left: 0.75rem;
+    margin-right: 0;
+  }
 }
 
 /* RTL Form Support */

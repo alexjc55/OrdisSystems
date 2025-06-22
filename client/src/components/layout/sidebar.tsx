@@ -66,7 +66,7 @@ export default function Sidebar({
                     : "text-gray-700 hover:bg-gray-50 hover:text-primary"
                 )}
               >
-                <span className="mr-3">{category.icon || '📦'}</span>
+                <span className="mr-3 rtl:mr-0 rtl:ml-3">{category.icon || '📦'}</span>
                 {category.name}
                 <Badge variant="secondary" className="ml-auto text-xs bg-gray-200 text-gray-700">
                   {category.products.filter(p => p.isAvailable).length}
