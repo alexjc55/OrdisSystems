@@ -1849,7 +1849,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Category update error:", error);
-      toast({ title: "Ошибка", description: "Не удалось обновить категорию", variant: "destructive" });
+      toast({ title: adminT('common.error'), description: adminT('categories.notifications.updateError'), variant: "destructive" });
     }
   });
 
@@ -1860,11 +1860,11 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
-      toast({ title: "Категория удалена", description: "Категория успешно удалена" });
+      toast({ title: adminT('categories.notifications.categoryDeleted'), description: adminT('categories.notifications.categoryDeletedDesc') });
     },
     onError: (error: any) => {
       console.error("Category deletion error:", error);
-      toast({ title: "Ошибка", description: "Не удалось удалить категорию", variant: "destructive" });
+      toast({ title: adminT('common.error'), description: adminT('categories.notifications.deleteError'), variant: "destructive" });
     }
   });
 
@@ -1913,8 +1913,8 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       toast({
-        title: "Статус заказа обновлен",
-        description: "Изменения сохранены успешно",
+        title: adminT('orders.notifications.statusUpdated'),
+        description: adminT('orders.notifications.statusUpdatedDesc'),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
     },
@@ -1984,11 +1984,11 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
-      toast({ title: "Роль обновлена", description: "Роль пользователя успешно изменена" });
+      toast({ title: adminT('users.notifications.roleUpdated'), description: adminT('users.notifications.roleUpdatedDesc') });
     },
     onError: (error: any) => {
       console.error("User role update error:", error);
-      toast({ title: "Ошибка", description: "Не удалось обновить роль", variant: "destructive" });
+      toast({ title: adminT('common.error'), description: adminT('users.notifications.roleUpdateError'), variant: "destructive" });
     }
   });
 
@@ -2001,11 +2001,11 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
-      toast({ title: "Пользователь удален", description: "Пользователь успешно удален" });
+      toast({ title: adminT('users.notifications.userDeleted'), description: adminT('users.notifications.userDeletedDesc') });
     },
     onError: (error: any) => {
       console.error("User deletion error:", error);
-      toast({ title: "Ошибка", description: "Не удалось удалить пользователя", variant: "destructive" });
+      toast({ title: adminT('common.error'), description: adminT('users.notifications.deleteError'), variant: "destructive" });
     }
   });
 
@@ -2024,7 +2024,7 @@ export default function AdminDashboard() {
       return await response.json();
     },
     onSuccess: () => {
-      toast({ title: "Пароль установлен", description: "Пароль успешно установлен для пользователя" });
+      toast({ title: adminT('users.notifications.passwordSet'), description: adminT('users.notifications.passwordSetDesc') });
     },
     onError: (error: any) => {
       console.error("Set password error:", error);
