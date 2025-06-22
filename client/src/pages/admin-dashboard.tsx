@@ -65,12 +65,14 @@ import { CSS } from '@dnd-kit/utilities';
 let updateCategoryMutation: any;
 
 // Sortable Category Item Component
-function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: { 
+function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setActiveTab, setSelectedCategory }: { 
   category: any, 
   onEdit: (category: any) => void, 
   onDelete: (id: number) => void, 
   adminT: (key: string) => string,
-  isRTL: boolean 
+  isRTL: boolean,
+  setActiveTab: (tab: string) => void,
+  setSelectedCategory: (category: string) => void
 }) {
   const {
     attributes,
@@ -148,7 +150,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
             )}
           </div>
           
-          <div className="text-4xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-200">
+          <div className="text-6xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-200">
             {category.icon || '📦'}
           </div>
         </div>
@@ -163,9 +165,9 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
                 setActiveTab('products');
                 setSelectedCategory(category.id.toString());
               }}
-              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-500 text-white border border-orange-600 shadow-sm hover:bg-orange-600 transition-colors duration-200"
+              className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-orange-500 text-white border border-orange-600 shadow-sm hover:bg-orange-600 transition-colors duration-200 max-w-full"
             >
-              {category.products?.length || 0} товаров
+              <span className="truncate">{category.products?.length || 0} товаров</span>
             </button>
           </div>
           
