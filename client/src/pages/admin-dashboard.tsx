@@ -4354,13 +4354,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   </AlertDialogTrigger>
                   <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
                     <AlertDialogHeader>
-                      <AlertDialogTitle className="text-sm sm:text-base">Удалить товар</AlertDialogTitle>
+                      <AlertDialogTitle className="text-sm sm:text-base">{adminT('products.dialog.deleteTitle')}</AlertDialogTitle>
                       <AlertDialogDescription className="text-xs sm:text-sm">
-                        Вы уверены, что хотите удалить товар "{product.name}"? Это действие нельзя будет отменить.
+                        {adminT('products.dialog.deleteConfirm')}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                      <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">Отмена</AlertDialogCancel>
+                      <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">{adminT('products.dialog.cancelButton')}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() => {
                           // Call delete mutation here - we'll need to pass it as a prop
@@ -4369,7 +4369,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                         }}
                         className="bg-red-600 text-white hover:bg-red-600 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-xs sm:text-sm"
                       >
-                        Удалить
+                        {adminT('products.dialog.deleteTitle')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -4385,14 +4385,14 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   onClick={onClose} 
                   className="text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200"
                 >
-                  Отмена
+                  {adminT('products.dialog.cancelButton')}
                 </Button>
                 <Button 
                   type="submit" 
                   className="text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200"
                 >
                   <Save className="mr-2 h-4 w-4" />
-                  {product ? "Обновить" : "Создать"}
+                  {product ? adminT('products.dialog.saveButton') : adminT('products.dialog.createButton')}
                 </Button>
               </div>
             </div>
