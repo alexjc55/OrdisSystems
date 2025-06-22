@@ -1757,11 +1757,11 @@ export default function AdminDashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
-      toast({ title: "Товар удален", description: "Товар успешно удален" });
+      toast({ title: adminT('products.notifications.productDeleted'), description: adminT('products.notifications.productDeletedDesc') });
     },
     onError: (error: any) => {
       console.error("Product deletion error:", error);
-      toast({ title: "Ошибка", description: "Не удалось удалить товар", variant: "destructive" });
+      toast({ title: adminT('common.error'), description: adminT('products.notifications.deleteError'), variant: "destructive" });
     }
   });
 
@@ -1780,11 +1780,11 @@ export default function AdminDashboard() {
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
       setIsAvailabilityDialogOpen(false);
       setProductToToggle(null);
-      toast({ title: "Статус обновлен", description: "Статус доступности товара изменен" });
+      toast({ title: adminT('products.notifications.statusUpdated'), description: adminT('products.notifications.statusUpdatedDesc') });
     },
     onError: (error: any) => {
       console.error("Update availability status error:", error);
-      toast({ title: "Ошибка", description: "Не удалось обновить статус доступности", variant: "destructive" });
+      toast({ title: adminT('common.error'), description: adminT('products.notifications.statusError'), variant: "destructive" });
     }
   });
 
@@ -1804,7 +1804,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Toggle availability error:", error);
-      toast({ title: "Ошибка", description: "Не удалось обновить наличие", variant: "destructive" });
+      toast({ title: adminT('common.error'), description: adminT('products.notifications.availabilityError'), variant: "destructive" });
     }
   });
 
@@ -1823,11 +1823,11 @@ export default function AdminDashboard() {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
       setIsCategoryFormOpen(false);
       setEditingCategory(null);
-      toast({ title: "Категория создана", description: "Категория успешно добавлена" });
+      toast({ title: adminT('categories.notifications.categoryCreated'), description: adminT('categories.notifications.categoryCreatedDesc') });
     },
     onError: (error: any) => {
       console.error("Category creation error:", error);
-      toast({ title: "Ошибка", description: "Не удалось создать категорию", variant: "destructive" });
+      toast({ title: adminT('common.error'), description: adminT('categories.notifications.createError'), variant: "destructive" });
     }
   });
 
@@ -1845,7 +1845,7 @@ export default function AdminDashboard() {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
       setEditingCategory(null);
       setIsCategoryFormOpen(false);
-      toast({ title: "Категория обновлена", description: "Изменения сохранены" });
+      toast({ title: adminT('categories.notifications.categoryUpdated'), description: adminT('categories.notifications.categoryUpdatedDesc') });
     },
     onError: (error: any) => {
       console.error("Category update error:", error);
