@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { useShopTranslation } from "@/hooks/use-language";
+import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
@@ -62,6 +62,7 @@ export default function Home() {
   const { isOpen: isCartOpen, addItem } = useCartStore();
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
+  const { currentLanguage } = useLanguage();
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
@@ -508,7 +509,12 @@ export default function Home() {
                         <button
                           onClick={() => {
                             if (carouselApiRef.current) {
-                              carouselApiRef.current.scrollPrev();
+                              const isRTL = currentLanguage === 'he';
+                              if (isRTL) {
+                                carouselApiRef.current.scrollNext();
+                              } else {
+                                carouselApiRef.current.scrollPrev();
+                              }
                             }
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
@@ -518,7 +524,12 @@ export default function Home() {
                         <button
                           onClick={() => {
                             if (carouselApiRef.current) {
-                              carouselApiRef.current.scrollNext();
+                              const isRTL = currentLanguage === 'he';
+                              if (isRTL) {
+                                carouselApiRef.current.scrollPrev();
+                              } else {
+                                carouselApiRef.current.scrollNext();
+                              }
                             }
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"

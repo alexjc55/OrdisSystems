@@ -133,19 +133,15 @@ export default function Header({ onResetView }: HeaderProps) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
                       <Link href="/profile">
-                        <div className="flex items-center w-full">
-                          <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                          <span>{t('navigation.profile')}</span>
-                        </div>
+                        <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                        <span>{t('navigation.profile')}</span>
                       </Link>
                     </DropdownMenuItem>
                     {user?.role === 'admin' && (
                       <DropdownMenuItem asChild>
                         <Link href="/admin">
-                          <div className="flex items-center w-full">
-                            <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                            <span>{t('adminPanel')}</span>
-                          </div>
+                          <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                          <span>{t('adminPanel')}</span>
                         </Link>
                       </DropdownMenuItem>
                     )}
