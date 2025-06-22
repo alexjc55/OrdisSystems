@@ -18,7 +18,7 @@ export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const { storeSettings } = useStoreSettings();
   const { t } = useCommonTranslation();
-  const { currentLanguage } = useLanguage();
+  const { currentLanguage, changeLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState("login");
 
   // Dynamic validation messages based on current language
@@ -199,7 +199,24 @@ export default function AuthPage() {
     }
   }, [user, setLocation]);
 
-
+  // Preserve language selection when navigating to auth page
+  useEffect(() => {
+    // Optimize language restoration to prevent loading delays
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage && savedLanguage !== currentLanguage) {
+      // Use requestIdleCallback for non-blocking language change
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(() => {
+          changeLanguage(savedLanguage as any);
+        });
+      } else {
+        // Fallback for browsers without requestIdleCallback
+        setTimeout(() => {
+          changeLanguage(savedLanguage as any);
+        }, 0);
+      }
+    }
+  }, []); // Remove dependencies to run only once
 
   const onLogin = async (data: LoginFormData) => {
     try {
