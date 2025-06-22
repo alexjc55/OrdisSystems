@@ -173,23 +173,14 @@ export default function Home() {
   
   // Handle carousel navigation
   const goToSlide = (pageIndex: number) => {
-    if (carouselApiRef.current) {
-      // For mobile: each page is one slide
-      // For desktop: need to calculate based on slidesPerPage
-      const slideIndex = isMobile ? pageIndex : pageIndex * slidesPerPage;
-      const totalSlides = carouselApiRef.current.scrollSnapList().length;
-      
-      console.log('Going to slide:', slideIndex, 'for page:', pageIndex, 'total slides:', totalSlides, 'slides per page:', slidesPerPage);
-      
-      // Use scrollTo with proper index validation
-      if (slideIndex < totalSlides) {
-        carouselApiRef.current.scrollTo(slideIndex);
-        console.log('Scrolled to slide:', slideIndex);
-      } else {
-        console.warn('Invalid slide index:', slideIndex, 'max allowed:', totalSlides - 1);
-      }
+    console.log('Going to page:', pageIndex, 'current slide:', currentSlide);
+    if (isMobile) {
+      // Mobile: each page is one slide
+      setCurrentSlide(pageIndex);
     } else {
-      console.warn('Carousel API not available');
+      // Desktop: calculate slide index based on page
+      const slideIndex = pageIndex * slidesPerPage;
+      setCurrentSlide(slideIndex);
     }
   };
 
@@ -567,33 +558,24 @@ export default function Home() {
                     </div>
                   ) : (
                     <div className="w-full relative">
-                      <Carousel
-                        opts={{
-                          align: "start",
-                          loop: false,
-                          slidesToScroll: 1,
-                          skipSnaps: false,
-                        }}
-                        className="w-full mx-auto"
-                        setApi={(api) => {
-                          carouselApiRef.current = api;
-                          if (api) {
-                            console.log('Carousel API set, available methods:', Object.getOwnPropertyNames(api));
-                            api.on('select', () => {
-                              const currentSlideIndex = api.selectedScrollSnap();
-                              console.log('Carousel selected slide:', currentSlideIndex);
-                              setCurrentSlide(currentSlideIndex);
-                            });
-                          }
-                        }}
-                      >
-                        <CarouselContent className="ml-0 flex items-stretch gap-2.5">
-                          {specialOffers.map((product) => (
-                            <CarouselItem 
+                      {/* Custom Carousel Implementation */}
+                      <div className="overflow-hidden">
+                        <div 
+                          className="flex transition-transform duration-300 ease-in-out gap-2.5"
+                          style={{
+                            transform: `translateX(${isMobile ? -currentSlide * 100 : -Math.floor(currentSlide / slidesPerPage) * 100}%)`,
+                            width: isMobile ? `${specialOffers.length * 100}%` : `${Math.ceil(specialOffers.length / slidesPerPage) * 100}%`
+                          }}
+                        >
+                          {specialOffers.map((product, index) => (
+                            <div 
                               key={product.id} 
-                              className="min-w-0 shrink-0 grow-0 basis-full md:basis-1/3 flex flex-col flex-shrink-0 pl-[0px] pr-[0px]"
+                              className={`flex-shrink-0 ${isMobile ? 'w-full' : 'w-1/3'}`}
+                              style={{
+                                width: isMobile ? `${100 / specialOffers.length}%` : `${100 / (Math.ceil(specialOffers.length / slidesPerPage) * slidesPerPage)}%`
+                              }}
                             >
-                              <div className="relative flex-1 flex">
+                              <div className="relative flex-1 flex px-1">
                                 <div className="transform scale-90 origin-center w-full relative">
                                   <ProductCard 
                                     product={product} 
@@ -601,12 +583,10 @@ export default function Home() {
                                   />
                                 </div>
                               </div>
-                            </CarouselItem>
+                            </div>
                           ))}
-                        </CarouselContent>
-
-
-                      </Carousel>
+                        </div>
+                      </div>
 
                       {/* Navigation Dots */}
                       {specialOffers.length > slidesPerPage && (

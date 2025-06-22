@@ -35,7 +35,7 @@ export function LanguageSwitcher({
         <SelectTrigger className="w-auto min-w-[120px]">
           <SelectValue>
             <div className="flex items-center gap-2">
-              {showFlag && <span className="text-base">{currentLanguageInfo.flag}</span>}
+              {showFlag && <span className={`${currentLanguageInfo.flagClass} inline-block`}></span>}
               {showText && <span>{currentLanguageInfo.nativeName}</span>}
             </div>
           </SelectValue>
@@ -44,7 +44,7 @@ export function LanguageSwitcher({
           {Object.entries(availableLanguages).map(([code, info]) => (
             <SelectItem key={code} value={code}>
               <div className="flex items-center gap-2">
-                {showFlag && <span className="text-base">{info.flag}</span>}
+                {showFlag && <span className={`${info.flagClass} inline-block`}></span>}
                 <span>{info.nativeName}</span>
               </div>
             </SelectItem>
@@ -115,7 +115,7 @@ export function LanguageSwitcher({
                   : "text-gray-700 hover:bg-orange-50 hover:text-orange-600"
               }`}
             >
-              <span className="text-base mr-3 rtl:mr-0 rtl:ml-3">{info.flag}</span>
+              <span className={`${info.flagClass} inline-block mr-3 rtl:mr-0 rtl:ml-3`}></span>
               <div className="text-left">
                 <div className="font-medium">{info.name}</div>
                 <div className="text-xs text-gray-500">{info.nativeName}</div>

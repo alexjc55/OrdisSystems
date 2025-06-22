@@ -15,25 +15,28 @@ import commonHe from '../locales/he/common.json';
 import shopHe from '../locales/he/shop.json';
 import adminHe from '../locales/he/admin.json';
 
-// Language configuration
+// Language configuration with CSS flag classes for better browser compatibility
 export const LANGUAGES = {
   ru: { 
     name: 'Русский', 
     nativeName: 'Русский',
     dir: 'ltr',
-    flag: '🇷🇺'
+    flag: 'RU',
+    flagClass: 'flag-ru'
   },
   en: { 
     name: 'English', 
     nativeName: 'English',
     dir: 'ltr',
-    flag: '🇺🇸'
+    flag: 'EN',
+    flagClass: 'flag-en'
   },
   he: { 
     name: 'Hebrew', 
     nativeName: 'עברית',
     dir: 'rtl',
-    flag: '🇮🇱'
+    flag: 'HE',
+    flagClass: 'flag-he'
   }
 } as const;
 
