@@ -167,7 +167,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
                 setActiveTab('products');
                 setSelectedCategory(category.id.toString());
               }}
-              className={`inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-orange-500 text-white border border-orange-600 hover:bg-orange-600 hover:border-orange-700 transition-all duration-200 shadow-sm ${isRTL ? 'gap-1.5' : 'gap-1'}`}
+              className={`inline-flex items-center px-3 py-1 md:py-1.5 rounded-md text-xs font-medium bg-orange-500 text-white border border-orange-600 hover:bg-orange-600 hover:border-orange-700 transition-all duration-200 shadow-sm ${isRTL ? 'gap-1.5' : 'gap-1'}`}
             >
               <span className="font-semibold">{category.products?.length || 0}</span>
               <span>{adminT('categories.products')}</span>
