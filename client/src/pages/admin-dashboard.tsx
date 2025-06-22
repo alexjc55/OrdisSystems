@@ -2083,6 +2083,10 @@ export default function AdminDashboard() {
   const deleteCategoryMutation = useMutation({
     mutationFn: async (categoryId: number) => {
       const response = await apiRequest('DELETE', `/api/categories/${categoryId}`, {});
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw errorData;
+      }
       return response.json();
     },
     onSuccess: () => {
@@ -2091,7 +2095,21 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Category deletion error:", error);
-      toast({ title: adminT('common.error'), description: adminT('categories.notifications.deleteError'), variant: "destructive" });
+      
+      // Handle specific error when category has products
+      if (error.error === 'CATEGORY_HAS_PRODUCTS') {
+        toast({ 
+          title: adminT('categories.notifications.deleteErrorWithProducts'), 
+          description: adminT('categories.notifications.deleteErrorWithProductsDesc'),
+          variant: "destructive" 
+        });
+      } else {
+        toast({ 
+          title: adminT('common.error'), 
+          description: adminT('categories.notifications.deleteError'), 
+          variant: "destructive" 
+        });
+      }
     }
   });
 

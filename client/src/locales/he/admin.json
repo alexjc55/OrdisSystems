@@ -236,7 +236,9 @@
       "categoryDeletedDesc": "קטגוריה נמחקה בהצלחה",
       "createError": "לא ניתן ליצור קטגוריה",
       "updateError": "לא ניתן לעדכן קטגוריה",
-      "deleteError": "לא ניתן למחוק קטגוריה"
+      "deleteError": "לא ניתן למחוק קטגוריה",
+      "deleteErrorWithProducts": "קטגוריה מכילה מוצרים",
+      "deleteErrorWithProductsDesc": "לא ניתן למחוק קטגוריה המכילה מוצרים. אנא העבר או מחק את כל המוצרים תחילה."
     }
   },
   "orders": {

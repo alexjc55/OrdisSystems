@@ -236,7 +236,9 @@
       "categoryDeletedDesc": "Category deleted successfully",
       "createError": "Failed to create category",
       "updateError": "Failed to update category",
-      "deleteError": "Failed to delete category"
+      "deleteError": "Failed to delete category",
+      "deleteErrorWithProducts": "Category contains products",
+      "deleteErrorWithProductsDesc": "Cannot delete category that contains products. Please move or delete all products first."
     }
   },
   "orders": {

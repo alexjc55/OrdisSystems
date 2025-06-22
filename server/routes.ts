@@ -285,8 +285,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const id = parseInt(req.params.id);
       await storage.deleteCategory(id);
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting category:", error);
+      
+      // Check if the error is due to foreign key constraint (products exist in category)
+      if (error.code === '23503' && error.constraint === 'products_category_id_categories_id_fk') {
+        return res.status(400).json({ 
+          message: "Cannot delete category with existing products", 
+          error: "CATEGORY_HAS_PRODUCTS",
+          detail: "This category contains products. Please move or delete all products before deleting the category."
+        });
+      }
+      
       res.status(500).json({ message: "Failed to delete category" });
     }
   });
