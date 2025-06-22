@@ -26,6 +26,7 @@ import {
   type InsertOrderItem,
   type OrderWithItems,
   type CategoryWithProducts,
+  type CategoryWithCount,
   type StoreSettings,
   type InsertStoreSettings,
   type Theme,
@@ -247,7 +248,8 @@ export class DatabaseStorage implements IStorage {
         .innerJoin(products, eq(productCategories.productId, products.id))
         .where(and(
           eq(productCategories.categoryId, category.id),
-          eq(products.isActive, true)
+          eq(products.isActive, true),
+          eq(products.isAvailable, true)
         ));
 
       categoriesWithCount.push({
