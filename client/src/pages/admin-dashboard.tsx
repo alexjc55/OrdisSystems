@@ -99,12 +99,28 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
       
       {/* Header with drag handle and actions */}
       <div className="relative flex items-center justify-between p-3 pb-2">
-        <div
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing p-1.5 -m-1.5 text-gray-400 hover:text-gray-600 hover:bg-white/70 rounded-lg transition-all duration-200 backdrop-blur-sm border border-transparent hover:border-gray-200/50"
-        >
-          <GripVertical className="h-3.5 w-3.5" />
+        <div className="flex items-center gap-3">
+          <div
+            {...attributes}
+            {...listeners}
+            className="cursor-grab active:cursor-grabbing p-1.5 -m-1.5 text-gray-400 hover:text-gray-600 hover:bg-white/70 rounded-lg transition-all duration-200 backdrop-blur-sm border border-transparent hover:border-gray-200/50"
+          >
+            <GripVertical className="h-3.5 w-3.5" />
+          </div>
+          
+          {/* Product count snippet */}
+          <div 
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveTab('products');
+              setSelectedCategory(category.id.toString());
+            }}
+            className="cursor-pointer"
+          >
+            <span className="text-xs text-gray-500/90 hover:text-orange-600 transition-colors bg-white/60 px-2 py-1 rounded-md backdrop-blur-sm">
+              {category.products?.length || 0} {adminT('categories.products')}
+            </span>
+          </div>
         </div>
         
         <div className="flex gap-1.5">
@@ -147,20 +163,6 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
             <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1">
               {category.name}
             </h3>
-            
-            {/* Product count snippet */}
-            <div 
-              onClick={(e) => {
-                e.stopPropagation();
-                setActiveTab('products');
-                setSelectedCategory(category.id.toString());
-              }}
-              className="cursor-pointer inline-block"
-            >
-              <span className="text-xs text-gray-500/90 hover:text-orange-600 transition-colors">
-                {category.products?.length || 0} {adminT('categories.products')}
-              </span>
-            </div>
           </div>
 
           {/* Description at bottom if exists */}
