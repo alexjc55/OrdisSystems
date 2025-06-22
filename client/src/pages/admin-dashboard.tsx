@@ -2238,7 +2238,7 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Search and Filter Controls */}
-                <div className="flex flex-col lg:flex-row gap-3">
+                <div className={`flex flex-col gap-3 ${isRTL ? 'lg:flex-row-reverse' : 'lg:flex-row'}`}>
                   <div className="relative flex-1">
                     <Search className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                     <Input
@@ -2248,7 +2248,7 @@ export default function AdminDashboard() {
                       className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}
                     />
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-3 lg:flex-shrink-0">
+                  <div className={`flex flex-col gap-3 lg:flex-shrink-0 ${isRTL ? 'sm:flex-row-reverse' : 'sm:flex-row'}`}>
                     <div className="relative min-w-[180px]">
                       <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                       <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
