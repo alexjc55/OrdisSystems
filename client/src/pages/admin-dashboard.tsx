@@ -1915,7 +1915,12 @@ export default function AdminDashboard() {
     mutationFn: async (productData: any) => {
       const formData = new FormData();
       Object.keys(productData).forEach(key => {
-        if (productData[key] !== undefined && productData[key] !== null) {
+        if (key === 'categoryIds' && Array.isArray(productData[key])) {
+          // Handle categoryIds array specially
+          productData[key].forEach((id: number) => {
+            formData.append('categoryIds[]', id.toString());
+          });
+        } else if (productData[key] !== undefined && productData[key] !== null) {
           formData.append(key, productData[key]);
         }
       });
@@ -1954,7 +1959,7 @@ export default function AdminDashboard() {
         ...productData,
         price: productData.price?.toString() || productData.pricePerKg?.toString(),
         pricePerKg: productData.price?.toString() || productData.pricePerKg?.toString(),
-        categoryId: parseInt(productData.categoryId),
+        categoryIds: productData.categoryIds || [],
         isAvailable: Boolean(productData.isAvailable)
       };
 
@@ -2393,7 +2398,7 @@ export default function AdminDashboard() {
         (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase()));
       
       const matchesCategory = selectedCategoryFilter === "all" || 
-        product.categoryId === parseInt(selectedCategoryFilter);
+        product.categories?.some((cat: any) => cat.id === parseInt(selectedCategoryFilter));
       
       const matchesStatus = selectedStatusFilter === "all" ||
         (selectedStatusFilter === "available" && product.isAvailable) ||
@@ -2884,9 +2889,13 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
-                                    <Badge variant="outline" className="text-xs">
-                                      {product.category?.name}
-                                    </Badge>
+                                    <div className="flex flex-wrap gap-1 justify-end">
+                                      {product.categories?.map((category: any) => (
+                                        <Badge key={category.id} variant="outline" className="text-xs">
+                                          {category.name}
+                                        </Badge>
+                                      ))}
+                                    </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
                                     <button
@@ -2915,9 +2924,13 @@ export default function AdminDashboard() {
                                     </button>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-left">
-                                    <Badge variant="outline" className="text-xs">
-                                      {product.category?.name}
-                                    </Badge>
+                                    <div className="flex flex-wrap gap-1">
+                                      {product.categories?.map((category: any) => (
+                                        <Badge key={category.id} variant="outline" className="text-xs">
+                                          {category.name}
+                                        </Badge>
+                                      ))}
+                                    </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-left">
                                     <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
