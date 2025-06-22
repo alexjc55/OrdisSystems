@@ -2861,8 +2861,8 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 {(categories as any[] || []).length > 0 ? (
-                  <div className={`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 ${isRTL ? 'rtl:space-x-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
-                    {(isRTL ? [...(categories as any[] || [])].reverse() : (categories as any[] || [])).map((category: any) => (
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+                    {(categories as any[] || []).map((category: any) => (
                       <Card key={category.id} className="group hover:shadow-md transition-shadow duration-200">
                         <CardContent className="p-4">
                           <div className={`flex items-start justify-between mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
