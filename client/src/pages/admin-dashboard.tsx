@@ -1612,11 +1612,12 @@ export default function AdminDashboard() {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = categories.findIndex((category: any) => category.id === active.id);
-      const newIndex = categories.findIndex((category: any) => category.id === over.id);
+      const categoriesArray = categories as any[];
+      const oldIndex = categoriesArray.findIndex((category: any) => category.id === active.id);
+      const newIndex = categoriesArray.findIndex((category: any) => category.id === over.id);
 
       if (oldIndex !== -1 && newIndex !== -1) {
-        const newCategories = arrayMove(categories, oldIndex, newIndex);
+        const newCategories = arrayMove(categoriesArray, oldIndex, newIndex);
         
         // Create category orders array with new sort order
         const categoryOrders = newCategories.map((category: any, index: number) => ({
@@ -3010,7 +3011,7 @@ export default function AdminDashboard() {
                       onDragEnd={handleCategoryDragEnd}
                     >
                       <SortableContext 
-                        items={categories.map((cat: any) => cat.id)}
+                        items={(categories as any[]).map((cat: any) => cat.id)}
                         strategy={verticalListSortingStrategy}
                       >
                         <div className="space-y-3">
