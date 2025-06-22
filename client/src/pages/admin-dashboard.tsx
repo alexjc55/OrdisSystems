@@ -4194,11 +4194,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 name="unit"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">Единица измерения</FormLabel>
+                    <FormLabel className="text-sm">{adminT('products.dialog.unitLabel')}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="text-sm">
-                          <SelectValue placeholder="Выберите единицу" />
+                          <SelectValue placeholder={adminT('products.dialog.unitLabel')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
