@@ -436,6 +436,14 @@
     /* Keep natural RTL direction for the container */
   }
 
+  /* Mobile RTL table initial scroll position */
+  @media (max-width: 768px) {
+    [dir="rtl"] .table-container {
+      /* On mobile, we want to show the leftmost content first for RTL tables */
+      scroll-snap-type: x mandatory;
+    }
+  }
+
   /* RTL horizontal scroll should start from right */
   [dir="rtl"] .table-container::-webkit-scrollbar {
     height: 8px;

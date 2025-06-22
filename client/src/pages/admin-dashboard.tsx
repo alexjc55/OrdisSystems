@@ -2038,19 +2038,39 @@ export default function AdminDashboard() {
     setIsCancellationDialogOpen(true);
   };
 
-  // RTL table scroll fix - scroll to show rightmost content first for RTL tables
+  // RTL table scroll fix - scroll to show leftmost content first for RTL tables on mobile
   useEffect(() => {
-    if (isRTL) {
-      const tableContainers = document.querySelectorAll('.table-container');
-      tableContainers.forEach((container) => {
-        const element = container as HTMLElement;
-        // For RTL tables, we want to show the rightmost content first
-        // In RTL, scrollLeft starts at 0 and goes negative as we scroll left
-        setTimeout(() => {
-          element.scrollLeft = 0; // Reset to show rightmost content
-        }, 100);
-      });
-    }
+    const handleTableScroll = () => {
+      if (isRTL) {
+        const tableContainers = document.querySelectorAll('.table-container');
+        tableContainers.forEach((container) => {
+          const element = container as HTMLElement;
+          
+          // Check if we're on mobile (screen width <= 768px)
+          const isMobile = window.innerWidth <= 768;
+          
+          if (isMobile) {
+            // On mobile RTL, scroll to the leftmost position to show the first column (product name)
+            // In RTL direction, the leftmost content requires scrolling to the right edge
+            const maxScrollLeft = element.scrollWidth - element.clientWidth;
+            element.scrollLeft = maxScrollLeft;
+          } else {
+            // On desktop, keep the default RTL behavior
+            element.scrollLeft = 0;
+          }
+        });
+      }
+    };
+
+    // Initial scroll positioning
+    setTimeout(handleTableScroll, 100);
+
+    // Add resize listener for orientation changes
+    window.addEventListener('resize', handleTableScroll);
+    
+    return () => {
+      window.removeEventListener('resize', handleTableScroll);
+    };
   }, [isRTL, activeTab, productsData, usersData, ordersResponse]);
 
   if (isLoading || !user) {
