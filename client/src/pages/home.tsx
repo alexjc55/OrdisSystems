@@ -338,8 +338,8 @@ export default function Home() {
                                 
                                 return (
                                   <div key={index} className="text-base sm:text-lg flex justify-between">
-                                    <span className="font-semibold">{daysText}:</span>
-                                    <span className="text-gray-700 font-medium">{group.hours}</span>
+                                    <span className="font-bold">{daysText}:</span>
+                                    <span className="text-gray-700 font-bold">{group.hours}</span>
                                   </div>
                                 );
                               })}
@@ -368,14 +368,14 @@ export default function Home() {
                       <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
                         {storeSettings.contactPhone && (
                           <div className="text-base sm:text-lg flex justify-between">
-                            <span className="text-gray-700 font-semibold">{t('phone')}:</span>
-                            <span className="font-semibold">{storeSettings.contactPhone}</span>
+                            <span className="text-gray-700 font-bold">{t('phone')}:</span>
+                            <span className="font-bold">{storeSettings.contactPhone}</span>
                           </div>
                         )}
                         {storeSettings.contactEmail && (
                           <div className="text-base sm:text-lg flex justify-between">
-                            <span className="text-gray-700 font-semibold">Email:</span>
-                            <span className="font-semibold break-all">{storeSettings.contactEmail}</span>
+                            <span className="text-gray-700 font-bold">Email:</span>
+                            <span className="font-bold break-all">{storeSettings.contactEmail}</span>
                           </div>
                         )}
                       </div>
@@ -398,14 +398,14 @@ export default function Home() {
                       <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
                         {storeSettings.deliveryInfo && (
                           <div>
-                            <span className="text-gray-700 text-base font-semibold block mb-2">{t('delivery')}:</span>
-                            <span className="text-gray-800 font-semibold text-base leading-relaxed">{storeSettings.deliveryInfo}</span>
+                            <span className="text-gray-700 text-base font-bold block mb-2">{t('delivery')}:</span>
+                            <span className="text-gray-800 font-bold text-base leading-relaxed">{storeSettings.deliveryInfo}</span>
                           </div>
                         )}
                         {storeSettings.paymentInfo && (
                           <div>
-                            <span className="text-gray-700 text-base font-semibold block mb-2">{t('payment')}:</span>
-                            <span className="text-gray-800 font-semibold text-base leading-relaxed">{storeSettings.paymentInfo}</span>
+                            <span className="text-gray-700 text-base font-bold block mb-2">{t('payment')}:</span>
+                            <span className="text-gray-800 font-bold text-base leading-relaxed">{storeSettings.paymentInfo}</span>
                           </div>
                         )}
                       </div>
