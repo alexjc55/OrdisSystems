@@ -498,25 +498,38 @@ export class DatabaseStorage implements IStorage {
     
     const total = totalResult?.count || 0;
 
-    // Get paginated data with categories
-    const productsData = await db.query.products.findMany({
-      with: {
-        productCategories: {
-          with: {
-            category: true
-          }
-        }
-      },
-      where: whereClause,
-      orderBy,
-      limit,
-      offset,
-    });
+    // Get paginated data with categories using direct joins
+    const productsData = await db
+      .select()
+      .from(products)
+      .where(whereClause)
+      .orderBy(orderBy)
+      .limit(limit)
+      .offset(offset);
 
-    const data = productsData.map(product => ({
-      ...product,
-      categories: product.productCategories.map(pc => pc.category)
-    }));
+    // Get categories for each product
+    const data: ProductWithCategories[] = [];
+    for (const product of productsData) {
+      const productCats = await db
+        .select({
+          id: categories.id,
+          name: categories.name,
+          description: categories.description,
+          icon: categories.icon,
+          isActive: categories.isActive,
+          sortOrder: categories.sortOrder,
+          createdAt: categories.createdAt,
+          updatedAt: categories.updatedAt,
+        })
+        .from(categories)
+        .innerJoin(productCategories, eq(categories.id, productCategories.categoryId))
+        .where(eq(productCategories.productId, product.id));
+      
+      data.push({
+        ...product,
+        categories: productCats
+      });
+    }
 
     return {
       data,
@@ -528,22 +541,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProductById(id: number): Promise<ProductWithCategories | undefined> {
-    const product = await db.query.products.findFirst({
-      with: {
-        productCategories: {
-          with: {
-            category: true
-          }
-        }
-      },
-      where: eq(products.id, id),
-    });
+    const [product] = await db
+      .select()
+      .from(products)
+      .where(eq(products.id, id));
 
     if (!product) return undefined;
 
+    // Get categories for this product
+    const productCats = await db
+      .select()
+      .from(categories)
+      .innerJoin(productCategories, eq(categories.id, productCategories.categoryId))
+      .where(eq(productCategories.productId, product.id));
+
     return {
       ...product,
-      categories: product.productCategories.map(pc => pc.category)
+      categories: productCats.map(pc => pc.categories)
     };
   }
 
@@ -619,44 +633,114 @@ export class DatabaseStorage implements IStorage {
   }
 
   async searchProducts(query: string): Promise<ProductWithCategories[]> {
-    const productsData = await db.query.products.findMany({
-      with: {
-        productCategories: {
-          with: {
-            category: true
-          }
-        }
-      },
-      where: and(
+    const productsData = await db
+      .select()
+      .from(products)
+      .where(and(
         eq(products.isActive, true),
         ne(products.stockStatus, 'out_of_stock'),
         like(products.name, `%${query}%`)
-      ),
-      orderBy: [products.name],
-    });
+      ))
+      .orderBy(products.name);
 
-    return productsData.map(product => ({
-      ...product,
-      categories: product.productCategories.map(pc => pc.category)
-    }));
+    // Get categories for each product
+    const result: ProductWithCategories[] = [];
+    for (const product of productsData) {
+      const productCats = await db
+        .select()
+        .from(categories)
+        .innerJoin(productCategories, eq(categories.id, productCategories.categoryId))
+        .where(eq(productCategories.productId, product.id));
+      
+      result.push({
+        ...product,
+        categories: productCats.map(pc => pc.categories)
+      });
+    }
+    
+    return result;
   }
 
   // Order operations
   async getOrders(userId?: string): Promise<OrderWithItems[]> {
     const whereClause = userId ? eq(orders.userId, userId) : undefined;
 
-    return await db.query.orders.findMany({
-      with: {
-        items: {
-          with: {
-            product: true,
-          },
-        },
-        user: true,
-      },
-      where: whereClause,
-      orderBy: [desc(orders.createdAt)],
-    }) as OrderWithItems[];
+    const ordersData = await db
+      .select()
+      .from(orders)
+      .where(whereClause)
+      .orderBy(desc(orders.createdAt));
+
+    const result: OrderWithItems[] = [];
+    for (const order of ordersData) {
+      // Get order items with products
+      const itemsData = await db
+        .select({
+          id: orderItems.id,
+          orderId: orderItems.orderId,
+          productId: orderItems.productId,
+          quantity: orderItems.quantity,
+          pricePerKg: orderItems.pricePerKg,
+          totalPrice: orderItems.totalPrice,
+          createdAt: orderItems.createdAt,
+          productName: products.name,
+          productDescription: products.description,
+          productPrice: products.price,
+          productUnit: products.unit,
+          productImageUrl: products.imageUrl,
+          productStockStatus: products.stockStatus,
+          productAvailabilityStatus: products.availabilityStatus,
+          productIsActive: products.isActive,
+          productSortOrder: products.sortOrder,
+          productCreatedAt: products.createdAt,
+          productUpdatedAt: products.updatedAt,
+          productIsDiscounted: products.isDiscounted,
+          productDiscountType: products.discountType,
+          productDiscountValue: products.discountValue,
+        })
+        .from(orderItems)
+        .innerJoin(products, eq(orderItems.productId, products.id))
+        .where(eq(orderItems.orderId, order.id));
+
+      // Get user data
+      const [userData] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, order.userId || ''));
+
+      result.push({
+        ...order,
+        items: itemsData.map(item => ({
+          id: item.id,
+          orderId: item.orderId,
+          productId: item.productId,
+          quantity: item.quantity,
+          pricePerKg: item.pricePerKg,
+          totalPrice: item.totalPrice,
+          createdAt: item.createdAt,
+          product: {
+            id: item.productId,
+            name: item.productName,
+            description: item.productDescription,
+            price: item.productPrice,
+            unit: item.productUnit,
+            imageUrl: item.productImageUrl,
+            stockStatus: item.productStockStatus,
+            availabilityStatus: item.productAvailabilityStatus,
+            isActive: item.productIsActive,
+            sortOrder: item.productSortOrder,
+            createdAt: item.productCreatedAt,
+            updatedAt: item.productUpdatedAt,
+            isDiscounted: item.productIsDiscounted,
+            discountType: item.productDiscountType,
+            discountValue: item.productDiscountValue,
+          }
+        })),
+        user: userData || null
+      });
+    }
+
+    return result;
   }
 
   async getOrdersPaginated(params: PaginationParams): Promise<PaginatedResult<OrderWithItems>> {
