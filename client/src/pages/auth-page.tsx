@@ -10,14 +10,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
+import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
   const { user, loginMutation, registerMutation } = useAuth();
+  const { storeSettings } = useStoreSettings();
+  const { t } = useCommonTranslation();
+  const { currentLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState("login");
-  
-  // Get current language from localStorage directly to avoid hook overhead
-  const currentLanguage = localStorage.getItem('language') || 'ru';
 
   // Dynamic validation messages based on current language
   const getValidationMessage = (key: string) => {
