@@ -127,8 +127,13 @@ export default function Home() {
     setSelectedCategoryId(null);
   }, []);
 
-  // Get special offers (products marked as special offers)
-  const specialOffers = allProducts?.filter(product => product.isAvailable !== false && product.isSpecialOffer === true) || [];
+  // Get special offers (products marked as special offers from active categories only)
+  const specialOffers = allProducts?.filter(product => {
+    const productCategory = categories.find(cat => cat.id === product.categoryId);
+    return product.isAvailable !== false && 
+           product.isSpecialOffer === true && 
+           productCategory?.isActive !== false;
+  }) || [];
 
   // Display products logic
   const displayProducts = useMemo(() => {
