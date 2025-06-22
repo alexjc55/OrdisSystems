@@ -168,7 +168,13 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
               }}
               className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-orange-500 text-white border border-orange-600 shadow-sm hover:bg-orange-600 transition-colors duration-200"
             >
-              <span className="truncate">{category.products?.length || 0} товаров</span>
+              <span className="truncate">
+                {(() => {
+                  const productCount = category.products?.length || 0;
+                  console.log(`Category ${category.name}: ${productCount} products`, category.products);
+                  return `${productCount} товаров`;
+                })()}
+              </span>
             </button>
           </div>
         </div>
