@@ -803,7 +803,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
                 <span className="text-green-600 font-medium">Бесплатно</span> : 
                 formatCurrency(order.deliveryFee || "0")
             }</div>
-            <div><strong>Итого:</strong> {formatCurrency(order.totalAmount)}</div>
+            <div><strong>{adminT('orders.total')}:</strong> {formatCurrency(order.totalAmount)}</div>
             <div><strong>Клиент:</strong> {order.user?.firstName && order.user?.lastName 
               ? `${order.user.firstName} ${order.user.lastName}`
               : order.user?.email || "—"}</div>
