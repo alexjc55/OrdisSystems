@@ -21,7 +21,7 @@ import ChangePasswordPage from "@/pages/change-password";
 import ForgotPasswordPage from "@/pages/forgot-password";
 import ResetPasswordPage from "@/pages/reset-password";
 import Checkout from "@/pages/checkout";
-import AuthPage from "@/pages/auth-page";
+import AuthPage from "@/pages/auth-page-simplified";
 import NotFound from "@/pages/not-found";
 import { ProtectedRoute } from "@/lib/protected-route";
 
