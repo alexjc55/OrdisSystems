@@ -48,6 +48,22 @@
     margin-inline-start: auto;
   }
   
+  /* Force center alignment for all directions */
+  .text-center-force {
+    text-align: center !important;
+  }
+  
+  /* RTL-specific center alignment */
+  html[dir="rtl"] .text-center,
+  html[dir="rtl"] .text-center-force {
+    text-align: center !important;
+  }
+  
+  html[dir="ltr"] .text-center,
+  html[dir="ltr"] .text-center-force {
+    text-align: center !important;
+  }
+  
   /* RTL-specific utility classes */
   [dir="rtl"] .rtl\:text-right {
     text-align: right;
