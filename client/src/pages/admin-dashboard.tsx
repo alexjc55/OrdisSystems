@@ -159,7 +159,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
         </div>
 
         {/* Bottom section */}
-        <div className="mt-auto pb-1">
+        <div className="mt-auto pb-3 md:pb-1">
           <div className="flex justify-start">
             <button
               onClick={(e) => {
