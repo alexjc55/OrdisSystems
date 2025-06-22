@@ -1,15 +1,17 @@
 export type ProductUnit = "100g" | "100ml" | "piece" | "kg";
 
-export function formatCurrency(amount: number | string): string {
+export function formatCurrency(amount: number | string, locale?: string): string {
   const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
   if (isNaN(numAmount)) return '₪0.00';
   
-  return new Intl.NumberFormat('he-IL', {
-    style: 'currency',
-    currency: 'ILS',
+  // For Hebrew interface, always show shekel symbol on the left
+  // regardless of RTL direction to maintain consistency
+  const formatted = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(numAmount);
+  
+  return `₪${formatted}`;
 }
 
 export function parseCurrency(amount: string): number {
