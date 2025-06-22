@@ -621,7 +621,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
     switch (product.unit) {
       case 'piece': return `${formatCurrency(product.price)} за шт.`;
       case 'kg': return `${formatCurrency(product.price)} за кг`;
-      case '100g': return `${formatCurrency(product.price)} за 100г`;
+      case '100g': return `${formatCurrency(product.price)} {adminT('products.per100g')}`;
       case '100ml': return `${formatCurrency(product.price)} за 100мл`;
       default: return formatCurrency(product.price);
     }
@@ -2416,7 +2416,7 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
-                                    <div className="text-xs sm:text-sm p-2 rounded">
+                                    <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
                                       {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
                                         <div className="space-y-1">
                                           <div className="text-gray-400 line-through text-xs">{formatCurrency(product.price || product.pricePerKg)}</div>
