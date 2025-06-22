@@ -506,7 +506,10 @@ export default function Home() {
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          <ChevronLeft className="h-4 w-4" />
+                          {document.documentElement.dir === 'rtl' ? 
+                            <ChevronRight className="h-4 w-4" /> : 
+                            <ChevronLeft className="h-4 w-4" />
+                          }
                         </button>
                         <button
                           onClick={() => {
@@ -521,7 +524,10 @@ export default function Home() {
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          <ChevronRight className="h-4 w-4" />
+                          {document.documentElement.dir === 'rtl' ? 
+                            <ChevronLeft className="h-4 w-4" /> : 
+                            <ChevronRight className="h-4 w-4" />
+                          }
                         </button>
                       </div>
                     )}

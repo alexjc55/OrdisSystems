@@ -257,10 +257,14 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           {/* Total Price */}
           <div className="bg-gray-50 rounded p-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">{t('total') === 'total' ? (
-                document.documentElement.dir === 'rtl' ? 'סה״כ' : 
-                document.documentElement.lang === 'en' ? 'Total' : 'Итого'
-              ) : t('total')}:</span>
+              <span className="text-sm text-gray-600">{(() => {
+                const lang = document.documentElement.lang || 'ru';
+                const isRTL = document.documentElement.dir === 'rtl';
+                
+                if (lang === 'he' || isRTL) return 'סה״כ';
+                if (lang === 'en') return 'Total';
+                return 'Итого';
+              })()}:</span>
               <span className="text-base font-bold text-gray-900">
                 {formatCurrency(totalPrice)}
               </span>
