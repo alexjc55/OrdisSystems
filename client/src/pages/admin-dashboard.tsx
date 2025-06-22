@@ -61,6 +61,9 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+// Define updateCategoryMutation outside components for proper scope
+let updateCategoryMutation: any;
+
 // Sortable Category Item Component
 function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: { 
   category: any, 
@@ -1842,7 +1845,7 @@ export default function AdminDashboard() {
   const usersTotal = usersResponse?.total || 0;
 
   // Category mutations
-  const updateCategoryMutation = useMutation({
+  updateCategoryMutation = useMutation({
     mutationFn: async ({ id, ...categoryData }: any) => {
       const response = await fetch(`/api/categories/${id}`, {
         method: 'PATCH',
@@ -2060,7 +2063,7 @@ export default function AdminDashboard() {
       return await response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
       toast({ title: adminT('categories.notifications.orderUpdated'), description: adminT('categories.notifications.orderUpdatedDesc') });
     },
     onError: (error: any) => {
