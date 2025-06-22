@@ -3,6 +3,7 @@ import {
   userAddresses,
   categories,
   products,
+  productCategories,
   orders,
   orderItems,
   storeSettings,
@@ -16,6 +17,9 @@ import {
   type Product,
   type InsertProduct,
   type ProductWithCategory,
+  type ProductWithCategories,
+  type ProductCategory,
+  type InsertProductCategory,
   type Order,
   type InsertOrder,
   type OrderItem,
@@ -276,28 +280,61 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Product operations
-  async getProducts(categoryId?: number): Promise<ProductWithCategory[]> {
-    const whereClause = categoryId 
-      ? and(
-          eq(products.isActive, true), 
-          eq(products.categoryId, categoryId),
-          ne(products.stockStatus, 'out_of_stock')
-        )
-      : and(
+  async getProducts(categoryId?: number): Promise<ProductWithCategories[]> {
+    if (categoryId) {
+      // Get products for specific category via junction table
+      const productIds = await db
+        .select({ productId: productCategories.productId })
+        .from(productCategories)
+        .where(eq(productCategories.categoryId, categoryId));
+      
+      if (productIds.length === 0) return [];
+      
+      const productsData = await db.query.products.findMany({
+        with: {
+          productCategories: {
+            with: {
+              category: true
+            }
+          }
+        },
+        where: and(
+          eq(products.isActive, true),
+          ne(products.stockStatus, 'out_of_stock'),
+          inArray(products.id, productIds.map(p => p.productId))
+        ),
+        orderBy: [products.sortOrder, products.name],
+      });
+
+      return productsData.map(product => ({
+        ...product,
+        categories: product.productCategories.map(pc => pc.category)
+      }));
+    } else {
+      // Get all active products with their categories
+      const productsData = await db.query.products.findMany({
+        with: {
+          productCategories: {
+            with: {
+              category: true
+            }
+          }
+        },
+        where: and(
           eq(products.isActive, true),
           ne(products.stockStatus, 'out_of_stock')
-        );
+        ),
+        orderBy: [products.sortOrder, products.name],
+      });
 
-    return await db.query.products.findMany({
-      with: {
-        category: true,
-      },
-      where: whereClause,
-      orderBy: [products.sortOrder, products.name],
-    });
+      return productsData.map(product => ({
+        ...product,
+        categories: product.productCategories.map(pc => pc.category)
+      }));
+    }
   }
 
-  async getProductsPaginated(params: PaginationParams): Promise<PaginatedResult<ProductWithCategory>> {
+  async getProductsPaginated(params: PaginationParams): Promise<PaginatedResult<ProductWithCategories>> {
     const { page, limit, search, categoryId, status, sortField, sortDirection } = params;
     const offset = (page - 1) * limit;
 
@@ -308,10 +345,6 @@ export class DatabaseStorage implements IStorage {
       conditions.push(like(products.name, `%${search}%`));
     }
     
-    if (categoryId) {
-      conditions.push(eq(products.categoryId, categoryId));
-    }
-    
     if (status && status !== 'all') {
       if (status === 'available') {
         conditions.push(eq(products.isAvailable, true));
@@ -319,6 +352,29 @@ export class DatabaseStorage implements IStorage {
         conditions.push(eq(products.isAvailable, false));
       } else if (status === 'with_discount') {
         conditions.push(eq(products.isSpecialOffer, true));
+      }
+    }
+
+    // If filtering by category, get product IDs first
+    let productIdsForCategory: number[] = [];
+    if (categoryId) {
+      const categoryProducts = await db
+        .select({ productId: productCategories.productId })
+        .from(productCategories)
+        .where(eq(productCategories.categoryId, categoryId));
+      productIdsForCategory = categoryProducts.map(p => p.productId);
+      
+      if (productIdsForCategory.length > 0) {
+        conditions.push(inArray(products.id, productIdsForCategory));
+      } else {
+        // No products in this category
+        return {
+          data: [],
+          total: 0,
+          page,
+          limit,
+          totalPages: 0
+        };
       }
     }
 
