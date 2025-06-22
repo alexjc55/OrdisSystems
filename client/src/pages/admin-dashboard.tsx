@@ -2123,45 +2123,45 @@ export default function AdminDashboard() {
                 // RTL order: reverse the tab order
                 <>
                   {hasPermission("canManageSettings") && (
-                    <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="themes" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <Palette className="w-4 h-4 ml-1" />
-                      {adminT('tabs.themes')}
+                      <span className="admin-tab-text">{adminT('tabs.themes')}</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canManageSettings") && (
-                    <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="settings" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <UserCheck className="w-4 h-4 ml-1" />
-                      {adminT('tabs.permissions')}
+                      <span className="admin-tab-text">{adminT('tabs.permissions')}</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canViewSettings") && (
-                    <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="store" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <Settings className="w-4 h-4 ml-1" />
-                      {adminT('tabs.settings')}
+                      <span className="admin-tab-text">{adminT('tabs.settings')}</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canViewUsers") && (
-                    <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="users" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <Users className="w-4 h-4 ml-1" />
-                      {adminT('tabs.users')}
+                      <span className="admin-tab-text">{adminT('tabs.users')}</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canManageOrders") && (
-                    <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="orders" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <ShoppingCart className="w-4 h-4 ml-1" />
-                      {adminT('tabs.orders')}
+                      <span className="admin-tab-text">{adminT('tabs.orders')}</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canManageCategories") && (
-                    <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="categories" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <Layers3 className="w-4 h-4 ml-1" />
-                      {adminT('tabs.categories')}
+                      <span className="admin-tab-text">{adminT('tabs.categories')}</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canManageProducts") && (
-                    <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="products" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <Package className="w-4 h-4 ml-1" />
-                      {adminT('tabs.products')}
+                      <span className="admin-tab-text">{adminT('tabs.products')}</span>
                     </TabsTrigger>
                   )}
                 </>
@@ -2169,45 +2169,45 @@ export default function AdminDashboard() {
                 // LTR order: normal order
                 <>
                   {hasPermission("canManageProducts") && (
-                    <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="products" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <Package className="w-4 h-4 mr-1" />
-                      {adminT('tabs.products')}
+                      <span className="admin-tab-text">{adminT('tabs.products')}</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canManageCategories") && (
-                    <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="categories" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <Layers3 className="w-4 h-4 mr-1" />
-                      {adminT('tabs.categories')}
+                      <span className="admin-tab-text">{adminT('tabs.categories')}</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canManageOrders") && (
-                    <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="orders" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <ShoppingCart className="w-4 h-4 mr-1" />
-                      {adminT('tabs.orders')}
+                      <span className="admin-tab-text">{adminT('tabs.orders')}</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canViewUsers") && (
-                    <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="users" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <Users className="w-4 h-4 mr-1" />
-                      {adminT('tabs.users')}
+                      <span className="admin-tab-text">{adminT('tabs.users')}</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canViewSettings") && (
-                    <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="store" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <Settings className="w-4 h-4 mr-1" />
-                      {adminT('tabs.settings')}
+                      <span className="admin-tab-text">{adminT('tabs.settings')}</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canManageSettings") && (
-                    <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="settings" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <UserCheck className="w-4 h-4 mr-1" />
-                      {adminT('tabs.permissions')}
+                      <span className="admin-tab-text">{adminT('tabs.permissions')}</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canManageSettings") && (
-                    <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap">
+                    <TabsTrigger value="themes" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap">
                       <Palette className="w-4 h-4 mr-1" />
-                      {adminT('tabs.themes')}
+                      <span className="admin-tab-text">{adminT('tabs.themes')}</span>
                     </TabsTrigger>
                   )}
                 </>

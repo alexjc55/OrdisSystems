@@ -334,6 +334,47 @@
     text-align: right !important;
   }
 
+  /* Admin tabs responsive design */
+  .admin-tabs-list {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scrollbar-width: thin !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .admin-tabs-list::-webkit-scrollbar {
+    height: 3px !important;
+  }
+
+  .admin-tabs-list::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+
+  .admin-tabs-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-radius: 3px !important;
+  }
+
+  /* Hide text on smaller screens, show only icons */
+  @media (max-width: 768px) {
+    .admin-tab-text {
+      display: none !important;
+    }
+    
+    .admin-tabs-list .admin-tabs-trigger {
+      min-width: auto !important;
+      padding: 0.5rem !important;
+    }
+  }
+
+  /* Show text on larger screens */
+  @media (min-width: 769px) {
+    .admin-tab-text {
+      display: inline !important;
+    }
+  }
+
   .admin-tabs-trigger {
     flex: 1 1 calc(50% - 0.25rem) !important;
     min-width: calc(50% - 0.25rem) !important;
