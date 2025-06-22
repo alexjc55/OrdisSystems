@@ -67,15 +67,19 @@ export function LanguageSwitcher({
             {Object.entries(availableLanguages).map(([code, info]) => (
               <Button
                 key={code}
-                variant={code === currentLanguage ? "default" : "ghost"}
+                variant="ghost"
                 size="sm"
                 onClick={() => {
                   changeLanguage(code as any);
                   setIsOpen(false);
                 }}
-                className="justify-start"
+                className={`justify-start h-9 px-3 transition-colors ${
+                  code === currentLanguage 
+                    ? "bg-orange-50 text-orange-700 hover:bg-orange-100" 
+                    : "hover:bg-gray-50 text-gray-700 hover:text-gray-900"
+                }`}
               >
-                <span className="text-base mr-2">{info.flag}</span>
+                <span className="text-base mr-2 rtl:mr-0 rtl:ml-2">{info.flag}</span>
                 <span className="text-xs">{info.nativeName}</span>
               </Button>
             ))}
@@ -95,26 +99,26 @@ export function LanguageSwitcher({
           {showText && <span>{currentLanguageInfo.nativeName}</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-2" align="end">
+      <PopoverContent className="w-auto p-1" align="end">
         <div className="space-y-1">
-          <div className="text-sm font-medium text-gray-700 mb-2">
-            {t('chooseLanguage')}
-          </div>
           {Object.entries(availableLanguages).map(([code, info]) => (
             <Button
               key={code}
-              variant={code === currentLanguage ? "default" : "ghost"}
+              variant="ghost"
               size="sm"
               onClick={() => {
                 changeLanguage(code as any);
                 setIsOpen(false);
               }}
-              className="w-full justify-start"
+              className={`w-full justify-start h-9 px-3 transition-colors ${
+                code === currentLanguage 
+                  ? "bg-orange-50 text-orange-700 hover:bg-orange-100" 
+                  : "hover:bg-gray-50 text-gray-700 hover:text-gray-900"
+              }`}
             >
-              <span className="text-base mr-3">{info.flag}</span>
+              <span className="text-base mr-3 rtl:mr-0 rtl:ml-3">{info.flag}</span>
               <div className="text-left">
-                <div className="font-medium">{info.name}</div>
-                <div className="text-xs text-gray-500">{info.nativeName}</div>
+                <div className="font-medium text-sm">{info.nativeName}</div>
               </div>
             </Button>
           ))}
