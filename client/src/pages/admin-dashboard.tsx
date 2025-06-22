@@ -2095,15 +2095,15 @@ export default function AdminDashboard() {
     });
 
   return (
-    <div className={`min-h-screen bg-gray-50`} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen bg-gray-50 pt-16`} dir={isRTL ? 'rtl' : 'ltr'}>
       <Header />
       
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         <div className="mb-4 sm:mb-8">
           <div className={`flex flex-col sm:flex-row sm:items-center ${isRTL ? 'sm:flex-row-reverse' : ''} justify-between gap-4`}>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{adminT('dashboard.title')}</h1>
-              <p className="text-gray-600 text-sm sm:text-base">{adminT('dashboard.overview')}</p>
+            <div className={isRTL ? 'text-right' : 'text-left'}>
+              <h1 className={`text-2xl sm:text-3xl font-bold text-gray-900 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('dashboard.title')}</h1>
+              <p className={`text-gray-600 text-sm sm:text-base ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('dashboard.overview')}</p>
             </div>
 
           </div>
