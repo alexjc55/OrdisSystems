@@ -2863,9 +2863,9 @@ export default function AdminDashboard() {
                 {(categories as any[] || []).length > 0 ? (
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
                     {(categories as any[] || []).map((category: any) => (
-                      <Card key={category.id} className="group hover:shadow-md transition-shadow duration-200">
-                        <CardContent className="p-4">
-                          <div className={`flex items-start justify-between mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <Card key={category.id} className="group hover:shadow-md transition-shadow duration-200 flex flex-col h-full">
+                        <CardContent className="p-4 flex flex-col flex-1">
+                          <div className={`flex items-start justify-between mb-3 flex-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                             {isRTL ? (
                               <>
                                 <div className="flex-shrink-0 ml-4">
@@ -2908,7 +2908,7 @@ export default function AdminDashboard() {
                               </>
                             )}
                           </div>
-                          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
+                          <div className={`flex items-center justify-between mt-auto ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
                             {isRTL ? (
                               <>
                                 {/* RTL: Счетчик товаров слева, кнопки справа */}
