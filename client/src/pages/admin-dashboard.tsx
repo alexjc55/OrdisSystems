@@ -2075,11 +2075,11 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
-      toast({ title: adminT('categories.notifications.orderUpdated'), description: adminT('categories.notifications.orderUpdatedDesc') });
+      // Убираем уведомление при успешном перетаскивании - оно не нужно
     },
     onError: (error: any) => {
       console.error("Category reordering error:", error);
-      toast({ title: adminT('common.error'), description: adminT('categories.notifications.reorderError'), variant: "destructive" });
+      toast({ title: adminT('common.error'), description: error.message || 'Не удалось изменить порядок категорий', variant: "destructive" });
     }
   });
 
