@@ -3,16 +3,16 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useShopTranslation } from "@/hooks/use-language";
-import type { CategoryWithProducts } from "@shared/schema";
+import type { CategoryWithCount } from "@shared/schema";
 
 interface SidebarProps {
-  categories: CategoryWithProducts[];
+  categories: CategoryWithCount[];
   selectedCategoryId: number | null;
   onCategorySelect: (categoryId: number | null) => void;
   isLoading?: boolean;
 }
 
-function getIconForCategory(category: CategoryWithProducts): string {
+function getIconForCategory(category: CategoryWithCount): string {
   return category.icon || '📦';
 }
 
@@ -69,7 +69,7 @@ export default function Sidebar({
                 <span className="mr-3 rtl:mr-0 rtl:ml-3">{category.icon || '📦'}</span>
                 {category.name}
                 <Badge variant="secondary" className="ml-auto text-xs bg-gray-200 text-gray-700">
-                  {category.products.filter(p => p.isAvailable).length}
+                  {category.productCount}
                 </Badge>
               </Button>
             ))}

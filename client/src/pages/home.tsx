@@ -53,7 +53,7 @@ import {
   Users,
   Sparkles
 } from "lucide-react";
-import type { CategoryWithProducts, ProductWithCategories } from "@shared/schema";
+import type { CategoryWithCount, ProductWithCategories } from "@shared/schema";
 
 export default function Home() {
   const params = useParams();
@@ -73,7 +73,7 @@ export default function Home() {
   const isMobile = useIsMobile();
 
   // Fetch categories
-  const { data: categories = [], isLoading: categoriesLoading } = useQuery<CategoryWithProducts[]>({
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery<CategoryWithCount[]>({
     queryKey: ["/api/categories"],
   });
 

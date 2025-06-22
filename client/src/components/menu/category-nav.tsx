@@ -2,15 +2,15 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { memo, useCallback } from "react";
 import { useShopTranslation } from "@/hooks/use-language";
-import type { CategoryWithProducts } from "@shared/schema";
+import type { CategoryWithCount } from "@shared/schema";
 
 interface CategoryNavProps {
-  categories: CategoryWithProducts[];
+  categories: CategoryWithCount[];
   selectedCategoryId: number | null;
   onCategorySelect: (categoryId: number | null) => void;
 }
 
-function getIconForCategory(category: CategoryWithProducts): string {
+function getIconForCategory(category: CategoryWithCount): string {
   return category.icon || '📦';
 }
 
