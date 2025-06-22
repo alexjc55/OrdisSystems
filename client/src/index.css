@@ -480,10 +480,34 @@
       direction: rtl !important;
     }
     
-    /* Force table layout to be truly RTL */
+    /* Force table layout to be truly RTL - target Radix UI table specifically */
     .rtl-scroll-container table {
       transform: none !important;
       unicode-bidi: bidi-override !important;
+    }
+    
+    /* Specific targeting for Radix UI table components */
+    .rtl-scroll-container [data-radix-collection-item],
+    .rtl-scroll-container [role="table"],
+    .rtl-scroll-container [role="row"],
+    .rtl-scroll-container [role="cell"],
+    .rtl-scroll-container [role="columnheader"] {
+      direction: rtl !important;
+    }
+    
+    /* Force RTL on table wrapper elements */
+    [dir="rtl"] .rtl-scroll-container {
+      direction: rtl !important;
+    }
+    
+    [dir="rtl"] .rtl-scroll-container table,
+    [dir="rtl"] .rtl-scroll-container tbody,
+    [dir="rtl"] .rtl-scroll-container thead,
+    [dir="rtl"] .rtl-scroll-container tr,
+    [dir="rtl"] .rtl-scroll-container th,
+    [dir="rtl"] .rtl-scroll-container td {
+      direction: rtl !important;
+      text-align: right !important;
     }
   }
 
