@@ -123,17 +123,8 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
           </div>
         </div>
 
-        {/* Category icon and info */}
-        <div className="flex items-center gap-4 mb-4">
-          <div className="relative">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-              {category.icon || '📦'}
-            </div>
-            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-md">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
-            </div>
-          </div>
-          
+        {/* Category info and icon */}
+        <div className="flex items-center justify-between gap-4 mb-4">
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-blue-600 transition-colors">
               {category.name}
@@ -144,9 +135,13 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
               </p>
             )}
           </div>
+          
+          <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
+            {category.icon || '📦'}
+          </div>
         </div>
 
-        {/* Stats */}
+        {/* Stats and Status */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="relative">
@@ -164,9 +159,20 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
             </div>
           </div>
           
-          <div className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-xs text-gray-500 font-medium">Active</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              <div className={`w-2 h-2 rounded-full ${category.isActive ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`}></div>
+              <span className="text-xs text-gray-500 font-medium">
+                {category.isActive ? adminT('common.active') : adminT('common.inactive')}
+              </span>
+            </div>
+            <Switch
+              checked={category.isActive ?? true}
+              onCheckedChange={(checked) => {
+                updateCategoryMutation.mutate({ id: category.id, isActive: checked });
+              }}
+              className="scale-75"
+            />
           </div>
         </div>
 
