@@ -188,6 +188,7 @@
     "title": "קטגוריות", 
     "description": "ניהול קטגוריות פשוט",
     "products": "מוצרים",
+    "orderUpdated": "סדר הקטגוריות עודכן",
     "addCategory": "הוסף קטגוריה",
     "editCategory": "ערוך קטגוריה",
     "deleteCategory": "מחק קטגוריה",

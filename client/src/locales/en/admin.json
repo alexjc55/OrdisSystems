@@ -188,6 +188,7 @@
     "title": "Categories",
     "description": "Simple category management",
     "products": "products",
+    "orderUpdated": "Category order updated",
     "addCategory": "Add Category",
     "editCategory": "Edit Category",
     "deleteCategory": "Delete Category",

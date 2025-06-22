@@ -2078,7 +2078,7 @@ export default function AdminDashboard() {
       // Краткое уведомление об успешном изменении порядка
       toast({ 
         title: adminT('categories.title'),
-        description: "Порядок категорий обновлен",
+        description: adminT('categories.orderUpdated'),
         duration: 2000 
       });
     },
