@@ -267,7 +267,7 @@ import {
 const productSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
-  categoryId: z.number().min(1),
+  categoryIds: z.array(z.number()).min(1, "Выберите хотя бы одну категорию"),
   price: z.string().min(1),
   unit: z.enum(["100g", "100ml", "piece", "kg"]).default("100g"),
   imageUrl: z.string().optional(),
@@ -4607,7 +4607,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     defaultValues: {
       name: "",
       description: "",
-      categoryId: 0,
+      categoryIds: [],
       price: "",
       unit: "100g" as ProductUnit,
       imageUrl: "",
@@ -4628,10 +4628,12 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   useEffect(() => {
     if (open) {
       if (product) {
+        // Extract category IDs from product categories array
+        const categoryIds = product.categories ? product.categories.map((cat: any) => cat.id) : [];
         form.reset({
           name: product.name || "",
           description: product.description || "",
-          categoryId: product.categoryId || 0,
+          categoryIds: categoryIds,
           price: (product.price || product.pricePerKg)?.toString() || "",
           unit: (product.unit || "100g") as ProductUnit,
           imageUrl: product.imageUrl || "",
@@ -4645,7 +4647,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
         form.reset({
           name: "",
           description: "",
-          categoryId: 0,
+          categoryIds: [],
           price: "",
           unit: "100g" as ProductUnit,
           imageUrl: "",
@@ -4709,27 +4711,35 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
 
             <FormField
               control={form.control}
-              name="categoryId"
+              name="categoryIds"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm">{adminT('products.dialog.categoryLabel')}</FormLabel>
-                  <Select 
-                    onValueChange={(value) => field.onChange(parseInt(value))}
-                    value={field.value?.toString()}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="text-sm">
-                        <SelectValue placeholder={adminT('products.dialog.categoryPlaceholder')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
+                  <FormControl>
+                    <div className="border rounded-md p-3 max-h-32 overflow-y-auto">
                       {categories?.map((category: any) => (
-                        <SelectItem key={category.id} value={category.id.toString()} className="text-sm">
-                          {category.icon} {category.name}
-                        </SelectItem>
+                        <div key={category.id} className="flex items-center space-x-2 py-1">
+                          <input
+                            type="checkbox"
+                            id={`category-${category.id}`}
+                            checked={field.value?.includes(category.id) || false}
+                            onChange={(e) => {
+                              const currentIds = field.value || [];
+                              if (e.target.checked) {
+                                field.onChange([...currentIds, category.id]);
+                              } else {
+                                field.onChange(currentIds.filter((id: number) => id !== category.id));
+                              }
+                            }}
+                            className="rounded border-gray-300"
+                          />
+                          <label htmlFor={`category-${category.id}`} className="text-sm cursor-pointer flex-1">
+                            {category.icon} {category.name}
+                          </label>
+                        </div>
                       ))}
-                    </SelectContent>
-                  </Select>
+                    </div>
+                  </FormControl>
                   <FormMessage className="text-xs" />
                 </FormItem>
               )}
