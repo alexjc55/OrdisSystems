@@ -412,7 +412,24 @@
     "createError": "Failed to create user",
     "updated": "User updated",
     "updateSuccess": "Changes saved",
-    "updateError": "Failed to update user"
+    "updateError": "Failed to update user",
+    "notifications": {
+      "userCreated": "User created",
+      "userCreatedDesc": "New user successfully added",
+      "userUpdated": "User updated", 
+      "userUpdatedDesc": "User data successfully updated",
+      "createError": "Failed to create user",
+      "updateError": "Failed to update user",
+      "roleUpdated": "Role updated",
+      "roleUpdatedDesc": "User role successfully changed",
+      "roleUpdateError": "Failed to update role",
+      "userDeleted": "User deleted",
+      "userDeletedDesc": "User successfully deleted",
+      "deleteError": "Failed to delete user",
+      "passwordSet": "Password set",
+      "passwordSetDesc": "Password successfully set for user",
+      "passwordSetError": "Failed to set password"
+    }
   },
   "settings": {
     "showSpecialOffers": "Show special offers",

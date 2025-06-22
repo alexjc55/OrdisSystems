@@ -951,7 +951,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             className="text-xs"
           >
             <Plus className={`h-3 w-3 ${isRTL ? 'mr-4' : 'mr-4'}`} />
-            {adminT('orders.addProduct', 'Добавить товар')}
+            {adminT('orders.addProduct')}
           </Button>
         </div>
         <div className="border rounded-lg overflow-hidden">
@@ -2028,7 +2028,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Set password error:", error);
-      toast({ title: "Ошибка", description: error.message || "Не удалось установить пароль", variant: "destructive" });
+      toast({ title: adminT('common.error'), description: error.message || adminT('users.notifications.passwordSetError'), variant: "destructive" });
     }
   });
 
