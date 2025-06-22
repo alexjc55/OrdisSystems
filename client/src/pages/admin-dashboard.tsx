@@ -2404,9 +2404,9 @@ export default function AdminDashboard() {
                                 <>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
                                     <div className="flex flex-col gap-1 items-end">
-                                      <CustomSwitch
+                                      <Switch className="data-[state=checked]:bg-green-500"
                                         checked={product.isAvailable && (product.availabilityStatus === "available")}
-                                        onChange={(checked) => {
+                                        onCheckedChange={(checked) => {
                                           if (!checked) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
@@ -2417,7 +2417,7 @@ export default function AdminDashboard() {
                                             });
                                           }
                                         }}
-                                        bgColor="bg-green-500"
+                                        
                                       />
                                       {product.availabilityStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
@@ -2508,9 +2508,9 @@ export default function AdminDashboard() {
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-left">
                                     <div className="flex flex-col gap-1 items-start">
-                                      <CustomSwitch
+                                      <Switch className="data-[state=checked]:bg-green-500"
                                         checked={product.isAvailable && (product.availabilityStatus === "available")}
-                                        onChange={(checked) => {
+                                        onCheckedChange={(checked) => {
                                           if (!checked) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
@@ -2521,7 +2521,7 @@ export default function AdminDashboard() {
                                             });
                                           }
                                         }}
-                                        bgColor="bg-green-500"
+                                        
                                       />
                                       {product.availabilityStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
@@ -3733,9 +3733,9 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">Управление товарами</label>
                           <p className="text-xs text-gray-500">Добавление, редактирование и удаление товаров</p>
                         </div>
-                        <CustomSwitch
+                        <Switch className="data-[state=checked]:bg-green-500"
                           checked={(storeSettings?.workerPermissions as any)?.canManageProducts || false}
-                          onChange={(checked) => 
+                          onCheckedChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -3752,9 +3752,9 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">Управление категориями</label>
                           <p className="text-xs text-gray-500">Добавление, редактирование и удаление категорий</p>
                         </div>
-                        <CustomSwitch
+                        <Switch className="data-[state=checked]:bg-green-500"
                           checked={(storeSettings?.workerPermissions as any)?.canManageCategories || false}
-                          onChange={(checked) => 
+                          onCheckedChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -3771,9 +3771,9 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">Управление заказами</label>
                           <p className="text-xs text-gray-500">Просмотр и изменение статуса заказов</p>
                         </div>
-                        <CustomSwitch
+                        <Switch className="data-[state=checked]:bg-green-500"
                           checked={(storeSettings?.workerPermissions as any)?.canManageOrders || false}
-                          onChange={(checked) => 
+                          onCheckedChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -3792,7 +3792,7 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">Просмотр пользователей</label>
                           <p className="text-xs text-gray-500">Просмотр списка клиентов</p>
                         </div>
-                        <Switch
+                        <Switch className="data-[state=checked]:bg-green-500"
                           checked={(storeSettings?.workerPermissions as any)?.canViewUsers || false}
                           onCheckedChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
@@ -3810,9 +3810,9 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">Управление пользователями</label>
                           <p className="text-xs text-gray-500">Редактирование и удаление пользователей</p>
                         </div>
-                        <CustomSwitch
+                        <Switch className="data-[state=checked]:bg-green-500"
                           checked={(storeSettings?.workerPermissions as any)?.canManageUsers || false}
-                          onChange={(checked) => 
+                          onCheckedChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -3829,9 +3829,9 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">Просмотр настроек</label>
                           <p className="text-xs text-gray-500">Доступ к настройкам магазина (только чтение)</p>
                         </div>
-                        <CustomSwitch
+                        <Switch className="data-[state=checked]:bg-green-500"
                           checked={(storeSettings?.workerPermissions as any)?.canViewSettings || false}
-                          onChange={(checked) => 
+                          onCheckedChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -3848,9 +3848,9 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">Управление настройками</label>
                           <p className="text-xs text-gray-500">Полный доступ к настройкам магазина</p>
                         </div>
-                        <CustomSwitch
+                        <Switch className="data-[state=checked]:bg-green-500"
                           checked={(storeSettings?.workerPermissions as any)?.canManageSettings || false}
-                          onChange={(checked) => 
+                          onCheckedChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -4012,41 +4012,7 @@ export default function AdminDashboard() {
   );
 }
 
-// Custom Switch Component for mobile compatibility
-function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: { 
-  checked: boolean; 
-  onChange: (checked: boolean) => void; 
-  bgColor?: string;
-}) {
-  return (
-    <div
-      onClick={() => {
-        try {
-          onChange(!checked);
-        } catch (error) {
-          console.error('Switch toggle error:', error);
-        }
-      }}
-      className={`cursor-pointer transition-colors rounded-full relative flex items-center ${
-        checked ? bgColor : 'bg-gray-200'
-      }`}
-      style={{ 
-        width: '44px', 
-        height: '24px',
-        padding: '2px'
-      }}
-    >
-      <div
-        className="bg-white rounded-full transition-transform shadow-md border border-gray-200"
-        style={{ 
-          width: '20px', 
-          height: '20px',
-          transform: checked ? 'translateX(20px)' : 'translateX(0px)'
-        }}
-      />
-    </div>
-  );
-}
+
 
 // Form Dialog Components
 function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDelete, adminT }: any) {
@@ -4289,7 +4255,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     </div>
                   </div>
                   <FormControl>
-                    <CustomSwitch
+                    <Switch className="data-[state=checked]:bg-green-500"
                       checked={Boolean(field.value)}
                       onChange={field.onChange}
                       bgColor="bg-orange-500"
@@ -5080,9 +5046,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                           <span className={`text-xs font-medium ${isEnabled ? 'text-green-600' : 'text-gray-400'}`}>
                             {isEnabled ? 'Активен' : 'Отключен'}
                           </span>
-                          <CustomSwitch 
+                          <Switch 
                             checked={isEnabled}
-                            onChange={(checked) => {
+                            onCheckedChange={(checked) => {
                               const currentEnabled = form.getValues("enabledLanguages") || ["ru", "en", "he"];
                               const currentDefault = form.getValues("defaultLanguage") || "ru";
                               let newEnabled;
@@ -5192,7 +5158,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <div className="flex items-center justify-between">
                     <FormLabel className="text-sm font-medium">{label}</FormLabel>
                     <div className="flex items-center space-x-2">
-                      <Switch
+                      <Switch className="data-[state=checked]:bg-green-500"
                         checked={isWorking}
                         onCheckedChange={(checked) => {
                           if (checked) {
@@ -5452,7 +5418,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
+                    <Switch className="data-[state=checked]:bg-green-500"
                       checked={field.value}
                       onCheckedChange={field.onChange}
                       className="switch-green"
@@ -5474,7 +5440,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
+                    <Switch className="data-[state=checked]:bg-green-500"
                       checked={field.value}
                       onCheckedChange={field.onChange}
                       className="switch-green"
@@ -5496,7 +5462,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
+                    <Switch className="data-[state=checked]:bg-green-500"
                       checked={field.value}
                       onCheckedChange={field.onChange}
                       className="switch-green"
@@ -5518,7 +5484,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
+                    <Switch className="data-[state=checked]:bg-green-500"
                       checked={field.value}
                       onCheckedChange={field.onChange}
                       className="switch-green"
@@ -5540,7 +5506,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
+                    <Switch className="data-[state=checked]:bg-green-500"
                       checked={field.value}
                       onCheckedChange={field.onChange}
                       className="switch-green"
@@ -5562,7 +5528,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
+                    <Switch className="data-[state=checked]:bg-green-500"
                       checked={field.value}
                       onCheckedChange={field.onChange}
                       className="switch-green"
@@ -5645,7 +5611,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   </FormDescription>
                 </div>
                 <FormControl>
-                  <Switch
+                  <Switch className="data-[state=checked]:bg-green-500"
                     checked={field.value}
                     onCheckedChange={field.onChange}
                     className="switch-green"
@@ -5825,7 +5791,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   </FormDescription>
                 </div>
                 <FormControl>
-                  <Switch
+                  <Switch className="data-[state=checked]:bg-green-500"
                     checked={field.value}
                     onCheckedChange={field.onChange}
                     className="switch-green"
