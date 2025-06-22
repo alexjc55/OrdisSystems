@@ -87,6 +87,7 @@ export default function Home() {
     queryKey: ["/api/products", selectedCategoryId],
     queryFn: () => fetch(`/api/products?categoryId=${selectedCategoryId}`).then(res => res.json()),
     enabled: selectedCategoryId !== null,
+    staleTime: 0, // Always refetch when category changes
   });
 
   // Search products

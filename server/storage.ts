@@ -231,7 +231,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Category operations
-  async getCategories(includeInactive = false): Promise<Category[]> {
+  async getCategories(includeInactive = false): Promise<CategoryWithCount[]> {
     const categoriesData = await db
       .select()
       .from(categories)
@@ -304,6 +304,7 @@ export class DatabaseStorage implements IStorage {
           name: products.name,
           description: products.description,
           price: products.price,
+          pricePerKg: products.pricePerKg,
           unit: products.unit,
           imageUrl: products.imageUrl,
           stockStatus: products.stockStatus,
@@ -344,6 +345,7 @@ export class DatabaseStorage implements IStorage {
             name: row.name,
             description: row.description,
             price: row.price,
+            pricePerKg: row.pricePerKg,
             unit: row.unit,
             imageUrl: row.imageUrl,
             stockStatus: row.stockStatus,
@@ -384,6 +386,7 @@ export class DatabaseStorage implements IStorage {
           name: products.name,
           description: products.description,
           price: products.price,
+          pricePerKg: products.pricePerKg,
           unit: products.unit,
           imageUrl: products.imageUrl,
           stockStatus: products.stockStatus,
@@ -423,6 +426,7 @@ export class DatabaseStorage implements IStorage {
             name: row.name,
             description: row.description,
             price: row.price,
+            pricePerKg: row.pricePerKg,
             unit: row.unit,
             imageUrl: row.imageUrl,
             stockStatus: row.stockStatus,
