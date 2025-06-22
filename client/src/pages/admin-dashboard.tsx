@@ -157,16 +157,16 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
         </div>
 
         {/* Bottom section - always at bottom */}
-        <div className="mt-auto">
+        <div className="mt-auto pt-2">
           {/* Product count */}
-          <div className="mb-2">
+          <div className="flex justify-center">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveTab('products');
                 setSelectedCategory(category.id.toString());
               }}
-              className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-orange-500 text-white border border-orange-600 shadow-sm hover:bg-orange-600 transition-colors duration-200 max-w-full"
+              className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-orange-500 text-white border border-orange-600 shadow-sm hover:bg-orange-600 transition-colors duration-200"
             >
               <span className="truncate">{category.products?.length || 0} товаров</span>
             </button>
