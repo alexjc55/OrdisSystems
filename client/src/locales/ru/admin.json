@@ -86,6 +86,8 @@
     "allProducts": "Все товары",
     "availableProducts": "Доступные товары",
     "unavailableProducts": "Недоступные товары",
+    "preorder": "предзаказ",
+    "per100g": "за 100г",
     "productsWithDiscount": "Товары со скидкой",
     "noProducts": "Нет товаров",
     "addFirstProduct": "Начните с добавления первого товара",

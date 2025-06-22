@@ -85,6 +85,8 @@
     "allProducts": "All Products",
     "availableProducts": "Available Products",
     "unavailableProducts": "Unavailable Products",
+    "preorder": "pre-order",
+    "per100g": "per 100g",
     "productsWithDiscount": "Products with Discount",
     "noProducts": "No Products",
     "addFirstProduct": "Start by adding your first product",

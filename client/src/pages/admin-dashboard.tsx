@@ -2410,7 +2410,7 @@ export default function AdminDashboard() {
                                       />
                                       {product.availabilityStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
-                                          предзаказ
+                                          {adminT('products.preorder')}
                                         </div>
                                       )}
                                     </div>
@@ -2514,7 +2514,7 @@ export default function AdminDashboard() {
                                       />
                                       {product.availabilityStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
-                                          предзаказ
+                                          {adminT('products.preorder')}
                                         </div>
                                       )}
                                     </div>
