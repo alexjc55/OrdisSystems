@@ -2116,30 +2116,63 @@ export default function AdminDashboard() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
           <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
-            <TabsList className={`admin-tabs-list flex w-full overflow-x-auto gap-1 ${isRTL ? 'justify-end flex-row-reverse' : 'justify-start'}`} dir={isRTL ? 'rtl' : 'ltr'}>
-              {hasPermission("canManageProducts") && (
-                <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.products')}</TabsTrigger>
-              )}
-              {hasPermission("canManageCategories") && (
-                <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.categories')}</TabsTrigger>
-              )}
-              {hasPermission("canManageOrders") && (
-                <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.orders')}</TabsTrigger>
-              )}
-              {hasPermission("canViewUsers") && (
-                <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.users')}</TabsTrigger>
-              )}
-              {hasPermission("canViewSettings") && (
-                <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.settings')}</TabsTrigger>
-              )}
-              {hasPermission("canManageSettings") && (
-                <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Права доступа</TabsTrigger>
-              )}
-              {hasPermission("canManageSettings") && (
-                <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap">
-                  <Palette className="w-4 h-4 mr-1 rtl:mr-0 rtl:ml-1" />
-                  Темы
-                </TabsTrigger>
+            <TabsList className={`admin-tabs-list flex w-full overflow-x-auto gap-1 ${isRTL ? 'justify-start' : 'justify-start'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+              {isRTL ? (
+                // RTL order: reverse the tab order
+                <>
+                  {hasPermission("canManageSettings") && (
+                    <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap">
+                      <Palette className="w-4 h-4 ml-1" />
+                      Темы
+                    </TabsTrigger>
+                  )}
+                  {hasPermission("canManageSettings") && (
+                    <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Права доступа</TabsTrigger>
+                  )}
+                  {hasPermission("canViewSettings") && (
+                    <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.settings')}</TabsTrigger>
+                  )}
+                  {hasPermission("canViewUsers") && (
+                    <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.users')}</TabsTrigger>
+                  )}
+                  {hasPermission("canManageOrders") && (
+                    <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.orders')}</TabsTrigger>
+                  )}
+                  {hasPermission("canManageCategories") && (
+                    <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.categories')}</TabsTrigger>
+                  )}
+                  {hasPermission("canManageProducts") && (
+                    <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.products')}</TabsTrigger>
+                  )}
+                </>
+              ) : (
+                // LTR order: normal order
+                <>
+                  {hasPermission("canManageProducts") && (
+                    <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.products')}</TabsTrigger>
+                  )}
+                  {hasPermission("canManageCategories") && (
+                    <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.categories')}</TabsTrigger>
+                  )}
+                  {hasPermission("canManageOrders") && (
+                    <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.orders')}</TabsTrigger>
+                  )}
+                  {hasPermission("canViewUsers") && (
+                    <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.users')}</TabsTrigger>
+                  )}
+                  {hasPermission("canViewSettings") && (
+                    <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.settings')}</TabsTrigger>
+                  )}
+                  {hasPermission("canManageSettings") && (
+                    <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Права доступа</TabsTrigger>
+                  )}
+                  {hasPermission("canManageSettings") && (
+                    <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap">
+                      <Palette className="w-4 h-4 mr-1" />
+                      Темы
+                    </TabsTrigger>
+                  )}
+                </>
               )}
             </TabsList>
           </div>
