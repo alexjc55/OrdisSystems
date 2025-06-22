@@ -157,15 +157,21 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
       {/* Main content with two containers */}
       <div className="relative flex-1 px-3 py-2 flex items-start gap-3">
         {/* Left container - Text content */}
-        <div className="flex-1 min-w-0 flex flex-col h-full">
+        <div 
+          className="flex-1 min-w-0 flex flex-col h-full cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(category);
+          }}
+        >
           {/* Category name */}
-          <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1">
+          <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1 hover:text-blue-600">
             {category.name}
           </h3>
 
           {/* Description if exists */}
           {category.description && (
-            <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed">
+            <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed hover:text-gray-700">
               {category.description}
             </p>
           )}
