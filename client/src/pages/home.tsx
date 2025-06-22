@@ -508,12 +508,7 @@ export default function Home() {
                         <button
                           onClick={() => {
                             if (carouselApiRef.current) {
-                              const isRTL = document.documentElement.dir === 'rtl';
-                              if (isRTL) {
-                                carouselApiRef.current.scrollNext();
-                              } else {
-                                carouselApiRef.current.scrollPrev();
-                              }
+                              carouselApiRef.current.scrollPrev();
                             }
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
@@ -523,12 +518,7 @@ export default function Home() {
                         <button
                           onClick={() => {
                             if (carouselApiRef.current) {
-                              const isRTL = document.documentElement.dir === 'rtl';
-                              if (isRTL) {
-                                carouselApiRef.current.scrollPrev();
-                              } else {
-                                carouselApiRef.current.scrollNext();
-                              }
+                              carouselApiRef.current.scrollNext();
                             }
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"

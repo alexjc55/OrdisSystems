@@ -57,7 +57,7 @@ export default function Header({ onResetView }: HeaderProps) {
             </Link>
             
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex ml-8 space-x-8 rtl:space-x-reverse">
+            <nav className="hidden md:flex ml-8 rtl:ml-0 rtl:mr-8 space-x-8 rtl:space-x-reverse">
               <Link href="/" onClick={() => onResetView?.()} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                 {t('menu')}
               </Link>
@@ -133,7 +133,7 @@ export default function Header({ onResetView }: HeaderProps) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
                       <Link href="/profile">
-                        <div className="flex items-center">
+                        <div className="flex items-center w-full">
                           <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                           <span>{t('navigation.profile')}</span>
                         </div>
@@ -142,8 +142,8 @@ export default function Header({ onResetView }: HeaderProps) {
                     {user?.role === 'admin' && (
                       <DropdownMenuItem asChild>
                         <Link href="/admin">
-                          <div className="flex items-center">
-                            <Settings className="mr-2 h-4 w-4" />
+                          <div className="flex items-center w-full">
+                            <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                             <span>{t('adminPanel')}</span>
                           </div>
                         </Link>
@@ -151,7 +151,7 @@ export default function Header({ onResetView }: HeaderProps) {
                     )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
-                      <LogOut className="mr-2 h-4 w-4" />
+                      <LogOut className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                       <span>{t('logout')}</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
