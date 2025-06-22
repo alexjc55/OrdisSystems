@@ -196,7 +196,7 @@ export default function Header({ onResetView }: HeaderProps) {
                 </Link>
               ) : (user?.role === 'admin' || user?.role === 'worker') ? (
                 /* Admin/Worker - Menu and Management buttons side by side */
-                <div className="flex space-x-4 px-4">
+                <div className="flex space-x-4 rtl:space-x-reverse px-4">
                   <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }} className="flex-1">
                     <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
                       <Utensils className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
@@ -212,7 +212,7 @@ export default function Header({ onResetView }: HeaderProps) {
                 </div>
               ) : (
                 /* Regular user - Menu and Profile buttons side by side */
-                <div className="flex space-x-4 px-4">
+                <div className="flex space-x-4 rtl:space-x-reverse px-4">
                   <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }} className="flex-1">
                     <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
                       <Utensils className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
