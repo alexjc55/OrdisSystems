@@ -135,7 +135,7 @@ export default function Home() {
       const productCategory = categories.find(cat => cat.id === product.categoryId);
       return product.isAvailable !== false && 
              product.isSpecialOffer === true && 
-             productCategory?.isActive !== false;
+             productCategory?.isActive === true;
     });
   }, [allProducts, categories]);
 
