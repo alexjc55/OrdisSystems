@@ -797,14 +797,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
           <div className="space-y-2 text-sm">
             <div><strong>№ заказа:</strong> #{order.id}</div>
             <div><strong>Дата создания:</strong> {new Date(order.createdAt).toLocaleString('ru-RU')}</div>
-            <div><strong>Сумма товаров:</strong> {formatCurrency(parseFloat(order.totalAmount) - parseFloat(order.deliveryFee || "0"))}</div>
-            <div><strong>Доставка:</strong> {
+            <div><strong>{adminT('orders.subtotal')}:</strong> {formatCurrency(parseFloat(order.totalAmount) - parseFloat(order.deliveryFee || "0"))}</div>
+            <div><strong>{adminT('orders.deliveryFee')}:</strong> {
               parseFloat(order.deliveryFee || "0") === 0 ? 
-                <span className="text-green-600 font-medium">Бесплатно</span> : 
+                <span className="text-green-600 font-medium">{adminT('common.free')}</span> : 
                 formatCurrency(order.deliveryFee || "0")
             }</div>
-            <div><strong>{adminT('orders.total')}:</strong> {formatCurrency(order.totalAmount)}</div>
-            <div><strong>Клиент:</strong> {order.user?.firstName && order.user?.lastName 
+            <div><strong>{adminT('orders.orderTotal')}:</strong> {formatCurrency(order.totalAmount)}</div>
+            <div><strong>{adminT('orders.customer')}:</strong> {order.user?.firstName && order.user?.lastName 
               ? `${order.user.firstName} ${order.user.lastName}`
               : order.user?.email || "—"}</div>
             {order.deliveryDate && (
@@ -1388,7 +1388,7 @@ function ItemDiscountDialog({
                   <span className="text-red-600">-{formatCurrency(discountAmount)}</span>
                 </div>
                 <div className="flex justify-between font-medium">
-                  <span>Итого:</span>
+                  <span>{adminT('orders.orderTotal')}:</span>
                   <span>{formatCurrency(finalPrice)}</span>
                 </div>
               </div>

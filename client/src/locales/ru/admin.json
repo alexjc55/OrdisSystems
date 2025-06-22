@@ -42,7 +42,8 @@
     "table": "Таблица",
     "kanban": "Канбан",
     "searchProducts": "Поиск товаров...",
-    "error": "Ошибка"
+    "error": "Ошибка",
+    "free": "Бесплатно"
   },
   "imageUpload": {
     "invalidFormat": "Неверный формат файла",
