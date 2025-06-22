@@ -176,8 +176,6 @@ export default function Home() {
     if (carouselApiRef.current) {
       const slideIndex = pageIndex * slidesPerPage;
       carouselApiRef.current.scrollTo(slideIndex);
-      // Update current slide state immediately for visual feedback
-      setCurrentSlide(slideIndex);
     }
   };
 
@@ -447,7 +445,7 @@ export default function Home() {
                         onClick={() => setSelectedCategoryId(0)}
                         className="w-full md:w-auto bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 !text-white hover:!text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                       >
-                        <Package className="mr-2 h-5 w-5" />
+                        <Package className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
                         {t('allProducts')}
                       </Button>
                     </div>
