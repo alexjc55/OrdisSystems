@@ -18,7 +18,7 @@ export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const { storeSettings } = useStoreSettings();
   const { t } = useCommonTranslation();
-  const { currentLanguage } = useLanguage();
+  const { currentLanguage, changeLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState("login");
 
   // Dynamic validation messages based on current language
