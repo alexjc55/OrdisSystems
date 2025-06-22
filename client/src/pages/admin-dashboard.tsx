@@ -2189,7 +2189,7 @@ export default function AdminDashboard() {
                       {activeTab === 'store' && <Settings className="w-5 h-5" />}
                       {activeTab === 'settings' && <UserCheck className="w-5 h-5" />}
                       {activeTab === 'themes' && <Palette className="w-5 h-5" />}
-                      <span className="text-base font-medium">
+                      <span className="text-lg font-medium">
                         {activeTab === 'products' && adminT('tabs.products')}
                         {activeTab === 'categories' && adminT('tabs.categories')}
                         {activeTab === 'orders' && adminT('tabs.orders')}
@@ -2206,7 +2206,7 @@ export default function AdminDashboard() {
                     <SelectItem value="products" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Package className="w-5 h-5" />
-                        <span className="text-base">{adminT('tabs.products')}</span>
+                        <span className="text-lg">{adminT('tabs.products')}</span>
                       </div>
                     </SelectItem>
                   )}
@@ -2214,7 +2214,7 @@ export default function AdminDashboard() {
                     <SelectItem value="categories" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Layers3 className="w-5 h-5" />
-                        <span className="text-base">{adminT('tabs.categories')}</span>
+                        <span className="text-lg">{adminT('tabs.categories')}</span>
                       </div>
                     </SelectItem>
                   )}
@@ -2222,7 +2222,7 @@ export default function AdminDashboard() {
                     <SelectItem value="orders" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <ShoppingCart className="w-5 h-5" />
-                        <span className="text-base">{adminT('tabs.orders')}</span>
+                        <span className="text-lg">{adminT('tabs.orders')}</span>
                       </div>
                     </SelectItem>
                   )}
@@ -2230,7 +2230,7 @@ export default function AdminDashboard() {
                     <SelectItem value="users" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Users className="w-5 h-5" />
-                        <span className="text-base">{adminT('tabs.users')}</span>
+                        <span className="text-lg">{adminT('tabs.users')}</span>
                       </div>
                     </SelectItem>
                   )}
@@ -2238,7 +2238,7 @@ export default function AdminDashboard() {
                     <SelectItem value="store" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Settings className="w-5 h-5" />
-                        <span className="text-base">{adminT('tabs.settings')}</span>
+                        <span className="text-lg">{adminT('tabs.settings')}</span>
                       </div>
                     </SelectItem>
                   )}
@@ -2246,7 +2246,7 @@ export default function AdminDashboard() {
                     <SelectItem value="settings" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <UserCheck className="w-5 h-5" />
-                        <span className="text-base">{adminT('tabs.permissions')}</span>
+                        <span className="text-lg">{adminT('tabs.permissions')}</span>
                       </div>
                     </SelectItem>
                   )}
@@ -2254,7 +2254,7 @@ export default function AdminDashboard() {
                     <SelectItem value="themes" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Palette className="w-5 h-5" />
-                        <span className="text-base">{adminT('tabs.themes')}</span>
+                        <span className="text-lg">{adminT('tabs.themes')}</span>
                       </div>
                     </SelectItem>
                   )}
@@ -2262,8 +2262,9 @@ export default function AdminDashboard() {
               </Select>
             </div>
             
-            {/* Desktop Tabs - hidden on mobile */}
-            <TabsList className={`admin-tabs-list ${isRTL ? 'rtl-tabs-reverse' : ''} hidden sm:flex w-full overflow-x-auto gap-1`}>
+            {/* Desktop Tabs - hidden on mobile screens */}
+            <div className="hidden sm:block">
+              <TabsList className={`admin-tabs-list ${isRTL ? 'rtl-tabs-reverse' : ''} flex w-full overflow-x-auto gap-1`}>
               {isRTL ? (
                 // RTL order: reverse the tab order
                 <>
@@ -2357,7 +2358,8 @@ export default function AdminDashboard() {
                   )}
                 </>
               )}
-            </TabsList>
+              </TabsList>
+            </div>
           </div>
 
           {/* Products Management */}
