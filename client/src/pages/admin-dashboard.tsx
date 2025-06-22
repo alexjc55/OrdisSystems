@@ -4098,10 +4098,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto mx-4">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl">
-            {product ? "Редактировать товар" : "Добавить товар"}
+            {product ? adminT('products.dialog.editTitle') : adminT('products.dialog.addTitle')}
           </DialogTitle>
           <DialogDescription className="text-sm">
-            {product ? "Обновите информацию о товаре" : "Добавьте новый товар в каталог"}
+            {product ? adminT('products.dialog.editDescription') : adminT('products.dialog.addDescription')}
           </DialogDescription>
         </DialogHeader>
         
@@ -4112,9 +4112,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Название товара</FormLabel>
+                  <FormLabel className="text-sm">{adminT('products.dialog.nameLabel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Введите название товара" {...field} className="text-sm" />
+                    <Input placeholder={adminT('products.dialog.namePlaceholder')} {...field} className="text-sm" />
                   </FormControl>
                   <FormMessage className="text-xs" />
                 </FormItem>
