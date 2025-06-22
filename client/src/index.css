@@ -1131,4 +1131,38 @@ html[dir="rtl"] button.whatsapp-button.whatsapp-button.whatsapp-button {
   margin-left: 8px;
 }
 
+/* Swiper Custom Pagination */
+.swiper-pagination-bullet-custom {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgb(209, 213, 219);
+  opacity: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0 4px;
+  display: inline-block;
+}
+
+.swiper-pagination-bullet-custom:hover {
+  background: rgb(156, 163, 175);
+}
+
+.swiper-pagination-bullet-active-custom {
+  width: 24px;
+  border-radius: 12px;
+  background: rgb(249, 115, 22);
+}
+
+/* Hide default Swiper navigation */
+.swiper-button-next,
+.swiper-button-prev {
+  display: none !important;
+}
+
+/* RTL Swiper adjustments */
+.swiper[dir="rtl"] .swiper-slide {
+  text-align: inherit;
+}
+
 
