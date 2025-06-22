@@ -201,12 +201,13 @@ export default function AuthPage() {
 
   // Preserve language selection when navigating to auth page
   useEffect(() => {
-    // This effect helps maintain language state on auth page load
-    const savedLanguage = localStorage.getItem('preferred-language');
+    // Force language persistence on auth page load
+    const savedLanguage = localStorage.getItem('language');
     if (savedLanguage && savedLanguage !== currentLanguage) {
-      // Language persistence is handled by the language hook
+      console.log('Auth page: restoring saved language', savedLanguage);
+      changeLanguage(savedLanguage as any);
     }
-  }, [currentLanguage]);
+  }, [currentLanguage, changeLanguage]);
 
   const onLogin = async (data: LoginFormData) => {
     try {

@@ -21,9 +21,10 @@ export function LanguageInitializer() {
     if (isSuccess && storeSettings?.defaultLanguage) {
       const defaultLanguage = storeSettings.defaultLanguage;
       const currentLanguage = i18n.language;
+      const savedLanguage = localStorage.getItem('language');
       
-      // Apply the default language from database settings without reload
-      if (defaultLanguage !== currentLanguage) {
+      // Only apply default language if user hasn't explicitly chosen a language
+      if (!savedLanguage && defaultLanguage !== currentLanguage) {
         console.log('Applying default language from database:', defaultLanguage);
         i18n.changeLanguage(defaultLanguage).then(() => {
           updateDocumentDirection(defaultLanguage);
