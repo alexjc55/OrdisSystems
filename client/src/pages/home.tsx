@@ -511,33 +511,47 @@ export default function Home() {
                       <div className="hidden md:flex items-center gap-2">
                         <button
                           onClick={() => {
-                            if (carouselApiRef.current) {
-                              const isRTL = currentLanguage === 'he';
-                              if (isRTL) {
-                                carouselApiRef.current.scrollNext();
-                              } else {
-                                carouselApiRef.current.scrollPrev();
+                            const isRTL = currentLanguage === 'he';
+                            const currentPage = Math.floor(currentSlide / slidesPerPage);
+                            const prevPage = currentPage - 1;
+                            
+                            if (isRTL) {
+                              // RTL: left arrow goes to next page
+                              if (currentPage < totalPages - 1) {
+                                goToSlide(currentPage + 1);
+                              }
+                            } else {
+                              // LTR: left arrow goes to previous page
+                              if (prevPage >= 0) {
+                                goToSlide(prevPage);
                               }
                             }
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          <ChevronLeft className={`h-4 w-4 ${currentLanguage === 'he' ? 'rotate-180' : ''}`} />
+                          <ChevronLeft className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => {
-                            if (carouselApiRef.current) {
-                              const isRTL = currentLanguage === 'he';
-                              if (isRTL) {
-                                carouselApiRef.current.scrollPrev();
-                              } else {
-                                carouselApiRef.current.scrollNext();
+                            const isRTL = currentLanguage === 'he';
+                            const currentPage = Math.floor(currentSlide / slidesPerPage);
+                            const nextPage = currentPage + 1;
+                            
+                            if (isRTL) {
+                              // RTL: right arrow goes to previous page
+                              if (currentPage > 0) {
+                                goToSlide(currentPage - 1);
+                              }
+                            } else {
+                              // LTR: right arrow goes to next page
+                              if (nextPage < totalPages) {
+                                goToSlide(nextPage);
                               }
                             }
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          <ChevronRight className={`h-4 w-4 ${currentLanguage === 'he' ? 'rotate-180' : ''}`} />
+                          <ChevronRight className="h-4 w-4" />
                         </button>
                       </div>
                     )}
