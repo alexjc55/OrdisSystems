@@ -1167,6 +1167,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
           onClose={() => setShowAddItem(false)}
           onAdd={addItem}
           searchPlaceholder={searchPlaceholder}
+          adminT={adminT}
         />
       )}
 
