@@ -306,7 +306,7 @@ export const insertProductSchema = createInsertSchema(products).omit({
   updatedAt: true,
 }).extend({
   unit: z.enum(["100g", "100ml", "piece", "kg"]).default("100g"),
-  discountType: z.enum(["percentage", "fixed"]).optional(),
+  discountType: z.enum(["percentage", "fixed"]).nullable().optional(),
   discountValue: z.string().nullable().optional(),
 });
 
