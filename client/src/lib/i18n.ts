@@ -122,7 +122,7 @@ i18n
       order: ['localStorage', 'querystring', 'navigator'],
       lookupLocalStorage: 'language',
       lookupQuerystring: 'lng',
-      caches: ['localStorage'],
+      caches: [],
     },
     
     react: {
