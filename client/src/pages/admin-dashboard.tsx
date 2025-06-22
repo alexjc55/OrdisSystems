@@ -60,6 +60,74 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+
+// Sortable Category Item Component
+function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: { 
+  category: any, 
+  onEdit: (category: any) => void, 
+  onDelete: (id: number) => void, 
+  adminT: (key: string) => string,
+  isRTL: boolean 
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: category.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-3 p-3 bg-white border rounded-lg shadow-sm"
+    >
+      <div
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600"
+      >
+        <GripVertical className="h-4 w-4" />
+      </div>
+      
+      <div className="flex-1">
+        <div className="font-medium">{category.name}</div>
+        {category.description && (
+          <div className="text-sm text-gray-500">{category.description}</div>
+        )}
+        <div className="text-xs text-gray-400 mt-1">
+          {adminT('categories.productsCount')}: {category.products?.length || 0}
+        </div>
+      </div>
+      
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => onEdit(category)}
+          className="h-8 w-8 p-0"
+        >
+          <Edit2 className="h-3 w-3" />
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => onDelete(category.id)}
+          className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+        >
+          <Trash2 className="h-3 w-3" />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 import { 
   Package, 
   Plus, 
@@ -1531,6 +1599,37 @@ export default function AdminDashboard() {
   const [editingUser, setEditingUser] = useState<any>(null);
   const [usersRoleFilter, setUsersRoleFilter] = useState("all");
 
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Handle category drag end
+  const handleCategoryDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = categories.findIndex((category: any) => category.id === active.id);
+      const newIndex = categories.findIndex((category: any) => category.id === over.id);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newCategories = arrayMove(categories, oldIndex, newIndex);
+        
+        // Create category orders array with new sort order
+        const categoryOrders = newCategories.map((category: any, index: number) => ({
+          id: category.id,
+          sortOrder: index + 1
+        }));
+
+        // Execute mutation to update database
+        reorderCategoriesMutation.mutate(categoryOrders);
+      }
+    }
+  };
+
   // Reset pagination when filters change
   useEffect(() => {
     setProductsPage(1);
@@ -1885,6 +1984,26 @@ export default function AdminDashboard() {
     onError: (error: any) => {
       console.error("Category deletion error:", error);
       toast({ title: adminT('common.error'), description: adminT('categories.notifications.deleteError'), variant: "destructive" });
+    }
+  });
+
+  const reorderCategoriesMutation = useMutation({
+    mutationFn: async (categoryOrders: { id: number; sortOrder: number }[]) => {
+      const response = await fetch('/api/categories/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ categoryOrders }),
+      });
+      if (!response.ok) throw new Error('Failed to reorder categories');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      toast({ title: adminT('categories.notifications.orderUpdated'), description: adminT('categories.notifications.orderUpdatedDesc') });
+    },
+    onError: (error: any) => {
+      console.error("Category reordering error:", error);
+      toast({ title: adminT('common.error'), description: adminT('categories.notifications.reorderError'), variant: "destructive" });
     }
   });
 
@@ -2881,185 +3000,36 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 {(categories as any[] || []).length > 0 ? (
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
-                    {(categories as any[] || []).map((category: any) => (
-                      <Card key={category.id} className="group hover:shadow-md transition-shadow duration-200 flex flex-col h-full">
-                        <CardContent className="p-4 flex flex-col flex-1">
-                          <div className={`flex items-start justify-between mb-3 flex-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                            {isRTL ? (
-                              <>
-                                <div className="flex-shrink-0 ml-4">
-                                  <div className="text-4xl">{category.icon}</div>
-                                </div>
-                                <div className="flex-1 min-w-0 text-right">
-                                  <button
-                                    onClick={() => {
-                                      setEditingCategory(category);
-                                      setIsCategoryFormOpen(true);
-                                    }}
-                                    className="font-bold text-lg hover:text-blue-600 cursor-pointer truncate text-right"
-                                  >
-                                    {category.name}
-                                  </button>
-                                  {category.description && (
-                                    <p className="text-sm text-gray-500 mt-2 line-clamp-2 text-right">{category.description}</p>
-                                  )}
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                <div className="flex-1 min-w-0 text-left">
-                                  <button
-                                    onClick={() => {
-                                      setEditingCategory(category);
-                                      setIsCategoryFormOpen(true);
-                                    }}
-                                    className="font-bold text-lg hover:text-blue-600 cursor-pointer truncate text-left"
-                                  >
-                                    {category.name}
-                                  </button>
-                                  {category.description && (
-                                    <p className="text-sm text-gray-500 mt-2 line-clamp-2 text-left">{category.description}</p>
-                                  )}
-                                </div>
-                                <div className="flex-shrink-0 ml-4">
-                                  <div className="text-4xl">{category.icon}</div>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                          <div className={`flex items-center justify-between mt-auto ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
-                            {isRTL ? (
-                              <>
-                                {/* RTL: Счетчик товаров слева, кнопки справа */}
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => {
-                                    setSelectedCategoryFilter(category.id.toString());
-                                    setActiveTab("products");
-                                  }}
-                                  className="text-xs hover:bg-blue-50 hover:border-blue-300"
-                                >
-                                  <Package className="h-3 w-3 mr-2" />
-                                  {category.products?.length || 0} {adminT('products.items')}
-                                </Button>
-                                <div className="flex items-center gap-1">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 w-8 p-0 hover:bg-blue-50"
-                                    onClick={() => {
-                                      setEditingCategory(category);
-                                      setIsCategoryFormOpen(true);
-                                    }}
-                                    title={adminT('categories.edit', 'Редактировать')}
-                                  >
-                                    <Edit2 className="h-3 w-3 text-blue-600" />
-                                  </Button>
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-50" title={adminT('categories.delete', 'Удалить')}>
-                                        <Trash2 className="h-3 w-3 text-red-600" />
-                                      </Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
-                                      <AlertDialogHeader className="text-right">
-                                        <AlertDialogTitle className="text-sm sm:text-base text-right">{adminT('categories.deleteConfirm', 'Удалить категорию?')}</AlertDialogTitle>
-                                        <AlertDialogDescription className="text-xs sm:text-sm text-right">
-                                          {adminT('categories.deleteWarning', 'Вы уверены, что хотите удалить категорию "{name}"? Это действие нельзя отменить.').replace('{name}', category.name)}
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter className="flex-col sm:flex-row gap-2 sm:flex-row-reverse">
-                                        <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">{adminT('actions.cancel', 'Отмена')}</AlertDialogCancel>
-                                        <AlertDialogAction
-                                          onClick={() => deleteCategoryMutation.mutate(category.id)}
-                                          className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 focus:bg-red-700 data-[state=open]:bg-red-700 transition-colors duration-200 text-xs sm:text-sm"
-                                          style={{ backgroundColor: 'rgb(220 38 38)', borderColor: 'rgb(220 38 38)' }}
-                                          onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'rgb(185 28 28)';
-                                            e.currentTarget.style.borderColor = 'rgb(185 28 28)';
-                                          }}
-                                          onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'rgb(220 38 38)';
-                                            e.currentTarget.style.borderColor = 'rgb(220 38 38)';
-                                          }}
-                                        >
-                                          {adminT('actions.delete', 'Удалить')}
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                {/* LTR: Счетчик товаров слева, кнопки справа */}
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => {
-                                    setSelectedCategoryFilter(category.id.toString());
-                                    setActiveTab("products");
-                                  }}
-                                  className="text-xs hover:bg-blue-50 hover:border-blue-300"
-                                >
-                                  <Package className={`h-3 w-3 ${isRTL ? 'mr-2' : 'mr-2'}`} />
-                                  {category.products?.length || 0} {adminT('products.items')}
-                                </Button>
-                                <div className="flex items-center gap-1">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 w-8 p-0 hover:bg-blue-50"
-                                    onClick={() => {
-                                      setEditingCategory(category);
-                                      setIsCategoryFormOpen(true);
-                                    }}
-                                    title={adminT('categories.edit', 'Редактировать')}
-                                  >
-                                    <Edit2 className="h-3 w-3 text-blue-600" />
-                                  </Button>
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-50" title={adminT('categories.delete', 'Удалить')}>
-                                        <Trash2 className="h-3 w-3 text-red-600" />
-                                      </Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
-                                      <AlertDialogHeader className="text-left">
-                                        <AlertDialogTitle className="text-sm sm:text-base text-left">{adminT('categories.deleteConfirm', 'Удалить категорию?')}</AlertDialogTitle>
-                                        <AlertDialogDescription className="text-xs sm:text-sm text-left">
-                                          {adminT('categories.deleteWarning', 'Вы уверены, что хотите удалить категорию "{name}"? Это действие нельзя отменить.').replace('{name}', category.name)}
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                                        <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">{adminT('actions.cancel', 'Отмена')}</AlertDialogCancel>
-                                        <AlertDialogAction
-                                          onClick={() => deleteCategoryMutation.mutate(category.id)}
-                                          className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 focus:bg-red-700 data-[state=open]:bg-red-700 transition-colors duration-200 text-xs sm:text-sm"
-                                          style={{ backgroundColor: 'rgb(220 38 38)', borderColor: 'rgb(220 38 38)' }}
-                                          onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'rgb(185 28 28)';
-                                            e.currentTarget.style.borderColor = 'rgb(185 28 28)';
-                                          }}
-                                          onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'rgb(220 38 38)';
-                                            e.currentTarget.style.borderColor = 'rgb(220 38 38)';
-                                          }}
-                                        >
-                                          {adminT('actions.delete', 'Удалить')}
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                  <div className="space-y-4" style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+                    <div className="text-sm text-gray-600 mb-4">
+                      {adminT('categories.dragToReorder', 'Перетащите категории для изменения порядка отображения')}
+                    </div>
+                    <DndContext 
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleCategoryDragEnd}
+                    >
+                      <SortableContext 
+                        items={categories.map((cat: any) => cat.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <div className="space-y-3">
+                          {(categories as any[] || []).map((category: any) => (
+                            <SortableCategoryItem
+                              key={category.id}
+                              category={category}
+                              onEdit={(category) => {
+                                setEditingCategory(category);
+                                setIsCategoryFormOpen(true);
+                              }}
+                              onDelete={(id) => deleteCategoryMutation.mutate(id)}
+                              adminT={adminT}
+                              isRTL={isRTL}
+                            />
+                          ))}
+                        </div>
+                      </SortableContext>
+                    </DndContext>
                   </div>
                 ) : (
                   <div className={`text-center py-8 ${isRTL ? 'text-right' : 'text-left'}`}>
