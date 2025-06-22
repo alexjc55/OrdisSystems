@@ -960,7 +960,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
                 <TableHead className="text-xs w-32">Количество</TableHead>
                 <TableHead className="text-xs w-20">Цена</TableHead>
                 <TableHead className="text-xs w-24">Сумма</TableHead>
-                <TableHead className="text-xs w-20">Скидка</TableHead>
+                <TableHead className="text-xs w-20">{adminT('orders.discount')}</TableHead>
                 <TableHead className="text-xs w-16">Действия</TableHead>
               </TableRow>
             </TableHeader>
@@ -1035,18 +1035,18 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT }: { 
 
         {/* Order Total Summary */}
         <div className="bg-gray-50 p-4 rounded-lg">
-          <h4 className="font-medium mb-3">Итого по заказу</h4>
+          <h4 className="font-medium mb-3">{adminT('orders.orderSummary')}</h4>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span>Сумма товаров:</span>
+              <span>{adminT('orders.subtotal')}:</span>
               <span>{formatCurrency(calculateSubtotal())}</span>
             </div>
             
             <div className="flex justify-between">
-              <span>Доставка:</span>
+              <span>{adminT('orders.deliveryFee')}:</span>
               <span>
                 {parseFloat(order.deliveryFee || "0") === 0 ? (
-                  <span className="text-green-600 font-medium">Бесплатно</span>
+                  <span className="text-green-600 font-medium">{adminT('common.free')}</span>
                 ) : (
                   formatCurrency(order.deliveryFee || "0")
                 )}
@@ -1384,7 +1384,7 @@ function ItemDiscountDialog({
             <div className="bg-gray-50 p-3 rounded">
               <div className="text-sm space-y-1">
                 <div className="flex justify-between">
-                  <span>Скидка:</span>
+                  <span>{adminT('orders.discount')}:</span>
                   <span className="text-red-600">-{formatCurrency(discountAmount)}</span>
                 </div>
                 <div className="flex justify-between font-medium">

@@ -41,7 +41,8 @@
     "tryDifferentSearch": "Try changing search criteria or filters",
     "table": "Table",
     "kanban": "Kanban",
-    "searchProducts": "Search products..."
+    "searchProducts": "Search products...",
+    "free": "Free"
   },
   "imageUpload": {
     "invalidFormat": "Invalid file format",
