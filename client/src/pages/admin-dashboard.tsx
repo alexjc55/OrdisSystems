@@ -3973,14 +3973,16 @@ export default function AdminDashboard() {
 
       {/* Availability Confirmation Dialog */}
       <AlertDialog open={isAvailabilityDialogOpen} onOpenChange={setIsAvailabilityDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className={isRTL ? 'rtl' : ''}>
           <AlertDialogHeader>
-            <AlertDialogTitle>Полностью отключить товар или оставить для заказа на другой день?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Выберите действие для данного товара
+            <AlertDialogTitle className={isRTL ? 'text-right' : 'text-left'}>
+              {adminT('products.statusDialog.title')}
+            </AlertDialogTitle>
+            <AlertDialogDescription className={isRTL ? 'text-right' : 'text-left'}>
+              {adminT('products.statusDialog.description')}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
+          <AlertDialogFooter className={`${isRTL ? 'flex-row-reverse' : 'flex-row'} gap-2`}>
             <AlertDialogAction
               onClick={() => {
                 if (productToToggle) {
@@ -3990,9 +3992,9 @@ export default function AdminDashboard() {
                   });
                 }
               }}
-              className="btn-system btn-error"
+              className={`btn-system btn-error ${isRTL ? 'mr-2' : 'ml-2'}`}
             >
-              Отключить
+              {adminT('products.statusDialog.disable')}
             </AlertDialogAction>
             <AlertDialogAction
               onClick={() => {
@@ -4003,9 +4005,9 @@ export default function AdminDashboard() {
                   });
                 }
               }}
-              className="btn-system btn-info"
+              className={`btn-system btn-info ${isRTL ? 'ml-2' : 'mr-2'}`}
             >
-              Оставить
+              {adminT('products.statusDialog.keep')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

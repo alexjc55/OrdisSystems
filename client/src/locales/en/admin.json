@@ -150,6 +150,12 @@
       "unitKg": "kg",
       "unit100gml": "100g/100ml",
       "recommendedSize": "Recommended size: 400×300 pixels (4:3 ratio)"
+    },
+    "statusDialog": {
+      "title": "Completely disable product or keep for next day order?",
+      "description": "Choose action for this product",
+      "disable": "Disable",
+      "keep": "Keep"
     }
   },
   "imageUpload": {
