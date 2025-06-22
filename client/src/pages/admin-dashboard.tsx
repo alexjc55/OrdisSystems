@@ -157,9 +157,16 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
         <div className="mt-auto">
           {/* Product count */}
           <div className="mb-2">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-500 text-white border border-orange-600 shadow-sm">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveTab('products');
+                setSelectedCategory(category.id.toString());
+              }}
+              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-500 text-white border border-orange-600 shadow-sm hover:bg-orange-600 transition-colors duration-200"
+            >
               {category.products?.length || 0} товаров
-            </span>
+            </button>
           </div>
           
 
@@ -1587,6 +1594,7 @@ export default function AdminDashboard() {
   const [editingCategory, setEditingCategory] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStatusFilter, setSelectedStatusFilter] = useState("all");
 
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
@@ -1676,7 +1684,14 @@ export default function AdminDashboard() {
   // Reset pagination when filters change
   useEffect(() => {
     setProductsPage(1);
-  }, [searchQuery, selectedCategoryFilter, selectedStatusFilter]);
+  }, [searchQuery, selectedCategoryFilter, selectedCategory, selectedStatusFilter]);
+
+  // Update category filter when selectedCategory changes
+  useEffect(() => {
+    if (selectedCategory !== "all") {
+      setSelectedCategoryFilter(selectedCategory);
+    }
+  }, [selectedCategory]);
 
   useEffect(() => {
     setOrdersPage(1);
