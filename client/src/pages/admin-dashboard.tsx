@@ -2808,89 +2808,121 @@ export default function AdminDashboard() {
                 {(categories as any[] || []).length > 0 ? (
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {(categories as any[] || []).map((category: any) => (
-                      <Card key={category.id} className="group hover:shadow-md transition-shadow duration-200 h-[140px] flex flex-col">
-                        <CardContent className="p-4 flex flex-col h-full">
-                          <div className="flex items-start justify-between mb-2 flex-1">
-                            <div className="flex-1 min-w-0 text-left pr-2">
-                              <button
-                                onClick={() => {
-                                  setEditingCategory(category);
-                                  setIsCategoryFormOpen(true);
-                                }}
-                                className="font-bold text-base hover:text-blue-600 cursor-pointer text-left block w-full truncate leading-tight"
-                              >
-                                {category.name}
-                              </button>
-                              {category.description && (
-                                <p className="text-xs text-gray-500 mt-1 line-clamp-1 text-left">{category.description}</p>
-                              )}
-                            </div>
-                            <div className="flex-shrink-0">
-                              <div className="text-2xl">{category.icon}</div>
-                            </div>
-                          </div>
-                          <div className="flex items-center justify-between mt-auto">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedCategoryFilter(category.id.toString());
-                                setActiveTab("products");
-                              }}
-                              className="text-xs hover:bg-blue-50 hover:border-blue-300 h-7"
-                            >
-                              <Package className="h-3 w-3 mr-1" />
-{category.products?.length || 0} {adminT('products.items', 'товаров')}
-                            </Button>
-                            <div className="flex items-center gap-1">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0 hover:bg-blue-50"
-                                onClick={() => {
-                                  setEditingCategory(category);
-                                  setIsCategoryFormOpen(true);
-                                }}
-                              >
-                                <Edit2 className="h-3 w-3 text-blue-600" />
-                              </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-50">
-                                    <Trash2 className="h-3 w-3 text-red-600" />
+                      <div
+                        key={category.id}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("text/plain", category.id.toString());
+                          e.dataTransfer.effectAllowed = "move";
+                        }}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.dataTransfer.dropEffect = "move";
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const draggedId = parseInt(e.dataTransfer.getData("text/plain"));
+                          const targetId = category.id;
+                          
+                          if (draggedId !== targetId) {
+                            // Handle category reordering logic here
+                            console.log(`Moving category ${draggedId} to position of ${targetId}`);
+                          }
+                        }}
+                        className="cursor-move"
+                      >
+                        <Card className="group hover:shadow-md transition-shadow duration-200 h-[120px]">
+                          <CardContent className="p-4 h-full">
+                            <div className="flex h-full gap-3">
+                              {/* Icon column */}
+                              <div className="flex-shrink-0 flex items-center">
+                                <div className="text-3xl">{category.icon}</div>
+                              </div>
+                              
+                              {/* Content column */}
+                              <div className="flex-1 flex flex-col justify-between min-w-0">
+                                {/* Title and description */}
+                                <div className="flex-1">
+                                  <button
+                                    onClick={() => {
+                                      setEditingCategory(category);
+                                      setIsCategoryFormOpen(true);
+                                    }}
+                                    className="font-bold text-base hover:text-blue-600 cursor-pointer text-left block w-full truncate leading-tight"
+                                  >
+                                    {category.name}
+                                  </button>
+                                  {category.description && (
+                                    <p className="text-xs text-gray-500 mt-1 line-clamp-2 text-left">{category.description}</p>
+                                  )}
+                                </div>
+                                
+                                {/* Bottom row with button and actions */}
+                                <div className="flex items-center justify-between mt-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      setSelectedCategoryFilter(category.id.toString());
+                                      setActiveTab("products");
+                                    }}
+                                    className="text-xs hover:bg-blue-50 hover:border-blue-300 h-7"
+                                  >
+                                    <Package className="h-3 w-3 mr-1" />
+                                    {category.products?.length || 0} {adminT('products.items', 'товаров')}
                                   </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle className="text-sm sm:text-base">{adminT('categories.deleteCategoryConfirm')}</AlertDialogTitle>
-                                    <AlertDialogDescription className="text-xs sm:text-sm">
-                                      {adminT('categories.deleteCategoryWarning').replace('{name}', category.name)}
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                                    <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">{commonT('buttons.cancel')}</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => deleteCategoryMutation.mutate(category.id)}
-                                      className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 focus:bg-red-700 data-[state=open]:bg-red-700 transition-colors duration-200 text-xs sm:text-sm"
-                                      style={{ backgroundColor: 'rgb(220 38 38)', borderColor: 'rgb(220 38 38)' }}
-                                      onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'rgb(185 28 28)';
-                                        e.currentTarget.style.borderColor = 'rgb(185 28 28)';
-                                      }}
-                                      onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'rgb(220 38 38)';
-                                        e.currentTarget.style.borderColor = 'rgb(220 38 38)';
+                                  <div className="flex items-center gap-1">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-8 w-8 p-0 hover:bg-blue-50"
+                                      onClick={() => {
+                                        setEditingCategory(category);
+                                        setIsCategoryFormOpen(true);
                                       }}
                                     >
-                                      {adminT('common.delete', 'Удалить')}
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
+                                      <Edit2 className="h-3 w-3 text-blue-600" />
+                                    </Button>
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-50">
+                                          <Trash2 className="h-3 w-3 text-red-600" />
+                                        </Button>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle className="text-sm sm:text-base">{adminT('categories.deleteCategoryConfirm')}</AlertDialogTitle>
+                                          <AlertDialogDescription className="text-xs sm:text-sm">
+                                            {adminT('categories.deleteCategoryWarning').replace('{name}', category.name)}
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                                          <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">{commonT('buttons.cancel')}</AlertDialogCancel>
+                                          <AlertDialogAction
+                                            onClick={() => deleteCategoryMutation.mutate(category.id)}
+                                            className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 focus:bg-red-700 data-[state=open]:bg-red-700 transition-colors duration-200 text-xs sm:text-sm"
+                                            style={{ backgroundColor: 'rgb(220 38 38)', borderColor: 'rgb(220 38 38)' }}
+                                            onMouseEnter={(e) => {
+                                              e.currentTarget.style.backgroundColor = 'rgb(185 28 28)';
+                                              e.currentTarget.style.borderColor = 'rgb(185 28 28)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                              e.currentTarget.style.backgroundColor = 'rgb(220 38 38)';
+                                              e.currentTarget.style.borderColor = 'rgb(220 38 38)';
+                                            }}
+                                          >
+                                            {adminT('common.delete', 'Удалить')}
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </CardContent>
-                      </Card>
+                          </CardContent>
+                        </Card>
+                      </div>
                     ))}
                   </div>
                 ) : (
