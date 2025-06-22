@@ -2076,53 +2076,18 @@ export default function AdminDashboard() {
     };
   }, [isRTL, activeTab, productsData, usersData, ordersResponse]);
 
-  // Additional effect to force RTL on tables after data loads
+  // Reset scroll position for RTL tables  
   useEffect(() => {
     if (isRTL && (productsData || usersData || ordersResponse)) {
-      const forceTableRTL = () => {
+      const resetScrollPosition = () => {
         const rtlContainers = document.querySelectorAll('.rtl-scroll-container');
         rtlContainers.forEach((container) => {
           const element = container as HTMLElement;
-          
-          // Reset scroll position to start (left edge for RTL)
           element.scrollLeft = 0;
-          
-          // Force RTL on the container
-          element.style.direction = 'rtl';
-          element.setAttribute('dir', 'rtl');
-          
-          // Find and force RTL on the table and all its elements
-          const table = element.querySelector('table');
-          if (table) {
-            table.style.direction = 'rtl';
-            table.setAttribute('dir', 'rtl');
-            
-            // Force RTL on all table elements
-            const allTableElements = table.querySelectorAll('*');
-            allTableElements.forEach((el) => {
-              const htmlEl = el as HTMLElement;
-              htmlEl.style.direction = 'rtl';
-              if (el.tagName === 'TH' || el.tagName === 'TD') {
-                htmlEl.style.textAlign = 'right';
-              }
-            });
-            
-            // Force RTL on specific table sections
-            const sections = table.querySelectorAll('tbody, thead, tr, th, td');
-            sections.forEach((section) => {
-              const htmlSection = section as HTMLElement;
-              htmlSection.style.direction = 'rtl';
-              htmlSection.setAttribute('dir', 'rtl');
-            });
-          }
         });
       };
       
-      // Apply immediately and with multiple delays for reliability
-      forceTableRTL();
-      setTimeout(forceTableRTL, 50);
-      setTimeout(forceTableRTL, 150);
-      setTimeout(forceTableRTL, 300);
+      setTimeout(resetScrollPosition, 100);
     }
   }, [isRTL, productsData, usersData, ordersResponse, activeTab]);
 
