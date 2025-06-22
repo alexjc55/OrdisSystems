@@ -83,6 +83,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    zIndex: transform ? 1000 : 'auto',
   };
 
   return (
@@ -147,7 +148,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
             )}
           </div>
           
-          <div className="text-2xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-200">
+          <div className="text-3xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-200">
             {category.icon || '📦'}
           </div>
         </div>
