@@ -92,7 +92,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative overflow-hidden bg-gradient-to-br from-white via-gray-50/30 to-white border border-gray-200/80 rounded-xl shadow-sm hover:shadow-lg hover:shadow-gray-900/[0.08] transition-all duration-300 h-[180px] flex flex-col backdrop-blur-sm hover:border-gray-300/60"
+      className="group relative overflow-hidden bg-gradient-to-br from-white via-gray-50/30 to-white border border-gray-200/80 rounded-xl shadow-sm hover:shadow-lg hover:shadow-gray-900/[0.08] transition-all duration-300 h-[140px] flex flex-col backdrop-blur-sm hover:border-gray-300/60"
     >
       {/* Subtle gradient overlay for depth */}
       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-gray-100/10 pointer-events-none" />
@@ -139,23 +139,23 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
       </div>
 
       {/* Main content with two containers */}
-      <div className="relative flex-1 px-3 pt-1 pb-3 flex items-start gap-4">
+      <div className="relative flex-1 px-3 py-2 flex items-start gap-3">
         {/* Left container - Text content */}
-        <div className="flex-1 min-w-0 flex flex-col h-full">
+        <div className="flex-1 min-w-0 flex flex-col justify-between h-full">
           {/* Category name and description */}
-          <div className="flex-1">
+          <div>
             <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1">
               {category.name}
             </h3>
             {category.description && (
-              <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed max-h-8 overflow-hidden">
+              <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed mb-2">
                 {category.description}
               </p>
             )}
           </div>
 
           {/* Product count button at bottom */}
-          <div className="mt-auto pt-3">
+          <div>
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -171,8 +171,8 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
         </div>
         
         {/* Right container - Icon */}
-        <div className="flex-shrink-0 pt-1">
-          <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
+        <div className="flex-shrink-0 flex items-center">
+          <div className="text-3xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
             {category.icon || '📦'}
           </div>
         </div>
