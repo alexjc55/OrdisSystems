@@ -2861,30 +2861,30 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 {(categories as any[] || []).length > 0 ? (
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className={`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 ${isRTL ? 'rtl:space-x-reverse' : ''}`}>
                     {(categories as any[] || []).map((category: any) => (
                       <Card key={category.id} className="group hover:shadow-md transition-shadow duration-200">
                         <CardContent className="p-4">
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="flex-1 min-w-0 text-left">
+                          <div className={`flex items-start justify-between mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                            <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : 'text-left'}`}>
                               <button
                                 onClick={() => {
                                   setEditingCategory(category);
                                   setIsCategoryFormOpen(true);
                                 }}
-                                className="font-bold text-lg hover:text-blue-600 cursor-pointer text-left block w-full truncate"
+                                className={`font-bold text-lg hover:text-blue-600 cursor-pointer block w-full truncate ${isRTL ? 'text-right' : 'text-left'}`}
                               >
                                 {category.name}
                               </button>
                               {category.description && (
-                                <p className="text-sm text-gray-500 mt-2 line-clamp-2 text-left">{category.description}</p>
+                                <p className={`text-sm text-gray-500 mt-2 line-clamp-2 ${isRTL ? 'text-right' : 'text-left'}`}>{category.description}</p>
                               )}
                             </div>
-                            <div className="flex-shrink-0 ml-4">
+                            <div className={`flex-shrink-0 ${isRTL ? 'mr-4' : 'ml-4'}`}>
                               <div className="text-4xl">{category.icon}</div>
                             </div>
                           </div>
-                          <div className="flex items-center justify-between">
+                          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <Button
                               variant="outline"
                               size="sm"
@@ -2894,10 +2894,10 @@ export default function AdminDashboard() {
                               }}
                               className="text-xs hover:bg-blue-50 hover:border-blue-300"
                             >
-                              <Package className="h-3 w-3 mr-1" />
-{category.products?.length || 0} {adminT('products.items', 'товаров')}
+                              <Package className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+                              {category.products?.length || 0} {adminT('products.items', 'товаров')}
                             </Button>
-                            <div className="flex items-center gap-1">
+                            <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -2906,24 +2906,25 @@ export default function AdminDashboard() {
                                   setEditingCategory(category);
                                   setIsCategoryFormOpen(true);
                                 }}
+                                title={adminT('categories.edit', 'Редактировать')}
                               >
                                 <Edit2 className="h-3 w-3 text-blue-600" />
                               </Button>
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-50">
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-50" title={adminT('categories.delete', 'Удалить')}>
                                     <Trash2 className="h-3 w-3 text-red-600" />
                                   </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle className="text-sm sm:text-base">{adminT('categories.deleteCategoryConfirm')}</AlertDialogTitle>
-                                    <AlertDialogDescription className="text-xs sm:text-sm">
-                                      {adminT('categories.deleteCategoryWarning').replace('{name}', category.name)}
+                                  <AlertDialogHeader className={isRTL ? 'text-right' : 'text-left'}>
+                                    <AlertDialogTitle className={`text-sm sm:text-base ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.deleteConfirm', 'Удалить категорию?')}</AlertDialogTitle>
+                                    <AlertDialogDescription className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                                      {adminT('categories.deleteWarning', 'Вы уверены, что хотите удалить категорию "{name}"? Это действие нельзя отменить.').replace('{name}', category.name)}
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
-                                  <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                                    <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">{commonT('buttons.cancel')}</AlertDialogCancel>
+                                  <AlertDialogFooter className={`flex-col sm:flex-row gap-2 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+                                    <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">{adminT('actions.cancel', 'Отмена')}</AlertDialogCancel>
                                     <AlertDialogAction
                                       onClick={() => deleteCategoryMutation.mutate(category.id)}
                                       className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 focus:bg-red-700 data-[state=open]:bg-red-700 transition-colors duration-200 text-xs sm:text-sm"
@@ -2937,7 +2938,7 @@ export default function AdminDashboard() {
                                         e.currentTarget.style.borderColor = 'rgb(220 38 38)';
                                       }}
                                     >
-                                      {adminT('common.delete', 'Удалить')}
+                                      {adminT('actions.delete', 'Удалить')}
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -2949,10 +2950,10 @@ export default function AdminDashboard() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-8">
+                  <div className={`text-center py-8 ${isRTL ? 'text-right' : 'text-left'}`}>
                     <Utensils className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">{adminT('categories.noCategories')}</h3>
-                    <p className="text-gray-500 text-sm">{adminT('categories.addFirstCategory')}</p>
+                    <h3 className={`text-lg font-medium text-gray-900 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.noCategories', 'Нет категорий')}</h3>
+                    <p className={`text-gray-500 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.addFirstCategory', 'Начните с добавления первой категории')}</p>
                   </div>
                 )}
               </CardContent>
@@ -4755,6 +4756,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
 }
 
 function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
+  const { t: adminT } = useAdminTranslation();
+  const { i18n } = useCommonTranslation();
+  const isRTL = i18n.language === 'he';
+  
   const form = useForm({
     resolver: zodResolver(categorySchema),
     defaultValues: {
@@ -4787,12 +4792,12 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px] mx-4 max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-lg sm:text-xl">
-            {category ? "Редактировать категорию" : "Добавить категорию"}
+        <DialogHeader className={isRTL ? 'text-right' : 'text-left'}>
+          <DialogTitle className={`text-lg sm:text-xl ${isRTL ? 'text-right' : 'text-left'}`}>
+            {category ? adminT('categories.editTitle', 'Редактировать категорию') : adminT('categories.addTitle', 'Добавить категорию')}
           </DialogTitle>
-          <DialogDescription className="text-sm">
-            {category ? "Обновите информацию о категории" : "Добавьте новую категорию товаров"}
+          <DialogDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+            {category ? adminT('categories.editDescription', 'Обновите информацию о категории') : adminT('categories.addDescription', 'Добавьте новую категорию товаров')}
           </DialogDescription>
         </DialogHeader>
         
@@ -4803,11 +4808,16 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Название категории</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name', 'Название категории')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Введите название категории" {...field} className="text-sm" />
+                    <Input 
+                      placeholder={adminT('categories.fields.namePlaceholder', 'Введите название категории')} 
+                      {...field} 
+                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                      dir={isRTL ? 'rtl' : 'ltr'}
+                    />
                   </FormControl>
-                  <FormMessage className="text-xs" />
+                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                 </FormItem>
               )}
             />
@@ -4817,15 +4827,16 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Описание</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description', 'Описание')}</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Введите описание категории"
-                      className="resize-none text-sm"
+                      placeholder={adminT('categories.fields.descriptionPlaceholder', 'Введите описание категории')}
+                      className={`resize-none text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                      dir={isRTL ? 'rtl' : 'ltr'}
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-xs" />
+                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                 </FormItem>
               )}
             />
@@ -4842,20 +4853,20 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                 
                 return (
                   <FormItem>
-                    <FormLabel className="text-sm">Иконка категории</FormLabel>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.icon', 'Иконка категории')}</FormLabel>
                     <div className="space-y-3">
                       {/* Current selected icon display */}
-                      <div className="flex items-center gap-3 p-3 border rounded-lg bg-gray-50">
+                      <div className={`flex items-center gap-3 p-3 border rounded-lg bg-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <span className="text-2xl">{field.value}</span>
                         <div className="flex-1">
-                          <div className="text-sm font-medium">Выбранная иконка</div>
-                          <div className="text-xs text-gray-500">Нажмите на иконку ниже для выбора</div>
+                          <div className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.selectedIcon', 'Выбранная иконка')}</div>
+                          <div className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.clickToSelect', 'Нажмите на иконку ниже для выбора')}</div>
                         </div>
                       </div>
                       
                       {/* Icon grid selector */}
                       <div>
-                        <div className="text-xs text-gray-600 mb-2">Популярные иконки:</div>
+                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.popularIcons', 'Популярные иконки')}:</div>
                         <div className="grid grid-cols-8 gap-2">
                           {commonIcons.map((icon) => (
                             <Button
@@ -4877,20 +4888,21 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                       
                       {/* Custom icon input */}
                       <div>
-                        <div className="text-xs text-gray-600 mb-2">Или введите свою иконку:</div>
+                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.customIcon', 'Или введите свою иконку')}:</div>
                         <FormControl>
                           <Input 
-                            placeholder="🍽️ Введите эмодзи"
+                            placeholder={adminT('categories.iconPlaceholder', '🍽️ Введите эмодзи')}
                             value={field.value}
                             onChange={(e) => field.onChange(e.target.value)}
-                            className="text-sm"
+                            className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                            dir={isRTL ? 'rtl' : 'ltr'}
                           />
                         </FormControl>
                       </div>
                       
                       {/* Image upload option */}
                       <div>
-                        <div className="text-xs text-gray-600 mb-2">Или загрузите изображение:</div>
+                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.uploadImage', 'Или загрузите изображение')}:</div>
                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-orange-300 transition-colors">
                           <ImageUpload
                             value=""
@@ -4900,25 +4912,33 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                               }
                             }}
                           />
-                          <div className="text-xs text-gray-400 mt-2 text-center">
-                            Рекомендуемый размер: 64×64 пикселей
+                          <div className={`text-xs text-gray-400 mt-2 text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {adminT('categories.recommendedSize', 'Рекомендуемый размер: 64×64 пикселей')}
                           </div>
                         </div>
                       </div>
                     </div>
-                    <FormMessage className="text-xs" />
+                    <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                   </FormItem>
                 );
               }}
             />
 
-            <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
-              <Button type="button" variant="outline" onClick={onClose} className="text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">
-                Отмена
+            <div className={`flex flex-col sm:flex-row justify-end gap-3 ${isRTL ? 'sm:flex-row-reverse rtl:space-x-reverse' : 'space-x-4'}`}>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onClose} 
+                className={`text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200 ${isRTL ? 'ml-4' : ''}`}
+              >
+                {adminT('actions.cancel', 'Отмена')}
               </Button>
-              <Button type="submit" className="text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200">
-                <Save className="mr-2 h-4 w-4" />
-                {category ? "Обновить" : "Создать"}  
+              <Button 
+                type="submit" 
+                className={`text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+              >
+                <Save className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                {category ? adminT('actions.update', 'Обновить') : adminT('actions.create', 'Создать')}  
               </Button>
             </div>
           </form>

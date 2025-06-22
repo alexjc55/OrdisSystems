@@ -186,7 +186,42 @@
     "categoryName": "שם הקטגוריה",
     "categoryDescription": "תיאור הקטגוריה",
     "categoryImage": "תמונת הקטגוריה",
-    "productsCount": "מספר מוצרים"
+    "productsCount": "מספר מוצרים",
+    "edit": "ערוך",
+    "delete": "מחק",
+    "deleteConfirm": "למחוק קטגוריה?",
+    "deleteWarning": "האם אתה בטוח שברצונך למחוק את הקטגוריה \"{name}\"? פעולה זו אינה ניתנת לביטול.",
+    "noCategories": "אין קטגוריות",
+    "addFirstCategory": "התחל בהוספת הקטגוריה הראשונה",
+    "addTitle": "הוסף קטגוריה",
+    "editTitle": "ערוך קטגוריה",
+    "addDescription": "הוסף קטגוריית מוצרים חדשה",
+    "editDescription": "עדכן מידע על הקטגוריה",
+    "fields": {
+      "name": "שם הקטגוריה",
+      "namePlaceholder": "הזן שם קטגוריה",
+      "description": "תיאור",
+      "descriptionPlaceholder": "הזן תיאור קטגוריה",
+      "icon": "אייקון קטגוריה"
+    },
+    "selectedIcon": "אייקון נבחר",
+    "clickToSelect": "לחץ על אייקון למטה לבחירה",
+    "popularIcons": "אייקונים פופולריים",
+    "customIcon": "או הזן אייקון משלך",
+    "iconPlaceholder": "🍽️ הזן אמוג'י",
+    "uploadImage": "או העלה תמונה",
+    "recommendedSize": "גודל מומלץ: 64×64 פיקסלים",
+    "notifications": {
+      "categoryCreated": "קטגוריה נוצרה",
+      "categoryCreatedDesc": "קטגוריה נוספה בהצלחה",
+      "categoryUpdated": "קטגוריה עודכנה",
+      "categoryUpdatedDesc": "שינויים נשמרו",
+      "categoryDeleted": "קטגוריה נמחקה",
+      "categoryDeletedDesc": "קטגוריה נמחקה בהצלחה",
+      "createError": "לא ניתן ליצור קטגוריה",
+      "updateError": "לא ניתן לעדכן קטגוריה",
+      "deleteError": "לא ניתן למחוק קטגוריה"
+    }
   },
   "orders": {
     "title": "הזמנות",

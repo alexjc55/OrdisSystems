@@ -186,7 +186,42 @@
     "categoryName": "Category Name",
     "categoryDescription": "Category Description",
     "categoryImage": "Category Image",
-    "productsCount": "Products Count"
+    "productsCount": "Products Count",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Delete category?",
+    "deleteWarning": "Are you sure you want to delete the category \"{name}\"? This action cannot be undone.",
+    "noCategories": "No categories",
+    "addFirstCategory": "Start by adding the first category",
+    "addTitle": "Add Category",
+    "editTitle": "Edit Category",
+    "addDescription": "Add a new product category",
+    "editDescription": "Update category information",
+    "fields": {
+      "name": "Category Name",
+      "namePlaceholder": "Enter category name",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter category description",
+      "icon": "Category Icon"
+    },
+    "selectedIcon": "Selected icon",
+    "clickToSelect": "Click on icon below to select",
+    "popularIcons": "Popular icons",
+    "customIcon": "Or enter your own icon",
+    "iconPlaceholder": "🍽️ Enter emoji",
+    "uploadImage": "Or upload image",
+    "recommendedSize": "Recommended size: 64×64 pixels",
+    "notifications": {
+      "categoryCreated": "Category created",
+      "categoryCreatedDesc": "Category added successfully",
+      "categoryUpdated": "Category updated",
+      "categoryUpdatedDesc": "Changes saved",
+      "categoryDeleted": "Category deleted",
+      "categoryDeletedDesc": "Category deleted successfully",
+      "createError": "Failed to create category",
+      "updateError": "Failed to update category",
+      "deleteError": "Failed to delete category"
+    }
   },
   "orders": {
     "title": "Orders",
