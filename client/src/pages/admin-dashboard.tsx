@@ -181,7 +181,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
 
       {/* Inactive state overlay */}
       {!category.isActive && (
-        <div className="absolute inset-0 bg-gray-100/80 backdrop-blur-[2px] rounded-xl flex items-center justify-center">
+        <div className="absolute inset-0 bg-gray-100/80 backdrop-blur-[2px] rounded-xl flex items-center justify-center pointer-events-none">
           <div className="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-200/60 shadow-sm">
             <span className="text-sm font-medium text-gray-600">{adminT('categories.hidden')}</span>
           </div>
