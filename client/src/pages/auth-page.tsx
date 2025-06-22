@@ -15,11 +15,17 @@ import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
   const { user, loginMutation, registerMutation } = useAuth();
   const { storeSettings } = useStoreSettings();
   const { t } = useCommonTranslation();
   const { currentLanguage, changeLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState("login");
+
+  // Handle initial loading state - simplified approach
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
 
   // Dynamic validation messages based on current language
   const getValidationMessage = (key: string) => {
@@ -217,6 +223,15 @@ export default function AuthPage() {
       }
     }
   }, []); // Remove dependencies to run only once
+
+  // Show loading spinner if still loading
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+      </div>
+    );
+  }
 
   const onLogin = async (data: LoginFormData) => {
     try {
