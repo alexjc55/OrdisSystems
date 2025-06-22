@@ -77,7 +77,9 @@ import {
   Type,
   Palette,
   Settings,
-  Languages
+  Languages,
+  Layers3,
+  UserCheck
 } from "lucide-react";
 
 // Validation schemas
@@ -2123,53 +2125,89 @@ export default function AdminDashboard() {
                   {hasPermission("canManageSettings") && (
                     <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap">
                       <Palette className="w-4 h-4 ml-1" />
-                      Темы
+                      {adminT('tabs.themes')}
                     </TabsTrigger>
                   )}
                   {hasPermission("canManageSettings") && (
-                    <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Права доступа</TabsTrigger>
+                    <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">
+                      <UserCheck className="w-4 h-4 ml-1" />
+                      {adminT('tabs.permissions')}
+                    </TabsTrigger>
                   )}
                   {hasPermission("canViewSettings") && (
-                    <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.settings')}</TabsTrigger>
+                    <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">
+                      <Settings className="w-4 h-4 ml-1" />
+                      {adminT('tabs.settings')}
+                    </TabsTrigger>
                   )}
                   {hasPermission("canViewUsers") && (
-                    <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.users')}</TabsTrigger>
+                    <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">
+                      <Users className="w-4 h-4 ml-1" />
+                      {adminT('tabs.users')}
+                    </TabsTrigger>
                   )}
                   {hasPermission("canManageOrders") && (
-                    <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.orders')}</TabsTrigger>
+                    <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">
+                      <ShoppingCart className="w-4 h-4 ml-1" />
+                      {adminT('tabs.orders')}
+                    </TabsTrigger>
                   )}
                   {hasPermission("canManageCategories") && (
-                    <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.categories')}</TabsTrigger>
+                    <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">
+                      <Layers3 className="w-4 h-4 ml-1" />
+                      {adminT('tabs.categories')}
+                    </TabsTrigger>
                   )}
                   {hasPermission("canManageProducts") && (
-                    <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.products')}</TabsTrigger>
+                    <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">
+                      <Package className="w-4 h-4 ml-1" />
+                      {adminT('tabs.products')}
+                    </TabsTrigger>
                   )}
                 </>
               ) : (
                 // LTR order: normal order
                 <>
                   {hasPermission("canManageProducts") && (
-                    <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.products')}</TabsTrigger>
+                    <TabsTrigger value="products" className="text-xs sm:text-sm whitespace-nowrap">
+                      <Package className="w-4 h-4 mr-1" />
+                      {adminT('tabs.products')}
+                    </TabsTrigger>
                   )}
                   {hasPermission("canManageCategories") && (
-                    <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.categories')}</TabsTrigger>
+                    <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap">
+                      <Layers3 className="w-4 h-4 mr-1" />
+                      {adminT('tabs.categories')}
+                    </TabsTrigger>
                   )}
                   {hasPermission("canManageOrders") && (
-                    <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.orders')}</TabsTrigger>
+                    <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">
+                      <ShoppingCart className="w-4 h-4 mr-1" />
+                      {adminT('tabs.orders')}
+                    </TabsTrigger>
                   )}
                   {hasPermission("canViewUsers") && (
-                    <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.users')}</TabsTrigger>
+                    <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">
+                      <Users className="w-4 h-4 mr-1" />
+                      {adminT('tabs.users')}
+                    </TabsTrigger>
                   )}
                   {hasPermission("canViewSettings") && (
-                    <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">{adminT('tabs.settings')}</TabsTrigger>
+                    <TabsTrigger value="store" className="text-xs sm:text-sm whitespace-nowrap">
+                      <Settings className="w-4 h-4 mr-1" />
+                      {adminT('tabs.settings')}
+                    </TabsTrigger>
                   )}
                   {hasPermission("canManageSettings") && (
-                    <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">Права доступа</TabsTrigger>
+                    <TabsTrigger value="settings" className="text-xs sm:text-sm whitespace-nowrap">
+                      <UserCheck className="w-4 h-4 mr-1" />
+                      {adminT('tabs.permissions')}
+                    </TabsTrigger>
                   )}
                   {hasPermission("canManageSettings") && (
                     <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap">
                       <Palette className="w-4 h-4 mr-1" />
-                      Темы
+                      {adminT('tabs.themes')}
                     </TabsTrigger>
                   )}
                 </>

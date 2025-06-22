@@ -4,7 +4,9 @@
     "categories": "קטגוריות", 
     "orders": "הזמנות",
     "users": "משתמשים",
-    "settings": "הגדרות"
+    "settings": "הגדרות",
+    "permissions": "הרשאות",
+    "themes": "עיצובים"
   },
   "actions": {
     "add": "הוסף",
