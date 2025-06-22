@@ -277,7 +277,7 @@ export default function Home() {
                         </div>
                         <span className="font-semibold text-lg text-gray-800">{t('workingHours')}</span>
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-2 px-0 md:px-4">
                       {(() => {
                         try {
                           const workingHours = storeSettings.workingHours;
@@ -365,7 +365,7 @@ export default function Home() {
                         </div>
                         <span className="font-semibold text-lg text-gray-800">{t('contacts')}</span>
                       </div>
-                      <div className="space-y-1">
+                      <div className="space-y-1 px-0 md:px-4">
                         {storeSettings.contactPhone && (
                           <div className="text-xs sm:text-sm flex justify-between">
                             <span className="text-gray-600">{t('phone')}:</span>
@@ -395,7 +395,7 @@ export default function Home() {
                         </div>
                         <span className="font-semibold text-lg text-gray-800">Оплата и доставка</span>
                       </div>
-                      <div className="space-y-4 flex-1">
+                      <div className="space-y-4 flex-1 px-0 md:px-4">
                         {storeSettings.deliveryInfo && (
                           <div>
                             <span className="text-gray-500 text-sm font-medium block mb-2">{t('delivery')}:</span>
@@ -515,12 +515,18 @@ export default function Home() {
                         <button
                           className="swiper-button-prev-custom w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          <ChevronLeft className="h-4 w-4" />
+                          {currentLanguage === 'he' ? 
+                            <ChevronRight className="h-4 w-4" /> : 
+                            <ChevronLeft className="h-4 w-4" />
+                          }
                         </button>
                         <button
                           className="swiper-button-next-custom w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          <ChevronRight className="h-4 w-4" />
+                          {currentLanguage === 'he' ? 
+                            <ChevronLeft className="h-4 w-4" /> : 
+                            <ChevronRight className="h-4 w-4" />
+                          }
                         </button>
                       </div>
                     )}
