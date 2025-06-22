@@ -213,7 +213,7 @@ export default function Home() {
           {/* Title and Description */}
           {storeSettings?.showTitleDescription !== false && (
             <div className="text-center mb-12">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight text-center">
                 <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">
                   {(() => {
                     try {
@@ -235,8 +235,8 @@ export default function Home() {
                 </span>
               </h1>
               
-              <div className="max-w-3xl mx-auto">
-                <p className="text-xl sm:text-2xl text-gray-600 font-light leading-relaxed mb-8">
+              <div className="max-w-3xl mx-auto text-center">
+                <p className="text-xl sm:text-2xl text-gray-600 font-light leading-relaxed mb-8 text-center">
                   {(() => {
                     try {
                       if (searchQuery && searchQuery.length > 2) {
