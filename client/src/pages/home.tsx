@@ -30,7 +30,13 @@ import CartSidebar from "@/components/cart/cart-sidebar";
 import { useCartStore } from "@/lib/cart";
 import { formatCurrency } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import { 
   Search, 
   Clock, 
@@ -57,7 +63,7 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [discountFilter, setDiscountFilter] = useState("all");
-  const carouselApiRef = useRef<any>(null);
+  const swiperRef = useRef<any>(null);
   const { user } = useAuth();
   const { isOpen: isCartOpen, addItem } = useCartStore();
   const { storeSettings } = useStoreSettings();
@@ -173,11 +179,11 @@ export default function Home() {
   const totalSlides = specialOffers.length;
   const totalPages = Math.ceil(totalSlides / slidesPerPage);
   
-  // Handle carousel navigation
+  // Handle swiper navigation
   const goToSlide = (pageIndex: number) => {
-    if (carouselApiRef.current) {
+    if (swiperRef.current && swiperRef.current.swiper) {
       const slideIndex = pageIndex * slidesPerPage;
-      carouselApiRef.current.scrollTo(slideIndex);
+      swiperRef.current.swiper.slideTo(slideIndex);
     }
   };
 
@@ -507,22 +513,12 @@ export default function Home() {
                     {specialOffers.length > slidesPerPage && (
                       <div className="hidden md:flex items-center gap-2">
                         <button
-                          onClick={() => {
-                            if (carouselApiRef.current) {
-                              carouselApiRef.current.scrollPrev();
-                            }
-                          }}
-                          className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
+                          className="swiper-button-prev-custom w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </button>
                         <button
-                          onClick={() => {
-                            if (carouselApiRef.current) {
-                              carouselApiRef.current.scrollNext();
-                            }
-                          }}
-                          className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
+                          className="swiper-button-next-custom w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </button>
@@ -544,67 +540,45 @@ export default function Home() {
                       ))}
                     </div>
                   ) : (
-                    <div className={`w-full relative ${currentLanguage === 'he' ? 'rtl-carousel' : ''}`}>
-                      <Carousel
-                        key={currentLanguage} // Force re-render on language change
-                        opts={{
-                          align: "start",
-                          loop: false,
-                          dragFree: false,
-                          containScroll: "trimSnaps",
-                          skipSnaps: false,
+                    <div className="w-full relative">
+                      <Swiper
+                        key={currentLanguage}
+                        ref={swiperRef}
+                        modules={[Navigation, Pagination]}
+                        spaceBetween={16}
+                        slidesPerView={isMobile ? 1 : 3}
+                        slidesPerGroup={isMobile ? 1 : 3}
+                        dir={currentLanguage === 'he' ? 'rtl' : 'ltr'}
+                        navigation={{
+                          prevEl: '.swiper-button-prev-custom',
+                          nextEl: '.swiper-button-next-custom',
                         }}
-                        className="w-full"
-                        setApi={(api) => {
-                          carouselApiRef.current = api;
-                          if (api) {
-                            api.on('select', () => {
-                              const currentSlideIndex = api.selectedScrollSnap();
-                              setCurrentSlide(currentSlideIndex);
-                            });
-                          }
+                        pagination={{
+                          el: '.swiper-pagination-custom',
+                          clickable: true,
+                          bulletClass: 'swiper-pagination-bullet-custom',
+                          bulletActiveClass: 'swiper-pagination-bullet-active-custom',
                         }}
+                        onSlideChange={(swiper) => {
+                          setCurrentSlide(swiper.activeIndex);
+                        }}
+                        className="w-full pb-12"
                       >
-                        <CarouselContent className="-ml-2 md:-ml-4">
-                          {specialOffers.map((product) => (
-                            <CarouselItem 
-                              key={product.id} 
-                              className="pl-2 md:pl-4 basis-full md:basis-1/3"
-                            >
-                              <div className="p-1">
-                                <ProductCard 
-                                  product={product} 
-                                  onCategoryClick={handleCategorySelect}
-                                />
-                              </div>
-                            </CarouselItem>
-                          ))}
-                        </CarouselContent>
-                      </Carousel>
-
-                      {/* Navigation Dots */}
-                      {specialOffers.length > slidesPerPage && (
-                        <div className="flex justify-center mt-6 space-x-2">
-                          {Array.from({ length: totalPages }, (_, index) => {
-                            // Calculate which page group we're currently viewing
-                            const currentPage = isMobile 
-                              ? currentSlide 
-                              : Math.floor(currentSlide / slidesPerPage);
-                            const isActive = currentPage === index;
-                            
-                            return (
-                              <button
-                                key={index}
-                                onClick={() => goToSlide(index)}
-                                className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                                  isActive 
-                                    ? 'bg-orange-500 w-6' 
-                                    : 'bg-gray-300 hover:bg-gray-400'
-                                }`}
+                        {specialOffers.map((product) => (
+                          <SwiperSlide key={product.id}>
+                            <div className="p-1">
+                              <ProductCard 
+                                product={product} 
+                                onCategoryClick={handleCategorySelect}
                               />
-                            );
-                          })}
-                        </div>
+                            </div>
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
+
+                      {/* Custom Pagination */}
+                      {specialOffers.length > slidesPerPage && (
+                        <div className="swiper-pagination-custom flex justify-center mt-6 space-x-2"></div>
                       )}
                     </div>
                   )}
