@@ -4033,7 +4033,8 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
       style={{ 
         width: '44px', 
         height: '24px',
-        padding: '2px'
+        padding: '2px',
+        direction: 'ltr'
       }}
     >
       <div
