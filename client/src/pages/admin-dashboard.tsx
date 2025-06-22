@@ -2182,13 +2182,17 @@ export default function AdminDashboard() {
                 <SelectTrigger className="w-full bg-white border-gray-200 h-12">
                   <SelectValue>
                     <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                      {activeTab === 'products' && <Package className="w-5 h-5" />}
-                      {activeTab === 'categories' && <Layers3 className="w-5 h-5" />}
-                      {activeTab === 'orders' && <ShoppingCart className="w-5 h-5" />}
-                      {activeTab === 'users' && <Users className="w-5 h-5" />}
-                      {activeTab === 'store' && <Settings className="w-5 h-5" />}
-                      {activeTab === 'settings' && <UserCheck className="w-5 h-5" />}
-                      {activeTab === 'themes' && <Palette className="w-5 h-5" />}
+                      {!isRTL && (
+                        <>
+                          {activeTab === 'products' && <Package className="w-5 h-5" />}
+                          {activeTab === 'categories' && <Layers3 className="w-5 h-5" />}
+                          {activeTab === 'orders' && <ShoppingCart className="w-5 h-5" />}
+                          {activeTab === 'users' && <Users className="w-5 h-5" />}
+                          {activeTab === 'store' && <Settings className="w-5 h-5" />}
+                          {activeTab === 'settings' && <UserCheck className="w-5 h-5" />}
+                          {activeTab === 'themes' && <Palette className="w-5 h-5" />}
+                        </>
+                      )}
                       <span className="text-lg font-medium">
                         {activeTab === 'products' && adminT('tabs.products')}
                         {activeTab === 'categories' && adminT('tabs.categories')}
@@ -2198,6 +2202,17 @@ export default function AdminDashboard() {
                         {activeTab === 'settings' && adminT('tabs.permissions')}
                         {activeTab === 'themes' && adminT('tabs.themes')}
                       </span>
+                      {isRTL && (
+                        <>
+                          {activeTab === 'products' && <Package className="w-5 h-5" />}
+                          {activeTab === 'categories' && <Layers3 className="w-5 h-5" />}
+                          {activeTab === 'orders' && <ShoppingCart className="w-5 h-5" />}
+                          {activeTab === 'users' && <Users className="w-5 h-5" />}
+                          {activeTab === 'store' && <Settings className="w-5 h-5" />}
+                          {activeTab === 'settings' && <UserCheck className="w-5 h-5" />}
+                          {activeTab === 'themes' && <Palette className="w-5 h-5" />}
+                        </>
+                      )}
                     </div>
                   </SelectValue>
                 </SelectTrigger>
@@ -2205,56 +2220,63 @@ export default function AdminDashboard() {
                   {hasPermission("canManageProducts") && (
                     <SelectItem value="products" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <Package className="w-5 h-5" />
+                        {!isRTL && <Package className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.products')}</span>
+                        {isRTL && <Package className="w-5 h-5" />}
                       </div>
                     </SelectItem>
                   )}
                   {hasPermission("canManageCategories") && (
                     <SelectItem value="categories" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <Layers3 className="w-5 h-5" />
+                        {!isRTL && <Layers3 className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.categories')}</span>
+                        {isRTL && <Layers3 className="w-5 h-5" />}
                       </div>
                     </SelectItem>
                   )}
                   {hasPermission("canManageOrders") && (
                     <SelectItem value="orders" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <ShoppingCart className="w-5 h-5" />
+                        {!isRTL && <ShoppingCart className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.orders')}</span>
+                        {isRTL && <ShoppingCart className="w-5 h-5" />}
                       </div>
                     </SelectItem>
                   )}
                   {hasPermission("canViewUsers") && (
                     <SelectItem value="users" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <Users className="w-5 h-5" />
+                        {!isRTL && <Users className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.users')}</span>
+                        {isRTL && <Users className="w-5 h-5" />}
                       </div>
                     </SelectItem>
                   )}
                   {hasPermission("canViewSettings") && (
                     <SelectItem value="store" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <Settings className="w-5 h-5" />
+                        {!isRTL && <Settings className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.settings')}</span>
+                        {isRTL && <Settings className="w-5 h-5" />}
                       </div>
                     </SelectItem>
                   )}
                   {hasPermission("canManageSettings") && (
                     <SelectItem value="settings" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <UserCheck className="w-5 h-5" />
+                        {!isRTL && <UserCheck className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.permissions')}</span>
+                        {isRTL && <UserCheck className="w-5 h-5" />}
                       </div>
                     </SelectItem>
                   )}
                   {hasPermission("canManageSettings") && (
                     <SelectItem value="themes" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <Palette className="w-5 h-5" />
+                        {!isRTL && <Palette className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.themes')}</span>
+                        {isRTL && <Palette className="w-5 h-5" />}
                       </div>
                     </SelectItem>
                   )}
