@@ -264,10 +264,10 @@ export default function AuthPage() {
           <div className="hidden lg:block space-y-6">
             <div className="space-y-4">
             <h1 className="text-4xl font-bold text-gray-900">
-              {storeSettings?.authPageTitle || "Добро пожаловать в eDAHouse"}
+              {storeSettings?.storeSettings?.authPageTitle || "Добро пожаловать в eDAHouse"}
             </h1>
             <p className="text-xl text-gray-600">
-              {storeSettings?.authPageSubtitle || "Готовые блюда высокого качества с доставкой на дом"}
+              {storeSettings?.storeSettings?.authPageSubtitle || "Готовые блюда высокого качества с доставкой на дом"}
             </p>
           </div>
           
@@ -276,19 +276,19 @@ export default function AuthPage() {
               <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
                 ✓
               </div>
-              <span className="text-gray-700">{storeSettings?.authPageFeature1 || "Свежие готовые блюда каждый день"}</span>
+              <span className="text-gray-700">{storeSettings?.storeSettings?.authPageFeature1 || "Свежие готовые блюда каждый день"}</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
                 ✓
               </div>
-              <span className="text-gray-700">{storeSettings?.authPageFeature2 || "Быстрая доставка в удобное время"}</span>
+              <span className="text-gray-700">{storeSettings?.storeSettings?.authPageFeature2 || "Быстрая доставка в удобное время"}</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
                 ✓
               </div>
-              <span className="text-gray-700">{storeSettings?.authPageFeature3 || "Широкий выбор блюд на любой вкус"}</span>
+              <span className="text-gray-700">{storeSettings?.storeSettings?.authPageFeature3 || "Широкий выбор блюд на любой вкус"}</span>
             </div>
           </div>
         </div>
