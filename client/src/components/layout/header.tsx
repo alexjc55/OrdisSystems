@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCartStore } from "@/lib/cart";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { useCommonTranslation } from "@/hooks/use-language";
+import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
