@@ -16,7 +16,15 @@ import shopHe from '../locales/he/shop.json';
 import adminHe from '../locales/he/admin.json';
 
 // Language configuration with CSS flag classes for better browser compatibility
+// Hebrew first as requested
 export const LANGUAGES = {
+  he: { 
+    name: 'Hebrew', 
+    nativeName: 'עברית',
+    dir: 'rtl',
+    flag: 'HE',
+    flagClass: 'flag-he'
+  },
   ru: { 
     name: 'Русский', 
     nativeName: 'Русский',
@@ -30,13 +38,6 @@ export const LANGUAGES = {
     dir: 'ltr',
     flag: 'EN',
     flagClass: 'flag-en'
-  },
-  he: { 
-    name: 'Hebrew', 
-    nativeName: 'עברית',
-    dir: 'rtl',
-    flag: 'HE',
-    flagClass: 'flag-he'
   }
 } as const;
 

@@ -575,18 +575,18 @@ export default function Home() {
                       {/* Custom Carousel Implementation */}
                       <div className="overflow-hidden">
                         <div 
-                          className="flex transition-transform duration-300 ease-in-out gap-2.5"
+                          className="flex transition-transform duration-300 ease-in-out"
                           style={{
-                            transform: `translateX(${isMobile ? -currentSlide * 100 : -Math.floor(currentSlide / slidesPerPage) * 100}%)`,
-                            width: isMobile ? `${specialOffers.length * 100}%` : `${Math.ceil(specialOffers.length / slidesPerPage) * 100}%`
+                            transform: `translateX(-${Math.floor(currentSlide / slidesPerPage) * 100}%)`,
+                            width: `${totalPages * 100}%`
                           }}
                         >
                           {specialOffers.map((product, index) => (
                             <div 
                               key={product.id} 
-                              className={`flex-shrink-0 ${isMobile ? 'w-full' : 'w-1/3'}`}
+                              className="flex-shrink-0"
                               style={{
-                                width: isMobile ? `${100 / specialOffers.length}%` : `${100 / (Math.ceil(specialOffers.length / slidesPerPage) * slidesPerPage)}%`
+                                width: `${100 / (totalPages * slidesPerPage)}%`
                               }}
                             >
                               <div className="relative flex-1 flex px-1">
