@@ -139,23 +139,22 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
       </div>
 
       {/* Category content */}
-      <div className="relative flex-1 px-3 pt-0 pb-4 md:pb-3 flex flex-col">
-        {/* Category name and icon */}
-        <div className="flex items-start gap-3 mb-2">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1">
-              {category.name}
-            </h3>
-            {category.description && (
-              <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed max-h-8 overflow-hidden">
-                {category.description}
-              </p>
-            )}
-          </div>
-          
-          <div className="text-4xl md:text-3xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
-            {category.icon || '📦'}
-          </div>
+      <div className="relative flex-1 px-3 pt-2 pb-4 md:pb-3 flex flex-col">
+        {/* Category icon - positioned absolutely */}
+        <div className="absolute top-2 right-3 text-4xl md:text-3xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80 z-10">
+          {category.icon || '📦'}
+        </div>
+
+        {/* Category name and description */}
+        <div className="pr-12 mb-2">
+          <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1">
+            {category.name}
+          </h3>
+          {category.description && (
+            <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed max-h-8 overflow-hidden">
+              {category.description}
+            </p>
+          )}
         </div>
 
         {/* Bottom section */}
