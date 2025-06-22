@@ -2872,7 +2872,7 @@ export default function AdminDashboard() {
                                   setEditingCategory(category);
                                   setIsCategoryFormOpen(true);
                                 }}
-                                className={`font-bold text-lg hover:text-blue-600 cursor-pointer block w-full truncate ${isRTL ? 'text-right' : 'text-left'}`}
+                                className={`font-bold text-lg hover:text-blue-600 cursor-pointer truncate ${isRTL ? 'text-right' : 'text-left'}`}
                               >
                                 {category.name}
                               </button>
