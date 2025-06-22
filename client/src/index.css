@@ -82,6 +82,14 @@
     margin-left: 0.5rem;
     margin-right: 0;
   }
+  
+  [dir="rtl"] .rtl\:mr-0 {
+    margin-right: 0;
+  }
+  
+  [dir="rtl"] .rtl\:ml-1 {
+    margin-left: 0.25rem;
+  }
 }
 
 /* RTL Form Support */

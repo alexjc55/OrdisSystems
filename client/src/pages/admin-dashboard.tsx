@@ -2137,7 +2137,7 @@ export default function AdminDashboard() {
               )}
               {hasPermission("canManageSettings") && (
                 <TabsTrigger value="themes" className="text-xs sm:text-sm whitespace-nowrap">
-                  <Palette className="w-4 h-4 mr-1" />
+                  <Palette className="w-4 h-4 mr-1 rtl:mr-0 rtl:ml-1" />
                   Темы
                 </TabsTrigger>
               )}
