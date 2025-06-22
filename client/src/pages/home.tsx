@@ -277,7 +277,7 @@ export default function Home() {
                         </div>
                         <span className="font-semibold text-lg text-gray-800">{t('workingHours')}</span>
                       </div>
-                      <div className="space-y-2 px-0 md:ml-11 md:pr-8">
+                      <div className="space-y-2 px-0 md:ml-14 md:pr-8">
                       {(() => {
                         try {
                           const workingHours = storeSettings.workingHours;
@@ -365,7 +365,7 @@ export default function Home() {
                         </div>
                         <span className="font-semibold text-lg text-gray-800">{t('contacts')}</span>
                       </div>
-                      <div className="space-y-1 px-0 md:ml-11 md:pr-8">
+                      <div className="space-y-1 px-0 md:ml-14 md:pr-8">
                         {storeSettings.contactPhone && (
                           <div className="text-xs sm:text-sm flex justify-between">
                             <span className="text-gray-600">{t('phone')}:</span>
@@ -395,7 +395,7 @@ export default function Home() {
                         </div>
                         <span className="font-semibold text-lg text-gray-800">Оплата и доставка</span>
                       </div>
-                      <div className="space-y-4 flex-1 px-0 md:ml-11 md:pr-8">
+                      <div className="space-y-4 flex-1 px-0 md:ml-14 md:pr-8">
                         {storeSettings.deliveryInfo && (
                           <div>
                             <span className="text-gray-500 text-sm font-medium block mb-2">{t('delivery')}:</span>
