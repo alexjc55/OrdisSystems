@@ -167,9 +167,11 @@ export default function Home() {
     }
   }, [location, selectedCategoryId]);
   
-  // Calculate slides per page based on screen size
+  // For Embla carousel, we don't need complex page calculation
+  // Each slide is individual, navigation works slide by slide
   const slidesPerPage = isMobile ? 1 : 3;
-  const totalPages = Math.ceil(specialOffers.length / slidesPerPage);
+  const totalSlides = specialOffers.length;
+  const totalPages = Math.ceil(totalSlides / slidesPerPage);
   
   // Handle carousel navigation
   const goToSlide = (pageIndex: number) => {
@@ -557,8 +559,9 @@ export default function Home() {
                         opts={{
                           align: "start",
                           loop: false,
+                          dragFree: false,
+                          containScroll: "trimSnaps",
                           skipSnaps: false,
-                          slidesToScroll: isMobile ? 1 : 3,
                         }}
                         className="w-full"
                         setApi={(api) => {
@@ -571,19 +574,17 @@ export default function Home() {
                           }
                         }}
                       >
-                        <CarouselContent className="ml-0">
+                        <CarouselContent className="-ml-2 md:-ml-4">
                           {specialOffers.map((product) => (
                             <CarouselItem 
                               key={product.id} 
-                              className={`pl-4 ${isMobile ? 'basis-full' : 'basis-1/3'}`}
+                              className="pl-2 md:pl-4 basis-full md:basis-1/3"
                             >
-                              <div className="relative flex-1 flex">
-                                <div className="transform scale-90 origin-center w-full relative">
-                                  <ProductCard 
-                                    product={product} 
-                                    onCategoryClick={handleCategorySelect}
-                                  />
-                                </div>
+                              <div className="p-1">
+                                <ProductCard 
+                                  product={product} 
+                                  onCategoryClick={handleCategorySelect}
+                                />
                               </div>
                             </CarouselItem>
                           ))}
@@ -593,8 +594,11 @@ export default function Home() {
                       {/* Navigation Dots */}
                       {specialOffers.length > slidesPerPage && (
                         <div className="flex justify-center mt-6 space-x-2">
-                          {[...Array(totalPages)].map((_, index) => {
-                            const currentPage = Math.floor(currentSlide / slidesPerPage);
+                          {Array.from({ length: totalPages }, (_, index) => {
+                            // Calculate which page group we're currently viewing
+                            const currentPage = isMobile 
+                              ? currentSlide 
+                              : Math.floor(currentSlide / slidesPerPage);
                             const isActive = currentPage === index;
                             
                             return (
