@@ -2728,22 +2728,22 @@ export default function AdminDashboard() {
                       </div>
                       <div className="flex items-center justify-center gap-2">
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
                           onClick={() => setProductsPage(1)}
                           disabled={productsPage === 1}
                           title="Первая страница"
-                          className="h-9 w-9 p-0 text-xs bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           ⟨⟨
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
                           onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
                           disabled={productsPage === 1}
                           title="Предыдущая страница"
-                          className="h-9 w-9 p-0 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </Button>
@@ -2751,22 +2751,22 @@ export default function AdminDashboard() {
                           {productsPage}/{productsTotalPages}
                         </span>
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
                           onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
                           disabled={productsPage === productsTotalPages}
                           title="Следующая страница"
-                          className="h-9 w-9 p-0 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
                           onClick={() => setProductsPage(productsTotalPages)}
                           disabled={productsPage === productsTotalPages}
                           title="Последняя страница"
-                          className="h-9 w-9 p-0 text-xs bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           ⟩⟩
                         </Button>
@@ -3551,22 +3551,22 @@ export default function AdminDashboard() {
                           </div>
                           <div className="flex items-center justify-center gap-2">
                             <Button
-                              variant="outline"
+                              variant="ghost"
                               size="sm"
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
                               title="Первая страница"
-                              className="h-9 w-9 p-0 text-xs bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               ⟨⟨
                             </Button>
                             <Button
-                              variant="outline"
+                              variant="ghost"
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
                               title="Предыдущая страница"
-                              className="h-9 w-9 p-0 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
@@ -3574,22 +3574,22 @@ export default function AdminDashboard() {
                               {ordersResponse.page}/{ordersResponse.totalPages}
                             </span>
                             <Button
-                              variant="outline"
+                              variant="ghost"
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Следующая страница"
-                              className="h-9 w-9 p-0 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               <ChevronRight className="h-4 w-4" />
                             </Button>
                             <Button
-                              variant="outline"
+                              variant="ghost"
                               size="sm"
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Последняя страница"
-                              className="h-9 w-9 p-0 text-xs bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               ⟩⟩
                             </Button>
@@ -3902,22 +3902,22 @@ export default function AdminDashboard() {
                       </div>
                       <div className="flex items-center justify-center gap-2">
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
                           onClick={() => setUsersPage(1)}
                           disabled={usersPage === 1}
                           title="Первая страница"
-                          className="h-9 w-9 p-0 text-xs bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           ⟨⟨
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
                           onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
                           disabled={usersPage === 1}
                           title="Предыдущая страница"
-                          className="h-9 w-9 p-0 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </Button>
@@ -3925,22 +3925,22 @@ export default function AdminDashboard() {
                           {usersPage}/{usersTotalPages}
                         </span>
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
                           onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
                           disabled={usersPage === usersTotalPages}
                           title="Следующая страница"
-                          className="h-9 w-9 p-0 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
                           onClick={() => setUsersPage(usersTotalPages)}
                           disabled={usersPage === usersTotalPages}
                           title="Последняя страница"
-                          className="h-9 w-9 p-0 text-xs bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           ⟩⟩
                         </Button>
