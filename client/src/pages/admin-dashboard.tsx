@@ -157,21 +157,17 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
       {/* Main content with two containers */}
       <div className="relative flex-1 px-3 py-2 flex items-start gap-3">
         {/* Left container - Text content */}
-        <div className="flex-1 min-w-0 flex flex-col justify-between h-full">
+        <div className="flex-1 min-w-0 flex flex-col h-full">
           {/* Category name */}
-          <div>
-            <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide">
-              {category.name}
-            </h3>
-          </div>
+          <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1">
+            {category.name}
+          </h3>
 
-          {/* Description at bottom if exists */}
+          {/* Description if exists */}
           {category.description && (
-            <div>
-              <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed">
-                {category.description}
-              </p>
-            </div>
+            <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed">
+              {category.description}
+            </p>
           )}
         </div>
         
