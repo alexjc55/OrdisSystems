@@ -144,6 +144,10 @@
       "recommendedSize": "Recommended size: 400×300 pixels (4:3 ratio)"
     }
   },
+  "imageUpload": {
+    "selectFile": "Select File",
+    "uploading": "Uploading..."
+  },
   "categories": {
     "title": "Categories",
     "description": "Simple category management",

@@ -144,6 +144,10 @@
       "recommendedSize": "גודל מומלץ: 400×300 פיקסלים (יחס 4:3)"
     }
   },
+  "imageUpload": {
+    "selectFile": "בחר קובץ",
+    "uploading": "מעלה..."
+  },
   "categories": {
     "title": "קטגוריות",
     "description": "ניהול קטגוריות פשוט",

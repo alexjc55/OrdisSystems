@@ -152,7 +152,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
           className="flex-1"
         >
           <Upload className="h-4 w-4 mr-2" />
-          {uploading ? "Загрузка..." : "Выбрать файл"}
+          {uploading ? t('imageUpload.uploading') : t('imageUpload.selectFile')}
         </Button>
         
         {preview && (
