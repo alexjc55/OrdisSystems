@@ -2213,13 +2213,13 @@ export default function AdminDashboard() {
             <TabsContent value="products" className="space-y-4 sm:space-y-6">
               <Card>
                 <CardHeader>
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                  <div>
-                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl rtl:flex-row-reverse">
+                  <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                       <Package className="h-4 w-4 sm:h-5 sm:w-5" />
                       {adminT('products.title')}
                     </CardTitle>
-                    <CardDescription className="text-sm">
+                    <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                       {adminT('products.description', 'Полное управление товарами с поиском и фильтрацией')}
                     </CardDescription>
                   </div>
@@ -2228,7 +2228,7 @@ export default function AdminDashboard() {
                       setEditingProduct(null);
                       setIsProductFormOpen(true);
                     }}
-                    className="bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto"
+                    className={`bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-first' : ''}`}
                     size="sm"
                   >
                     <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
@@ -2605,13 +2605,13 @@ export default function AdminDashboard() {
             <TabsContent value="categories" className="space-y-4 sm:space-y-6">
               <Card>
                 <CardHeader>
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div>
-                      <CardTitle className="flex items-center gap-2 text-lg sm:text-xl rtl:flex-row-reverse">
+                  <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+                    <div className={isRTL ? 'text-right' : 'text-left'}>
+                      <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                       <Utensils className="h-4 w-4 sm:h-5 sm:w-5" />
                       {adminT('categories.title')}
                     </CardTitle>
-                    <CardDescription className="text-sm">
+                    <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                       {adminT('categories.description', 'Простое управление категориями')}
                     </CardDescription>
                   </div>
@@ -2620,10 +2620,10 @@ export default function AdminDashboard() {
                       setEditingCategory(null);
                       setIsCategoryFormOpen(true);
                     }}
-                    className="bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto"
+                    className={`bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-first' : ''}`}
                     size="sm"
                   >
-                    <Plus className="mr-2 h-4 w-4" />
+                    <Plus className={`${isRTL ? 'ml-2' : 'mr-2'} h-4 w-4`} />
                     {adminT('actions.add')} {adminT('categories.title')}
                   </Button>
                 </div>
@@ -2734,12 +2734,12 @@ export default function AdminDashboard() {
             <TabsContent value="orders" className="space-y-4 sm:space-y-6">
               {/* Header Section */}
               <div className="flex flex-col gap-4">
-                <div>
-                  <h1 className="text-2xl font-bold flex items-center gap-2 rtl:flex-row-reverse">
+                <div className={isRTL ? 'text-right' : 'text-left'}>
+                  <h1 className={`text-2xl font-bold flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                     <ShoppingCart className="h-6 w-6" />
                     {adminT('orders.title')}
                   </h1>
-                  <p className="text-gray-600 mt-1">{adminT('orders.description', 'Управление заказами клиентов')}</p>
+                  <p className={`text-gray-600 mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.description', 'Управление заказами клиентов')}</p>
                 </div>
               
               {/* Controls Row */}
@@ -3417,13 +3417,17 @@ export default function AdminDashboard() {
             <TabsContent value="users" className="space-y-4 sm:space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                    <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                    Пользователи
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    Управление пользователями и ролями
-                  </CardDescription>
+                  <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+                    <div className={isRTL ? 'text-right' : 'text-left'}>
+                      <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                        <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+                        Пользователи
+                      </CardTitle>
+                      <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                        Управление пользователями и ролями
+                      </CardDescription>
+                    </div>
+                  </div>
               </CardHeader>
               <CardContent>
                 {/* Users Filters and Controls */}
