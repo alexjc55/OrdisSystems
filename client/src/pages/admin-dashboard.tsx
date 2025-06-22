@@ -142,37 +142,40 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
       <div className="relative flex-1 px-3 py-2 flex items-start gap-3">
         {/* Left container - Text content */}
         <div className="flex-1 min-w-0 flex flex-col justify-between h-full">
-          {/* Category name and description */}
+          {/* Category name */}
           <div>
             <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1">
               {category.name}
             </h3>
-            {category.description && (
-              <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed mb-2">
-                {category.description}
-              </p>
-            )}
-          </div>
-
-          {/* Product count button at bottom */}
-          <div>
-            <button
+            
+            {/* Product count snippet */}
+            <div 
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveTab('products');
                 setSelectedCategory(category.id.toString());
               }}
-              className={`inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-orange-500 text-white border border-orange-600 hover:bg-orange-600 hover:border-orange-700 transition-all duration-200 shadow-sm ${isRTL ? 'gap-1.5' : 'gap-1'}`}
+              className="cursor-pointer inline-block"
             >
-              <span className="font-semibold">{category.products?.length || 0}</span>
-              <span>{adminT('categories.products')}</span>
-            </button>
+              <span className="text-xs text-gray-500/90 hover:text-orange-600 transition-colors">
+                {category.products?.length || 0} {adminT('categories.products')}
+              </span>
+            </div>
           </div>
+
+          {/* Description at bottom if exists */}
+          {category.description && (
+            <div>
+              <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed">
+                {category.description}
+              </p>
+            </div>
+          )}
         </div>
         
         {/* Right container - Icon */}
         <div className="flex-shrink-0 flex items-center">
-          <div className="text-3xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
+          <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
             {category.icon || '📦'}
           </div>
         </div>
