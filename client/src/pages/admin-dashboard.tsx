@@ -4337,7 +4337,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
 
                 {discountType === "fixed" && (
                   <div className="text-xs text-orange-700 bg-orange-100 p-2 rounded">
-                    Фиксированная скидка применяется за {unit === "piece" ? "штуку" : unit === "kg" ? "кг" : "100г/100мл"}
+                    {adminT('products.dialog.fixedDiscountInfo')} {unit === "piece" ? adminT('products.dialog.unitPiece') : unit === "kg" ? adminT('products.dialog.unitKg') : adminT('products.dialog.unit100gml')}
                   </div>
                 )}
               </div>
