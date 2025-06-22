@@ -159,7 +159,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
         </div>
 
         {/* Bottom section */}
-        <div className="mt-auto">
+        <div className="mt-auto pb-1">
           <div className="flex justify-start">
             <button
               onClick={(e) => {
@@ -167,9 +167,9 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
                 setActiveTab('products');
                 setSelectedCategory(category.id.toString());
               }}
-              className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200 hover:bg-orange-50 hover:text-orange-700 hover:border-orange-200 transition-all duration-200"
+              className={`inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-orange-500 text-white border border-orange-600 hover:bg-orange-600 hover:border-orange-700 transition-all duration-200 shadow-sm ${isRTL ? 'gap-1.5' : 'gap-1'}`}
             >
-              <span className="mr-1 font-semibold">{category.products?.length || 0}</span>
+              <span className="font-semibold">{category.products?.length || 0}</span>
               <span>товаров</span>
             </button>
           </div>
