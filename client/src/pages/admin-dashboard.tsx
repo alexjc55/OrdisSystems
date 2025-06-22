@@ -2176,7 +2176,94 @@ export default function AdminDashboard() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
           <div>
-            <TabsList className={`admin-tabs-list ${isRTL ? 'rtl-tabs-reverse' : ''} flex w-full overflow-x-auto gap-1`}>
+            {/* Mobile Dropdown Menu */}
+            <div className="block sm:hidden mb-4">
+              <Select value={activeTab} onValueChange={setActiveTab}>
+                <SelectTrigger className="w-full bg-white border-gray-200">
+                  <SelectValue>
+                    <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      {activeTab === 'products' && <Package className="w-4 h-4" />}
+                      {activeTab === 'categories' && <Layers3 className="w-4 h-4" />}
+                      {activeTab === 'orders' && <ShoppingCart className="w-4 h-4" />}
+                      {activeTab === 'users' && <Users className="w-4 h-4" />}
+                      {activeTab === 'store' && <Settings className="w-4 h-4" />}
+                      {activeTab === 'settings' && <UserCheck className="w-4 h-4" />}
+                      {activeTab === 'themes' && <Palette className="w-4 h-4" />}
+                      <span>
+                        {activeTab === 'products' && adminT('tabs.products')}
+                        {activeTab === 'categories' && adminT('tabs.categories')}
+                        {activeTab === 'orders' && adminT('tabs.orders')}
+                        {activeTab === 'users' && adminT('tabs.users')}
+                        {activeTab === 'store' && adminT('tabs.settings')}
+                        {activeTab === 'settings' && adminT('tabs.permissions')}
+                        {activeTab === 'themes' && adminT('tabs.themes')}
+                      </span>
+                    </div>
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {hasPermission("canManageProducts") && (
+                    <SelectItem value="products">
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Package className="w-4 h-4" />
+                        <span>{adminT('tabs.products')}</span>
+                      </div>
+                    </SelectItem>
+                  )}
+                  {hasPermission("canManageCategories") && (
+                    <SelectItem value="categories">
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Layers3 className="w-4 h-4" />
+                        <span>{adminT('tabs.categories')}</span>
+                      </div>
+                    </SelectItem>
+                  )}
+                  {hasPermission("canManageOrders") && (
+                    <SelectItem value="orders">
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <ShoppingCart className="w-4 h-4" />
+                        <span>{adminT('tabs.orders')}</span>
+                      </div>
+                    </SelectItem>
+                  )}
+                  {hasPermission("canViewUsers") && (
+                    <SelectItem value="users">
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Users className="w-4 h-4" />
+                        <span>{adminT('tabs.users')}</span>
+                      </div>
+                    </SelectItem>
+                  )}
+                  {hasPermission("canViewSettings") && (
+                    <SelectItem value="store">
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Settings className="w-4 h-4" />
+                        <span>{adminT('tabs.settings')}</span>
+                      </div>
+                    </SelectItem>
+                  )}
+                  {hasPermission("canManageSettings") && (
+                    <SelectItem value="settings">
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <UserCheck className="w-4 h-4" />
+                        <span>{adminT('tabs.permissions')}</span>
+                      </div>
+                    </SelectItem>
+                  )}
+                  {hasPermission("canManageSettings") && (
+                    <SelectItem value="themes">
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Palette className="w-4 h-4" />
+                        <span>{adminT('tabs.themes')}</span>
+                      </div>
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {/* Desktop Tabs */}
+            <TabsList className={`admin-tabs-list ${isRTL ? 'rtl-tabs-reverse' : ''} hidden sm:flex w-full overflow-x-auto gap-1`}>
               {isRTL ? (
                 // RTL order: reverse the tab order
                 <>
