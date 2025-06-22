@@ -2866,47 +2866,23 @@ export default function AdminDashboard() {
                       <Card key={category.id} className="group hover:shadow-md transition-shadow duration-200">
                         <CardContent className="p-4">
                           <div className={`flex items-start justify-between mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                            {isRTL ? (
-                              <>
-                                <div className="flex-shrink-0 ml-4">
-                                  <div className="text-4xl">{category.icon}</div>
-                                </div>
-                                <div className="flex-1 min-w-0 text-right">
-                                  <button
-                                    onClick={() => {
-                                      setEditingCategory(category);
-                                      setIsCategoryFormOpen(true);
-                                    }}
-                                    className="font-bold text-lg hover:text-blue-600 cursor-pointer block w-full truncate text-right"
-                                  >
-                                    {category.name}
-                                  </button>
-                                  {category.description && (
-                                    <p className="text-sm text-gray-500 mt-2 line-clamp-2 text-right">{category.description}</p>
-                                  )}
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                <div className="flex-1 min-w-0 text-left">
-                                  <button
-                                    onClick={() => {
-                                      setEditingCategory(category);
-                                      setIsCategoryFormOpen(true);
-                                    }}
-                                    className="font-bold text-lg hover:text-blue-600 cursor-pointer block w-full truncate text-left"
-                                  >
-                                    {category.name}
-                                  </button>
-                                  {category.description && (
-                                    <p className="text-sm text-gray-500 mt-2 line-clamp-2 text-left">{category.description}</p>
-                                  )}
-                                </div>
-                                <div className="flex-shrink-0 ml-4">
-                                  <div className="text-4xl">{category.icon}</div>
-                                </div>
-                              </>
-                            )}
+                            <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : 'text-left'}`}>
+                              <button
+                                onClick={() => {
+                                  setEditingCategory(category);
+                                  setIsCategoryFormOpen(true);
+                                }}
+                                className={`font-bold text-lg hover:text-blue-600 cursor-pointer block w-full truncate ${isRTL ? 'text-right' : 'text-left'}`}
+                              >
+                                {category.name}
+                              </button>
+                              {category.description && (
+                                <p className={`text-sm text-gray-500 mt-2 line-clamp-2 ${isRTL ? 'text-right' : 'text-left'}`}>{category.description}</p>
+                              )}
+                            </div>
+                            <div className={`flex-shrink-0 ${isRTL ? 'mr-4' : 'ml-4'}`}>
+                              <div className="text-4xl">{category.icon}</div>
+                            </div>
                           </div>
                           <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <Button
