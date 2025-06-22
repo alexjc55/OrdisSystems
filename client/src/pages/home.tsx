@@ -680,9 +680,9 @@ export default function Home() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12">
+                <div className={`py-12 ${currentLanguage === 'he' ? 'text-right' : 'text-center'}`}>
                   <div className="text-gray-400 mb-4">
-                    <Package className="mx-auto h-12 w-12" />
+                    <Package className={`h-12 w-12 ${currentLanguage === 'he' ? 'mr-auto' : 'mx-auto'}`} />
                   </div>
                   <h3 className="text-lg font-medium text-gray-900 mb-2">
                     {searchQuery ? t('noSearchResults') : t('noProductsFound')}
