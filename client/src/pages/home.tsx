@@ -684,10 +684,10 @@ export default function Home() {
                   <div className="text-gray-400 mb-4">
                     <Package className="mx-auto h-12 w-12" />
                   </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <h3 className="text-lg font-medium text-gray-900 mb-2" style={{ textAlign: 'center' }}>
                     {searchQuery ? t('noSearchResults') : t('noProductsFound')}
                   </h3>
-                  <p className="text-gray-500">
+                  <p className="text-gray-500" style={{ textAlign: 'center' }}>
                     {searchQuery ? t('tryDifferentSearch') : t('checkBackLater')}
                   </p>
                 </div>
