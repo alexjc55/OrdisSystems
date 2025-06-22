@@ -1,3 +1,15 @@
+/**
+ * BACKUP VERSION OF HOME PAGE - Created June 21, 2025
+ * 
+ * This is a complete backup of the home page with:
+ * - Multi-language support (Russian, English, Hebrew)
+ * - RTL layout support for Hebrew interface
+ * - Product filtering and search functionality
+ * - Shopping cart integration
+ * - Mobile-responsive design
+ * - All existing features and UI patterns preserved
+ */
+
 import { useState, useMemo, useRef, useCallback, memo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
@@ -163,6 +175,8 @@ export default function Home() {
     if (carouselApiRef.current) {
       const slideIndex = pageIndex * slidesPerPage;
       carouselApiRef.current.scrollTo(slideIndex);
+      // Update current slide state immediately for visual feedback
+      setCurrentSlide(slideIndex);
     }
   };
 
@@ -432,7 +446,7 @@ export default function Home() {
                         onClick={() => setSelectedCategoryId(0)}
                         className="w-full md:w-auto bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 !text-white hover:!text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                       >
-                        <Package className="mr-2 rtl:mr-0 rtl:ml-2 h-5 w-5" />
+                        <Package className="mr-2 h-5 w-5" />
                         {t('allProducts')}
                       </Button>
                     </div>
@@ -494,28 +508,32 @@ export default function Home() {
                         <button
                           onClick={() => {
                             if (carouselApiRef.current) {
-                              carouselApiRef.current.scrollPrev();
+                              const isRTL = document.documentElement.dir === 'rtl';
+                              if (isRTL) {
+                                carouselApiRef.current.scrollNext();
+                              } else {
+                                carouselApiRef.current.scrollPrev();
+                              }
                             }
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          {document.documentElement.dir === 'rtl' ? 
-                            <ChevronRight className="h-4 w-4" /> : 
-                            <ChevronLeft className="h-4 w-4" />
-                          }
+                          <ChevronLeft className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => {
                             if (carouselApiRef.current) {
-                              carouselApiRef.current.scrollNext();
+                              const isRTL = document.documentElement.dir === 'rtl';
+                              if (isRTL) {
+                                carouselApiRef.current.scrollPrev();
+                              } else {
+                                carouselApiRef.current.scrollNext();
+                              }
                             }
                           }}
                           className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
                         >
-                          {document.documentElement.dir === 'rtl' ? 
-                            <ChevronLeft className="h-4 w-4" /> : 
-                            <ChevronRight className="h-4 w-4" />
-                          }
+                          <ChevronRight className="h-4 w-4" />
                         </button>
                       </div>
                     )}

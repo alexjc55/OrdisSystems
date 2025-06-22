@@ -67,13 +67,17 @@ export function LanguageSwitcher({
             {Object.entries(availableLanguages).map(([code, info]) => (
               <Button
                 key={code}
-                variant={code === currentLanguage ? "default" : "ghost"}
+                variant="ghost"
                 size="sm"
                 onClick={() => {
                   changeLanguage(code as any);
                   setIsOpen(false);
                 }}
-                className="justify-start"
+                className={`justify-start transition-colors ${
+                  code === currentLanguage 
+                    ? "bg-orange-50 text-orange-700 hover:bg-orange-100" 
+                    : "hover:bg-gray-50 text-gray-700 hover:text-gray-900"
+                }`}
               >
                 <span className="text-base mr-2 rtl:mr-0 rtl:ml-2">{info.flag}</span>
                 <span className="text-xs">{info.nativeName}</span>
@@ -103,13 +107,17 @@ export function LanguageSwitcher({
           {Object.entries(availableLanguages).map(([code, info]) => (
             <Button
               key={code}
-              variant={code === currentLanguage ? "default" : "ghost"}
+              variant="ghost"
               size="sm"
               onClick={() => {
                 changeLanguage(code as any);
                 setIsOpen(false);
               }}
-              className="w-full justify-start"
+              className={`w-full justify-start transition-colors ${
+                code === currentLanguage 
+                  ? "bg-orange-50 text-orange-700 hover:bg-orange-100" 
+                  : "hover:bg-gray-50 text-gray-700 hover:text-gray-900"
+              }`}
             >
               <span className="text-base mr-3 rtl:mr-0 rtl:ml-3">{info.flag}</span>
               <div className="text-left">

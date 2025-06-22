@@ -134,8 +134,8 @@ export default function Header({ onResetView }: HeaderProps) {
                     <DropdownMenuItem asChild>
                       <Link href="/profile">
                         <div className="flex items-center">
-                          <User className="mr-2 h-4 w-4" />
-                          <span>{t('profile')}</span>
+                          <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                          <span>{t('navigation.profile')}</span>
                         </div>
                       </Link>
                     </DropdownMenuItem>
