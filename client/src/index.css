@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+Hebrew:wght@300;400;500;600;700&family=Assistant:wght@300;400;500;600;700&display=swap');
 @import './lib/design-system.css';
 
 @tailwind base;
@@ -13,7 +13,7 @@
   }
 }
 
-/* RTL Support */
+/* RTL Support with Hebrew Font Optimization */
 @layer base {
   html[dir="rtl"] {
     --text-align-start: right;
@@ -22,6 +22,11 @@
     --margin-end: 1rem;
     --padding-start: 0;
     --padding-end: 1rem;
+    font-family: 'Assistant', 'Noto Sans Hebrew', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "kern" 1, "liga" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   html[dir="ltr"] {
@@ -31,6 +36,15 @@
     --margin-end: 0;
     --padding-start: 1rem;
     --padding-end: 0;
+    font-family: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
+  }
+  
+  /* Hebrew text optimization */
+  [lang="he"], 
+  html[dir="rtl"] * {
+    font-family: 'Assistant', 'Noto Sans Hebrew', system-ui, -apple-system, sans-serif !important;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
   }
 }
 
