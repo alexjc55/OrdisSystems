@@ -151,7 +151,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
 
         {/* Icon in center */}
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-6xl transform group-hover:scale-110 transition-transform duration-200">
+          <div className="text-4xl transform group-hover:scale-110 transition-transform duration-200">
             {category.icon || '📦'}
           </div>
         </div>
@@ -169,11 +169,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
               className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-orange-500 text-white border border-orange-600 shadow-sm hover:bg-orange-600 transition-colors duration-200"
             >
               <span className="truncate">
-                {(() => {
-                  const productCount = category.products?.length || 0;
-                  console.log(`Category ${category.name}: ${productCount} products`, category.products);
-                  return `${productCount} товаров`;
-                })()}
+                {category.products?.length || 0} товаров
               </span>
             </button>
           </div>
