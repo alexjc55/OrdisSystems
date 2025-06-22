@@ -257,7 +257,7 @@ export default function Header({ onResetView }: HeaderProps) {
                   <div className="border-t border-gray-200 pt-4 mt-4">
                     <div className="px-4">
                       <span className="text-sm font-medium text-gray-700 block mb-3">{t('language')}</span>
-                      <div className={`grid ${gridCols} gap-2`}>
+                      <div className={`grid ${gridCols} gap-2 w-full`}>
                         {languages.map((lang) => (
                           <button
                             key={lang.code}
@@ -265,14 +265,14 @@ export default function Header({ onResetView }: HeaderProps) {
                               changeLanguage(lang.code);
                               setIsMobileMenuOpen(false);
                             }}
-                            className={`flex items-center justify-center px-3 py-2 rounded-lg transition-colors ${
+                            className={`flex items-center justify-center px-2 py-2 rounded-lg transition-colors text-xs ${
                               currentLanguage === lang.code 
                                 ? 'bg-blue-50 text-blue-600 font-medium' 
                                 : 'text-gray-700 hover:bg-gray-50'
                             }`}
                           >
-                            <span className="text-lg mr-2 rtl:ml-2 rtl:mr-0">{lang.flag}</span>
-                            <span className="text-sm">{lang.name}</span>
+                            <span className="text-sm mr-1 rtl:ml-1 rtl:mr-0">{lang.flag}</span>
+                            <span className="text-xs whitespace-nowrap">{lang.name}</span>
                           </button>
                         ))}
                       </div>
@@ -297,7 +297,7 @@ export default function Header({ onResetView }: HeaderProps) {
               {user && (
                 <div className="border-t border-gray-200 pt-4 mt-4">
                   <div 
-                    className="flex items-center px-4 py-3 mx-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors cursor-pointer"
+                    className="flex items-center justify-center px-4 py-3 mx-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors cursor-pointer"
                     onClick={() => {
                       logoutMutation.mutate();
                       setIsMobileMenuOpen(false);
