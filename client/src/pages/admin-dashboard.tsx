@@ -89,10 +89,10 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 h-[180px] flex flex-col"
+      className="group relative overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 h-[160px] flex flex-col"
     >
       {/* Header with drag handle and actions */}
-      <div className="flex items-center justify-between p-3 pb-0">
+      <div className="flex items-center justify-between p-2 pb-0">
         <div
           {...attributes}
           {...listeners}
@@ -111,7 +111,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
             className={`h-6 w-6 p-0 ${category.isActive ? 'text-green-600 hover:text-green-700 hover:bg-green-50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'}`}
             title={category.isActive ? 'Скрыть категорию' : 'Показать категорию'}
           >
-            {category.isActive ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+            {category.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
           </Button>
           <Button
             size="sm"
@@ -133,7 +133,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
       </div>
 
       {/* Category content - grows to fill available space */}
-      <div className="flex-1 px-3 pt-2 pb-3 flex flex-col">
+      <div className="flex-1 px-2 pt-1 pb-2 flex flex-col">
         {/* Category name and icon */}
         <div className="flex items-start gap-3 mb-3">
           <div className="flex-1 min-w-0">
