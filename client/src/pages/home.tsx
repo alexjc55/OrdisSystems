@@ -337,7 +337,7 @@ export default function Home() {
                                   : `${dayNames[group.days[0]]} - ${dayNames[group.days[group.days.length - 1]]}`;
                                 
                                 return (
-                                  <div key={index} className="text-xs sm:text-sm flex justify-between">
+                                  <div key={index} className="text-sm sm:text-base flex justify-between">
                                     <span className="font-medium">{daysText}:</span>
                                     <span className="text-gray-600">{group.hours}</span>
                                   </div>
@@ -367,13 +367,13 @@ export default function Home() {
                       </div>
                       <div className={`space-y-1 px-0 ${currentLanguage === 'he' ? 'md:mr-16 md:pl-8' : 'md:ml-16 md:pr-8'}`}>
                         {storeSettings.contactPhone && (
-                          <div className="text-xs sm:text-sm flex justify-between">
+                          <div className="text-sm sm:text-base flex justify-between">
                             <span className="text-gray-600">{t('phone')}:</span>
                             <span className="font-medium">{storeSettings.contactPhone}</span>
                           </div>
                         )}
                         {storeSettings.contactEmail && (
-                          <div className="text-xs sm:text-sm flex justify-between">
+                          <div className="text-sm sm:text-base flex justify-between">
                             <span className="text-gray-600">Email:</span>
                             <span className="font-medium break-all">{storeSettings.contactEmail}</span>
                           </div>
