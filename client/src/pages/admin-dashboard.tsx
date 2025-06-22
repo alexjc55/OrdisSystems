@@ -1990,6 +1990,7 @@ export default function AdminDashboard() {
 
   const reorderCategoriesMutation = useMutation({
     mutationFn: async (categoryOrders: { id: number; sortOrder: number }[]) => {
+      console.log('Sending category reorder data:', categoryOrders);
       const response = await fetch('/api/categories/reorder', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

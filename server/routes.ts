@@ -240,12 +240,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { categoryOrders } = req.body; // Array of { id: number, sortOrder: number }
+      console.log('Received category reorder data:', JSON.stringify(categoryOrders, null, 2));
       
       if (!Array.isArray(categoryOrders)) {
         return res.status(400).json({ message: "Invalid data format" });
       }
 
-      await storage.updateCategoryOrders(categoryOrders);
+      // Validate and sanitize the data
+      const validatedOrders = categoryOrders.map((item, index) => {
+        const id = parseInt(String(item.id));
+        const sortOrder = parseInt(String(item.sortOrder));
+        
+        if (isNaN(id) || isNaN(sortOrder)) {
+          console.error(`Invalid data at index ${index}:`, item);
+          throw new Error(`Invalid id or sortOrder at index ${index}`);
+        }
+        
+        return { id, sortOrder };
+      });
+
+      console.log('Validated category orders:', validatedOrders);
+      await storage.updateCategoryOrders(validatedOrders);
       res.json({ success: true });
     } catch (error) {
       console.error("Error reordering categories:", error);
