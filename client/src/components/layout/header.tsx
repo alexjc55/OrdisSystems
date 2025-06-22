@@ -241,23 +241,15 @@ export default function Header({ onResetView }: HeaderProps) {
                 
                 // Layout logic: 
                 // 1 language = hidden (not shown)
-                // 2 languages = 1 row with 2 columns
-                // 3 languages = 1 row with 3 columns
-                // 4 languages = 2 rows with 2 columns each
-                let gridCols;
-                if (languages.length === 2) {
-                  gridCols = 'grid-cols-2';
-                } else if (languages.length === 3) {
-                  gridCols = 'grid-cols-3';
-                } else {
-                  gridCols = 'grid-cols-2'; // 4+ languages, 2 per row
-                }
+                // 2 languages = flex row
+                // 3 languages = flex row  
+                // 4+ languages = flex wrap (will wrap to new lines automatically)
                 
                 return (
                   <div className="border-t border-gray-200 pt-4 mt-4">
                     <div className="px-4">
                       <span className="text-sm font-medium text-gray-700 block mb-3">{t('language')}</span>
-                      <div className={`grid ${gridCols} gap-2 w-full`}>
+                      <div className={`flex ${languages.length >= 4 ? 'flex-wrap' : 'flex-nowrap'} gap-2 w-full`}>
                         {languages.map((lang) => (
                           <button
                             key={lang.code}
@@ -265,7 +257,7 @@ export default function Header({ onResetView }: HeaderProps) {
                               changeLanguage(lang.code);
                               setIsMobileMenuOpen(false);
                             }}
-                            className={`flex items-center justify-center px-2 py-2 rounded-lg transition-colors text-xs ${
+                            className={`flex items-center justify-center px-2 py-2 rounded-lg transition-colors text-xs flex-1 ${
                               currentLanguage === lang.code 
                                 ? 'bg-blue-50 text-blue-600 font-medium' 
                                 : 'text-gray-700 hover:bg-gray-50'
