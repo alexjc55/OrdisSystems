@@ -1456,7 +1456,7 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
   const [selectedStatusFilter, setSelectedStatusFilter] = useState("all");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [activeTab, setActiveTab] = useState("products");
@@ -2105,19 +2105,12 @@ export default function AdminDashboard() {
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{adminT('dashboard.title')}</h1>
               <p className="text-gray-600 text-sm sm:text-base">{adminT('dashboard.overview')}</p>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="sm:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              <Menu className="h-4 w-4" />
-            </Button>
+
           </div>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
-          <div className={`${isMobileMenuOpen ? 'block' : 'hidden sm:block'}`}>
+          <div>
             <TabsList className={`admin-tabs-list ${isRTL ? 'rtl-tabs-reverse' : ''} flex w-full overflow-x-auto gap-1`}>
               {isRTL ? (
                 // RTL order: reverse the tab order

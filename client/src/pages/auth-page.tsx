@@ -137,26 +137,26 @@ export default function AuthPage() {
         {/* Auth Forms */}
         <Card className="w-full max-w-md mx-auto">
           <CardHeader>
-            <CardTitle>Вход в систему</CardTitle>
+            <CardTitle>{t('auth.title')}</CardTitle>
             <CardDescription>
-              Войдите в свой аккаунт или создайте новый
+              {t('auth.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Вход</TabsTrigger>
-                <TabsTrigger value="register">Регистрация</TabsTrigger>
+                <TabsTrigger value="login">{t('auth.login')}</TabsTrigger>
+                <TabsTrigger value="register">{t('auth.register')}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="login" className="space-y-4">
                 <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="username">Имя пользователя</Label>
+                    <Label htmlFor="username">{t('auth.username')}</Label>
                     <Input
                       id="username"
                       {...loginForm.register("username")}
-                      placeholder="Введите имя пользователя"
+                      placeholder={t('auth.usernamePlaceholder')}
                     />
                     {loginForm.formState.errors.username && (
                       <p className="text-sm text-red-600">
@@ -166,12 +166,12 @@ export default function AuthPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="password">Пароль</Label>
+                    <Label htmlFor="password">{t('auth.password')}</Label>
                     <Input
                       id="password"
                       type="password"
                       {...loginForm.register("password")}
-                      placeholder="Введите пароль"
+                      placeholder={t('auth.passwordPlaceholder')}
                     />
                     {loginForm.formState.errors.password && (
                       <p className="text-sm text-red-600">
@@ -188,10 +188,10 @@ export default function AuthPage() {
                     {loginMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Вход...
+                        {t('auth.loggingIn')}
                       </>
                     ) : (
-                      "Войти"
+                      t('auth.loginButton')
                     )}
                   </Button>
                 </form>
@@ -200,11 +200,11 @@ export default function AuthPage() {
               <TabsContent value="register" className="space-y-4">
                 <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="reg-username">Имя пользователя *</Label>
+                    <Label htmlFor="reg-username">{t('auth.username')} *</Label>
                     <Input
                       id="reg-username"
                       {...registerForm.register("username")}
-                      placeholder="Выберите имя пользователя"
+                      placeholder={t('auth.usernameRegPlaceholder')}
                     />
                     {registerForm.formState.errors.username && (
                       <p className="text-sm text-red-600">
@@ -214,12 +214,12 @@ export default function AuthPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t('auth.email')}</Label>
                     <Input
                       id="email"
                       type="email"
                       {...registerForm.register("email")}
-                      placeholder="Введите email (необязательно)"
+                      placeholder={t('auth.emailPlaceholder')}
                     />
                     {registerForm.formState.errors.email && (
                       <p className="text-sm text-red-600">
@@ -230,39 +230,39 @@ export default function AuthPage() {
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="firstName">Имя</Label>
+                      <Label htmlFor="firstName">{t('auth.firstName')}</Label>
                       <Input
                         id="firstName"
                         {...registerForm.register("firstName")}
-                        placeholder="Ваше имя"
+                        placeholder={t('auth.firstNamePlaceholder')}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="lastName">Фамилия</Label>
+                      <Label htmlFor="lastName">{t('auth.lastName')}</Label>
                       <Input
                         id="lastName"
                         {...registerForm.register("lastName")}
-                        placeholder="Ваша фамилия"
+                        placeholder={t('auth.lastNamePlaceholder')}
                       />
                     </div>
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Телефон</Label>
+                    <Label htmlFor="phone">{t('auth.phone')}</Label>
                     <Input
                       id="phone"
                       {...registerForm.register("phone")}
-                      placeholder="Номер телефона"
+                      placeholder={t('auth.phonePlaceholder')}
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="reg-password">Пароль *</Label>
+                    <Label htmlFor="reg-password">{t('auth.password')} *</Label>
                     <Input
                       id="reg-password"
                       type="password"
                       {...registerForm.register("password")}
-                      placeholder="Создайте пароль"
+                      placeholder={t('auth.createPasswordPlaceholder')}
                     />
                     {registerForm.formState.errors.password && (
                       <p className="text-sm text-red-600">
@@ -272,12 +272,12 @@ export default function AuthPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Подтвердите пароль *</Label>
+                    <Label htmlFor="confirmPassword">{t('auth.confirmPassword')} *</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
                       {...registerForm.register("confirmPassword")}
-                      placeholder="Повторите пароль"
+                      placeholder={t('auth.confirmPasswordPlaceholder')}
                     />
                     {registerForm.formState.errors.confirmPassword && (
                       <p className="text-sm text-red-600">
@@ -294,10 +294,10 @@ export default function AuthPage() {
                     {registerMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Регистрация...
+                        {t('auth.registering')}
                       </>
                     ) : (
-                      "Зарегистрироваться"
+                      t('auth.registerButton')
                     )}
                   </Button>
                 </form>
