@@ -363,12 +363,12 @@ export default function AuthPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="email">{t('auth.email')}</Label>
+                    <Label htmlFor="email">{getAuthText('email')}</Label>
                     <Input
                       id="email"
                       type="email"
                       {...registerForm.register("email")}
-                      placeholder={t('auth.emailPlaceholder')}
+                      placeholder={getAuthText('emailPlaceholder')}
                     />
                     {registerForm.formState.errors.email && (
                       <p className="text-sm text-red-600">
@@ -379,39 +379,39 @@ export default function AuthPage() {
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="firstName">{t('auth.firstName')}</Label>
+                      <Label htmlFor="firstName">{getAuthText('firstName')}</Label>
                       <Input
                         id="firstName"
                         {...registerForm.register("firstName")}
-                        placeholder={t('auth.firstNamePlaceholder')}
+                        placeholder={getAuthText('firstNamePlaceholder')}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="lastName">{t('auth.lastName')}</Label>
+                      <Label htmlFor="lastName">{getAuthText('lastName')}</Label>
                       <Input
                         id="lastName"
                         {...registerForm.register("lastName")}
-                        placeholder={t('auth.lastNamePlaceholder')}
+                        placeholder={getAuthText('lastNamePlaceholder')}
                       />
                     </div>
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="phone">{t('auth.phone')}</Label>
+                    <Label htmlFor="phone">{getAuthText('phone')}</Label>
                     <Input
                       id="phone"
                       {...registerForm.register("phone")}
-                      placeholder={t('auth.phonePlaceholder')}
+                      placeholder={getAuthText('phonePlaceholder')}
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="reg-password">{t('auth.password')} *</Label>
+                    <Label htmlFor="reg-password">{getAuthText('password')} *</Label>
                     <Input
                       id="reg-password"
                       type="password"
                       {...registerForm.register("password")}
-                      placeholder={t('auth.createPasswordPlaceholder')}
+                      placeholder={getAuthText('createPasswordPlaceholder')}
                     />
                     {registerForm.formState.errors.password && (
                       <p className="text-sm text-red-600">
@@ -421,12 +421,12 @@ export default function AuthPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">{t('auth.confirmPassword')} *</Label>
+                    <Label htmlFor="confirmPassword">{getAuthText('confirmPassword')} *</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
                       {...registerForm.register("confirmPassword")}
-                      placeholder={t('auth.confirmPasswordPlaceholder')}
+                      placeholder={getAuthText('confirmPasswordPlaceholder')}
                     />
                     {registerForm.formState.errors.confirmPassword && (
                       <p className="text-sm text-red-600">
@@ -443,10 +443,10 @@ export default function AuthPage() {
                     {registerMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t('auth.registering')}
+                        {getAuthText('registering')}
                       </>
                     ) : (
-                      t('auth.registerButton')
+                      getAuthText('registerButton')
                     )}
                   </Button>
                 </form>
