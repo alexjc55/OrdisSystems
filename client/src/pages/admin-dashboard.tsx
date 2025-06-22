@@ -2908,7 +2908,7 @@ export default function AdminDashboard() {
                               </>
                             )}
                           </div>
-                          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
                             {isRTL ? (
                               <>
                                 {/* RTL: Счетчик товаров слева, кнопки справа */}
