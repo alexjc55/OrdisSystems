@@ -449,10 +449,41 @@
       direction: rtl;
     }
     
-    .rtl-scroll-container > table {
+    .rtl-scroll-container table {
       /* Keep table content in RTL but ensure proper column order */
-      direction: rtl;
+      direction: rtl !important;
       width: 100%;
+    }
+    
+    .rtl-scroll-container table th,
+    .rtl-scroll-container table td {
+      /* Ensure all table cells are RTL */
+      direction: rtl !important;
+      text-align: right !important;
+    }
+    
+    .rtl-scroll-container table thead tr,
+    .rtl-scroll-container table tbody tr {
+      /* Ensure table rows are RTL */
+      direction: rtl !important;
+    }
+    
+    /* Force RTL on all nested elements within RTL scroll container */
+    .rtl-scroll-container * {
+      direction: rtl !important;
+    }
+    
+    /* Override any potential LTR styles from component libraries */
+    .rtl-scroll-container [data-radix-collection-item],
+    .rtl-scroll-container button,
+    .rtl-scroll-container div {
+      direction: rtl !important;
+    }
+    
+    /* Force table layout to be truly RTL */
+    .rtl-scroll-container table {
+      transform: none !important;
+      unicode-bidi: bidi-override !important;
     }
   }
 
