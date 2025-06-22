@@ -2213,8 +2213,8 @@ export default function AdminDashboard() {
             <TabsContent value="products" className="space-y-4 sm:space-y-6">
               <Card>
                 <CardHeader>
-                  <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
-                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                  <div className={`flex flex-col gap-4 ${isRTL ? 'sm:flex-row-reverse sm:justify-between sm:items-center' : 'sm:flex-row sm:justify-between sm:items-center'}`}>
+                  <div className={isRTL ? 'text-right sm:order-2' : 'text-left sm:order-1'}>
                     <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                       <Package className="h-4 w-4 sm:h-5 sm:w-5" />
                       {adminT('products.title')}
@@ -2228,7 +2228,7 @@ export default function AdminDashboard() {
                       setEditingProduct(null);
                       setIsProductFormOpen(true);
                     }}
-                    className={`bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-first' : ''}`}
+                    className={`bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-1' : 'sm:order-2'}`}
                     size="sm"
                   >
                     <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
@@ -2605,8 +2605,8 @@ export default function AdminDashboard() {
             <TabsContent value="categories" className="space-y-4 sm:space-y-6">
               <Card>
                 <CardHeader>
-                  <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
-                    <div className={isRTL ? 'text-right' : 'text-left'}>
+                  <div className={`flex flex-col gap-4 ${isRTL ? 'sm:flex-row-reverse sm:justify-between sm:items-center' : 'sm:flex-row sm:justify-between sm:items-center'}`}>
+                    <div className={isRTL ? 'text-right sm:order-2' : 'text-left sm:order-1'}>
                       <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                       <Utensils className="h-4 w-4 sm:h-5 sm:w-5" />
                       {adminT('categories.title')}
@@ -2620,7 +2620,7 @@ export default function AdminDashboard() {
                       setEditingCategory(null);
                       setIsCategoryFormOpen(true);
                     }}
-                    className={`bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-first' : ''}`}
+                    className={`bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-1' : 'sm:order-2'}`}
                     size="sm"
                   >
                     <Plus className={`${isRTL ? 'ml-2' : 'mr-2'} h-4 w-4`} />
