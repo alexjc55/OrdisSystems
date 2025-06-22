@@ -2300,7 +2300,7 @@ export default function AdminDashboard() {
                 {/* Products Table */}
                 {filteredProducts.length > 0 ? (
                   <div className="border rounded-lg bg-white overflow-hidden">
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto table-container">
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -2816,7 +2816,7 @@ export default function AdminDashboard() {
                     {/* Table View */}
                     {ordersViewMode === "table" && (
                       <div className="border rounded-lg bg-white">
-                        <div className="w-full">
+                        <div className="w-full table-container">
                           <Table className="rtl:text-right">
                             <TableHeader>
                               <TableRow>
@@ -3477,7 +3477,7 @@ export default function AdminDashboard() {
 
                 {(usersData as any[] || []).length > 0 ? (
                   <div className="border rounded-lg bg-white overflow-hidden">
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto table-container">
                       <Table>
                         <TableHeader>
                           <TableRow>

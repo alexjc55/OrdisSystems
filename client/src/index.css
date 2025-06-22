@@ -401,10 +401,67 @@
   /* Admin tabs responsive design */
   .admin-tabs-list {
     display: flex !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
+    flex-wrap: wrap !important;
+    overflow-x: visible !important;
     scrollbar-width: thin !important;
     -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Mobile specific - allow tabs to wrap to multiple rows */
+  @media (max-width: 768px) {
+    .admin-tabs-list {
+      flex-wrap: wrap !important;
+      overflow-x: visible !important;
+      height: auto !important;
+      max-height: none !important;
+    }
+    
+    .admin-tabs-trigger {
+      flex: 1 1 calc(33.333% - 0.25rem) !important;
+      min-width: calc(33.333% - 0.25rem) !important;
+    }
+  }
+
+  /* Very small screens - 2 tabs per row */
+  @media (max-width: 480px) {
+    .admin-tabs-trigger {
+      flex: 1 1 calc(50% - 0.25rem) !important;
+      min-width: calc(50% - 0.25rem) !important;
+    }
+  }
+
+  /* RTL Table Scroll Fixes */
+  [dir="rtl"] .table-container {
+    overflow-x: auto;
+    direction: ltr; /* Force LTR for scrolling container */
+  }
+
+  [dir="rtl"] .table-container table {
+    direction: rtl; /* Keep table content RTL */
+  }
+
+  /* RTL horizontal scroll should start from right */
+  [dir="rtl"] .table-container::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  [dir="rtl"] .table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  [dir="rtl"] .table-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+
+  [dir="rtl"] .table-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+
+  /* Auto-scroll to right for RTL tables on mobile */
+  [dir="rtl"] .table-container {
+    scroll-behavior: smooth;
   }
 
   .admin-tabs-list::-webkit-scrollbar {
