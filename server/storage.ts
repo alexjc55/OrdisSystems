@@ -398,16 +398,25 @@ export class DatabaseStorage implements IStorage {
     
     const total = totalResult?.count || 0;
 
-    // Get paginated data
-    const data = await db.query.products.findMany({
+    // Get paginated data with categories
+    const productsData = await db.query.products.findMany({
       with: {
-        category: true,
+        productCategories: {
+          with: {
+            category: true
+          }
+        }
       },
       where: whereClause,
       orderBy,
       limit,
       offset,
     });
+
+    const data = productsData.map(product => ({
+      ...product,
+      categories: product.productCategories.map(pc => pc.category)
+    }));
 
     return {
       data,
@@ -418,29 +427,74 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
-  async getProductById(id: number): Promise<ProductWithCategory | undefined> {
-    return await db.query.products.findFirst({
+  async getProductById(id: number): Promise<ProductWithCategories | undefined> {
+    const product = await db.query.products.findFirst({
       with: {
-        category: true,
+        productCategories: {
+          with: {
+            category: true
+          }
+        }
       },
       where: eq(products.id, id),
     });
+
+    if (!product) return undefined;
+
+    return {
+      ...product,
+      categories: product.productCategories.map(pc => pc.category)
+    };
   }
 
   async createProduct(product: InsertProduct): Promise<Product> {
+    const { categoryIds, ...productData } = product;
+    
+    // Create product without categories first
     const [newProduct] = await db
       .insert(products)
-      .values(product)
+      .values(productData)
       .returning();
+
+    // Add category relationships if provided
+    if (categoryIds && categoryIds.length > 0) {
+      const categoryRelations = categoryIds.map(categoryId => ({
+        productId: newProduct.id,
+        categoryId
+      }));
+      
+      await db.insert(productCategories).values(categoryRelations);
+    }
+
     return newProduct;
   }
 
   async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product> {
+    const { categoryIds, ...productData } = product;
+    
+    // Update product data
     const [updatedProduct] = await db
       .update(products)
-      .set({ ...product, updatedAt: new Date() })
+      .set({ ...productData, updatedAt: new Date() })
       .where(eq(products.id, id))
       .returning();
+
+    // Handle category relationships if provided
+    if (categoryIds !== undefined) {
+      // Remove existing category relationships
+      await db.delete(productCategories).where(eq(productCategories.productId, id));
+      
+      // Add new category relationships
+      if (categoryIds.length > 0) {
+        const categoryRelations = categoryIds.map(categoryId => ({
+          productId: id,
+          categoryId
+        }));
+        
+        await db.insert(productCategories).values(categoryRelations);
+      }
+    }
+
     return updatedProduct;
   }
 
@@ -458,13 +512,20 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteProduct(id: number): Promise<void> {
+    // Delete category relationships first (they should cascade automatically, but being explicit)
+    await db.delete(productCategories).where(eq(productCategories.productId, id));
+    // Delete the product
     await db.delete(products).where(eq(products.id, id));
   }
 
-  async searchProducts(query: string): Promise<ProductWithCategory[]> {
-    return await db.query.products.findMany({
+  async searchProducts(query: string): Promise<ProductWithCategories[]> {
+    const productsData = await db.query.products.findMany({
       with: {
-        category: true,
+        productCategories: {
+          with: {
+            category: true
+          }
+        }
       },
       where: and(
         eq(products.isActive, true),
@@ -473,6 +534,11 @@ export class DatabaseStorage implements IStorage {
       ),
       orderBy: [products.name],
     });
+
+    return productsData.map(product => ({
+      ...product,
+      categories: product.productCategories.map(pc => pc.category)
+    }));
   }
 
   // Order operations
