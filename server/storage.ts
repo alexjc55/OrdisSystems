@@ -83,7 +83,7 @@ export interface IStorage {
   setDefaultAddress(userId: string, addressId: number): Promise<void>;
 
   // Category operations
-  getCategories(includeInactive?: boolean): Promise<Category[]>;
+  getCategories(includeInactive?: boolean): Promise<CategoryWithCount[]>;
   getCategoryById(id: number): Promise<Category | undefined>;
   createCategory(category: InsertCategory): Promise<Category>;
   updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category>;
@@ -232,11 +232,31 @@ export class DatabaseStorage implements IStorage {
 
   // Category operations
   async getCategories(includeInactive = false): Promise<Category[]> {
-    return await db
+    const categoriesData = await db
       .select()
       .from(categories)
       .where(includeInactive ? undefined : eq(categories.isActive, true))
       .orderBy(categories.sortOrder, categories.name);
+
+    // Add product count for each category
+    const categoriesWithCount = [];
+    for (const category of categoriesData) {
+      const [productCount] = await db
+        .select({ count: count() })
+        .from(productCategories)
+        .innerJoin(products, eq(productCategories.productId, products.id))
+        .where(and(
+          eq(productCategories.categoryId, category.id),
+          eq(products.isActive, true)
+        ));
+
+      categoriesWithCount.push({
+        ...category,
+        productCount: productCount?.count || 0
+      });
+    }
+
+    return categoriesWithCount;
   }
 
   async getCategoryById(id: number): Promise<Category | undefined> {

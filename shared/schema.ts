@@ -388,3 +388,7 @@ export type OrderWithItems = Order & {
 export type CategoryWithProducts = Category & {
   products: Product[];
 };
+
+export type CategoryWithCount = Category & {
+  productCount: number;
+};
