@@ -282,7 +282,7 @@ export default function Home() {
                         try {
                           const workingHours = storeSettings.workingHours;
                           if (!workingHours || typeof workingHours !== 'object') {
-                            return <p className="text-gray-500 text-xs">{t('notSpecified')}</p>;
+                            return <p className="text-gray-500 text-sm">{t('notSpecified')}</p>;
                           }
 
                           const dayNames: Record<string, string> = {
@@ -305,7 +305,7 @@ export default function Home() {
                             .map(day => [day, workingHours[day]]);
 
                           if (validEntries.length === 0) {
-                            return <p className="text-gray-500 text-xs">{t('notSpecified')}</p>;
+                            return <p className="text-gray-500 text-sm">{t('notSpecified')}</p>;
                           }
 
                           // Group consecutive days with same hours
@@ -328,7 +328,7 @@ export default function Home() {
                           }
 
                           return (
-                            <div className="space-y-1">
+                            <div className="space-y-2">
                               {groupedHours.map((group, index) => {
                                 const daysText = group.days.length === 1 
                                   ? dayNames[group.days[0]]
@@ -337,9 +337,9 @@ export default function Home() {
                                   : `${dayNames[group.days[0]]} - ${dayNames[group.days[group.days.length - 1]]}`;
                                 
                                 return (
-                                  <div key={index} className="text-sm sm:text-base flex justify-between">
-                                    <span className="font-medium">{daysText}:</span>
-                                    <span className="text-gray-600">{group.hours}</span>
+                                  <div key={index} className="text-base sm:text-lg flex justify-between">
+                                    <span className="font-semibold">{daysText}:</span>
+                                    <span className="text-gray-700 font-medium">{group.hours}</span>
                                   </div>
                                 );
                               })}
@@ -347,7 +347,7 @@ export default function Home() {
                           );
                         } catch (error) {
                           console.error('Error rendering working hours:', error);
-                          return <p className="text-gray-500 text-xs">{t('loadingError')}</p>;
+                          return <p className="text-gray-500 text-sm">{t('loadingError')}</p>;
                         }
                       })()}
                       </div>
@@ -365,17 +365,17 @@ export default function Home() {
                         </div>
                         <span className="font-semibold text-lg text-gray-800">{t('contacts')}</span>
                       </div>
-                      <div className={`space-y-1 px-0 ${currentLanguage === 'he' ? 'md:mr-16 md:pl-8' : 'md:ml-16 md:pr-8'}`}>
+                      <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'md:mr-16 md:pl-8' : 'md:ml-16 md:pr-8'}`}>
                         {storeSettings.contactPhone && (
-                          <div className="text-sm sm:text-base flex justify-between">
-                            <span className="text-gray-600">{t('phone')}:</span>
-                            <span className="font-medium">{storeSettings.contactPhone}</span>
+                          <div className="text-base sm:text-lg flex justify-between">
+                            <span className="text-gray-700 font-semibold">{t('phone')}:</span>
+                            <span className="font-semibold">{storeSettings.contactPhone}</span>
                           </div>
                         )}
                         {storeSettings.contactEmail && (
-                          <div className="text-sm sm:text-base flex justify-between">
-                            <span className="text-gray-600">Email:</span>
-                            <span className="font-medium break-all">{storeSettings.contactEmail}</span>
+                          <div className="text-base sm:text-lg flex justify-between">
+                            <span className="text-gray-700 font-semibold">Email:</span>
+                            <span className="font-semibold break-all">{storeSettings.contactEmail}</span>
                           </div>
                         )}
                       </div>
@@ -398,14 +398,14 @@ export default function Home() {
                       <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'md:mr-16 md:pl-8' : 'md:ml-16 md:pr-8'}`}>
                         {storeSettings.deliveryInfo && (
                           <div>
-                            <span className="text-gray-500 text-sm font-medium block mb-2">{t('delivery')}:</span>
-                            <span className="text-gray-800 font-semibold text-sm leading-relaxed">{storeSettings.deliveryInfo}</span>
+                            <span className="text-gray-700 text-base font-semibold block mb-2">{t('delivery')}:</span>
+                            <span className="text-gray-800 font-semibold text-base leading-relaxed">{storeSettings.deliveryInfo}</span>
                           </div>
                         )}
                         {storeSettings.paymentInfo && (
                           <div>
-                            <span className="text-gray-500 text-sm font-medium block mb-2">{t('payment')}:</span>
-                            <span className="text-gray-800 font-semibold text-sm leading-relaxed">{storeSettings.paymentInfo}</span>
+                            <span className="text-gray-700 text-base font-semibold block mb-2">{t('payment')}:</span>
+                            <span className="text-gray-800 font-semibold text-base leading-relaxed">{storeSettings.paymentInfo}</span>
                           </div>
                         )}
                       </div>
