@@ -2038,15 +2038,16 @@ export default function AdminDashboard() {
     setIsCancellationDialogOpen(true);
   };
 
-  // RTL table scroll fix - scroll to right for RTL tables
+  // RTL table scroll fix - scroll to show rightmost content first for RTL tables
   useEffect(() => {
     if (isRTL) {
       const tableContainers = document.querySelectorAll('.table-container');
       tableContainers.forEach((container) => {
         const element = container as HTMLElement;
-        // Scroll to the right for RTL tables
+        // For RTL tables, we want to show the rightmost content first
+        // In RTL, scrollLeft starts at 0 and goes negative as we scroll left
         setTimeout(() => {
-          element.scrollLeft = element.scrollWidth - element.clientWidth;
+          element.scrollLeft = 0; // Reset to show rightmost content
         }, 100);
       });
     }

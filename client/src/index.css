@@ -433,11 +433,7 @@
   /* RTL Table Scroll Fixes */
   [dir="rtl"] .table-container {
     overflow-x: auto;
-    direction: ltr; /* Force LTR for scrolling container */
-  }
-
-  [dir="rtl"] .table-container table {
-    direction: rtl; /* Keep table content RTL */
+    /* Keep natural RTL direction for the container */
   }
 
   /* RTL horizontal scroll should start from right */
