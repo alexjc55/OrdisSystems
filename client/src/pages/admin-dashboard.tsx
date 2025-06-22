@@ -4219,7 +4219,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               name="imageUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Изображение</FormLabel>
+                  <FormLabel className="text-sm">{adminT('products.dialog.imageLabel')}</FormLabel>
                   <FormControl>
                     <ImageUpload
                       value={field.value || ""}
@@ -4239,11 +4239,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               name="availabilityStatus"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Статус доступности</FormLabel>
+                  <FormLabel className="text-sm">{adminT('products.dialog.availabilityLabel')}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger className="text-sm">
-                        <SelectValue placeholder="Выберите статус" />
+                        <SelectValue placeholder={adminT('products.dialog.availabilityPlaceholder')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -4349,7 +4349,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   <AlertDialogTrigger asChild>
                     <button type="button" className="text-sm text-red-600 hover:text-red-800 transition-colors underline flex items-center gap-1">
                       <Trash2 className="h-3 w-3" />
-                      Удалить товар
+                      {adminT('products.dialog.deleteTitle')}
                     </button>
                   </AlertDialogTrigger>
                   <AlertDialogContent className="max-w-[90vw] sm:max-w-md">

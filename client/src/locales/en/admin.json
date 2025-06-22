@@ -118,7 +118,10 @@
       "percentageDiscount": "Percentage Discount",
       "fixedDiscount": "Fixed Discount",
       "deleteTitle": "Delete Product",
-      "deleteConfirm": "Are you sure you want to delete this product? This action cannot be undone."
+      "deleteConfirm": "Are you sure you want to delete this product? This action cannot be undone.",
+      "createButton": "Create",
+      "saveButton": "Save",
+      "cancelButton": "Cancel"
     }
   },
   "categories": {

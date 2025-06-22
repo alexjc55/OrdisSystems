@@ -118,7 +118,10 @@
       "percentageDiscount": "הנחה באחוזים",
       "fixedDiscount": "הנחה קבועה",
       "deleteTitle": "מחק מוצר",
-      "deleteConfirm": "האם אתה בטוח שברצונך למחוק את המוצר הזה? פעולה זו אינה ניתנת לביטול."
+      "deleteConfirm": "האם אתה בטוח שברצונך למחוק את המוצר הזה? פעולה זו אינה ניתנת לביטול.",
+      "createButton": "צור",
+      "saveButton": "שמור",
+      "cancelButton": "ביטול"
     }
   },
   "categories": {

@@ -127,7 +127,10 @@
       "percentageDiscount": "Процентная скидка",
       "fixedDiscount": "Фиксированная скидка",
       "deleteTitle": "Удалить товар",
-      "deleteConfirm": "Вы уверены, что хотите удалить этот товар? Это действие необратимо."
+      "deleteConfirm": "Вы уверены, что хотите удалить этот товар? Это действие необратимо.",
+      "createButton": "Создать",
+      "saveButton": "Сохранить",
+      "cancelButton": "Отмена"
     }
   },
   "categories": {
