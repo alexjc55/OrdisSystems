@@ -1690,11 +1690,11 @@ export default function AdminDashboard() {
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
       setIsProductFormOpen(false);
       setEditingProduct(null);
-      toast({ title: "Товар создан", description: "Товар успешно добавлен" });
+      toast({ title: adminT('products.notifications.productCreated'), description: adminT('products.notifications.productCreatedDesc') });
     },
     onError: (error: any) => {
       console.error("Product creation error:", error);
-      toast({ title: "Ошибка", description: "Не удалось создать товар", variant: "destructive" });
+      toast({ title: adminT('common.error'), description: adminT('products.notifications.createError'), variant: "destructive" });
     }
   });
 
@@ -1736,13 +1736,13 @@ export default function AdminDashboard() {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
       setEditingProduct(null);
       setIsProductFormOpen(false);
-      toast({ title: "Товар обновлен", description: "Изменения сохранены" });
+      toast({ title: adminT('products.notifications.productUpdated'), description: adminT('products.notifications.productUpdatedDesc') });
     },
     onError: (error: any) => {
       console.error("Product update error:", error);
       toast({ 
-        title: "Ошибка обновления товара", 
-        description: error.message || "Не удалось обновить товар", 
+        title: adminT('common.error'), 
+        description: error.message || adminT('products.notifications.updateError'), 
         variant: "destructive" 
       });
     }

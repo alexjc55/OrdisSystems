@@ -156,6 +156,21 @@
       "description": "בחר פעולה עבור מוצר זה",
       "disable": "השבת",
       "keep": "השאר"
+    },
+    "notifications": {
+      "productCreated": "מוצר נוצר",
+      "productCreatedDesc": "המוצר נוסף בהצלחה",
+      "productUpdated": "מוצר עודכן", 
+      "productUpdatedDesc": "השינויים נשמרו",
+      "productDeleted": "מוצר נמחק",
+      "productDeletedDesc": "המוצר נמחק בהצלחה",
+      "statusUpdated": "סטטוס עודכן",
+      "statusUpdatedDesc": "סטטוס זמינות המוצר השתנה",
+      "createError": "לא ניתן ליצור מוצר",
+      "updateError": "לא ניתן לעדכן מוצר", 
+      "deleteError": "לא ניתן למחוק מוצר",
+      "statusError": "לא ניתן לעדכן סטטוס זמינות",
+      "availabilityError": "לא ניתן לעדכן זמינות"
     }
   },
   "imageUpload": {

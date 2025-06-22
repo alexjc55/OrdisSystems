@@ -156,6 +156,21 @@
       "description": "Choose action for this product",
       "disable": "Disable",
       "keep": "Keep"
+    },
+    "notifications": {
+      "productCreated": "Product created",
+      "productCreatedDesc": "Product successfully added",
+      "productUpdated": "Product updated", 
+      "productUpdatedDesc": "Changes saved",
+      "productDeleted": "Product deleted",
+      "productDeletedDesc": "Product successfully deleted",
+      "statusUpdated": "Status updated",
+      "statusUpdatedDesc": "Product availability status changed",
+      "createError": "Failed to create product",
+      "updateError": "Failed to update product", 
+      "deleteError": "Failed to delete product",
+      "statusError": "Failed to update availability status",
+      "availabilityError": "Failed to update availability"
     }
   },
   "imageUpload": {

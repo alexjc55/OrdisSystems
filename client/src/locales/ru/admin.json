@@ -165,6 +165,21 @@
       "description": "Выберите действие для данного товара",
       "disable": "Отключить",
       "keep": "Оставить"
+    },
+    "notifications": {
+      "productCreated": "Товар создан",
+      "productCreatedDesc": "Товар успешно добавлен",
+      "productUpdated": "Товар обновлен", 
+      "productUpdatedDesc": "Изменения сохранены",
+      "productDeleted": "Товар удален",
+      "productDeletedDesc": "Товар успешно удален",
+      "statusUpdated": "Статус обновлен",
+      "statusUpdatedDesc": "Статус доступности товара изменен",
+      "createError": "Не удалось создать товар",
+      "updateError": "Не удалось обновить товар", 
+      "deleteError": "Не удалось удалить товар",
+      "statusError": "Не удалось обновить статус доступности",
+      "availabilityError": "Не удалось обновить наличие"
     }
   },
   "imageUpload": {
