@@ -117,7 +117,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
             }}
             className="cursor-pointer"
           >
-            <span className="text-xs text-gray-500/90 hover:text-orange-600 transition-colors bg-white/60 px-2 py-1 rounded-md backdrop-blur-sm">
+            <span className="text-xs font-medium text-orange-600 hover:text-orange-700 transition-colors bg-orange-50/80 px-2.5 py-1 rounded-full backdrop-blur-sm border border-orange-200/50">
               {category.products?.length || 0} {adminT('categories.products')}
             </span>
           </div>
@@ -160,7 +160,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
         <div className="flex-1 min-w-0 flex flex-col justify-between h-full">
           {/* Category name */}
           <div>
-            <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1">
+            <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide">
               {category.name}
             </h3>
           </div>
