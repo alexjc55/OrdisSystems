@@ -148,7 +148,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
             )}
           </div>
           
-          <div className="text-3xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-200">
+          <div className="text-4xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-200">
             {category.icon || '📦'}
           </div>
         </div>
@@ -156,18 +156,10 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL }: {
         {/* Bottom section - always at bottom */}
         <div className="mt-auto">
           {/* Product count */}
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 bg-gradient-to-r from-orange-500 to-orange-600 rounded flex items-center justify-center">
-              <Package className="w-3 h-3 text-white" />
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-sm font-semibold text-gray-900">
-                {category.products?.length || 0}
-              </span>
-              <span className="text-xs text-gray-500">
-                товаров
-              </span>
-            </div>
+          <div className="mb-2">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-500 text-white border border-orange-600 shadow-sm">
+              {category.products?.length || 0} товаров
+            </span>
           </div>
           
 
