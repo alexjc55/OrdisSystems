@@ -1,5 +1,5 @@
 /**
- * BACKUP VERSION OF ADMIN DASHBOARD - Created June 22, 2025
+ * BACKUP VERSION OF ADMIN DASHBOARD - Updated June 22, 2025
  * 
  * This is a complete backup of the admin dashboard with:
  * - RTL layout support for Hebrew interface
@@ -8,6 +8,7 @@
  * - Corrected icon spacing for Hebrew RTL interface (mr-4 for proper placement)
  * - All existing features and UI patterns preserved
  * - Working admin panel with proper styling and functionality
+ * - Latest updates and improvements included
  * 
  * ВАЖНО: НЕ ИЗМЕНЯТЬ ДИЗАЙН АДМИН-ПАНЕЛИ БЕЗ ЯВНОГО ЗАПРОСА!
  * 
