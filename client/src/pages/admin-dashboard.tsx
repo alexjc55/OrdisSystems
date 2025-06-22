@@ -2908,66 +2908,132 @@ export default function AdminDashboard() {
                               </>
                             )}
                           </div>
-                          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedCategoryFilter(category.id.toString());
-                                setActiveTab("products");
-                              }}
-                              className="text-xs hover:bg-blue-50 hover:border-blue-300"
-                            >
-                              <Package className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
-                              {category.products?.length || 0} {adminT('products.items')}
-                            </Button>
-                            <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0 hover:bg-blue-50"
-                                onClick={() => {
-                                  setEditingCategory(category);
-                                  setIsCategoryFormOpen(true);
-                                }}
-                                title={adminT('categories.edit', 'Редактировать')}
-                              >
-                                <Edit2 className="h-3 w-3 text-blue-600" />
-                              </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-50" title={adminT('categories.delete', 'Удалить')}>
-                                    <Trash2 className="h-3 w-3 text-red-600" />
+                          <div className={`flex items-center justify-between ${isRTL ? '' : ''}`}>
+                            {isRTL ? (
+                              <>
+                                <div className="flex items-center gap-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0 hover:bg-blue-50"
+                                    onClick={() => {
+                                      setEditingCategory(category);
+                                      setIsCategoryFormOpen(true);
+                                    }}
+                                    title={adminT('categories.edit', 'Редактировать')}
+                                  >
+                                    <Edit2 className="h-3 w-3 text-blue-600" />
                                   </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
-                                  <AlertDialogHeader className={isRTL ? 'text-right' : 'text-left'}>
-                                    <AlertDialogTitle className={`text-sm sm:text-base ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.deleteConfirm', 'Удалить категорию?')}</AlertDialogTitle>
-                                    <AlertDialogDescription className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                                      {adminT('categories.deleteWarning', 'Вы уверены, что хотите удалить категорию "{name}"? Это действие нельзя отменить.').replace('{name}', category.name)}
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter className={`flex-col sm:flex-row gap-2 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
-                                    <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">{adminT('actions.cancel', 'Отмена')}</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => deleteCategoryMutation.mutate(category.id)}
-                                      className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 focus:bg-red-700 data-[state=open]:bg-red-700 transition-colors duration-200 text-xs sm:text-sm"
-                                      style={{ backgroundColor: 'rgb(220 38 38)', borderColor: 'rgb(220 38 38)' }}
-                                      onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'rgb(185 28 28)';
-                                        e.currentTarget.style.borderColor = 'rgb(185 28 28)';
-                                      }}
-                                      onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'rgb(220 38 38)';
-                                        e.currentTarget.style.borderColor = 'rgb(220 38 38)';
-                                      }}
-                                    >
-                                      {adminT('actions.delete', 'Удалить')}
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </div>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-50" title={adminT('categories.delete', 'Удалить')}>
+                                        <Trash2 className="h-3 w-3 text-red-600" />
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
+                                      <AlertDialogHeader className="text-right">
+                                        <AlertDialogTitle className="text-sm sm:text-base text-right">{adminT('categories.deleteConfirm', 'Удалить категорию?')}</AlertDialogTitle>
+                                        <AlertDialogDescription className="text-xs sm:text-sm text-right">
+                                          {adminT('categories.deleteWarning', 'Вы уверены, что хотите удалить категорию "{name}"? Это действие нельзя отменить.').replace('{name}', category.name)}
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter className="flex-col sm:flex-row gap-2 sm:flex-row-reverse">
+                                        <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">{adminT('actions.cancel', 'Отмена')}</AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() => deleteCategoryMutation.mutate(category.id)}
+                                          className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 focus:bg-red-700 data-[state=open]:bg-red-700 transition-colors duration-200 text-xs sm:text-sm"
+                                          style={{ backgroundColor: 'rgb(220 38 38)', borderColor: 'rgb(220 38 38)' }}
+                                          onMouseEnter={(e) => {
+                                            e.currentTarget.style.backgroundColor = 'rgb(185 28 28)';
+                                            e.currentTarget.style.borderColor = 'rgb(185 28 28)';
+                                          }}
+                                          onMouseLeave={(e) => {
+                                            e.currentTarget.style.backgroundColor = 'rgb(220 38 38)';
+                                            e.currentTarget.style.borderColor = 'rgb(220 38 38)';
+                                          }}
+                                        >
+                                          {adminT('actions.delete', 'Удалить')}
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </div>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedCategoryFilter(category.id.toString());
+                                    setActiveTab("products");
+                                  }}
+                                  className="text-xs hover:bg-blue-50 hover:border-blue-300"
+                                >
+                                  <Package className="h-3 w-3 ml-1" />
+                                  {category.products?.length || 0} {adminT('products.items')}
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedCategoryFilter(category.id.toString());
+                                    setActiveTab("products");
+                                  }}
+                                  className="text-xs hover:bg-blue-50 hover:border-blue-300"
+                                >
+                                  <Package className="h-3 w-3 mr-1" />
+                                  {category.products?.length || 0} {adminT('products.items')}
+                                </Button>
+                                <div className="flex items-center gap-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0 hover:bg-blue-50"
+                                    onClick={() => {
+                                      setEditingCategory(category);
+                                      setIsCategoryFormOpen(true);
+                                    }}
+                                    title={adminT('categories.edit', 'Редактировать')}
+                                  >
+                                    <Edit2 className="h-3 w-3 text-blue-600" />
+                                  </Button>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-50" title={adminT('categories.delete', 'Удалить')}>
+                                        <Trash2 className="h-3 w-3 text-red-600" />
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
+                                      <AlertDialogHeader className="text-left">
+                                        <AlertDialogTitle className="text-sm sm:text-base text-left">{adminT('categories.deleteConfirm', 'Удалить категорию?')}</AlertDialogTitle>
+                                        <AlertDialogDescription className="text-xs sm:text-sm text-left">
+                                          {adminT('categories.deleteWarning', 'Вы уверены, что хотите удалить категорию "{name}"? Это действие нельзя отменить.').replace('{name}', category.name)}
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                                        <AlertDialogCancel className="text-xs sm:text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200">{adminT('actions.cancel', 'Отмена')}</AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() => deleteCategoryMutation.mutate(category.id)}
+                                          className="bg-red-600 text-white hover:bg-red-700 border-red-600 hover:border-red-700 focus:bg-red-700 data-[state=open]:bg-red-700 transition-colors duration-200 text-xs sm:text-sm"
+                                          style={{ backgroundColor: 'rgb(220 38 38)', borderColor: 'rgb(220 38 38)' }}
+                                          onMouseEnter={(e) => {
+                                            e.currentTarget.style.backgroundColor = 'rgb(185 28 28)';
+                                            e.currentTarget.style.borderColor = 'rgb(185 28 28)';
+                                          }}
+                                          onMouseLeave={(e) => {
+                                            e.currentTarget.style.backgroundColor = 'rgb(220 38 38)';
+                                            e.currentTarget.style.borderColor = 'rgb(220 38 38)';
+                                          }}
+                                        >
+                                          {adminT('actions.delete', 'Удалить')}
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </div>
+                              </>
+                            )}
                           </div>
                         </CardContent>
                       </Card>
