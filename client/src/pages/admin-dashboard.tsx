@@ -4031,11 +4031,11 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
       }}
       className={`h-6 w-11 rounded-full cursor-pointer transition-colors ${
         checked ? bgColor : 'bg-gray-200'
-      } relative`}
+      } relative flex items-center p-0.5`}
     >
       <div
-        className={`h-5 w-5 bg-white rounded-full absolute top-0.5 transition-transform shadow-md border border-gray-200 ${
-          checked ? 'translate-x-5' : 'translate-x-0.5'
+        className={`h-5 w-5 bg-white rounded-full transition-transform shadow-md border border-gray-200 ${
+          checked ? 'translate-x-4' : 'translate-x-0'
         }`}
       />
     </div>
