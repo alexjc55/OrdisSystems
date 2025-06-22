@@ -3876,6 +3876,7 @@ export default function AdminDashboard() {
         }}
         categories={categories}
         product={editingProduct}
+        adminT={adminT}
         onSubmit={(data: any) => {
           // Set isAvailable based on availability status
           const productData = {
@@ -4031,7 +4032,7 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
 }
 
 // Form Dialog Components
-function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDelete }: any) {
+function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDelete, adminT }: any) {
   type ProductFormData = z.infer<typeof productSchema>;
   
   const form = useForm<ProductFormData>({
@@ -4126,10 +4127,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Описание</FormLabel>
+                  <FormLabel className="text-sm">{adminT('products.dialog.descriptionLabel')}</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Введите описание товара"
+                      placeholder={adminT('products.dialog.descriptionPlaceholder')}
                       className="resize-none text-sm"
                       {...field}
                     />
@@ -4144,14 +4145,14 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Категория</FormLabel>
+                  <FormLabel className="text-sm">{adminT('products.dialog.categoryLabel')}</FormLabel>
                   <Select 
                     onValueChange={(value) => field.onChange(parseInt(value))}
                     value={field.value?.toString()}
                   >
                     <FormControl>
                       <SelectTrigger className="text-sm">
-                        <SelectValue placeholder="Выберите категорию" />
+                        <SelectValue placeholder={adminT('products.dialog.categoryPlaceholder')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -4173,12 +4174,12 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">Цена (₪)</FormLabel>
+                    <FormLabel className="text-sm">{adminT('products.dialog.priceLabel')}</FormLabel>
                     <FormControl>
                       <Input 
                         type="number"
                         step="0.01"
-                        placeholder="0.00"
+                        placeholder={adminT('products.dialog.pricePlaceholder')}
                         {...field}
                         className="text-sm"
                       />
