@@ -2179,17 +2179,17 @@ export default function AdminDashboard() {
             {/* Mobile Dropdown Menu */}
             <div className="block sm:hidden mb-4">
               <Select value={activeTab} onValueChange={setActiveTab}>
-                <SelectTrigger className="w-full bg-white border-gray-200">
+                <SelectTrigger className="w-full bg-white border-gray-200 h-12">
                   <SelectValue>
-                    <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                      {activeTab === 'products' && <Package className="w-4 h-4" />}
-                      {activeTab === 'categories' && <Layers3 className="w-4 h-4" />}
-                      {activeTab === 'orders' && <ShoppingCart className="w-4 h-4" />}
-                      {activeTab === 'users' && <Users className="w-4 h-4" />}
-                      {activeTab === 'store' && <Settings className="w-4 h-4" />}
-                      {activeTab === 'settings' && <UserCheck className="w-4 h-4" />}
-                      {activeTab === 'themes' && <Palette className="w-4 h-4" />}
-                      <span>
+                    <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      {activeTab === 'products' && <Package className="w-5 h-5" />}
+                      {activeTab === 'categories' && <Layers3 className="w-5 h-5" />}
+                      {activeTab === 'orders' && <ShoppingCart className="w-5 h-5" />}
+                      {activeTab === 'users' && <Users className="w-5 h-5" />}
+                      {activeTab === 'store' && <Settings className="w-5 h-5" />}
+                      {activeTab === 'settings' && <UserCheck className="w-5 h-5" />}
+                      {activeTab === 'themes' && <Palette className="w-5 h-5" />}
+                      <span className="text-base font-medium">
                         {activeTab === 'products' && adminT('tabs.products')}
                         {activeTab === 'categories' && adminT('tabs.categories')}
                         {activeTab === 'orders' && adminT('tabs.orders')}
@@ -2203,58 +2203,58 @@ export default function AdminDashboard() {
                 </SelectTrigger>
                 <SelectContent>
                   {hasPermission("canManageProducts") && (
-                    <SelectItem value="products">
-                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <Package className="w-4 h-4" />
-                        <span>{adminT('tabs.products')}</span>
+                    <SelectItem value="products" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Package className="w-5 h-5" />
+                        <span className="text-base">{adminT('tabs.products')}</span>
                       </div>
                     </SelectItem>
                   )}
                   {hasPermission("canManageCategories") && (
-                    <SelectItem value="categories">
-                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <Layers3 className="w-4 h-4" />
-                        <span>{adminT('tabs.categories')}</span>
+                    <SelectItem value="categories" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Layers3 className="w-5 h-5" />
+                        <span className="text-base">{adminT('tabs.categories')}</span>
                       </div>
                     </SelectItem>
                   )}
                   {hasPermission("canManageOrders") && (
-                    <SelectItem value="orders">
-                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <ShoppingCart className="w-4 h-4" />
-                        <span>{adminT('tabs.orders')}</span>
+                    <SelectItem value="orders" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <ShoppingCart className="w-5 h-5" />
+                        <span className="text-base">{adminT('tabs.orders')}</span>
                       </div>
                     </SelectItem>
                   )}
                   {hasPermission("canViewUsers") && (
-                    <SelectItem value="users">
-                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <Users className="w-4 h-4" />
-                        <span>{adminT('tabs.users')}</span>
+                    <SelectItem value="users" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Users className="w-5 h-5" />
+                        <span className="text-base">{adminT('tabs.users')}</span>
                       </div>
                     </SelectItem>
                   )}
                   {hasPermission("canViewSettings") && (
-                    <SelectItem value="store">
-                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <Settings className="w-4 h-4" />
-                        <span>{adminT('tabs.settings')}</span>
+                    <SelectItem value="store" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Settings className="w-5 h-5" />
+                        <span className="text-base">{adminT('tabs.settings')}</span>
                       </div>
                     </SelectItem>
                   )}
                   {hasPermission("canManageSettings") && (
-                    <SelectItem value="settings">
-                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <UserCheck className="w-4 h-4" />
-                        <span>{adminT('tabs.permissions')}</span>
+                    <SelectItem value="settings" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <UserCheck className="w-5 h-5" />
+                        <span className="text-base">{adminT('tabs.permissions')}</span>
                       </div>
                     </SelectItem>
                   )}
                   {hasPermission("canManageSettings") && (
-                    <SelectItem value="themes">
-                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <Palette className="w-4 h-4" />
-                        <span>{adminT('tabs.themes')}</span>
+                    <SelectItem value="themes" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Palette className="w-5 h-5" />
+                        <span className="text-base">{adminT('tabs.themes')}</span>
                       </div>
                     </SelectItem>
                   )}
@@ -2262,7 +2262,7 @@ export default function AdminDashboard() {
               </Select>
             </div>
             
-            {/* Desktop Tabs */}
+            {/* Desktop Tabs - hidden on mobile */}
             <TabsList className={`admin-tabs-list ${isRTL ? 'rtl-tabs-reverse' : ''} hidden sm:flex w-full overflow-x-auto gap-1`}>
               {isRTL ? (
                 // RTL order: reverse the tab order
