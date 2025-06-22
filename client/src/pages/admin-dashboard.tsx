@@ -2049,7 +2049,11 @@ export default function AdminDashboard() {
           // Check if we're on mobile (screen width <= 768px)
           const isMobile = window.innerWidth <= 768;
           
-          if (isMobile) {
+          if (isMobile && element.classList.contains('rtl-scroll-container')) {
+            // For RTL scroll containers on mobile, scroll to start (0) to show first column
+            // The rtl-scroll-container CSS handles the direction properly
+            element.scrollLeft = 0;
+          } else if (isMobile) {
             // On mobile RTL, scroll to the leftmost position to show the first column (product name)
             // In RTL direction, the leftmost content requires scrolling to the right edge
             const maxScrollLeft = element.scrollWidth - element.clientWidth;
@@ -2335,7 +2339,7 @@ export default function AdminDashboard() {
                 {/* Products Table */}
                 {filteredProducts.length > 0 ? (
                   <div className="border rounded-lg bg-white overflow-hidden">
-                    <div className="overflow-x-auto table-container">
+                    <div className={`overflow-x-auto table-container ${isRTL ? 'rtl-scroll-container' : ''}`}>
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -3512,7 +3516,7 @@ export default function AdminDashboard() {
 
                 {(usersData as any[] || []).length > 0 ? (
                   <div className="border rounded-lg bg-white overflow-hidden">
-                    <div className="overflow-x-auto table-container">
+                    <div className={`overflow-x-auto table-container ${isRTL ? 'rtl-scroll-container' : ''}`}>
                       <Table>
                         <TableHeader>
                           <TableRow>

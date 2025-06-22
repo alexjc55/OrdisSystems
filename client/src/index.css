@@ -442,6 +442,18 @@
       /* On mobile, we want to show the leftmost content first for RTL tables */
       scroll-snap-type: x mandatory;
     }
+    
+    /* RTL scroll container specific behavior */
+    .rtl-scroll-container {
+      /* Force scroll direction to be natural for RTL on mobile */
+      direction: rtl;
+    }
+    
+    .rtl-scroll-container > table {
+      /* Keep table content in RTL but ensure proper column order */
+      direction: rtl;
+      width: 100%;
+    }
   }
 
   /* RTL horizontal scroll should start from right */
