@@ -41,13 +41,33 @@ import { formatCurrency, getUnitLabel, formatDeliveryTimeRange, type ProductUnit
 import { insertStoreSettingsSchema, type StoreSettings } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { 
   Package, 
   Plus, 
   Edit2, 
   Edit,
   Trash2, 
-  Users, 
+  Users,
+  GripVertical, 
   ShoppingCart, 
   Utensils,
   Save,

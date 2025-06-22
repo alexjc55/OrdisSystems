@@ -230,6 +230,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put('/api/categories/reorder', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user || (user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const { categoryOrders } = req.body; // Array of { id: number, sortOrder: number }
+      
+      if (!Array.isArray(categoryOrders)) {
+        return res.status(400).json({ message: "Invalid data format" });
+      }
+
+      await storage.updateCategoryOrders(categoryOrders);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error reordering categories:", error);
+      res.status(500).json({ message: "Failed to reorder categories" });
+    }
+  });
+
   // Product routes
   app.get('/api/products', async (req: any, res) => {
     try {

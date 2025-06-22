@@ -84,6 +84,7 @@ export interface IStorage {
   createCategory(category: InsertCategory): Promise<Category>;
   updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category>;
   deleteCategory(id: number): Promise<void>;
+  updateCategoryOrders(categoryOrders: { id: number; sortOrder: number }[]): Promise<void>;
 
   // Product operations
   getProducts(categoryId?: number): Promise<ProductWithCategory[]>;
@@ -263,6 +264,15 @@ export class DatabaseStorage implements IStorage {
 
   async deleteCategory(id: number): Promise<void> {
     await db.delete(categories).where(eq(categories.id, id));
+  }
+
+  async updateCategoryOrders(categoryOrders: { id: number; sortOrder: number }[]): Promise<void> {
+    for (const { id, sortOrder } of categoryOrders) {
+      await db
+        .update(categories)
+        .set({ sortOrder, updatedAt: new Date() })
+        .where(eq(categories.id, id));
+    }
   }
 
   // Product operations
