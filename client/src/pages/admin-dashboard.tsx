@@ -2076,18 +2076,48 @@ export default function AdminDashboard() {
     };
   }, [isRTL, activeTab, productsData, usersData, ordersResponse]);
 
-  // Reset scroll position for RTL tables  
+  // Force RTL on mobile tables - override browser defaults
   useEffect(() => {
     if (isRTL && (productsData || usersData || ordersResponse)) {
-      const resetScrollPosition = () => {
+      const forceMobileRTL = () => {
+        const isMobile = window.innerWidth <= 768;
+        if (!isMobile) return;
+        
         const rtlContainers = document.querySelectorAll('.rtl-scroll-container');
         rtlContainers.forEach((container) => {
           const element = container as HTMLElement;
           element.scrollLeft = 0;
+          
+          // Find table and force RTL on mobile
+          const table = element.querySelector('table');
+          if (table) {
+            // Set direction and unicode-bidi to override browser defaults
+            table.style.direction = 'rtl';
+            table.style.unicodeBidi = 'bidi-override';
+            table.setAttribute('dir', 'rtl');
+            
+            // Force RTL on all table elements
+            const allElements = table.querySelectorAll('*');
+            allElements.forEach((el) => {
+              const htmlEl = el as HTMLElement;
+              htmlEl.style.direction = 'rtl';
+              htmlEl.style.unicodeBidi = 'bidi-override';
+              if (el.tagName === 'TH' || el.tagName === 'TD') {
+                htmlEl.style.textAlign = 'right';
+              }
+            });
+          }
         });
       };
       
-      setTimeout(resetScrollPosition, 100);
+      // Apply immediately and with delays
+      forceMobileRTL();
+      setTimeout(forceMobileRTL, 100);
+      setTimeout(forceMobileRTL, 300);
+      
+      // Also apply on resize
+      window.addEventListener('resize', forceMobileRTL);
+      return () => window.removeEventListener('resize', forceMobileRTL);
     }
   }, [isRTL, productsData, usersData, ordersResponse, activeTab]);
 
