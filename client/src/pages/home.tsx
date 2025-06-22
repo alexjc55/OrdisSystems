@@ -132,10 +132,10 @@ export default function Home() {
     if (!allProducts || !categories) return [];
     
     return allProducts.filter(product => {
-      const productCategory = categories.find(cat => cat.id === product.categoryId);
+      const hasActiveCategory = product.categories?.some(cat => cat.isActive);
       return product.isAvailable !== false && 
              product.isSpecialOffer === true && 
-             productCategory?.isActive === true;
+             hasActiveCategory;
     });
   }, [allProducts, categories]);
 
