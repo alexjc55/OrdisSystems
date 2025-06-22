@@ -534,18 +534,16 @@ export default function Home() {
                         <button
                           onClick={() => {
                             const isRTL = currentLanguage === 'he';
-                            const currentPage = Math.floor(currentSlide / slidesPerPage);
-                            const prevPage = currentPage - 1;
                             
                             if (isRTL) {
                               // RTL: left arrow goes to next page
-                              if (currentPage < totalPages - 1) {
-                                goToSlide(currentPage + 1);
+                              if (currentSlide < totalPages - 1) {
+                                goToSlide(currentSlide + 1);
                               }
                             } else {
                               // LTR: left arrow goes to previous page
-                              if (prevPage >= 0) {
-                                goToSlide(prevPage);
+                              if (currentSlide > 0) {
+                                goToSlide(currentSlide - 1);
                               }
                             }
                           }}
@@ -556,18 +554,16 @@ export default function Home() {
                         <button
                           onClick={() => {
                             const isRTL = currentLanguage === 'he';
-                            const currentPage = Math.floor(currentSlide / slidesPerPage);
-                            const nextPage = currentPage + 1;
                             
                             if (isRTL) {
                               // RTL: right arrow goes to previous page
-                              if (currentPage > 0) {
-                                goToSlide(currentPage - 1);
+                              if (currentSlide > 0) {
+                                goToSlide(currentSlide - 1);
                               }
                             } else {
                               // LTR: right arrow goes to next page
-                              if (nextPage < totalPages) {
-                                goToSlide(nextPage);
+                              if (currentSlide < totalPages - 1) {
+                                goToSlide(currentSlide + 1);
                               }
                             }
                           }}
