@@ -468,10 +468,10 @@
       direction: rtl !important;
     }
     
-    /* Only target table cells on mobile RTL - avoid affecting text content */
+    /* Mobile RTL: container scrolls RTL but table content remains LTR */
     @media (max-width: 768px) {
       [dir="rtl"] .rtl-scroll-container table {
-        direction: rtl !important;
+        direction: ltr !important;
       }
       
       [dir="rtl"] .rtl-scroll-container table th,
