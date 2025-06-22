@@ -4,7 +4,9 @@
     "categories": "Категории", 
     "orders": "Заказы",
     "users": "Пользователи",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "permissions": "Права доступа",
+    "themes": "Темы"
   },
   "actions": {
     "add": "Добавить",

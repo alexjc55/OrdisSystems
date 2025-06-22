@@ -4,7 +4,9 @@
     "categories": "Categories", 
     "orders": "Orders",
     "users": "Users",
-    "settings": "Settings"
+    "settings": "Settings",
+    "permissions": "Permissions",
+    "themes": "Themes"
   },
   "actions": {
     "add": "Add",
