@@ -153,7 +153,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
             )}
           </div>
           
-          <div className="text-3xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
+          <div className="text-4xl md:text-3xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
             {category.icon || '📦'}
           </div>
         </div>
