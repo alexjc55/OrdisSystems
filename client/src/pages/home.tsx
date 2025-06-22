@@ -175,18 +175,10 @@ export default function Home() {
   const goToSlide = (pageIndex: number) => {
     if (carouselApiRef.current) {
       const slideIndex = pageIndex * slidesPerPage;
-      console.log('Going to slide:', slideIndex, 'for page:', pageIndex, 'API methods:', Object.keys(carouselApiRef.current));
+      console.log('Going to slide:', slideIndex, 'for page:', pageIndex);
       
-      // Try different API methods
-      if (typeof carouselApiRef.current.scrollTo === 'function') {
-        carouselApiRef.current.scrollTo(slideIndex);
-      } else if (typeof carouselApiRef.current.goTo === 'function') {
-        carouselApiRef.current.goTo(slideIndex);
-      } else if (typeof carouselApiRef.current.scrollToIndex === 'function') {
-        carouselApiRef.current.scrollToIndex(slideIndex);
-      } else {
-        console.log('No suitable API method found');
-      }
+      // Use Embla's scrollTo method
+      carouselApiRef.current.scrollTo(slideIndex);
     }
   };
 
