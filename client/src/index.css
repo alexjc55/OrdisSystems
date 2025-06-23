@@ -29,6 +29,43 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
+  /* RTL/LTR container direction control for admin dashboard */
+  .rtl {
+    direction: rtl;
+  }
+  
+  .ltr {
+    direction: ltr;
+  }
+  
+  /* Force LTR for table and kanban content inside RTL containers */
+  .rtl .table-container {
+    direction: rtl;
+    overflow-x: auto;
+  }
+  
+  .rtl .table-container table {
+    direction: ltr;
+  }
+  
+  .rtl .kanban-scroll-container {
+    direction: rtl;
+    overflow-x: auto;
+  }
+  
+  .rtl .kanban-scroll-container > div {
+    direction: ltr;
+  }
+  
+  /* Ensure proper scrollbar positioning in RTL */
+  .rtl .table-container::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .rtl .kanban-scroll-container::-webkit-scrollbar {
+    height: 6px;
+  }
+  
   html[dir="ltr"] {
     --text-align-start: left;
     --text-align-end: right;

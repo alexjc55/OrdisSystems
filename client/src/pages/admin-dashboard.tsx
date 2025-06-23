@@ -3263,9 +3263,9 @@ export default function AdminDashboard() {
                   <>
                     {/* Table View */}
                     {ordersViewMode === "table" && (
-                      <div className="border rounded-lg bg-white">
-                        <div className="w-full table-container">
-                          <Table className="rtl:text-right">
+                      <div className={`border rounded-lg bg-white ${isRTL ? 'rtl' : 'ltr'}`}>
+                        <div className={`w-full table-container ${isRTL ? 'rtl' : 'ltr'}`}>
+                          <Table className={`${isRTL ? 'ltr' : ''}`}>
                             <TableHeader>
                               <TableRow>
                                 <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>№</TableHead>
@@ -3527,7 +3527,7 @@ export default function AdminDashboard() {
                     {/* Kanban View */}
                     {ordersViewMode === "kanban" && (
                       <div 
-                        className="overflow-x-auto kanban-scroll-container"
+                        className={`overflow-x-auto kanban-scroll-container ${isRTL ? 'rtl' : 'ltr'}`}
                         ref={(el) => {
                           if (el && ordersViewMode === "kanban") {
                             setTimeout(() => {
@@ -3538,7 +3538,7 @@ export default function AdminDashboard() {
                           }
                         }}
                       >
-                        <div className="flex gap-4 min-w-max pb-4"
+                        <div className={`flex gap-4 min-w-max pb-4 ${isRTL ? 'ltr' : ''}`}
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => {
                             e.preventDefault();
