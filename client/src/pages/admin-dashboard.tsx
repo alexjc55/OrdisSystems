@@ -846,7 +846,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     if (item.product.pricePerKg && (unit === 'gram' || unit === '100gram')) {
       // If price is per kg but quantity is in grams, convert to kg for calculation
       basePrice = (newQuantity / 1000) * unitPrice;
-    } else if (unit === '100g' || unit === '100ml') {
+    } else if (unit === '100g' || unit === '100ml' || unit === '100gram') {
       // For 100g/100ml products, price is per 100 units, quantity is in actual units (grams/ml)
       basePrice = unitPrice * (newQuantity / 100);
     } else {
@@ -969,6 +969,9 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     if (product.pricePerKg && (product.unit === 'gram' || product.unit === '100gram')) {
       // If price is per kg but quantity is in grams, convert to kg for calculation
       totalPrice = (quantity / 1000) * unitPrice;
+    } else if (product.unit === '100gram' || product.unit === '100g') {
+      // For 100g products, price is per 100g unit, so divide quantity by 100
+      totalPrice = (quantity / 100) * unitPrice;
     } else {
       // Standard calculation for other units
       totalPrice = quantity * unitPrice;
@@ -1095,11 +1098,11 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             {adminT('orders.delivery')}
           </h3>
           <div className="space-y-2">
-            {/* Customer Information and Delivery Details */}
+            {/* Customer Information and Delivery Details - All in one row */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">Информация о клиенте и доставке</label>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-                <div className="flex gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                <div className="flex gap-1">
                   <Input
                     value={editedOrder.customerPhone}
                     onChange={(e) => setEditedOrder(prev => ({ ...prev, customerPhone: e.target.value }))}
@@ -1113,9 +1116,9 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-8 px-2 text-blue-600 hover:text-blue-800 border-blue-200 hover:bg-blue-50"
+                          className="h-8 px-1 text-blue-600 hover:text-blue-800 border-blue-200 hover:bg-blue-50"
                         >
-                          <Phone className="h-4 w-4" />
+                          <Phone className="h-3 w-3" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-36">
