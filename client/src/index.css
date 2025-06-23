@@ -111,6 +111,46 @@
     overflow-x: auto;
   }
   
+  .rtl .kanban-scroll-container .flex {
+    flex-direction: inherit;
+  }
+  
+  /* Enhanced kanban scrolling */
+  .kanban-scroll-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    scroll-behavior: smooth;
+  }
+  
+  .kanban-scroll-container::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  .kanban-scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .kanban-scroll-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+  
+  .kanban-scroll-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Kanban card optimization */
+  .kanban-card {
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+  
+  .kanban-card:hover {
+    transform: translateY(-1px) translateZ(0);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
   /* Force kanban columns to display in RTL order */
   .rtl .flex-row-reverse {
     flex-direction: row-reverse !important;

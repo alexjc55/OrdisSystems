@@ -377,12 +377,21 @@ function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { 
       onDragStart={(e) => {
         e.dataTransfer.setData("orderId", order.id.toString());
         e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.dropEffect = "move";
+        // Add visual feedback
+        (e.target as HTMLElement).style.opacity = "0.5";
       }}
       onDragEnd={(e) => {
         e.preventDefault();
+        // Restore visual state
+        (e.target as HTMLElement).style.opacity = "1";
       }}
-      className="cursor-move touch-manipulation"
-      style={{ touchAction: 'manipulation' }}
+      className="kanban-card cursor-move touch-manipulation transition-opacity duration-75"
+      style={{ 
+        touchAction: 'manipulation',
+        transform: 'translateZ(0)', // Force hardware acceleration
+        backfaceVisibility: 'hidden' // Improve rendering performance
+      }}
     >
       <OrderCard order={order} onEdit={onEdit} onStatusChange={onStatusChange} onCancelOrder={onCancelOrder} />
     </div>
@@ -1681,6 +1690,67 @@ export default function AdminDashboard() {
   
   // Kanban scroll container ref
   const kanbanRef = useRef<HTMLDivElement>(null);
+  
+  // Enhanced kanban scrolling with mouse support
+  useEffect(() => {
+    const container = kanbanRef.current;
+    if (!container || ordersViewMode !== "kanban") return;
+
+    let isMouseDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        container.scrollLeft += e.deltaY;
+      }
+    };
+
+    const handleMouseDown = (e: MouseEvent) => {
+      if (e.target && (e.target as Element).closest('.kanban-card')) return;
+      isMouseDown = true;
+      startX = e.pageX - container.offsetLeft;
+      scrollLeft = container.scrollLeft;
+      container.style.cursor = 'grabbing';
+      container.style.userSelect = 'none';
+    };
+
+    const handleMouseLeave = () => {
+      isMouseDown = false;
+      container.style.cursor = 'grab';
+      container.style.userSelect = 'auto';
+    };
+
+    const handleMouseUp = () => {
+      isMouseDown = false;
+      container.style.cursor = 'grab';
+      container.style.userSelect = 'auto';
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isMouseDown) return;
+      e.preventDefault();
+      const x = e.pageX - container.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      container.scrollLeft = scrollLeft - walk;
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    container.addEventListener('mousedown', handleMouseDown);
+    container.addEventListener('mouseleave', handleMouseLeave);
+    container.addEventListener('mouseup', handleMouseUp);
+    container.addEventListener('mousemove', handleMouseMove);
+    container.style.cursor = 'grab';
+
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+      container.removeEventListener('mousedown', handleMouseDown);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+      container.removeEventListener('mouseup', handleMouseUp);
+      container.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [ordersViewMode]);
   const [ordersStatusFilter, setOrdersStatusFilter] = useState("active"); // active, delivered, cancelled, all
   
   // Cancellation dialog state
@@ -3535,21 +3605,12 @@ export default function AdminDashboard() {
                     {/* Kanban View */}
                     {ordersViewMode === "kanban" && (
                       <div 
+                        ref={kanbanRef}
                         className="overflow-x-auto kanban-scroll-container"
                         style={{ 
                           touchAction: 'pan-x pan-y',
                           overflowX: 'auto',
                           WebkitOverflowScrolling: 'touch'
-                        }}
-                        ref={(el) => {
-                          if (el && ordersViewMode === "kanban") {
-                            // Reset scroll position
-                            setTimeout(() => {
-                              if (el) {
-                                el.scrollLeft = 0;
-                              }
-                            }, 100);
-                          }
                         }}
                       >
                         {/* Kanban columns container */}
