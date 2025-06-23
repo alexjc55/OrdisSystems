@@ -3350,9 +3350,9 @@ export default function AdminDashboard() {
                                 <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>№</TableHead>
                                 <TableHead className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.customer', 'Клиент')}</TableHead>
                                 <TableHead className={`text-xs sm:text-sm hidden sm:table-cell w-24 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.statusHeader')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-20 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.total', 'Сумма')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm hidden md:table-cell w-32 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.date', 'Дата и время')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.actions', 'Действия')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm w-20 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.orderTotal')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm hidden md:table-cell w-32 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.orderDate')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('common.actions')}</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -3413,12 +3413,12 @@ export default function AdminDashboard() {
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                                        <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">Ожидает</SelectItem>
-                                        <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">Подтвержден</SelectItem>
-                                        <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">Готовится</SelectItem>
-                                        <SelectItem value="ready" className="text-green-800 hover:bg-green-50">Готов</SelectItem>
-                                        <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">Доставлен</SelectItem>
-                                        <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">Отменен</SelectItem>
+                                        <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">{adminT('orders.status.pending')}</SelectItem>
+                                        <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">{adminT('orders.status.confirmed')}</SelectItem>
+                                        <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">{adminT('orders.status.preparing')}</SelectItem>
+                                        <SelectItem value="ready" className="text-green-800 hover:bg-green-50">{adminT('orders.status.ready')}</SelectItem>
+                                        <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">{adminT('orders.status.delivered')}</SelectItem>
+                                        <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">{adminT('orders.status.cancelled')}</SelectItem>
                                       </SelectContent>
                                     </Select>
                                   </TableCell>
@@ -3479,10 +3479,10 @@ export default function AdminDashboard() {
                                         return (
                                           <div className="space-y-1">
                                             <div className="text-xs text-gray-600">
-                                              Товары: {formatCurrency(subtotal)}
+                                              {adminT('orders.subtotal')}: {formatCurrency(subtotal)}
                                             </div>
                                             <div className="text-xs text-gray-600">
-                                              Доставка: {formatCurrency(deliveryFee)}
+                                              {adminT('orders.deliveryFee')}: {formatCurrency(deliveryFee)}
                                             </div>
                                             <div className="font-medium">
                                               {formatCurrency(order.totalAmount)}
@@ -3493,10 +3493,10 @@ export default function AdminDashboard() {
                                         return (
                                           <div className="space-y-1">
                                             <div className="text-xs text-gray-600">
-                                              Товары: {formatCurrency(subtotal)}
+                                              {adminT('orders.subtotal')}: {formatCurrency(subtotal)}
                                             </div>
                                             <div className="text-xs text-green-600">
-                                              Доставка: Бесплатно
+                                              {adminT('orders.deliveryFee')}: {adminT('common.free')}
                                             </div>
                                             <div className="font-medium">
                                               {formatCurrency(order.totalAmount)}
@@ -3512,7 +3512,7 @@ export default function AdminDashboard() {
                                     <div className="space-y-1">
                                       <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                                         <Calendar className="h-3 w-3 text-gray-400" />
-                                        <span className="font-medium">Создан:</span>
+                                        <span className="font-medium">{adminT('common.created')}:</span>
                                       </div>
                                       <div className="text-xs text-gray-600">
                                         {new Date(order.createdAt).toLocaleDateString('ru-RU')} {new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
@@ -3521,7 +3521,7 @@ export default function AdminDashboard() {
                                         <>
                                           <div className={`flex items-center gap-1 mt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                                             <Clock className="h-3 w-3 text-blue-400" />
-                                            <span className="font-medium text-blue-600">Доставка:</span>
+                                            <span className="font-medium text-blue-600">{adminT('orders.deliveryDate')}:</span>
                                           </div>
                                           <div className="text-xs text-blue-600">
                                             {new Date(order.deliveryDate).toLocaleDateString('ru-RU')} {order.deliveryTime || ''}
