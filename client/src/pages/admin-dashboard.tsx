@@ -404,7 +404,7 @@ function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { 
 function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
       case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'ready': return 'bg-green-100 text-green-800 border-green-200';
@@ -616,7 +616,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   // Status color function for consistent styling
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
       case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'ready': return 'bg-green-100 text-green-800 border-green-200';
@@ -2339,7 +2339,7 @@ export default function AdminDashboard() {
   // Status color helper function
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
       case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'ready': return 'bg-green-100 text-green-800 border-green-200';
