@@ -576,7 +576,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 onEdit(order);
               }}
             >
-              <Eye className="h-3 w-3 mr-1" />
+              <Eye className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
               {adminT('orders.orderDetails')}
             </Button>
             <Select
