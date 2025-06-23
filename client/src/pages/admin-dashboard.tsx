@@ -842,7 +842,11 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     // Calculate base price based on product unit
     let basePrice;
     const unit = item.product?.unit;
-    if (unit === '100g' || unit === '100ml') {
+    
+    if (item.product.pricePerKg && (unit === 'gram' || unit === '100gram')) {
+      // If price is per kg but quantity is in grams, convert to kg for calculation
+      basePrice = (newQuantity / 1000) * unitPrice;
+    } else if (unit === '100g' || unit === '100ml') {
       // For 100g/100ml products, price is per 100 units, quantity is in actual units (grams/ml)
       basePrice = unitPrice * (newQuantity / 100);
     } else {
@@ -959,13 +963,24 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
   const addItem = (product: any, quantity: number) => {
     const unitPrice = product.price || product.pricePerKg || 0;
+    
+    // Calculate total price based on product unit and pricing
+    let totalPrice;
+    if (product.pricePerKg && (product.unit === 'gram' || product.unit === '100gram')) {
+      // If price is per kg but quantity is in grams, convert to kg for calculation
+      totalPrice = (quantity / 1000) * unitPrice;
+    } else {
+      // Standard calculation for other units
+      totalPrice = quantity * unitPrice;
+    }
+
     const newItem = {
       product,
       productId: product.id,
       quantity,
       pricePerUnit: unitPrice,
       pricePerKg: unitPrice,
-      totalPrice: quantity * unitPrice
+      totalPrice: totalPrice
     };
     setEditedOrderItems([...editedOrderItems, newItem]);
     setShowAddItem(false);
@@ -998,7 +1013,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 admin-input-focus">
       {/* Compact Order Header with Key Info */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-100">
         <div className="flex flex-wrap items-center justify-between gap-4">

@@ -5,6 +5,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom focus styles for admin form inputs */
+@layer components {
+  .admin-input-focus input:focus,
+  .admin-input-focus textarea:focus,
+  .admin-input-focus select:focus {
+    outline: none !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    ring: none !important;
+  }
+  
+  .admin-input-focus button[role="combobox"]:focus {
+    outline: none !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  }
+}
+
 /* Global container max-width limitation */
 @layer base {
   body {
