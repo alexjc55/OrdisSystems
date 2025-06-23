@@ -102,12 +102,17 @@ export function useAdminTranslation() {
   
   // Enhanced translation function with fallback
   const enhancedT = (key: string, fallback?: string) => {
-    const translation = t(key);
-    // If translation returns the key itself, use fallback or return key
-    if (translation === key) {
-      return fallback || key;
+    try {
+      const translation = t(key);
+      // If translation returns the key itself, use fallback or return key
+      if (translation === key || !translation) {
+        return fallback || key.split('.').pop() || key;
+      }
+      return translation;
+    } catch (error) {
+      console.error('Translation error for key:', key, error);
+      return fallback || key.split('.').pop() || key;
     }
-    return translation;
   };
   
   return { t: enhancedT, i18n };
