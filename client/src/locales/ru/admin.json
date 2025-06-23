@@ -316,6 +316,7 @@
     "finalTotal": "К доплате",
     "notes": "Примечания",
     "notesPlaceholder": "Дополнительные заметки к заказу...",
+    "removeItemConfirm": "Удалить товар",
     "call": "Позвонить",
     "updateStatus": "Обновить статус",
     "customerPhone": "Телефон клиента",

@@ -1303,14 +1303,34 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => removeItem(index)}
-                      className="h-7 w-7 p-0 text-red-600 hover:text-red-800"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 w-7 p-0 text-red-600 hover:text-red-800"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999]">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>{adminT('common.confirm')}</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {adminT('orders.removeItemConfirm')} "{item.product?.name}"?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>{adminT('common.cancel')}</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => removeItem(index)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            {adminT('common.delete')}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               ))}
@@ -1330,14 +1350,34 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   )}
                   <div className="text-xs text-gray-600 mt-1">{getUnitPrice(item.product)}</div>
                 </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => removeItem(index)}
-                  className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999]">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>{adminT('common.confirm')}</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {adminT('orders.removeItemConfirm')} "{item.product?.name}"?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>{adminT('common.cancel')}</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => removeItem(index)}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        {adminT('common.delete')}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
               
               <div className="grid grid-cols-2 gap-3">
@@ -1592,8 +1632,8 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96 max-h-[80vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
+      <div className="bg-white rounded-lg p-6 w-96 max-h-[90vh] overflow-y-auto shadow-lg">
         <h3 className="text-lg font-semibold mb-4">{adminT('orders.addProduct')}</h3>
         
         {/* Search */}
@@ -1694,7 +1734,7 @@ function ItemDiscountDialog({
   const finalPrice = basePrice - discountAmount;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
       <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl">
         <h3 className="text-lg font-semibold mb-4">{adminT('orders.itemDiscount')}</h3>
         

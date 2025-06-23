@@ -293,6 +293,7 @@
     "finalTotal": "Final Total",
     "notes": "Notes",
     "notesPlaceholder": "Additional notes for the order...",
+    "removeItemConfirm": "Remove item",
     "call": "Call",
     "order": "Order",
     "newOrder": "New Order",
