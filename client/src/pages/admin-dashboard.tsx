@@ -3559,10 +3559,10 @@ export default function AdminDashboard() {
                   <div className="px-4 py-3 border-t bg-gray-50">
                     {/* Mobile: Stack info and controls */}
                     <div className="sm:hidden space-y-2">
-                      <div className="text-center text-xs text-gray-600">
+                      <div className={`text-center text-xs text-gray-600 ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                         {adminT('common.showing', 'Показано')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {adminT('common.of', 'из')} {productsTotal}
                       </div>
-                      <div className="flex items-center justify-center gap-2">
+                      <div className={`flex items-center justify-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -3583,7 +3583,7 @@ export default function AdminDashboard() {
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </Button>
-                        <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
+                        <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
                           {productsPage}/{productsTotalPages}
                         </span>
                         <Button
@@ -4063,10 +4063,10 @@ export default function AdminDashboard() {
                         <div className="px-4 py-3 border-t bg-gray-50">
                           {/* Mobile: Stack info and controls */}
                           <div className="sm:hidden space-y-2">
-                            <div className="text-center text-xs text-gray-600">
+                            <div className={`text-center text-xs text-gray-600 ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                               {adminT('common.showing', 'Показано')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of', 'из')} {ordersResponse.total}
                             </div>
-                            <div className="flex items-center justify-center gap-2">
+                            <div className={`flex items-center justify-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -4087,7 +4087,7 @@ export default function AdminDashboard() {
                               >
                                 <ChevronLeft className="h-4 w-4" />
                               </Button>
-                              <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
+                              <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
                                 {ordersResponse.page}/{ordersResponse.totalPages}
                               </span>
                               <Button
@@ -4418,10 +4418,10 @@ export default function AdminDashboard() {
                       <div className="px-4 py-3 border-t bg-gray-50">
                         {/* Mobile: Stack info and controls */}
                         <div className="sm:hidden space-y-2">
-                          <div className="text-center text-xs text-gray-600">
+                          <div className={`text-center text-xs text-gray-600 ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                             {adminT('common.showing', 'Показано')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of', 'из')} {ordersResponse.total}
                           </div>
-                          <div className="flex items-center justify-center gap-2">
+                          <div className={`flex items-center justify-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <Button
                               variant="ghost"
                               size="sm"
@@ -4442,7 +4442,7 @@ export default function AdminDashboard() {
                             >
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
-                            <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
+                            <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
                               {ordersResponse.page}/{ordersResponse.totalPages}
                             </span>
                             <Button
