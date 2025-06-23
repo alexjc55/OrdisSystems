@@ -819,6 +819,18 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     }
   };
 
+  const getStatusDisplayName = (status: string) => {
+    switch (status) {
+      case 'pending': return adminT('orders.status.pending');
+      case 'confirmed': return adminT('orders.status.confirmed');
+      case 'preparing': return adminT('orders.status.preparing');
+      case 'ready': return adminT('orders.status.ready');
+      case 'delivered': return adminT('orders.status.delivered');
+      case 'cancelled': return adminT('orders.status.cancelled');
+      default: return status;
+    }
+  };
+
   const getUnitPrice = (product: any) => {
     switch (product.unit) {
       case 'piece': return `${formatCurrency(product.price)} ${adminT('products.dialog.unitPiece')}`;
@@ -1054,7 +1066,11 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
               >
                 <SelectTrigger className={`text-sm h-8 border w-full ${getStatusColor(editedOrder.status)}`}>
-                  <SelectValue placeholder="Выберите статус" />
+                  <SelectValue>
+                    <span className="text-sm font-medium">
+                      {getStatusDisplayName(editedOrder.status)}
+                    </span>
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="z-[10000]">
                   <SelectItem value="pending">
@@ -1117,7 +1133,11 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
               >
                 <SelectTrigger className={`text-sm h-8 border w-full ${getStatusColor(editedOrder.status)}`}>
-                  <SelectValue />
+                  <SelectValue>
+                    <span className="text-sm font-medium">
+                      {getStatusDisplayName(editedOrder.status)}
+                    </span>
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="z-[10000]">
                   <SelectItem value="pending" className="bg-yellow-50 hover:bg-yellow-100">
