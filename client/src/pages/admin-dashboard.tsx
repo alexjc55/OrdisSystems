@@ -596,11 +596,28 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
               <Eye className="h-3 w-3 mr-1" />
               {adminT('orders.orderDetails')}
             </Button>
-            <div className={`px-2 py-1 rounded text-xs font-medium border text-center min-w-[80px] max-w-[120px] truncate ${getStatusColor(order.status)} ${order.status === 'pending' ? 'mobile-status-pending' : ''}`}>
-              <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {getStatusLabel(order.status) || order.status || 'Статус'}
-              </span>
-            </div>
+            <Select
+              value={order.status}
+              onValueChange={(newStatus) => {
+                if (newStatus === 'cancelled') {
+                  onCancelOrder(order.id);
+                } else {
+                  onStatusChange({ orderId: order.id, status: newStatus });
+                }
+              }}
+            >
+              <SelectTrigger className="w-20 h-7 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">{getStatusLabel('pending')}</SelectItem>
+                <SelectItem value="confirmed">{getStatusLabel('confirmed')}</SelectItem>
+                <SelectItem value="preparing">{getStatusLabel('preparing')}</SelectItem>
+                <SelectItem value="ready">{getStatusLabel('ready')}</SelectItem>
+                <SelectItem value="delivered">{getStatusLabel('delivered')}</SelectItem>
+                <SelectItem value="cancelled">{getStatusLabel('cancelled')}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardContent>
@@ -4430,7 +4447,7 @@ export default function AdminDashboard() {
                               title="Первая страница"
                               className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
-                              ⟨⟨
+                              {isRTL ? '⟩⟩' : '⟨⟨'}
                             </Button>
                             <Button
                               variant="ghost"
@@ -4440,7 +4457,7 @@ export default function AdminDashboard() {
                               title="Предыдущая страница"
                               className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
-                              <ChevronLeft className="h-4 w-4" />
+                              {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                             </Button>
                             <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
                               {ordersResponse.page}/{ordersResponse.totalPages}
@@ -4453,7 +4470,7 @@ export default function AdminDashboard() {
                               title="Следующая страница"
                               className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
-                              <ChevronRight className="h-4 w-4" />
+                              {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                             </Button>
                             <Button
                               variant="ghost"
@@ -4463,7 +4480,7 @@ export default function AdminDashboard() {
                               title="Последняя страница"
                               className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
-                              ⟩⟩
+                              {isRTL ? '⟨⟨' : '⟩⟩'}
                             </Button>
                           </div>
                         </div>
