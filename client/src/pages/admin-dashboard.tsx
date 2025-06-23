@@ -9,7 +9,7 @@
  * - Сохранять все существующие UI паттерны и структуру
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -377,21 +377,12 @@ function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { 
       onDragStart={(e) => {
         e.dataTransfer.setData("orderId", order.id.toString());
         e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.dropEffect = "move";
-        // Add visual feedback
-        (e.target as HTMLElement).style.opacity = "0.5";
       }}
       onDragEnd={(e) => {
         e.preventDefault();
-        // Restore visual state
-        (e.target as HTMLElement).style.opacity = "1";
       }}
-      className="kanban-card cursor-move touch-manipulation transition-opacity duration-75"
-      style={{ 
-        touchAction: 'manipulation',
-        transform: 'translateZ(0)', // Force hardware acceleration
-        backfaceVisibility: 'hidden' // Improve rendering performance
-      }}
+      className="cursor-move touch-manipulation"
+      style={{ touchAction: 'manipulation' }}
     >
       <OrderCard order={order} onEdit={onEdit} onStatusChange={onStatusChange} onCancelOrder={onCancelOrder} />
     </div>
@@ -1687,71 +1678,6 @@ export default function AdminDashboard() {
   const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
   const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<any>(null);
-  
-  // Kanban scroll container ref
-  const kanbanRef = useRef<HTMLDivElement>(null);
-  
-  // Enhanced kanban scrolling with mouse support
-  useEffect(() => {
-    const container = kanbanRef.current;
-    if (!container || ordersViewMode !== "kanban") return;
-
-    let isMouseDown = false;
-    let startX = 0;
-    let scrollLeft = 0;
-
-    const handleWheel = (e: WheelEvent) => {
-      // Only handle horizontal scrolling with Shift+wheel
-      if (e.shiftKey && e.deltaY !== 0) {
-        e.preventDefault();
-        container.scrollLeft += e.deltaY;
-      }
-    };
-
-    const handleMouseDown = (e: MouseEvent) => {
-      if (e.target && (e.target as Element).closest('.kanban-card')) return;
-      isMouseDown = true;
-      startX = e.pageX - container.offsetLeft;
-      scrollLeft = container.scrollLeft;
-      container.style.cursor = 'grabbing';
-      container.style.userSelect = 'none';
-    };
-
-    const handleMouseLeave = () => {
-      isMouseDown = false;
-      container.style.cursor = 'grab';
-      container.style.userSelect = 'auto';
-    };
-
-    const handleMouseUp = () => {
-      isMouseDown = false;
-      container.style.cursor = 'grab';
-      container.style.userSelect = 'auto';
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isMouseDown) return;
-      e.preventDefault();
-      const x = e.pageX - container.offsetLeft;
-      const walk = (x - startX) * 1.5;
-      container.scrollLeft = scrollLeft - walk;
-    };
-
-    container.addEventListener('wheel', handleWheel, { passive: false });
-    container.addEventListener('mousedown', handleMouseDown);
-    container.addEventListener('mouseleave', handleMouseLeave);
-    container.addEventListener('mouseup', handleMouseUp);
-    container.addEventListener('mousemove', handleMouseMove);
-    container.style.cursor = 'grab';
-
-    return () => {
-      container.removeEventListener('wheel', handleWheel);
-      container.removeEventListener('mousedown', handleMouseDown);
-      container.removeEventListener('mouseleave', handleMouseLeave);
-      container.removeEventListener('mouseup', handleMouseUp);
-      container.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, [ordersViewMode]);
   const [ordersStatusFilter, setOrdersStatusFilter] = useState("active"); // active, delivered, cancelled, all
   
   // Cancellation dialog state
@@ -3281,37 +3207,15 @@ export default function AdminDashboard() {
                   <p className={`text-gray-600 mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.description', 'Управление заказами клиентов')}</p>
                 </div>
               
-              {/* Controls Row */}
+              {/* Controls Row for RTL Layout */}
               <div className={`flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
-                {/* View Mode Toggle */}
-                <div className={`flex items-center gap-2 p-1 bg-gray-100 rounded-lg ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <Button
-                    variant={ordersViewMode === "table" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setOrdersViewMode("table")}
-                    className="text-xs px-3 py-1 h-8"
-                  >
-                    <Grid3X3 className="h-3 w-3 mr-1" />
-                    {adminT('common.table', 'Таблица')}
-                  </Button>
-                  <Button
-                    variant={ordersViewMode === "kanban" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setOrdersViewMode("kanban")}
-                    className="text-xs px-3 py-1 h-8"
-                  >
-                    <Columns className="h-3 w-3 mr-1" />
-                    {adminT('common.kanban', 'Канбан')}
-                  </Button>
-                </div>
-
-                {/* Filters */}
-                <div className={`flex gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                {/* Filters - Left side for LTR, Right side for RTL */}
+                <div className={`flex gap-3 ${isRTL ? 'flex-row-reverse order-2 sm:order-1' : 'order-1'}`}>
                   <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
                     <SelectTrigger className="w-40 text-xs h-8">
                       <SelectValue placeholder={adminT('orders.filterOrders', 'Фильтр заказов')} />
                     </SelectTrigger>
-                    <SelectContent className="min-w-[160px] max-w-[200px] bg-white border border-gray-200 shadow-lg z-50">
+                    <SelectContent>
                       <SelectItem value="active">{adminT('orders.activeOrders', 'Активные заказы')}</SelectItem>
                       <SelectItem value="delivered">{adminT('orders.deliveredOrders', 'Доставленные заказы')}</SelectItem>
                       <SelectItem value="cancelled">{adminT('orders.cancelledOrders', 'Отмененные заказы')}</SelectItem>
@@ -3350,9 +3254,9 @@ export default function AdminDashboard() {
                                 <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>№</TableHead>
                                 <TableHead className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.customer', 'Клиент')}</TableHead>
                                 <TableHead className={`text-xs sm:text-sm hidden sm:table-cell w-24 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.statusHeader')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-20 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.orderTotal')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm hidden md:table-cell w-32 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.orderDate')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('common.actions')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm w-20 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.total', 'Сумма')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm hidden md:table-cell w-32 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.date', 'Дата и время')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.actions', 'Действия')}</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -3381,7 +3285,7 @@ export default function AdminDashboard() {
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <Phone className="h-4 w-4 mr-2" />
-                                              {adminT('orders.call', 'Позвонить')}
+{adminT('orders.call', 'Позвонить')}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem 
                                               onClick={() => {
@@ -3391,7 +3295,7 @@ export default function AdminDashboard() {
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <MessageCircle className="h-4 w-4 mr-2" />
-                                              {adminT('orders.whatsapp', 'WhatsApp')}
+                                              WhatsApp
                                             </DropdownMenuItem>
                                           </DropdownMenuContent>
                                         </DropdownMenu>
@@ -3413,12 +3317,12 @@ export default function AdminDashboard() {
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                                        <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">{adminT('orders.status.pending')}</SelectItem>
-                                        <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">{adminT('orders.status.confirmed')}</SelectItem>
-                                        <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">{adminT('orders.status.preparing')}</SelectItem>
-                                        <SelectItem value="ready" className="text-green-800 hover:bg-green-50">{adminT('orders.status.ready')}</SelectItem>
-                                        <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">{adminT('orders.status.delivered')}</SelectItem>
-                                        <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">{adminT('orders.status.cancelled')}</SelectItem>
+                                        <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">Ожидает</SelectItem>
+                                        <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">Подтвержден</SelectItem>
+                                        <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">Готовится</SelectItem>
+                                        <SelectItem value="ready" className="text-green-800 hover:bg-green-50">Готов</SelectItem>
+                                        <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">Доставлен</SelectItem>
+                                        <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">Отменен</SelectItem>
                                       </SelectContent>
                                     </Select>
                                   </TableCell>
@@ -3479,10 +3383,10 @@ export default function AdminDashboard() {
                                         return (
                                           <div className="space-y-1">
                                             <div className="text-xs text-gray-600">
-                                              {adminT('orders.subtotal')}: {formatCurrency(subtotal)}
+                                              Товары: {formatCurrency(subtotal)}
                                             </div>
                                             <div className="text-xs text-gray-600">
-                                              {adminT('orders.deliveryFee')}: {formatCurrency(deliveryFee)}
+                                              Доставка: {formatCurrency(deliveryFee)}
                                             </div>
                                             <div className="font-medium">
                                               {formatCurrency(order.totalAmount)}
@@ -3493,10 +3397,10 @@ export default function AdminDashboard() {
                                         return (
                                           <div className="space-y-1">
                                             <div className="text-xs text-gray-600">
-                                              {adminT('orders.subtotal')}: {formatCurrency(subtotal)}
+                                              Товары: {formatCurrency(subtotal)}
                                             </div>
                                             <div className="text-xs text-green-600">
-                                              {adminT('orders.deliveryFee')}: {adminT('common.free')}
+                                              Доставка: Бесплатно
                                             </div>
                                             <div className="font-medium">
                                               {formatCurrency(order.totalAmount)}
@@ -3512,7 +3416,7 @@ export default function AdminDashboard() {
                                     <div className="space-y-1">
                                       <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                                         <Calendar className="h-3 w-3 text-gray-400" />
-                                        <span className="font-medium">{adminT('common.created')}:</span>
+                                        <span className="font-medium">Создан:</span>
                                       </div>
                                       <div className="text-xs text-gray-600">
                                         {new Date(order.createdAt).toLocaleDateString('ru-RU')} {new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
@@ -3521,7 +3425,7 @@ export default function AdminDashboard() {
                                         <>
                                           <div className={`flex items-center gap-1 mt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                                             <Clock className="h-3 w-3 text-blue-400" />
-                                            <span className="font-medium text-blue-600">{adminT('orders.deliveryDate')}:</span>
+                                            <span className="font-medium text-blue-600">Доставка:</span>
                                           </div>
                                           <div className="text-xs text-blue-600">
                                             {new Date(order.deliveryDate).toLocaleDateString('ru-RU')} {order.deliveryTime || ''}
@@ -3606,12 +3510,20 @@ export default function AdminDashboard() {
                     {/* Kanban View */}
                     {ordersViewMode === "kanban" && (
                       <div 
-                        ref={kanbanRef}
                         className="overflow-x-auto kanban-scroll-container"
                         style={{ 
                           touchAction: 'pan-x pan-y',
                           overflowX: 'auto',
                           WebkitOverflowScrolling: 'touch'
+                        }}
+                        ref={(el) => {
+                          if (el && ordersViewMode === "kanban") {
+                            setTimeout(() => {
+                              if (el) {
+                                el.scrollLeft = 0;
+                              }
+                            }, 100);
+                          }
                         }}
                       >
                         {/* Kanban columns container */}
@@ -3651,7 +3563,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-yellow-800 flex items-center gap-2">
                               <Clock className="h-4 w-4" />
-                              {adminT('orders.status.pending', 'Ожидает')} ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
+                              Ожидает ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'pending').map((order: any) => (
@@ -3686,7 +3598,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-blue-800 flex items-center gap-2">
                               <ShoppingCart className="h-4 w-4" />
-                              {adminT('orders.status.confirmed', 'Подтвержден')} ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
+                              Подтвержден ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'confirmed').map((order: any) => (
@@ -3721,7 +3633,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-orange-800 flex items-center gap-2">
                               <Utensils className="h-4 w-4" />
-                              {adminT('orders.status.preparing', 'Готовится')} ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
+                              Готовится ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'preparing').map((order: any) => (
@@ -3756,7 +3668,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-green-800 flex items-center gap-2">
                               <Package className="h-4 w-4" />
-                              {adminT('orders.status.ready', 'Готов')} ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
+                              Готов ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'ready').map((order: any) => (
@@ -3792,7 +3704,7 @@ export default function AdminDashboard() {
                             >
                               <h3 className="font-semibold text-sm mb-3 text-gray-800 flex items-center gap-2">
                                 <Truck className="h-4 w-4" />
-                                {adminT('orders.status.delivered', 'Доставлен')} ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
+                                Доставлен ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
                               </h3>
                               <div className="space-y-3 min-h-24">
                                 {ordersResponse.data.filter((order: any) => order.status === 'delivered').map((order: any) => (
@@ -3826,7 +3738,7 @@ export default function AdminDashboard() {
                             >
                               <h3 className="font-semibold text-sm mb-3 text-red-800 flex items-center gap-2">
                                 <X className="h-4 w-4" />
-                                {adminT('orders.status.cancelled', 'Отменен')} ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
+                                Отменен ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
                               </h3>
                               <div className="space-y-3 min-h-24">
                                 {ordersResponse.data.filter((order: any) => order.status === 'cancelled').map((order: any) => (
