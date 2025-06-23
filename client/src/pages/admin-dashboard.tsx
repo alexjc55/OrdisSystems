@@ -1028,7 +1028,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 <Input
                   value={editedOrder.customerPhone}
                   onChange={(e) => setEditedOrder(prev => ({ ...prev, customerPhone: e.target.value }))}
-                  placeholder="Номер телефона"
+                  placeholder={adminT('orders.phonePlaceholder')}
                   className="text-sm flex-1"
                 />
                 {editedOrder.customerPhone && (
@@ -1048,7 +1048,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                         className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
                       >
                         <Phone className="h-4 w-4 mr-2" />
-                        Позвонить
+                        {adminT('orders.call')}
                       </DropdownMenuItem>
                       <DropdownMenuItem 
                         onClick={() => {
@@ -1067,7 +1067,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Статус заказа</label>
+              <label className="block text-sm font-medium mb-1">{adminT('orders.orderStatus')}</label>
               <Select
                 value={editedOrder.status}
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
@@ -1076,12 +1076,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="pending">Ожидает</SelectItem>
-                  <SelectItem value="confirmed">Подтвержден</SelectItem>
-                  <SelectItem value="preparing">Готовится</SelectItem>
-                  <SelectItem value="ready">Готов</SelectItem>
-                  <SelectItem value="delivered">Доставлен</SelectItem>
-                  <SelectItem value="cancelled">Отменен</SelectItem>
+                  <SelectItem value="pending">{adminT('orders.status.pending')}</SelectItem>
+                  <SelectItem value="confirmed">{adminT('orders.status.confirmed')}</SelectItem>
+                  <SelectItem value="preparing">{adminT('orders.status.preparing')}</SelectItem>
+                  <SelectItem value="ready">{adminT('orders.status.ready')}</SelectItem>
+                  <SelectItem value="delivered">{adminT('orders.status.delivered')}</SelectItem>
+                  <SelectItem value="cancelled">{adminT('orders.status.cancelled')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1091,21 +1091,21 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
       {/* Delivery Information */}
       <div>
-        <h3 className="font-semibold mb-3">Доставка</h3>
+        <h3 className="font-semibold mb-3">{adminT('orders.delivery')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Адрес доставки</label>
+            <label className="block text-sm font-medium mb-1">{adminT('orders.deliveryAddress')}</label>
             <Input
               value={editedOrder.deliveryAddress}
               onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryAddress: e.target.value }))}
-              placeholder="Введите адрес"
+              placeholder={adminT('orders.addressPlaceholder')}
               className="text-sm"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-sm font-medium mb-1">Дата</label>
+              <label className="block text-sm font-medium mb-1">{adminT('orders.date')}</label>
               <Input
                 type="date"
                 value={editedOrder.deliveryDate}
@@ -1114,7 +1114,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Время</label>
+              <label className="block text-sm font-medium mb-1">{adminT('orders.time')}</label>
               <Select
                 value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
