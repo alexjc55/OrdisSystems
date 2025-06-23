@@ -1233,7 +1233,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             {adminT('orders.addProduct')}
           </Button>
         </div>
-        <div className="border rounded-lg overflow-hidden">
+        {/* Desktop Table View */}
+        <div className="hidden md:block border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
@@ -1314,6 +1315,81 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
           </Table>
         </div>
 
+        {/* Mobile Card View */}
+        <div className="md:hidden space-y-4">
+          {editedOrderItems.map((item: any, index: number) => (
+            <div key={index} className="bg-white border rounded-lg p-4 space-y-3">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <div className="font-medium text-sm">{item.product?.name}</div>
+                  {item.product?.description && (
+                    <div className="text-xs text-gray-500 mt-1">{item.product.description}</div>
+                  )}
+                  <div className="text-xs text-gray-600 mt-1">{getUnitPrice(item.product)}</div>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => removeItem(index)}
+                  className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-gray-600 mb-1 block">{adminT('orders.quantity')}</label>
+                  <div className="flex items-center gap-1">
+                    <Input
+                      type="number"
+                      step="0.1"
+                      min="0.1"
+                      value={item.quantity}
+                      onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
+                      className="h-8 text-xs"
+                    />
+                    <span className="text-xs text-gray-500">
+                      {getUnitDisplay(item.product?.unit, item.quantity)}
+                    </span>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="text-xs text-gray-600 mb-1 block">{adminT('orders.amount')}</label>
+                  <div className="text-sm font-medium">{formatCurrency(item.totalPrice)}</div>
+                </div>
+              </div>
+              
+              <div>
+                <label className="text-xs text-gray-600 mb-1 block">{adminT('orders.discount')}</label>
+                <div className="flex items-center gap-2">
+                  {itemDiscounts[index] ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setShowDiscountDialog({ itemIndex: index, item, currentDiscount: itemDiscounts[index] })}
+                      className="h-8 text-xs text-green-600 hover:text-green-800 border-green-200"
+                    >
+                      {itemDiscounts[index].type === 'percentage' ? `${itemDiscounts[index].value}%` : formatCurrency(itemDiscounts[index].value)}
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setShowDiscountDialog({ itemIndex: index, item })}
+                      className="h-8 text-xs"
+                    >
+                      <Plus className="h-3 w-3 mr-1" />
+                      {adminT('orders.discount')}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* Order Total Summary */}
         <div className="bg-gray-50 p-4 rounded-lg">
           <h4 className="font-medium mb-3">{adminT('orders.orderSummary')}</h4>
@@ -1337,7 +1413,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             {/* Order-level discount */}
             <div className="border-t pt-2">
               <div className="flex justify-between items-center mb-2">
-                <span className="font-medium">Общая скидка на заказ:</span>
+                <span className="font-medium">{adminT('orders.orderDiscount')}:</span>
                 <span className="text-red-600">-{formatCurrency(calculateOrderDiscount(calculateSubtotal()))}</span>
               </div>
               <div className="grid grid-cols-3 gap-2">
@@ -1612,8 +1688,8 @@ function ItemDiscountDialog({
   const finalPrice = basePrice - discountAmount;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
+      <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl">
         <h3 className="text-lg font-semibold mb-4">{adminT('orders.itemDiscount')}</h3>
         
         <div className="mb-4">
