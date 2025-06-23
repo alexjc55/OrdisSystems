@@ -131,7 +131,8 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
-- June 23, 2025. Initial setup
+- June 24, 2025: Fixed status dropdown functionality on kanban OrderCard components - restored interactive Select component for order status changes
+- June 23, 2025: Initial setup
 
 ## User Preferences
 
