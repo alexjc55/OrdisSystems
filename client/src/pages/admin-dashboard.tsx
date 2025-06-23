@@ -3532,9 +3532,8 @@ export default function AdminDashboard() {
                     {/* Kanban View */}
                     {ordersViewMode === "kanban" && (
                       <div 
-                        className={`overflow-x-auto kanban-scroll-container ${isRTL ? 'rtl' : 'ltr'}`}
+                        className="overflow-x-auto kanban-scroll-container"
                         style={{ 
-                          direction: isRTL ? 'rtl' : 'ltr',
                           touchAction: 'pan-x pan-y',
                           overflowX: 'auto',
                           WebkitOverflowScrolling: 'touch'
@@ -3549,12 +3548,9 @@ export default function AdminDashboard() {
                           }
                         }}
                       >
-                        {/* RTL-aware kanban columns container */}
+                        {/* Kanban columns container - maintain logical order */}
                         <div 
                           className="flex gap-4 min-w-max pb-4"
-                          style={{
-                            flexDirection: isRTL ? 'row-reverse' : 'row'
-                          }}
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => {
                             e.preventDefault();
@@ -3575,6 +3571,7 @@ export default function AdminDashboard() {
                           {/* Pending Column */}
                           <div 
                             className="bg-yellow-50 rounded-lg p-4 min-w-80"
+                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => {
                               e.preventDefault();
@@ -3610,6 +3607,7 @@ export default function AdminDashboard() {
                           {/* Confirmed Column */}
                           <div 
                             className="bg-blue-50 rounded-lg p-4 min-w-80"
+                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => {
                               e.preventDefault();
@@ -3645,6 +3643,7 @@ export default function AdminDashboard() {
                           {/* Preparing Column */}
                           <div 
                             className="bg-orange-50 rounded-lg p-4 min-w-80"
+                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => {
                               e.preventDefault();
@@ -3680,6 +3679,7 @@ export default function AdminDashboard() {
                           {/* Ready Column */}
                           <div 
                             className="bg-green-50 rounded-lg p-4 min-w-80"
+                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => {
                               e.preventDefault();
@@ -3716,6 +3716,7 @@ export default function AdminDashboard() {
                           {(ordersStatusFilter === "delivered" || ordersStatusFilter === "all") && (
                             <div 
                               className="bg-gray-50 rounded-lg p-4 min-w-80"
+                              style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                               onDragOver={(e) => e.preventDefault()}
                               onDrop={(e) => {
                                 e.preventDefault();
@@ -3753,6 +3754,7 @@ export default function AdminDashboard() {
                           {(ordersStatusFilter === "cancelled" || ordersStatusFilter === "all") && (
                             <div 
                               className="bg-red-50 rounded-lg p-4 min-w-80"
+                              style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                               onDragOver={(e) => e.preventDefault()}
                               onDrop={(e) => {
                                 e.preventDefault();
