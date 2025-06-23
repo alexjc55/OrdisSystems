@@ -38,13 +38,45 @@
     direction: ltr !important;
   }
   
-  /* Orders section RTL container */
+  /* Orders section RTL styling */
   .rtl {
     direction: rtl !important;
+  }
+  
+  /* RTL text alignment for all content */
+  .rtl h1,
+  .rtl h2,
+  .rtl h3,
+  .rtl p,
+  .rtl div,
+  .rtl span {
     text-align: right;
   }
   
-  /* Override specific elements that should remain LTR inside RTL container */
+  /* Specific RTL flex layouts for orders UI */
+  .rtl .flex.flex-col {
+    flex-direction: column;
+  }
+  
+  .rtl .flex.sm\\:flex-row {
+    flex-direction: row-reverse;
+  }
+  
+  .rtl .flex.items-center.gap-2 {
+    flex-direction: row-reverse;
+  }
+  
+  .rtl .flex.gap-3 {
+    flex-direction: row-reverse;
+  }
+  
+  /* Header and controls RTL alignment */
+  .rtl .justify-between {
+    justify-content: space-between;
+    flex-direction: row-reverse;
+  }
+  
+  /* Override for table container - keep scroll RTL but table content LTR */
   .rtl .table-container {
     direction: rtl;
     overflow-x: auto;
@@ -55,31 +87,31 @@
     text-align: left;
   }
   
+  /* Override for kanban - container RTL, content LTR */
   .rtl .kanban-scroll-container {
     direction: rtl;
     overflow-x: auto;
   }
   
-  .rtl .kanban-scroll-container .flex {
+  .rtl .kanban-scroll-container > div {
     direction: ltr;
+    flex-direction: row !important;
   }
   
-  /* Maintain button text centering in RTL */
+  /* Form elements RTL alignment */
+  .rtl input,
+  .rtl select,
+  .rtl textarea {
+    text-align: right;
+  }
+  
+  /* Button content should remain centered */
   .rtl button {
     text-align: center;
-    direction: ltr;
   }
   
-  /* Form elements should align right in RTL but maintain LTR text direction */
-  .rtl input[type="text"],
-  .rtl input[type="search"] {
-    text-align: right;
-    direction: rtl;
-  }
-  
-  .rtl select {
-    text-align: right;
-    direction: rtl;
+  .rtl button * {
+    text-align: center;
   }
   
   html[dir="ltr"] {
