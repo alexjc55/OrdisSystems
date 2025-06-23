@@ -592,8 +592,10 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 }
               }}
             >
-              <SelectTrigger className="w-20 sm:w-24 md:w-28 h-7 text-xs">
-                <SelectValue placeholder={getStatusLabel(order.status)} />
+              <SelectTrigger className="w-24 sm:w-28 md:w-32 h-7 text-xs px-2 min-w-0">
+                <div className="truncate text-left">
+                  {getStatusLabel(order.status)}
+                </div>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="pending">{getStatusLabel('pending')}</SelectItem>
