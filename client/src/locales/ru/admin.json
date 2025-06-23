@@ -321,7 +321,19 @@
     "readyOrders": "Готовые заказы",
     "deliveredOrders": "Доставленные заказы",
     "cancelledOrders": "Отменённые заказы",
-    "addProduct": "Добавить товар"
+    "addProduct": "Добавить товар",
+    "editing": "Редактирование",
+    "phonePlaceholder": "Номер телефона",
+    "delivery": "Доставка",
+    "addressPlaceholder": "Введите адрес",
+    "date": "Дата",
+    "time": "Время",
+    "selectTime": "Выберите время",
+    "product": "Товар",
+    "quantity": "Количество",
+    "price": "Цена",
+    "amount": "Сумма",
+    "actions": "Действия"
   },
   "users": {
     "title": "Пользователи",

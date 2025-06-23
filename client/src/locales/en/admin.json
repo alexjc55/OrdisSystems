@@ -305,7 +305,19 @@
     "readyOrders": "Ready Orders",
     "deliveredOrders": "Delivered Orders",
     "cancelledOrders": "Cancelled Orders",
-    "addProduct": "Add Product"
+    "addProduct": "Add Product",
+    "editing": "Editing",
+    "phonePlaceholder": "Phone number",
+    "delivery": "Delivery",
+    "addressPlaceholder": "Enter address",
+    "date": "Date",
+    "time": "Time",
+    "selectTime": "Select time",
+    "product": "Product",
+    "quantity": "Quantity",
+    "price": "Price",
+    "amount": "Amount",
+    "actions": "Actions"
   },
   "users": {
     "title": "Users",

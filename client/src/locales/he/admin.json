@@ -305,7 +305,19 @@
     "readyOrders": "הזמנות מוכנות",
     "deliveredOrders": "הזמנות שנמסרו",
     "cancelledOrders": "הזמנות שבוטלו",
-    "addProduct": "הוסף מוצר"
+    "addProduct": "הוסף מוצר",
+    "editing": "עריכה",
+    "phonePlaceholder": "מספר טלפון",
+    "delivery": "משלוח",
+    "addressPlaceholder": "הכנס כתובת",
+    "date": "תאריך",
+    "time": "זמן",
+    "selectTime": "בחר זמן",
+    "product": "מוצר",
+    "quantity": "כמות",
+    "price": "מחיר",
+    "amount": "סכום",
+    "actions": "פעולות"
   },
   "users": {
     "title": "משתמשים",

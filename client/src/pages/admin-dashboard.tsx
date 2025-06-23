@@ -1120,7 +1120,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
               >
                 <SelectTrigger className="text-sm">
-                  <SelectValue placeholder="Выберите время" />
+                  <SelectValue placeholder={adminT('orders.selectTime')} />
                 </SelectTrigger>
                 <SelectContent>
                   {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
@@ -1138,7 +1138,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
       {/* Order Items */}
       <div>
         <div className="flex justify-between items-center mb-3">
-          <h3 className="font-semibold">Товары в заказе</h3>
+          <h3 className="font-semibold">{adminT('orders.orderItems')}</h3>
           <Button 
             size="sm" 
             variant="outline"
@@ -1153,12 +1153,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-xs">Товар</TableHead>
-                <TableHead className="text-xs w-32">Количество</TableHead>
-                <TableHead className="text-xs w-20">Цена</TableHead>
-                <TableHead className="text-xs w-24">Сумма</TableHead>
+                <TableHead className="text-xs">{adminT('orders.product')}</TableHead>
+                <TableHead className="text-xs w-32">{adminT('orders.quantity')}</TableHead>
+                <TableHead className="text-xs w-20">{adminT('orders.price')}</TableHead>
+                <TableHead className="text-xs w-24">{adminT('orders.amount')}</TableHead>
                 <TableHead className="text-xs w-20">{adminT('orders.discount')}</TableHead>
-                <TableHead className="text-xs w-16">Действия</TableHead>
+                <TableHead className="text-xs w-16">{adminT('orders.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
