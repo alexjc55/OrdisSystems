@@ -1693,11 +1693,11 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
       )}
 
       {/* Item Discount Dialog */}
-      {showDiscountDialog !== null && (
+      {showDiscountDialog !== null && editedOrderItems[showDiscountDialog] && (
         <ItemDiscountDialog
           itemIndex={showDiscountDialog}
           item={editedOrderItems[showDiscountDialog]}
-          currentDiscount={itemDiscounts[showDiscountDialog]}
+          currentDiscount={itemDiscounts[showDiscountDialog] || null}
           onClose={() => setShowDiscountDialog(null)}
           onApply={applyItemDiscount}
           adminT={adminT}
