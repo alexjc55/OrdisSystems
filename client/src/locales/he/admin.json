@@ -317,7 +317,11 @@
     "quantity": "כמות",
     "price": "מחיר",
     "amount": "סכום",
-    "actions": "פעולות"
+    "actions": "פעולות",
+    "orderInformation": "מידע על ההזמנה",
+    "orderNumber": "מס' הזמנה",
+    "createdDate": "תאריך יצירה",
+    "customerInfo": "מידע לקוח"
   },
   "users": {
     "title": "משתמשים",

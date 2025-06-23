@@ -248,7 +248,6 @@ import {
   Calendar,
   MapPin,
   Phone,
-  User,
   Eye,
   EyeOff,
   X,
@@ -440,7 +439,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
           {/* Customer Info */}
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-sm">
-              <User className="h-3 w-3 text-gray-400" />
+              <Users className="h-3 w-3 text-gray-400" />
               <span className="font-medium">
                 {order.user?.firstName && order.user?.lastName 
                   ? `${order.user.firstName} ${order.user.lastName}`
@@ -1019,7 +1018,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
         {/* Customer Contact & Status */}
         <div className="bg-white rounded-lg border p-4">
           <h3 className="font-semibold mb-3 text-gray-800 flex items-center gap-2">
-            <User className="h-4 w-4" />
+            <Users className="h-4 w-4" />
             {adminT('orders.customerInfo')}
           </h3>
           <div className="space-y-3">
@@ -6799,7 +6798,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
               <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <User className="h-5 w-5 text-orange-500" />
+                <Users className="h-5 w-5 text-orange-500" />
                 <h3 className="text-lg font-semibold">{adminT('settings.authPage')}</h3>
               </div>
               {isAuthPageOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}

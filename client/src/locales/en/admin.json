@@ -317,7 +317,11 @@
     "quantity": "Quantity",
     "price": "Price",
     "amount": "Amount",
-    "actions": "Actions"
+    "actions": "Actions",
+    "orderInformation": "Order Information",
+    "orderNumber": "Order #",
+    "createdDate": "Created Date",
+    "customerInfo": "Customer Information"
   },
   "users": {
     "title": "Users",

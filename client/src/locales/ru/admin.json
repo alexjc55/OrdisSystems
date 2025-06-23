@@ -333,7 +333,11 @@
     "quantity": "Количество",
     "price": "Цена",
     "amount": "Сумма",
-    "actions": "Действия"
+    "actions": "Действия",
+    "orderInformation": "Информация о заказе",
+    "orderNumber": "№ заказа",
+    "createdDate": "Дата создания",
+    "customerInfo": "Информация о клиенте"
   },
   "users": {
     "title": "Пользователи",
