@@ -596,8 +596,21 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
               <Eye className="h-3 w-3 mr-1" />
               {adminT('orders.orderDetails')}
             </Button>
-            <div className={`px-2 py-1 rounded text-xs font-medium border text-center min-w-[80px] max-w-[120px] truncate ${getStatusColor(order.status)}`}>
-              {getStatusLabel(order.status) || order.status || 'Unknown'}
+            <div 
+              className={`px-2 py-1 rounded text-xs font-medium border text-center min-w-[80px] max-w-[120px] ${getStatusColor(order.status)}`}
+              style={{ 
+                backgroundColor: order.status === 'pending' ? '#fef3c7' : undefined,
+                color: order.status === 'pending' ? '#92400e' : undefined,
+                borderColor: order.status === 'pending' ? '#fde68a' : undefined,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '28px'
+              }}
+            >
+              <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {getStatusLabel(order.status) || order.status || 'Статус'}
+              </span>
             </div>
           </div>
         </div>
