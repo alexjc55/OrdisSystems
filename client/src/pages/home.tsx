@@ -139,7 +139,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                         return (
                           <div key={index} className="text-base sm:text-lg flex justify-between">
                             <span className="font-bold">{daysText}:</span>
-                            <span className="text-gray-700 font-bold">{group.hours}</span>
+                            <span className="text-gray-700">{group.hours}</span>
                           </div>
                         );
                       })}
@@ -169,13 +169,13 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                 {storeSettings.contactPhone && (
                   <div className="text-base sm:text-lg flex justify-between">
                     <span className="text-gray-700 font-bold">{t('phone')}:</span>
-                    <span className="font-bold">{storeSettings.contactPhone}</span>
+                    <span className="text-gray-700">{storeSettings.contactPhone}</span>
                   </div>
                 )}
                 {storeSettings.contactEmail && (
                   <div className="text-base sm:text-lg flex justify-between">
                     <span className="text-gray-700 font-bold">Email:</span>
-                    <span className="font-bold break-all">{storeSettings.contactEmail}</span>
+                    <span className="text-gray-700 break-all">{storeSettings.contactEmail}</span>
                   </div>
                 )}
               </div>
@@ -199,13 +199,13 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                 {storeSettings.deliveryInfo && (
                   <div>
                     <span className="text-gray-700 text-base font-bold block mb-2">{t('delivery')}:</span>
-                    <span className="text-gray-800 font-bold text-base leading-relaxed">{storeSettings.deliveryInfo}</span>
+                    <span className="text-gray-800 text-base leading-relaxed">{storeSettings.deliveryInfo}</span>
                   </div>
                 )}
                 {storeSettings.paymentInfo && (
                   <div>
                     <span className="text-gray-700 text-base font-bold block mb-2">{t('payment')}:</span>
-                    <span className="text-gray-800 font-bold text-base leading-relaxed">{storeSettings.paymentInfo}</span>
+                    <span className="text-gray-800 text-base leading-relaxed">{storeSettings.paymentInfo}</span>
                   </div>
                 )}
               </div>
