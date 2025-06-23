@@ -290,32 +290,26 @@ export default function Home() {
 
 
 
-          {/* Modern Store Information Cards */}
+          {/* Compact Store Information Cards */}
           {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && storeSettings?.showInfoBlocks !== false && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+            <div className="mb-6">
+              <div className="flex overflow-x-auto gap-3 pb-2 lg:grid lg:grid-cols-3 lg:gap-4 lg:overflow-visible">
               {/* Working Hours */}
               {storeSettings?.workingHours && (
-                <Card className="group relative hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-gradient-to-br from-blue-50 via-white to-blue-50 overflow-hidden hover:-translate-y-2">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="relative p-6">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
-                        <div className="relative p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl group-hover:scale-110 transition-transform duration-500 shadow-lg">
-                          <Clock className="h-6 w-6 text-white" />
-                        </div>
+                <Card className="group relative hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-gradient-to-br from-blue-50 to-white overflow-hidden flex-shrink-0 w-64 lg:w-auto">
+                  <div className="relative p-3 lg:p-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg group-hover:scale-105 transition-transform duration-300">
+                        <Clock className="h-4 w-4 text-white" />
                       </div>
-                      <div>
-                        <h3 className="font-bold text-xl text-gray-800 group-hover:text-blue-600 transition-colors duration-300">{t('workingHours')}</h3>
-                        <p className="text-sm text-gray-500 mt-1">График работы</p>
-                      </div>
+                      <h3 className="font-semibold text-base text-gray-800">{t('workingHours')}</h3>
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       {(() => {
                         try {
                           const workingHours = storeSettings.workingHours;
                           if (!workingHours || typeof workingHours !== 'object') {
-                            return <p className="text-gray-500 text-sm">{t('notSpecified')}</p>;
+                            return <p className="text-gray-500 text-xs">{t('notSpecified')}</p>;
                           }
 
                           const dayNames: Record<string, string> = {
@@ -338,7 +332,7 @@ export default function Home() {
                             .map(day => [day, workingHours[day]]);
 
                           if (validEntries.length === 0) {
-                            return <p className="text-gray-500 text-sm">{t('notSpecified')}</p>;
+                            return <p className="text-gray-500 text-xs">{t('notSpecified')}</p>;
                           }
 
                           // Group consecutive days with same hours
@@ -361,8 +355,8 @@ export default function Home() {
                           }
 
                           return (
-                            <div className="space-y-3">
-                              {groupedHours.map((group, index) => {
+                            <div className="space-y-1">
+                              {groupedHours.slice(0, 3).map((group, index) => {
                                 const daysText = group.days.length === 1 
                                   ? dayNames[group.days[0]]
                                   : group.days.length === 2
@@ -370,9 +364,9 @@ export default function Home() {
                                   : `${dayNames[group.days[0]]} - ${dayNames[group.days[group.days.length - 1]]}`;
                                 
                                 return (
-                                  <div key={index} className="flex justify-between items-center p-3 bg-white/50 rounded-xl border border-blue-100 group-hover:border-blue-200 transition-colors duration-300">
-                                    <span className="font-semibold text-gray-700">{daysText}</span>
-                                    <span className="text-blue-600 font-bold text-sm bg-blue-50 px-3 py-1 rounded-lg">{group.hours}</span>
+                                  <div key={index} className="flex justify-between text-xs">
+                                    <span className="text-gray-600">{daysText}</span>
+                                    <span className="text-blue-600 font-medium">{group.hours}</span>
                                   </div>
                                 );
                               })}
@@ -380,7 +374,7 @@ export default function Home() {
                           );
                         } catch (error) {
                           console.error('Error rendering working hours:', error);
-                          return <p className="text-gray-500 text-sm">{t('loadingError')}</p>;
+                          return <p className="text-gray-500 text-xs">{t('loadingError')}</p>;
                         }
                       })()}
                     </div>
@@ -390,34 +384,27 @@ export default function Home() {
 
               {/* Contact Information */}
               {(storeSettings?.contactPhone || storeSettings?.contactEmail) && (
-                <Card className="group relative hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-gradient-to-br from-green-50 via-white to-emerald-50 overflow-hidden hover:-translate-y-2">
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="relative p-6">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
-                        <div className="relative p-4 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl group-hover:scale-110 transition-transform duration-500 shadow-lg">
-                          <Phone className="h-6 w-6 text-white" />
-                        </div>
+                <Card className="group relative hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-gradient-to-br from-green-50 to-white overflow-hidden">
+                  <div className="relative p-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg group-hover:scale-105 transition-transform duration-300">
+                        <Phone className="h-4 w-4 text-white" />
                       </div>
-                      <div>
-                        <h3 className="font-bold text-xl text-gray-800 group-hover:text-green-600 transition-colors duration-300">{t('contacts')}</h3>
-                        <p className="text-sm text-gray-500 mt-1">Свяжитесь с нами</p>
-                      </div>
+                      <h3 className="font-semibold text-base text-gray-800">{t('contacts')}</h3>
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-1">
                       {storeSettings.contactPhone && (
-                        <div className="flex justify-between items-center p-3 bg-white/50 rounded-xl border border-green-100 group-hover:border-green-200 transition-colors duration-300">
-                          <span className="font-semibold text-gray-700">{t('phone')}</span>
-                          <a href={`tel:${storeSettings.contactPhone}`} className="text-green-600 font-bold text-sm bg-green-50 px-3 py-1 rounded-lg hover:bg-green-100 transition-colors duration-200">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-gray-600">{t('phone')}</span>
+                          <a href={`tel:${storeSettings.contactPhone}`} className="text-green-600 font-medium hover:text-green-700">
                             {storeSettings.contactPhone}
                           </a>
                         </div>
                       )}
                       {storeSettings.contactEmail && (
-                        <div className="flex justify-between items-center p-3 bg-white/50 rounded-xl border border-green-100 group-hover:border-green-200 transition-colors duration-300">
-                          <span className="font-semibold text-gray-700">Email</span>
-                          <a href={`mailto:${storeSettings.contactEmail}`} className="text-green-600 font-bold text-sm bg-green-50 px-3 py-1 rounded-lg hover:bg-green-100 transition-colors duration-200 truncate max-w-32">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-gray-600">Email</span>
+                          <a href={`mailto:${storeSettings.contactEmail}`} className="text-green-600 font-medium hover:text-green-700 truncate max-w-24">
                             {storeSettings.contactEmail}
                           </a>
                         </div>
@@ -429,38 +416,30 @@ export default function Home() {
 
               {/* Delivery & Payment */}
               {(storeSettings?.deliveryInfo || storeSettings?.paymentInfo) && (
-                <Card className="group relative hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-gradient-to-br from-purple-50 via-white to-violet-50 overflow-hidden hover:-translate-y-2">
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-violet-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="relative p-6">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-violet-600 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
-                        <div className="relative p-4 bg-gradient-to-br from-purple-500 to-violet-600 rounded-2xl group-hover:scale-110 transition-transform duration-500 shadow-lg">
-                          <CreditCard className="h-6 w-6 text-white" />
-                        </div>
+                <Card className="group relative hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-gradient-to-br from-purple-50 to-white overflow-hidden">
+                  <div className="relative p-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-gradient-to-br from-purple-500 to-violet-600 rounded-lg group-hover:scale-105 transition-transform duration-300">
+                        <CreditCard className="h-4 w-4 text-white" />
                       </div>
-                      <div>
-                        <h3 className="font-bold text-xl text-gray-800 group-hover:text-purple-600 transition-colors duration-300">{t('delivery')} и {t('payment')}</h3>
-                        <p className="text-sm text-gray-500 mt-1">Удобные способы</p>
-                      </div>
+                      <h3 className="font-semibold text-base text-gray-800">{t('delivery')} и {t('payment')}</h3>
                     </div>
-                    <div className="space-y-4">
+                    <div className="space-y-2">
                       {storeSettings.deliveryInfo && (
-                        <div className="p-4 bg-white/50 rounded-xl border border-purple-100 group-hover:border-purple-200 transition-colors duration-300">
-                          <h4 className="font-semibold text-gray-700 mb-2">{t('delivery')}</h4>
-                          <p className="text-gray-600 text-sm leading-relaxed">{storeSettings.deliveryInfo}</p>
+                        <div>
+                          <p className="text-gray-600 text-xs leading-relaxed">{storeSettings.deliveryInfo.substring(0, 80)}...</p>
                         </div>
                       )}
                       {storeSettings.paymentInfo && (
-                        <div className="p-4 bg-white/50 rounded-xl border border-purple-100 group-hover:border-purple-200 transition-colors duration-300">
-                          <h4 className="font-semibold text-gray-700 mb-2">{t('payment')}</h4>
-                          <p className="text-gray-600 text-sm leading-relaxed">{storeSettings.paymentInfo}</p>
+                        <div>
+                          <p className="text-gray-600 text-xs leading-relaxed">{storeSettings.paymentInfo.substring(0, 80)}...</p>
                         </div>
                       )}
                     </div>
                   </div>
                 </Card>
               )}
+              </div>
             </div>
           )}
 
