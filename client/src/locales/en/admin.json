@@ -107,6 +107,7 @@
       "per100g": "per 100g",
       "per100ml": "per 100ml"
     },
+    "per": "per",
     "items": "items",
     "productsWithDiscount": "Products with Discount",
     "noProducts": "No Products",
@@ -480,6 +481,7 @@
     "edit": "Edit",
     "save": "Save",
     "cancel": "Cancel",
+    "add": "Add",
     "close": "Close",
     "confirm": "Confirm",
     "loading": "Loading...",
