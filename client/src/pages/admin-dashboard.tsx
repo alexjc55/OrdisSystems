@@ -3571,7 +3571,6 @@ export default function AdminDashboard() {
                           {/* Pending Column */}
                           <div 
                             className="bg-yellow-50 rounded-lg p-4 min-w-80"
-                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => {
                               e.preventDefault();
@@ -3607,7 +3606,6 @@ export default function AdminDashboard() {
                           {/* Confirmed Column */}
                           <div 
                             className="bg-blue-50 rounded-lg p-4 min-w-80"
-                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => {
                               e.preventDefault();
@@ -3643,7 +3641,6 @@ export default function AdminDashboard() {
                           {/* Preparing Column */}
                           <div 
                             className="bg-orange-50 rounded-lg p-4 min-w-80"
-                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => {
                               e.preventDefault();
@@ -3679,7 +3676,6 @@ export default function AdminDashboard() {
                           {/* Ready Column */}
                           <div 
                             className="bg-green-50 rounded-lg p-4 min-w-80"
-                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => {
                               e.preventDefault();
@@ -3716,7 +3712,6 @@ export default function AdminDashboard() {
                           {(ordersStatusFilter === "delivered" || ordersStatusFilter === "all") && (
                             <div 
                               className="bg-gray-50 rounded-lg p-4 min-w-80"
-                              style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                               onDragOver={(e) => e.preventDefault()}
                               onDrop={(e) => {
                                 e.preventDefault();
@@ -3754,7 +3749,6 @@ export default function AdminDashboard() {
                           {(ordersStatusFilter === "cancelled" || ordersStatusFilter === "all") && (
                             <div 
                               className="bg-red-50 rounded-lg p-4 min-w-80"
-                              style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                               onDragOver={(e) => e.preventDefault()}
                               onDrop={(e) => {
                                 e.preventDefault();
