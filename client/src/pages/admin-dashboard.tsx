@@ -582,30 +582,62 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
               <Eye className="h-3 w-3 mr-1" />
               {adminT('orders.orderDetails')}
             </Button>
-            <Select
-              value={order.status}
-              onValueChange={(newStatus) => {
-                if (newStatus === 'cancelled') {
-                  onCancelOrder(order.id);
-                } else {
-                  onStatusChange({ orderId: order.id, status: newStatus });
-                }
-              }}
-            >
-              <SelectTrigger className="w-24 sm:w-28 md:w-32 h-7 text-xs px-2 min-w-0">
-                <div className="truncate text-left">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`h-7 text-xs px-2 ${getStatusColor(order.status)} border-2 min-w-[80px] max-w-[120px] truncate`}
+                >
                   {getStatusLabel(order.status)}
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pending">{getStatusLabel('pending')}</SelectItem>
-                <SelectItem value="confirmed">{getStatusLabel('confirmed')}</SelectItem>
-                <SelectItem value="preparing">{getStatusLabel('preparing')}</SelectItem>
-                <SelectItem value="ready">{getStatusLabel('ready')}</SelectItem>
-                <SelectItem value="delivered">{getStatusLabel('delivered')}</SelectItem>
-                <SelectItem value="cancelled">{getStatusLabel('cancelled')}</SelectItem>
-              </SelectContent>
-            </Select>
+                  <ChevronDown className="h-3 w-3 ml-1 flex-shrink-0" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[120px]">
+                <DropdownMenuItem 
+                  onClick={() => onStatusChange({ orderId: order.id, status: 'pending' })}
+                  className="cursor-pointer"
+                >
+                  <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor('pending').split(' ')[0]}`}></div>
+                  {getStatusLabel('pending')}
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => onStatusChange({ orderId: order.id, status: 'confirmed' })}
+                  className="cursor-pointer"
+                >
+                  <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor('confirmed').split(' ')[0]}`}></div>
+                  {getStatusLabel('confirmed')}
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => onStatusChange({ orderId: order.id, status: 'preparing' })}
+                  className="cursor-pointer"
+                >
+                  <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor('preparing').split(' ')[0]}`}></div>
+                  {getStatusLabel('preparing')}
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => onStatusChange({ orderId: order.id, status: 'ready' })}
+                  className="cursor-pointer"
+                >
+                  <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor('ready').split(' ')[0]}`}></div>
+                  {getStatusLabel('ready')}
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => onStatusChange({ orderId: order.id, status: 'delivered' })}
+                  className="cursor-pointer"
+                >
+                  <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor('delivered').split(' ')[0]}`}></div>
+                  {getStatusLabel('delivered')}
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => onCancelOrder(order.id)}
+                  className="cursor-pointer text-red-600 hover:!text-red-700 hover:!bg-red-50"
+                >
+                  <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor('cancelled').split(' ')[0]}`}></div>
+                  {getStatusLabel('cancelled')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </CardContent>
