@@ -1030,24 +1030,24 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   return (
     <div className="space-y-4 admin-input-focus">
       {/* Compact Order Header with Key Info */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-100">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2 sm:p-4 border border-blue-100">
+        <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+            <div className="bg-white rounded-lg px-2 py-1 sm:px-3 sm:py-2 shadow-sm">
               <div className="text-xs text-gray-500">{adminT('orders.orderNumber')}</div>
-              <div className="font-bold text-lg">#{order.id}</div>
+              <div className="font-bold text-sm sm:text-lg">#{order.id}</div>
             </div>
-            <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
+            <div className="bg-white rounded-lg px-2 py-1 sm:px-3 sm:py-2 shadow-sm">
               <div className="text-xs text-gray-500">{adminT('orders.orderTotal')}</div>
-              <div className="font-bold text-lg text-green-600">{formatCurrency(order.totalAmount)}</div>
+              <div className="font-bold text-sm sm:text-lg text-green-600">{formatCurrency(order.totalAmount)}</div>
             </div>
-            <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
+            <div className="bg-white rounded-lg px-2 py-1 sm:px-3 sm:py-2 shadow-sm max-w-[120px] sm:max-w-none">
               <div className="text-xs text-gray-500">{adminT('orders.customer')}</div>
-              <div className="font-medium">{order.user?.firstName && order.user?.lastName 
+              <div className="font-medium text-xs sm:text-sm truncate">{order.user?.firstName && order.user?.lastName 
                 ? `${order.user.firstName} ${order.user.lastName}`
                 : order.user?.email || "—"}</div>
             </div>
-            <div className="bg-white rounded-lg px-3 py-2 shadow-sm min-w-[160px]">
+            <div className="bg-white rounded-lg px-2 py-1 sm:px-3 sm:py-2 shadow-sm min-w-[120px] sm:min-w-[160px]">
               <div className="text-xs text-gray-500">{adminT('orders.orderStatus')}</div>
               <Select
                 value={editedOrder.status}
@@ -1360,7 +1360,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       min="0.1"
                       value={item.quantity}
                       onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
-                      className="h-8 text-xs"
+                      className="h-8 text-xs w-20"
                     />
                     <span className="text-xs text-gray-500">
                       {getUnitDisplay(item.product?.unit, item.quantity)}
