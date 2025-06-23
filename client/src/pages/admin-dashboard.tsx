@@ -164,12 +164,12 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter className={isRTL ? "flex-row-reverse" : ""}>
-                <AlertDialogCancel>{adminT('common.cancel')}</AlertDialogCancel>
+                <AlertDialogCancel>{adminT('common.cancel', 'Отмена')}</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => onDelete(category.id)}
                   className="bg-red-600 hover:bg-red-700"
                 >
-                  {adminT('common.delete')}
+                  {adminT('common.delete', 'Удалить')}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -983,7 +983,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             <div><strong>{adminT('orders.subtotal')}:</strong> {formatCurrency(parseFloat(order.totalAmount) - parseFloat(order.deliveryFee || "0"))}</div>
             <div><strong>{adminT('orders.deliveryFee')}:</strong> {
               parseFloat(order.deliveryFee || "0") === 0 ? 
-                <span className="text-green-600 font-medium">{adminT('common.free')}</span> : 
+                <span className="text-green-600 font-medium">{adminT('common.free', 'Бесплатно')}</span> : 
                 formatCurrency(order.deliveryFee || "0")
             }</div>
             <div><strong>{adminT('orders.orderTotal')}:</strong> {formatCurrency(order.totalAmount)}</div>
@@ -1229,7 +1229,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               <span>{adminT('orders.deliveryFee')}:</span>
               <span>
                 {parseFloat(order.deliveryFee || "0") === 0 ? (
-                  <span className="text-green-600 font-medium">{adminT('common.free')}</span>
+                  <span className="text-green-600 font-medium">{adminT('common.free', 'Бесплатно')}</span>
                 ) : (
                   formatCurrency(order.deliveryFee || "0")
                 )}
@@ -1368,14 +1368,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
       {/* Actions */}
       <div className="flex justify-end gap-3 pt-4 border-t">
         <Button variant="outline" onClick={onClose}>
-          {adminT('common.cancel')}
+          {adminT('common.cancel', 'Отмена')}
         </Button>
         <Button 
           onClick={handleSave}
           disabled={updateOrderMutation.isPending}
           variant="success"
         >
-          {updateOrderMutation.isPending ? adminT('common.saving') : adminT('common.saveChanges')}
+          {updateOrderMutation.isPending ? adminT('common.saving', 'Сохранение...') : adminT('common.saveChanges', 'Сохранить изменения')}
         </Button>
       </div>
     </div>
