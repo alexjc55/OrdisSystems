@@ -9,7 +9,7 @@
  * - Сохранять все существующие UI паттерны и структуру
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -60,6 +60,64 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+
+// Custom hook for mouse drag scrolling
+function useMouseDragScroll() {
+  const ref = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const handleMouseDown = (e: MouseEvent) => {
+      isDragging.current = true;
+      startX.current = e.pageX - element.offsetLeft;
+      scrollLeft.current = element.scrollLeft;
+      element.style.cursor = 'grabbing';
+      element.style.userSelect = 'none';
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+      e.preventDefault();
+      const x = e.pageX - element.offsetLeft;
+      const walk = (x - startX.current) * 2; // Scroll speed multiplier
+      element.scrollLeft = scrollLeft.current - walk;
+    };
+
+    const handleMouseUp = () => {
+      isDragging.current = false;
+      element.style.cursor = 'grab';
+      element.style.userSelect = '';
+    };
+
+    const handleMouseLeave = () => {
+      isDragging.current = false;
+      element.style.cursor = 'grab';
+      element.style.userSelect = '';
+    };
+
+    element.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    element.addEventListener('mouseleave', handleMouseLeave);
+
+    // Set initial cursor
+    element.style.cursor = 'grab';
+
+    return () => {
+      element.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      element.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, []);
+
+  return ref;
+}
 
 // Define updateCategoryMutation outside components for proper scope
 let updateCategoryMutation: any;
@@ -1697,6 +1755,9 @@ export default function AdminDashboard() {
   const [isUserFormOpen, setIsUserFormOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [usersRoleFilter, setUsersRoleFilter] = useState("all");
+
+  // Mouse drag scroll for kanban board
+  const kanbanScrollRef = useMouseDragScroll();
 
   // Drag and drop sensors
   const sensors = useSensors(
@@ -3539,6 +3600,10 @@ export default function AdminDashboard() {
                           WebkitOverflowScrolling: 'touch'
                         }}
                         ref={(el) => {
+                          // Apply both refs
+                          if (kanbanScrollRef) {
+                            kanbanScrollRef.current = el;
+                          }
                           if (el && ordersViewMode === "kanban") {
                             setTimeout(() => {
                               if (el) {
