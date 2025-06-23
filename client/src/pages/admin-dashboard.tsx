@@ -1113,7 +1113,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             {/* Customer Information and Delivery Details - All in one row */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">Информация о клиенте и доставке</label>
-              <div className="grid grid-cols-4 gap-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
                 <div className="flex gap-1">
                   <Input
                     value={editedOrder.customerPhone}
