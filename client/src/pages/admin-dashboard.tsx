@@ -810,27 +810,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
   // Helper functions for order items editing
   const getUnitDisplay = (unit: string, quantity: number) => {
-    const qty = Math.round(quantity * 10) / 10; // Round to 1 decimal place
     switch (unit) {
-      case 'piece': return `${qty} ${adminT('products.units.piece')}`;
-      case 'kg': return `${qty} ${adminT('products.units.kg')}`;
-      case '100g': 
-        if (qty >= 1000) {
-          return `${(qty / 1000).toFixed(1)} ${adminT('products.units.kg')}`;
-        }
-        return `${qty} ${adminT('products.units.g')}`;
-      case '100ml': return `${qty} ${adminT('products.units.ml')}`;
-      default: return `${qty}`;
-    }
-  };
-
-  const getUnitPrice = (product: any) => {
-    switch (product.unit) {
-      case 'piece': return `${formatCurrency(product.price)} ${adminT('products.dialog.unitPiece')}`;
-      case 'kg': return `${formatCurrency(product.price)} ${adminT('products.dialog.unitKg')}`;
-      case '100g': return `${formatCurrency(product.price)} ${adminT('products.dialog.unit100g')}`;
-      case '100ml': return `${formatCurrency(product.price)} ${adminT('products.dialog.unit100ml')}`;
-      default: return formatCurrency(product.price);
+      case 'piece': return adminT('products.units.piece');
+      case 'kg': return adminT('products.units.kg');
+      case '100g': return adminT('products.units.g');
+      case '100ml': return adminT('products.units.ml');
+      default: return '';
     }
   };
 
@@ -843,6 +828,16 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
       case 'delivered': return adminT('orders.status.delivered');
       case 'cancelled': return adminT('orders.status.cancelled');
       default: return status;
+    }
+  };
+
+  const getUnitPrice = (product: any) => {
+    switch (product.unit) {
+      case 'piece': return `${formatCurrency(product.price)} ${adminT('products.dialog.unitPiece')}`;
+      case 'kg': return `${formatCurrency(product.price)} ${adminT('products.dialog.unitKg')}`;
+      case '100g': return `${formatCurrency(product.price)} ${adminT('products.dialog.unit100g')}`;
+      case '100ml': return `${formatCurrency(product.price)} ${adminT('products.dialog.unit100ml')}`;
+      default: return formatCurrency(product.price);
     }
   };
 
@@ -1043,33 +1038,35 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     <div className="space-y-4 admin-input-focus">
       {/* Compact Order Header with Key Info */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-100">
-        {/* Mobile Layout - Stack vertically */}
+        {/* Mobile Layout - New arrangement */}
         <div className="block sm:hidden space-y-3">
-          <div className="flex justify-between items-center">
+          {/* First row: Order number and Customer name */}
+          <div className="flex justify-between items-center gap-2">
             <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
               <div className="text-xs text-gray-500">{adminT('orders.orderNumber')}</div>
               <div className="font-bold text-lg">#{order.id}</div>
             </div>
+            <div className="bg-white rounded-lg px-3 py-2 shadow-sm flex-1 min-w-0">
+              <div className="text-xs text-gray-500">{adminT('orders.customer')}</div>
+              <div className="font-medium text-sm truncate">{order.user?.firstName && order.user?.lastName 
+                ? `${order.user.firstName} ${order.user.lastName}`
+                : order.user?.email || "—"}</div>
+            </div>
+          </div>
+          {/* Second row: Total amount and Status */}
+          <div className="flex justify-between items-center gap-2">
             <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
               <div className="text-xs text-gray-500">{adminT('orders.orderTotal')}</div>
               <div className="font-bold text-lg text-green-600">{formatCurrency(order.totalAmount)}</div>
             </div>
-          </div>
-          <div className="flex justify-between items-center gap-2">
             <div className="bg-white rounded-lg px-3 py-2 shadow-sm flex-1">
-              <div className="text-xs text-gray-500">{adminT('orders.customer')}</div>
-              <div className="font-medium text-sm">{order.user?.firstName && order.user?.lastName 
-                ? `${order.user.firstName} ${order.user.lastName}`
-                : order.user?.email || "—"}</div>
-            </div>
-            <div className="bg-white rounded-lg px-3 py-2 shadow-sm min-w-[140px]">
-              <div className="text-xs text-gray-500">{adminT('orders.orderStatus')}</div>
+              <div className="text-xs text-gray-500 mb-1">{adminT('orders.orderStatus')}</div>
               <Select
                 value={editedOrder.status}
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
               >
                 <SelectTrigger className={`text-sm h-8 border w-full ${getStatusColor(editedOrder.status)}`}>
-                  <SelectValue placeholder="Выберите статус">
+                  <SelectValue>
                     <span className="text-sm font-medium">
                       {getStatusDisplayName(editedOrder.status)}
                     </span>
@@ -1136,7 +1133,11 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
               >
                 <SelectTrigger className={`text-sm h-8 border w-full ${getStatusColor(editedOrder.status)}`}>
-                  <SelectValue />
+                  <SelectValue>
+                    <span className="text-sm font-medium">
+                      {getStatusDisplayName(editedOrder.status)}
+                    </span>
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent className="z-[10000]">
                   <SelectItem value="pending" className="bg-yellow-50 hover:bg-yellow-100">
@@ -1466,23 +1467,21 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
         </div>
 
         {/* Mobile Card View */}
-        <div className="md:hidden space-y-4">
+        <div className="md:hidden space-y-3">
           {editedOrderItems.map((item: any, index: number) => (
-            <div key={index} className="bg-white border rounded-lg p-4 space-y-3">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="font-medium text-sm">{item.product?.name}</div>
-                  {item.product?.description && (
-                    <div className="text-xs text-gray-500 mt-1">{item.product.description}</div>
-                  )}
-                  <div className="text-xs text-gray-600 mt-1">{getUnitPrice(item.product)}</div>
+            <div key={index} className="bg-gray-50 border rounded-lg p-3">
+              {/* Product Header */}
+              <div className="flex justify-between items-start mb-2">
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-base text-gray-900 truncate">{item.product?.name}</div>
+                  <div className="text-sm text-gray-500 mt-0.5">{getUnitPrice(item.product)}</div>
                 </div>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button
                       size="sm"
-                      variant="outline"
-                      className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
+                      variant="ghost"
+                      className="h-7 w-7 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 ml-2"
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>
@@ -1507,49 +1506,47 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 </AlertDialog>
               </div>
               
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <div className="flex-1">
-                    <label className="text-xs text-gray-600 mb-1 block">{adminT('orders.quantity')}</label>
-                    <div className="flex items-center gap-1">
-                      <Input
-                        type="number"
-                        step="0.1"
-                        min="0.1"
-                        value={item.quantity}
-                        onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
-                        className="h-8 text-xs w-16"
-                      />
-                      <span className="text-xs text-gray-500 truncate">
-                        {getUnitDisplay(item.product?.unit, item.quantity)}
-                      </span>
-                    </div>
+              {/* Compact Controls Row */}
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 flex-1">
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      step="0.1"
+                      min="0.1"
+                      value={item.quantity}
+                      onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
+                      className="h-7 text-sm w-16 text-center"
+                    />
+                    <span className="text-sm text-gray-600 min-w-[40px] flex-shrink-0">
+                      {getUnitDisplay(item.product?.unit, item.quantity)}
+                    </span>
                   </div>
-                  <div className="text-right">
-                    <label className="text-xs text-gray-600 mb-1 block">{adminT('orders.amount')}</label>
-                    <div className="text-lg font-bold text-green-600">{formatCurrency(item.totalPrice)}</div>
-                  </div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <div className="text-lg font-bold text-green-600">{formatCurrency(item.totalPrice)}</div>
                 </div>
               </div>
               
-              <div>
-                <label className="text-xs text-gray-600 mb-1 block">{adminT('orders.discount')}</label>
-                <div className="flex items-center gap-2">
+              {/* Discount section - compact */}
+              <div className="mt-2 pt-2 border-t border-gray-200">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-600">{adminT('orders.discount')}</span>
                   {itemDiscounts[index] ? (
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => setShowDiscountDialog(index)}
-                      className="h-8 text-xs text-green-600 hover:text-green-800 border-green-200"
+                      className="h-6 px-2 text-xs text-green-600 hover:text-green-800 border-green-200"
                     >
                       {itemDiscounts[index].type === 'percentage' ? `${itemDiscounts[index].value}%` : formatCurrency(itemDiscounts[index].value)}
                     </Button>
                   ) : (
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant="ghost"
                       onClick={() => setShowDiscountDialog(index)}
-                      className="h-8 text-xs"
+                      className="h-6 px-2 text-xs text-gray-500 hover:text-gray-700"
                     >
                       <Plus className="h-3 w-3 mr-1" />
                       {adminT('orders.discount')}
@@ -1562,7 +1559,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
         </div>
 
         {/* Order Total Summary - Important section with visual accent */}
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 p-4 rounded-lg shadow-sm">
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 p-4 rounded-lg shadow-sm mt-6">
           <h4 className="font-medium mb-3 text-purple-800 flex items-center gap-2">
             <Receipt className="h-4 w-4 text-purple-600" />
             {adminT('orders.orderSummary')}
