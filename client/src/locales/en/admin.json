@@ -457,7 +457,15 @@
     "all": "All",
     "active": "Active",
     "inactive": "Inactive",
-    "error": "Error"
+    "error": "Error",
+    "created": "Created",
+    "actions": "Actions",
+    "free": "Free",
+    "table": "Table",
+    "kanban": "Kanban",
+    "add": "Add",
+    "noResults": "No results found",
+    "tryDifferentSearch": "Try different search criteria"
   },
   "permissions": {
     "title": "Permissions",

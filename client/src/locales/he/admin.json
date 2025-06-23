@@ -457,7 +457,15 @@
     "all": "הכל",
     "active": "פעיל",
     "inactive": "לא פעיל",
-    "error": "שגיאה"
+    "error": "שגיאה",
+    "created": "נוצר",
+    "actions": "פעולות",
+    "free": "חינם",
+    "table": "טבלה",
+    "kanban": "קאנבן",
+    "add": "הוסף",
+    "noResults": "לא נמצאו תוצאות",
+    "tryDifferentSearch": "נסה קריטריונים שונים לחיפוש"
   },
   "permissions": {
     "title": "הרשאות",
