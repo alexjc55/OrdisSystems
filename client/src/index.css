@@ -5,6 +5,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Force yellow status colors */
+@layer utilities {
+  .bg-yellow-100 {
+    background-color: #fef3c7 !important;
+  }
+  .text-yellow-800 {
+    color: #92400e !important;
+  }
+  .border-yellow-200 {
+    border-color: #fde68a !important;
+  }
+}
+
 /* Custom focus styles for admin form inputs */
 @layer components {
   .admin-input-focus input:focus,
