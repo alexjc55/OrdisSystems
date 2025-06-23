@@ -3311,7 +3311,7 @@ export default function AdminDashboard() {
                     <SelectTrigger className="w-40 text-xs h-8">
                       <SelectValue placeholder={adminT('orders.filterOrders', 'Фильтр заказов')} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="min-w-[160px] max-w-[200px] bg-white border border-gray-200 shadow-lg z-50">
                       <SelectItem value="active">{adminT('orders.activeOrders', 'Активные заказы')}</SelectItem>
                       <SelectItem value="delivered">{adminT('orders.deliveredOrders', 'Доставленные заказы')}</SelectItem>
                       <SelectItem value="cancelled">{adminT('orders.cancelledOrders', 'Отмененные заказы')}</SelectItem>

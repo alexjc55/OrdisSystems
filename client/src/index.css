@@ -151,6 +151,19 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
+  /* Fix select dropdown layout issues */
+  [data-radix-select-content] {
+    position: fixed !important;
+    z-index: 9999 !important;
+    max-width: 200px !important;
+    overflow: hidden !important;
+  }
+  
+  [data-radix-select-viewport] {
+    max-width: 200px !important;
+    overflow: hidden !important;
+  }
+  
   /* Force kanban columns to display in RTL order */
   .rtl .flex-row-reverse {
     flex-direction: row-reverse !important;
