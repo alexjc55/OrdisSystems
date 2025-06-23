@@ -103,9 +103,9 @@ export function useAdminTranslation() {
   // Enhanced translation function with fallback
   const enhancedT = (key: string, fallback?: string) => {
     const translation = t(key);
-    // If translation returns the key itself, use fallback or return empty string
+    // If translation returns the key itself, use fallback or return key
     if (translation === key) {
-      return fallback || '';
+      return fallback || key;
     }
     return translation;
   };
