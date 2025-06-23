@@ -1080,10 +1080,10 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             {adminT('orders.delivery')}
           </h3>
           <div className="space-y-2">
-            {/* Customer Information */}
+            {/* Customer Information and Delivery Details */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Информация о клиенте</label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <label className="block text-xs font-medium text-gray-700 mb-1">Информация о клиенте и доставке</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
                 <div className="flex gap-2">
                   <Input
                     value={editedOrder.customerPhone}
@@ -1131,20 +1131,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   placeholder={adminT('orders.addressPlaceholder')}
                   className="text-sm h-8"
                 />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.date')}</label>
                 <Input
                   type="date"
                   value={editedOrder.deliveryDate}
                   onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
                   className="text-sm h-8"
                 />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.time')}</label>
                 <Select
                   value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
                   onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
@@ -1490,6 +1482,13 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               )}
             </div>
             
+            {order.paymentMethod && (
+              <div className="flex justify-between text-xs text-gray-500 pt-2 border-t">
+                <span>{adminT('orders.paymentMethod')}:</span>
+                <span>{order.paymentMethod}</span>
+              </div>
+            )}
+            
             <div className="border-t pt-2 flex justify-between font-semibold">
               <span>{adminT('orders.finalTotal')}:</span>
               <span>{formatCurrency(calculateFinalTotal())}</span>
@@ -1572,8 +1571,8 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
     
     // Set default quantity based on unit and pricing structure
     if (product.pricePerKg && product.unit !== 'piece') {
-      // If price is per kg, default to 100g (0.1 kg)
-      setQuantity(0.1);
+      // If price is per kg, default to 100g
+      setQuantity(100);
     } else if (product.unit === 'piece' || product.pricePerPiece) {
       // If it's per piece, default to 1
       setQuantity(1);
