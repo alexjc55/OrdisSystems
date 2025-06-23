@@ -596,29 +596,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
               <Eye className="h-3 w-3 mr-1" />
               {adminT('orders.orderDetails')}
             </Button>
-            <div 
-              className="px-2 py-1 rounded text-xs font-medium border text-center min-w-[80px] max-w-[120px]"
-              style={(() => {
-                const colors = {
-                  'pending': { bg: '#fef3c7', text: '#92400e', border: '#fde68a' },
-                  'confirmed': { bg: '#dbeafe', text: '#1e40af', border: '#bfdbfe' },
-                  'preparing': { bg: '#fed7aa', text: '#c2410c', border: '#fdba74' },
-                  'ready': { bg: '#dcfce7', text: '#166534', border: '#bbf7d0' },
-                  'delivered': { bg: '#f3f4f6', text: '#374151', border: '#d1d5db' },
-                  'cancelled': { bg: '#fee2e2', text: '#dc2626', border: '#fecaca' }
-                };
-                const statusColors = colors[order.status as keyof typeof colors] || colors['delivered'];
-                return {
-                  backgroundColor: statusColors.bg,
-                  color: statusColors.text,
-                  borderColor: statusColors.border,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  minHeight: '28px'
-                };
-              })()}
-            >
+            <div className={`px-2 py-1 rounded text-xs font-medium border text-center min-w-[80px] max-w-[120px] truncate ${getStatusColor(order.status)}`}>
               <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {getStatusLabel(order.status) || order.status || 'Статус'}
               </span>
