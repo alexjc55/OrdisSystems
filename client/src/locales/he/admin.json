@@ -321,7 +321,15 @@
     "orderInformation": "מידע על ההזמנה",
     "orderNumber": "מס' הזמנה",
     "createdDate": "תאריך יצירה",
-    "customerInfo": "מידע לקוח"
+    "customerInfo": "מידע לקוח",
+    "itemDiscount": "הנחה על פריט",
+    "baseCost": "עלות בסיס",
+    "discountType": "סוג הנחה",
+    "percentage": "אחוז",
+    "discountSize": "גודל הנחה",
+    "discountReason": "סיבת הנחה",
+    "discountReasonPlaceholder": "הכנס סיבת הנחה...",
+    "removeDiscount": "הסר הנחה"
   },
   "users": {
     "title": "משתמשים",
