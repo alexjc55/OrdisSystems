@@ -53,7 +53,7 @@
   }
   
   .rtl .kanban-scroll-container .flex {
-    flex-direction: inherit;
+    flex-direction: inherit !important;
   }
   
   /* RTL text alignment for all content */
