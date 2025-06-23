@@ -9,7 +9,7 @@
  * - Сохранять все существующие UI паттерны и структуру
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -377,12 +377,21 @@ function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { 
       onDragStart={(e) => {
         e.dataTransfer.setData("orderId", order.id.toString());
         e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.dropEffect = "move";
+        // Add visual feedback
+        (e.target as HTMLElement).style.opacity = "0.5";
       }}
       onDragEnd={(e) => {
         e.preventDefault();
+        // Restore visual state
+        (e.target as HTMLElement).style.opacity = "1";
       }}
-      className="cursor-move touch-manipulation"
-      style={{ touchAction: 'manipulation' }}
+      className="kanban-card cursor-move touch-manipulation transition-opacity duration-75"
+      style={{ 
+        touchAction: 'manipulation',
+        transform: 'translateZ(0)', // Force hardware acceleration
+        backfaceVisibility: 'hidden' // Improve rendering performance
+      }}
     >
       <OrderCard order={order} onEdit={onEdit} onStatusChange={onStatusChange} onCancelOrder={onCancelOrder} />
     </div>
@@ -402,8 +411,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
     }
   };
 
-  const { t: adminT, i18n } = useAdminTranslation();
-  const isRTL = i18n.language === 'he';
+  const { t: adminT } = useAdminTranslation();
   
   const getStatusLabel = (status: string) => {
     switch (status) {
@@ -568,7 +576,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 onEdit(order);
               }}
             >
-              <Eye className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+              <Eye className="h-3 w-3 mr-1" />
               {adminT('orders.orderDetails')}
             </Button>
             <Select
@@ -1679,6 +1687,71 @@ export default function AdminDashboard() {
   const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
   const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<any>(null);
+  
+  // Kanban scroll container ref
+  const kanbanRef = useRef<HTMLDivElement>(null);
+  
+  // Enhanced kanban scrolling with mouse support
+  useEffect(() => {
+    const container = kanbanRef.current;
+    if (!container || ordersViewMode !== "kanban") return;
+
+    let isMouseDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    const handleWheel = (e: WheelEvent) => {
+      // Only handle horizontal scrolling with Shift+wheel
+      if (e.shiftKey && e.deltaY !== 0) {
+        e.preventDefault();
+        container.scrollLeft += e.deltaY;
+      }
+    };
+
+    const handleMouseDown = (e: MouseEvent) => {
+      if (e.target && (e.target as Element).closest('.kanban-card')) return;
+      isMouseDown = true;
+      startX = e.pageX - container.offsetLeft;
+      scrollLeft = container.scrollLeft;
+      container.style.cursor = 'grabbing';
+      container.style.userSelect = 'none';
+    };
+
+    const handleMouseLeave = () => {
+      isMouseDown = false;
+      container.style.cursor = 'grab';
+      container.style.userSelect = 'auto';
+    };
+
+    const handleMouseUp = () => {
+      isMouseDown = false;
+      container.style.cursor = 'grab';
+      container.style.userSelect = 'auto';
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isMouseDown) return;
+      e.preventDefault();
+      const x = e.pageX - container.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      container.scrollLeft = scrollLeft - walk;
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    container.addEventListener('mousedown', handleMouseDown);
+    container.addEventListener('mouseleave', handleMouseLeave);
+    container.addEventListener('mouseup', handleMouseUp);
+    container.addEventListener('mousemove', handleMouseMove);
+    container.style.cursor = 'grab';
+
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+      container.removeEventListener('mousedown', handleMouseDown);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+      container.removeEventListener('mouseup', handleMouseUp);
+      container.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [ordersViewMode]);
   const [ordersStatusFilter, setOrdersStatusFilter] = useState("active"); // active, delivered, cancelled, all
   
   // Cancellation dialog state
@@ -2744,7 +2817,7 @@ export default function AdminDashboard() {
 
                 {/* Products Table */}
                 {filteredProducts.length > 0 ? (
-                  <div className="border rounded-lg bg-white overflow-hidden">
+                  <div className="border rounded-lg bg-white overflow-hidden products" dir="ltr">
                     <div className={`overflow-x-auto table-container ${isRTL ? 'rtl-scroll-container' : ''}`}>
                       <Table>
                         <TableHeader>
@@ -3199,7 +3272,7 @@ export default function AdminDashboard() {
           {hasPermission("canManageOrders") && (
             <TabsContent value="orders" className={`space-y-4 sm:space-y-6 ${isRTL ? 'rtl' : 'ltr'}`}>
               {/* Header Section */}
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4" dir="ltr">
                 <div className={isRTL ? 'text-right' : 'text-left'}>
                   <h1 className={`text-2xl font-bold flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                     <ShoppingCart className="h-6 w-6" />
@@ -3216,18 +3289,18 @@ export default function AdminDashboard() {
                     variant={ordersViewMode === "table" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setOrdersViewMode("table")}
-                    className="text-xs px-3 py-1 h-8"
+                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "table" ? 'bg-orange-500 text-white hover:bg-orange-600' : 'hover:bg-gray-200'}`}
                   >
-                    <Grid3X3 className="h-3 w-3 mr-1" />
+                    <Grid3X3 className={`h-3 w-3 mr-1 ${ordersViewMode === "table" ? 'text-white' : ''}`} />
                     {adminT('common.table', 'Таблица')}
                   </Button>
                   <Button
                     variant={ordersViewMode === "kanban" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setOrdersViewMode("kanban")}
-                    className="text-xs px-3 py-1 h-8"
+                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "kanban" ? 'bg-orange-500 text-white hover:bg-orange-600' : 'hover:bg-gray-200'}`}
                   >
-                    <Columns className="h-3 w-3 mr-1" />
+                    <Columns className={`h-3 w-3 mr-1 ${ordersViewMode === "kanban" ? 'text-white' : ''}`} />
                     {adminT('common.kanban', 'Канбан')}
                   </Button>
                 </div>
@@ -3238,7 +3311,7 @@ export default function AdminDashboard() {
                     <SelectTrigger className="w-40 text-xs h-8">
                       <SelectValue placeholder={adminT('orders.filterOrders', 'Фильтр заказов')} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="min-w-[160px] max-w-[200px] bg-white border border-gray-200 shadow-lg z-50">
                       <SelectItem value="active">{adminT('orders.activeOrders', 'Активные заказы')}</SelectItem>
                       <SelectItem value="delivered">{adminT('orders.deliveredOrders', 'Доставленные заказы')}</SelectItem>
                       <SelectItem value="cancelled">{adminT('orders.cancelledOrders', 'Отмененные заказы')}</SelectItem>
@@ -3269,24 +3342,48 @@ export default function AdminDashboard() {
                   <>
                     {/* Table View */}
                     {ordersViewMode === "table" && (
-                      <div className={`border rounded-lg bg-white ${isRTL ? 'rtl' : 'ltr'}`}>
+                      <div className={`border rounded-lg bg-white orders ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                         <div className={`w-full table-container ${isRTL ? 'rtl' : 'ltr'}`}>
                           <Table className={`${isRTL ? 'rtl' : ''}`}>
                             <TableHeader>
-                              <TableRow>
-                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>№</TableHead>
-                                <TableHead className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.customer', 'Клиент')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm hidden sm:table-cell w-24 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.statusHeader')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-20 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.total', 'Сумма')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm hidden md:table-cell w-32 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.date', 'Дата и время')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.actions', 'Действия')}</TableHead>
+                              <TableRow dir={isRTL ? 'rtl' : 'ltr'}>
+                                <TableHead 
+                                  className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                >№</TableHead>
+                                <TableHead 
+                                  className={`text-xs sm:text-sm font-semibold min-w-[180px] ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                >{adminT('orders.customer', 'Клиент')}</TableHead>
+                                <TableHead 
+                                  className={`text-xs sm:text-sm hidden sm:table-cell w-32 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                >{adminT('orders.statusHeader')}</TableHead>
+                                <TableHead 
+                                  className={`text-xs sm:text-sm w-28 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                >{adminT('orders.orderTotal')}</TableHead>
+                                <TableHead 
+                                  className={`text-xs sm:text-sm hidden md:table-cell w-36 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                >{adminT('orders.orderDate')}</TableHead>
+                                <TableHead 
+                                  className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                >{adminT('common.actions')}</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {ordersResponse.data.map((order: any) => (
-                                <TableRow key={order.id} className="hover:bg-gray-50">
-                                  <TableCell className={`font-bold text-xs sm:text-sm text-orange-600 ${isRTL ? 'text-right' : 'text-left'}`}>#{order.id}</TableCell>
-                                  <TableCell className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                                <TableRow key={order.id} className="hover:bg-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
+                                  <TableCell 
+                                    className={`font-bold text-xs sm:text-sm text-orange-600 ${isRTL ? 'text-right' : 'text-center'}`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  >#{order.id}</TableCell>
+                                  <TableCell 
+                                    className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'} px-3`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'left'}}
+                                  >
                                     <div className="space-y-1">
                                       <div className="font-medium">
                                         {order.user?.firstName && order.user?.lastName 
@@ -3308,7 +3405,7 @@ export default function AdminDashboard() {
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <Phone className="h-4 w-4 mr-2" />
-{adminT('orders.call', 'Позвонить')}
+                                              {adminT('orders.call', 'Позвонить')}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem 
                                               onClick={() => {
@@ -3318,14 +3415,17 @@ export default function AdminDashboard() {
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <MessageCircle className="h-4 w-4 mr-2" />
-                                              WhatsApp
+                                              {adminT('orders.whatsapp', 'WhatsApp')}
                                             </DropdownMenuItem>
                                           </DropdownMenuContent>
                                         </DropdownMenu>
                                       )}
                                     </div>
                                   </TableCell>
-                                  <TableCell className={`hidden sm:table-cell ${isRTL ? 'text-right' : 'text-left'}`}>
+                                  <TableCell 
+                                    className={`hidden sm:table-cell ${isRTL ? 'text-right' : 'text-center'}`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  >
                                     <Select
                                       value={order.status}
                                       onValueChange={(newStatus) => {
@@ -3336,20 +3436,23 @@ export default function AdminDashboard() {
                                         }
                                       }}
                                     >
-                                      <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} ${isRTL ? 'text-right' : 'text-left'}`}>
+                                      <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} ${isRTL ? 'text-right' : 'text-center'}`}>
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                                        <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">Ожидает</SelectItem>
-                                        <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">Подтвержден</SelectItem>
-                                        <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">Готовится</SelectItem>
-                                        <SelectItem value="ready" className="text-green-800 hover:bg-green-50">Готов</SelectItem>
-                                        <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">Доставлен</SelectItem>
-                                        <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">Отменен</SelectItem>
+                                        <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">{adminT('orders.status.pending')}</SelectItem>
+                                        <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">{adminT('orders.status.confirmed')}</SelectItem>
+                                        <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">{adminT('orders.status.preparing')}</SelectItem>
+                                        <SelectItem value="ready" className="text-green-800 hover:bg-green-50">{adminT('orders.status.ready')}</SelectItem>
+                                        <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">{adminT('orders.status.delivered')}</SelectItem>
+                                        <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">{adminT('orders.status.cancelled')}</SelectItem>
                                       </SelectContent>
                                     </Select>
                                   </TableCell>
-                                  <TableCell className={`font-medium text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                                  <TableCell 
+                                    className={`font-medium text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-center'}`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  >
                                     {(() => {
                                       // Extract discount information from order notes
                                       const extractDiscounts = (notes: string) => {
@@ -3406,10 +3509,10 @@ export default function AdminDashboard() {
                                         return (
                                           <div className="space-y-1">
                                             <div className="text-xs text-gray-600">
-                                              Товары: {formatCurrency(subtotal)}
+                                              {adminT('orders.subtotal')}: {formatCurrency(subtotal)}
                                             </div>
                                             <div className="text-xs text-gray-600">
-                                              Доставка: {formatCurrency(deliveryFee)}
+                                              {adminT('orders.deliveryFee')}: {formatCurrency(deliveryFee)}
                                             </div>
                                             <div className="font-medium">
                                               {formatCurrency(order.totalAmount)}
@@ -3420,10 +3523,10 @@ export default function AdminDashboard() {
                                         return (
                                           <div className="space-y-1">
                                             <div className="text-xs text-gray-600">
-                                              Товары: {formatCurrency(subtotal)}
+                                              {adminT('orders.subtotal')}: {formatCurrency(subtotal)}
                                             </div>
                                             <div className="text-xs text-green-600">
-                                              Доставка: Бесплатно
+                                              {adminT('orders.deliveryFee')}: {adminT('common.free')}
                                             </div>
                                             <div className="font-medium">
                                               {formatCurrency(order.totalAmount)}
@@ -3435,29 +3538,35 @@ export default function AdminDashboard() {
                                       return formatCurrency(order.totalAmount);
                                     })()}
                                   </TableCell>
-                                  <TableCell className={`text-xs sm:text-sm hidden md:table-cell ${isRTL ? 'text-right' : 'text-left'}`}>
-                                    <div className="space-y-1">
-                                      <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                                  <TableCell 
+                                    className={`text-xs sm:text-sm hidden md:table-cell ${isRTL ? 'text-right' : 'text-center'}`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  >
+                                    <div className="space-y-1" dir="ltr">
+                                      <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse justify-start' : 'justify-center'}`}>
                                         <Calendar className="h-3 w-3 text-gray-400" />
-                                        <span className="font-medium">Создан:</span>
+                                        <span className="font-medium">{adminT('common.created')}:</span>
                                       </div>
-                                      <div className="text-xs text-gray-600">
+                                      <div className={`text-xs text-gray-600 ${isRTL ? 'text-right' : 'text-center'}`}>
                                         {new Date(order.createdAt).toLocaleDateString('ru-RU')} {new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
                                       </div>
                                       {order.deliveryDate && (
                                         <>
-                                          <div className={`flex items-center gap-1 mt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                                          <div className={`flex items-center gap-1 mt-2 ${isRTL ? 'flex-row-reverse justify-start' : 'justify-center'}`}>
                                             <Clock className="h-3 w-3 text-blue-400" />
-                                            <span className="font-medium text-blue-600">Доставка:</span>
+                                            <span className="font-medium text-blue-600">{adminT('orders.deliveryDate')}:</span>
                                           </div>
-                                          <div className="text-xs text-blue-600">
+                                          <div className={`text-xs text-blue-600 ${isRTL ? 'text-right' : 'text-center'}`}>
                                             {new Date(order.deliveryDate).toLocaleDateString('ru-RU')} {order.deliveryTime || ''}
                                           </div>
                                         </>
                                       )}
                                     </div>
                                   </TableCell>
-                                  <TableCell className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                                  <TableCell 
+                                    className={`${isRTL ? 'text-right' : 'text-center'}`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  >
                                     <Button 
                                       variant="outline" 
                                       size="sm" 
@@ -3479,7 +3588,7 @@ export default function AdminDashboard() {
                         {/* Pagination for table view */}
                         <div className={`flex items-center justify-between px-4 py-3 border-t ${isRTL ? 'flex-row-reverse' : ''}`}>
                           <div className={`flex items-center gap-2 text-sm text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>
-                            <span>Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}</span>
+                            <span>{adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of')} {ordersResponse.total}</span>
                           </div>
                           <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <Button
@@ -3487,7 +3596,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
-                              title="Первая страница"
+                              title={adminT('common.firstPage')}
                               className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟨⟨
@@ -3497,13 +3606,13 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
-                              title="Предыдущая страница"
+                              title={adminT('common.previousPage')}
                               className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
                             <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
-                              {ordersResponse.page} из {ordersResponse.totalPages}
+                              {ordersResponse.page} {adminT('common.of')} {ordersResponse.totalPages}
                             </span>
                             <Button
                               variant="outline"
@@ -3533,20 +3642,12 @@ export default function AdminDashboard() {
                     {/* Kanban View */}
                     {ordersViewMode === "kanban" && (
                       <div 
+                        ref={kanbanRef}
                         className="overflow-x-auto kanban-scroll-container"
                         style={{ 
                           touchAction: 'pan-x pan-y',
                           overflowX: 'auto',
                           WebkitOverflowScrolling: 'touch'
-                        }}
-                        ref={(el) => {
-                          if (el && ordersViewMode === "kanban") {
-                            setTimeout(() => {
-                              if (el) {
-                                el.scrollLeft = 0;
-                              }
-                            }, 100);
-                          }
                         }}
                       >
                         {/* Kanban columns container */}
@@ -3586,7 +3687,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-yellow-800 flex items-center gap-2">
                               <Clock className="h-4 w-4" />
-                              Ожидает ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
+                              {adminT('orders.status.pending', 'Ожидает')} ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'pending').map((order: any) => (
@@ -3621,7 +3722,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-blue-800 flex items-center gap-2">
                               <ShoppingCart className="h-4 w-4" />
-                              Подтвержден ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
+                              {adminT('orders.status.confirmed', 'Подтвержден')} ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'confirmed').map((order: any) => (
@@ -3656,7 +3757,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-orange-800 flex items-center gap-2">
                               <Utensils className="h-4 w-4" />
-                              Готовится ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
+                              {adminT('orders.status.preparing', 'Готовится')} ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'preparing').map((order: any) => (
@@ -3691,7 +3792,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-green-800 flex items-center gap-2">
                               <Package className="h-4 w-4" />
-                              Готов ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
+                              {adminT('orders.status.ready', 'Готов')} ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'ready').map((order: any) => (
@@ -3727,7 +3828,7 @@ export default function AdminDashboard() {
                             >
                               <h3 className="font-semibold text-sm mb-3 text-gray-800 flex items-center gap-2">
                                 <Truck className="h-4 w-4" />
-                                Доставлен ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
+                                {adminT('orders.status.delivered', 'Доставлен')} ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
                               </h3>
                               <div className="space-y-3 min-h-24">
                                 {ordersResponse.data.filter((order: any) => order.status === 'delivered').map((order: any) => (
@@ -3761,7 +3862,7 @@ export default function AdminDashboard() {
                             >
                               <h3 className="font-semibold text-sm mb-3 text-red-800 flex items-center gap-2">
                                 <X className="h-4 w-4" />
-                                Отменен ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
+                                {adminT('orders.status.cancelled', 'Отменен')} ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
                               </h3>
                               <div className="space-y-3 min-h-24">
                                 {ordersResponse.data.filter((order: any) => order.status === 'cancelled').map((order: any) => (
