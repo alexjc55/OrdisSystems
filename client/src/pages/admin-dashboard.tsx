@@ -34,10 +34,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { formatCurrency, getUnitLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
+import { format } from "date-fns";
+import { ru, enUS, he } from "date-fns/locale";
 import { insertStoreSettingsSchema, type StoreSettings, type CategoryWithCount } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
@@ -245,7 +249,7 @@ import {
   ChevronRight,
   Grid3X3,
   Columns,
-  Calendar,
+  Calendar as CalendarIcon,
   MapPin,
   Phone,
   Eye,
