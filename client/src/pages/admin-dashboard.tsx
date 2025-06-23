@@ -9,7 +9,7 @@
  * - Сохранять все существующие UI паттерны и структуру
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -1678,6 +1678,9 @@ export default function AdminDashboard() {
   const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
   const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<any>(null);
+  
+  // Kanban scroll container ref
+  const kanbanRef = useRef<HTMLDivElement>(null);
   const [ordersStatusFilter, setOrdersStatusFilter] = useState("active"); // active, delivered, cancelled, all
   
   // Cancellation dialog state
@@ -3540,6 +3543,7 @@ export default function AdminDashboard() {
                         }}
                         ref={(el) => {
                           if (el && ordersViewMode === "kanban") {
+                            // Reset scroll position
                             setTimeout(() => {
                               if (el) {
                                 el.scrollLeft = 0;
