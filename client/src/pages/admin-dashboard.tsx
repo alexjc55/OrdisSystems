@@ -233,7 +233,7 @@ import {
   Save,
   Search,
   Filter,
-
+  Receipt,
   ChevronUp,
   ChevronDown,
   Store,
@@ -986,44 +986,45 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   };
 
   return (
-    <div className="space-y-6">
-      {/* Order Information */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <h3 className="font-semibold mb-2">Информация о заказе</h3>
-          <div className="space-y-2 text-sm">
-            <div><strong>№ заказа:</strong> #{order.id}</div>
-            <div><strong>Дата создания:</strong> {new Date(order.createdAt).toLocaleString('ru-RU')}</div>
-            <div><strong>{adminT('orders.subtotal')}:</strong> {formatCurrency(parseFloat(order.totalAmount) - parseFloat(order.deliveryFee || "0"))}</div>
-            <div><strong>{adminT('orders.deliveryFee')}:</strong> {
-              parseFloat(order.deliveryFee || "0") === 0 ? 
-                <span className="text-green-600 font-medium">{adminT('common.free')}</span> : 
-                formatCurrency(order.deliveryFee || "0")
-            }</div>
-            <div><strong>{adminT('orders.orderTotal')}:</strong> {formatCurrency(order.totalAmount)}</div>
-            <div><strong>{adminT('orders.customer')}:</strong> {order.user?.firstName && order.user?.lastName 
-              ? `${order.user.firstName} ${order.user.lastName}`
-              : order.user?.email || "—"}</div>
-            {order.deliveryDate && (
-              <div><strong>{adminT('orders.deliveryDate')}:</strong> {new Date(order.deliveryDate).toLocaleDateString('ru-RU')}</div>
-            )}
-            {order.deliveryTime && (
-              <div><strong>{adminT('orders.deliveryTime')}:</strong> {formatDeliveryTimeRange(order.deliveryTime)}</div>
-            )}
-            {order.paymentMethod && (
-              <div><strong>{adminT('orders.paymentMethod')}:</strong> {order.paymentMethod}</div>
-            )}
-            {order.deliveryAddress && (
-              <div><strong>{adminT('orders.deliveryAddress')}:</strong> {order.deliveryAddress}</div>
-            )}
+    <div className="space-y-4">
+      {/* Compact Order Header with Key Info */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-100">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
+              <div className="text-xs text-gray-500">{adminT('orders.orderNumber')}</div>
+              <div className="font-bold text-lg">#{order.id}</div>
+            </div>
+            <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
+              <div className="text-xs text-gray-500">{adminT('orders.orderTotal')}</div>
+              <div className="font-bold text-lg text-green-600">{formatCurrency(order.totalAmount)}</div>
+            </div>
+            <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
+              <div className="text-xs text-gray-500">{adminT('orders.customer')}</div>
+              <div className="font-medium">{order.user?.firstName && order.user?.lastName 
+                ? `${order.user.firstName} ${order.user.lastName}`
+                : order.user?.email || "—"}</div>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-xs text-gray-500">{adminT('orders.createdDate')}</div>
+            <div className="text-sm">{new Date(order.createdAt).toLocaleString('ru-RU')}</div>
           </div>
         </div>
+      </div>
 
-        <div>
-          <h3 className="font-semibold mb-2">{adminT('orders.editing')}</h3>
+      {/* Compact Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        
+        {/* Customer Contact & Status */}
+        <div className="bg-white rounded-lg border p-4">
+          <h3 className="font-semibold mb-3 text-gray-800 flex items-center gap-2">
+            <User className="h-4 w-4" />
+            {adminT('orders.customerInfo')}
+          </h3>
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium mb-1">{adminT('orders.customerPhone')}</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">{adminT('orders.customerPhone')}</label>
               <div className="flex gap-2">
                 <Input
                   value={editedOrder.customerPhone}
@@ -1037,17 +1038,17 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       <Button
                         size="sm"
                         variant="outline"
-                        className="h-9 px-3 text-blue-600 hover:text-blue-800 border-blue-200 hover:bg-blue-50"
+                        className="h-9 px-2 text-blue-600 hover:text-blue-800 border-blue-200 hover:bg-blue-50"
                       >
                         <Phone className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-40">
+                    <DropdownMenuContent align="end" className="w-36">
                       <DropdownMenuItem 
                         onClick={() => window.location.href = `tel:${editedOrder.customerPhone}`}
-                        className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
+                        className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
                       >
-                        <Phone className="h-4 w-4 mr-2" />
+                        <Phone className="h-3 w-3 mr-2" />
                         {adminT('orders.call')}
                       </DropdownMenuItem>
                       <DropdownMenuItem 
@@ -1055,9 +1056,9 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                           const cleanPhone = editedOrder.customerPhone.replace(/[^\d+]/g, '');
                           window.open(`https://wa.me/${cleanPhone}`, '_blank');
                         }}
-                        className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
+                        className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
                       >
-                        <MessageCircle className="h-4 w-4 mr-2" />
+                        <MessageCircle className="h-3 w-3 mr-2" />
                         WhatsApp
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -1067,12 +1068,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">{adminT('orders.orderStatus')}</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">{adminT('orders.orderStatus')}</label>
               <Select
                 value={editedOrder.status}
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
               >
-                <SelectTrigger className="text-sm">
+                <SelectTrigger className="text-sm h-9">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1087,50 +1088,97 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Delivery Information */}
-      <div>
-        <h3 className="font-semibold mb-3">{adminT('orders.delivery')}</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">{adminT('orders.deliveryAddress')}</label>
-            <Input
-              value={editedOrder.deliveryAddress}
-              onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryAddress: e.target.value }))}
-              placeholder={adminT('orders.addressPlaceholder')}
-              className="text-sm"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
+        {/* Delivery Information */}
+        <div className="bg-white rounded-lg border p-4">
+          <h3 className="font-semibold mb-3 text-gray-800 flex items-center gap-2">
+            <Truck className="h-4 w-4" />
+            {adminT('orders.delivery')}
+          </h3>
+          <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium mb-1">{adminT('orders.date')}</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">{adminT('orders.deliveryAddress')}</label>
               <Input
-                type="date"
-                value={editedOrder.deliveryDate}
-                onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
-                className="text-sm"
+                value={editedOrder.deliveryAddress}
+                onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryAddress: e.target.value }))}
+                placeholder={adminT('orders.addressPlaceholder')}
+                className="text-sm h-9"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">{adminT('orders.time')}</label>
-              <Select
-                value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
-                onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
-              >
-                <SelectTrigger className="text-sm">
-                  <SelectValue placeholder={adminT('orders.selectTime')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
-                    <SelectItem key={slot.value} value={slot.label}>
-                      {slot.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">{adminT('orders.date')}</label>
+                <Input
+                  type="date"
+                  value={editedOrder.deliveryDate}
+                  onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
+                  className="text-sm h-9"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">{adminT('orders.time')}</label>
+                <Select
+                  value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
+                  onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
+                >
+                  <SelectTrigger className="text-sm h-9">
+                    <SelectValue placeholder={adminT('orders.selectTime')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
+                      <SelectItem key={slot.value} value={slot.label}>
+                        {slot.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+          </div>
+        </div>
+
+        {/* Order Summary */}
+        <div className="bg-white rounded-lg border p-4">
+          <h3 className="font-semibold mb-3 text-gray-800 flex items-center gap-2">
+            <Receipt className="h-4 w-4" />
+            {adminT('orders.orderSummary')}
+          </h3>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-600">{adminT('orders.subtotal')}:</span>
+              <span>{formatCurrency(parseFloat(order.totalAmount) - parseFloat(order.deliveryFee || "0"))}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">{adminT('orders.deliveryFee')}:</span>
+              <span>{
+                parseFloat(order.deliveryFee || "0") === 0 ? 
+                  <span className="text-green-600 font-medium">{adminT('common.free')}</span> : 
+                  formatCurrency(order.deliveryFee || "0")
+              }</span>
+            </div>
+            <hr className="my-2" />
+            <div className="flex justify-between font-semibold">
+              <span>{adminT('orders.orderTotal')}:</span>
+              <span className="text-green-600">{formatCurrency(order.totalAmount)}</span>
+            </div>
+            {order.deliveryDate && (
+              <div className="flex justify-between text-xs text-gray-500 pt-2">
+                <span>{adminT('orders.deliveryDate')}:</span>
+                <span>{new Date(order.deliveryDate).toLocaleDateString('ru-RU')}</span>
+              </div>
+            )}
+            {order.deliveryTime && (
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>{adminT('orders.deliveryTime')}:</span>
+                <span>{formatDeliveryTimeRange(order.deliveryTime)}</span>
+              </div>
+            )}
+            {order.paymentMethod && (
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>{adminT('orders.paymentMethod')}:</span>
+                <span>{order.paymentMethod}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
