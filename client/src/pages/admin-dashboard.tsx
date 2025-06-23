@@ -2817,7 +2817,7 @@ export default function AdminDashboard() {
 
                 {/* Products Table */}
                 {filteredProducts.length > 0 ? (
-                  <div className="border rounded-lg bg-white overflow-hidden" dir="ltr">
+                  <div className="border rounded-lg bg-white overflow-hidden products" dir="ltr">
                     <div className={`overflow-x-auto table-container ${isRTL ? 'rtl-scroll-container' : ''}`}>
                       <Table>
                         <TableHeader>
@@ -3342,7 +3342,7 @@ export default function AdminDashboard() {
                   <>
                     {/* Table View */}
                     {ordersViewMode === "table" && (
-                      <div className={`border rounded-lg bg-white ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                      <div className={`border rounded-lg bg-white orders ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                         <div className={`w-full table-container ${isRTL ? 'rtl' : 'ltr'}`}>
                           <Table className={`${isRTL ? 'rtl' : ''}`}>
                             <TableHeader>
