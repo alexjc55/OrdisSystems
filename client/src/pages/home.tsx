@@ -292,20 +292,25 @@ export default function Home() {
 
           {/* Modern Store Information Cards */}
           {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && storeSettings?.showInfoBlocks !== false && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-              {/* Left Column: Working Hours and Contacts */}
-              <div className="space-y-6">
-                {/* Working Hours */}
-                {storeSettings?.workingHours && (
-                  <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
-                    <div className="p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full group-hover:scale-110 transition-transform duration-300">
-                          <Clock className="h-5 w-5 text-white" />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+              {/* Working Hours */}
+              {storeSettings?.workingHours && (
+                <Card className="group relative hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-gradient-to-br from-blue-50 via-white to-blue-50 overflow-hidden hover:-translate-y-2">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="relative p-6">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
+                        <div className="relative p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl group-hover:scale-110 transition-transform duration-500 shadow-lg">
+                          <Clock className="h-6 w-6 text-white" />
                         </div>
-                        <span className="font-semibold text-lg text-gray-800">{t('workingHours')}</span>
                       </div>
-                      <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
+                      <div>
+                        <h3 className="font-bold text-xl text-gray-800 group-hover:text-blue-600 transition-colors duration-300">{t('workingHours')}</h3>
+                        <p className="text-sm text-gray-500 mt-1">График работы</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
                       {(() => {
                         try {
                           const workingHours = storeSettings.workingHours;
@@ -356,7 +361,7 @@ export default function Home() {
                           }
 
                           return (
-                            <div className="space-y-2">
+                            <div className="space-y-3">
                               {groupedHours.map((group, index) => {
                                 const daysText = group.days.length === 1 
                                   ? dayNames[group.days[0]]
@@ -365,9 +370,9 @@ export default function Home() {
                                   : `${dayNames[group.days[0]]} - ${dayNames[group.days[group.days.length - 1]]}`;
                                 
                                 return (
-                                  <div key={index} className="text-base sm:text-lg flex justify-between">
-                                    <span className="font-bold">{daysText}:</span>
-                                    <span className="text-gray-700 font-bold">{group.hours}</span>
+                                  <div key={index} className="flex justify-between items-center p-3 bg-white/50 rounded-xl border border-blue-100 group-hover:border-blue-200 transition-colors duration-300">
+                                    <span className="font-semibold text-gray-700">{daysText}</span>
+                                    <span className="text-blue-600 font-bold text-sm bg-blue-50 px-3 py-1 rounded-lg">{group.hours}</span>
                                   </div>
                                 );
                               })}
@@ -378,68 +383,83 @@ export default function Home() {
                           return <p className="text-gray-500 text-sm">{t('loadingError')}</p>;
                         }
                       })()}
-                      </div>
                     </div>
-                  </Card>
-                )}
+                  </div>
+                </Card>
+              )}
 
-                {/* Contact Information */}
-                {(storeSettings?.contactPhone || storeSettings?.contactEmail) && (
-                  <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
-                    <div className="p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-full group-hover:scale-110 transition-transform duration-300">
-                          <Phone className="h-5 w-5 text-white" />
+              {/* Contact Information */}
+              {(storeSettings?.contactPhone || storeSettings?.contactEmail) && (
+                <Card className="group relative hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-gradient-to-br from-green-50 via-white to-emerald-50 overflow-hidden hover:-translate-y-2">
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="relative p-6">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
+                        <div className="relative p-4 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl group-hover:scale-110 transition-transform duration-500 shadow-lg">
+                          <Phone className="h-6 w-6 text-white" />
                         </div>
-                        <span className="font-semibold text-lg text-gray-800">{t('contacts')}</span>
                       </div>
-                      <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
-                        {storeSettings.contactPhone && (
-                          <div className="text-base sm:text-lg flex justify-between">
-                            <span className="text-gray-700 font-bold">{t('phone')}:</span>
-                            <span className="font-bold">{storeSettings.contactPhone}</span>
-                          </div>
-                        )}
-                        {storeSettings.contactEmail && (
-                          <div className="text-base sm:text-lg flex justify-between">
-                            <span className="text-gray-700 font-bold">Email:</span>
-                            <span className="font-bold break-all">{storeSettings.contactEmail}</span>
-                          </div>
-                        )}
+                      <div>
+                        <h3 className="font-bold text-xl text-gray-800 group-hover:text-green-600 transition-colors duration-300">{t('contacts')}</h3>
+                        <p className="text-sm text-gray-500 mt-1">Свяжитесь с нами</p>
                       </div>
                     </div>
-                  </Card>
-                )}
-              </div>
+                    <div className="space-y-3">
+                      {storeSettings.contactPhone && (
+                        <div className="flex justify-between items-center p-3 bg-white/50 rounded-xl border border-green-100 group-hover:border-green-200 transition-colors duration-300">
+                          <span className="font-semibold text-gray-700">{t('phone')}</span>
+                          <a href={`tel:${storeSettings.contactPhone}`} className="text-green-600 font-bold text-sm bg-green-50 px-3 py-1 rounded-lg hover:bg-green-100 transition-colors duration-200">
+                            {storeSettings.contactPhone}
+                          </a>
+                        </div>
+                      )}
+                      {storeSettings.contactEmail && (
+                        <div className="flex justify-between items-center p-3 bg-white/50 rounded-xl border border-green-100 group-hover:border-green-200 transition-colors duration-300">
+                          <span className="font-semibold text-gray-700">Email</span>
+                          <a href={`mailto:${storeSettings.contactEmail}`} className="text-green-600 font-bold text-sm bg-green-50 px-3 py-1 rounded-lg hover:bg-green-100 transition-colors duration-200 truncate max-w-32">
+                            {storeSettings.contactEmail}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              )}
 
-              {/* Right Column: Delivery & Payment */}
+              {/* Delivery & Payment */}
               {(storeSettings?.deliveryInfo || storeSettings?.paymentInfo) && (
-                <div className="flex">
-                  <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden flex-1 flex flex-col">
-                    <div className="p-6 flex-1 flex flex-col">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full group-hover:scale-110 transition-transform duration-300">
-                          <CreditCard className="h-5 w-5 text-white" />
+                <Card className="group relative hover:shadow-2xl transition-all duration-500 border-0 shadow-lg bg-gradient-to-br from-purple-50 via-white to-violet-50 overflow-hidden hover:-translate-y-2">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-violet-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="relative p-6">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-violet-600 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
+                        <div className="relative p-4 bg-gradient-to-br from-purple-500 to-violet-600 rounded-2xl group-hover:scale-110 transition-transform duration-500 shadow-lg">
+                          <CreditCard className="h-6 w-6 text-white" />
                         </div>
-                        <span className="font-semibold text-lg text-gray-800">Оплата и доставка</span>
                       </div>
-                      <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
-                        {storeSettings.deliveryInfo && (
-                          <div>
-                            <span className="text-gray-700 text-base font-bold block mb-2">{t('delivery')}:</span>
-                            <span className="text-gray-800 font-bold text-base leading-relaxed">{storeSettings.deliveryInfo}</span>
-                          </div>
-                        )}
-                        {storeSettings.paymentInfo && (
-                          <div>
-                            <span className="text-gray-700 text-base font-bold block mb-2">{t('payment')}:</span>
-                            <span className="text-gray-800 font-bold text-base leading-relaxed">{storeSettings.paymentInfo}</span>
-                          </div>
-                        )}
+                      <div>
+                        <h3 className="font-bold text-xl text-gray-800 group-hover:text-purple-600 transition-colors duration-300">{t('delivery')} и {t('payment')}</h3>
+                        <p className="text-sm text-gray-500 mt-1">Удобные способы</p>
                       </div>
                     </div>
-                  </Card>
-                </div>
+                    <div className="space-y-4">
+                      {storeSettings.deliveryInfo && (
+                        <div className="p-4 bg-white/50 rounded-xl border border-purple-100 group-hover:border-purple-200 transition-colors duration-300">
+                          <h4 className="font-semibold text-gray-700 mb-2">{t('delivery')}</h4>
+                          <p className="text-gray-600 text-sm leading-relaxed">{storeSettings.deliveryInfo}</p>
+                        </div>
+                      )}
+                      {storeSettings.paymentInfo && (
+                        <div className="p-4 bg-white/50 rounded-xl border border-purple-100 group-hover:border-purple-200 transition-colors duration-300">
+                          <h4 className="font-semibold text-gray-700 mb-2">{t('payment')}</h4>
+                          <p className="text-gray-600 text-sm leading-relaxed">{storeSettings.paymentInfo}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Card>
               )}
             </div>
           )}
