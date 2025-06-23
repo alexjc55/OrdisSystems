@@ -3552,7 +3552,7 @@ export default function AdminDashboard() {
                         {/* Pagination for table view */}
                         <div className={`flex items-center justify-between px-4 py-3 border-t ${isRTL ? 'flex-row-reverse' : ''}`}>
                           <div className={`flex items-center gap-2 text-sm text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>
-                            <span>Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}</span>
+                            <span>{adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of')} {ordersResponse.total}</span>
                           </div>
                           <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <Button
@@ -3560,7 +3560,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
-                              title="Первая страница"
+                              title={adminT('common.firstPage')}
                               className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟨⟨
@@ -3570,13 +3570,13 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
-                              title="Предыдущая страница"
+                              title={adminT('common.previousPage')}
                               className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
                             <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
-                              {ordersResponse.page} из {ordersResponse.totalPages}
+                              {ordersResponse.page} {adminT('common.of')} {ordersResponse.totalPages}
                             </span>
                             <Button
                               variant="outline"
