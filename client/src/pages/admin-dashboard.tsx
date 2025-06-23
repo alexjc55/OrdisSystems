@@ -3347,19 +3347,43 @@ export default function AdminDashboard() {
                           <Table className={`${isRTL ? 'rtl' : ''}`}>
                             <TableHeader>
                               <TableRow dir={isRTL ? 'rtl' : 'ltr'}>
-                                <TableHead className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}>№</TableHead>
-                                <TableHead className={`text-xs sm:text-sm font-semibold min-w-[180px] ${isRTL ? 'text-right' : 'text-center'}`}>{adminT('orders.customer', 'Клиент')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm hidden sm:table-cell w-32 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}>{adminT('orders.statusHeader')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-28 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}>{adminT('orders.orderTotal')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm hidden md:table-cell w-36 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}>{adminT('orders.orderDate')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}>{adminT('common.actions')}</TableHead>
+                                <TableHead 
+                                  className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                >№</TableHead>
+                                <TableHead 
+                                  className={`text-xs sm:text-sm font-semibold min-w-[180px] ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                >{adminT('orders.customer', 'Клиент')}</TableHead>
+                                <TableHead 
+                                  className={`text-xs sm:text-sm hidden sm:table-cell w-32 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                >{adminT('orders.statusHeader')}</TableHead>
+                                <TableHead 
+                                  className={`text-xs sm:text-sm w-28 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                >{adminT('orders.orderTotal')}</TableHead>
+                                <TableHead 
+                                  className={`text-xs sm:text-sm hidden md:table-cell w-36 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                >{adminT('orders.orderDate')}</TableHead>
+                                <TableHead 
+                                  className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                >{adminT('common.actions')}</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {ordersResponse.data.map((order: any) => (
                                 <TableRow key={order.id} className="hover:bg-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
-                                  <TableCell className={`font-bold text-xs sm:text-sm text-orange-600 ${isRTL ? 'text-right' : 'text-center'}`}>#{order.id}</TableCell>
-                                  <TableCell className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'} px-3`}>
+                                  <TableCell 
+                                    className={`font-bold text-xs sm:text-sm text-orange-600 ${isRTL ? 'text-right' : 'text-center'}`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  >#{order.id}</TableCell>
+                                  <TableCell 
+                                    className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'} px-3`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'left'}}
+                                  >
                                     <div className="space-y-1">
                                       <div className="font-medium">
                                         {order.user?.firstName && order.user?.lastName 
@@ -3398,7 +3422,10 @@ export default function AdminDashboard() {
                                       )}
                                     </div>
                                   </TableCell>
-                                  <TableCell className={`hidden sm:table-cell ${isRTL ? 'text-right' : 'text-center'}`}>
+                                  <TableCell 
+                                    className={`hidden sm:table-cell ${isRTL ? 'text-right' : 'text-center'}`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  >
                                     <Select
                                       value={order.status}
                                       onValueChange={(newStatus) => {
@@ -3422,7 +3449,10 @@ export default function AdminDashboard() {
                                       </SelectContent>
                                     </Select>
                                   </TableCell>
-                                  <TableCell className={`font-medium text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-center'}`}>
+                                  <TableCell 
+                                    className={`font-medium text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-center'}`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  >
                                     {(() => {
                                       // Extract discount information from order notes
                                       const extractDiscounts = (notes: string) => {
@@ -3508,7 +3538,10 @@ export default function AdminDashboard() {
                                       return formatCurrency(order.totalAmount);
                                     })()}
                                   </TableCell>
-                                  <TableCell className={`text-xs sm:text-sm hidden md:table-cell ${isRTL ? 'text-right' : 'text-center'}`}>
+                                  <TableCell 
+                                    className={`text-xs sm:text-sm hidden md:table-cell ${isRTL ? 'text-right' : 'text-center'}`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  >
                                     <div className="space-y-1">
                                       <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse justify-start' : 'justify-center'}`}>
                                         <Calendar className="h-3 w-3 text-gray-400" />
@@ -3530,7 +3563,10 @@ export default function AdminDashboard() {
                                       )}
                                     </div>
                                   </TableCell>
-                                  <TableCell className={`${isRTL ? 'text-right' : 'text-center'}`}>
+                                  <TableCell 
+                                    className={`${isRTL ? 'text-right' : 'text-center'}`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  >
                                     <Button 
                                       variant="outline" 
                                       size="sm" 

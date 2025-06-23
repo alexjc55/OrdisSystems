@@ -84,6 +84,36 @@
     text-align: right !important;
   }
   
+  /* Orders table specific RTL styles */
+  [dir="rtl"] table th,
+  [dir="rtl"] table td {
+    text-align: right !important;
+    direction: rtl !important;
+  }
+  
+  [dir="rtl"] .table-container table {
+    direction: rtl !important;
+  }
+  
+  [dir="rtl"] .table-container th,
+  [dir="rtl"] .table-container td {
+    text-align: right !important;
+  }
+  
+  /* Force RTL for orders table */
+  .rtl table[class*="Table"] th,
+  .rtl table[class*="Table"] td,
+  .rtl [data-table] th,
+  .rtl [data-table] td {
+    text-align: right !important;
+    direction: rtl;
+  }
+  
+  .rtl [role="table"] th,
+  .rtl [role="table"] td {
+    text-align: right !important;
+  }
+  
   /* Specific RTL flex layouts for orders UI */
   .rtl .flex.flex-col {
     flex-direction: column;
