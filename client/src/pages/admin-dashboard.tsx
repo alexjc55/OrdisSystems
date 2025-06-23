@@ -1575,15 +1575,15 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 <span className="text-red-600">-{formatCurrency(calculateOrderDiscount(calculateSubtotal()))}</span>
               </div>
               {/* Mobile Layout - Stack vertically */}
-              <div className="sm:hidden space-y-1">
-                <div className="flex gap-1 items-center">
+              <div className="block sm:hidden space-y-2">
+                <div className="flex gap-1">
                   <Select
                     value={orderDiscount.type}
                     onValueChange={(value: 'percentage' | 'amount') => 
                       setOrderDiscount(prev => ({ ...prev, type: value }))
                     }
                   >
-                    <SelectTrigger className="h-7 text-xs w-10 px-1">
+                    <SelectTrigger className="h-8 text-xs w-16">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1599,9 +1599,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       ...prev, 
                       value: parseFloat(e.target.value) || 0 
                     }))}
-                    className="h-7 text-xs w-14 px-1"
+                    className="h-8 text-xs w-20"
                   />
-                  <span className="text-xs text-gray-500">{adminT('orders.discount')}</span>
                 </div>
                 <Input
                   placeholder={adminT('orders.discountReason')}
@@ -1610,7 +1609,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     ...prev, 
                     reason: e.target.value 
                   }))}
-                  className="h-7 text-xs w-full px-2"
+                  className="h-8 text-xs w-full"
                 />
               </div>
 
@@ -1681,7 +1680,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       ...prev, 
                       value: parseFloat(e.target.value) || 0 
                     }))}
-                    className="h-7 text-xs w-20"
+                    className="h-8 text-xs w-28"
                   />
                   <p className="text-xs text-orange-600">
                     * {adminT('orders.manualPriceNote')}
