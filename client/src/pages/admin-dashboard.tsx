@@ -3528,6 +3528,7 @@ export default function AdminDashboard() {
                     {ordersViewMode === "kanban" && (
                       <div 
                         className={`overflow-x-auto kanban-scroll-container ${isRTL ? 'rtl' : 'ltr'}`}
+                        style={isRTL ? { direction: 'rtl' } : {}}
                         ref={(el) => {
                           if (el && ordersViewMode === "kanban") {
                             setTimeout(() => {
@@ -3538,7 +3539,9 @@ export default function AdminDashboard() {
                           }
                         }}
                       >
-                        <div className={`flex gap-4 min-w-max pb-4 ${isRTL ? 'flex-row-reverse rtl' : ''}`}
+                        <div 
+                          className={`flex gap-4 min-w-max pb-4 ${isRTL ? 'rtl' : ''}`}
+                          style={isRTL ? { flexDirection: 'row-reverse' } : {}}
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => {
                             e.preventDefault();
