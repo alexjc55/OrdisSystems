@@ -399,6 +399,8 @@ function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { 
 }
 
 function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === 'he';
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
@@ -576,7 +578,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 onEdit(order);
               }}
             >
-              <Eye className="h-3 w-3 mr-1" />
+              <Eye className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
               {adminT('orders.orderDetails')}
             </Button>
             <Select
