@@ -3307,7 +3307,7 @@ export default function AdminDashboard() {
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <Phone className="h-4 w-4 mr-2" />
-{adminT('orders.call', 'Позвонить')}
+                                              {adminT('orders.call', 'Позвонить')}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem 
                                               onClick={() => {
@@ -3317,7 +3317,7 @@ export default function AdminDashboard() {
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <MessageCircle className="h-4 w-4 mr-2" />
-                                              WhatsApp
+                                              {adminT('orders.whatsapp', 'WhatsApp')}
                                             </DropdownMenuItem>
                                           </DropdownMenuContent>
                                         </DropdownMenu>
@@ -3548,33 +3548,6 @@ export default function AdminDashboard() {
                           }
                         }}
                       >
-                        {/* Kanban Navigation Panel - Kommo CRM Style */}
-                        <div className="hidden sm:flex absolute top-4 right-4 z-10 bg-white border border-gray-200 rounded-lg shadow-sm">
-                          <button
-                            className="h-8 w-8 flex items-center justify-center hover:bg-gray-100 rounded-l-lg transition-colors"
-                            onClick={() => {
-                              const container = document.querySelector('.kanban-scroll-container');
-                              if (container) {
-                                container.scrollBy({ left: -300, behavior: 'smooth' });
-                              }
-                            }}
-                          >
-                            <ChevronLeft className="h-4 w-4" />
-                          </button>
-                          <div className="w-px bg-gray-200"></div>
-                          <button
-                            className="h-8 w-8 flex items-center justify-center hover:bg-gray-100 rounded-r-lg transition-colors"
-                            onClick={() => {
-                              const container = document.querySelector('.kanban-scroll-container');
-                              if (container) {
-                                container.scrollBy({ left: 300, behavior: 'smooth' });
-                              }
-                            }}
-                          >
-                            <ChevronRight className="h-4 w-4" />
-                          </button>
-                        </div>
-
                         {/* Kanban columns container */}
                         <div 
                           className="flex gap-4 min-w-max pb-4"
@@ -3612,7 +3585,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-yellow-800 flex items-center gap-2">
                               <Clock className="h-4 w-4" />
-                              Ожидает ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
+                              {adminT('orders.status.pending', 'Ожидает')} ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'pending').map((order: any) => (
@@ -3647,7 +3620,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-blue-800 flex items-center gap-2">
                               <ShoppingCart className="h-4 w-4" />
-                              Подтвержден ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
+                              {adminT('orders.status.confirmed', 'Подтвержден')} ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'confirmed').map((order: any) => (
@@ -3682,7 +3655,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-orange-800 flex items-center gap-2">
                               <Utensils className="h-4 w-4" />
-                              Готовится ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
+                              {adminT('orders.status.preparing', 'Готовится')} ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'preparing').map((order: any) => (
@@ -3717,7 +3690,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-green-800 flex items-center gap-2">
                               <Package className="h-4 w-4" />
-                              Готов ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
+                              {adminT('orders.status.ready', 'Готов')} ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'ready').map((order: any) => (
@@ -3753,7 +3726,7 @@ export default function AdminDashboard() {
                             >
                               <h3 className="font-semibold text-sm mb-3 text-gray-800 flex items-center gap-2">
                                 <Truck className="h-4 w-4" />
-                                Доставлен ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
+                                {adminT('orders.status.delivered', 'Доставлен')} ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
                               </h3>
                               <div className="space-y-3 min-h-24">
                                 {ordersResponse.data.filter((order: any) => order.status === 'delivered').map((order: any) => (
@@ -3787,7 +3760,7 @@ export default function AdminDashboard() {
                             >
                               <h3 className="font-semibold text-sm mb-3 text-red-800 flex items-center gap-2">
                                 <X className="h-4 w-4" />
-                                Отменен ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
+                                {adminT('orders.status.cancelled', 'Отменен')} ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
                               </h3>
                               <div className="space-y-3 min-h-24">
                                 {ordersResponse.data.filter((order: any) => order.status === 'cancelled').map((order: any) => (

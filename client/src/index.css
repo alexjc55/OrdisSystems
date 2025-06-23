@@ -111,43 +111,6 @@
     overflow-x: auto;
   }
   
-  /* Custom Kanban Scrollbar for Desktop */
-  .kanban-scroll-container {
-    scrollbar-width: thin;
-    scrollbar-color: #fb923c #f3f4f6;
-  }
-  
-  .kanban-scroll-container::-webkit-scrollbar {
-    height: 12px;
-  }
-  
-  .kanban-scroll-container::-webkit-scrollbar-track {
-    background: #f3f4f6;
-    border-radius: 6px;
-    margin: 0 16px;
-  }
-  
-  .kanban-scroll-container::-webkit-scrollbar-thumb {
-    background: #fb923c;
-    border-radius: 6px;
-    border: 2px solid #f3f4f6;
-  }
-  
-  .kanban-scroll-container::-webkit-scrollbar-thumb:hover {
-    background: #f97316;
-  }
-  
-  .kanban-scroll-container::-webkit-scrollbar-thumb:active {
-    background: #ea580c;
-  }
-  
-  /* Show scrollbar on mobile */
-  @media (max-width: 640px) {
-    .kanban-scroll-container::-webkit-scrollbar {
-      height: 8px;
-    }
-  }
-  
   /* Force kanban columns to display in RTL order */
   .rtl .flex-row-reverse {
     flex-direction: row-reverse !important;
