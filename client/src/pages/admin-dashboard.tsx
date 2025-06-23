@@ -417,15 +417,20 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
   const { t: adminT } = useAdminTranslation();
   
   const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'pending': return adminT('orders.status.pending');
-      case 'confirmed': return adminT('orders.status.confirmed');
-      case 'preparing': return adminT('orders.status.preparing');
-      case 'ready': return adminT('orders.status.ready');
-      case 'delivered': return adminT('orders.status.delivered');
-      case 'cancelled': return adminT('orders.status.cancelled');
-      default: return status;
-    }
+    console.log('OrderCard getStatusLabel called with status:', status);
+    const result = (() => {
+      switch (status) {
+        case 'pending': return adminT('orders.status.pending');
+        case 'confirmed': return adminT('orders.status.confirmed');
+        case 'preparing': return adminT('orders.status.preparing');
+        case 'ready': return adminT('orders.status.ready');
+        case 'delivered': return adminT('orders.status.delivered');
+        case 'cancelled': return adminT('orders.status.cancelled');
+        default: return status;
+      }
+    })();
+    console.log('OrderCard getStatusLabel result:', result);
+    return result;
   };
 
   return (
@@ -583,7 +588,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
               {adminT('orders.orderDetails')}
             </Button>
             <div className={`px-2 py-1 rounded text-xs font-medium border text-center min-w-[80px] max-w-[120px] truncate ${getStatusColor(order.status)}`}>
-              {getStatusLabel(order.status)}
+              {getStatusLabel(order.status) || order.status || 'Unknown'}
             </div>
           </div>
         </div>
