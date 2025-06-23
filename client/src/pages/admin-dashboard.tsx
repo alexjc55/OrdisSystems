@@ -3532,7 +3532,7 @@ export default function AdminDashboard() {
                     {/* Kanban View */}
                     {ordersViewMode === "kanban" && (
                       <div className="relative">
-                        {/* Kanban Navigation Panel */}
+                        {/* Kanban Navigation Panel - Kommo CRM Style */}
                         <div className="hidden sm:flex absolute top-4 right-4 z-10 bg-white border border-gray-200 rounded-lg shadow-sm">
                           <Button
                             variant="ghost"
@@ -3562,7 +3562,7 @@ export default function AdminDashboard() {
                             <ChevronRight className="h-4 w-4" />
                           </Button>
                         </div>
-
+                        
                         <div 
                           className="overflow-x-auto kanban-scroll-container"
                           style={{ 
@@ -3580,9 +3580,9 @@ export default function AdminDashboard() {
                             }
                           }}
                         >
-                        {/* Kanban columns container */}
-                        <div 
-                          className="flex gap-4 min-w-max pb-4"
+                          {/* Kanban columns container */}
+                          <div 
+                            className="flex gap-4 min-w-max pb-4"
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => {
                             e.preventDefault();
@@ -3810,7 +3810,7 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                           )}
-                        </div>
+                          </div>
                         </div>
                       </div>
                     )}
