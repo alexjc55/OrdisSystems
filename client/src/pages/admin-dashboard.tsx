@@ -3531,23 +3531,55 @@ export default function AdminDashboard() {
 
                     {/* Kanban View */}
                     {ordersViewMode === "kanban" && (
-                      <div 
-                        className="overflow-x-auto kanban-scroll-container"
-                        style={{ 
-                          touchAction: 'pan-x pan-y',
-                          overflowX: 'auto',
-                          WebkitOverflowScrolling: 'touch'
-                        }}
-                        ref={(el) => {
-                          if (el && ordersViewMode === "kanban") {
-                            setTimeout(() => {
-                              if (el) {
-                                el.scrollLeft = 0;
+                      <div className="relative">
+                        {/* Kanban Navigation Panel */}
+                        <div className="hidden sm:flex absolute top-4 right-4 z-10 bg-white border border-gray-200 rounded-lg shadow-sm">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 hover:bg-gray-100"
+                            onClick={() => {
+                              const container = document.querySelector('.kanban-scroll-container');
+                              if (container) {
+                                container.scrollBy({ left: -300, behavior: 'smooth' });
                               }
-                            }, 100);
-                          }
-                        }}
-                      >
+                            }}
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          <div className="w-px bg-gray-200 my-1"></div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 hover:bg-gray-100"
+                            onClick={() => {
+                              const container = document.querySelector('.kanban-scroll-container');
+                              if (container) {
+                                container.scrollBy({ left: 300, behavior: 'smooth' });
+                              }
+                            }}
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+
+                        <div 
+                          className="overflow-x-auto kanban-scroll-container"
+                          style={{ 
+                            touchAction: 'pan-x pan-y',
+                            overflowX: 'auto',
+                            WebkitOverflowScrolling: 'touch'
+                          }}
+                          ref={(el) => {
+                            if (el && ordersViewMode === "kanban") {
+                              setTimeout(() => {
+                                if (el) {
+                                  el.scrollLeft = 0;
+                                }
+                              }, 100);
+                            }
+                          }}
+                        >
                         {/* Kanban columns container */}
                         <div 
                           className="flex gap-4 min-w-max pb-4"
@@ -3778,6 +3810,7 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                           )}
+                        </div>
                         </div>
                       </div>
                     )}
