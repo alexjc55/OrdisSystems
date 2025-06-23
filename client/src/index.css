@@ -93,9 +93,13 @@
     overflow-x: auto;
   }
   
-  .rtl .kanban-scroll-container > div {
-    direction: rtl;
-    flex-direction: row-reverse;
+  /* Force kanban columns to display in RTL order */
+  .rtl .flex-row-reverse {
+    flex-direction: row-reverse !important;
+  }
+  
+  .rtl .kanban-scroll-container .flex {
+    flex-direction: row-reverse !important;
   }
   
   /* Form elements RTL alignment */

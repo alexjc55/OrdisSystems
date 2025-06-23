@@ -3538,7 +3538,7 @@ export default function AdminDashboard() {
                           }
                         }}
                       >
-                        <div className={`flex gap-4 min-w-max pb-4 ${isRTL ? 'rtl' : ''}`}
+                        <div className={`flex gap-4 min-w-max pb-4 ${isRTL ? 'flex-row-reverse rtl' : ''}`}
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => {
                             e.preventDefault();
