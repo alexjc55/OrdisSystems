@@ -5239,6 +5239,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       showBannerImage: storeSettings?.showBannerImage !== false,
       showTitleDescription: storeSettings?.showTitleDescription !== false,
       showInfoBlocks: storeSettings?.showInfoBlocks !== false,
+      infoBlocksPosition: storeSettings?.infoBlocksPosition || "top",
       showSpecialOffers: storeSettings?.showSpecialOffers !== false,
       showCategoryMenu: storeSettings?.showCategoryMenu !== false,
       weekStartDay: storeSettings?.weekStartDay || "monday",
@@ -5299,6 +5300,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         showBannerImage: storeSettings?.showBannerImage !== false,
         showTitleDescription: storeSettings?.showTitleDescription !== false,
         showInfoBlocks: storeSettings?.showInfoBlocks !== false,
+        infoBlocksPosition: storeSettings?.infoBlocksPosition || "top",
         showSpecialOffers: storeSettings?.showSpecialOffers !== false,
         showCategoryMenu: storeSettings?.showCategoryMenu !== false,
         weekStartDay: storeSettings?.weekStartDay || "monday",
@@ -6094,6 +6096,31 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       className="switch-green"
                     />
                   </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="infoBlocksPosition"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">Позиция информационных блоков</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Выберите позицию" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="top">Вверху (перед специальными предложениями)</SelectItem>
+                      <SelectItem value="bottom">Внизу (после баннеров)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription className="text-xs">
+                    Выберите где отображать блоки с информацией о магазине
+                  </FormDescription>
+                  <FormMessage />
                 </FormItem>
               )}
             />
