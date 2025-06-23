@@ -114,11 +114,6 @@
     text-align: right !important;
   }
   
-  /* Products table specific RTL fix */
-  .rtl .table-container table {
-    direction: ltr !important;
-  }
-  
   /* Specific RTL flex layouts for orders UI */
   .rtl .flex.flex-col {
     flex-direction: column;
