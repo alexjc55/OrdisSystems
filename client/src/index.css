@@ -45,7 +45,7 @@
   
   /* Kanban RTL Support */
   [dir="rtl"] .kanban-scroll-container {
-    direction: rtl;
+    direction: rtl !important;
   }
   
   .rtl .kanban-scroll-container {
