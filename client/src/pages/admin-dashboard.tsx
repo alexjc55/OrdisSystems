@@ -1087,32 +1087,32 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 </SelectTrigger>
                 <SelectContent className="z-[10000]">
                   <SelectItem value="pending">
-                    <span className="text-xs font-medium text-yellow-800">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-yellow-800">
                       {adminT('orders.status.pending')}
                     </span>
                   </SelectItem>
                   <SelectItem value="confirmed">
-                    <span className="text-xs font-medium text-blue-800">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-blue-800">
                       {adminT('orders.status.confirmed')}
                     </span>
                   </SelectItem>
                   <SelectItem value="preparing">
-                    <span className="text-xs font-medium text-orange-800">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-orange-800">
                       {adminT('orders.status.preparing')}
                     </span>
                   </SelectItem>
                   <SelectItem value="ready">
-                    <span className="text-xs font-medium text-green-800">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-green-800">
                       {adminT('orders.status.ready')}
                     </span>
                   </SelectItem>
                   <SelectItem value="delivered">
-                    <span className="text-xs font-medium text-gray-800">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-gray-800">
                       {adminT('orders.status.delivered')}
                     </span>
                   </SelectItem>
                   <SelectItem value="cancelled">
-                    <span className="text-xs font-medium text-red-800">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-red-800">
                       {adminT('orders.status.cancelled')}
                     </span>
                   </SelectItem>
@@ -1154,32 +1154,32 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 </SelectTrigger>
                 <SelectContent className="z-[10000]">
                   <SelectItem value="pending" className="bg-yellow-50 hover:bg-yellow-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-yellow-100 text-yellow-800">
                       {adminT('orders.status.pending')}
                     </span>
                   </SelectItem>
                   <SelectItem value="confirmed" className="bg-blue-50 hover:bg-blue-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-blue-100 text-blue-800">
                       {adminT('orders.status.confirmed')}
                     </span>
                   </SelectItem>
                   <SelectItem value="preparing" className="bg-orange-50 hover:bg-orange-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-orange-100 text-orange-800">
                       {adminT('orders.status.preparing')}
                     </span>
                   </SelectItem>
                   <SelectItem value="ready" className="bg-green-50 hover:bg-green-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-green-100 text-green-800">
                       {adminT('orders.status.ready')}
                     </span>
                   </SelectItem>
                   <SelectItem value="delivered" className="bg-gray-50 hover:bg-gray-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-gray-100 text-gray-800">
                       {adminT('orders.status.delivered')}
                     </span>
                   </SelectItem>
                   <SelectItem value="cancelled" className="bg-red-50 hover:bg-red-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-red-100 text-red-800">
                       {adminT('orders.status.cancelled')}
                     </span>
                   </SelectItem>
