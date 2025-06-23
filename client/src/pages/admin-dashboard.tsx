@@ -810,17 +810,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
   // Helper functions for order items editing
   const getUnitDisplay = (unit: string, quantity: number) => {
-    const qty = Math.round(quantity * 10) / 10; // Round to 1 decimal place
     switch (unit) {
-      case 'piece': return `${qty} ${adminT('products.units.piece')}`;
-      case 'kg': return `${qty} ${adminT('products.units.kg')}`;
-      case '100g': 
-        if (qty >= 1000) {
-          return `${(qty / 1000).toFixed(1)} ${adminT('products.units.kg')}`;
-        }
-        return `${qty} ${adminT('products.units.g')}`;
-      case '100ml': return `${qty} ${adminT('products.units.ml')}`;
-      default: return `${qty}`;
+      case 'piece': return 'шт.';
+      case 'kg': return 'кг';
+      case '100g': return 'г';
+      case '100ml': return 'мл';
+      default: return '';
     }
   };
 
@@ -1052,14 +1047,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               <div className="text-xs text-gray-500">{adminT('orders.orderTotal')}</div>
               <div className="font-bold text-lg text-green-600">{formatCurrency(order.totalAmount)}</div>
             </div>
-            <div className="bg-white rounded-lg px-3 py-2 shadow-sm min-w-[140px]">
-              <div className="text-xs text-gray-500">{adminT('orders.orderStatus')}</div>
+            <div className="bg-white rounded-lg px-3 py-2 shadow-sm flex-1">
+              <div className="text-xs text-gray-500 mb-1">{adminT('orders.orderStatus')}</div>
               <Select
                 value={editedOrder.status}
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
               >
-                <SelectTrigger className={`text-sm h-8 border w-full text-gray-900 font-medium ${getStatusColor(editedOrder.status)}`}>
-                  <SelectValue className="text-gray-900 font-medium" />
+                <SelectTrigger className={`text-sm h-8 border w-full ${getStatusColor(editedOrder.status)}`}>
+                  <SelectValue placeholder="Выберите статус" />
                 </SelectTrigger>
                 <SelectContent className="z-[10000]">
                   <SelectItem value="pending">
@@ -1458,8 +1453,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               {/* Product Header */}
               <div className="flex justify-between items-start mb-2">
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm text-gray-900 truncate">{item.product?.name}</div>
-                  <div className="text-xs text-gray-500 mt-0.5">{getUnitPrice(item.product)}</div>
+                  <div className="font-medium text-base text-gray-900 truncate">{item.product?.name}</div>
+                  <div className="text-sm text-gray-500 mt-0.5">{getUnitPrice(item.product)}</div>
                 </div>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -1544,7 +1539,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
         </div>
 
         {/* Order Total Summary - Important section with visual accent */}
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 p-4 rounded-lg shadow-sm">
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 p-4 rounded-lg shadow-sm mt-6">
           <h4 className="font-medium mb-3 text-purple-800 flex items-center gap-2">
             <Receipt className="h-4 w-4 text-purple-600" />
             {adminT('orders.orderSummary')}
