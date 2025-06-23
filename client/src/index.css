@@ -16,6 +16,31 @@
   .border-yellow-200 {
     border-color: #fde68a !important;
   }
+  
+  /* Mobile-specific yellow status colors */
+  @media (max-width: 768px) {
+    .bg-yellow-100 {
+      background-color: #fef3c7 !important;
+    }
+    .text-yellow-800 {
+      color: #92400e !important;
+    }
+    .border-yellow-200 {
+      border-color: #fde68a !important;
+    }
+    
+    /* Force mobile pending status visibility */
+    .mobile-status-pending {
+      background-color: #fef3c7 !important;
+      color: #92400e !important;
+      border-color: #fde68a !important;
+      border-width: 1px !important;
+      border-style: solid !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      display: flex !important;
+    }
+  }
 }
 
 /* Custom focus styles for admin form inputs */
