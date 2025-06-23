@@ -800,10 +800,10 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
   const getUnitPrice = (product: any) => {
     switch (product.unit) {
-      case 'piece': return `${formatCurrency(product.price)} за шт.`;
-      case 'kg': return `${formatCurrency(product.price)} за кг`;
-      case '100g': return `${formatCurrency(product.price)} {adminT('products.per100g')}`;
-      case '100ml': return `${formatCurrency(product.price)} за 100мл`;
+      case 'piece': return `${formatCurrency(product.price)} ${adminT('products.dialog.unitPiece')}`;
+      case 'kg': return `${formatCurrency(product.price)} ${adminT('products.dialog.unitKg')}`;
+      case '100g': return `${formatCurrency(product.price)} ${adminT('products.dialog.unit100g')}`;
+      case '100ml': return `${formatCurrency(product.price)} ${adminT('products.dialog.unit100ml')}`;
       default: return formatCurrency(product.price);
     }
   };
