@@ -3265,7 +3265,7 @@ export default function AdminDashboard() {
                     {ordersViewMode === "table" && (
                       <div className={`border rounded-lg bg-white ${isRTL ? 'rtl' : 'ltr'}`}>
                         <div className={`w-full table-container ${isRTL ? 'rtl' : 'ltr'}`}>
-                          <Table className={`${isRTL ? 'ltr' : ''}`}>
+                          <Table className={`${isRTL ? 'rtl' : ''}`}>
                             <TableHeader>
                               <TableRow>
                                 <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>№</TableHead>
@@ -3538,7 +3538,7 @@ export default function AdminDashboard() {
                           }
                         }}
                       >
-                        <div className={`flex gap-4 min-w-max pb-4 ${isRTL ? 'ltr' : ''}`}
+                        <div className={`flex gap-4 min-w-max pb-4 ${isRTL ? 'rtl' : ''}`}
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => {
                             e.preventDefault();

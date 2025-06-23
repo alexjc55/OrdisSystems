@@ -76,26 +76,26 @@
     flex-direction: row-reverse;
   }
   
-  /* Override for table container - keep scroll RTL but table content LTR */
+  /* Table RTL styling */
   .rtl .table-container {
     direction: rtl;
     overflow-x: auto;
   }
   
-  .rtl .table-container table {
-    direction: ltr;
-    text-align: left;
+  .rtl table {
+    direction: rtl;
+    text-align: right;
   }
   
-  /* Override for kanban - container RTL, content LTR */
+  /* Kanban RTL styling */
   .rtl .kanban-scroll-container {
     direction: rtl;
     overflow-x: auto;
   }
   
   .rtl .kanban-scroll-container > div {
-    direction: ltr;
-    flex-direction: row !important;
+    direction: rtl;
+    flex-direction: row-reverse;
   }
   
   /* Form elements RTL alignment */
