@@ -3542,7 +3542,7 @@ export default function AdminDashboard() {
                                     className={`text-xs sm:text-sm hidden md:table-cell ${isRTL ? 'text-right' : 'text-center'}`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                   >
-                                    <div className="space-y-1">
+                                    <div className="space-y-1" dir="ltr">
                                       <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse justify-start' : 'justify-center'}`}>
                                         <Calendar className="h-3 w-3 text-gray-400" />
                                         <span className="font-medium">{adminT('common.created')}:</span>
