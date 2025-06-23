@@ -3599,19 +3599,7 @@ export default function AdminDashboard() {
                           overflowX: 'auto',
                           WebkitOverflowScrolling: 'touch'
                         }}
-                        ref={(el) => {
-                          // Apply both refs
-                          if (kanbanScrollRef) {
-                            kanbanScrollRef.current = el;
-                          }
-                          if (el && ordersViewMode === "kanban") {
-                            setTimeout(() => {
-                              if (el) {
-                                el.scrollLeft = 0;
-                              }
-                            }, 100);
-                          }
-                        }}
+                        ref={kanbanScrollRef}
                       >
                         {/* Kanban columns container */}
                         <div 
