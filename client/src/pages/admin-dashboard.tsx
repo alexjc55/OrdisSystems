@@ -811,10 +811,10 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   // Helper functions for order items editing
   const getUnitDisplay = (unit: string, quantity: number) => {
     switch (unit) {
-      case 'piece': return 'шт.';
-      case 'kg': return 'кг';
-      case '100g': return 'г';
-      case '100ml': return 'мл';
+      case 'piece': return adminT('products.units.piece');
+      case 'kg': return adminT('products.units.kg');
+      case '100g': return adminT('products.units.g');
+      case '100ml': return adminT('products.units.ml');
       default: return '';
     }
   };
@@ -1509,16 +1509,16 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               {/* Compact Controls Row */}
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 flex-1">
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-2">
                     <Input
                       type="number"
                       step="0.1"
                       min="0.1"
                       value={item.quantity}
                       onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
-                      className="h-7 text-xs w-14 text-center"
+                      className="h-7 text-sm w-16 text-center"
                     />
-                    <span className="text-xs text-gray-500 min-w-0 truncate">
+                    <span className="text-sm text-gray-600 min-w-[40px] flex-shrink-0">
                       {getUnitDisplay(item.product?.unit, item.quantity)}
                     </span>
                   </div>
