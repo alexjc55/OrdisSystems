@@ -615,13 +615,13 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   // Status color function for consistent styling
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'ready': return 'bg-green-100 text-green-800 border-green-200';
-      case 'delivered': return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'pending': return 'bg-yellow-50 border-yellow-300';
+      case 'confirmed': return 'bg-blue-50 border-blue-300';
+      case 'preparing': return 'bg-orange-50 border-orange-300';
+      case 'ready': return 'bg-green-50 border-green-300';
+      case 'delivered': return 'bg-gray-50 border-gray-300';
+      case 'cancelled': return 'bg-red-50 border-red-300';
+      default: return 'bg-gray-50 border-gray-300';
     }
   };
   const { data: storeSettingsData } = useQuery({
@@ -1031,32 +1031,31 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     <div className="space-y-4 admin-input-focus">
       {/* Compact Order Header with Key Info */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-100">
-        {/* Mobile Layout - Stack vertically */}
-        <div className="block sm:hidden space-y-3">
-          <div className="flex justify-between items-center">
-            <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
+        {/* Mobile Layout - Compact grid */}
+        <div className="block sm:hidden space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-white rounded px-2 py-1 shadow-sm">
               <div className="text-xs text-gray-500">{adminT('orders.orderNumber')}</div>
-              <div className="font-bold text-lg">#{order.id}</div>
+              <div className="font-bold text-sm text-orange-600">#{order.id}</div>
             </div>
-            <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
+            <div className="bg-white rounded px-2 py-1 shadow-sm">
               <div className="text-xs text-gray-500">{adminT('orders.orderTotal')}</div>
-              <div className="font-bold text-lg text-green-600">{formatCurrency(order.totalAmount)}</div>
+              <div className="font-bold text-sm text-green-600">{formatCurrency(order.totalAmount)}</div>
             </div>
           </div>
-          <div className="flex justify-between items-center gap-2">
-            <div className="bg-white rounded-lg px-3 py-2 shadow-sm flex-1">
-              <div className="text-xs text-gray-500">{adminT('orders.customer')}</div>
-              <div className="font-medium text-sm">{order.user?.firstName && order.user?.lastName 
-                ? `${order.user.firstName} ${order.user.lastName}`
-                : order.user?.email || "—"}</div>
-            </div>
-            <div className="bg-white rounded-lg px-3 py-2 shadow-sm min-w-[140px]">
-              <div className="text-xs text-gray-500">{adminT('orders.orderStatus')}</div>
+          <div className="bg-white rounded px-2 py-1 shadow-sm">
+            <div className="text-xs text-gray-500 mb-1">{adminT('orders.customer')}</div>
+            <div className="font-medium text-sm">{order.user?.firstName && order.user?.lastName 
+              ? `${order.user.firstName} ${order.user.lastName}`
+              : order.user?.email || "—"}</div>
+          </div>
+          <div className="bg-white rounded px-2 py-1 shadow-sm">
+            <div className="text-xs text-gray-500 mb-1">{adminT('orders.orderStatus')}</div>
               <Select
                 value={editedOrder.status}
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
               >
-                <SelectTrigger className={`text-sm h-8 border w-full text-gray-900 font-medium ${getStatusColor(editedOrder.status)}`}>
+                <SelectTrigger className={`text-sm h-7 border w-full text-gray-900 font-medium ${getStatusColor(editedOrder.status)}`}>
                   <SelectValue className="text-gray-900 font-medium" />
                 </SelectTrigger>
                 <SelectContent className="z-[10000]">
@@ -1229,28 +1228,34 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   placeholder={adminT('orders.addressPlaceholder')}
                   className="text-sm h-8"
                 />
-                <div className="grid grid-cols-2 gap-2">
-                  <Input
-                    type="date"
-                    value={editedOrder.deliveryDate}
-                    onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
-                    className="text-sm h-8"
-                  />
-                  <Select
-                    value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
-                    onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
-                  >
-                    <SelectTrigger className="text-sm h-8">
-                      <SelectValue placeholder={adminT('orders.selectTime')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
-                        <SelectItem key={slot.value} value={slot.label}>
-                          {slot.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="space-y-2 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-2">
+                  <div>
+                    <label className="text-xs text-gray-600 block mb-1">{adminT('orders.deliveryDate')}</label>
+                    <Input
+                      type="date"
+                      value={editedOrder.deliveryDate}
+                      onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
+                      className="text-sm h-8 w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-600 block mb-1">{adminT('orders.deliveryTime')}</label>
+                    <Select
+                      value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
+                      onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
+                    >
+                      <SelectTrigger className="text-sm h-8 w-full">
+                        <SelectValue placeholder={adminT('orders.selectTime')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
+                          <SelectItem key={slot.value} value={slot.label}>
+                            {slot.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
@@ -1502,7 +1507,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                         min="0.1"
                         value={item.quantity}
                         onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
-                        className="h-8 text-xs w-16"
+                        className="h-7 text-xs w-14"
                       />
                       <span className="text-xs text-gray-500 truncate">
                         {getUnitDisplay(item.product?.unit, item.quantity)}
@@ -1575,15 +1580,15 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 <span className="text-red-600">-{formatCurrency(calculateOrderDiscount(calculateSubtotal()))}</span>
               </div>
               {/* Mobile Layout - Stack vertically */}
-              <div className="block sm:hidden space-y-2">
-                <div className="flex gap-1">
+              <div className="sm:hidden space-y-1">
+                <div className="flex gap-1 items-center">
                   <Select
                     value={orderDiscount.type}
                     onValueChange={(value: 'percentage' | 'amount') => 
                       setOrderDiscount(prev => ({ ...prev, type: value }))
                     }
                   >
-                    <SelectTrigger className="h-8 text-xs w-16">
+                    <SelectTrigger className="h-7 text-xs w-10 px-1">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1599,8 +1604,9 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       ...prev, 
                       value: parseFloat(e.target.value) || 0 
                     }))}
-                    className="h-8 text-xs w-20"
+                    className="h-7 text-xs w-14 px-1"
                   />
+                  <span className="text-xs text-gray-500">{adminT('orders.discount')}</span>
                 </div>
                 <Input
                   placeholder={adminT('orders.discountReason')}
@@ -1609,7 +1615,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     ...prev, 
                     reason: e.target.value 
                   }))}
-                  className="h-8 text-xs w-full"
+                  className="h-7 text-xs w-full px-2"
                 />
               </div>
 
@@ -1680,7 +1686,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       ...prev, 
                       value: parseFloat(e.target.value) || 0 
                     }))}
-                    className="h-8 text-xs w-28"
+                    className="h-7 text-xs w-20"
                   />
                   <p className="text-xs text-orange-600">
                     * {adminT('orders.manualPriceNote')}
