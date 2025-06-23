@@ -800,14 +800,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   const getUnitDisplay = (unit: string, quantity: number) => {
     const qty = Math.round(quantity * 10) / 10; // Round to 1 decimal place
     switch (unit) {
-      case 'piece': return `${qty} шт.`;
-      case 'kg': return `${qty} кг`;
+      case 'piece': return `${qty} ${adminT('products.units.piece')}`;
+      case 'kg': return `${qty} ${adminT('products.units.kg')}`;
       case '100g': 
         if (qty >= 1000) {
-          return `${(qty / 1000).toFixed(1)} кг`;
+          return `${(qty / 1000).toFixed(1)} ${adminT('products.units.kg')}`;
         }
-        return `${qty} г`;
-      case '100ml': return `${qty} мл`;
+        return `${qty} ${adminT('products.units.g')}`;
+      case '100ml': return `${qty} ${adminT('products.units.ml')}`;
       default: return `${qty}`;
     }
   };
@@ -1005,25 +1005,25 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               ? `${order.user.firstName} ${order.user.lastName}`
               : order.user?.email || "—"}</div>
             {order.deliveryDate && (
-              <div><strong>Дата доставки:</strong> {new Date(order.deliveryDate).toLocaleDateString('ru-RU')}</div>
+              <div><strong>{adminT('orders.deliveryDate')}:</strong> {new Date(order.deliveryDate).toLocaleDateString('ru-RU')}</div>
             )}
             {order.deliveryTime && (
-              <div><strong>Время доставки:</strong> {formatDeliveryTimeRange(order.deliveryTime)}</div>
+              <div><strong>{adminT('orders.deliveryTime')}:</strong> {formatDeliveryTimeRange(order.deliveryTime)}</div>
             )}
             {order.paymentMethod && (
-              <div><strong>Способ оплаты:</strong> {order.paymentMethod}</div>
+              <div><strong>{adminT('orders.paymentMethod')}:</strong> {order.paymentMethod}</div>
             )}
             {order.deliveryAddress && (
-              <div><strong>Адрес доставки:</strong> {order.deliveryAddress}</div>
+              <div><strong>{adminT('orders.deliveryAddress')}:</strong> {order.deliveryAddress}</div>
             )}
           </div>
         </div>
 
         <div>
-          <h3 className="font-semibold mb-2">Редактирование</h3>
+          <h3 className="font-semibold mb-2">{adminT('orders.editing')}</h3>
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium mb-1">Телефон клиента</label>
+              <label className="block text-sm font-medium mb-1">{adminT('orders.customerPhone')}</label>
               <div className="flex gap-2">
                 <Input
                   value={editedOrder.customerPhone}

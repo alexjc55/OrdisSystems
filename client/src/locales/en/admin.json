@@ -102,6 +102,8 @@
     "units": {
       "piece": "pcs.",
       "kg": "kg",
+      "g": "g",
+      "ml": "ml",
       "per100g": "per 100g",
       "per100ml": "per 100ml"
     },
