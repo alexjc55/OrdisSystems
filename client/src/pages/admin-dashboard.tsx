@@ -3197,18 +3197,18 @@ export default function AdminDashboard() {
           {/* Orders Management */}
           {hasPermission("canManageOrders") && (
             <TabsContent value="orders" className={`space-y-4 sm:space-y-6 ${isRTL ? 'rtl' : 'ltr'}`}>
-              {/* Header Section */}
+              {/* Header Section with RTL Layout */}
               <div className="flex flex-col gap-4">
-                <div className={isRTL ? 'text-right' : 'text-left'}>
-                  <h1 className={`text-2xl font-bold flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
-                    <ShoppingCart className="h-6 w-6" />
-                    {adminT('orders.title')}
-                  </h1>
-                  <p className={`text-gray-600 mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.description', 'Управление заказами клиентов')}</p>
-                </div>
-              
-              {/* Controls Row for RTL Layout */}
-              <div className={`flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+                {/* Combined Header and Controls Row */}
+                <div className={`flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+                  {/* Header - Center for LTR, Right for RTL */}
+                  <div className={`flex-1 ${isRTL ? 'text-right order-1' : 'text-center order-2'}`}>
+                    <h1 className={`text-2xl font-bold flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-center'}`}>
+                      <ShoppingCart className="h-6 w-6" />
+                      {adminT('orders.title')}
+                    </h1>
+                    <p className={`text-gray-600 mt-1 ${isRTL ? 'text-right' : 'text-center'}`}>{adminT('orders.description', 'Управление заказами клиентов')}</p>
+                  </div>
                 {/* Filters - Left side for LTR, Right side for RTL */}
                 <div className={`flex gap-3 ${isRTL ? 'flex-row-reverse order-2 sm:order-1' : 'order-1'}`}>
                   <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
@@ -3232,6 +3232,28 @@ export default function AdminDashboard() {
                       className="pl-9 text-xs h-8 w-48"
                     />
                   </div>
+                </div>
+
+                {/* View Mode Toggle - Right side for LTR, Left side for RTL */}
+                <div className={`flex items-center gap-2 p-1 bg-gray-100 rounded-lg ${isRTL ? 'flex-row-reverse order-1 sm:order-2' : 'order-2'}`}>
+                  <Button
+                    variant={ordersViewMode === "table" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setOrdersViewMode("table")}
+                    className="text-xs px-3 py-1 h-8"
+                  >
+                    <Grid3X3 className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+                    {adminT('common.table', 'Таблица')}
+                  </Button>
+                  <Button
+                    variant={ordersViewMode === "kanban" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setOrdersViewMode("kanban")}
+                    className="text-xs px-3 py-1 h-8"
+                  >
+                    <Columns className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+                    {adminT('common.kanban', 'Канбан')}
+                  </Button>
                 </div>
               </div>
             </div>
