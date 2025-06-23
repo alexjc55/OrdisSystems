@@ -66,6 +66,24 @@
     text-align: right;
   }
   
+  /* RTL table header and cell alignment */
+  .rtl th,
+  .rtl td {
+    text-align: right !important;
+  }
+  
+  .rtl table {
+    direction: rtl !important;
+  }
+  
+  .rtl thead th {
+    text-align: right !important;
+  }
+  
+  .rtl tbody td {
+    text-align: right !important;
+  }
+  
   /* Specific RTL flex layouts for orders UI */
   .rtl .flex.flex-col {
     flex-direction: column;
