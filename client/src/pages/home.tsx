@@ -290,26 +290,27 @@ export default function Home() {
 
 
 
-          {/* Compact Store Information Cards */}
+          {/* Modern Store Information Cards */}
           {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && storeSettings?.showInfoBlocks !== false && (
-            <div className="mb-6">
-              <div className="flex overflow-x-auto gap-3 pb-2 lg:grid lg:grid-cols-3 lg:gap-4 lg:overflow-visible">
-              {/* Working Hours */}
-              {storeSettings?.workingHours && (
-                <Card className="group relative hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-gradient-to-br from-blue-50 to-white overflow-hidden flex-shrink-0 w-64 lg:w-auto">
-                  <div className="relative p-3 lg:p-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg group-hover:scale-105 transition-transform duration-300">
-                        <Clock className="h-4 w-4 text-white" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+              {/* Left Column: Working Hours and Contacts */}
+              <div className="space-y-6">
+                {/* Working Hours */}
+                {storeSettings?.workingHours && (
+                  <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
+                    <div className="p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full group-hover:scale-110 transition-transform duration-300">
+                          <Clock className="h-5 w-5 text-white" />
+                        </div>
+                        <span className="font-semibold text-lg text-gray-800">{t('workingHours')}</span>
                       </div>
-                      <h3 className="font-semibold text-base text-gray-800">{t('workingHours')}</h3>
-                    </div>
-                    <div className="space-y-2">
+                      <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
                       {(() => {
                         try {
                           const workingHours = storeSettings.workingHours;
                           if (!workingHours || typeof workingHours !== 'object') {
-                            return <p className="text-gray-500 text-xs">{t('notSpecified')}</p>;
+                            return <p className="text-gray-500 text-sm">{t('notSpecified')}</p>;
                           }
 
                           const dayNames: Record<string, string> = {
@@ -332,7 +333,7 @@ export default function Home() {
                             .map(day => [day, workingHours[day]]);
 
                           if (validEntries.length === 0) {
-                            return <p className="text-gray-500 text-xs">{t('notSpecified')}</p>;
+                            return <p className="text-gray-500 text-sm">{t('notSpecified')}</p>;
                           }
 
                           // Group consecutive days with same hours
@@ -355,8 +356,8 @@ export default function Home() {
                           }
 
                           return (
-                            <div className="space-y-1">
-                              {groupedHours.slice(0, 3).map((group, index) => {
+                            <div className="space-y-2">
+                              {groupedHours.map((group, index) => {
                                 const daysText = group.days.length === 1 
                                   ? dayNames[group.days[0]]
                                   : group.days.length === 2
@@ -364,9 +365,9 @@ export default function Home() {
                                   : `${dayNames[group.days[0]]} - ${dayNames[group.days[group.days.length - 1]]}`;
                                 
                                 return (
-                                  <div key={index} className="flex justify-between text-xs">
-                                    <span className="text-gray-600">{daysText}</span>
-                                    <span className="text-blue-600 font-medium">{group.hours}</span>
+                                  <div key={index} className="text-base sm:text-lg flex justify-between">
+                                    <span className="font-bold">{daysText}:</span>
+                                    <span className="text-gray-700 font-bold">{group.hours}</span>
                                   </div>
                                 );
                               })}
@@ -374,72 +375,72 @@ export default function Home() {
                           );
                         } catch (error) {
                           console.error('Error rendering working hours:', error);
-                          return <p className="text-gray-500 text-xs">{t('loadingError')}</p>;
+                          return <p className="text-gray-500 text-sm">{t('loadingError')}</p>;
                         }
                       })()}
-                    </div>
-                  </div>
-                </Card>
-              )}
-
-              {/* Contact Information */}
-              {(storeSettings?.contactPhone || storeSettings?.contactEmail) && (
-                <Card className="group relative hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-gradient-to-br from-green-50 to-white overflow-hidden">
-                  <div className="relative p-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg group-hover:scale-105 transition-transform duration-300">
-                        <Phone className="h-4 w-4 text-white" />
                       </div>
-                      <h3 className="font-semibold text-base text-gray-800">{t('contacts')}</h3>
                     </div>
-                    <div className="space-y-1">
-                      {storeSettings.contactPhone && (
-                        <div className="flex justify-between text-xs">
-                          <span className="text-gray-600">{t('phone')}</span>
-                          <a href={`tel:${storeSettings.contactPhone}`} className="text-green-600 font-medium hover:text-green-700">
-                            {storeSettings.contactPhone}
-                          </a>
-                        </div>
-                      )}
-                      {storeSettings.contactEmail && (
-                        <div className="flex justify-between text-xs">
-                          <span className="text-gray-600">Email</span>
-                          <a href={`mailto:${storeSettings.contactEmail}`} className="text-green-600 font-medium hover:text-green-700 truncate max-w-24">
-                            {storeSettings.contactEmail}
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              )}
+                  </Card>
+                )}
 
-              {/* Delivery & Payment */}
-              {(storeSettings?.deliveryInfo || storeSettings?.paymentInfo) && (
-                <Card className="group relative hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-gradient-to-br from-purple-50 to-white overflow-hidden">
-                  <div className="relative p-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 bg-gradient-to-br from-purple-500 to-violet-600 rounded-lg group-hover:scale-105 transition-transform duration-300">
-                        <CreditCard className="h-4 w-4 text-white" />
+                {/* Contact Information */}
+                {(storeSettings?.contactPhone || storeSettings?.contactEmail) && (
+                  <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
+                    <div className="p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-full group-hover:scale-110 transition-transform duration-300">
+                          <Phone className="h-5 w-5 text-white" />
+                        </div>
+                        <span className="font-semibold text-lg text-gray-800">{t('contacts')}</span>
                       </div>
-                      <h3 className="font-semibold text-base text-gray-800">{t('delivery')} и {t('payment')}</h3>
+                      <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
+                        {storeSettings.contactPhone && (
+                          <div className="text-base sm:text-lg flex justify-between">
+                            <span className="text-gray-700 font-bold">{t('phone')}:</span>
+                            <span className="font-bold">{storeSettings.contactPhone}</span>
+                          </div>
+                        )}
+                        {storeSettings.contactEmail && (
+                          <div className="text-base sm:text-lg flex justify-between">
+                            <span className="text-gray-700 font-bold">Email:</span>
+                            <span className="font-bold break-all">{storeSettings.contactEmail}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      {storeSettings.deliveryInfo && (
-                        <div>
-                          <p className="text-gray-600 text-xs leading-relaxed">{storeSettings.deliveryInfo.substring(0, 80)}...</p>
-                        </div>
-                      )}
-                      {storeSettings.paymentInfo && (
-                        <div>
-                          <p className="text-gray-600 text-xs leading-relaxed">{storeSettings.paymentInfo.substring(0, 80)}...</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              )}
+                  </Card>
+                )}
               </div>
+
+              {/* Right Column: Delivery & Payment */}
+              {(storeSettings?.deliveryInfo || storeSettings?.paymentInfo) && (
+                <div className="flex">
+                  <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden flex-1 flex flex-col">
+                    <div className="p-6 flex-1 flex flex-col">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full group-hover:scale-110 transition-transform duration-300">
+                          <CreditCard className="h-5 w-5 text-white" />
+                        </div>
+                        <span className="font-semibold text-lg text-gray-800">Оплата и доставка</span>
+                      </div>
+                      <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
+                        {storeSettings.deliveryInfo && (
+                          <div>
+                            <span className="text-gray-700 text-base font-bold block mb-2">{t('delivery')}:</span>
+                            <span className="text-gray-800 font-bold text-base leading-relaxed">{storeSettings.deliveryInfo}</span>
+                          </div>
+                        )}
+                        {storeSettings.paymentInfo && (
+                          <div>
+                            <span className="text-gray-700 text-base font-bold block mb-2">{t('payment')}:</span>
+                            <span className="text-gray-800 font-bold text-base leading-relaxed">{storeSettings.paymentInfo}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+              )}
             </div>
           )}
 
