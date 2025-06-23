@@ -3539,11 +3539,13 @@ export default function AdminDashboard() {
                           }
                         }}
                       >
+                        {/* RTL-aware kanban columns container */}
                         <div 
-                          className="flex gap-4 min-w-max pb-4"
+                          className="gap-4 min-w-max pb-4"
                           style={{
+                            display: 'flex',
                             flexDirection: isRTL ? 'row-reverse' : 'row',
-                            direction: isRTL ? 'rtl' : 'ltr'
+                            direction: 'ltr' // Keep content direction LTR for proper functionality
                           }}
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => {
