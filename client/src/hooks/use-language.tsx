@@ -100,18 +100,66 @@ export function useShopTranslation() {
 export function useAdminTranslation() {
   const { t, i18n } = useTranslation('admin');
   
-  // Enhanced translation function with fallback
+  // Multilingual fallback values
+  const fallbackValues: Record<string, Record<string, string>> = {
+    'common.save': {
+      ru: 'Сохранить',
+      en: 'Save',
+      he: 'שמור'
+    },
+    'common.saving': {
+      ru: 'Сохранение...',
+      en: 'Saving...',
+      he: 'שומר...'
+    },
+    'common.saveChanges': {
+      ru: 'Сохранить изменения',
+      en: 'Save Changes',
+      he: 'שמור שינויים'
+    },
+    'common.cancel': {
+      ru: 'Отмена',
+      en: 'Cancel',
+      he: 'ביטול'
+    },
+    'common.delete': {
+      ru: 'Удалить',
+      en: 'Delete',
+      he: 'מחק'
+    },
+    'common.free': {
+      ru: 'Бесплатно',
+      en: 'Free',
+      he: 'חינם'
+    },
+    'common.error': {
+      ru: 'Ошибка',
+      en: 'Error',
+      he: 'שגיאה'
+    }
+  };
+  
+  // Enhanced translation function with multilingual fallback
   const enhancedT = (key: string, fallback?: string) => {
     try {
       const translation = t(key);
-      // If translation returns the key itself, use fallback or return key
+      // If translation returns the key itself, use fallback or multilingual fallback
       if (translation === key || !translation) {
+        // Try to get language-specific fallback
+        const currentLang = i18n.language;
+        const langFallback = fallbackValues[key]?.[currentLang];
+        if (langFallback) {
+          return langFallback;
+        }
+        // Use provided fallback or key parts
         return fallback || key.split('.').pop() || key;
       }
       return translation;
     } catch (error) {
       console.error('Translation error for key:', key, error);
-      return fallback || key.split('.').pop() || key;
+      const currentLang = i18n.language;
+      const langFallback = fallbackValues[key]?.[currentLang];
+      return langFallback || fallback || key.split('.').pop() || key;
     }
   };
   
