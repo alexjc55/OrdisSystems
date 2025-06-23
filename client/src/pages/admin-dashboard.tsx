@@ -1026,23 +1026,24 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
       </div>
 
       {/* Compact Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         
-        {/* Customer Contact & Status */}
-        <div className="bg-white rounded-lg border p-4">
-          <h3 className="font-semibold mb-3 text-gray-800 flex items-center gap-2">
-            <Users className="h-4 w-4" />
+        {/* Customer Contact & Status - Important section with visual accent */}
+        <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg border-2 border-orange-200 p-4 shadow-sm">
+          <h3 className="font-semibold mb-3 text-orange-800 flex items-center gap-2">
+            <Users className="h-4 w-4 text-orange-600" />
             {adminT('orders.customerInfo')}
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">{adminT('orders.customerPhone')}</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.customerPhone')}</label>
               <div className="flex gap-2">
                 <Input
                   value={editedOrder.customerPhone}
                   onChange={(e) => setEditedOrder(prev => ({ ...prev, customerPhone: e.target.value }))}
                   placeholder={adminT('orders.phonePlaceholder')}
-                  className="text-sm flex-1"
+                  className="text-sm flex-1 h-8"
+                  autoFocus={false}
                 />
                 {editedOrder.customerPhone && (
                   <DropdownMenu>
@@ -1080,12 +1081,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">{adminT('orders.orderStatus')}</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.orderStatus')}</label>
               <Select
                 value={editedOrder.status}
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
               >
-                <SelectTrigger className={`text-sm h-9 border ${getStatusColor(editedOrder.status)}`}>
+                <SelectTrigger className={`text-sm h-8 border ${getStatusColor(editedOrder.status)}`}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1125,39 +1126,39 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
           </div>
         </div>
 
-        {/* Delivery Information */}
-        <div className="bg-white rounded-lg border p-4">
-          <h3 className="font-semibold mb-3 text-gray-800 flex items-center gap-2">
-            <Truck className="h-4 w-4" />
+        {/* Delivery Information - Important section with visual accent */}
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg border-2 border-blue-200 p-4 shadow-sm">
+          <h3 className="font-semibold mb-3 text-blue-800 flex items-center gap-2">
+            <Truck className="h-4 w-4 text-blue-600" />
             {adminT('orders.delivery')}
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">{adminT('orders.deliveryAddress')}</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.deliveryAddress')}</label>
               <Input
                 value={editedOrder.deliveryAddress}
                 onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryAddress: e.target.value }))}
                 placeholder={adminT('orders.addressPlaceholder')}
-                className="text-sm h-9"
+                className="text-sm h-8"
               />
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">{adminT('orders.date')}</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.date')}</label>
                 <Input
                   type="date"
                   value={editedOrder.deliveryDate}
                   onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
-                  className="text-sm h-9"
+                  className="text-sm h-8"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">{adminT('orders.time')}</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.time')}</label>
                 <Select
                   value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
                   onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
                 >
-                  <SelectTrigger className="text-sm h-9">
+                  <SelectTrigger className="text-sm h-8">
                     <SelectValue placeholder={adminT('orders.selectTime')} />
                   </SelectTrigger>
                   <SelectContent>
@@ -1219,10 +1220,13 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
         </div>
       </div>
 
-      {/* Order Items */}
-      <div>
+      {/* Order Items - Important section with visual accent */}
+      <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border-2 border-green-200 p-4 shadow-sm">
         <div className={`flex justify-between items-center mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-          <h3 className="font-semibold">{adminT('orders.orderItems')}</h3>
+          <h3 className="font-semibold text-green-800 flex items-center gap-2">
+            <ShoppingCart className="h-4 w-4 text-green-600" />
+            {adminT('orders.orderItems')}
+          </h3>
           <Button 
             size="sm" 
             onClick={() => setShowAddItem(true)}
@@ -1592,7 +1596,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
         {/* Search */}
         <div className="mb-4">
           <Input
-            placeholder={searchPlaceholder}
+            placeholder={adminT('common.search')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="mb-3"
