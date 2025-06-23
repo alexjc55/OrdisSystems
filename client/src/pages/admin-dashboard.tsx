@@ -1633,7 +1633,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
-      <div className="bg-white rounded-lg p-6 w-96 max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-6 w-96 max-h-[90vh] overflow-y-auto shadow-2xl z-[9999]">
         <h3 className="text-lg font-semibold mb-4">{adminT('orders.addProduct')}</h3>
         
         {/* Search */}
@@ -1735,7 +1735,7 @@ function ItemDiscountDialog({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl z-[9999]">
         <h3 className="text-lg font-semibold mb-4">{adminT('orders.itemDiscount')}</h3>
         
         <div className="mb-4">
