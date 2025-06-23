@@ -52,6 +52,10 @@
     direction: rtl;
   }
   
+  .rtl .kanban-scroll-container .flex {
+    flex-direction: inherit;
+  }
+  
   /* RTL text alignment for all content */
   .rtl h1,
   .rtl h2,
