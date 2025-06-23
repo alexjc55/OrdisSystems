@@ -544,7 +544,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
           {order.deliveryDate && order.deliveryTime && (
             <div className="space-y-1 text-xs text-gray-500">
               <div className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
+                <CalendarIcon className="h-3 w-3" />
                 {order.deliveryDate}
               </div>
               <div className="flex items-center gap-1">
@@ -692,6 +692,18 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   const [showAddItem, setShowAddItem] = useState(false);
   const [editedOrderItems, setEditedOrderItems] = useState(order.items || []);
   const [showDiscountDialog, setShowDiscountDialog] = useState<number | null>(null);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [mobileDatePickerOpen, setMobileDatePickerOpen] = useState(false);
+
+  // Get locale for calendar based on current language
+  const getCalendarLocale = () => {
+    const currentLanguage = localStorage.getItem('language') || 'ru';
+    switch (currentLanguage) {
+      case 'en': return enUS;
+      case 'he': return he;
+      default: return ru;
+    }
+  };
 
   const updateOrderMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -1251,12 +1263,31 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   className="text-sm h-8"
                 />
                 <div className="grid grid-cols-2 gap-2">
-                  <Input
-                    type="date"
-                    value={editedOrder.deliveryDate}
-                    onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
-                    className="text-sm h-8"
-                  />
+                  <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="text-sm h-8 justify-start text-left font-normal"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "PPP", { locale: getCalendarLocale() }) : adminT('orders.selectDate')}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <CalendarComponent
+                        mode="single"
+                        selected={editedOrder.deliveryDate ? new Date(editedOrder.deliveryDate) : undefined}
+                        onSelect={(date) => {
+                          if (date) {
+                            setEditedOrder(prev => ({ ...prev, deliveryDate: format(date, "yyyy-MM-dd") }));
+                            setDatePickerOpen(false);
+                          }
+                        }}
+                        locale={getCalendarLocale()}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <Select
                     value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
                     onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
@@ -1324,12 +1355,31 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   placeholder={adminT('orders.addressPlaceholder')}
                   className="text-sm h-8"
                 />
-                <Input
-                  type="date"
-                  value={editedOrder.deliveryDate}
-                  onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
-                  className="text-sm h-8"
-                />
+                <Popover open={mobileDatePickerOpen} onOpenChange={setMobileDatePickerOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="text-sm h-8 justify-start text-left font-normal"
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "PPP", { locale: getCalendarLocale() }) : adminT('orders.selectDate')}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={editedOrder.deliveryDate ? new Date(editedOrder.deliveryDate) : undefined}
+                      onSelect={(date) => {
+                        if (date) {
+                          setEditedOrder(prev => ({ ...prev, deliveryDate: format(date, "yyyy-MM-dd") }));
+                          setMobileDatePickerOpen(false);
+                        }
+                      }}
+                      locale={getCalendarLocale()}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
                 <Select
                   value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
                   onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
@@ -3971,7 +4021,7 @@ export default function AdminDashboard() {
                                   >
                                     <div className="space-y-1" dir="ltr">
                                       <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse justify-start' : 'justify-center'}`}>
-                                        <Calendar className="h-3 w-3 text-gray-400" />
+                                        <CalendarIcon className="h-3 w-3 text-gray-400" />
                                         <span className="font-medium">{adminT('common.created')}:</span>
                                       </div>
                                       <div className={`text-xs text-gray-600 ${isRTL ? 'text-right' : 'text-center'}`}>
