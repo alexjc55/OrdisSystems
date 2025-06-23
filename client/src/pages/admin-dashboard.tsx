@@ -1221,15 +1221,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
       {/* Order Items */}
       <div>
-        <div className="flex justify-between items-center mb-3">
+        <div className={`flex justify-between items-center mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <h3 className="font-semibold">{adminT('orders.orderItems')}</h3>
           <Button 
             size="sm" 
-            variant="outline"
             onClick={() => setShowAddItem(true)}
-            className="text-xs"
+            className="text-xs bg-orange-500 hover:bg-orange-600 text-white border-orange-500"
           >
-            <Plus className={`h-3 w-3 ${isRTL ? 'mr-4' : 'mr-4'}`} />
+            <Plus className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
             {adminT('orders.addProduct')}
           </Button>
         </div>
@@ -1413,7 +1412,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             {/* Order-level discount */}
             <div className="border-t pt-2">
               <div className="flex justify-between items-center mb-2">
-                <span className="font-medium">{adminT('orders.orderDiscount')}:</span>
+                <span className="font-medium">{adminT('orders.discount')}:</span>
                 <span className="text-red-600">-{formatCurrency(calculateOrderDiscount(calculateSubtotal()))}</span>
               </div>
               <div className="grid grid-cols-3 gap-2">
@@ -1588,7 +1587,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-96 max-h-[80vh] overflow-y-auto">
-        <h3 className="text-lg font-semibold mb-4">Добавить товар</h3>
+        <h3 className="text-lg font-semibold mb-4">{adminT('orders.addProduct')}</h3>
         
         {/* Search */}
         <div className="mb-4">
@@ -1612,7 +1611,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
             >
               <div className="font-medium">{product.name}</div>
               <div className="text-sm text-gray-500">
-                {formatCurrency(product.price || product.pricePerKg)} за {getUnitDisplay(product.unit)}
+                {formatCurrency(product.price || product.pricePerKg)} {adminT('products.per')} {getUnitDisplay(product.unit)}
               </div>
             </div>
           ))}
@@ -1622,7 +1621,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
         {selectedProduct && (
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">
-              Количество ({getUnitDisplay(selectedProduct.unit)})
+              {adminT('orders.quantity')} ({getUnitDisplay(selectedProduct.unit)})
             </label>
             <Input
               type="number"
@@ -1637,14 +1636,14 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
         {/* Actions */}
         <div className="flex justify-end gap-3">
           <Button variant="outline" onClick={onClose}>
-            Отмена
+            {adminT('common.cancel')}
           </Button>
           <Button 
             onClick={handleAdd}
             disabled={!selectedProduct || quantity <= 0}
             className="bg-green-600 hover:bg-green-700"
           >
-            Добавить
+            {adminT('common.add')}
           </Button>
         </div>
       </div>
