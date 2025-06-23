@@ -964,28 +964,40 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   const addItem = (product: any, quantity: number) => {
     const unitPrice = product.price || product.pricePerKg || 0;
     
-    // Calculate total price based on product unit and pricing
-    let totalPrice;
-    if (product.pricePerKg && (product.unit === 'gram' || product.unit === '100gram')) {
-      // If price is per kg but quantity is in grams, convert to kg for calculation
-      totalPrice = (quantity / 1000) * unitPrice;
-    } else if (product.unit === '100gram' || product.unit === '100g') {
-      // For 100g products, price is per 100g unit, so divide quantity by 100
-      totalPrice = (quantity / 100) * unitPrice;
+    // Check if product already exists in the order
+    const existingItemIndex = editedOrderItems.findIndex((item: any) => item.productId === product.id);
+    
+    if (existingItemIndex !== -1) {
+      // Product exists, update quantity
+      const existingItem = editedOrderItems[existingItemIndex];
+      const newQuantity = existingItem.quantity + quantity;
+      updateItemQuantity(existingItemIndex, newQuantity);
     } else {
-      // Standard calculation for other units
-      totalPrice = quantity * unitPrice;
-    }
+      // New product, add to order
+      // Calculate total price based on product unit and pricing
+      let totalPrice;
+      if (product.pricePerKg && (product.unit === 'gram' || product.unit === '100gram')) {
+        // If price is per kg but quantity is in grams, convert to kg for calculation
+        totalPrice = (quantity / 1000) * unitPrice;
+      } else if (product.unit === '100gram' || product.unit === '100g') {
+        // For 100g products, price is per 100g unit, so divide quantity by 100
+        totalPrice = (quantity / 100) * unitPrice;
+      } else {
+        // Standard calculation for other units
+        totalPrice = quantity * unitPrice;
+      }
 
-    const newItem = {
-      product,
-      productId: product.id,
-      quantity,
-      pricePerUnit: unitPrice,
-      pricePerKg: unitPrice,
-      totalPrice: totalPrice
-    };
-    setEditedOrderItems([...editedOrderItems, newItem]);
+      const newItem = {
+        product,
+        productId: product.id,
+        quantity,
+        pricePerUnit: unitPrice,
+        pricePerKg: unitPrice,
+        totalPrice: totalPrice
+      };
+      setEditedOrderItems([...editedOrderItems, newItem]);
+    }
+    
     setShowAddItem(false);
   };
 
@@ -1101,7 +1113,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             {/* Customer Information and Delivery Details - All in one row */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">Информация о клиенте и доставке</label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+              <div className="grid grid-cols-4 gap-1">
                 <div className="flex gap-1">
                   <Input
                     value={editedOrder.customerPhone}
