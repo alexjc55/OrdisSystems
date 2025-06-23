@@ -1524,7 +1524,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <div className="text-sm font-bold text-green-600">{formatCurrency(item.totalPrice)}</div>
+                  <div className="text-lg font-bold text-green-600">{formatCurrency(item.totalPrice)}</div>
                 </div>
               </div>
               
@@ -1549,7 +1549,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       className="h-6 px-2 text-xs text-gray-500 hover:text-gray-700"
                     >
                       <Plus className="h-3 w-3 mr-1" />
-                      Добавить
+                      {adminT('orders.discount')}
                     </Button>
                   )}
                 </div>
