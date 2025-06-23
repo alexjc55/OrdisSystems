@@ -418,14 +418,23 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
   
   const getStatusLabel = (status: string) => {
     console.log('OrderCard getStatusLabel called with status:', status);
+    console.log('adminT function:', adminT);
+    
+    if (status === 'pending') {
+      const pendingTranslation = adminT('orders.status.pending');
+      console.log('Pending translation result:', pendingTranslation);
+      console.log('Pending translation type:', typeof pendingTranslation);
+      console.log('Pending translation length:', pendingTranslation?.length);
+    }
+    
     const result = (() => {
       switch (status) {
-        case 'pending': return adminT('orders.status.pending');
-        case 'confirmed': return adminT('orders.status.confirmed');
-        case 'preparing': return adminT('orders.status.preparing');
-        case 'ready': return adminT('orders.status.ready');
-        case 'delivered': return adminT('orders.status.delivered');
-        case 'cancelled': return adminT('orders.status.cancelled');
+        case 'pending': return adminT('orders.status.pending') || 'Ожидает';
+        case 'confirmed': return adminT('orders.status.confirmed') || 'Подтвержден';
+        case 'preparing': return adminT('orders.status.preparing') || 'Готовится';
+        case 'ready': return adminT('orders.status.ready') || 'Готов';
+        case 'delivered': return adminT('orders.status.delivered') || 'Доставлен';
+        case 'cancelled': return adminT('orders.status.cancelled') || 'Отменен';
         default: return status;
       }
     })();
