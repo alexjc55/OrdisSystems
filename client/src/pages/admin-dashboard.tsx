@@ -373,11 +373,16 @@ const generateAdminDeliveryTimes = (workingHours: any, selectedDate: string, wee
 function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
   return (
     <div
-      draggable
+      draggable={true}
       onDragStart={(e) => {
         e.dataTransfer.setData("orderId", order.id.toString());
+        e.dataTransfer.effectAllowed = "move";
       }}
-      className="cursor-move"
+      onDragEnd={(e) => {
+        e.preventDefault();
+      }}
+      className="cursor-move touch-manipulation"
+      style={{ touchAction: 'manipulation' }}
     >
       <OrderCard order={order} onEdit={onEdit} onStatusChange={onStatusChange} onCancelOrder={onCancelOrder} />
     </div>
@@ -3528,7 +3533,12 @@ export default function AdminDashboard() {
                     {ordersViewMode === "kanban" && (
                       <div 
                         className={`overflow-x-auto kanban-scroll-container ${isRTL ? 'rtl' : 'ltr'}`}
-                        style={isRTL ? { direction: 'rtl' } : {}}
+                        style={{ 
+                          direction: isRTL ? 'rtl' : 'ltr',
+                          touchAction: 'pan-x pan-y',
+                          overflowX: 'auto',
+                          WebkitOverflowScrolling: 'touch'
+                        }}
                         ref={(el) => {
                           if (el && ordersViewMode === "kanban") {
                             setTimeout(() => {
@@ -3541,11 +3551,9 @@ export default function AdminDashboard() {
                       >
                         {/* RTL-aware kanban columns container */}
                         <div 
-                          className="gap-4 min-w-max pb-4"
+                          className="flex gap-4 min-w-max pb-4"
                           style={{
-                            display: 'flex',
-                            flexDirection: isRTL ? 'row-reverse' : 'row',
-                            direction: 'ltr' // Keep content direction LTR for proper functionality
+                            flexDirection: isRTL ? 'row-reverse' : 'row'
                           }}
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => {
