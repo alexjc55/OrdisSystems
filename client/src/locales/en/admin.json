@@ -321,7 +321,15 @@
     "orderInformation": "Order Information",
     "orderNumber": "Order #",
     "createdDate": "Created Date",
-    "customerInfo": "Customer Information"
+    "customerInfo": "Customer Information",
+    "itemDiscount": "Item Discount",
+    "baseCost": "Base Cost",
+    "discountType": "Discount Type",
+    "percentage": "Percentage",
+    "discountSize": "Discount Amount",
+    "discountReason": "Discount Reason",
+    "discountReasonPlaceholder": "Enter discount reason...",
+    "removeDiscount": "Remove Discount"
   },
   "users": {
     "title": "Users",

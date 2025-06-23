@@ -337,7 +337,15 @@
     "orderInformation": "Информация о заказе",
     "orderNumber": "№ заказа",
     "createdDate": "Дата создания",
-    "customerInfo": "Информация о клиенте"
+    "customerInfo": "Информация о клиенте",
+    "itemDiscount": "Скидка на товар",
+    "baseCost": "Базовая стоимость",
+    "discountType": "Тип скидки",
+    "percentage": "Процент",
+    "discountSize": "Размер скидки",
+    "discountReason": "Причина скидки",
+    "discountReasonPlaceholder": "Укажите причину скидки...",
+    "removeDiscount": "Удалить скидку"
   },
   "users": {
     "title": "Пользователи",

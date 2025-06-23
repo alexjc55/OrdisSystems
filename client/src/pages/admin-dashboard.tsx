@@ -611,6 +611,19 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
 function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRTL }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Status color function for consistent styling
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'ready': return 'bg-green-100 text-green-800 border-green-200';
+      case 'delivered': return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
   const { data: storeSettingsData } = useQuery({
     queryKey: ['/api/settings'],
     queryFn: async () => {
@@ -1072,16 +1085,40 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 value={editedOrder.status}
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
               >
-                <SelectTrigger className="text-sm h-9">
+                <SelectTrigger className={`text-sm h-9 border ${getStatusColor(editedOrder.status)}`}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="pending">{adminT('orders.status.pending')}</SelectItem>
-                  <SelectItem value="confirmed">{adminT('orders.status.confirmed')}</SelectItem>
-                  <SelectItem value="preparing">{adminT('orders.status.preparing')}</SelectItem>
-                  <SelectItem value="ready">{adminT('orders.status.ready')}</SelectItem>
-                  <SelectItem value="delivered">{adminT('orders.status.delivered')}</SelectItem>
-                  <SelectItem value="cancelled">{adminT('orders.status.cancelled')}</SelectItem>
+                  <SelectItem value="pending" className="bg-yellow-50 hover:bg-yellow-100">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      {adminT('orders.status.pending')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="confirmed" className="bg-blue-50 hover:bg-blue-100">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {adminT('orders.status.confirmed')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="preparing" className="bg-orange-50 hover:bg-orange-100">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                      {adminT('orders.status.preparing')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="ready" className="bg-green-50 hover:bg-green-100">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      {adminT('orders.status.ready')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="delivered" className="bg-gray-50 hover:bg-gray-100">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      {adminT('orders.status.delivered')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="cancelled" className="bg-red-50 hover:bg-red-100">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      {adminT('orders.status.cancelled')}
+                    </span>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1575,20 +1612,20 @@ function ItemDiscountDialog({
   const finalPrice = basePrice - discountAmount;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96">
-        <h3 className="text-lg font-semibold mb-4">Скидка на товар</h3>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <h3 className="text-lg font-semibold mb-4">{adminT('orders.itemDiscount')}</h3>
         
         <div className="mb-4">
           <div className="font-medium">{item.product?.name}</div>
           <div className="text-sm text-gray-500">
-            Базовая стоимость: {formatCurrency(basePrice)}
+            {adminT('orders.baseCost')}: {formatCurrency(basePrice)}
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Тип скидки</label>
+            <label className="block text-sm font-medium mb-2">{adminT('orders.discountType')}</label>
             <Select
               value={discountType}
               onValueChange={(value: 'percentage' | 'amount') => setDiscountType(value)}
@@ -1597,30 +1634,38 @@ function ItemDiscountDialog({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="percentage">Процент (%)</SelectItem>
-                <SelectItem value="amount">Сумма (₪)</SelectItem>
+                <SelectItem value="percentage">{adminT('orders.percentage')} (%)</SelectItem>
+                <SelectItem value="amount">{adminT('orders.amount')} (₪)</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">
-              Размер скидки {discountType === 'percentage' ? '(%)' : '(₪)'}
+              {adminT('orders.discountSize')} {discountType === 'percentage' ? '(%)' : '(₪)'}
             </label>
             <Input
               type="number"
               step="0.01"
               min="0"
               max={discountType === 'percentage' ? "100" : basePrice.toString()}
-              value={discountValue}
-              onChange={(e) => setDiscountValue(parseFloat(e.target.value) || 0)}
+              value={discountValue === 0 ? '' : discountValue}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === '') {
+                  setDiscountValue(0);
+                } else {
+                  setDiscountValue(parseFloat(value) || 0);
+                }
+              }}
+              placeholder="0"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Причина скидки</label>
+            <label className="block text-sm font-medium mb-2">{adminT('orders.discountReason')}</label>
             <Input
-              placeholder="Укажите причину скидки..."
+              placeholder={adminT('orders.discountReasonPlaceholder')}
               value={discountReason}
               onChange={(e) => setDiscountReason(e.target.value)}
             />
@@ -1644,7 +1689,7 @@ function ItemDiscountDialog({
 
         <div className="flex justify-end gap-3 mt-6">
           <Button variant="outline" onClick={onClose}>
-            Отмена
+            {adminT('actions.cancel')}
           </Button>
           {currentDiscount && (
             <Button 
