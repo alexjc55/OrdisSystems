@@ -1017,71 +1017,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 ? `${order.user.firstName} ${order.user.lastName}`
                 : order.user?.email || "—"}</div>
             </div>
-          </div>
-          <div className="text-right">
-            <div className="text-xs text-gray-500">{adminT('orders.createdDate')}</div>
-            <div className="text-sm">{new Date(order.createdAt).toLocaleString('ru-RU')}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Compact Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        
-        {/* Customer Contact & Status - Important section with visual accent */}
-        <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg border-2 border-orange-200 p-4 shadow-sm">
-          <h3 className="font-semibold mb-3 text-orange-800 flex items-center gap-2">
-            <Users className="h-4 w-4 text-orange-600" />
-            {adminT('orders.customerInfo')}
-          </h3>
-          <div className="space-y-2">
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.customerPhone')}</label>
-              <div className="flex gap-2">
-                <Input
-                  value={editedOrder.customerPhone}
-                  onChange={(e) => setEditedOrder(prev => ({ ...prev, customerPhone: e.target.value }))}
-                  placeholder={adminT('orders.phonePlaceholder')}
-                  className="text-sm flex-1 h-8"
-                  autoFocus={false}
-                />
-                {editedOrder.customerPhone && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-9 px-2 text-blue-600 hover:text-blue-800 border-blue-200 hover:bg-blue-50"
-                      >
-                        <Phone className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-36">
-                      <DropdownMenuItem 
-                        onClick={() => window.location.href = `tel:${editedOrder.customerPhone}`}
-                        className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
-                      >
-                        <Phone className="h-3 w-3 mr-2" />
-                        {adminT('orders.call')}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={() => {
-                          const cleanPhone = editedOrder.customerPhone.replace(/[^\d+]/g, '');
-                          window.open(`https://wa.me/${cleanPhone}`, '_blank');
-                        }}
-                        className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
-                      >
-                        <MessageCircle className="h-3 w-3 mr-2" />
-                        WhatsApp
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.orderStatus')}</label>
+            <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
+              <div className="text-xs text-gray-500">{adminT('orders.orderStatus')}</div>
               <Select
                 value={editedOrder.status}
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
@@ -1089,7 +1026,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 <SelectTrigger className={`text-sm h-8 border ${getStatusColor(editedOrder.status)}`}>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="z-[10000]">
                   <SelectItem value="pending" className="bg-yellow-50 hover:bg-yellow-100">
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                       {adminT('orders.status.pending')}
@@ -1124,7 +1061,17 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               </Select>
             </div>
           </div>
+          <div className="text-right">
+            <div className="text-xs text-gray-500">{adminT('orders.createdDate')}</div>
+            <div className="text-sm">{new Date(order.createdAt).toLocaleString('ru-RU')}</div>
+          </div>
         </div>
+      </div>
+
+      {/* Compact Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        
+
 
         {/* Delivery Information - Important section with visual accent */}
         <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg border-2 border-blue-200 p-4 shadow-sm">
@@ -1133,14 +1080,58 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             {adminT('orders.delivery')}
           </h3>
           <div className="space-y-2">
+            {/* Customer Information */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.deliveryAddress')}</label>
-              <Input
-                value={editedOrder.deliveryAddress}
-                onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryAddress: e.target.value }))}
-                placeholder={adminT('orders.addressPlaceholder')}
-                className="text-sm h-8"
-              />
+              <label className="block text-xs font-medium text-gray-700 mb-1">Информация о клиенте</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="flex gap-2">
+                  <Input
+                    value={editedOrder.customerPhone}
+                    onChange={(e) => setEditedOrder(prev => ({ ...prev, customerPhone: e.target.value }))}
+                    placeholder={adminT('orders.phonePlaceholder')}
+                    className="text-sm flex-1 h-8"
+                    autoFocus={false}
+                  />
+                  {editedOrder.customerPhone && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 px-2 text-blue-600 hover:text-blue-800 border-blue-200 hover:bg-blue-50"
+                        >
+                          <Phone className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-36">
+                        <DropdownMenuItem 
+                          onClick={() => window.location.href = `tel:${editedOrder.customerPhone}`}
+                          className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
+                        >
+                          <Phone className="h-3 w-3 mr-2" />
+                          {adminT('orders.call')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => {
+                            const cleanPhone = editedOrder.customerPhone.replace(/[^\d+]/g, '');
+                            window.open(`https://wa.me/${cleanPhone}`, '_blank');
+                          }}
+                          className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
+                        >
+                          <MessageCircle className="h-3 w-3 mr-2" />
+                          WhatsApp
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                </div>
+                <Input
+                  value={editedOrder.deliveryAddress}
+                  onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryAddress: e.target.value }))}
+                  placeholder={adminT('orders.addressPlaceholder')}
+                  className="text-sm h-8"
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
@@ -1367,7 +1358,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                         {adminT('orders.removeItemConfirm')} "{item.product?.name}"?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogFooter className={`${isRTL ? 'gap-4' : ''}`}>
+                    <AlertDialogFooter className={`${isRTL ? 'flex-row-reverse space-x-reverse space-x-4' : ''}`}>
                       <AlertDialogCancel>{adminT('common.cancel')}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() => removeItem(index)}
@@ -1627,6 +1618,8 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
         break;
       case 'gram':
       case 'ml':
+      case '100gram':
+      case '100ml':
         setQuantity(100);
         break;
       case 'kg':
