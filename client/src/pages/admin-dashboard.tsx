@@ -3508,22 +3508,22 @@ export default function AdminDashboard() {
                                       return formatCurrency(order.totalAmount);
                                     })()}
                                   </TableCell>
-                                  <TableCell className="text-xs sm:text-sm hidden md:table-cell text-center">
+                                  <TableCell className={`text-xs sm:text-sm hidden md:table-cell ${isRTL ? 'text-right' : 'text-center'}`}>
                                     <div className="space-y-1">
-                                      <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                                      <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse justify-start' : 'justify-center'}`}>
                                         <Calendar className="h-3 w-3 text-gray-400" />
                                         <span className="font-medium">{adminT('common.created')}:</span>
                                       </div>
-                                      <div className="text-xs text-gray-600">
+                                      <div className={`text-xs text-gray-600 ${isRTL ? 'text-right' : 'text-center'}`}>
                                         {new Date(order.createdAt).toLocaleDateString('ru-RU')} {new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
                                       </div>
                                       {order.deliveryDate && (
                                         <>
-                                          <div className={`flex items-center gap-1 mt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                                          <div className={`flex items-center gap-1 mt-2 ${isRTL ? 'flex-row-reverse justify-start' : 'justify-center'}`}>
                                             <Clock className="h-3 w-3 text-blue-400" />
                                             <span className="font-medium text-blue-600">{adminT('orders.deliveryDate')}:</span>
                                           </div>
-                                          <div className="text-xs text-blue-600">
+                                          <div className={`text-xs text-blue-600 ${isRTL ? 'text-right' : 'text-center'}`}>
                                             {new Date(order.deliveryDate).toLocaleDateString('ru-RU')} {order.deliveryTime || ''}
                                           </div>
                                         </>
