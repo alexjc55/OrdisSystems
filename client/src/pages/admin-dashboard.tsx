@@ -1056,7 +1056,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 value={editedOrder.status}
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
               >
-                <SelectTrigger className={`text-sm h-8 border w-full ${getStatusColor(editedOrder.status)}`}>
+                <SelectTrigger className={`text-sm h-8 border w-full text-gray-900 font-medium ${getStatusColor(editedOrder.status)}`}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="z-[10000]">
@@ -1495,16 +1495,16 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 <div className="flex justify-between items-center">
                   <div className="flex-1">
                     <label className="text-xs text-gray-600 mb-1 block">{adminT('orders.quantity')}</label>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                       <Input
                         type="number"
                         step="0.1"
                         min="0.1"
                         value={item.quantity}
                         onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
-                        className="h-8 text-xs w-20"
+                        className="h-8 text-xs w-16"
                       />
-                      <span className="text-xs text-gray-500 flex-1">
+                      <span className="text-xs text-gray-500 truncate">
                         {getUnitDisplay(item.product?.unit, item.quantity)}
                       </span>
                     </div>
@@ -1574,7 +1574,47 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 <span className="font-medium">{adminT('orders.discount')}:</span>
                 <span className="text-red-600">-{formatCurrency(calculateOrderDiscount(calculateSubtotal()))}</span>
               </div>
-              <div className="flex gap-2">
+              {/* Mobile Layout - Stack vertically */}
+              <div className="block sm:hidden space-y-2">
+                <div className="flex gap-1">
+                  <Select
+                    value={orderDiscount.type}
+                    onValueChange={(value: 'percentage' | 'amount') => 
+                      setOrderDiscount(prev => ({ ...prev, type: value }))
+                    }
+                  >
+                    <SelectTrigger className="h-8 text-xs w-16">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="percentage">%</SelectItem>
+                      <SelectItem value="amount">₪</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={orderDiscount.value}
+                    onChange={(e) => setOrderDiscount(prev => ({ 
+                      ...prev, 
+                      value: parseFloat(e.target.value) || 0 
+                    }))}
+                    className="h-8 text-xs w-20"
+                  />
+                </div>
+                <Input
+                  placeholder={adminT('orders.discountReason')}
+                  value={orderDiscount.reason}
+                  onChange={(e) => setOrderDiscount(prev => ({ 
+                    ...prev, 
+                    reason: e.target.value 
+                  }))}
+                  className="h-8 text-xs w-full"
+                />
+              </div>
+
+              {/* Desktop Layout - Horizontal */}
+              <div className="hidden sm:flex gap-2">
                 <Select
                   value={orderDiscount.type}
                   onValueChange={(value: 'percentage' | 'amount') => 
@@ -1640,7 +1680,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       ...prev, 
                       value: parseFloat(e.target.value) || 0 
                     }))}
-                    className="h-8 text-xs w-32"
+                    className="h-8 text-xs w-28"
                   />
                   <p className="text-xs text-orange-600">
                     * {adminT('orders.manualPriceNote')}
