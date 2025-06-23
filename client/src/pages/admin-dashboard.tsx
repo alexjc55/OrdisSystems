@@ -3272,7 +3272,7 @@ export default function AdminDashboard() {
           {hasPermission("canManageOrders") && (
             <TabsContent value="orders" className={`space-y-4 sm:space-y-6 ${isRTL ? 'rtl' : 'ltr'}`}>
               {/* Header Section */}
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4" dir="ltr">
                 <div className={isRTL ? 'text-right' : 'text-left'}>
                   <h1 className={`text-2xl font-bold flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                     <ShoppingCart className="h-6 w-6" />
