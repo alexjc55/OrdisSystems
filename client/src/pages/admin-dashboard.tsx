@@ -402,7 +402,8 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
     }
   };
 
-  const { t: adminT } = useAdminTranslation();
+  const { t: adminT, i18n } = useAdminTranslation();
+  const isRTL = i18n.language === 'he';
   
   const getStatusLabel = (status: string) => {
     switch (status) {
@@ -567,7 +568,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 onEdit(order);
               }}
             >
-              <Eye className="h-3 w-3 mr-1" />
+              <Eye className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
               {adminT('orders.orderDetails')}
             </Button>
             <Select
