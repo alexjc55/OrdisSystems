@@ -263,6 +263,7 @@
     "discountApplied": "Discount applied",
     "removeDiscount": "Remove discount",
     "call": "Call",
+    "whatsapp": "WhatsApp",
     "updated": "Order updated",
     "updateSuccess": "Changes saved successfully",
     "updateError": "Failed to update order",

@@ -261,7 +261,9 @@
       "cancelled": "מבוטל"
     },
     "discountApplied": "הנחה הוחלה",
+    "removeDiscount": "הסר הנחה",
     "call": "התקשר",
+    "whatsapp": "WhatsApp",
     "updated": "הזמנה עודכנה",
     "updateSuccess": "השינויים נשמרו בהצלחה",
     "updateError": "לא ניתן לעדכן את ההזמנה",
