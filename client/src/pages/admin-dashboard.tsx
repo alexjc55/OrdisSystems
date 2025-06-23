@@ -25,7 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import * as SelectPrimitive from "@radix-ui/react-select";
@@ -1632,9 +1632,11 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-6 w-96 max-h-[90vh] overflow-y-auto shadow-2xl z-[9999]">
-        <h3 className="text-lg font-semibold mb-4">{adminT('orders.addProduct')}</h3>
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] w-96 max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{adminT('orders.addProduct')}</DialogTitle>
+        </DialogHeader>
         
         {/* Search */}
         <div className="mb-4">
@@ -1680,8 +1682,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
           </div>
         )}
 
-        {/* Actions */}
-        <div className={`flex justify-end ${isRTL ? 'gap-4' : 'gap-3'}`}>
+        <DialogFooter className={`${isRTL ? 'gap-4' : 'gap-3'}`}>
           <Button variant="outline" onClick={onClose}>
             {adminT('common.cancel')}
           </Button>
@@ -1692,9 +1693,9 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
           >
             {adminT('common.add')}
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -1734,9 +1735,11 @@ function ItemDiscountDialog({
   const finalPrice = basePrice - discountAmount;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl z-[9999]">
-        <h3 className="text-lg font-semibold mb-4">{adminT('orders.itemDiscount')}</h3>
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{adminT('orders.itemDiscount')}</DialogTitle>
+        </DialogHeader>
         
         <div className="mb-4">
           <div className="font-medium">{item.product?.name}</div>
@@ -1809,7 +1812,7 @@ function ItemDiscountDialog({
           )}
         </div>
 
-        <div className="flex justify-end gap-4 mt-6">
+        <DialogFooter className="gap-4 mt-6">
           <Button variant="outline" onClick={onClose}>
             {adminT('actions.cancel')}
           </Button>
@@ -1831,9 +1834,9 @@ function ItemDiscountDialog({
           >
             {adminT('actions.apply')}
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
