@@ -111,10 +111,6 @@
     flex-direction: row-reverse !important;
   }
   
-  .rtl .kanban-scroll-container .flex {
-    flex-direction: row-reverse !important;
-  }
-  
   /* Form elements RTL alignment */
   .rtl input,
   .rtl select,
