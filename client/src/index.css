@@ -100,6 +100,11 @@
     text-align: right;
   }
   
+  .rtl table td,
+  .rtl table th {
+    text-align: right;
+  }
+  
   /* Kanban RTL styling */
   .rtl .kanban-scroll-container {
     direction: rtl;
