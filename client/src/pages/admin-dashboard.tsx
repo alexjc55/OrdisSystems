@@ -1297,7 +1297,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                           onClick={() => setShowDiscountDialog(index)}
                           className="h-6 px-2 text-xs"
                         >
-                          Скидка
+                          {adminT('orders.discount')}
                         </Button>
                       )}
                     </div>
@@ -1633,7 +1633,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
-      <div className="bg-white rounded-lg p-6 w-96 max-h-[90vh] overflow-y-auto shadow-lg">
+      <div className="bg-white rounded-lg p-6 w-96 max-h-[90vh] overflow-y-auto shadow-2xl">
         <h3 className="text-lg font-semibold mb-4">{adminT('orders.addProduct')}</h3>
         
         {/* Search */}
@@ -1681,7 +1681,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
         )}
 
         {/* Actions */}
-        <div className="flex justify-end gap-3">
+        <div className={`flex justify-end ${isRTL ? 'gap-4' : 'gap-3'}`}>
           <Button variant="outline" onClick={onClose}>
             {adminT('common.cancel')}
           </Button>
@@ -1809,7 +1809,7 @@ function ItemDiscountDialog({
           )}
         </div>
 
-        <div className="flex justify-end gap-3 mt-6">
+        <div className="flex justify-end gap-4 mt-6">
           <Button variant="outline" onClick={onClose}>
             {adminT('actions.cancel')}
           </Button>
