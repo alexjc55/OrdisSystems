@@ -3347,19 +3347,19 @@ export default function AdminDashboard() {
                           <Table className={`${isRTL ? 'rtl' : ''}`}>
                             <TableHeader>
                               <TableRow>
-                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>№</TableHead>
-                                <TableHead className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.customer', 'Клиент')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm hidden sm:table-cell w-24 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.statusHeader')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-20 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.orderTotal')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm hidden md:table-cell w-32 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.orderDate')}</TableHead>
-                                <TableHead className={`text-xs sm:text-sm w-12 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('common.actions')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm w-16 text-center font-semibold">№</TableHead>
+                                <TableHead className="text-xs sm:text-sm text-center font-semibold min-w-[180px]">{adminT('orders.customer', 'Клиент')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-32 text-center font-semibold">{adminT('orders.statusHeader')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm w-28 text-center font-semibold">{adminT('orders.orderTotal')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm hidden md:table-cell w-36 text-center font-semibold">{adminT('orders.orderDate')}</TableHead>
+                                <TableHead className="text-xs sm:text-sm w-16 text-center font-semibold">{adminT('common.actions')}</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {ordersResponse.data.map((order: any) => (
                                 <TableRow key={order.id} className="hover:bg-gray-50">
-                                  <TableCell className={`font-bold text-xs sm:text-sm text-orange-600 ${isRTL ? 'text-right' : 'text-left'}`}>#{order.id}</TableCell>
-                                  <TableCell className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                                  <TableCell className="font-bold text-xs sm:text-sm text-orange-600 text-center">#{order.id}</TableCell>
+                                  <TableCell className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'} px-3`}>
                                     <div className="space-y-1">
                                       <div className="font-medium">
                                         {order.user?.firstName && order.user?.lastName 
@@ -3398,7 +3398,7 @@ export default function AdminDashboard() {
                                       )}
                                     </div>
                                   </TableCell>
-                                  <TableCell className={`hidden sm:table-cell ${isRTL ? 'text-right' : 'text-left'}`}>
+                                  <TableCell className="hidden sm:table-cell text-center">
                                     <Select
                                       value={order.status}
                                       onValueChange={(newStatus) => {
@@ -3409,7 +3409,7 @@ export default function AdminDashboard() {
                                         }
                                       }}
                                     >
-                                      <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} ${isRTL ? 'text-right' : 'text-left'}`}>
+                                      <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} text-center`}>
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent className="bg-white border border-gray-200 shadow-lg">
@@ -3422,7 +3422,7 @@ export default function AdminDashboard() {
                                       </SelectContent>
                                     </Select>
                                   </TableCell>
-                                  <TableCell className={`font-medium text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                                  <TableCell className="font-medium text-xs sm:text-sm text-center">
                                     {(() => {
                                       // Extract discount information from order notes
                                       const extractDiscounts = (notes: string) => {
@@ -3508,7 +3508,7 @@ export default function AdminDashboard() {
                                       return formatCurrency(order.totalAmount);
                                     })()}
                                   </TableCell>
-                                  <TableCell className={`text-xs sm:text-sm hidden md:table-cell ${isRTL ? 'text-right' : 'text-left'}`}>
+                                  <TableCell className="text-xs sm:text-sm hidden md:table-cell text-center">
                                     <div className="space-y-1">
                                       <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                                         <Calendar className="h-3 w-3 text-gray-400" />
@@ -3530,7 +3530,7 @@ export default function AdminDashboard() {
                                       )}
                                     </div>
                                   </TableCell>
-                                  <TableCell className={`${isRTL ? 'text-right' : 'text-left'}`}>
+                                  <TableCell className="text-center">
                                     <Button 
                                       variant="outline" 
                                       size="sm" 
