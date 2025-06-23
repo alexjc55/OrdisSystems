@@ -1393,9 +1393,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
           ))}
         </div>
 
-        {/* Order Total Summary */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h4 className="font-medium mb-3">{adminT('orders.orderSummary')}</h4>
+        {/* Order Total Summary - Important section with visual accent */}
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 p-4 rounded-lg shadow-sm">
+          <h4 className="font-medium mb-3 text-purple-800 flex items-center gap-2">
+            <Receipt className="h-4 w-4 text-purple-600" />
+            {adminT('orders.orderSummary')}
+          </h4>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span>{adminT('orders.subtotal')}:</span>
