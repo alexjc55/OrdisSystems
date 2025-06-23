@@ -3531,13 +3531,27 @@ export default function AdminDashboard() {
 
                     {/* Kanban View */}
                     {ordersViewMode === "kanban" && (
-                      <div className="relative">
+                      <div 
+                        className="overflow-x-auto kanban-scroll-container"
+                        style={{ 
+                          touchAction: 'pan-x pan-y',
+                          overflowX: 'auto',
+                          WebkitOverflowScrolling: 'touch'
+                        }}
+                        ref={(el) => {
+                          if (el && ordersViewMode === "kanban") {
+                            setTimeout(() => {
+                              if (el) {
+                                el.scrollLeft = 0;
+                              }
+                            }, 100);
+                          }
+                        }}
+                      >
                         {/* Kanban Navigation Panel - Kommo CRM Style */}
                         <div className="hidden sm:flex absolute top-4 right-4 z-10 bg-white border border-gray-200 rounded-lg shadow-sm">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 hover:bg-gray-100"
+                          <button
+                            className="h-8 w-8 flex items-center justify-center hover:bg-gray-100 rounded-l-lg transition-colors"
                             onClick={() => {
                               const container = document.querySelector('.kanban-scroll-container');
                               if (container) {
@@ -3546,12 +3560,10 @@ export default function AdminDashboard() {
                             }}
                           >
                             <ChevronLeft className="h-4 w-4" />
-                          </Button>
-                          <div className="w-px bg-gray-200 my-1"></div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 hover:bg-gray-100"
+                          </button>
+                          <div className="w-px bg-gray-200"></div>
+                          <button
+                            className="h-8 w-8 flex items-center justify-center hover:bg-gray-100 rounded-r-lg transition-colors"
                             onClick={() => {
                               const container = document.querySelector('.kanban-scroll-container');
                               if (container) {
@@ -3560,29 +3572,12 @@ export default function AdminDashboard() {
                             }}
                           >
                             <ChevronRight className="h-4 w-4" />
-                          </Button>
+                          </button>
                         </div>
-                        
+
+                        {/* Kanban columns container */}
                         <div 
-                          className="overflow-x-auto kanban-scroll-container"
-                          style={{ 
-                            touchAction: 'pan-x pan-y',
-                            overflowX: 'auto',
-                            WebkitOverflowScrolling: 'touch'
-                          }}
-                          ref={(el) => {
-                            if (el && ordersViewMode === "kanban") {
-                              setTimeout(() => {
-                                if (el) {
-                                  el.scrollLeft = 0;
-                                }
-                              }, 100);
-                            }
-                          }}
-                        >
-                          {/* Kanban columns container */}
-                          <div 
-                            className="flex gap-4 min-w-max pb-4"
+                          className="flex gap-4 min-w-max pb-4"
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => {
                             e.preventDefault();
@@ -3810,7 +3805,6 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                           )}
-                          </div>
                         </div>
                       </div>
                     )}
