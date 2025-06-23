@@ -3342,23 +3342,23 @@ export default function AdminDashboard() {
                   <>
                     {/* Table View */}
                     {ordersViewMode === "table" && (
-                      <div className={`border rounded-lg bg-white ${isRTL ? 'rtl' : 'ltr'}`}>
+                      <div className={`border rounded-lg bg-white ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                         <div className={`w-full table-container ${isRTL ? 'rtl' : 'ltr'}`}>
                           <Table className={`${isRTL ? 'rtl' : ''}`}>
                             <TableHeader>
-                              <TableRow>
-                                <TableHead className="text-xs sm:text-sm w-16 text-center font-semibold">№</TableHead>
-                                <TableHead className="text-xs sm:text-sm text-center font-semibold min-w-[180px]">{adminT('orders.customer', 'Клиент')}</TableHead>
-                                <TableHead className="text-xs sm:text-sm hidden sm:table-cell w-32 text-center font-semibold">{adminT('orders.statusHeader')}</TableHead>
-                                <TableHead className="text-xs sm:text-sm w-28 text-center font-semibold">{adminT('orders.orderTotal')}</TableHead>
-                                <TableHead className="text-xs sm:text-sm hidden md:table-cell w-36 text-center font-semibold">{adminT('orders.orderDate')}</TableHead>
-                                <TableHead className="text-xs sm:text-sm w-16 text-center font-semibold">{adminT('common.actions')}</TableHead>
+                              <TableRow dir={isRTL ? 'rtl' : 'ltr'}>
+                                <TableHead className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}>№</TableHead>
+                                <TableHead className={`text-xs sm:text-sm font-semibold min-w-[180px] ${isRTL ? 'text-right' : 'text-center'}`}>{adminT('orders.customer', 'Клиент')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm hidden sm:table-cell w-32 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}>{adminT('orders.statusHeader')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm w-28 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}>{adminT('orders.orderTotal')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm hidden md:table-cell w-36 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}>{adminT('orders.orderDate')}</TableHead>
+                                <TableHead className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}>{adminT('common.actions')}</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {ordersResponse.data.map((order: any) => (
-                                <TableRow key={order.id} className="hover:bg-gray-50">
-                                  <TableCell className="font-bold text-xs sm:text-sm text-orange-600 text-center">#{order.id}</TableCell>
+                                <TableRow key={order.id} className="hover:bg-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
+                                  <TableCell className={`font-bold text-xs sm:text-sm text-orange-600 ${isRTL ? 'text-right' : 'text-center'}`}>#{order.id}</TableCell>
                                   <TableCell className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'} px-3`}>
                                     <div className="space-y-1">
                                       <div className="font-medium">
@@ -3398,7 +3398,7 @@ export default function AdminDashboard() {
                                       )}
                                     </div>
                                   </TableCell>
-                                  <TableCell className="hidden sm:table-cell text-center">
+                                  <TableCell className={`hidden sm:table-cell ${isRTL ? 'text-right' : 'text-center'}`}>
                                     <Select
                                       value={order.status}
                                       onValueChange={(newStatus) => {
@@ -3409,7 +3409,7 @@ export default function AdminDashboard() {
                                         }
                                       }}
                                     >
-                                      <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} text-center`}>
+                                      <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} ${isRTL ? 'text-right' : 'text-center'}`}>
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent className="bg-white border border-gray-200 shadow-lg">
@@ -3422,7 +3422,7 @@ export default function AdminDashboard() {
                                       </SelectContent>
                                     </Select>
                                   </TableCell>
-                                  <TableCell className="font-medium text-xs sm:text-sm text-center">
+                                  <TableCell className={`font-medium text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-center'}`}>
                                     {(() => {
                                       // Extract discount information from order notes
                                       const extractDiscounts = (notes: string) => {
@@ -3530,7 +3530,7 @@ export default function AdminDashboard() {
                                       )}
                                     </div>
                                   </TableCell>
-                                  <TableCell className="text-center">
+                                  <TableCell className={`${isRTL ? 'text-right' : 'text-center'}`}>
                                     <Button 
                                       variant="outline" 
                                       size="sm" 
