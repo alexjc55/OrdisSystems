@@ -43,6 +43,11 @@
     direction: rtl !important;
   }
   
+  /* Kanban RTL Support */
+  [dir="rtl"] .kanban-scroll-container {
+    direction: rtl;
+  }
+  
   /* RTL text alignment for all content */
   .rtl h1,
   .rtl h2,
