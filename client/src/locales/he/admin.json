@@ -251,6 +251,7 @@
     "title": "הזמנות",
     "description": "ניהול הזמנות לקוחות",
     "filterOrders": "סינון הזמנות",
+    "statusHeader": "סטטוס",
     "status": {
       "pending": "ממתין",
       "confirmed": "מאושר",

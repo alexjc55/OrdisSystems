@@ -270,6 +270,7 @@
     "title": "Заказы",
     "description": "Управление заказами клиентов",
     "filterOrders": "Фильтр заказов",
+    "statusHeader": "Статус",
     "status": {
       "pending": "Ожидает",
       "confirmed": "Подтвержден",

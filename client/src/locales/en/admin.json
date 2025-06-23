@@ -251,6 +251,7 @@
     "title": "Orders",
     "description": "Customer order management",
     "filterOrders": "Filter Orders",
+    "statusHeader": "Status",
     "status": {
       "pending": "Pending",
       "confirmed": "Confirmed",
