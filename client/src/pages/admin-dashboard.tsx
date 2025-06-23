@@ -1701,7 +1701,8 @@ export default function AdminDashboard() {
     let scrollLeft = 0;
 
     const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY !== 0) {
+      // Only handle horizontal scrolling with Shift+wheel
+      if (e.shiftKey && e.deltaY !== 0) {
         e.preventDefault();
         container.scrollLeft += e.deltaY;
       }
