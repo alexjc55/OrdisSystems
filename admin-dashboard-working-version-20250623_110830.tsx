@@ -3307,7 +3307,7 @@ export default function AdminDashboard() {
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <Phone className="h-4 w-4 mr-2" />
-                                              {adminT('orders.call', 'Позвонить')}
+{adminT('orders.call', 'Позвонить')}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem 
                                               onClick={() => {
@@ -3317,7 +3317,7 @@ export default function AdminDashboard() {
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <MessageCircle className="h-4 w-4 mr-2" />
-                                              {adminT('orders.whatsapp', 'WhatsApp')}
+                                              WhatsApp
                                             </DropdownMenuItem>
                                           </DropdownMenuContent>
                                         </DropdownMenu>
@@ -3585,7 +3585,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-yellow-800 flex items-center gap-2">
                               <Clock className="h-4 w-4" />
-                              {adminT('orders.status.pending', 'Ожидает')} ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
+                              Ожидает ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'pending').map((order: any) => (
@@ -3620,7 +3620,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-blue-800 flex items-center gap-2">
                               <ShoppingCart className="h-4 w-4" />
-                              {adminT('orders.status.confirmed', 'Подтвержден')} ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
+                              Подтвержден ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'confirmed').map((order: any) => (
