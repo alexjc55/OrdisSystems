@@ -1368,7 +1368,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => setShowDiscountDialog({ itemIndex: index, item, currentDiscount: itemDiscounts[index] })}
+                      onClick={() => setShowDiscountDialog(index)}
                       className="h-8 text-xs text-green-600 hover:text-green-800 border-green-200"
                     >
                       {itemDiscounts[index].type === 'percentage' ? `${itemDiscounts[index].value}%` : formatCurrency(itemDiscounts[index].value)}
@@ -1377,7 +1377,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => setShowDiscountDialog({ itemIndex: index, item })}
+                      onClick={() => setShowDiscountDialog(index)}
                       className="h-8 text-xs"
                     >
                       <Plus className="h-3 w-3 mr-1" />
@@ -1456,7 +1456,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             {/* Manual Price Adjustment */}
             <div className="border-t pt-3 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Ручная корректировка цены:</span>
+                <span className="text-sm font-medium">{adminT('orders.manualPriceOverride')}:</span>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
@@ -1476,7 +1476,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   <Input
                     type="number"
                     step="0.01"
-                    placeholder="Введите новую сумму заказа"
+                    placeholder={adminT('orders.enterNewOrderAmount')}
                     value={manualPriceOverride.value || ''}
                     onChange={(e) => setManualPriceOverride(prev => ({ 
                       ...prev, 
@@ -1485,7 +1485,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     className="h-8 text-xs"
                   />
                   <p className="text-xs text-orange-600">
-                    * Указанная сумма заменит расчетную стоимость товаров
+                    * {adminT('orders.manualPriceNote')}
                   </p>
                   {!manualPriceOverride.enabled && (
                     <p className="text-xs text-gray-500">
@@ -1497,7 +1497,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             </div>
             
             <div className="border-t pt-2 flex justify-between font-semibold">
-              <span>К доплате:</span>
+              <span>{adminT('orders.finalTotal')}:</span>
               <span>{formatCurrency(calculateFinalTotal())}</span>
             </div>
           </div>
@@ -1506,11 +1506,11 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
       {/* Notes */}
       <div>
-        <label className="block text-sm font-medium mb-2">Примечания</label>
+        <label className="block text-sm font-medium mb-2">{adminT('orders.notes')}</label>
         <Textarea
           value={editedOrder.notes}
           onChange={(e) => setEditedOrder(prev => ({ ...prev, notes: e.target.value }))}
-          placeholder="Дополнительные заметки к заказу..."
+          placeholder={adminT('orders.notesPlaceholder')}
           className="text-sm"
           rows={3}
         />
