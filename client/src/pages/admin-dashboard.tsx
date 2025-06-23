@@ -1367,7 +1367,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                         {adminT('orders.removeItemConfirm')} "{item.product?.name}"?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogFooter>
+                    <AlertDialogFooter className={`${isRTL ? 'gap-4' : ''}`}>
                       <AlertDialogCancel>{adminT('common.cancel')}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() => removeItem(index)}
@@ -1616,6 +1616,27 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
   }
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
+
+  // Update default quantity when product is selected
+  const handleProductSelect = (product: any) => {
+    setSelectedProduct(product);
+    // Set default quantity based on unit
+    switch (product.unit) {
+      case 'piece':
+        setQuantity(1);
+        break;
+      case 'gram':
+      case 'ml':
+        setQuantity(100);
+        break;
+      case 'kg':
+      case 'liter':
+        setQuantity(1);
+        break;
+      default:
+        setQuantity(1);
+    }
+  };
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: productsResponse } = useQuery({
@@ -1656,7 +1677,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
               className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${
                 selectedProduct?.id === product.id ? 'bg-blue-50' : ''
               }`}
-              onClick={() => setSelectedProduct(product)}
+              onClick={() => handleProductSelect(product)}
             >
               <div className="font-medium">{product.name}</div>
               <div className="text-sm text-gray-500">
@@ -1758,7 +1779,7 @@ function ItemDiscountDialog({
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-[10000]">
                 <SelectItem value="percentage">{adminT('orders.percentage')} (%)</SelectItem>
                 <SelectItem value="amount">{adminT('orders.amount')} (₪)</SelectItem>
               </SelectContent>
