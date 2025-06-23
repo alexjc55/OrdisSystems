@@ -128,6 +128,20 @@ export default function Home() {
     setSelectedCategoryId(null);
   }, []);
 
+  const handleCategoryFilterChange = useCallback((value: string) => {
+    setCategoryFilter(value);
+    if (value === "all") {
+      // Reset to all products view
+      setSelectedCategoryId(0);
+      navigate('/all-products');
+    } else {
+      // Navigate to specific category
+      const categoryId = parseInt(value);
+      setSelectedCategoryId(categoryId);
+      navigate(`/category/${categoryId}`);
+    }
+  }, [navigate]);
+
   // Get special offers (products marked as special offers from active categories only)
   const specialOffers = useMemo(() => {
     if (!allProducts || !categories) return [];
@@ -146,6 +160,12 @@ export default function Home() {
 
     if (searchQuery && searchQuery.length > 2) {
       productsToShow = searchResults;
+    } else if (categoryFilter !== "all") {
+      // Use category filter when it's set (overrides selectedCategoryId)
+      const categoryId = parseInt(categoryFilter);
+      productsToShow = allProducts.filter(product => 
+        product.categories?.some(cat => cat.id === categoryId)
+      );
     } else if (selectedCategoryId === 0) {
       // Show all products
       productsToShow = allProducts;
@@ -155,14 +175,7 @@ export default function Home() {
       productsToShow = [];
     }
 
-    // Apply filters if any
-    if (categoryFilter !== "all") {
-      const categoryId = parseInt(categoryFilter);
-      productsToShow = productsToShow.filter(product => 
-        product.categories?.some(cat => cat.id === categoryId)
-      );
-    }
-
+    // Apply discount filter
     if (discountFilter === "discount") {
       productsToShow = productsToShow.filter(product => product.isSpecialOffer);
     }
@@ -177,11 +190,14 @@ export default function Home() {
       const categoryId = parseInt(pathParts[2]);
       if (!isNaN(categoryId) && categoryId !== selectedCategoryId) {
         setSelectedCategoryId(categoryId);
+        setCategoryFilter(categoryId.toString());
       }
     } else if (pathParts[1] === 'all-products' && selectedCategoryId !== 0) {
       setSelectedCategoryId(0);
+      setCategoryFilter("all");
     } else if (pathParts[1] === '' && selectedCategoryId !== null) {
       setSelectedCategoryId(null);
+      setCategoryFilter("all");
     }
   }, [location, selectedCategoryId]);
   
@@ -632,7 +648,7 @@ export default function Home() {
               {/* Filter Controls */}
               {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
                 <div className="flex gap-2 sm:gap-4 mb-6">
-                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
                     <SelectTrigger className="flex-1 min-w-0 text-sm">
                       <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
                     </SelectTrigger>
