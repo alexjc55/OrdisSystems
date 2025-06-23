@@ -582,62 +582,9 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
               <Eye className="h-3 w-3 mr-1" />
               {adminT('orders.orderDetails')}
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={`h-7 text-xs px-2 ${getStatusColor(order.status)} border-2 min-w-[80px] max-w-[120px] truncate`}
-                >
-                  {getStatusLabel(order.status)}
-                  <ChevronDown className="h-3 w-3 ml-1 flex-shrink-0" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-[120px]">
-                <DropdownMenuItem 
-                  onClick={() => onStatusChange({ orderId: order.id, status: 'pending' })}
-                  className="cursor-pointer"
-                >
-                  <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor('pending').split(' ')[0]}`}></div>
-                  {getStatusLabel('pending')}
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => onStatusChange({ orderId: order.id, status: 'confirmed' })}
-                  className="cursor-pointer"
-                >
-                  <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor('confirmed').split(' ')[0]}`}></div>
-                  {getStatusLabel('confirmed')}
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => onStatusChange({ orderId: order.id, status: 'preparing' })}
-                  className="cursor-pointer"
-                >
-                  <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor('preparing').split(' ')[0]}`}></div>
-                  {getStatusLabel('preparing')}
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => onStatusChange({ orderId: order.id, status: 'ready' })}
-                  className="cursor-pointer"
-                >
-                  <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor('ready').split(' ')[0]}`}></div>
-                  {getStatusLabel('ready')}
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => onStatusChange({ orderId: order.id, status: 'delivered' })}
-                  className="cursor-pointer"
-                >
-                  <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor('delivered').split(' ')[0]}`}></div>
-                  {getStatusLabel('delivered')}
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => onCancelOrder(order.id)}
-                  className="cursor-pointer text-red-600 hover:!text-red-700 hover:!bg-red-50"
-                >
-                  <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor('cancelled').split(' ')[0]}`}></div>
-                  {getStatusLabel('cancelled')}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className={`px-2 py-1 rounded text-xs font-medium border text-center min-w-[80px] max-w-[120px] truncate ${getStatusColor(order.status)}`}>
+              {getStatusLabel(order.status)}
+            </div>
           </div>
         </div>
       </CardContent>
