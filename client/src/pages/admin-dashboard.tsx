@@ -3191,7 +3191,7 @@ export default function AdminDashboard() {
 
           {/* Orders Management */}
           {hasPermission("canManageOrders") && (
-            <TabsContent value="orders" className="space-y-4 sm:space-y-6">
+            <TabsContent value="orders" className={`space-y-4 sm:space-y-6 ${isRTL ? 'rtl' : 'ltr'}`}>
               {/* Header Section */}
               <div className="flex flex-col gap-4">
                 <div className={isRTL ? 'text-right' : 'text-left'}>
@@ -3203,9 +3203,9 @@ export default function AdminDashboard() {
                 </div>
               
               {/* Controls Row */}
-              <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+              <div className={`flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
                 {/* View Mode Toggle */}
-                <div className="flex items-center gap-2 p-1 bg-gray-100 rounded-lg">
+                <div className={`flex items-center gap-2 p-1 bg-gray-100 rounded-lg ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <Button
                     variant={ordersViewMode === "table" ? "default" : "ghost"}
                     size="sm"
@@ -3227,7 +3227,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Filters */}
-                <div className="flex gap-3">
+                <div className={`flex gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
                     <SelectTrigger className="w-40 text-xs h-8">
                       <SelectValue placeholder={adminT('orders.filterOrders', 'Фильтр заказов')} />

@@ -31,14 +31,20 @@
   
   /* RTL/LTR container direction control for admin dashboard */
   .rtl {
-    direction: rtl;
+    direction: rtl !important;
   }
   
   .ltr {
-    direction: ltr;
+    direction: ltr !important;
   }
   
-  /* Force LTR for table and kanban content inside RTL containers */
+  /* Orders section RTL container */
+  .rtl {
+    direction: rtl !important;
+    text-align: right;
+  }
+  
+  /* Override specific elements that should remain LTR inside RTL container */
   .rtl .table-container {
     direction: rtl;
     overflow-x: auto;
@@ -46,6 +52,7 @@
   
   .rtl .table-container table {
     direction: ltr;
+    text-align: left;
   }
   
   .rtl .kanban-scroll-container {
@@ -53,17 +60,26 @@
     overflow-x: auto;
   }
   
-  .rtl .kanban-scroll-container > div {
+  .rtl .kanban-scroll-container .flex {
     direction: ltr;
   }
   
-  /* Ensure proper scrollbar positioning in RTL */
-  .rtl .table-container::-webkit-scrollbar {
-    height: 6px;
+  /* Maintain button text centering in RTL */
+  .rtl button {
+    text-align: center;
+    direction: ltr;
   }
   
-  .rtl .kanban-scroll-container::-webkit-scrollbar {
-    height: 6px;
+  /* Form elements should align right in RTL but maintain LTR text direction */
+  .rtl input[type="text"],
+  .rtl input[type="search"] {
+    text-align: right;
+    direction: rtl;
+  }
+  
+  .rtl select {
+    text-align: right;
+    direction: rtl;
   }
   
   html[dir="ltr"] {
