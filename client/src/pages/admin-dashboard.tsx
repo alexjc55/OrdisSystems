@@ -1508,7 +1508,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                         min="0.1"
                         value={item.quantity}
                         onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
-                        className="h-8 text-xs w-16"
+                        className="h-7 text-xs w-14"
                       />
                       <span className="text-xs text-gray-500 truncate">
                         {getUnitDisplay(item.product?.unit, item.quantity)}
@@ -1581,15 +1581,15 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 <span className="text-red-600">-{formatCurrency(calculateOrderDiscount(calculateSubtotal()))}</span>
               </div>
               {/* Mobile Layout - Stack vertically */}
-              <div className="sm:hidden space-y-2">
-                <div className="flex gap-2">
+              <div className="sm:hidden space-y-1">
+                <div className="flex gap-1 items-center">
                   <Select
                     value={orderDiscount.type}
                     onValueChange={(value: 'percentage' | 'amount') => 
                       setOrderDiscount(prev => ({ ...prev, type: value }))
                     }
                   >
-                    <SelectTrigger className="h-8 text-xs w-12">
+                    <SelectTrigger className="h-7 text-xs w-10 px-1">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1605,8 +1605,9 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       ...prev, 
                       value: parseFloat(e.target.value) || 0 
                     }))}
-                    className="h-8 text-xs w-16"
+                    className="h-7 text-xs w-14 px-1"
                   />
+                  <span className="text-xs text-gray-500">{adminT('orders.discount')}</span>
                 </div>
                 <Input
                   placeholder={adminT('orders.discountReason')}
@@ -1615,7 +1616,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     ...prev, 
                     reason: e.target.value 
                   }))}
-                  className="h-8 text-xs"
+                  className="h-7 text-xs w-full px-2"
                 />
               </div>
 
@@ -1686,7 +1687,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       ...prev, 
                       value: parseFloat(e.target.value) || 0 
                     }))}
-                    className="h-8 text-xs w-24"
+                    className="h-7 text-xs w-20"
                   />
                   <p className="text-xs text-orange-600">
                     * {adminT('orders.manualPriceNote')}
