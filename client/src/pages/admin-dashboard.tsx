@@ -1017,13 +1017,13 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 ? `${order.user.firstName} ${order.user.lastName}`
                 : order.user?.email || "—"}</div>
             </div>
-            <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
+            <div className="bg-white rounded-lg px-3 py-2 shadow-sm min-w-[160px]">
               <div className="text-xs text-gray-500">{adminT('orders.orderStatus')}</div>
               <Select
                 value={editedOrder.status}
                 onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
               >
-                <SelectTrigger className={`text-sm h-8 border ${getStatusColor(editedOrder.status)}`}>
+                <SelectTrigger className={`text-sm h-8 border w-full ${getStatusColor(editedOrder.status)}`}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="z-[10000]">
@@ -1133,7 +1133,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.date')}</label>
                 <Input
@@ -1165,50 +1165,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
           </div>
         </div>
 
-        {/* Order Summary */}
-        <div className="bg-white rounded-lg border p-4">
-          <h3 className="font-semibold mb-3 text-gray-800 flex items-center gap-2">
-            <Receipt className="h-4 w-4" />
-            {adminT('orders.orderSummary')}
-          </h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">{adminT('orders.subtotal')}:</span>
-              <span>{formatCurrency(parseFloat(order.totalAmount) - parseFloat(order.deliveryFee || "0"))}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">{adminT('orders.deliveryFee')}:</span>
-              <span>{
-                parseFloat(order.deliveryFee || "0") === 0 ? 
-                  <span className="text-green-600 font-medium">{adminT('common.free')}</span> : 
-                  formatCurrency(order.deliveryFee || "0")
-              }</span>
-            </div>
-            <hr className="my-2" />
-            <div className="flex justify-between font-semibold">
-              <span>{adminT('orders.orderTotal')}:</span>
-              <span className="text-green-600">{formatCurrency(order.totalAmount)}</span>
-            </div>
-            {order.deliveryDate && (
-              <div className="flex justify-between text-xs text-gray-500 pt-2">
-                <span>{adminT('orders.deliveryDate')}:</span>
-                <span>{new Date(order.deliveryDate).toLocaleDateString('ru-RU')}</span>
-              </div>
-            )}
-            {order.deliveryTime && (
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>{adminT('orders.deliveryTime')}:</span>
-                <span>{formatDeliveryTimeRange(order.deliveryTime)}</span>
-              </div>
-            )}
-            {order.paymentMethod && (
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>{adminT('orders.paymentMethod')}:</span>
-                <span>{order.paymentMethod}</span>
-              </div>
-            )}
-          </div>
-        </div>
+
       </div>
 
       {/* Order Items - Important section with visual accent */}
@@ -1453,14 +1410,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 <span className="font-medium">{adminT('orders.discount')}:</span>
                 <span className="text-red-600">-{formatCurrency(calculateOrderDiscount(calculateSubtotal()))}</span>
               </div>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="flex gap-2">
                 <Select
                   value={orderDiscount.type}
                   onValueChange={(value: 'percentage' | 'amount') => 
                     setOrderDiscount(prev => ({ ...prev, type: value }))
                   }
                 >
-                  <SelectTrigger className="h-8 text-xs">
+                  <SelectTrigger className="h-8 text-xs w-20">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -1476,7 +1433,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     ...prev, 
                     value: parseFloat(e.target.value) || 0 
                   }))}
-                  className="h-8 text-xs"
+                  className="h-8 text-xs w-20"
                 />
                 <Input
                   placeholder={adminT('orders.discountReason')}
@@ -1485,7 +1442,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     ...prev, 
                     reason: e.target.value 
                   }))}
-                  className="h-8 text-xs"
+                  className="h-8 text-xs flex-1"
                 />
               </div>
             </div>
@@ -1519,7 +1476,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       ...prev, 
                       value: parseFloat(e.target.value) || 0 
                     }))}
-                    className="h-8 text-xs"
+                    className="h-8 text-xs w-32"
                   />
                   <p className="text-xs text-orange-600">
                     * {adminT('orders.manualPriceNote')}
@@ -1611,23 +1568,34 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
   // Update default quantity when product is selected
   const handleProductSelect = (product: any) => {
     setSelectedProduct(product);
-    // Set default quantity based on unit
-    switch (product.unit) {
-      case 'piece':
-        setQuantity(1);
-        break;
-      case 'gram':
-      case 'ml':
-      case '100gram':
-      case '100ml':
-        setQuantity(100);
-        break;
-      case 'kg':
-      case 'liter':
-        setQuantity(1);
-        break;
-      default:
-        setQuantity(1);
+    console.log('Selected product unit:', product.unit, 'price per unit:', product.pricePerKg || product.pricePerPiece);
+    
+    // Set default quantity based on unit and pricing structure
+    if (product.pricePerKg && product.unit !== 'piece') {
+      // If price is per kg, default to 100g (0.1 kg)
+      setQuantity(0.1);
+    } else if (product.unit === 'piece' || product.pricePerPiece) {
+      // If it's per piece, default to 1
+      setQuantity(1);
+    } else {
+      // Fallback based on unit name
+      switch (product.unit) {
+        case 'piece':
+          setQuantity(1);
+          break;
+        case 'gram':
+        case 'ml':
+        case '100gram':
+        case '100ml':
+          setQuantity(100);
+          break;
+        case 'kg':
+        case 'liter':
+          setQuantity(1);
+          break;
+        default:
+          setQuantity(1);
+      }
     }
   };
   const [searchQuery, setSearchQuery] = useState("");
