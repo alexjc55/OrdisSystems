@@ -3534,6 +3534,7 @@ export default function AdminDashboard() {
                       <div 
                         className="overflow-x-auto kanban-scroll-container"
                         style={{ 
+                          direction: isRTL ? 'rtl' : 'ltr',
                           touchAction: 'pan-x pan-y',
                           overflowX: 'auto',
                           WebkitOverflowScrolling: 'touch'
