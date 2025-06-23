@@ -1442,7 +1442,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   className="h-8 text-xs"
                 />
                 <Input
-                  placeholder="Причина"
+                  placeholder={adminT('orders.discountReason')}
                   value={orderDiscount.reason}
                   onChange={(e) => setOrderDiscount(prev => ({ 
                     ...prev, 
