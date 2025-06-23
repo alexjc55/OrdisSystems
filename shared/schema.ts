@@ -155,6 +155,7 @@ export const storeSettings = pgTable("store_settings", {
   showBannerImage: boolean("show_banner_image").default(true),
   showTitleDescription: boolean("show_title_description").default(true),
   showInfoBlocks: boolean("show_info_blocks").default(true),
+  infoBlocksPosition: varchar("info_blocks_position", { enum: ["top", "bottom"] }).default("top"), // top = above offers, bottom = below banners
   showSpecialOffers: boolean("show_special_offers").default(true),
   showCategoryMenu: boolean("show_category_menu").default(true),
   weekStartDay: varchar("week_start_day", { length: 10 }).default("monday"), // "monday" or "sunday"
