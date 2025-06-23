@@ -1450,23 +1450,21 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
         </div>
 
         {/* Mobile Card View */}
-        <div className="md:hidden space-y-4">
+        <div className="md:hidden space-y-3">
           {editedOrderItems.map((item: any, index: number) => (
-            <div key={index} className="bg-white border rounded-lg p-4 space-y-3">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="font-medium text-sm">{item.product?.name}</div>
-                  {item.product?.description && (
-                    <div className="text-xs text-gray-500 mt-1">{item.product.description}</div>
-                  )}
-                  <div className="text-xs text-gray-600 mt-1">{getUnitPrice(item.product)}</div>
+            <div key={index} className="bg-gray-50 border rounded-lg p-3">
+              {/* Product Header */}
+              <div className="flex justify-between items-start mb-2">
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm text-gray-900 truncate">{item.product?.name}</div>
+                  <div className="text-xs text-gray-500 mt-0.5">{getUnitPrice(item.product)}</div>
                 </div>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button
                       size="sm"
-                      variant="outline"
-                      className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
+                      variant="ghost"
+                      className="h-7 w-7 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 ml-2"
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>
@@ -1491,52 +1489,50 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 </AlertDialog>
               </div>
               
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <div className="flex-1">
-                    <label className="text-xs text-gray-600 mb-1 block">{adminT('orders.quantity')}</label>
-                    <div className="flex items-center gap-1">
-                      <Input
-                        type="number"
-                        step="0.1"
-                        min="0.1"
-                        value={item.quantity}
-                        onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
-                        className="h-8 text-xs w-16"
-                      />
-                      <span className="text-xs text-gray-500 truncate">
-                        {getUnitDisplay(item.product?.unit, item.quantity)}
-                      </span>
-                    </div>
+              {/* Compact Controls Row */}
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 flex-1">
+                  <div className="flex items-center gap-1">
+                    <Input
+                      type="number"
+                      step="0.1"
+                      min="0.1"
+                      value={item.quantity}
+                      onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
+                      className="h-7 text-xs w-14 text-center"
+                    />
+                    <span className="text-xs text-gray-500 min-w-0 truncate">
+                      {getUnitDisplay(item.product?.unit, item.quantity)}
+                    </span>
                   </div>
-                  <div className="text-right">
-                    <label className="text-xs text-gray-600 mb-1 block">{adminT('orders.amount')}</label>
-                    <div className="text-lg font-bold text-green-600">{formatCurrency(item.totalPrice)}</div>
-                  </div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <div className="text-sm font-bold text-green-600">{formatCurrency(item.totalPrice)}</div>
                 </div>
               </div>
               
-              <div>
-                <label className="text-xs text-gray-600 mb-1 block">{adminT('orders.discount')}</label>
-                <div className="flex items-center gap-2">
+              {/* Discount section - compact */}
+              <div className="mt-2 pt-2 border-t border-gray-200">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-600">{adminT('orders.discount')}</span>
                   {itemDiscounts[index] ? (
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => setShowDiscountDialog(index)}
-                      className="h-8 text-xs text-green-600 hover:text-green-800 border-green-200"
+                      className="h-6 px-2 text-xs text-green-600 hover:text-green-800 border-green-200"
                     >
                       {itemDiscounts[index].type === 'percentage' ? `${itemDiscounts[index].value}%` : formatCurrency(itemDiscounts[index].value)}
                     </Button>
                   ) : (
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant="ghost"
                       onClick={() => setShowDiscountDialog(index)}
-                      className="h-8 text-xs"
+                      className="h-6 px-2 text-xs text-gray-500 hover:text-gray-700"
                     >
                       <Plus className="h-3 w-3 mr-1" />
-                      {adminT('orders.discount')}
+                      Добавить
                     </Button>
                   )}
                 </div>
