@@ -1031,24 +1031,26 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     <div className="space-y-4 admin-input-focus">
       {/* Compact Order Header with Key Info */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-100">
-        {/* Mobile Layout - Stack vertically */}
+        {/* Mobile Layout - New arrangement */}
         <div className="block sm:hidden space-y-3">
-          <div className="flex justify-between items-center">
+          {/* First row: Order number and Customer name */}
+          <div className="flex justify-between items-center gap-2">
             <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
               <div className="text-xs text-gray-500">{adminT('orders.orderNumber')}</div>
               <div className="font-bold text-lg">#{order.id}</div>
             </div>
+            <div className="bg-white rounded-lg px-3 py-2 shadow-sm flex-1 min-w-0">
+              <div className="text-xs text-gray-500">{adminT('orders.customer')}</div>
+              <div className="font-medium text-sm truncate">{order.user?.firstName && order.user?.lastName 
+                ? `${order.user.firstName} ${order.user.lastName}`
+                : order.user?.email || "—"}</div>
+            </div>
+          </div>
+          {/* Second row: Total amount and Status */}
+          <div className="flex justify-between items-center gap-2">
             <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
               <div className="text-xs text-gray-500">{adminT('orders.orderTotal')}</div>
               <div className="font-bold text-lg text-green-600">{formatCurrency(order.totalAmount)}</div>
-            </div>
-          </div>
-          <div className="flex justify-between items-center gap-2">
-            <div className="bg-white rounded-lg px-3 py-2 shadow-sm flex-1">
-              <div className="text-xs text-gray-500">{adminT('orders.customer')}</div>
-              <div className="font-medium text-sm">{order.user?.firstName && order.user?.lastName 
-                ? `${order.user.firstName} ${order.user.lastName}`
-                : order.user?.email || "—"}</div>
             </div>
             <div className="bg-white rounded-lg px-3 py-2 shadow-sm min-w-[140px]">
               <div className="text-xs text-gray-500">{adminT('orders.orderStatus')}</div>
