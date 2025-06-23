@@ -9,7 +9,7 @@
  * - Сохранять все существующие UI паттерны и структуру
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -61,62 +61,161 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-// Custom hook for mouse drag scrolling
-function useMouseDragScroll() {
-  const ref = useRef<HTMLDivElement>(null);
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const scrollLeft = useRef(0);
+// Custom hook for kanban scrolling with visual scrollbar
+function useKanbanScroll() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollbarRef = useRef<HTMLDivElement>(null);
+  const thumbRef = useRef<HTMLDivElement>(null);
+  const [scrollState, setScrollState] = useState({
+    scrollLeft: 0,
+    scrollWidth: 0,
+    clientWidth: 0,
+    showScrollbar: false
+  });
 
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
+  const updateScrollState = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
-    const handleMouseDown = (e: MouseEvent) => {
-      isDragging.current = true;
-      startX.current = e.pageX - element.offsetLeft;
-      scrollLeft.current = element.scrollLeft;
-      element.style.cursor = 'grabbing';
-      element.style.userSelect = 'none';
-    };
+    const scrollLeft = container.scrollLeft;
+    const scrollWidth = container.scrollWidth;
+    const clientWidth = container.clientWidth;
+    const showScrollbar = scrollWidth > clientWidth;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging.current) return;
-      e.preventDefault();
-      const x = e.pageX - element.offsetLeft;
-      const walk = (x - startX.current) * 2; // Scroll speed multiplier
-      element.scrollLeft = scrollLeft.current - walk;
-    };
-
-    const handleMouseUp = () => {
-      isDragging.current = false;
-      element.style.cursor = 'grab';
-      element.style.userSelect = '';
-    };
-
-    const handleMouseLeave = () => {
-      isDragging.current = false;
-      element.style.cursor = 'grab';
-      element.style.userSelect = '';
-    };
-
-    element.addEventListener('mousedown', handleMouseDown);
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-    element.addEventListener('mouseleave', handleMouseLeave);
-
-    // Set initial cursor
-    element.style.cursor = 'grab';
-
-    return () => {
-      element.removeEventListener('mousedown', handleMouseDown);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      element.removeEventListener('mouseleave', handleMouseLeave);
-    };
+    setScrollState({
+      scrollLeft,
+      scrollWidth,
+      clientWidth,
+      showScrollbar
+    });
   }, []);
 
-  return ref;
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => updateScrollState();
+    const handleResize = () => updateScrollState();
+
+    container.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
+    
+    // Initial update
+    setTimeout(updateScrollState, 100);
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [updateScrollState]);
+
+  const scrollTo = useCallback((position: number) => {
+    const container = containerRef.current;
+    if (!container) return;
+    
+    container.scrollTo({
+      left: position,
+      behavior: 'smooth'
+    });
+  }, []);
+
+  return {
+    containerRef,
+    scrollbarRef,
+    thumbRef,
+    scrollState,
+    scrollTo,
+    updateScrollState
+  };
+}
+
+// Custom Scrollbar Component
+function KanbanScrollbar({ scrollState, scrollTo, scrollbarRef, thumbRef }: {
+  scrollState: any;
+  scrollTo: (position: number) => void;
+  scrollbarRef: React.RefObject<HTMLDivElement>;
+  thumbRef: React.RefObject<HTMLDivElement>;
+}) {
+  const [isDragging, setIsDragging] = useState(false);
+
+  if (!scrollState.showScrollbar) return null;
+
+  const thumbWidth = Math.max(
+    (scrollState.clientWidth / scrollState.scrollWidth) * 100,
+    10
+  );
+  
+  const thumbLeft = (scrollState.scrollLeft / (scrollState.scrollWidth - scrollState.clientWidth)) * (100 - thumbWidth);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    
+    const scrollbar = scrollbarRef.current;
+    if (!scrollbar) return;
+    
+    const rect = scrollbar.getBoundingClientRect();
+    const clickPosition = ((e.clientX - rect.left) / rect.width) * 100;
+    const maxScroll = scrollState.scrollWidth - scrollState.clientWidth;
+    const targetScroll = (clickPosition / 100) * maxScroll;
+    
+    scrollTo(targetScroll);
+  };
+
+  const handleThumbMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+    
+    const startX = e.clientX;
+    const startScrollLeft = scrollState.scrollLeft;
+    const scrollbar = scrollbarRef.current;
+    
+    if (!scrollbar) return;
+    
+    const scrollbarWidth = scrollbar.clientWidth;
+    const maxScroll = scrollState.scrollWidth - scrollState.clientWidth;
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaX = e.clientX - startX;
+      const deltaPercent = (deltaX / scrollbarWidth) * 100;
+      const deltaScroll = (deltaPercent / 100) * maxScroll;
+      const newScrollLeft = Math.max(0, Math.min(maxScroll, startScrollLeft + deltaScroll));
+      
+      scrollTo(newScrollLeft);
+    };
+    
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+    
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  return (
+    <div className="hidden sm:block mt-2 px-4">
+      <div 
+        ref={scrollbarRef}
+        className="relative h-3 bg-gray-100 rounded-full cursor-pointer"
+        onMouseDown={handleMouseDown}
+      >
+        <div 
+          ref={thumbRef}
+          className={`absolute top-0 h-full bg-orange-400 rounded-full cursor-grab transition-colors ${
+            isDragging ? 'bg-orange-500 cursor-grabbing' : 'hover:bg-orange-500'
+          }`}
+          style={{
+            width: `${thumbWidth}%`,
+            left: `${thumbLeft}%`
+          }}
+          onMouseDown={handleThumbMouseDown}
+        />
+      </div>
+    </div>
+  );
 }
 
 // Define updateCategoryMutation outside components for proper scope
@@ -1756,9 +1855,6 @@ export default function AdminDashboard() {
   const [editingUser, setEditingUser] = useState<any>(null);
   const [usersRoleFilter, setUsersRoleFilter] = useState("all");
 
-  // Mouse drag scroll for kanban board
-  const kanbanScrollRef = useMouseDragScroll();
-
   // Drag and drop sensors
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -3368,7 +3464,7 @@ export default function AdminDashboard() {
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <Phone className="h-4 w-4 mr-2" />
-                                              {adminT('orders.call', 'Позвонить')}
+{adminT('orders.call', 'Позвонить')}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem 
                                               onClick={() => {
@@ -3378,7 +3474,7 @@ export default function AdminDashboard() {
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <MessageCircle className="h-4 w-4 mr-2" />
-                                              {adminT('orders.whatsapp', 'WhatsApp')}
+                                              WhatsApp
                                             </DropdownMenuItem>
                                           </DropdownMenuContent>
                                         </DropdownMenu>
@@ -3599,7 +3695,15 @@ export default function AdminDashboard() {
                           overflowX: 'auto',
                           WebkitOverflowScrolling: 'touch'
                         }}
-                        ref={kanbanScrollRef}
+                        ref={(el) => {
+                          if (el && ordersViewMode === "kanban") {
+                            setTimeout(() => {
+                              if (el) {
+                                el.scrollLeft = 0;
+                              }
+                            }, 100);
+                          }
+                        }}
                       >
                         {/* Kanban columns container */}
                         <div 
@@ -3638,7 +3742,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-yellow-800 flex items-center gap-2">
                               <Clock className="h-4 w-4" />
-                              {adminT('orders.status.pending', 'Ожидает')} ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
+                              Ожидает ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'pending').map((order: any) => (
@@ -3673,7 +3777,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-blue-800 flex items-center gap-2">
                               <ShoppingCart className="h-4 w-4" />
-                              {adminT('orders.status.confirmed', 'Подтвержден')} ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
+                              Подтвержден ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'confirmed').map((order: any) => (
@@ -3708,7 +3812,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-orange-800 flex items-center gap-2">
                               <Utensils className="h-4 w-4" />
-                              {adminT('orders.status.preparing', 'Готовится')} ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
+                              Готовится ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'preparing').map((order: any) => (
@@ -3743,7 +3847,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-green-800 flex items-center gap-2">
                               <Package className="h-4 w-4" />
-                              {adminT('orders.status.ready', 'Готов')} ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
+                              Готов ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'ready').map((order: any) => (
@@ -3779,7 +3883,7 @@ export default function AdminDashboard() {
                             >
                               <h3 className="font-semibold text-sm mb-3 text-gray-800 flex items-center gap-2">
                                 <Truck className="h-4 w-4" />
-                                {adminT('orders.status.delivered', 'Доставлен')} ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
+                                Доставлен ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
                               </h3>
                               <div className="space-y-3 min-h-24">
                                 {ordersResponse.data.filter((order: any) => order.status === 'delivered').map((order: any) => (
@@ -3813,7 +3917,7 @@ export default function AdminDashboard() {
                             >
                               <h3 className="font-semibold text-sm mb-3 text-red-800 flex items-center gap-2">
                                 <X className="h-4 w-4" />
-                                {adminT('orders.status.cancelled', 'Отменен')} ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
+                                Отменен ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
                               </h3>
                               <div className="space-y-3 min-h-24">
                                 {ordersResponse.data.filter((order: any) => order.status === 'cancelled').map((order: any) => (
