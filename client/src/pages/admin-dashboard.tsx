@@ -2817,7 +2817,7 @@ export default function AdminDashboard() {
 
                 {/* Products Table */}
                 {filteredProducts.length > 0 ? (
-                  <div className="border rounded-lg bg-white overflow-hidden">
+                  <div className="border rounded-lg bg-white overflow-hidden" dir="ltr">
                     <div className={`overflow-x-auto table-container ${isRTL ? 'rtl-scroll-container' : ''}`}>
                       <Table>
                         <TableHeader>
