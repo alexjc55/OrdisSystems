@@ -4670,11 +4670,11 @@ export default function AdminDashboard() {
                                    user.role === "worker" ? adminT('users.role.worker', 'Сотрудник') : adminT('users.role.customer', 'Клиент')}
                                 </Badge>
                               </TableCell>
-                              <TableCell className="px-3 py-3 text-sm rtl-cell">
+                              <TableCell className="px-3 py-3 text-sm">
                                 {user.phone ? (
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                      <span className="text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block rtl-text">
+                                      <span className="text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block text-left" dir="ltr">
                                         {user.phone}
                                       </span>
                                     </DropdownMenuTrigger>
