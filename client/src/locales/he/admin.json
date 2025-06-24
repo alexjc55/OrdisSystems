@@ -1,4 +1,6 @@
 {
+  "title": "הגדרות",
+  "description": "ניהול חנות",
   "tabs": {
     "products": "מוצרים",
     "categories": "קטגוריות", 

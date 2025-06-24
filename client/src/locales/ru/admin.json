@@ -1,4 +1,6 @@
 {
+  "title": "Настройки",
+  "description": "Управление магазином",
   "tabs": {
     "products": "Товары",
     "categories": "Категории", 
