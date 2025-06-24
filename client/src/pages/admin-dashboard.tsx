@@ -4615,8 +4615,22 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {(usersData as any[] || []).length > 0 ? (
-                  <div className={`border border-gray-100 rounded-lg bg-white overflow-hidden ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {/* Filter users based on search and role */}
+                {(() => {
+                  const filteredUsers = (usersData as any[] || []).filter((user: any) => {
+                    const matchesSearch = !searchQuery || 
+                      (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                      (user.firstName && user.firstName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                      (user.lastName && user.lastName.toLowerCase().includes(searchQuery.toLowerCase()));
+                    const matchesRole = usersRoleFilter === 'all' || user.role === usersRoleFilter;
+                    return matchesSearch && matchesRole;
+                  });
+
+                  const usersTotal = filteredUsers.length;
+                  const usersTotalPages = Math.ceil(usersTotal / itemsPerPage);
+
+                  return filteredUsers.length > 0 ? (
+                    <div className={`border border-gray-100 rounded-lg bg-white overflow-hidden ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                     <div className={`overflow-x-auto table-auto-scroll ${isRTL ? 'rtl-scroll-container' : ''}`}>
                       <Table className={`w-full ${isRTL ? 'rtl' : 'ltr'}`}>
                         <TableHeader className="bg-gray-50/80">
@@ -4797,9 +4811,6 @@ export default function AdminDashboard() {
                     <p className="text-gray-500 text-sm">{adminT('users.noUsersDescription', 'Пользователи будут отображаться здесь')}</p>
                   </div>
                 )}
-                
-                {/* Users Pagination */}
-                {usersTotalPages > 1 && (
                   <div className="px-4 py-3 border-t bg-gray-50">
                     {/* Mobile: Stack info and controls */}
                     <div className="sm:hidden space-y-2">
