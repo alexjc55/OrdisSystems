@@ -268,10 +268,10 @@
     "deleteUser": "Delete User",
     "searchPlaceholder": "Search by email or name...",
     "allRoles": "All Roles",
-    "noName": "Unnamed User",
+    "unnamed": "Unnamed User",
     "callUser": "Call",
     "whatsapp": "WhatsApp",
-    "role": {
+    "roles": {
       "admin": "Administrator",
       "worker": "Worker",
       "customer": "Customer"

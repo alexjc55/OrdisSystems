@@ -4587,7 +4587,7 @@ export default function AdminDashboard() {
                 <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <div className="flex-1">
                     <Input
-                      placeholder={adminT('users.searchPlaceholder', 'searchPlaceholder')}
+                      placeholder={adminT('users.searchPlaceholder', 'Поиск пользователей...')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="max-w-sm"

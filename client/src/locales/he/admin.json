@@ -268,10 +268,10 @@
     "deleteUser": "מחק משתמש",
     "searchPlaceholder": "חיפוש לפי אימייל או שם...",
     "allRoles": "כל התפקידים",
-    "noName": "משתמש ללא שם",
+    "unnamed": "משתמש ללא שם",
     "callUser": "התקשר",
     "whatsapp": "WhatsApp",
-    "role": {
+    "roles": {
       "admin": "מנהל",
       "worker": "עובד",
       "customer": "לקוח"
