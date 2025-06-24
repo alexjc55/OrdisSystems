@@ -5890,7 +5890,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Store className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.basicSettings')}</h3>
+                <h3 className="text-lg font-semibold">{adminT('storeSettings.basicInfo', 'Основная информация')}</h3>
                 {isBasicInfoOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
@@ -6542,7 +6542,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
                 <Eye className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.displaySettings')}</h3>
+                <h3 className="text-lg font-semibold">{adminT('storeSettings.displaySettings', 'Настройки отображения')}</h3>
                 {isDisplaySettingsOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
