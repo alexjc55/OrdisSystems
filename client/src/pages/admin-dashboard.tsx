@@ -4833,8 +4833,8 @@ export default function AdminDashboard() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div>
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
                           <label className="text-sm font-medium">{adminT('systemSettings.canManageProducts', 'Управление товарами')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canManageProductsDescription', 'Добавление, редактирование и удаление товаров')}</p>
                         </div>
@@ -4852,8 +4852,8 @@ export default function AdminDashboard() {
                         />
                       </div>
                       
-                      <div className="flex items-center justify-between">
-                        <div>
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
                           <label className="text-sm font-medium">{adminT('systemSettings.canManageCategories', 'Управление категориями')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canManageCategoriesDescription', 'Создание и редактирование категорий товаров')}</p>
                         </div>
@@ -4892,8 +4892,8 @@ export default function AdminDashboard() {
                     </div>
                     
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div>
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
                           <label className="text-sm font-medium">{adminT('systemSettings.canViewUsers', 'Просмотр пользователей')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canViewUsersDescription', 'Доступ к списку пользователей системы')}</p>
                         </div>
@@ -4948,8 +4948,8 @@ export default function AdminDashboard() {
                         />
                       </div>
                       
-                      <div className="flex items-center justify-between">
-                        <div>
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
                           <label className="text-sm font-medium">{adminT('systemSettings.canManageSettings', 'Управление настройками')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canManageSettingsDescription', 'Доступ к настройкам магазина и системы')}</p>
                         </div>
