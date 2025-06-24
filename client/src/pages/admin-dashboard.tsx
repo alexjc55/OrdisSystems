@@ -6585,9 +6585,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">Показывать баннер</FormLabel>
+                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showBanner')}</FormLabel>
                     <FormDescription className="text-xs">
-                      Картинка под шапкой сайта
+                      {adminT('storeSettings.showBannerDescription')}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -6607,9 +6607,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">Показывать заголовок</FormLabel>
+                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showTitle')}</FormLabel>
                     <FormDescription className="text-xs">
-                      Заголовок и описание магазина
+                      {adminT('storeSettings.showTitleDescription')}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -6629,9 +6629,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">Показывать блоки информации</FormLabel>
+                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showInfoBlocks')}</FormLabel>
                     <FormDescription className="text-xs">
-                      Часы работы, контакты, оплата и доставка
+                      {adminT('storeSettings.showInfoBlocksDescription')}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -6650,20 +6650,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               name="infoBlocksPosition"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">Позиция информационных блоков</FormLabel>
+                  <FormLabel className="text-sm font-medium">{adminT('storeSettings.infoBlocksPosition')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Выберите позицию" />
+                        <SelectValue placeholder={adminT('storeSettings.selectPosition')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="top">Вверху (перед специальными предложениями)</SelectItem>
-                      <SelectItem value="bottom">Внизу (после баннеров)</SelectItem>
+                      <SelectItem value="top">{adminT('storeSettings.positionTop')}</SelectItem>
+                      <SelectItem value="bottom">{adminT('storeSettings.positionBottom')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription className="text-xs">
-                    Выберите где отображать блоки с информацией о магазине
+{adminT('storeSettings.infoBlocksPositionDescription')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -6676,7 +6676,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('settings.showSpecialOffers', 'Показывать спецпредложения')}</FormLabel>
+                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showSpecialOffers')}</FormLabel>
                     <FormDescription className="text-xs">
                       {adminT('settings.specialOffersDescription', 'Отображать блок с особыми предложениями')}
                     </FormDescription>
@@ -6698,7 +6698,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('settings.showCategoryMenu', 'Показывать меню категорий')}</FormLabel>
+                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showCategoryMenu')}</FormLabel>
                     <FormDescription className="text-xs">
                       {adminT('settings.categoryMenuDescription', 'Отображать навигационное меню категорий')}
                     </FormDescription>
@@ -6720,7 +6720,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">Показывать чат WhatsApp</FormLabel>
+                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showWhatsAppChat')}</FormLabel>
                     <FormDescription className="text-xs">
                       Плавающая кнопка WhatsApp в правом нижнем углу сайта
                     </FormDescription>
