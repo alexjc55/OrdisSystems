@@ -5894,9 +5894,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.basicInfo', 'Основная информация')}</h3>
                 </div>
                 {isBasicInfoOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 )}
               </div>
             </Button>
@@ -6036,9 +6036,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.contacts', 'Контакты')}</h3>
                 </div>
                 {isContactsOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 )}
               </div>
             </Button>
@@ -6097,9 +6097,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.visuals', 'Визуальное оформление')}</h3>
                 </div>
                 {isVisualsOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 )}
               </div>
             </Button>
@@ -6168,9 +6168,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.languageSettings', 'Настройки языка')}</h3>
                 </div>
                 {isLanguageSettingsOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 )}
               </div>
             </Button>
@@ -6288,9 +6288,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('settings.operatingHours', 'שעות פעילות')}</h3>
                 </div>
                 {isWorkingHoursOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 )}
               </div>
             </Button>
@@ -6436,9 +6436,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.deliveryPayment', 'Доставка и оплата')}</h3>
                 </div>
                 {isDeliveryPaymentOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 )}
               </div>
             </Button>
@@ -7130,9 +7130,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.trackingCode', 'Код отслеживания')}</h3>
                 </div>
                 {isTrackingCodeOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 )}
               </div>
             </Button>
@@ -7202,9 +7202,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.authPage', 'Страница авторизации')}</h3>
                 </div>
                 {isAuthPageOpen ? (
-                  <ChevronUp className={`h-4 w-4 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronUp className={`h-4 w-4 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 ) : (
-                  <ChevronDown className={`h-4 w-4 text-gray-500 ${isRTL ? 'order-first mr-2' : 'order-last ml-2'}`} />
+                  <ChevronDown className={`h-4 w-4 text-gray-500 ${isRTL ? 'order-last ml-2' : 'order-first mr-2'}`} />
                 )}
               </div>
             </Button>
