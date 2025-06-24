@@ -3456,13 +3456,13 @@ export default function AdminDashboard() {
                                       ))}
                                     </div>
                                   </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right max-w-[150px] w-[150px]">
                                     <button
                                       onClick={() => {
                                         setEditingProduct(product);
                                         setIsProductFormOpen(true);
                                       }}
-                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-right"
+                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-right w-full break-words whitespace-normal leading-relaxed"
                                     >
                                       {product.name}
                                     </button>
@@ -3471,13 +3471,13 @@ export default function AdminDashboard() {
                               ) : (
                                 // LTR order: Name, Category, Price, Status (normal)
                                 <>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left max-w-[150px] w-[150px]">
                                     <button
                                       onClick={() => {
                                         setEditingProduct(product);
                                         setIsProductFormOpen(true);
                                       }}
-                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-left"
+                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-left w-full break-words whitespace-normal leading-relaxed"
                                     >
                                       {product.name}
                                     </button>
