@@ -36,7 +36,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { SimplePagination } from "@/components/ui/simple-pagination";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -597,28 +596,11 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
               <Eye className="h-3 w-3 mr-1" />
               {adminT('orders.orderDetails')}
             </Button>
-            <Select
-              value={order.status}
-              onValueChange={(newStatus) => {
-                if (newStatus === 'cancelled') {
-                  onCancelOrder(order.id);
-                } else {
-                  onStatusChange({ orderId: order.id, status: newStatus });
-                }
-              }}
-            >
-              <SelectTrigger className="w-20 h-7 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pending">{getStatusLabel('pending')}</SelectItem>
-                <SelectItem value="confirmed">{getStatusLabel('confirmed')}</SelectItem>
-                <SelectItem value="preparing">{getStatusLabel('preparing')}</SelectItem>
-                <SelectItem value="ready">{getStatusLabel('ready')}</SelectItem>
-                <SelectItem value="delivered">{getStatusLabel('delivered')}</SelectItem>
-                <SelectItem value="cancelled">{getStatusLabel('cancelled')}</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className={`px-2 py-1 rounded text-xs font-medium border text-center min-w-[80px] max-w-[120px] truncate ${getStatusColor(order.status)} ${order.status === 'pending' ? 'mobile-status-pending' : ''}`}>
+              <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {getStatusLabel(order.status) || order.status || 'Статус'}
+              </span>
+            </div>
           </div>
         </div>
       </CardContent>
@@ -3573,16 +3555,113 @@ export default function AdminDashboard() {
                 )}
                 
                 {/* Products Pagination */}
-                <SimplePagination
-                  currentPage={productsPage}
-                  totalPages={productsTotalPages}
-                  total={productsTotal}
-                  itemsPerPage={itemsPerPage}
-                  onPageChange={setProductsPage}
-                  isRTL={isRTL}
-                  showingText={adminT('common.showing', 'Показано')}
-                  ofText={adminT('common.of', 'из')}
-                />
+                {productsTotalPages > 1 && (
+                  <div className="px-4 py-3 border-t bg-gray-50">
+                    {/* Mobile: Stack info and controls */}
+                    <div className="sm:hidden space-y-2">
+                      <div className="text-center text-xs text-gray-600">
+                        {adminT('common.showing', 'Показано')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {adminT('common.of', 'из')} {productsTotal}
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setProductsPage(1)}
+                          disabled={productsPage === 1}
+                          title="Первая страница"
+                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                          ⟨⟨
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
+                          disabled={productsPage === 1}
+                          title="Предыдущая страница"
+                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
+                          {productsPage}/{productsTotalPages}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
+                          disabled={productsPage === productsTotalPages}
+                          title="Следующая страница"
+                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setProductsPage(productsTotalPages)}
+                          disabled={productsPage === productsTotalPages}
+                          title="Последняя страница"
+                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                          ⟩⟩
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {/* Desktop: Original layout */}
+                    <div className="hidden sm:flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <span>{adminT('common.showing', 'Показано')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {adminT('common.of', 'из')} {productsTotal}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setProductsPage(1)}
+                          disabled={productsPage === 1}
+                          title="Первая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          ⟨⟨
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
+                          disabled={productsPage === 1}
+                          title="Предыдущая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                          {productsPage} из {productsTotalPages}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
+                          disabled={productsPage === productsTotalPages}
+                          title="Следующая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setProductsPage(productsTotalPages)}
+                          disabled={productsPage === productsTotalPages}
+                          title="Последняя страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          ⟩⟩
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -3981,109 +4060,54 @@ export default function AdminDashboard() {
                         </div>
                         
                         {/* Pagination for table view */}
-                        <div className="px-4 py-3 border-t bg-gray-50">
-                          {/* Mobile: Stack info and controls */}
-                          <div className="sm:hidden space-y-2">
-                            <div className={`text-center text-xs text-gray-600 ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                              {adminT('common.showing', 'Показано')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of', 'из')} {ordersResponse.total}
-                            </div>
-                            <div className={`flex items-center justify-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setOrdersPage(1)}
-                                disabled={ordersResponse.page === 1}
-                                title="Первая страница"
-                                className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                              >
-                                ⟨⟨
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
-                                disabled={ordersResponse.page === 1}
-                                title="Предыдущая страница"
-                                className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                              >
-                                <ChevronLeft className="h-4 w-4" />
-                              </Button>
-                              <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
-                                {ordersResponse.page}/{ordersResponse.totalPages}
-                              </span>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
-                                disabled={ordersResponse.page === ordersResponse.totalPages}
-                                title="Следующая страница"
-                                className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                              >
-                                <ChevronRight className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setOrdersPage(ordersResponse.totalPages)}
-                                disabled={ordersResponse.page === ordersResponse.totalPages}
-                                title="Последняя страница"
-                                className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                              >
-                                ⟩⟩
-                              </Button>
-                            </div>
+                        <div className={`flex items-center justify-between px-4 py-3 border-t ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          <div className={`flex items-center gap-2 text-sm text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>
+                            <span>{adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of')} {ordersResponse.total}</span>
                           </div>
-                          
-                          {/* Desktop: Original layout */}
-                          <div className="hidden sm:flex items-center justify-between">
-                            <div className="flex items-center gap-2 text-sm text-gray-700">
-                              <span>{adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of')} {ordersResponse.total}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setOrdersPage(1)}
-                                disabled={ordersResponse.page === 1}
-                                title={adminT('common.firstPage')}
-                                className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                              >
-                                ⟨⟨
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
-                                disabled={ordersResponse.page === 1}
-                                title={adminT('common.previousPage')}
-                                className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                              >
-                                <ChevronLeft className="h-4 w-4" />
-                              </Button>
-                              <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
-                                {ordersResponse.page} {adminT('common.of')} {ordersResponse.totalPages}
-                              </span>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
-                                disabled={ordersResponse.page === ordersResponse.totalPages}
-                                title="Следующая страница"
-                                className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                              >
-                                <ChevronRight className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setOrdersPage(ordersResponse.totalPages)}
-                                disabled={ordersResponse.page === ordersResponse.totalPages}
-                                title="Последняя страница"
-                                className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                              >
-                                ⟩⟩
-                              </Button>
-                            </div>
+                          <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setOrdersPage(1)}
+                              disabled={ordersResponse.page === 1}
+                              title={adminT('common.firstPage')}
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                            >
+                              ⟨⟨
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
+                              disabled={ordersResponse.page === 1}
+                              title={adminT('common.previousPage')}
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                            >
+                              <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                              {ordersResponse.page} {adminT('common.of')} {ordersResponse.totalPages}
+                            </span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
+                              disabled={ordersResponse.page === ordersResponse.totalPages}
+                              title="Следующая страница"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                            >
+                              <ChevronRight className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setOrdersPage(ordersResponse.totalPages)}
+                              disabled={ordersResponse.page === ordersResponse.totalPages}
+                              title="Последняя страница"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                            >
+                              ⟩⟩
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -4335,16 +4359,113 @@ export default function AdminDashboard() {
                     )}
 
                     {/* Orders Pagination */}
-                    <SimplePagination
-                      currentPage={ordersResponse?.page || 1}
-                      totalPages={ordersResponse?.totalPages || 1}
-                      total={ordersResponse?.total || 0}
-                      itemsPerPage={ordersResponse?.limit || 10}
-                      onPageChange={setOrdersPage}
-                      isRTL={isRTL}
-                      showingText={adminT('common.showing', 'Показано')}
-                      ofText={adminT('common.of', 'из')}
-                    />
+                    {ordersResponse?.totalPages > 1 && (
+                      <div className="px-4 py-3 border-t bg-gray-50 mt-4">
+                        {/* Mobile: Stack info and controls */}
+                        <div className="sm:hidden space-y-2">
+                          <div className="text-center text-xs text-gray-600">
+                            Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}
+                          </div>
+                          <div className="flex items-center justify-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setOrdersPage(1)}
+                              disabled={ordersResponse.page === 1}
+                              title="Первая страница"
+                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                            >
+                              ⟨⟨
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
+                              disabled={ordersResponse.page === 1}
+                              title="Предыдущая страница"
+                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                            >
+                              <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
+                              {ordersResponse.page}/{ordersResponse.totalPages}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
+                              disabled={ordersResponse.page === ordersResponse.totalPages}
+                              title="Следующая страница"
+                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                            >
+                              <ChevronRight className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setOrdersPage(ordersResponse.totalPages)}
+                              disabled={ordersResponse.page === ordersResponse.totalPages}
+                              title="Последняя страница"
+                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                            >
+                              ⟩⟩
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        {/* Desktop: Original layout */}
+                        <div className="hidden sm:flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-sm text-gray-700">
+                            <span>Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setOrdersPage(1)}
+                              disabled={ordersResponse.page === 1}
+                              title="Первая страница"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                            >
+                              ⟨⟨
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
+                              disabled={ordersResponse.page === 1}
+                              title="Предыдущая страница"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                            >
+                              <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                              {ordersResponse.page} из {ordersResponse.totalPages}
+                            </span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
+                              disabled={ordersResponse.page === ordersResponse.totalPages}
+                              title="Следующая страница"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                            >
+                              <ChevronRight className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setOrdersPage(ordersResponse.totalPages)}
+                              disabled={ordersResponse.page === ordersResponse.totalPages}
+                              title="Последняя страница"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                            >
+                              ⟩⟩
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </>
                 ) : (
                   <div className="text-center py-8">
@@ -4529,16 +4650,56 @@ export default function AdminDashboard() {
                     </div>
                     
                     {/* Pagination for users table */}
-                    <SimplePagination
-                      currentPage={usersPage}
-                      totalPages={usersTotalPages}
-                      total={usersTotal}
-                      itemsPerPage={itemsPerPage}
-                      onPageChange={setUsersPage}
-                      isRTL={isRTL}
-                      showingText={adminT('common.showing', 'Показано')}
-                      ofText={adminT('common.of', 'из')}
-                    />
+                    <div className="flex items-center justify-between px-4 py-3 border-t">
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <span>Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUsersPage(1)}
+                          disabled={usersPage === 1}
+                          title="Первая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          ⟨⟨
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
+                          disabled={usersPage === 1}
+                          title="Предыдущая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                          {usersPage} из {usersTotalPages}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
+                          disabled={usersPage === usersTotalPages}
+                          title="Следующая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUsersPage(usersTotalPages)}
+                          disabled={usersPage === usersTotalPages}
+                          title="Последняя страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          ⟩⟩
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center py-8">
@@ -4549,16 +4710,113 @@ export default function AdminDashboard() {
                 )}
                 
                 {/* Users Pagination */}
-                <SimplePagination
-                  currentPage={usersPage}
-                  totalPages={usersTotalPages}
-                  total={usersTotal}
-                  itemsPerPage={itemsPerPage}
-                  onPageChange={setUsersPage}
-                  isRTL={isRTL}
-                  showingText={adminT('common.showing', 'Показано')}
-                  ofText={adminT('common.of', 'из')}
-                />
+                {usersTotalPages > 1 && (
+                  <div className="px-4 py-3 border-t bg-gray-50">
+                    {/* Mobile: Stack info and controls */}
+                    <div className="sm:hidden space-y-2">
+                      <div className="text-center text-xs text-gray-600">
+                        Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUsersPage(1)}
+                          disabled={usersPage === 1}
+                          title="Первая страница"
+                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                          ⟨⟨
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
+                          disabled={usersPage === 1}
+                          title="Предыдущая страница"
+                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
+                          {usersPage}/{usersTotalPages}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
+                          disabled={usersPage === usersTotalPages}
+                          title="Следующая страница"
+                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUsersPage(usersTotalPages)}
+                          disabled={usersPage === usersTotalPages}
+                          title="Последняя страница"
+                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                          ⟩⟩
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {/* Desktop: Original layout */}
+                    <div className="hidden sm:flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <span>Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUsersPage(1)}
+                          disabled={usersPage === 1}
+                          title="Первая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          ⟨⟨
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
+                          disabled={usersPage === 1}
+                          title="Предыдущая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                          {usersPage} из {usersTotalPages}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
+                          disabled={usersPage === usersTotalPages}
+                          title="Следующая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUsersPage(usersTotalPages)}
+                          disabled={usersPage === usersTotalPages}
+                          title="Последняя страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          ⟩⟩
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

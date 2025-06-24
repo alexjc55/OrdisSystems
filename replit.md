@@ -131,9 +131,7 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
-- June 24, 2025: Replaced all pagination implementations with unified SimplePagination component for consistent RTL support and mobile responsiveness
-- June 24, 2025: Fixed status dropdown functionality on kanban OrderCard components - restored interactive Select component for order status changes
-- June 23, 2025: Initial setup
+- June 23, 2025. Initial setup
 
 ## User Preferences
 
