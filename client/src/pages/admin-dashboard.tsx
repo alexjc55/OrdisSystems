@@ -6328,9 +6328,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
               return (
                 <div key={key} className="border rounded-lg p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <FormLabel className="text-sm font-medium">{label}</FormLabel>
-                    <div className="flex items-center space-x-2">
+                  <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <FormLabel className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{label}</FormLabel>
+                    <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
                       <Switch
                         checked={isWorking}
                         onCheckedChange={(checked) => {
@@ -6438,9 +6438,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="deliveryInfo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm flex items-center gap-2">
+              <FormLabel className={`text-sm flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                 <Truck className="h-4 w-4" />
-{adminT('storeSettings.deliveryInfo')}
+                {adminT('storeSettings.deliveryInfo')}
               </FormLabel>
               <FormControl>
                 <Textarea 
@@ -6459,9 +6459,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="paymentInfo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm flex items-center gap-2">
+              <FormLabel className={`text-sm flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                 <CreditCard className="h-4 w-4" />
-{adminT('storeSettings.paymentInfo')}
+                {adminT('storeSettings.paymentInfo')}
               </FormLabel>
               <FormControl>
                 <Textarea 
@@ -6480,15 +6480,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="paymentMethods"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm flex items-center gap-2">
+              <FormLabel className={`text-sm flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                 <CreditCard className="h-4 w-4" />
-                Способы оплаты
+                {adminT('storeSettings.paymentMethods')}
               </FormLabel>
               <div className="space-y-3">
                 {(field.value || []).map((method: any, index: number) => (
                   <div key={method.id || index} className="flex items-center gap-2 p-3 border rounded-lg">
                     <Input
-                      placeholder="Название способа оплаты"
+                      placeholder={adminT('storeSettings.paymentMethodPlaceholder')}
                       value={method.name || ""}
                       onChange={(e) => {
                         const updatedMethods = [...(field.value || [])];
@@ -6507,7 +6507,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       }}
                       className="text-red-600 hover:text-red-700"
                     >
-                      Удалить
+{adminT('actions.delete')}
                     </Button>
                   </div>
                 ))}
@@ -6521,7 +6521,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   }}
                   className="w-full"
                 >
-                  + Добавить способ оплаты
++ {adminT('storeSettings.addPaymentMethod')}
                 </Button>
               </div>
               <FormMessage className="text-xs" />
@@ -6539,7 +6539,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
                 <Eye className="h-5 w-5 text-orange-500" />
                 <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.displaySettings')}</h3>
                 {isDisplaySettingsOpen ? (
@@ -6558,16 +6558,16 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="discountBadgeText"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm">Текст на значке скидки</FormLabel>
+              <FormLabel className="text-sm">{adminT('storeSettings.discountBadgeTextLabel')}</FormLabel>
               <FormControl>
                 <Input 
-                  placeholder="Скидка"
+                  placeholder={adminT('storeSettings.discountBadgeText')}
                   className="text-sm"
                   {...field}
                 />
               </FormControl>
               <FormDescription className="text-xs">
-                Этот текст будет отображаться на оранжевом значке товаров со скидкой
+{adminT('storeSettings.discountBadgeDescription')}
               </FormDescription>
               <FormMessage className="text-xs" />
             </FormItem>
@@ -6576,7 +6576,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
         {/* Переключатели отображения */}
         <div className="space-y-4">
-          <h4 className="text-sm font-medium text-gray-700">{adminT('storeSettings.displaySettingsDescription', 'Настройки отображения главной страницы')}</h4>
+          <h4 className="text-sm font-medium text-gray-700">{adminT('storeSettings.displaySettingsDescription')}</h4>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
