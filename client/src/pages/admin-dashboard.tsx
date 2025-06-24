@@ -4623,9 +4623,11 @@ export default function AdminDashboard() {
                 {(() => {
                   const filteredUsers = (usersData as any[] || []).filter((user: any) => {
                     const matchesSearch = !searchQuery || 
+                      (user.username && user.username.toLowerCase().includes(searchQuery.toLowerCase())) ||
                       (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
                       (user.firstName && user.firstName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                      (user.lastName && user.lastName.toLowerCase().includes(searchQuery.toLowerCase()));
+                      (user.lastName && user.lastName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                      (user.phone && user.phone.toLowerCase().includes(searchQuery.toLowerCase()));
                     const matchesRole = usersRoleFilter === 'all' || user.role === usersRoleFilter;
                     return matchesSearch && matchesRole;
                   });
