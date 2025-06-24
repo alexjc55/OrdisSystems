@@ -815,7 +815,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       const search = req.query.search as string || '';
-      const role = req.query.role as string || 'all';
+      const status = req.query.status as string || 'all';
       const sortField = req.query.sortField as string || 'createdAt';
       const sortDirection = req.query.sortDirection as string || 'desc';
 
@@ -823,7 +823,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         page,
         limit,
         search,
-        status: role,
+        status,
         sortField,
         sortDirection
       });
