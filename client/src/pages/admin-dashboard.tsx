@@ -6745,7 +6745,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <FormItem>
                       <FormLabel className="text-sm flex items-center gap-2">
                         <Phone className="h-4 w-4" />
-                        Номер телефона WhatsApp
+{adminT('storeSettings.whatsappPhoneNumber')}
                       </FormLabel>
                       <FormControl>
                         <Input 
@@ -6769,7 +6769,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <FormItem>
                       <FormLabel className="text-sm flex items-center gap-2">
                         <MessageCircle className="h-4 w-4" />
-                        Сообщение по умолчанию
+{adminT('storeSettings.whatsappDefaultMessage')}
                       </FormLabel>
                       <FormControl>
                         <Textarea 
@@ -6805,7 +6805,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <div className="space-y-0.5">
                   <FormLabel className="text-sm font-medium">{adminT('storeSettings.showCartBanner')}</FormLabel>
                   <FormDescription className="text-xs">
-                    Баннер отображается в корзине под итоговой суммой
+{adminT('storeSettings.showCartBannerDescription')}
                   </FormDescription>
                 </div>
                 <FormControl>
@@ -6828,7 +6828,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <FormItem>
                     <FormLabel className="text-sm flex items-center gap-2">
                       <Layers className="h-4 w-4" />
-                      Тип баннера
+{adminT('storeSettings.bannerType')}
                     </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
@@ -6985,7 +6985,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <div className="space-y-0.5">
                   <FormLabel className="text-sm font-medium">{adminT('storeSettings.showBottomBanners')}</FormLabel>
                   <FormDescription className="text-xs">
-                    Два баннера в самом низу главной страницы
+{adminT('storeSettings.showBottomBannersDescription')}
                   </FormDescription>
                 </div>
                 <FormControl>
@@ -7111,7 +7111,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
                 <Code className="h-5 w-5 text-orange-500" />
                 <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.trackingCode')}</h3>
                 {isTrackingCodeOpen ? (
@@ -7181,7 +7181,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
                 <Users className="h-5 w-5 text-orange-500" />
                 <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.authPage')}</h3>
                 {isAuthPageOpen ? (
@@ -7200,7 +7200,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    Заголовок страницы входа
+{adminT('storeSettings.authPageTitle')}
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -7224,7 +7224,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    Подзаголовок страницы входа
+{adminT('storeSettings.authPageSubtitle')}
                   </FormLabel>
                   <FormControl>
                     <Textarea 
