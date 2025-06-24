@@ -4647,19 +4647,18 @@ export default function AdminDashboard() {
                           {filteredUsers.slice((usersPage - 1) * itemsPerPage, usersPage * itemsPerPage).map((user: any) => (
                             <TableRow key={user.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors" dir={isRTL ? 'rtl' : 'ltr'}>
                               <TableCell className={`px-3 py-3 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <Button
-                                  variant="ghost"
+                                <span 
                                   onClick={() => {
                                     setEditingUser(user);
                                     setIsUserFormOpen(true);
                                   }}
-                                  className={`h-auto p-0 text-blue-600 hover:text-blue-800 hover:bg-transparent text-sm font-normal ${isRTL ? 'justify-end' : 'justify-start'}`}
+                                  className={`text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block ${isRTL ? 'text-right' : 'text-left'}`}
                                 >
                                   {user.firstName && user.lastName 
                                     ? `${user.firstName} ${user.lastName}`
                                     : user.email || adminT('users.noName', 'Безымянный пользователь')
                                   }
-                                </Button>
+                                </span>
                               </TableCell>
                               <TableCell className={`px-3 py-3 ${isRTL ? 'text-right' : 'text-left'}`}>
                                 <Badge variant="outline" className={
@@ -4675,12 +4674,9 @@ export default function AdminDashboard() {
                                 {user.phone ? (
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                      <Button
-                                        variant="ghost"
-                                        className={`h-auto p-0 text-blue-600 hover:text-blue-800 hover:bg-transparent text-sm font-normal ${isRTL ? 'justify-end' : 'justify-start'}`}
-                                      >
+                                      <span className={`text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block ${isRTL ? 'text-right' : 'text-left'}`}>
                                         {user.phone}
-                                      </Button>
+                                      </span>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg" align={isRTL ? "start" : "end"} dir={isRTL ? 'rtl' : 'ltr'}>
                                       <DropdownMenuItem onClick={() => window.open(`tel:${user.phone}`, '_self')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
