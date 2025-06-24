@@ -6413,7 +6413,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Доставка и оплата */}
+        {/* {adminT('storeSettings.deliveryPayment', 'Доставка и оплата')} */}
         <Collapsible open={isDeliveryPaymentOpen} onOpenChange={setIsDeliveryPaymentOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
@@ -6533,7 +6533,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Настройки отображения */}
+        {/* {adminT('storeSettings.displaySettings', 'Настройки отображения')} */}
         <Collapsible open={isDisplaySettingsOpen} onOpenChange={setIsDisplaySettingsOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
@@ -7105,7 +7105,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Код отслеживания */}
+        {/* {adminT('storeSettings.trackingCode', 'Код отслеживания')} */}
         <Collapsible open={isTrackingCodeOpen} onOpenChange={setIsTrackingCodeOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
