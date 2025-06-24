@@ -4706,37 +4706,6 @@ export default function AdminDashboard() {
                                   {formatCurrency(user.totalOrderAmount || 0)}
                                 </span>
                               </TableCell>
-                              <TableCell className="px-3 py-3 rtl-cell">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" className="h-8 w-8 p-0">
-                                      <span className="sr-only">{adminT('common.openMenu', 'Открыть меню')}</span>
-                                      <MoreHorizontal className="h-4 w-4" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align={isRTL ? "start" : "end"} className="bg-white border border-gray-200 shadow-lg" dir={isRTL ? 'rtl' : 'ltr'}>
-                                    <DropdownMenuItem 
-                                      onClick={() => {
-                                        setEditingUser(user);
-                                        setIsUserFormOpen(true);
-                                      }}
-                                      className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
-                                    >
-                                      <Edit className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                                      {adminT('common.edit', 'Изменить')}
-                                    </DropdownMenuItem>
-                                    {user.role !== 'admin' && (
-                                      <DropdownMenuItem 
-                                        onClick={() => handleDeleteUser(user.id)}
-                                        className="text-red-600 hover:bg-red-50 focus:bg-red-50"
-                                      >
-                                        <Trash2 className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                                        {adminT('common.delete', 'Удалить')}
-                                      </DropdownMenuItem>
-                                    )}
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
