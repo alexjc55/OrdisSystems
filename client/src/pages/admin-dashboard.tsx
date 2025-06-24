@@ -2261,6 +2261,25 @@ export default function AdminDashboard() {
   // User management state
   const [isUserFormOpen, setIsUserFormOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
+  
+  const handleDeleteUser = async (userId: string) => {
+    if (window.confirm(adminT('users.deleteConfirm', 'Вы уверены, что хотите удалить этого пользователя?'))) {
+      try {
+        await apiRequest('DELETE', `/api/admin/users/${userId}`);
+        toast({
+          title: adminT('users.deleted'),
+          description: adminT('users.deleteSuccess', 'Пользователь успешно удален'),
+        });
+        queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      } catch (error: any) {
+        toast({
+          title: adminT('common.error'),
+          description: error.message || adminT('users.deleteError'),
+          variant: "destructive",
+        });
+      }
+    }
+  };
   const [usersRoleFilter, setUsersRoleFilter] = useState("all");
 
   // Drag and drop sensors
@@ -4718,18 +4737,25 @@ export default function AdminDashboard() {
                     </div>
                     
                     {/* Pagination for users table */}
-                    <div className="flex items-center justify-between px-4 py-3 border-t">
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <span>Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}</span>
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-3 border-t border-gray-100 bg-gray-50/30">
+                      <div className="text-xs text-gray-600 text-center sm:text-left">
+                        <div className="sm:hidden">
+                          <div>{adminT('common.showing')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)}</div>
+                          <div>{adminT('common.of')} {usersTotal}</div>
+                        </div>
+                        <div className="hidden sm:block">
+                          {adminT('common.showing')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('common.of')} {usersTotal}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      
+                      <div className="flex items-center gap-1">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(1)}
                           disabled={usersPage === 1}
-                          title="Первая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          title={adminT('common.firstPage')}
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           ⟨⟨
                         </Button>
@@ -4738,31 +4764,32 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
                           disabled={usersPage === 1}
-                          title="Предыдущая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          title={adminT('common.prevPage')}
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <ChevronLeft className="h-4 w-4" />
+                          ⟨
                         </Button>
-                        <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
-                          {usersPage} из {usersTotalPages}
+                        <span className="text-xs text-gray-600 px-2 min-w-[60px] text-center">
+                          <span className="sm:hidden">{usersPage}/{usersTotalPages}</span>
+                          <span className="hidden sm:inline">{usersPage} {adminT('common.of')} {usersTotalPages}</span>
                         </span>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
-                          disabled={usersPage === usersTotalPages}
-                          title="Следующая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          disabled={usersPage >= usersTotalPages}
+                          title={adminT('common.nextPage')}
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <ChevronRight className="h-4 w-4" />
+                          ⟩
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(usersTotalPages)}
-                          disabled={usersPage === usersTotalPages}
-                          title="Последняя страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          disabled={usersPage >= usersTotalPages}
+                          title={adminT('common.lastPage')}
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           ⟩⟩
                         </Button>
@@ -4772,8 +4799,8 @@ export default function AdminDashboard() {
                 ) : (
                   <div className="text-center py-8">
                     <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет пользователей</h3>
-                    <p className="text-gray-500 text-sm">Пользователи будут отображаться здесь</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">{adminT('users.noUsers', 'Нет пользователей')}</h3>
+                    <p className="text-gray-500 text-sm">{adminT('users.noUsersDescription', 'Пользователи будут отображаться здесь')}</p>
                   </div>
                 )}
                 

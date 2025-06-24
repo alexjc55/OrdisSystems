@@ -36,7 +36,17 @@
     "error": "Ошибка",
     "success": "Успешно",
     "free": "Бесплатно",
-    "searchProducts": "Поиск товаров..."
+    "searchProducts": "Поиск товаров...",
+    "actions": "Действия",
+    "edit": "Изменить",
+    "delete": "Удалить",
+    "openMenu": "Открыть меню",
+    "showing": "Показано",
+    "of": "из",
+    "firstPage": "Первая страница",
+    "prevPage": "Предыдущая страница",
+    "nextPage": "Следующая страница",
+    "lastPage": "Последняя страница"
   },
   "dashboard": {
     "title": "Панель управления",
@@ -269,6 +279,51 @@
       "updateError": "Не удалось обновить категорию",
       "deleteError": "Не удалось удалить категорию"
     }
+  },
+  "users": {
+    "title": "Пользователи",
+    "description": "Управление пользователями и ролями",
+    "addUser": "Добавить пользователя",
+    "editUser": "Редактировать пользователя",
+    "deleteUser": "Удалить пользователя",
+    "searchPlaceholder": "Поиск по email или имени...",
+    "allRoles": "Все роли",
+    "noName": "Безымянный пользователь",
+    "callUser": "Позвонить",
+    "whatsapp": "WhatsApp",
+    "role": {
+      "admin": "Администратор",
+      "worker": "Сотрудник",
+      "customer": "Клиент"
+    },
+    "table": {
+      "name": "Имя",
+      "role": "Роль",
+      "phone": "Телефон",
+      "orders": "Заказов",
+      "totalAmount": "Сумма заказов"
+    },
+    "dialog": {
+      "firstNameLabel": "Имя",
+      "lastNameLabel": "Фамилия",
+      "emailLabel": "Email",
+      "phoneLabel": "Телефон",
+      "roleLabel": "Роль",
+      "passwordLabel": "Пароль",
+      "confirmPasswordLabel": "Подтвердите пароль",
+      "firstNamePlaceholder": "Введите имя",
+      "lastNamePlaceholder": "Введите фамилию",
+      "emailPlaceholder": "Введите email",
+      "phonePlaceholder": "Введите телефон",
+      "passwordPlaceholder": "Введите пароль",
+      "confirmPasswordPlaceholder": "Подтвердите пароль"
+    },
+    "created": "Пользователь создан",
+    "updated": "Пользователь обновлен",
+    "deleted": "Пользователь удален",
+    "createError": "Ошибка создания пользователя",
+    "updateError": "Ошибка обновления пользователя",
+    "deleteError": "Ошибка удаления пользователя"
   },
   "orders": {
     "title": "Заказы",

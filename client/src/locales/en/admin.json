@@ -48,6 +48,16 @@
     "free": "Free",
     "noResults": "No results found",
     "tryDifferentSearch": "Try changing search criteria or filters",
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "openMenu": "Open menu",
+    "showing": "Showing",
+    "of": "of",
+    "firstPage": "First page",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
+    "lastPage": "Last page",
     "table": "Table",
     "kanban": "Kanban",
     "searchProducts": "Search products...",
@@ -249,6 +259,51 @@
       "deleteErrorWithProducts": "Category contains products",
       "deleteErrorWithProductsDesc": "Cannot delete category that contains products. Please move or delete all products first."
     }
+  },
+  "users": {
+    "title": "Users",
+    "description": "User and role management",
+    "addUser": "Add User",
+    "editUser": "Edit User",
+    "deleteUser": "Delete User",
+    "searchPlaceholder": "Search by email or name...",
+    "allRoles": "All Roles",
+    "noName": "Unnamed User",
+    "callUser": "Call",
+    "whatsapp": "WhatsApp",
+    "role": {
+      "admin": "Administrator",
+      "worker": "Worker",
+      "customer": "Customer"
+    },
+    "table": {
+      "name": "Name",
+      "role": "Role",
+      "phone": "Phone",
+      "orders": "Orders",
+      "totalAmount": "Total Amount"
+    },
+    "dialog": {
+      "firstNameLabel": "First Name",
+      "lastNameLabel": "Last Name",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone",
+      "roleLabel": "Role",
+      "passwordLabel": "Password",
+      "confirmPasswordLabel": "Confirm Password",
+      "firstNamePlaceholder": "Enter first name",
+      "lastNamePlaceholder": "Enter last name",
+      "emailPlaceholder": "Enter email",
+      "phonePlaceholder": "Enter phone",
+      "passwordPlaceholder": "Enter password",
+      "confirmPasswordPlaceholder": "Confirm password"
+    },
+    "created": "User created",
+    "updated": "User updated",
+    "deleted": "User deleted",
+    "createError": "Error creating user",
+    "updateError": "Error updating user",
+    "deleteError": "Error deleting user"
   },
   "orders": {
     "title": "Orders",
