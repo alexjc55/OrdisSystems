@@ -4682,7 +4682,7 @@ export default function AdminDashboard() {
                                         {user.phone}
                                       </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg">
+                                    <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg" align={isRTL ? "start" : "end"} dir={isRTL ? 'rtl' : 'ltr'}>
                                       <DropdownMenuItem onClick={() => window.open(`tel:${user.phone}`, '_self')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
                                         <Phone className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                                         {adminT('users.callUser', 'Позвонить')}
@@ -4715,7 +4715,7 @@ export default function AdminDashboard() {
                                       <MoreHorizontal className="h-4 w-4" />
                                     </Button>
                                   </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end" className="bg-white border border-gray-200 shadow-lg">
+                                  <DropdownMenuContent align={isRTL ? "start" : "end"} className="bg-white border border-gray-200 shadow-lg" dir={isRTL ? 'rtl' : 'ltr'}>
                                     <DropdownMenuItem 
                                       onClick={() => {
                                         setEditingUser(user);
