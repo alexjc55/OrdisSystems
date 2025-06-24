@@ -106,6 +106,18 @@
     "canViewAnalyticsDescription": "Доступ к отчетам и статистике",
     "canManageThemes": "Управление темами",
     "canManageThemesDescription": "Настройка внешнего вида и тем оформления"
+    "canViewOrders": "Просмотр заказов",
+    "canViewOrdersDescription": "Доступ к списку и деталям заказов",
+    "canEditOrders": "Редактирование заказов",
+    "canEditOrdersDescription": "Изменение статуса и деталей заказов",
+    "canViewUsers": "Просмотр пользователей",
+    "canViewUsersDescription": "Доступ к списку пользователей системы",
+    "canManageSettings": "Управление настройками",
+    "canManageSettingsDescription": "Доступ к настройкам магазина и системы",
+    "canViewAnalytics": "Просмотр аналитики",
+    "canViewAnalyticsDescription": "Доступ к отчетам и статистике",
+    "canManageThemes": "Управление темами",
+    "canManageThemesDescription": "Настройка внешнего вида и тем оформления"
   },
   "common": {
     "save": "Сохранить",

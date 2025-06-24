@@ -4854,8 +4854,8 @@ export default function AdminDashboard() {
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Управление категориями</label>
-                          <p className="text-xs text-gray-500">Добавление, редактирование и удаление категорий</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageCategories', 'Управление категориями')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageCategoriesDescription', 'Создание и редактирование категорий товаров')}</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageCategories || false}
@@ -4894,8 +4894,8 @@ export default function AdminDashboard() {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Просмотр пользователей</label>
-                          <p className="text-xs text-gray-500">Просмотр списка клиентов</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canViewUsers', 'Просмотр пользователей')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canViewUsersDescription', 'Доступ к списку пользователей системы')}</p>
                         </div>
                         <Switch
                           checked={(storeSettings?.workerPermissions as any)?.canViewUsers || false}
@@ -4950,8 +4950,8 @@ export default function AdminDashboard() {
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Управление настройками</label>
-                          <p className="text-xs text-gray-500">Полный доступ к настройкам магазина</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageSettings', 'Управление настройками')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageSettingsDescription', 'Доступ к настройкам магазина и системы')}</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageSettings || false}
@@ -5881,7 +5881,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-8 ${isRTL ? 'rtl' : 'ltr'}`}>
-        {/* Основная информация */}
+        {/* {adminT('storeSettings.basicInfo', 'Основная информация')} */}
         <Collapsible open={isBasicInfoOpen} onOpenChange={setIsBasicInfoOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
@@ -6080,7 +6080,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Визуальное оформление */}
+        {/* {adminT('storeSettings.visuals', 'Визуальное оформление')} */}
         <Collapsible open={isVisualsOpen} onOpenChange={setIsVisualsOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
@@ -6577,7 +6577,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
         {/* Переключатели отображения */}
         <div className="space-y-4">
-          <h4 className="text-sm font-medium text-gray-700">Настройки отображения главной страницы</h4>
+          <h4 className="text-sm font-medium text-gray-700">{adminT('storeSettings.displaySettingsDescription', 'Настройки отображения главной страницы')}</h4>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField

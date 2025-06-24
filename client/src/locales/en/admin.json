@@ -106,6 +106,18 @@
     "canViewAnalyticsDescription": "Access to reports and statistics",
     "canManageThemes": "Manage Themes",
     "canManageThemesDescription": "Configure appearance and theme settings"
+    "canViewOrders": "View Orders",
+    "canViewOrdersDescription": "Access to order list and details",
+    "canEditOrders": "Edit Orders",
+    "canEditOrdersDescription": "Change order status and details",
+    "canViewUsers": "View Users",
+    "canViewUsersDescription": "Access to system user list",
+    "canManageSettings": "Manage Settings",
+    "canManageSettingsDescription": "Access to store and system settings",
+    "canViewAnalytics": "View Analytics",
+    "canViewAnalyticsDescription": "Access to reports and statistics",
+    "canManageThemes": "Manage Themes",
+    "canManageThemesDescription": "Configure appearance and theme settings"
   },
   "dashboard": {
     "title": "Admin Panel",
