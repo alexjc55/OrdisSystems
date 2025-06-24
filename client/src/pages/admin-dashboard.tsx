@@ -4619,21 +4619,15 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {/* Filter users based on search and role */}
+                {/* Filter users based on role only - search is handled by backend */}
                 {(() => {
                   const filteredUsers = (usersData as any[] || []).filter((user: any) => {
-                    const matchesSearch = !searchQuery || 
-                      (user.username && user.username.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                      (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                      (user.firstName && user.firstName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                      (user.lastName && user.lastName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                      (user.phone && user.phone.toLowerCase().includes(searchQuery.toLowerCase()));
                     const matchesRole = usersRoleFilter === 'all' || user.role === usersRoleFilter;
-                    return matchesSearch && matchesRole;
+                    return matchesRole;
                   });
 
-                  const usersTotal = filteredUsers.length;
-                  const usersTotalPages = Math.ceil(usersTotal / itemsPerPage);
+                  const usersTotal = usersResponse?.total || 0;
+                  const usersTotalPages = usersResponse?.totalPages || 0;
 
                   return filteredUsers.length > 0 ? (
                     <div className={`border border-gray-100 rounded-lg bg-white overflow-hidden ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
