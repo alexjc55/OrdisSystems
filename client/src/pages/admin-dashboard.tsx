@@ -4586,16 +4586,9 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 {/* Users Filters and Controls */}
-                <div className={`flex flex-col sm:flex-row gap-4 mb-6 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
-                  <div className="flex-1">
-                    <Input
-                      placeholder={adminT('users.searchPlaceholder', 'Поиск пользователей...')}
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className={`max-w-sm ${isRTL ? 'text-right' : ''}`}
-                    />
-                  </div>
-                  <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={`flex flex-col sm:flex-row gap-4 mb-6 ${isRTL ? '' : ''}`}>
+                  {/* Button first for RTL */}
+                  <div className={`flex gap-2 ${isRTL ? 'order-first' : 'order-last'}`}>
                     <Button 
                       onClick={() => setIsUserFormOpen(true)}
                       className={`bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
@@ -4614,6 +4607,15 @@ export default function AdminDashboard() {
                         <SelectItem value="customer">{adminT('users.roles.customer', 'Клиент')}</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  {/* Search field */}
+                  <div className={`flex-1 ${isRTL ? 'order-last' : 'order-first'}`}>
+                    <Input
+                      placeholder={adminT('users.searchPlaceholder', 'Поиск пользователей...')}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className={`max-w-sm ${isRTL ? 'text-right ml-auto' : ''}`}
+                    />
                   </div>
                 </div>
 
