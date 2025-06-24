@@ -3345,10 +3345,10 @@ export default function AdminDashboard() {
                             ) : (
                               // LTR order: Name, Category, Price, Status (normal)
                               <>
-                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                   <button 
                                     onClick={() => handleSort("name")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                    className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                                   >
                                     {adminT('products.productName')}
                                     {sortField === "name" && (
@@ -3358,10 +3358,10 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                 </TableHead>
-                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                   <button 
                                     onClick={() => handleSort("category")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                    className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                                   >
                                     {adminT('products.productCategory')}
                                     {sortField === "category" && (
@@ -3371,10 +3371,10 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                 </TableHead>
-                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                   <button 
                                     onClick={() => handleSort("price")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                    className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                                   >
                                     {adminT('products.productPrice')}
                                     {sortField === "price" && (
@@ -3384,7 +3384,7 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                 </TableHead>
-                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>{adminT('products.productStatus')}</TableHead>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('products.productStatus')}</TableHead>
                               </>
                             )}
                           </TableRow>
@@ -3471,18 +3471,18 @@ export default function AdminDashboard() {
                               ) : (
                                 // LTR order: Name, Category, Price, Status (normal)
                                 <>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-left max-w-[150px] w-[150px]">
+                                  <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'} max-w-[150px] w-[150px]`}>
                                     <button
                                       onClick={() => {
                                         setEditingProduct(product);
                                         setIsProductFormOpen(true);
                                       }}
-                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-left w-full break-words whitespace-normal leading-relaxed"
+                                      className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer ${isRTL ? 'text-right' : 'text-left'} w-full break-words whitespace-normal leading-relaxed`}
                                     >
                                       {product.name}
                                     </button>
                                   </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                  <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                                     <div className="flex flex-wrap gap-1.5 justify-center">
                                       {product.categories?.map((category: any) => (
                                         <span 
@@ -3496,7 +3496,7 @@ export default function AdminDashboard() {
                                       ))}
                                     </div>
                                   </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                  <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                                     <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
                                       {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
                                         <div className="space-y-1">
@@ -3518,8 +3518,8 @@ export default function AdminDashboard() {
                                       <div className="text-gray-500 text-xs mt-1">{getUnitDisplay(product.unit || "100g")}</div>
                                     </div>
                                   </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
-                                    <div className="flex flex-col gap-1 items-start">
+                                  <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                                    <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
                                       <CustomSwitch
                                         checked={product.isAvailable && (product.availabilityStatus === "available")}
                                         onChange={(checked) => {
