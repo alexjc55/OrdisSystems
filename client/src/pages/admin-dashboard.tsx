@@ -3263,7 +3263,8 @@ export default function AdminDashboard() {
                           <SelectItem value="all">{adminT('products.allCategories', 'Все категории')}</SelectItem>
                           {(categories as any[] || []).map((category: any) => (
                             <SelectItem 
-                              key={category.id} 
+                              key={category.id}
+                                          title={category.name} 
                               value={category.id.toString()}
                             >
                               {category.name}
@@ -3445,8 +3446,9 @@ export default function AdminDashboard() {
                                     <div className="flex flex-wrap gap-1.5 justify-center">
                                       {product.categories?.map((category: any) => (
                                         <span 
-                                          key={category.id} 
-                                          className="inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
+                                          key={category.id}
+                                          title={category.name} 
+                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
                                         >
                                           
                                           {category.name}
@@ -3484,8 +3486,9 @@ export default function AdminDashboard() {
                                     <div className="flex flex-wrap gap-1.5 justify-center">
                                       {product.categories?.map((category: any) => (
                                         <span 
-                                          key={category.id} 
-                                          className="inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
+                                          key={category.id}
+                                          title={category.name} 
+                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
                                         >
                                           
                                           {category.name}
@@ -3722,6 +3725,7 @@ export default function AdminDashboard() {
                           {(categories as any[] || []).map((category: any) => (
                             <SortableCategoryItem
                               key={category.id}
+                                          title={category.name}
                               category={category}
                               onEdit={(category) => {
                                 setEditingCategory(category);
@@ -5327,7 +5331,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   <FormControl>
                     <div className="border rounded-md p-3 max-h-32 overflow-y-auto">
                       {categories?.map((category: any) => (
-                        <div key={category.id} className="flex items-center space-x-2 py-1">
+                        <div key={category.id}
+                                          title={category.name} className="flex items-center space-x-2 py-1">
                           <input
                             type="checkbox"
                             id={`category-${category.id}`}
