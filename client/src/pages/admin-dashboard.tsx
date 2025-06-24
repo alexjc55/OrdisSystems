@@ -4554,10 +4554,10 @@ export default function AdminDashboard() {
                     <div className={isRTL ? 'text-right' : 'text-left'}>
                       <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                         <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                        Пользователи
+                        {adminT('users.title')}
                       </CardTitle>
                       <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        Управление пользователями и ролями
+                        {adminT('users.description')}
                       </CardDescription>
                     </div>
                   </div>
@@ -4567,7 +4567,7 @@ export default function AdminDashboard() {
                 <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <div className="flex-1">
                     <Input
-                      placeholder="Поиск по email или имени..."
+                      placeholder={adminT('users.searchPlaceholder')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="max-w-sm"
@@ -4576,13 +4576,13 @@ export default function AdminDashboard() {
                   <div className="flex gap-2">
                     <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
                       <SelectTrigger className="w-40">
-                        <SelectValue placeholder="Все роли" />
+                        <SelectValue placeholder={adminT('users.allRoles')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Все роли</SelectItem>
-                        <SelectItem value="admin">Администраторы</SelectItem>
-                        <SelectItem value="worker">Сотрудники</SelectItem>
-                        <SelectItem value="customer">Клиенты</SelectItem>
+                        <SelectItem value="all">{adminT('users.allRoles')}</SelectItem>
+                        <SelectItem value="admin">{adminT('users.role.admin')}</SelectItem>
+                        <SelectItem value="worker">{adminT('users.role.worker')}</SelectItem>
+                        <SelectItem value="customer">{adminT('users.role.customer')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <Button 
@@ -4596,53 +4596,61 @@ export default function AdminDashboard() {
                 </div>
 
                 {(usersData as any[] || []).length > 0 ? (
-                  <div className="border rounded-lg bg-white overflow-hidden">
-                    <div className={`overflow-x-auto table-container ${isRTL ? 'rtl-scroll-container' : ''}`}>
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="text-xs sm:text-sm">Имя</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Роль</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Телефон</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Заказов</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Сумма заказов</TableHead>
+                  <div className="border border-gray-100 rounded-lg bg-white overflow-hidden">
+                    <div className={`overflow-x-auto table-auto-scroll ${isRTL ? 'rtl-scroll-container' : ''}`}>
+                      <Table className="w-full">
+                        <TableHeader className="bg-gray-50/80">
+                          <TableRow className="border-b border-gray-100">
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.name')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.role')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.phone')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.orders')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.totalAmount')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'} w-20`}>{adminT('common.actions')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {(usersData as any[] || []).map((user: any) => (
-                            <TableRow key={user.id}>
-                              <TableCell className="font-medium text-xs sm:text-sm">
+                          {(usersData as any[] || []).filter((user: any) => {
+                            const matchesSearch = !searchQuery || 
+                              (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                              (user.firstName && user.firstName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                              (user.lastName && user.lastName.toLowerCase().includes(searchQuery.toLowerCase()));
+                            const matchesRole = usersRoleFilter === 'all' || user.role === usersRoleFilter;
+                            return matchesSearch && matchesRole;
+                          }).map((user: any) => (
+                            <TableRow key={user.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                              <TableCell className={`px-3 py-4 ${isRTL ? 'text-right' : 'text-left'}`}>
                                 <Button
                                   variant="ghost"
                                   onClick={() => {
                                     setEditingUser(user);
                                     setIsUserFormOpen(true);
                                   }}
-                                  className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent"
+                                  className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent text-xs justify-start"
                                 >
                                   {user.firstName && user.lastName 
                                     ? `${user.firstName} ${user.lastName}`
-                                    : user.email || "Безымянный пользователь"
+                                    : user.email || adminT('users.noName')
                                   }
                                 </Button>
                               </TableCell>
-                              <TableCell className="text-xs sm:text-sm">
+                              <TableCell className={`px-3 py-4 ${isRTL ? 'text-right' : 'text-left'}`}>
                                 <Badge variant="outline" className={
-                                  user.role === "admin" ? "border-red-200 text-red-700 bg-red-50" :
-                                  user.role === "worker" ? "border-orange-200 text-orange-700 bg-orange-50" :
-                                  "border-gray-200 text-gray-700 bg-gray-50"
+                                  user.role === "admin" ? "border-red-200 text-red-700 bg-red-50 text-xs" :
+                                  user.role === "worker" ? "border-orange-200 text-orange-700 bg-orange-50 text-xs" :
+                                  "border-gray-200 text-gray-700 bg-gray-50 text-xs"
                                 }>
-                                  {user.role === "admin" ? "Админ" : 
-                                   user.role === "worker" ? "Сотрудник" : "Клиент"}
+                                  {user.role === "admin" ? adminT('users.role.admin') : 
+                                   user.role === "worker" ? adminT('users.role.worker') : adminT('users.role.customer')}
                                 </Badge>
                               </TableCell>
-                              <TableCell className="text-xs sm:text-sm">
+                              <TableCell className={`px-3 py-4 ${isRTL ? 'text-right' : 'text-left'}`}>
                                 {user.phone ? (
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                       <Button
                                         variant="ghost"
-                                        className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent"
+                                        className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent text-xs justify-start"
                                       >
                                         {user.phone}
                                       </Button>
@@ -4650,27 +4658,58 @@ export default function AdminDashboard() {
                                     <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg">
                                       <DropdownMenuItem onClick={() => window.open(`tel:${user.phone}`, '_self')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
                                         <Phone className="mr-2 h-4 w-4" />
-                                        Позвонить
+                                        {adminT('users.callUser')}
                                       </DropdownMenuItem>
                                       <DropdownMenuItem onClick={() => window.open(`https://wa.me/${user.phone.replace(/[^\d]/g, '')}`, '_blank')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
                                         <MessageCircle className="mr-2 h-4 w-4" />
-                                        WhatsApp
+                                        {adminT('users.whatsapp')}
                                       </DropdownMenuItem>
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 ) : (
-                                  <span className="text-gray-400">—</span>
+                                  <span className="text-gray-400 text-xs">—</span>
                                 )}
                               </TableCell>
-                              <TableCell className="text-xs sm:text-sm">
-                                <span className="font-medium">
+                              <TableCell className={`px-3 py-4 ${isRTL ? 'text-right' : 'text-left'}`}>
+                                <span className="font-medium text-xs text-gray-900">
                                   {user.orderCount || 0}
                                 </span>
                               </TableCell>
-                              <TableCell className="text-xs sm:text-sm">
-                                <span className="font-medium">
+                              <TableCell className={`px-3 py-4 ${isRTL ? 'text-right' : 'text-left'}`}>
+                                <span className="font-medium text-xs text-gray-900">
                                   {formatCurrency(user.totalOrderAmount || 0)}
                                 </span>
+                              </TableCell>
+                              <TableCell className={`px-3 py-4 ${isRTL ? 'text-right' : 'text-left'}`}>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="h-8 w-8 p-0">
+                                      <span className="sr-only">{adminT('common.openMenu')}</span>
+                                      <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end" className="bg-white border border-gray-200 shadow-lg">
+                                    <DropdownMenuItem 
+                                      onClick={() => {
+                                        setEditingUser(user);
+                                        setIsUserFormOpen(true);
+                                      }}
+                                      className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
+                                    >
+                                      <Edit className="mr-2 h-4 w-4" />
+                                      {adminT('common.edit')}
+                                    </DropdownMenuItem>
+                                    {user.role !== 'admin' && (
+                                      <DropdownMenuItem 
+                                        onClick={() => handleDeleteUser(user.id)}
+                                        className="text-red-600 hover:bg-red-50 focus:bg-red-50"
+                                      >
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        {adminT('common.delete')}
+                                      </DropdownMenuItem>
+                                    )}
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
                               </TableCell>
                             </TableRow>
                           ))}
