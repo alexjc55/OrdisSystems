@@ -969,6 +969,7 @@ export class DatabaseStorage implements IStorage {
     const conditions = [];
     
     if (search) {
+      console.log(`Searching users with query: "${search}"`);
       conditions.push(
         or(
           like(users.username, `%${search}%`),
