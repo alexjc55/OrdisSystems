@@ -106,9 +106,6 @@
     "canViewAnalyticsDescription": "Access to reports and statistics",
     "canManageThemes": "Manage Themes",
     "canManageThemesDescription": "Configure appearance and theme settings"
-    "canViewAnalyticsDescription": "Access to reports and statistics",
-    "canManageThemes": "Manage Themes",
-    "canManageThemesDescription": "Configure appearance and theme settings"
   },
   "dashboard": {
     "title": "Admin Panel",

@@ -106,9 +106,6 @@
     "canViewAnalyticsDescription": "Доступ к отчетам и статистике",
     "canManageThemes": "Управление темами",
     "canManageThemesDescription": "Настройка внешнего вида и тем оформления"
-    "canViewAnalyticsDescription": "Доступ к отчетам и статистике",
-    "canManageThemes": "Управление темами",
-    "canManageThemesDescription": "Настройка внешнего вида и тем оформления"
   },
   "common": {
     "save": "Сохранить",
