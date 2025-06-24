@@ -5935,7 +5935,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="contactPhone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.storePhone')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.contactPhone', 'Контактный телефон')}</FormLabel>
                 <FormControl>
                   <Input placeholder="+972-XX-XXX-XXXX" {...field} className="text-sm" />
                 </FormControl>
@@ -5949,7 +5949,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="contactEmail"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.contactEmail')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.contactEmail', 'Контактный email')}</FormLabel>
                 <FormControl>
                   <Input placeholder="info@edahouse.com" type="email" {...field} className="text-sm" />
                 </FormControl>
@@ -5963,7 +5963,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="deliveryFee"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.deliveryFee')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.deliveryFee', 'Стоимость доставки')}</FormLabel>
                 <FormControl>
                   <Input {...field} className="text-sm" />
                 </FormControl>
@@ -5977,7 +5977,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="freeDeliveryFrom"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.freeDeliveryFrom')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.freeDeliveryFrom', 'Бесплатная доставка от')}</FormLabel>
                 <FormControl>
                   <Input {...field} className="text-sm" />
                 </FormControl>
