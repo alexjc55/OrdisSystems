@@ -5897,7 +5897,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               ) : (
                 <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'ml-auto' : 'mr-auto'}`} />
               )}
-              </div>
             </Button>
           </CollapsibleTrigger>
           
@@ -6278,12 +6277,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
                 <Clock className="h-5 w-5 text-orange-500" />
                 <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('settings.operatingHours', 'Рабочее время')}</h3>
-                {isWorkingHoursOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
-                ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
-                )}
               </div>
+              {isWorkingHoursOpen ? (
+                <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'ml-auto' : 'mr-auto'}`} />
+              ) : (
+                <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'ml-auto' : 'mr-auto'}`} />
+              )}
             </Button>
           </CollapsibleTrigger>
           
@@ -6424,12 +6423,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
                 <Truck className="h-5 w-5 text-orange-500" />
                 <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.deliveryPayment', 'Доставка и оплата')}</h3>
-                {isDeliveryPaymentOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
-                ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
-                )}
               </div>
+              {isDeliveryPaymentOpen ? (
+                <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'ml-auto' : 'mr-auto'}`} />
+              ) : (
+                <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'ml-auto' : 'mr-auto'}`} />
+              )}
             </Button>
           </CollapsibleTrigger>
           
