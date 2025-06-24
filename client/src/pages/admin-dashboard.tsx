@@ -263,7 +263,8 @@ import {
   Settings,
   Languages,
   Layers3,
-  UserCheck
+  UserCheck,
+  MoreHorizontal
 } from "lucide-react";
 
 // Validation schemas

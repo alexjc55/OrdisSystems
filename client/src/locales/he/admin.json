@@ -48,6 +48,16 @@
     "free": "חינם",
     "noResults": "לא נמצאו תוצאות",
     "tryDifferentSearch": "נסה לשנות את קריטריוני החיפוש או הסינון",
+    "actions": "פעולות",
+    "edit": "ערוך",
+    "delete": "מחק",
+    "openMenu": "פתח תפריט",
+    "showing": "מציג",
+    "of": "מתוך",
+    "firstPage": "עמוד ראשון",
+    "prevPage": "עמוד קודם",
+    "nextPage": "עמוד הבא",
+    "lastPage": "עמוד אחרון",
     "table": "טבלה",
     "kanban": "קנבן",
     "searchProducts": "חיפוש מוצרים...",
@@ -249,6 +259,51 @@
       "deleteErrorWithProducts": "קטגוריה מכילה מוצרים",
       "deleteErrorWithProductsDesc": "לא ניתן למחוק קטגוריה המכילה מוצרים. אנא העבר או מחק את כל המוצרים תחילה."
     }
+  },
+  "users": {
+    "title": "משתמשים",
+    "description": "ניהול משתמשים ותפקידים",
+    "addUser": "הוסף משתמש",
+    "editUser": "ערוך משתמש",
+    "deleteUser": "מחק משתמש",
+    "searchPlaceholder": "חיפוש לפי אימייל או שם...",
+    "allRoles": "כל התפקידים",
+    "noName": "משתמש ללא שם",
+    "callUser": "התקשר",
+    "whatsapp": "WhatsApp",
+    "role": {
+      "admin": "מנהל",
+      "worker": "עובד",
+      "customer": "לקוח"
+    },
+    "table": {
+      "name": "שם",
+      "role": "תפקיד",
+      "phone": "טלפון",
+      "orders": "הזמנות",
+      "totalAmount": "סכום כולל"
+    },
+    "dialog": {
+      "firstNameLabel": "שם פרטי",
+      "lastNameLabel": "שם משפחה",
+      "emailLabel": "אימייל",
+      "phoneLabel": "טלפון",
+      "roleLabel": "תפקיד",
+      "passwordLabel": "סיסמה",
+      "confirmPasswordLabel": "אשר סיסמה",
+      "firstNamePlaceholder": "הזן שם פרטי",
+      "lastNamePlaceholder": "הזן שם משפחה",
+      "emailPlaceholder": "הזן אימייל",
+      "phonePlaceholder": "הזן טלפון",
+      "passwordPlaceholder": "הזן סיסמה",
+      "confirmPasswordPlaceholder": "אשר סיסמה"
+    },
+    "created": "משתמש נוצר",
+    "updated": "משתמש עודכן",
+    "deleted": "משתמש נמחק",
+    "createError": "שגיאה ביצירת משתמש",
+    "updateError": "שגיאה בעדכון משתמש",
+    "deleteError": "שגיאה במחיקת משתמש"
   },
   "orders": {
     "title": "הזמנות",
