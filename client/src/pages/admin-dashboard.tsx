@@ -4600,9 +4600,9 @@ export default function AdminDashboard() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">{adminT('users.allRoles', 'Все роли')}</SelectItem>
-                        <SelectItem value="admin">{adminT('users.role.admin', 'Администратор')}</SelectItem>
-                        <SelectItem value="worker">{adminT('users.role.worker', 'Сотрудник')}</SelectItem>
-                        <SelectItem value="customer">{adminT('users.role.customer', 'Клиент')}</SelectItem>
+                        <SelectItem value="admin">{adminT('users.roles.admin', 'Администратор')}</SelectItem>
+                        <SelectItem value="worker">{adminT('users.roles.worker', 'Сотрудник')}</SelectItem>
+                        <SelectItem value="customer">{adminT('users.roles.customer', 'Клиент')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <Button 
@@ -4656,7 +4656,7 @@ export default function AdminDashboard() {
                                 >
                                   {user.firstName && user.lastName 
                                     ? `${user.firstName} ${user.lastName}`
-                                    : user.email || adminT('users.noName', 'Безымянный пользователь')
+                                    : user.email || adminT('users.unnamed', 'Безымянный пользователь')
                                   }
                                 </span>
                               </TableCell>
