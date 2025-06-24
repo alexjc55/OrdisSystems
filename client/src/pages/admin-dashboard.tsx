@@ -3462,7 +3462,7 @@ export default function AdminDashboard() {
                                         setEditingProduct(product);
                                         setIsProductFormOpen(true);
                                       }}
-                                      className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer w-full break-words whitespace-normal leading-relaxed ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
+                                      className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer w-full break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
                                     >
                                       {product.name}
                                     </button>
@@ -3477,7 +3477,7 @@ export default function AdminDashboard() {
                                         setEditingProduct(product);
                                         setIsProductFormOpen(true);
                                       }}
-                                      className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer w-full break-words whitespace-normal leading-relaxed ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
+                                      className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer w-full break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
                                     >
                                       {product.name}
                                     </button>
