@@ -4587,7 +4587,7 @@ export default function AdminDashboard() {
                 <div className="flex flex-col sm:flex-row gap-4 mb-6">
                   <div className="flex-1">
                     <Input
-                      placeholder={adminT('users.searchPlaceholder')}
+                      placeholder={adminT('users.searchPlaceholder', 'searchPlaceholder')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="max-w-sm"
@@ -4596,7 +4596,7 @@ export default function AdminDashboard() {
                   <div className="flex gap-2">
                     <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
                       <SelectTrigger className="w-40">
-                        <SelectValue placeholder={adminT('users.allRoles')} />
+                        <SelectValue placeholder={adminT('users.allRoles', 'Все роли')} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">{adminT('users.allRoles', 'Все роли')}</SelectItem>
@@ -4666,8 +4666,8 @@ export default function AdminDashboard() {
                                   user.role === "worker" ? "border-orange-200 text-orange-700 bg-orange-50 text-xs" :
                                   "border-gray-200 text-gray-700 bg-gray-50 text-xs"
                                 }>
-                                  {user.role === "admin" ? adminT('users.role.admin', 'Администратор') : 
-                                   user.role === "worker" ? adminT('users.role.worker', 'Сотрудник') : adminT('users.role.customer', 'Клиент')}
+                                  {user.role === "admin" ? adminT('users.roles.admin', 'Администратор') : 
+                                   user.role === "worker" ? adminT('users.roles.worker', 'Сотрудник') : adminT('users.roles.customer', 'Клиент')}
                                 </Badge>
                               </TableCell>
                               <TableCell className="px-3 py-3 text-sm">
