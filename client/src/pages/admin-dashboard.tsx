@@ -7112,12 +7112,26 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                <Code className="h-5 w-5 text-orange-500" />
-                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.trackingCode')}</h3>
-                {isTrackingCodeOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500" />
+                {isRTL ? (
+                  <>
+                    {isTrackingCodeOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.trackingCode')}</h3>
+                    <Code className="h-5 w-5 text-orange-500" />
+                  </>
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500" />
+                  <>
+                    <Code className="h-5 w-5 text-orange-500" />
+                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.trackingCode')}</h3>
+                    {isTrackingCodeOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </>
                 )}
               </div>
             </Button>
@@ -7182,12 +7196,26 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                <Users className="h-5 w-5 text-orange-500" />
-                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.authPage')}</h3>
-                {isAuthPageOpen ? (
-                  <ChevronUp className="h-4 w-4 text-gray-500" />
+                {isRTL ? (
+                  <>
+                    {isAuthPageOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.authPage')}</h3>
+                    <Users className="h-5 w-5 text-orange-500" />
+                  </>
                 ) : (
-                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                  <>
+                    <Users className="h-5 w-5 text-orange-500" />
+                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.authPage')}</h3>
+                    {isAuthPageOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </>
                 )}
               </div>
             </Button>
