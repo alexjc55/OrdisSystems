@@ -64,6 +64,23 @@
     "canManageThemes": "ניהול ערכות נושא",
     "canManageThemesDescription": "הגדרת מראה וערכות נושא"
   },
+  "settings": {
+    "title": "הגדרות",
+    "description": "ניהול הגדרות חנות ומערכת",
+    "operatingHours": "שעות פעילות",
+    "showSpecialOffers": "הצג הצעות מיוחדות",
+    "specialOffersDescription": "הצג בלוק הצעות מיוחדות",
+    "showCategoryMenu": "הצג תפריט קטגוריות",
+    "categoryMenuDescription": "הצג תפריט ניווט קטגוריות",
+    "saveSettings": "שמור הגדרות",
+    "saved": "נשמר",
+    "saveSuccess": "ההגדרות נשמרו בהצלחה",
+    "saveError": "שגיאה בשמירת ההגדרות",
+    "storeName": "שם החנות",
+    "welcomeTitle": "כותרת ברוכים הבאים",
+    "deliveryFee": "עלות משלוח",
+    "freeDeliveryFrom": "משלוח חינם מ"
+  },
   "dashboard": {
     "title": "פאנל ניהול",
     "overview": "ניהול מוצרים, קטגוריות והזמנות",
