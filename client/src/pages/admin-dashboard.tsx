@@ -6722,7 +6722,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <div className="space-y-0.5">
                     <FormLabel className="text-sm font-medium">{adminT('storeSettings.showWhatsAppChat')}</FormLabel>
                     <FormDescription className="text-xs">
-                      Плавающая кнопка WhatsApp в правом нижнем углу сайта
+{adminT('storeSettings.showWhatsAppChatDescription')}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -6803,7 +6803,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                 <div className="space-y-0.5">
-                  <FormLabel className="text-sm font-medium">Показывать баннер в корзине</FormLabel>
+                  <FormLabel className="text-sm font-medium">{adminT('storeSettings.showCartBanner')}</FormLabel>
                   <FormDescription className="text-xs">
                     Баннер отображается в корзине под итоговой суммой
                   </FormDescription>
@@ -6983,7 +6983,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                 <div className="space-y-0.5">
-                  <FormLabel className="text-sm font-medium">Показывать нижние баннеры</FormLabel>
+                  <FormLabel className="text-sm font-medium">{adminT('storeSettings.showBottomBanners')}</FormLabel>
                   <FormDescription className="text-xs">
                     Два баннера в самом низу главной страницы
                   </FormDescription>
