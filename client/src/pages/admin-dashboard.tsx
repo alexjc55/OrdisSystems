@@ -6047,10 +6047,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="storeDescription"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm">Описание магазина</FormLabel>
+              <FormLabel className="text-sm">{adminT('storeSettings.storeDescription')}</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Расскажите о вашем магазине готовой еды..."
+                  placeholder={adminT('storeSettings.storeDescriptionPlaceholder')}
                   className="resize-none text-sm min-h-[100px]"
                   {...field}
                 />
@@ -6065,7 +6065,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm">Адрес</FormLabel>
+              <FormLabel className="text-sm">{adminT('storeSettings.address')}</FormLabel>
               <FormControl>
                 <Textarea 
                   placeholder="Введите полный адрес магазина"
@@ -6171,7 +6171,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           <CollapsibleContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h4 className="text-sm font-medium">Язык по умолчанию</h4>
+                <h4 className="text-sm font-medium">{adminT('storeSettings.defaultLanguage')}</h4>
                 <div className="p-3 border rounded-lg bg-gray-50">
                   <Select 
                     value={form.watch("defaultLanguage") || "ru"}
@@ -6201,7 +6201,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               </div>
               
               <div className="space-y-4">
-                <h4 className="text-sm font-medium">Доступные языки</h4>
+                <h4 className="text-sm font-medium">{adminT('storeSettings.availableLanguages')}</h4>
                 <div className="space-y-3">
                   {Object.entries(LANGUAGES).map(([code, info]) => {
                     const enabledLanguages = form.watch("enabledLanguages") || ["ru", "en", "he"];
