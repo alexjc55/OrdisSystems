@@ -7442,10 +7442,14 @@ function CancellationReasonDialog({
 
 // User Form Dialog Component
 function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
+  const { t: adminT } = useAdminTranslation();
+  const { i18n } = useCommonTranslation();
+  const isRTL = i18n.language === 'he';
+
   const userSchema = z.object({
-    email: z.string().email("Неверный формат email"),
-    firstName: z.string().min(1, "Имя обязательно"),
-    lastName: z.string().min(1, "Фамилия обязательна"),
+    email: z.string().email(adminT('users.dialog.emailError', 'Неверный формат email')),
+    firstName: z.string().min(1, adminT('users.dialog.firstNameRequired', 'Имя обязательно')),
+    lastName: z.string().min(1, adminT('users.dialog.lastNameRequired', 'Фамилия обязательна')),
     phone: z.string().optional(),
     role: z.enum(["admin", "worker", "customer"]),
     password: z.string().optional(),
@@ -7497,50 +7501,52 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-lg">
-            {user ? "Редактировать пользователя" : "Добавить пользователя"}
+          <DialogTitle className={`text-lg ${isRTL ? 'text-right' : 'text-left'}`}>
+            {user ? adminT('users.editUser', 'Редактировать пользователя') : adminT('users.addUser', 'Добавить пользователя')}
           </DialogTitle>
-          <DialogDescription className="text-sm">
-            {user ? "Изменить информацию о пользователе" : "Создать нового пользователя"}
+          <DialogDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+            {user ? adminT('users.dialog.editDescription', 'Изменить информацию о пользователе') : adminT('users.dialog.addDescription', 'Создать нового пользователя')}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className={`space-y-4 ${isRTL ? 'rtl' : 'ltr'}`}>
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Email *</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.emailLabel', 'Email')} *</FormLabel>
                   <FormControl>
                     <Input 
                       type="email"
-                      placeholder="user@example.com"
+                      placeholder={adminT('users.dialog.emailPlaceholder', 'user@example.com')}
                       {...field}
-                      className="text-sm"
+                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                      dir={isRTL ? 'rtl' : 'ltr'}
                     />
                   </FormControl>
-                  <FormMessage className="text-xs" />
+                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                 </FormItem>
               )}
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className={`grid grid-cols-2 gap-4 ${isRTL ? 'rtl' : 'ltr'}`}>
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">Имя *</FormLabel>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.firstNameLabel', 'Имя')} *</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="Иван"
+                        placeholder={adminT('users.dialog.firstNamePlaceholder', 'Иван')}
                         {...field}
-                        className="text-sm"
+                        className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                        dir={isRTL ? 'rtl' : 'ltr'}
                       />
                     </FormControl>
-                    <FormMessage className="text-xs" />
+                    <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                   </FormItem>
                 )}
               />
@@ -7550,15 +7556,16 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">Фамилия *</FormLabel>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.lastNameLabel', 'Фамилия')} *</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="Иванов"
+                        placeholder={adminT('users.dialog.lastNamePlaceholder', 'Иванов')}
                         {...field}
-                        className="text-sm"
+                        className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                        dir={isRTL ? 'rtl' : 'ltr'}
                       />
                     </FormControl>
-                    <FormMessage className="text-xs" />
+                    <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                   </FormItem>
                 )}
               />
@@ -7569,16 +7576,17 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Телефон</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.phoneLabel', 'Телефон')}</FormLabel>
                   <FormControl>
                     <Input 
                       type="tel"
-                      placeholder="+972-50-123-4567"
+                      placeholder={adminT('users.dialog.phonePlaceholder', '+972-50-123-4567')}
                       {...field}
-                      className="text-sm"
+                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                      dir="ltr"
                     />
                   </FormControl>
-                  <FormMessage className="text-xs" />
+                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                 </FormItem>
               )}
             />
@@ -7588,11 +7596,11 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Роль *</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.roleLabel', 'Роль')} *</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger className="text-sm">
-                        <SelectValue placeholder="Выберите роль" />
+                      <SelectTrigger className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                        <SelectValue placeholder={adminT('users.dialog.rolePlaceholder', 'Выберите роль')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
