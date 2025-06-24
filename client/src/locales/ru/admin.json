@@ -293,11 +293,12 @@
     "noName": "Безымянный пользователь",
     "callUser": "Позвонить",
     "whatsapp": "WhatsApp",
-    "role": {
+    "roles": {
       "admin": "Администратор",
       "worker": "Сотрудник",
       "customer": "Клиент"
     },
+    "unnamed": "Безымянный пользователь",
     "table": {
       "name": "Имя",
       "role": "Роль",
