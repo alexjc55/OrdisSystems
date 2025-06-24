@@ -3481,11 +3481,15 @@ export default function AdminDashboard() {
                                     </button>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-left">
-                                    <div className="flex flex-wrap gap-1">
+                                    <div className="flex flex-wrap gap-1.5">
                                       {product.categories?.map((category: any) => (
-                                        <Badge key={category.id} variant="outline" className="text-xs">
+                                        <span 
+                                          key={category.id} 
+                                          className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-orange-100 to-amber-100 text-orange-800 border border-orange-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
+                                        >
+                                          <span className="mr-1">🏷️</span>
                                           {category.name}
-                                        </Badge>
+                                        </span>
                                       ))}
                                     </div>
                                   </TableCell>
