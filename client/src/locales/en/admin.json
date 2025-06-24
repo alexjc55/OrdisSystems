@@ -31,7 +31,7 @@
     "error": "Error"
   },
   "storeSettings": {
-    "title": "Store Settings",
+    "title": "Store Settings", 
     "description": "Configuration of basic store parameters",
     "basicInfo": "Basic Information",
     "contacts": "Contacts",
@@ -39,7 +39,7 @@
     "workingHours": "Working Hours",
     "operatingHours": "Operating Hours",
     "deliveryPayment": "Delivery & Payment",
-    "displaySettings": "Display Settings",
+    "displaySettings": "Display Settings", 
     "trackingCode": "Tracking Code",
     "authPage": "Authorization Page",
     "languageSettings": "Language Settings",
