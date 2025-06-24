@@ -567,6 +567,43 @@
     "accessAdmin": "Access Admin"
   },
   "users": {
+    "title": "Users",
+    "description": "User and role management",
+    "addUser": "Add User",
+    "editUser": "Edit User", 
+    "deleteUser": "Delete User",
+    "searchPlaceholder": "Search by email or name...",
+    "allRoles": "All Roles",
+    "unnamed": "Unnamed User",
+    "callUser": "Call",
+    "whatsapp": "WhatsApp",
+    "roles": {
+      "admin": "Administrator",
+      "worker": "Worker",
+      "customer": "Customer"
+    },
+    "table": {
+      "name": "Name",
+      "role": "Role", 
+      "phone": "Phone",
+      "orders": "Orders",
+      "totalAmount": "Total Amount"
+    },
+    "dialog": {
+      "firstNameLabel": "First Name",
+      "lastNameLabel": "Last Name",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone",
+      "roleLabel": "Role",
+      "passwordLabel": "Password",
+      "confirmPasswordLabel": "Confirm Password",
+      "firstNamePlaceholder": "Enter first name",
+      "lastNamePlaceholder": "Enter last name",
+      "emailPlaceholder": "Enter email", 
+      "phonePlaceholder": "Enter phone",
+      "passwordPlaceholder": "Enter password",
+      "confirmPasswordPlaceholder": "Confirm password"
+    },
     "created": "User created",
     "createSuccess": "User successfully added",
     "createError": "Failed to create user",
