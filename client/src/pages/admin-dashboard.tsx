@@ -5835,14 +5835,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         deliveryInfo: storeSettings?.deliveryInfo || "",
         paymentInfo: storeSettings?.paymentInfo || "",
         paymentMethods: storeSettings?.paymentMethods || [
-          { name: "Наличными при получении", id: 1 },
-          { name: "Банковской картой", id: 2 },
-          { name: "Банковский перевод", id: 3 }
+          { name: adminT('storeSettings.cashOnDelivery'), id: 1 },
+          { name: adminT('storeSettings.bankCard'), id: 2 },
+          { name: adminT('storeSettings.bankTransfer'), id: 3 }
         ],
         aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
         deliveryFee: storeSettings?.deliveryFee || "15.00",
         freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
-        discountBadgeText: storeSettings?.discountBadgeText || "Скидка",
+        discountBadgeText: storeSettings?.discountBadgeText || adminT('storeSettings.discountBadgeText'),
         showBannerImage: storeSettings?.showBannerImage !== false,
         showTitleDescription: storeSettings?.showTitleDescription !== false,
         showInfoBlocks: storeSettings?.showInfoBlocks !== false,
@@ -5860,7 +5860,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         footerHtml: storeSettings?.footerHtml || "",
         showWhatsAppChat: storeSettings?.showWhatsAppChat !== false,
         whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
-        whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || "Здравствуйте! Я хотел бы узнать больше о ваших товарах.",
+        whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || adminT('storeSettings.defaultWhatsappMessage'),
         showCartBanner: storeSettings?.showCartBanner || false,
         cartBannerType: storeSettings?.cartBannerType || "text",
         cartBannerImage: storeSettings?.cartBannerImage || "",
@@ -6440,11 +6440,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             <FormItem>
               <FormLabel className="text-sm flex items-center gap-2">
                 <Truck className="h-4 w-4" />
-                Информация о доставке
+{adminT('storeSettings.deliveryInfo')}
               </FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Условия доставки, время доставки, зоны обслуживания..."
+                  placeholder={adminT('storeSettings.deliveryInfoPlaceholder')}
                   className="resize-none text-sm min-h-[100px]"
                   {...field}
                 />
@@ -6461,11 +6461,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             <FormItem>
               <FormLabel className="text-sm flex items-center gap-2">
                 <CreditCard className="h-4 w-4" />
-                Информация об оплате
+{adminT('storeSettings.paymentInfo')}
               </FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Принимаемые способы оплаты, условия оплаты..."
+                  placeholder={adminT('storeSettings.paymentInfoPlaceholder')}
                   className="resize-none text-sm min-h-[100px]"
                   {...field}
                 />

@@ -86,7 +86,15 @@
     "openTime": "שעת פתיחה",
     "closeTime": "שעת סגירה",
     "noteTitle": "הערה",
-    "languageNote": "שינויים בהגדרות השפה יחולו לאחר שמירת ההגדרות. ביטול שפה יסתיר אותה מבורר השפות באתר."
+    "languageNote": "שינויים בהגדרות השפה יחולו לאחר שמירת ההגדרות. ביטול שפה יסתיר אותה מבורר השפות באתר.",
+    "storeNamePlaceholder": "eDAHouse",
+    "welcomeTitlePlaceholder": "ברוכים הבאים לחנות שלנו",
+    "contactPhonePlaceholder": "+972-XX-XXX-XXXX",
+    "contactEmailPlaceholder": "info@edahouse.com",
+    "deliveryInfoPlaceholder": "תנאי משלוח, זמני משלוח, אזורי שירות...",
+    "paymentInfoPlaceholder": "אמצעי תשלום מקובלים, תנאי תשלום...",
+    "deliveryInfo": "מידע על משלוח",
+    "paymentInfo": "מידע על תשלום"
   },
   "systemSettings": {
     "title": "הגדרות מערכת",
