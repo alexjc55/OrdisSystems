@@ -5888,13 +5888,27 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                <Store className="h-5 w-5 text-orange-500" />
-                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.basicInfo')}</h3>
-                {isBasicInfoOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500" />
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {isRTL ? (
+                  <>
+                    {isBasicInfoOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.basicInfo')}</h3>
+                    <Store className="h-5 w-5 text-orange-500" />
+                  </>
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500" />
+                  <>
+                    <Store className="h-5 w-5 text-orange-500" />
+                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.basicInfo')}</h3>
+                    {isBasicInfoOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </>
                 )}
               </div>
             </Button>
@@ -6273,13 +6287,27 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                <Clock className="h-5 w-5 text-orange-500" />
-                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.operatingHours')}</h3>
-                {isWorkingHoursOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500" />
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {isRTL ? (
+                  <>
+                    {isWorkingHoursOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.operatingHours')}</h3>
+                    <Clock className="h-5 w-5 text-orange-500" />
+                  </>
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500" />
+                  <>
+                    <Clock className="h-5 w-5 text-orange-500" />
+                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.operatingHours')}</h3>
+                    {isWorkingHoursOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </>
                 )}
               </div>
             </Button>
@@ -6419,13 +6447,27 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
-                <Truck className="h-5 w-5 text-orange-500" />
-                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.deliveryPayment')}</h3>
-                {isDeliveryPaymentOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500" />
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {isRTL ? (
+                  <>
+                    {isDeliveryPaymentOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.deliveryPayment')}</h3>
+                    <Truck className="h-5 w-5 text-orange-500" />
+                  </>
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500" />
+                  <>
+                    <Truck className="h-5 w-5 text-orange-500" />
+                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.deliveryPayment')}</h3>
+                    {isDeliveryPaymentOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </>
                 )}
               </div>
             </Button>
