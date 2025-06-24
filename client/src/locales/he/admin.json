@@ -61,7 +61,14 @@
     "storeDescription": "תיאור החנות",
     "storeDescriptionPlaceholder": "הכנס תיאור של החנות",
     "address": "כתובת",
-    "defaultLanguage": "שפת ברירת מחדל"
+    "defaultLanguage": "שפת ברירת מחדל",
+    "storeName": "שם החנות",
+    "welcomeTitle": "כותרת ברכת הבאה",
+    "contactPhone": "טלפון ליצירת קשר",
+    "contactEmail": "אימייל ליצירת קשר",
+    "deliveryFee": "עלות משלוח",
+    "freeDeliveryFrom": "משלוח חינם מ",
+    "defaultItemsPerPage": "פריטים בעמוד כברירת מחדל"
   },
   "systemSettings": {
     "title": "הגדרות מערכת",

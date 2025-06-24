@@ -5907,7 +5907,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="storeName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.storeName', 'Название магазина')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.storeName')}</FormLabel>
                 <FormControl>
                   <Input placeholder="eDAHouse" {...field} className="text-sm" />
                 </FormControl>
@@ -5921,7 +5921,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="welcomeTitle"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.welcomeTitle', 'Заголовок приветствия')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.welcomeTitle')}</FormLabel>
                 <FormControl>
                   <Input placeholder="Добро пожаловать в наш магазин" {...field} className="text-sm" />
                 </FormControl>
@@ -5935,7 +5935,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="contactPhone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.contactPhone', 'Контактный телефон')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.contactPhone')}</FormLabel>
                 <FormControl>
                   <Input placeholder="+972-XX-XXX-XXXX" {...field} className="text-sm" />
                 </FormControl>
@@ -5949,7 +5949,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="contactEmail"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.contactEmail', 'Контактный email')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.contactEmail')}</FormLabel>
                 <FormControl>
                   <Input placeholder="info@edahouse.com" type="email" {...field} className="text-sm" />
                 </FormControl>
@@ -5963,7 +5963,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="deliveryFee"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.deliveryFee', 'Стоимость доставки')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.deliveryFee')}</FormLabel>
                 <FormControl>
                   <Input {...field} className="text-sm" />
                 </FormControl>
@@ -5977,7 +5977,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="freeDeliveryFrom"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.freeDeliveryFrom', 'Бесплатная доставка от')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.freeDeliveryFrom')}</FormLabel>
                 <FormControl>
                   <Input {...field} className="text-sm" />
                 </FormControl>
@@ -5991,7 +5991,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="defaultItemsPerPage"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">Элементов на странице по умолчанию</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.defaultItemsPerPage')}</FormLabel>
                 <Select 
                   onValueChange={(value) => field.onChange(parseInt(value))} 
                   value={field.value?.toString() || "10"}
