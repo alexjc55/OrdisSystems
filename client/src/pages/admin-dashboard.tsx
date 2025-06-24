@@ -6792,9 +6792,18 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
         {/* Баннер корзины */}
         <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <ShoppingCart className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Баннер корзины</h3>
+          <div className={`flex items-center gap-2 pb-2 border-b ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+            {isRTL ? (
+              <>
+                <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.cartBanner')}</h3>
+                <ShoppingCart className="h-5 w-5 text-orange-500" />
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.cartBanner')}</h3>
+              </>
+            )}
           </div>
 
           <FormField
@@ -6858,7 +6867,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <FormItem>
                         <FormLabel className="text-sm flex items-center gap-2">
                           <Type className="h-4 w-4" />
-                          Текст баннера
+{adminT('storeSettings.bannerText')}
                         </FormLabel>
                         <FormControl>
                           <Textarea 
@@ -6971,9 +6980,18 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
         {/* Нижние баннеры */}
         <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <Layers className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Нижние баннеры</h3>
+          <div className={`flex items-center gap-2 pb-2 border-b ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+            {isRTL ? (
+              <>
+                <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.bottomBanners')}</h3>
+                <Layers className="h-5 w-5 text-orange-500" />
+              </>
+            ) : (
+              <>
+                <Layers className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.bottomBanners')}</h3>
+              </>
+            )}
           </div>
 
           
@@ -7276,7 +7294,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    Первое преимущество
+                    {adminT('storeSettings.authPageFeature1Label')}
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -7300,7 +7318,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    Второе преимущество
+                    {adminT('storeSettings.authPageFeature2Label')}
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -7324,7 +7342,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    Третье преимущество
+                    {adminT('storeSettings.authPageFeature3Label')}
                   </FormLabel>
                   <FormControl>
                     <Input 
