@@ -4816,27 +4816,27 @@ export default function AdminDashboard() {
                   <div className={isRTL ? 'text-right' : 'text-left'}>
                     <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                       <Settings className="h-5 w-5" />
-                      Настройки системы
+                      {adminT('systemSettings.title', 'Настройки системы')}
                     </CardTitle>
                     <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                      Управление правами доступа для сотрудников
+                      {adminT('systemSettings.description', 'Управление правами доступа для сотрудников')}
                     </CardDescription>
                   </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Worker Permissions Section */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Права доступа сотрудников</h3>
+                  <h3 className="text-lg font-medium">{adminT('systemSettings.workerPermissions', 'Права доступа сотрудников')}</h3>
                   <p className="text-sm text-gray-600">
-                    Настройте, к каким разделам админ-панели имеют доступ пользователи с ролью "Работник"
+                    {adminT('systemSettings.workerPermissionsDescription', 'Настройте, к каким разделам админ-панели имеют доступ пользователи с ролью "Работник"')}
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Управление товарами</label>
-                          <p className="text-xs text-gray-500">Добавление, редактирование и удаление товаров</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageProducts', 'Управление товарами')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageProductsDescription', 'Добавление, редактирование и удаление товаров')}</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageProducts || false}
