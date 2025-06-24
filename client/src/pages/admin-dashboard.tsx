@@ -6030,7 +6030,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <MapPin className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.basicSettingsDescription')}</h3>
+                <h3 className="text-lg font-semibold">{adminT('storeSettings.contacts', 'Контакты')}</h3>
                 {isContactsOpen ? (
                   <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
@@ -6089,7 +6089,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Upload className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.visualSettings')}</h3>
+                <h3 className="text-lg font-semibold">{adminT('storeSettings.visuals', 'Визуальное оформление')}</h3>
                 {isVisualsOpen ? (
                   <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
@@ -6158,7 +6158,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Languages className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.languageSettings')}</h3>
+                <h3 className="text-lg font-semibold">{adminT('storeSettings.languageSettings', 'Настройки языка')}</h3>
                 {isLanguageSettingsOpen ? (
                   <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
@@ -6422,7 +6422,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
                 <Truck className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.deliverySettings')}</h3>
+                <h3 className="text-lg font-semibold">{adminT('storeSettings.deliveryPayment', 'Доставка и оплата')}</h3>
                 {isDeliveryPaymentOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
@@ -7114,7 +7114,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Code className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.trackingCode')}</h3>
+                <h3 className="text-lg font-semibold">{adminT('storeSettings.trackingCode', 'Код отслеживания')}</h3>
                 {isTrackingCodeOpen ? (
                   <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
@@ -7184,7 +7184,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Users className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.authPage')}</h3>
+                <h3 className="text-lg font-semibold">{adminT('storeSettings.authPage', 'Страница авторизации')}</h3>
               </div>
               {isAuthPageOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
