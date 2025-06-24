@@ -971,9 +971,11 @@ export class DatabaseStorage implements IStorage {
     if (search) {
       conditions.push(
         or(
+          like(users.username, `%${search}%`),
           like(users.email, `%${search}%`),
           like(users.firstName, `%${search}%`),
-          like(users.lastName, `%${search}%`)
+          like(users.lastName, `%${search}%`),
+          like(users.phone, `%${search}%`)
         )
       );
     }
