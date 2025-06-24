@@ -5909,7 +5909,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <FormItem>
                 <FormLabel className="text-sm">{adminT('storeSettings.storeName')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="eDAHouse" {...field} className="text-sm" />
+                  <Input placeholder={adminT('storeSettings.storeNamePlaceholder')} {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -5923,7 +5923,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <FormItem>
                 <FormLabel className="text-sm">{adminT('storeSettings.welcomeTitle')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Добро пожаловать в наш магазин" {...field} className="text-sm" />
+                  <Input placeholder={adminT('storeSettings.welcomeTitlePlaceholder')} {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -5937,7 +5937,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <FormItem>
                 <FormLabel className="text-sm">{adminT('storeSettings.contactPhone')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="+972-XX-XXX-XXXX" {...field} className="text-sm" />
+                  <Input placeholder={adminT('storeSettings.contactPhonePlaceholder')} {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -5951,7 +5951,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <FormItem>
                 <FormLabel className="text-sm">{adminT('storeSettings.contactEmail')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="info@edahouse.com" type="email" {...field} className="text-sm" />
+                  <Input placeholder={adminT('storeSettings.contactEmailPlaceholder')} type="email" {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -6259,8 +6259,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <div className="flex items-start gap-2">
                 <div className="w-5 h-5 text-blue-600 mt-0.5">ℹ️</div>
                 <div className="text-sm text-blue-800">
-                  <strong>Примечание:</strong> Изменения в настройках языков применяются после сохранения настроек. 
-                  Отключение языка скроет его из селектора на сайте.
+                  <strong>{adminT('storeSettings.noteTitle')}:</strong> {adminT('storeSettings.languageNote')}
                 </div>
               </div>
             </div>
@@ -6315,16 +6314,16 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           
           <div className="space-y-4">
             {[
-              { key: "monday", label: "Понедельник" },
-              { key: "tuesday", label: "Вторник" },
-              { key: "wednesday", label: "Среда" },
-              { key: "thursday", label: "Четверг" },
-              { key: "friday", label: "Пятница" },
-              { key: "saturday", label: "Суббота" },
-              { key: "sunday", label: "Воскресенье" },
+              { key: "monday", label: adminT(`storeSettings.monday`) },
+              { key: "tuesday", label: adminT(`storeSettings.tuesday`) },
+              { key: "wednesday", label: adminT(`storeSettings.wednesday`) },
+              { key: "thursday", label: adminT(`storeSettings.thursday`) },
+              { key: "friday", label: adminT(`storeSettings.friday`) },
+              { key: "saturday", label: adminT(`storeSettings.saturday`) },
+              { key: "sunday", label: adminT(`storeSettings.sunday`) },
             ].map(({ key, label }) => {
               const currentHours = form.watch(`workingHours.${key}` as any) || "";
-              const isWorking = currentHours && currentHours !== "Выходной";
+              const isWorking = currentHours && currentHours !== adminT('storeSettings.closedDay');
               const [openTime, closeTime] = isWorking ? currentHours.split("-") : ["09:00", "18:00"];
 
               return (
@@ -6344,7 +6343,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         className="switch-green"
                       />
                       <span className="text-xs text-gray-600">
-                        {isWorking ? "Рабочий день" : "Выходной"}
+                        {isWorking ? adminT('storeSettings.workingDay') : adminT('storeSettings.closedDay')}
                       </span>
                     </div>
                   </div>
@@ -6352,7 +6351,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   {isWorking && (
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <FormLabel className="text-xs text-gray-600">Открытие</FormLabel>
+                        <FormLabel className="text-xs text-gray-600">{adminT('storeSettings.openTime')}</FormLabel>
                         <Select
                           value={openTime}
                           onValueChange={(value) => {
@@ -6379,7 +6378,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       </div>
                       
                       <div>
-                        <FormLabel className="text-xs text-gray-600">Закрытие</FormLabel>
+                        <FormLabel className="text-xs text-gray-600">{adminT('storeSettings.closeTime')}</FormLabel>
                         <Select
                           value={closeTime}
                           onValueChange={(value) => {
