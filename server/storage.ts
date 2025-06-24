@@ -972,11 +972,11 @@ export class DatabaseStorage implements IStorage {
       console.log(`Searching users with: "${search}"`);
       conditions.push(
         or(
-          like(users.username, `%${search}%`),
-          like(users.email, `%${search}%`),
-          like(users.firstName, `%${search}%`),
-          like(users.lastName, `%${search}%`),
-          like(users.phone, `%${search}%`)
+          sql`${users.username} ILIKE ${'%' + search + '%'}`,
+          sql`${users.email} ILIKE ${'%' + search + '%'}`,
+          sql`${users.firstName} ILIKE ${'%' + search + '%'}`,
+          sql`${users.lastName} ILIKE ${'%' + search + '%'}`,
+          sql`${users.phone} ILIKE ${'%' + search + '%'}`
         )
       );
     }
@@ -1005,6 +1005,7 @@ export class DatabaseStorage implements IStorage {
       .where(whereClause);
     
     const total = totalResult?.count || 0;
+    if (search) console.log(`Found ${total} users for search: "${search}"`);
 
     // Get paginated data with order statistics
     const data = await db
