@@ -566,6 +566,43 @@
     "accessAdmin": "גישה לניהול"
   },
   "users": {
+    "title": "משתמשים",
+    "description": "ניהול משתמשים ותפקידים",
+    "addUser": "הוסף משתמש",
+    "editUser": "ערוך משתמש",
+    "deleteUser": "מחק משתמש", 
+    "searchPlaceholder": "חיפוש לפי אימייל או שם...",
+    "allRoles": "כל התפקידים",
+    "unnamed": "משתמש ללא שם",
+    "callUser": "התקשר",
+    "whatsapp": "WhatsApp",
+    "roles": {
+      "admin": "מנהל",
+      "worker": "עובד", 
+      "customer": "לקוח"
+    },
+    "table": {
+      "name": "שם",
+      "role": "תפקיד",
+      "phone": "טלפון", 
+      "orders": "הזמנות",
+      "totalAmount": "סכום כולל"
+    },
+    "dialog": {
+      "firstNameLabel": "שם פרטי",
+      "lastNameLabel": "שם משפחה",
+      "emailLabel": "אימייל",
+      "phoneLabel": "טלפון",
+      "roleLabel": "תפקיד",
+      "passwordLabel": "סיסמה",
+      "confirmPasswordLabel": "אשר סיסמה",
+      "firstNamePlaceholder": "הזן שם פרטי",
+      "lastNamePlaceholder": "הזן שם משפחה", 
+      "emailPlaceholder": "הזן אימייל",
+      "phonePlaceholder": "הזן טלפון",
+      "passwordPlaceholder": "הזן סיסמה",
+      "confirmPasswordPlaceholder": "אשר סיסמה"
+    },
     "created": "משתמש נוצר",
     "createSuccess": "משתמש נוסף בהצלחה",
     "createError": "יצירת משתמש נכשלה",

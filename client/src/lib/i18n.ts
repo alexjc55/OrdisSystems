@@ -114,7 +114,7 @@ i18n
   .init({
     resources,
     lng: initialLang,
-    fallbackLng: false, // Disable global fallback to prevent Russian showing for all languages
+    fallbackLng: 'en', // Use English as fallback instead of Russian
     defaultNS: 'common',
     ns: ['common', 'shop', 'admin'],
     
