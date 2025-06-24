@@ -1809,7 +1809,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
       )}
 
       {/* Actions */}
-      <div className="flex justify-end gap-3 pt-4 border-t">
+      <div className="flex justify-center gap-3 pt-4 border-t">
         <Button variant="outline" onClick={onClose}>
           {adminT('common.cancel')}
         </Button>
@@ -3442,11 +3442,11 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
-                                    <div className="flex flex-wrap gap-1.5 justify-end">
+                                    <div className="flex flex-wrap gap-1.5 justify-center">
                                       {product.categories?.map((category: any) => (
                                         <span 
                                           key={category.id} 
-                                          className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-orange-100 to-amber-100 text-orange-800 border border-orange-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
+                                          className="inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
                                         >
                                           
                                           {category.name}
@@ -3481,11 +3481,11 @@ export default function AdminDashboard() {
                                     </button>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-left">
-                                    <div className="flex flex-wrap gap-1.5">
+                                    <div className="flex flex-wrap gap-1.5 justify-center">
                                       {product.categories?.map((category: any) => (
                                         <span 
                                           key={category.id} 
-                                          className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-orange-100 to-amber-100 text-orange-800 border border-orange-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
+                                          className="inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
                                         >
                                           
                                           {category.name}
@@ -5758,7 +5758,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               }}
             />
 
-            <div className={`flex flex-col sm:flex-row justify-end gap-3 ${isRTL ? 'sm:flex-row-reverse rtl:space-x-reverse' : 'space-x-4'}`}>
+            <div className={`flex flex-col sm:flex-row justify-center gap-3 ${isRTL ? 'sm:flex-row-reverse rtl:space-x-reverse' : 'space-x-4'}`}>
               <Button 
                 type="button" 
                 variant="outline" 
@@ -7362,7 +7362,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        <div className="flex justify-end">
+        <div className="flex justify-center">
           <Button 
             type="submit" 
             disabled={isLoading}
@@ -7435,7 +7435,7 @@ function CancellationReasonDialog({
           ))}
         </div>
 
-        <div className="flex justify-end space-x-2 pt-4">
+        <div className="flex justify-center space-x-2 pt-4">
           <Button variant="outline" onClick={onClose} className="text-sm">
             Отмена
           </Button>
