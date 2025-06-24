@@ -596,11 +596,28 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
               <Eye className="h-3 w-3 mr-1" />
               {adminT('orders.orderDetails')}
             </Button>
-            <div className={`px-2 py-1 rounded text-xs font-medium border text-center min-w-[80px] max-w-[120px] truncate ${getStatusColor(order.status)} ${order.status === 'pending' ? 'mobile-status-pending' : ''}`}>
-              <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {getStatusLabel(order.status) || order.status || 'Статус'}
-              </span>
-            </div>
+            <Select
+              value={order.status}
+              onValueChange={(newStatus) => {
+                if (newStatus === 'cancelled') {
+                  onCancelOrder(order.id);
+                } else {
+                  onStatusChange({ orderId: order.id, status: newStatus });
+                }
+              }}
+            >
+              <SelectTrigger className="w-24 h-7 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">{adminT('orders.status.pending')}</SelectItem>
+                <SelectItem value="confirmed">{adminT('orders.status.confirmed')}</SelectItem>
+                <SelectItem value="preparing">{adminT('orders.status.preparing')}</SelectItem>
+                <SelectItem value="ready">{adminT('orders.status.ready')}</SelectItem>
+                <SelectItem value="delivered">{adminT('orders.status.delivered')}</SelectItem>
+                <SelectItem value="cancelled">{adminT('orders.status.cancelled')}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardContent>
