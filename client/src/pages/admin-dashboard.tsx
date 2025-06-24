@@ -4789,10 +4789,10 @@ export default function AdminDashboard() {
                     <div className={isRTL ? 'text-right' : 'text-left'}>
                       <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                         <Store className="h-4 w-4 sm:h-5 sm:w-5" />
-                        {adminT('settings.title')}
+                        {adminT('storeSettings.title')}
                       </CardTitle>
                       <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        {adminT('settings.description')}
+                        {adminT('storeSettings.description')}
                       </CardDescription>
                     </div>
                 </CardHeader>
@@ -4873,8 +4873,8 @@ export default function AdminDashboard() {
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Управление заказами</label>
-                          <p className="text-xs text-gray-500">Просмотр и изменение статуса заказов</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canEditOrders')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canEditOrdersDescription')}</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageOrders || false}
@@ -4912,8 +4912,8 @@ export default function AdminDashboard() {
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Управление пользователями</label>
-                          <p className="text-xs text-gray-500">Редактирование и удаление пользователей</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageUsers')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageUsersDescription')}</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageUsers || false}
@@ -4931,8 +4931,8 @@ export default function AdminDashboard() {
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Просмотр настроек</label>
-                          <p className="text-xs text-gray-500">Доступ к настройкам магазина (только чтение)</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canViewSettings')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canViewSettingsDescription')}</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canViewSettings || false}
@@ -6218,7 +6218,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         </div>
                         <div className="flex items-center gap-3">
                           <span className={`text-xs font-medium ${isEnabled ? 'text-green-600' : 'text-gray-400'}`}>
-                            {isEnabled ? 'Активен' : 'Отключен'}
+                            {isEnabled ? adminT('storeSettings.languageActive') : adminT('storeSettings.languageDisabled')}
                           </span>
                           <CustomSwitch 
                             checked={isEnabled}
@@ -6293,20 +6293,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="weekStartDay"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">Первый день недели</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.weekStartDay')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="text-sm">
-                      <SelectValue placeholder="Выберите первый день недели" />
+                      <SelectValue placeholder={adminT('storeSettings.weekStartDayPlaceholder')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="monday">Понедельник</SelectItem>
-                    <SelectItem value="sunday">Воскресенье</SelectItem>
+                    <SelectItem value="monday">{adminT('storeSettings.monday')}</SelectItem>
+                    <SelectItem value="sunday">{adminT('storeSettings.sunday')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription className="text-xs">
-                  Выберите с какого дня недели начинается неделя в вашем регионе
+                  {adminT('storeSettings.weekStartDayDescription')}
                 </FormDescription>
                 <FormMessage className="text-xs" />
               </FormItem>
