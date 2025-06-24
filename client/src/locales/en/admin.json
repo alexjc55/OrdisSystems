@@ -602,7 +602,14 @@
       "emailPlaceholder": "Enter email", 
       "phonePlaceholder": "Enter phone",
       "passwordPlaceholder": "Enter password",
-      "confirmPasswordPlaceholder": "Confirm password"
+      "confirmPasswordPlaceholder": "Confirm password",
+      "addDescription": "Create new user",
+      "editDescription": "Modify user information",
+      "emailError": "Invalid email format",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "rolePlaceholder": "Select role",
+      "passwordMinLength": "Password must be at least 6 characters"
     },
     "created": "User created",
     "createSuccess": "User successfully added",

@@ -319,7 +319,14 @@
       "emailPlaceholder": "Введите email",
       "phonePlaceholder": "Введите телефон",
       "passwordPlaceholder": "Введите пароль",
-      "confirmPasswordPlaceholder": "Подтвердите пароль"
+      "confirmPasswordPlaceholder": "Подтвердите пароль",
+      "addDescription": "Создать нового пользователя",
+      "editDescription": "Изменить информацию о пользователе",
+      "emailError": "Неверный формат email",
+      "firstNameRequired": "Имя обязательно",
+      "lastNameRequired": "Фамилия обязательна",
+      "rolePlaceholder": "Выберите роль",
+      "passwordMinLength": "Пароль должен содержать минимум 6 символов"
     },
     "created": "Пользователь создан",
     "updated": "Пользователь обновлен",

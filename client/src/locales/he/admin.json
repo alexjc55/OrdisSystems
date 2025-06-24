@@ -601,7 +601,14 @@
       "emailPlaceholder": "הזן אימייל",
       "phonePlaceholder": "הזן טלפון",
       "passwordPlaceholder": "הזן סיסמה",
-      "confirmPasswordPlaceholder": "אשר סיסמה"
+      "confirmPasswordPlaceholder": "אשר סיסמה",
+      "addDescription": "צור משתמש חדש",
+      "editDescription": "שנה פרטי משתמש",
+      "emailError": "פורמט אימייל שגוי",
+      "firstNameRequired": "שם פרטי חובה",
+      "lastNameRequired": "שם משפחה חובה",
+      "rolePlaceholder": "בחר תפקיד",
+      "passwordMinLength": "סיסמה חייבת להכיל לפחות 6 תווים"
     },
     "created": "משתמש נוצר",
     "createSuccess": "משתמש נוסף בהצלחה",
