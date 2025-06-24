@@ -7604,9 +7604,9 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="customer">Клиент</SelectItem>
-                      <SelectItem value="worker">Сотрудник</SelectItem>
-                      <SelectItem value="admin">Администратор</SelectItem>
+                      <SelectItem value="customer">{adminT('users.roles.customer', 'Клиент')}</SelectItem>
+                      <SelectItem value="worker">{adminT('users.roles.worker', 'Сотрудник')}</SelectItem>
+                      <SelectItem value="admin">{adminT('users.roles.admin', 'Администратор')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage className="text-xs" />
@@ -7619,26 +7619,27 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">
-                    {user ? "Новый пароль (оставьте пустым если не меняете)" : "Пароль"}
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                    {user ? adminT('users.dialog.newPasswordLabel', 'Новый пароль (оставьте пустым если не меняете)') : adminT('users.dialog.passwordLabel', 'Пароль')}
                   </FormLabel>
                   <FormControl>
                     <Input 
                       type="password"
-                      placeholder="Минимум 6 символов"
+                      placeholder={adminT('users.dialog.passwordMinLength', 'Минимум 6 символов')}
                       {...field}
-                      className="text-sm"
+                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                      dir={isRTL ? 'rtl' : 'ltr'}
                     />
                   </FormControl>
-                  <FormMessage className="text-xs" />
+                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                 </FormItem>
               )}
             />
 
-            <div className="flex justify-between items-center pt-4">
-              <div className="flex gap-2">
+            <div className={`flex justify-between items-center pt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Button type="button" variant="outline" onClick={onClose} className="text-sm">
-                  Отмена
+                  {adminT('actions.cancel', 'Отмена')}
                 </Button>
                 {user && user.id !== "43948959" && ( // Don't allow deleting yourself
                   <AlertDialog>

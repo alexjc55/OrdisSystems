@@ -608,8 +608,10 @@
       "emailError": "Invalid email format",
       "firstNameRequired": "First name is required",
       "lastNameRequired": "Last name is required",
-      "rolePlaceholder": "Select role",
-      "passwordMinLength": "Password must be at least 6 characters"
+      "rolePlaceholder": "Select role", 
+      "passwordMinLength": "Password must be at least 6 characters",
+      "newPasswordLabel": "New password (leave empty if not changing)",
+      "deleteWarning": "This action cannot be undone. The user will be permanently deleted."
     },
     "created": "User created",
     "createSuccess": "User successfully added",

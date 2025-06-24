@@ -608,7 +608,9 @@
       "firstNameRequired": "שם פרטי חובה",
       "lastNameRequired": "שם משפחה חובה",
       "rolePlaceholder": "בחר תפקיד",
-      "passwordMinLength": "סיסמה חייבת להכיל לפחות 6 תווים"
+      "passwordMinLength": "סיסמה חייבת להכיל לפחות 6 תווים",
+      "newPasswordLabel": "סיסמה חדשה (השאר ריק אם לא משנה)",
+      "deleteWarning": "פעולה זו לא ניתנת לביטול. המשתמש יימחק לצמיתות."
     },
     "created": "משתמש נוצר",
     "createSuccess": "משתמש נוסף בהצלחה",
