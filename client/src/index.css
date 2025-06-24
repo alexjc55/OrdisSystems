@@ -50,15 +50,47 @@
   .admin-input-focus select:focus {
     outline: none !important;
     border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
     ring: none !important;
   }
   
   .admin-input-focus button[role="combobox"]:focus {
     outline: none !important;
     border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
   }
+}
+
+/* Global input focus styles */
+input:focus,
+textarea:focus,
+select:focus,
+[role="combobox"]:focus,
+[role="textbox"]:focus,
+button:focus,
+[type="checkbox"]:focus {
+  outline: none !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+  ring: none !important;
+}
+
+/* Remove harsh focus outlines */
+*:focus,
+*:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+}
+
+/* Override Tailwind focus styles globally */
+.focus\:outline-none:focus,
+.focus\:ring-2:focus,
+.focus\:ring-blue-500:focus,
+.focus\:border-blue-500:focus {
+  outline: none !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+  ring: none !important;
 }
 
 /* Global container max-width limitation */
