@@ -780,17 +780,10 @@ export class DatabaseStorage implements IStorage {
     const { page, limit, search, status, sortField, sortDirection } = params;
     const offset = (page - 1) * limit;
 
-    // Build where conditions
+    // Build where conditions for database query (only non-user fields)
     const conditions = [];
     
-    if (search) {
-      conditions.push(
-        or(
-          like(orders.customerPhone, `%${search}%`),
-          like(orders.deliveryAddress, `%${search}%`)
-        )
-      );
-    }
+    // Note: Don't add search conditions here - we'll handle user search client-side
     
     if (status && status !== 'all') {
       // Handle multiple statuses separated by comma (for active filter)
@@ -832,16 +825,21 @@ export class DatabaseStorage implements IStorage {
 
     let totalFiltered = ordersData.length;
 
-    // Additional client-side filtering for user names if search is provided
+    // Client-side filtering for search if provided
     if (search) {
       const searchLower = search.toLowerCase();
-      ordersData = ordersData.filter(order => 
-        order.customerPhone?.toLowerCase().includes(searchLower) ||
-        order.deliveryAddress?.toLowerCase().includes(searchLower) ||
-        order.user?.username?.toLowerCase().includes(searchLower) ||
-        order.user?.firstName?.toLowerCase().includes(searchLower) ||
-        order.user?.lastName?.toLowerCase().includes(searchLower)
-      );
+      ordersData = ordersData.filter(order => {
+        // Search in order fields
+        const phoneMatch = order.customerPhone?.toLowerCase().includes(searchLower);
+        const addressMatch = order.deliveryAddress?.toLowerCase().includes(searchLower);
+        
+        // Search in user fields
+        const usernameMatch = order.user?.username?.toLowerCase().includes(searchLower);
+        const firstNameMatch = order.user?.firstName?.toLowerCase().includes(searchLower);
+        const lastNameMatch = order.user?.lastName?.toLowerCase().includes(searchLower);
+        
+        return phoneMatch || addressMatch || usernameMatch || firstNameMatch || lastNameMatch;
+      });
       
       totalFiltered = ordersData.length;
       
