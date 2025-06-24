@@ -391,6 +391,12 @@ button:focus,
   [dir="rtl"] .text-center p.force-center-text {
     text-align: center !important;
   }
+
+  /* Dialog close button positioning for RTL */
+  [dir="rtl"] [data-radix-dialog-content] > button[data-radix-dialog-close] {
+    right: auto !important;
+    left: 1rem !important;
+  }
 }
 
 /* RTL Utilities */
