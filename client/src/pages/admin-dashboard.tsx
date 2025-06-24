@@ -5998,20 +5998,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 >
                   <FormControl>
                     <SelectTrigger className="text-sm">
-                      <SelectValue placeholder="Выберите количество" />
+                      <SelectValue placeholder={adminT('storeSettings.selectQuantity')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="10">10 элементов</SelectItem>
-                    <SelectItem value="15">15 элементов</SelectItem>
-                    <SelectItem value="25">25 элементов</SelectItem>
-                    <SelectItem value="50">50 элементов</SelectItem>
-                    <SelectItem value="100">100 элементов</SelectItem>
-                    <SelectItem value="1000">Все элементы</SelectItem>
+                    <SelectItem value="10">{adminT('storeSettings.items10')}</SelectItem>
+                    <SelectItem value="15">{adminT('storeSettings.items15')}</SelectItem>
+                    <SelectItem value="25">{adminT('storeSettings.items25')}</SelectItem>
+                    <SelectItem value="50">{adminT('storeSettings.items50')}</SelectItem>
+                    <SelectItem value="100">{adminT('storeSettings.items100')}</SelectItem>
+                    <SelectItem value="1000">{adminT('storeSettings.allItems')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription className="text-xs text-gray-500">
-                  Количество товаров, заказов и пользователей отображаемых на одной странице в админ панели
+                  {adminT('storeSettings.itemsPerPageDescription')}
                 </FormDescription>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -6068,7 +6068,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <FormLabel className="text-sm">{adminT('storeSettings.address')}</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Введите полный адрес магазина"
+                  placeholder={adminT('storeSettings.addressPlaceholder')}
                   className="resize-none text-sm"
                   {...field}
                 />
@@ -6108,7 +6108,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             <FormItem>
               <FormLabel className="text-sm flex items-center gap-2">
                 <Upload className="h-4 w-4" />
-                Логотип магазина
+                {adminT('storeSettings.storeLogo')}
               </FormLabel>
               <FormControl>
                 <ImageUpload
@@ -6117,7 +6117,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 />
               </FormControl>
               <FormDescription className="text-xs text-gray-500">
-                Рекомендуемый размер: 200×60 пикселей (PNG с прозрачным фоном)
+                {adminT('storeSettings.logoDescription')}
               </FormDescription>
               <FormMessage className="text-xs" />
             </FormItem>
@@ -6131,7 +6131,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             <FormItem>
               <FormLabel className="text-sm flex items-center gap-2">
                 <Upload className="h-4 w-4" />
-                Баннер на главной странице
+                {adminT('storeSettings.bannerImage')}
               </FormLabel>
               <FormControl>
                 <ImageUpload
@@ -6140,7 +6140,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 />
               </FormControl>
               <FormDescription className="text-xs text-gray-500">
-                Рекомендуемый размер: 1200×400 пикселей. Изображение будет отображаться под шапкой на всю ширину страницы
+                {adminT('storeSettings.bannerDescription')}
               </FormDescription>
               <FormMessage className="text-xs" />
             </FormItem>
@@ -6196,7 +6196,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   </Select>
                 </div>
                 <p className="text-xs text-gray-500">
-                  Выберите язык интерфейса по умолчанию для новых посетителей
+                  {adminT('storeSettings.defaultLanguageDescription')}
                 </p>
               </div>
               
