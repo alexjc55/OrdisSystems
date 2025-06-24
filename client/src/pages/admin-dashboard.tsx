@@ -36,7 +36,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { RTLPagination } from "@/components/ui/rtl-pagination";
+import { SimplePagination } from "@/components/ui/simple-pagination";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -3573,7 +3573,7 @@ export default function AdminDashboard() {
                 )}
                 
                 {/* Products Pagination */}
-                <RTLPagination
+                <SimplePagination
                   currentPage={productsPage}
                   totalPages={productsTotalPages}
                   total={productsTotal}
@@ -4529,7 +4529,7 @@ export default function AdminDashboard() {
                     </div>
                     
                     {/* Pagination for users table */}
-                    <RTLPagination
+                    <SimplePagination
                       currentPage={usersPage}
                       totalPages={usersTotalPages}
                       total={usersTotal}
@@ -4549,7 +4549,7 @@ export default function AdminDashboard() {
                 )}
                 
                 {/* Users Pagination */}
-                <RTLPagination
+                <SimplePagination
                   currentPage={usersPage}
                   totalPages={usersTotalPages}
                   total={usersTotal}
