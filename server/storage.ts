@@ -1005,6 +1005,7 @@ export class DatabaseStorage implements IStorage {
       .where(whereClause);
     
     const total = totalResult?.count || 0;
+    console.log(`Users search result: total=${total}, search="${search}", conditions=${conditions.length}`);
 
     // Get paginated data with order statistics
     const data = await db
@@ -1034,6 +1035,7 @@ export class DatabaseStorage implements IStorage {
       .limit(limit)
       .offset(offset);
 
+    console.log(`Users found: ${data.length} users, first user:`, data[0] ? {id: data[0].id, username: data[0].username} : 'none');
     return {
       data,
       total,
