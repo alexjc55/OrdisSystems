@@ -4646,14 +4646,14 @@ export default function AdminDashboard() {
                         <TableBody>
                           {filteredUsers.slice((usersPage - 1) * itemsPerPage, usersPage * itemsPerPage).map((user: any) => (
                             <TableRow key={user.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors" dir={isRTL ? 'rtl' : 'ltr'}>
-                              <TableCell className={`px-3 py-3 font-medium text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                              <TableCell className={`px-3 py-3 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                 <Button
                                   variant="ghost"
                                   onClick={() => {
                                     setEditingUser(user);
                                     setIsUserFormOpen(true);
                                   }}
-                                  className={`h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent text-sm ${isRTL ? 'justify-end' : 'justify-start'}`}
+                                  className={`h-auto p-0 text-blue-600 hover:text-blue-800 hover:bg-transparent text-sm font-normal ${isRTL ? 'justify-end' : 'justify-start'}`}
                                 >
                                   {user.firstName && user.lastName 
                                     ? `${user.firstName} ${user.lastName}`
@@ -4677,7 +4677,7 @@ export default function AdminDashboard() {
                                     <DropdownMenuTrigger asChild>
                                       <Button
                                         variant="ghost"
-                                        className={`h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent text-sm ${isRTL ? 'justify-end' : 'justify-start'}`}
+                                        className={`h-auto p-0 text-blue-600 hover:text-blue-800 hover:bg-transparent text-sm font-normal ${isRTL ? 'justify-end' : 'justify-start'}`}
                                       >
                                         {user.phone}
                                       </Button>
@@ -4698,12 +4698,12 @@ export default function AdminDashboard() {
                                 )}
                               </TableCell>
                               <TableCell className={`px-3 py-3 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <span className="font-medium text-sm text-gray-900">
+                                <span className="text-sm text-gray-900 font-normal">
                                   {user.orderCount || 0}
                                 </span>
                               </TableCell>
                               <TableCell className={`px-3 py-3 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                                <span className="font-medium text-sm text-gray-900">
+                                <span className="text-sm text-gray-900 font-normal">
                                   {formatCurrency(user.totalOrderAmount || 0)}
                                 </span>
                               </TableCell>
