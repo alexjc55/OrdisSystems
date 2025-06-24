@@ -5891,11 +5891,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
                 <Store className="h-5 w-5 text-orange-500" />
                 <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.basicInfo', 'Основная информация')}</h3>
-                {isBasicInfoOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
-                ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
-                )}
+              </div>
+              {isBasicInfoOpen ? (
+                <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'ml-auto' : 'mr-auto'}`} />
+              ) : (
+                <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'ml-auto' : 'mr-auto'}`} />
+              )}
               </div>
             </Button>
           </CollapsibleTrigger>
@@ -7186,7 +7187,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <Users className="h-5 w-5 text-orange-500" />
                 <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.authPage', 'Страница авторизации')}</h3>
               </div>
-              {isAuthPageOpen ? <ChevronUp className={`h-4 w-4 ${isRTL ? 'mr-auto' : 'ml-auto'}`} /> : <ChevronDown className={`h-4 w-4 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />}
+              {isAuthPageOpen ? <ChevronUp className={`h-4 w-4 ${isRTL ? 'ml-auto' : 'mr-auto'}`} /> : <ChevronDown className={`h-4 w-4 ${isRTL ? 'ml-auto' : 'mr-auto'}`} />}
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-6">
