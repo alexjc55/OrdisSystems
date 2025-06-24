@@ -197,6 +197,61 @@
       "deleteError": "לא ניתן למחוק מוצר",
       "statusError": "לא ניתן לעדכן סטטוס זמינות",
       "availabilityError": "לא ניתן לעדכן זמינות"
+    },
+    "users": {
+      "title": "משתמשים",
+      "description": "ניהול משתמשי המערכת",
+      "addUser": "הוסף משתמש",
+      "editUser": "ערוך משתמש",
+      "deleteUser": "מחק משתמש",
+      "confirmDelete": "האם אתה בטוח שברצונך למחוק את המשתמש הזה?",
+      "noUsers": "אין משתמשים",
+      "noUsersDescription": "משתמשים יוצגו כאן",
+      "addFirstUser": "הוסף את המשתמש הראשון כדי להתחיל",
+      "noName": "משתמש ללא שם",
+      "searchPlaceholder": "חפש משתמשים...",
+      "filterByRole": "סנן לפי תפקיד",
+      "allRoles": "כל התפקידים",
+      "pagination": {
+        "showing": "מוצג",
+        "of": "מתוך",
+        "firstPage": "עמוד ראשון",
+        "previousPage": "עמוד קודם", 
+        "nextPage": "עמוד הבא",
+        "lastPage": "עמוד אחרון"
+      },
+      "table": {
+        "name": "שם",
+        "email": "אימייל", 
+        "role": "תפקיד",
+        "phone": "טלפון",
+        "orders": "הזמנות",
+        "totalAmount": "סכום הזמנות"
+      },
+      "role": {
+        "admin": "מנהל",
+        "worker": "עובד", 
+        "customer": "לקוח"
+      },
+      "callUser": "התקשר",
+      "whatsapp": "WhatsApp",
+      "form": {
+        "firstName": "שם פרטי",
+        "lastName": "שם משפחה",
+        "email": "אימייל",
+        "phone": "טלפון",
+        "role": "תפקיד",
+        "password": "סיסמה",
+        "firstNamePlaceholder": "הכנס שם פרטי",
+        "lastNamePlaceholder": "הכנס שם משפחה",
+        "emailPlaceholder": "הכנס כתובת אימייל",
+        "phonePlaceholder": "הכנס מספר טלפון",
+        "passwordPlaceholder": "הכנס סיסמה",
+        "selectRole": "בחר תפקיד",
+        "save": "שמור",
+        "cancel": "ביטול",
+        "create": "צור משתמש"
+      }
     }
   },
   "imageUpload": {
