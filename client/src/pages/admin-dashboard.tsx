@@ -5892,9 +5892,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <Store className="h-5 w-5 text-orange-500" />
                 <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.basicInfo', 'Основная информация')}</h3>
                 {isBasicInfoOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 )}
               </div>
             </Button>
@@ -6424,9 +6424,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <Truck className="h-5 w-5 text-orange-500" />
                 <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.deliveryPayment', 'Доставка и оплата')}</h3>
                 {isDeliveryPaymentOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 )}
               </div>
             </Button>
@@ -6544,9 +6544,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <Eye className="h-5 w-5 text-orange-500" />
                 <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.displaySettings', 'Настройки отображения')}</h3>
                 {isDisplaySettingsOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 )}
               </div>
             </Button>
@@ -7186,7 +7186,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <Users className="h-5 w-5 text-orange-500" />
                 <h3 className={`text-lg font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.authPage', 'Страница авторизации')}</h3>
               </div>
-              {isAuthPageOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              {isAuthPageOpen ? <ChevronUp className={`h-4 w-4 ${isRTL ? 'mr-auto' : 'ml-auto'}`} /> : <ChevronDown className={`h-4 w-4 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />}
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-6">
