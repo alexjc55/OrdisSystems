@@ -4644,7 +4644,6 @@ export default function AdminDashboard() {
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.phone', 'Телефон')}</TableHead>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.orders', 'Заказов')}</TableHead>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.totalAmount', 'Сумма заказов')}</TableHead>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'} w-20`}>{adminT('common.actions', 'Действия')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
