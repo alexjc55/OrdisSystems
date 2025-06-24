@@ -2448,13 +2448,14 @@ export default function AdminDashboard() {
   });
 
   const { data: usersResponse, isLoading: usersLoading } = useQuery({
-    queryKey: ["/api/admin/users", usersPage, searchQuery, storeSettings?.defaultItemsPerPage],
+    queryKey: ["/api/admin/users", usersPage, searchQuery, usersRoleFilter, storeSettings?.defaultItemsPerPage],
     queryFn: async () => {
       const limit = storeSettings?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: usersPage.toString(),
         limit: limit.toString(),
-        search: searchQuery
+        search: searchQuery,
+        status: usersRoleFilter
       });
       const response = await fetch(`/api/admin/users?${params}`);
       if (!response.ok) throw new Error('Failed to fetch users');
@@ -4619,12 +4620,9 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {/* Filter users based on role only - search is handled by backend */}
+                {/* All filtering is handled by backend */}
                 {(() => {
-                  const filteredUsers = (usersData as any[] || []).filter((user: any) => {
-                    const matchesRole = usersRoleFilter === 'all' || user.role === usersRoleFilter;
-                    return matchesRole;
-                  });
+                  const filteredUsers = usersData as any[] || [];
 
                   const usersTotal = usersResponse?.total || 0;
                   const usersTotalPages = usersResponse?.totalPages || 0;
