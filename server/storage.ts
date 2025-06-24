@@ -471,7 +471,8 @@ export class DatabaseStorage implements IStorage {
     const conditions = [];
     
     if (search) {
-      conditions.push(like(products.name, `%${search}%`));
+      console.log(`Searching products with: "${search}"`);
+      conditions.push(sql`${products.name} ILIKE ${'%' + search + '%'}`);
     }
     
     if (status && status !== 'all') {
@@ -526,6 +527,7 @@ export class DatabaseStorage implements IStorage {
       .where(whereClause);
     
     const total = totalResult?.count || 0;
+    if (search) console.log(`Found ${total} products for search: "${search}"`);
 
     // Get paginated data with categories using direct joins
     const productsData = await db
@@ -668,7 +670,7 @@ export class DatabaseStorage implements IStorage {
       .where(and(
         eq(products.isActive, true),
         ne(products.stockStatus, 'out_of_stock'),
-        like(products.name, `%${query}%`)
+        sql`${products.name} ILIKE ${'%' + query + '%'}`
       ))
       .orderBy(products.name);
 
