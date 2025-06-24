@@ -5907,7 +5907,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="storeName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.storeName')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.storeName', 'Название магазина')}</FormLabel>
                 <FormControl>
                   <Input placeholder="eDAHouse" {...field} className="text-sm" />
                 </FormControl>
@@ -5921,7 +5921,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="welcomeTitle"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.welcomeTitle')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.welcomeTitle', 'Заголовок приветствия')}</FormLabel>
                 <FormControl>
                   <Input placeholder="Добро пожаловать в наш магазин" {...field} className="text-sm" />
                 </FormControl>
@@ -6276,7 +6276,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Clock className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.operatingHours')}</h3>
+                <h3 className="text-lg font-semibold">{adminT('settings.operatingHours', 'Рабочее время')}</h3>
                 {isWorkingHoursOpen ? (
                   <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
@@ -6677,9 +6677,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('settings.showSpecialOffers')}</FormLabel>
+                    <FormLabel className="text-sm font-medium">{adminT('settings.showSpecialOffers', 'Показывать спецпредложения')}</FormLabel>
                     <FormDescription className="text-xs">
-                      {adminT('settings.specialOffersDescription')}
+                      {adminT('settings.specialOffersDescription', 'Отображать блок с особыми предложениями')}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -6699,9 +6699,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('settings.showCategoryMenu')}</FormLabel>
+                    <FormLabel className="text-sm font-medium">{adminT('settings.showCategoryMenu', 'Показывать меню категорий')}</FormLabel>
                     <FormDescription className="text-xs">
-                      {adminT('settings.categoryMenuDescription')}
+                      {adminT('settings.categoryMenuDescription', 'Отображать навигационное меню категорий')}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -7319,7 +7319,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             className="bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200"
           >
             <Save className="mr-2 h-4 w-4" />
-            {isLoading ? adminT('common.loading') : adminT('settings.saveSettings')}
+            {isLoading ? adminT('common.loading', 'Загрузка...') : adminT('settings.saveSettings', 'Сохранить настройки')}
           </Button>
         </div>
       </form>
