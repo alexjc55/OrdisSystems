@@ -143,8 +143,8 @@ export function useAdminTranslation() {
   const enhancedT = (key: string, fallback?: string) => {
     try {
       const translation = t(key);
-      // If translation returns the key itself, use fallback or multilingual fallback
-      if (translation === key || !translation) {
+      // If translation returns the key itself or is empty, use fallback or multilingual fallback
+      if (translation === key || !translation || translation.trim() === '') {
         // Try to get language-specific fallback
         const currentLang = i18n.language;
         const langFallback = fallbackValues[key]?.[currentLang];

@@ -114,7 +114,7 @@ i18n
   .init({
     resources,
     lng: initialLang,
-    fallbackLng: 'ru',
+    fallbackLng: false, // Disable global fallback to prevent Russian showing for all languages
     defaultNS: 'common',
     ns: ['common', 'shop', 'admin'],
     
@@ -150,6 +150,9 @@ i18n
     returnEmptyString: false,
     returnNull: false,
     returnObjects: false,
+    // Disable keySeparator to prevent namespace issues
+    keySeparator: '.',
+    nsSeparator: ':',
   })
   .then(() => {
 
