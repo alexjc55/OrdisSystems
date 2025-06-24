@@ -788,8 +788,7 @@ export class DatabaseStorage implements IStorage {
         or(
           like(orders.customerPhone, `%${search}%`),
           like(orders.deliveryAddress, `%${search}%`),
-          like(orders.customerName, `%${search}%`),
-          like(orders.userId, `%${search}%`)
+          like(orders.customerName, `%${search}%`)
         )
       );
     }
