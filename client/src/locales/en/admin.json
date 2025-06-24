@@ -83,7 +83,13 @@
     "authPageSubtitle": "Auth Page Subtitle",
     "authPageFeature1": "Feature 1",
     "authPageFeature2": "Feature 2",
-    "authPageFeature3": "Feature 3"
+    "authPageFeature3": "Feature 3",
+    "operatingHours": "Operating Hours",
+    "showSpecialOffers": "Show Special Offers",
+    "specialOffersDescription": "Display special offers block",
+    "showCategoryMenu": "Show Category Menu",
+    "categoryMenuDescription": "Display category navigation menu",
+    "saveSettings": "Save Settings"
   },
   "systemSettings": {
     "title": "System Settings",

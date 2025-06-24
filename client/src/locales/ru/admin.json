@@ -83,7 +83,13 @@
     "authPageSubtitle": "Подзаголовок страницы авторизации",
     "authPageFeature1": "Особенность 1",
     "authPageFeature2": "Особенность 2",
-    "authPageFeature3": "Особенность 3"
+    "authPageFeature3": "Особенность 3",
+    "operatingHours": "Рабочее время",
+    "showSpecialOffers": "Показывать спецпредложения",
+    "specialOffersDescription": "Отображать блок с особыми предложениями",
+    "showCategoryMenu": "Показывать меню категорий",
+    "categoryMenuDescription": "Отображать навигационное меню категорий",
+    "saveSettings": "Сохранить настройки"
   },
   "systemSettings": {
     "title": "Настройки системы",
