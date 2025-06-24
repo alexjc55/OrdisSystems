@@ -4674,7 +4674,7 @@ export default function AdminDashboard() {
                                 {user.phone ? (
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                      <span className="text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block text-left" dir="ltr">
+                                      <span className="text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block" style={{direction: 'ltr', textAlign: 'left'}}>
                                         {user.phone}
                                       </span>
                                     </DropdownMenuTrigger>
