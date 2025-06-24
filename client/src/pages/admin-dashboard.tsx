@@ -3448,7 +3448,7 @@ export default function AdminDashboard() {
                                           key={category.id} 
                                           className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-orange-100 to-amber-100 text-orange-800 border border-orange-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
                                         >
-                                          <span className="mr-1">🏷️</span>
+                                          
                                           {category.name}
                                         </span>
                                       ))}
@@ -3487,7 +3487,7 @@ export default function AdminDashboard() {
                                           key={category.id} 
                                           className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-orange-100 to-amber-100 text-orange-800 border border-orange-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105"
                                         >
-                                          <span className="mr-1">🏷️</span>
+                                          
                                           {category.name}
                                         </span>
                                       ))}
