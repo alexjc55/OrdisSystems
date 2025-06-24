@@ -1,4 +1,6 @@
 {
+  "title": "Settings",
+  "description": "Store Management",
   "tabs": {
     "products": "Products",
     "categories": "Categories", 
@@ -35,6 +37,7 @@
     "contacts": "Contacts",
     "visuals": "Visual Design",
     "workingHours": "Working Hours",
+    "operatingHours": "Operating Hours",
     "deliveryPayment": "Delivery & Payment",
     "displaySettings": "Display Settings",
     "trackingCode": "Tracking Code",

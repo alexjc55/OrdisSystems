@@ -6276,7 +6276,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             >
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
                 <Clock className="h-5 w-5 text-orange-500" />
-                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('settings.operatingHours', 'שעות פעילות')}</h3>
+                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.operatingHours', 'Operating Hours')}</h3>
                 {isWorkingHoursOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500" />
                 ) : (
