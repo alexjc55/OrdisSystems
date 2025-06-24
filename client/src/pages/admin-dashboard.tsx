@@ -4744,11 +4744,11 @@ export default function AdminDashboard() {
                     <div className={`flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-3 border-t border-gray-100 bg-gray-50/30 ${isRTL ? 'sm:flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
                       <div className={`text-xs text-gray-600 text-center ${isRTL ? 'sm:text-right' : 'sm:text-left'}`}>
                         <div className="sm:hidden">
-                          <div>{adminT('users.pagination.showing', 'Показано')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)}</div>
-                          <div>{adminT('users.pagination.of', 'из')} {usersTotal}</div>
+                          <div>{adminT('common.showing', 'Показано')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)}</div>
+                          <div>{adminT('common.of', 'из')} {usersTotal}</div>
                         </div>
                         <div className="hidden sm:block">
-                          {adminT('users.pagination.showing', 'Показано')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('users.pagination.of', 'из')} {usersTotal}
+                          {adminT('common.showing', 'Показано')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('common.of', 'из')} {usersTotal}
                         </div>
                       </div>
                       
@@ -4758,7 +4758,7 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setUsersPage(1)}
                           disabled={usersPage === 1}
-                          title={adminT('users.pagination.firstPage', 'Первая страница')}
+                          title={adminT('common.firstPage', 'Первая страница')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟩⟩' : '⟨⟨'}
@@ -4768,21 +4768,21 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
                           disabled={usersPage === 1}
-                          title={adminT('users.pagination.previousPage', 'Предыдущая страница')}
+                          title={adminT('common.prevPage', 'Предыдущая страница')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟩' : '⟨'}
                         </Button>
                         <span className="text-xs text-gray-600 px-2 min-w-[60px] text-center">
                           <span className="sm:hidden">{usersPage}/{usersTotalPages}</span>
-                          <span className="hidden sm:inline">{usersPage} {adminT('users.pagination.of', 'из')} {usersTotalPages}</span>
+                          <span className="hidden sm:inline">{usersPage} {adminT('common.of', 'из')} {usersTotalPages}</span>
                         </span>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
                           disabled={usersPage >= usersTotalPages}
-                          title={adminT('users.pagination.nextPage', 'Следующая страница')}
+                          title={adminT('common.nextPage', 'Следующая страница')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟨' : '⟩'}
@@ -4792,7 +4792,7 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setUsersPage(usersTotalPages)}
                           disabled={usersPage >= usersTotalPages}
-                          title={adminT('users.pagination.lastPage', 'Последняя страница')}
+                          title={adminT('common.lastPage', 'Последняя страница')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟨⟨' : '⟩⟩'}
