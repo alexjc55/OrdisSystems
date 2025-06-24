@@ -4335,7 +4335,7 @@ export default function AdminDashboard() {
                     )}
 
                     {/* Orders Pagination */}
-                    <RTLPagination
+                    <SimplePagination
                       currentPage={ordersResponse?.page || 1}
                       totalPages={ordersResponse?.totalPages || 1}
                       total={ordersResponse?.total || 0}
