@@ -178,6 +178,30 @@ button:focus,
     text-align: right !important;
     direction: rtl !important;
   }
+
+  /* Users table RTL cell alignment */
+  [dir="rtl"] .users-table th,
+  [dir="rtl"] .users-table td {
+    text-align: right !important;
+  }
+
+  [dir="rtl"] .users-table .text-left {
+    text-align: right !important;
+  }
+
+  [dir="rtl"] .users-table .text-center {
+    text-align: center !important;
+  }
+
+  /* RTL cell specific styles */
+  [dir="rtl"] .rtl-cell {
+    text-align: right !important;
+  }
+
+  [dir="rtl"] .rtl-text {
+    text-align: right !important;
+    direction: rtl !important;
+  }
   
   [dir="rtl"] .table-container table {
     direction: rtl !important;

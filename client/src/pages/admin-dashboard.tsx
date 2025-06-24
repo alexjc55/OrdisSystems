@@ -4632,7 +4632,7 @@ export default function AdminDashboard() {
                   return filteredUsers.length > 0 ? (
                     <div className={`border border-gray-100 rounded-lg bg-white overflow-hidden ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                     <div className={`overflow-x-auto table-auto-scroll ${isRTL ? 'rtl-scroll-container' : ''}`}>
-                      <Table className={`w-full ${isRTL ? 'rtl' : 'ltr'}`}>
+                      <Table className={`w-full users-table ${isRTL ? 'rtl' : 'ltr'}`}>
                         <TableHeader className="bg-gray-50/80">
                           <TableRow className="border-b border-gray-100" dir={isRTL ? 'rtl' : 'ltr'}>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.name', 'Имя')}</TableHead>
@@ -4646,13 +4646,13 @@ export default function AdminDashboard() {
                         <TableBody>
                           {filteredUsers.slice((usersPage - 1) * itemsPerPage, usersPage * itemsPerPage).map((user: any) => (
                             <TableRow key={user.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors" dir={isRTL ? 'rtl' : 'ltr'}>
-                              <TableCell className={`px-3 py-3 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                              <TableCell className="px-3 py-3 text-sm rtl-cell">
                                 <span 
                                   onClick={() => {
                                     setEditingUser(user);
                                     setIsUserFormOpen(true);
                                   }}
-                                  className={`text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block ${isRTL ? 'text-right' : 'text-left'}`}
+                                  className="text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block rtl-text"
                                 >
                                   {user.firstName && user.lastName 
                                     ? `${user.firstName} ${user.lastName}`
@@ -4660,7 +4660,7 @@ export default function AdminDashboard() {
                                   }
                                 </span>
                               </TableCell>
-                              <TableCell className={`px-3 py-3 ${isRTL ? 'text-right' : 'text-left'}`}>
+                              <TableCell className="px-3 py-3 rtl-cell">
                                 <Badge variant="outline" className={
                                   user.role === "admin" ? "border-red-200 text-red-700 bg-red-50 text-xs" :
                                   user.role === "worker" ? "border-orange-200 text-orange-700 bg-orange-50 text-xs" :
@@ -4670,11 +4670,11 @@ export default function AdminDashboard() {
                                    user.role === "worker" ? adminT('users.role.worker', 'Сотрудник') : adminT('users.role.customer', 'Клиент')}
                                 </Badge>
                               </TableCell>
-                              <TableCell className={`px-3 py-3 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                              <TableCell className="px-3 py-3 text-sm rtl-cell">
                                 {user.phone ? (
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                      <span className={`text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block ${isRTL ? 'text-right' : 'text-left'}`}>
+                                      <span className="text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block rtl-text">
                                         {user.phone}
                                       </span>
                                     </DropdownMenuTrigger>
@@ -4693,17 +4693,17 @@ export default function AdminDashboard() {
                                   <span className="text-gray-400 text-sm">—</span>
                                 )}
                               </TableCell>
-                              <TableCell className={`px-3 py-3 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                              <TableCell className="px-3 py-3 text-sm rtl-cell">
                                 <span className="text-sm text-gray-900 font-normal">
                                   {user.orderCount || 0}
                                 </span>
                               </TableCell>
-                              <TableCell className={`px-3 py-3 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                              <TableCell className="px-3 py-3 text-sm rtl-cell">
                                 <span className="text-sm text-gray-900 font-normal">
                                   {formatCurrency(user.totalOrderAmount || 0)}
                                 </span>
                               </TableCell>
-                              <TableCell className={`px-3 py-3 ${isRTL ? 'text-right' : 'text-left'}`}>
+                              <TableCell className="px-3 py-3 rtl-cell">
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" className="h-8 w-8 p-0">
