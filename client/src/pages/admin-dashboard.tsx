@@ -4574,10 +4574,10 @@ export default function AdminDashboard() {
                     <div className={isRTL ? 'text-right' : 'text-left'}>
                       <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                         <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                        {adminT('users.title')}
+                        {adminT('users.title', 'Пользователи')}
                       </CardTitle>
                       <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        {adminT('users.description')}
+                        {adminT('users.description', 'Управление пользователями системы')}
                       </CardDescription>
                     </div>
                   </div>
