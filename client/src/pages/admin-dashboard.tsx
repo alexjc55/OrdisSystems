@@ -6792,7 +6792,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
         {/* Баннер корзины */}
         <div className="space-y-6">
-          <div className={`flex items-center gap-2 pb-2 border-b ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+          <div className="flex items-center gap-2 pb-2 border-b" dir={isRTL ? 'rtl' : 'ltr'}>
             {isRTL ? (
               <>
                 <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.cartBanner')}</h3>
@@ -6980,7 +6980,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
         {/* Нижние баннеры */}
         <div className="space-y-6">
-          <div className={`flex items-center gap-2 pb-2 border-b ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+          <div className="flex items-center gap-2 pb-2 border-b" dir={isRTL ? 'rtl' : 'ltr'}>
             {isRTL ? (
               <>
                 <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.bottomBanners')}</h3>
@@ -7129,7 +7129,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
                 {isRTL ? (
                   <>
                     {isTrackingCodeOpen ? (
@@ -7213,7 +7213,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
                 {isRTL ? (
                   <>
                     {isAuthPageOpen ? (
