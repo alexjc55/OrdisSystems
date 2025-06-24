@@ -787,7 +787,9 @@ export class DatabaseStorage implements IStorage {
       conditions.push(
         or(
           like(orders.customerPhone, `%${search}%`),
-          like(orders.deliveryAddress, `%${search}%`)
+          like(orders.deliveryAddress, `%${search}%`),
+          like(orders.customerName, `%${search}%`),
+          like(orders.userId, `%${search}%`)
         )
       );
     }
