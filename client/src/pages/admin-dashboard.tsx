@@ -4586,16 +4586,23 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 {/* Users Filters and Controls */}
-                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                <div className={`flex flex-col sm:flex-row gap-4 mb-6 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
                   <div className="flex-1">
                     <Input
                       placeholder={adminT('users.searchPlaceholder', 'Поиск пользователей...')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="max-w-sm"
+                      className={`max-w-sm ${isRTL ? 'text-right' : ''}`}
                     />
                   </div>
-                  <div className="flex gap-2">
+                  <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Button 
+                      onClick={() => setIsUserFormOpen(true)}
+                      className={`bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+                    >
+                      <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                      {adminT('users.addUser', 'Добавить пользователя')}
+                    </Button>
                     <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
                       <SelectTrigger className="w-40">
                         <SelectValue placeholder={adminT('users.allRoles', 'Все роли')} />
@@ -4607,13 +4614,6 @@ export default function AdminDashboard() {
                         <SelectItem value="customer">{adminT('users.roles.customer', 'Клиент')}</SelectItem>
                       </SelectContent>
                     </Select>
-                    <Button 
-                      onClick={() => setIsUserFormOpen(true)}
-                      className="bg-orange-500 hover:bg-orange-600 text-white"
-                    >
-                      <Plus className={`h-4 w-4 ${isRTL ? 'mr-4' : 'mr-4'}`} />
-                      {adminT('users.addUser', 'Добавить пользователя')}
-                    </Button>
                   </div>
                 </div>
 
