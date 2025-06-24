@@ -787,8 +787,7 @@ export class DatabaseStorage implements IStorage {
       conditions.push(
         or(
           like(orders.customerPhone, `%${search}%`),
-          like(orders.deliveryAddress, `%${search}%`),
-          like(orders.customerName, `%${search}%`)
+          like(orders.deliveryAddress, `%${search}%`)
         )
       );
     }
@@ -815,16 +814,8 @@ export class DatabaseStorage implements IStorage {
       orderBy = desc(orders.createdAt);
     }
 
-    // Get total count
-    const [totalResult] = await db
-      .select({ count: count() })
-      .from(orders)
-      .where(whereClause);
-    
-    const total = totalResult?.count || 0;
-
-    // Get paginated data
-    const data = await db.query.orders.findMany({
+    // Get paginated data with user search filtering
+    let ordersData = await db.query.orders.findMany({
       with: {
         items: {
           with: {
@@ -835,16 +826,44 @@ export class DatabaseStorage implements IStorage {
       },
       where: whereClause,
       orderBy,
-      limit,
-      offset,
+      limit: search ? undefined : limit, // Get all if searching by user name
+      offset: search ? undefined : offset,
     });
 
+    let totalFiltered = ordersData.length;
+
+    // Additional client-side filtering for user names if search is provided
+    if (search) {
+      const searchLower = search.toLowerCase();
+      ordersData = ordersData.filter(order => 
+        order.customerPhone?.toLowerCase().includes(searchLower) ||
+        order.deliveryAddress?.toLowerCase().includes(searchLower) ||
+        order.user?.username?.toLowerCase().includes(searchLower) ||
+        order.user?.firstName?.toLowerCase().includes(searchLower) ||
+        order.user?.lastName?.toLowerCase().includes(searchLower)
+      );
+      
+      totalFiltered = ordersData.length;
+      
+      // Apply pagination after filtering
+      const startIndex = (page - 1) * limit;
+      ordersData = ordersData.slice(startIndex, startIndex + limit);
+    } else {
+      // Get total count for non-search queries
+      const [totalResult] = await db
+        .select({ count: count() })
+        .from(orders)
+        .where(whereClause);
+      
+      totalFiltered = totalResult?.count || 0;
+    }
+
     return {
-      data: data as OrderWithItems[],
-      total,
+      data: ordersData as OrderWithItems[],
+      total: totalFiltered,
       page,
       limit,
-      totalPages: Math.ceil(total / limit),
+      totalPages: Math.ceil(totalFiltered / limit),
     };
   }
 
