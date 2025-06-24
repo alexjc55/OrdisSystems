@@ -7650,19 +7650,20 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                         className="text-sm text-red-600 border-red-200 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4 mr-1" />
-                        Удалить
+                        {adminT('actions.delete', 'Удалить')}
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Удалить пользователя</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Вы уверены, что хотите удалить пользователя {user.email}? 
-                          Это действие нельзя отменить.
+                        <AlertDialogTitle className={isRTL ? 'text-right' : 'text-left'}>
+                          {adminT('users.deleteUser', 'Удалить пользователя')}?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className={isRTL ? 'text-right' : 'text-left'}>
+                          {adminT('users.dialog.deleteWarning', 'Это действие нельзя отменить. Пользователь будет безвозвратно удален.')}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Отмена</AlertDialogCancel>
+                      <AlertDialogFooter className={isRTL ? 'flex-row-reverse' : ''}>
+                        <AlertDialogCancel>{adminT('actions.cancel', 'Отмена')}</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => {
                             onDelete(user.id);
@@ -7670,7 +7671,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                           }}
                           className="bg-red-600 hover:bg-red-700"
                         >
-                          Удалить
+                          {adminT('actions.delete', 'Удалить')}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -7679,10 +7680,9 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               </div>
               <Button 
                 type="submit" 
-                variant="default"
-                size="sm"
+                className="text-sm bg-orange-500 hover:bg-orange-600 text-white"
               >
-                {user ? "Сохранить изменения" : "Создать пользователя"}
+                {user ? adminT('actions.update', 'Обновить') : adminT('users.addUser', 'Создать пользователя')}
               </Button>
             </div>
           </form>
