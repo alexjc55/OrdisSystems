@@ -4972,17 +4972,29 @@ export default function AdminDashboard() {
                 </div>
               </CardContent>
             </Card>
-            </TabsContent>
+          </TabsContent>
           )}
 
           {/* Theme Management */}
           {hasPermission("canManageSettings") && (
             <TabsContent value="themes" className="space-y-4 sm:space-y-6">
-              <ThemeManager />
+              <Card className="bg-white border border-gray-200 shadow-sm">
+                <CardContent className="p-6">
+                  <div className="space-y-6">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {adminT('themes.title', 'Theme Management')}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {adminT('themes.description', 'Customize the appearance of your store')}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
           )}
         </Tabs>
       </div>
+    </div>
 
       {/* Dialogs */}
       {isProductFormOpen && (
@@ -5075,7 +5087,7 @@ export default function AdminDashboard() {
         }}
         cancellationReasons={(storeSettings?.cancellationReasons as string[]) || ["Клиент отменил", "Товар отсутствует", "Технические проблемы", "Другое"]}
         adminT={adminT}
-      />
+        />
 
       {/* Availability Confirmation Dialog */}
       <AlertDialog open={isAvailabilityDialogOpen} onOpenChange={setIsAvailabilityDialogOpen}>
