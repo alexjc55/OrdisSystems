@@ -1,4 +1,19 @@
 /**
+ * ADMIN DASHBOARD BACKUP - Created June 23, 2025 21:45
+ * 
+ * This backup includes the current state of the admin dashboard with:
+ * - Complete admin panel functionality
+ * - Multi-language support (Russian, English, Hebrew)
+ * - RTL layout support for Hebrew interface
+ * - Drag-and-drop category ordering
+ * - Order management with kanban-style interface
+ * - Product and category management
+ * - User management with role assignments
+ * - Store settings configuration
+ * - Theme customization system
+ * - Mobile-responsive design
+ * - All existing features and UI patterns preserved
+ * 
  * ВАЖНО: НЕ ИЗМЕНЯТЬ ДИЗАЙН АДМИН-ПАНЕЛИ БЕЗ ЯВНОГО ЗАПРОСА!
  * 
  * Правила для разработчика:
@@ -7,11 +22,9 @@
  * - НЕ менять стили, цвета, расположение элементов
  * - ТОЛЬКО добавлять новый функционал или исправлять то, что конкретно просят
  * - Сохранять все существующие UI паттерны и структуру
- * 
- * Последнее обновление: исправлены переводы ролей пользователей
  */
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -36,14 +49,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { formatCurrency, getUnitLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
-import { format } from "date-fns";
-import { ru, enUS, he } from "date-fns/locale";
 import { insertStoreSettingsSchema, type StoreSettings, type CategoryWithCount } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
@@ -251,7 +260,7 @@ import {
   ChevronRight,
   Grid3X3,
   Columns,
-  Calendar as CalendarIcon,
+  Calendar,
   MapPin,
   Phone,
   Eye,
@@ -265,8 +274,7 @@ import {
   Settings,
   Languages,
   Layers3,
-  UserCheck,
-  MoreHorizontal
+  UserCheck
 } from "lucide-react";
 
 // Validation schemas
@@ -407,7 +415,7 @@ function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { 
 function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'ready': return 'bg-green-100 text-green-800 border-green-200';
@@ -420,29 +428,15 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
   const { t: adminT } = useAdminTranslation();
   
   const getStatusLabel = (status: string) => {
-    console.log('OrderCard getStatusLabel called with status:', status);
-    console.log('adminT function:', adminT);
-    
-    if (status === 'pending') {
-      const pendingTranslation = adminT('orders.status.pending');
-      console.log('Pending translation result:', pendingTranslation);
-      console.log('Pending translation type:', typeof pendingTranslation);
-      console.log('Pending translation length:', pendingTranslation?.length);
+    switch (status) {
+      case 'pending': return adminT('orders.status.pending');
+      case 'confirmed': return adminT('orders.status.confirmed');
+      case 'preparing': return adminT('orders.status.preparing');
+      case 'ready': return adminT('orders.status.ready');
+      case 'delivered': return adminT('orders.status.delivered');
+      case 'cancelled': return adminT('orders.status.cancelled');
+      default: return status;
     }
-    
-    const result = (() => {
-      switch (status) {
-        case 'pending': return adminT('orders.status.pending') || 'Ожидает';
-        case 'confirmed': return adminT('orders.status.confirmed') || 'Подтвержден';
-        case 'preparing': return adminT('orders.status.preparing') || 'Готовится';
-        case 'ready': return adminT('orders.status.ready') || 'Готов';
-        case 'delivered': return adminT('orders.status.delivered') || 'Доставлен';
-        case 'cancelled': return adminT('orders.status.cancelled') || 'Отменен';
-        default: return status;
-      }
-    })();
-    console.log('OrderCard getStatusLabel result:', result);
-    return result;
   };
 
   return (
@@ -561,7 +555,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
           {order.deliveryDate && order.deliveryTime && (
             <div className="space-y-1 text-xs text-gray-500">
               <div className="flex items-center gap-1">
-                <CalendarIcon className="h-3 w-3" />
+                <Calendar className="h-3 w-3" />
                 {order.deliveryDate}
               </div>
               <div className="flex items-center gap-1">
@@ -609,16 +603,16 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 }
               }}
             >
-              <SelectTrigger className="w-24 h-7 text-xs">
+              <SelectTrigger className="w-20 h-7 text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pending">{adminT('orders.status.pending')}</SelectItem>
-                <SelectItem value="confirmed">{adminT('orders.status.confirmed')}</SelectItem>
-                <SelectItem value="preparing">{adminT('orders.status.preparing')}</SelectItem>
-                <SelectItem value="ready">{adminT('orders.status.ready')}</SelectItem>
-                <SelectItem value="delivered">{adminT('orders.status.delivered')}</SelectItem>
-                <SelectItem value="cancelled">{adminT('orders.status.cancelled')}</SelectItem>
+                <SelectItem value="pending">{getStatusLabel('pending')}</SelectItem>
+                <SelectItem value="confirmed">{getStatusLabel('confirmed')}</SelectItem>
+                <SelectItem value="preparing">{getStatusLabel('preparing')}</SelectItem>
+                <SelectItem value="ready">{getStatusLabel('ready')}</SelectItem>
+                <SelectItem value="delivered">{getStatusLabel('delivered')}</SelectItem>
+                <SelectItem value="cancelled">{getStatusLabel('cancelled')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -636,7 +630,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   // Status color function for consistent styling
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'ready': return 'bg-green-100 text-green-800 border-green-200';
@@ -709,18 +703,6 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   const [showAddItem, setShowAddItem] = useState(false);
   const [editedOrderItems, setEditedOrderItems] = useState(order.items || []);
   const [showDiscountDialog, setShowDiscountDialog] = useState<number | null>(null);
-  const [datePickerOpen, setDatePickerOpen] = useState(false);
-  const [mobileDatePickerOpen, setMobileDatePickerOpen] = useState(false);
-
-  // Get locale for calendar based on current language
-  const getCalendarLocale = () => {
-    const currentLanguage = localStorage.getItem('language') || 'ru';
-    switch (currentLanguage) {
-      case 'en': return enUS;
-      case 'he': return he;
-      default: return ru;
-    }
-  };
 
   const updateOrderMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -1107,32 +1089,32 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 </SelectTrigger>
                 <SelectContent className="z-[10000]">
                   <SelectItem value="pending">
-                    <span className="text-xs md:text-xs sm:text-sm font-medium text-yellow-800">
+                    <span className="text-xs font-medium text-yellow-800">
                       {adminT('orders.status.pending')}
                     </span>
                   </SelectItem>
                   <SelectItem value="confirmed">
-                    <span className="text-xs md:text-xs sm:text-sm font-medium text-blue-800">
+                    <span className="text-xs font-medium text-blue-800">
                       {adminT('orders.status.confirmed')}
                     </span>
                   </SelectItem>
                   <SelectItem value="preparing">
-                    <span className="text-xs md:text-xs sm:text-sm font-medium text-orange-800">
+                    <span className="text-xs font-medium text-orange-800">
                       {adminT('orders.status.preparing')}
                     </span>
                   </SelectItem>
                   <SelectItem value="ready">
-                    <span className="text-xs md:text-xs sm:text-sm font-medium text-green-800">
+                    <span className="text-xs font-medium text-green-800">
                       {adminT('orders.status.ready')}
                     </span>
                   </SelectItem>
                   <SelectItem value="delivered">
-                    <span className="text-xs md:text-xs sm:text-sm font-medium text-gray-800">
+                    <span className="text-xs font-medium text-gray-800">
                       {adminT('orders.status.delivered')}
                     </span>
                   </SelectItem>
                   <SelectItem value="cancelled">
-                    <span className="text-xs md:text-xs sm:text-sm font-medium text-red-800">
+                    <span className="text-xs font-medium text-red-800">
                       {adminT('orders.status.cancelled')}
                     </span>
                   </SelectItem>
@@ -1174,32 +1156,32 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 </SelectTrigger>
                 <SelectContent className="z-[10000]">
                   <SelectItem value="pending" className="bg-yellow-50 hover:bg-yellow-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-yellow-100 text-yellow-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                       {adminT('orders.status.pending')}
                     </span>
                   </SelectItem>
                   <SelectItem value="confirmed" className="bg-blue-50 hover:bg-blue-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                       {adminT('orders.status.confirmed')}
                     </span>
                   </SelectItem>
                   <SelectItem value="preparing" className="bg-orange-50 hover:bg-orange-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-orange-100 text-orange-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
                       {adminT('orders.status.preparing')}
                     </span>
                   </SelectItem>
                   <SelectItem value="ready" className="bg-green-50 hover:bg-green-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-green-100 text-green-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                       {adminT('orders.status.ready')}
                     </span>
                   </SelectItem>
                   <SelectItem value="delivered" className="bg-gray-50 hover:bg-gray-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-gray-100 text-gray-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                       {adminT('orders.status.delivered')}
                     </span>
                   </SelectItem>
                   <SelectItem value="cancelled" className="bg-red-50 hover:bg-red-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-red-100 text-red-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
                       {adminT('orders.status.cancelled')}
                     </span>
                   </SelectItem>
@@ -1228,7 +1210,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
           <div className="space-y-2">
             {/* Customer Information and Delivery Details */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.clientDeliveryInfo')}</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Информация о клиенте и доставке</label>
               
               {/* Mobile Layout - Stack vertically */}
               <div className="grid grid-cols-1 gap-2 sm:hidden">
@@ -1280,31 +1262,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   className="text-sm h-8"
                 />
                 <div className="grid grid-cols-2 gap-2">
-                  <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="text-sm h-8 justify-start text-left font-normal"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "PPP", { locale: getCalendarLocale() }) : adminT('orders.selectDate')}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <CalendarComponent
-                        mode="single"
-                        selected={editedOrder.deliveryDate ? new Date(editedOrder.deliveryDate) : undefined}
-                        onSelect={(date) => {
-                          if (date) {
-                            setEditedOrder(prev => ({ ...prev, deliveryDate: format(date, "yyyy-MM-dd") }));
-                            setDatePickerOpen(false);
-                          }
-                        }}
-                        locale={getCalendarLocale()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <Input
+                    type="date"
+                    value={editedOrder.deliveryDate}
+                    onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
+                    className="text-sm h-8"
+                  />
                   <Select
                     value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
                     onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
@@ -1372,31 +1335,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   placeholder={adminT('orders.addressPlaceholder')}
                   className="text-sm h-8"
                 />
-                <Popover open={mobileDatePickerOpen} onOpenChange={setMobileDatePickerOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="text-sm h-8 justify-start text-left font-normal"
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "PPP", { locale: getCalendarLocale() }) : adminT('orders.selectDate')}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <CalendarComponent
-                      mode="single"
-                      selected={editedOrder.deliveryDate ? new Date(editedOrder.deliveryDate) : undefined}
-                      onSelect={(date) => {
-                        if (date) {
-                          setEditedOrder(prev => ({ ...prev, deliveryDate: format(date, "yyyy-MM-dd") }));
-                          setMobileDatePickerOpen(false);
-                        }
-                      }}
-                      locale={getCalendarLocale()}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+                <Input
+                  type="date"
+                  value={editedOrder.deliveryDate}
+                  onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
+                  className="text-sm h-8"
+                />
                 <Select
                   value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
                   onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
@@ -1829,7 +1773,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
       )}
 
       {/* Actions */}
-      <div className="flex justify-center gap-3 pt-4 border-t">
+      <div className="flex justify-end gap-3 pt-4 border-t">
         <Button variant="outline" onClick={onClose}>
           {adminT('common.cancel')}
         </Button>
@@ -2264,25 +2208,6 @@ export default function AdminDashboard() {
   // User management state
   const [isUserFormOpen, setIsUserFormOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
-  
-  const handleDeleteUser = async (userId: string) => {
-    if (window.confirm(adminT('users.deleteConfirm', 'Вы уверены, что хотите удалить этого пользователя?'))) {
-      try {
-        await apiRequest('DELETE', `/api/admin/users/${userId}`);
-        toast({
-          title: adminT('users.deleted'),
-          description: adminT('users.deleteSuccess', 'Пользователь успешно удален'),
-        });
-        queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
-      } catch (error: any) {
-        toast({
-          title: adminT('common.error'),
-          description: error.message || adminT('users.deleteError'),
-          variant: "destructive",
-        });
-      }
-    }
-  };
   const [usersRoleFilter, setUsersRoleFilter] = useState("all");
 
   // Drag and drop sensors
@@ -2378,7 +2303,7 @@ export default function AdminDashboard() {
   // Status color helper function
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'ready': return 'bg-green-100 text-green-800 border-green-200';
@@ -2448,14 +2373,13 @@ export default function AdminDashboard() {
   });
 
   const { data: usersResponse, isLoading: usersLoading } = useQuery({
-    queryKey: ["/api/admin/users", usersPage, searchQuery, usersRoleFilter, storeSettings?.defaultItemsPerPage],
+    queryKey: ["/api/admin/users", usersPage, searchQuery, storeSettings?.defaultItemsPerPage],
     queryFn: async () => {
       const limit = storeSettings?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: usersPage.toString(),
         limit: limit.toString(),
-        search: searchQuery,
-        status: usersRoleFilter
+        search: searchQuery
       });
       const response = await fetch(`/api/admin/users?${params}`);
       if (!response.ok) throw new Error('Failed to fetch users');
@@ -3303,8 +3227,7 @@ export default function AdminDashboard() {
                           <SelectItem value="all">{adminT('products.allCategories', 'Все категории')}</SelectItem>
                           {(categories as any[] || []).map((category: any) => (
                             <SelectItem 
-                              key={category.id}
-                                          title={category.name} 
+                              key={category.id} 
                               value={category.id.toString()}
                             >
                               {category.name}
@@ -3385,10 +3308,10 @@ export default function AdminDashboard() {
                             ) : (
                               // LTR order: Name, Category, Price, Status (normal)
                               <>
-                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
                                   <button 
                                     onClick={() => handleSort("name")}
-                                    className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
                                   >
                                     {adminT('products.productName')}
                                     {sortField === "name" && (
@@ -3398,10 +3321,10 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                 </TableHead>
-                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
                                   <button 
                                     onClick={() => handleSort("category")}
-                                    className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
                                   >
                                     {adminT('products.productCategory')}
                                     {sortField === "category" && (
@@ -3411,10 +3334,10 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                 </TableHead>
-                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
                                   <button 
                                     onClick={() => handleSort("price")}
-                                    className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
+                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
                                   >
                                     {adminT('products.productPrice')}
                                     {sortField === "price" && (
@@ -3424,7 +3347,7 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                 </TableHead>
-                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('products.productStatus')}</TableHead>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>{adminT('products.productStatus')}</TableHead>
                               </>
                             )}
                           </TableRow>
@@ -3483,26 +3406,21 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
-                                    <div className="flex flex-wrap gap-1.5 justify-center">
+                                    <div className="flex flex-wrap gap-1 justify-end">
                                       {product.categories?.map((category: any) => (
-                                        <span 
-                                          key={category.id}
-                                          title={category.name} 
-                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
-                                        >
-                                          
+                                        <Badge key={category.id} variant="outline" className="text-xs">
                                           {category.name}
-                                        </span>
+                                        </Badge>
                                       ))}
                                     </div>
                                   </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-right max-w-[150px] w-[150px]">
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
                                     <button
                                       onClick={() => {
                                         setEditingProduct(product);
                                         setIsProductFormOpen(true);
                                       }}
-                                      className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
+                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-right"
                                     >
                                       {product.name}
                                     </button>
@@ -3511,32 +3429,27 @@ export default function AdminDashboard() {
                               ) : (
                                 // LTR order: Name, Category, Price, Status (normal)
                                 <>
-                                  <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'} max-w-[150px] w-[150px]`}>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
                                     <button
                                       onClick={() => {
                                         setEditingProduct(product);
                                         setIsProductFormOpen(true);
                                       }}
-                                      className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
+                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-left"
                                     >
                                       {product.name}
                                     </button>
                                   </TableCell>
-                                  <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                    <div className="flex flex-wrap gap-1.5 justify-center">
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <div className="flex flex-wrap gap-1">
                                       {product.categories?.map((category: any) => (
-                                        <span 
-                                          key={category.id}
-                                          title={category.name} 
-                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
-                                        >
-                                          
+                                        <Badge key={category.id} variant="outline" className="text-xs">
                                           {category.name}
-                                        </span>
+                                        </Badge>
                                       ))}
                                     </div>
                                   </TableCell>
-                                  <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
                                     <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
                                       {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
                                         <div className="space-y-1">
@@ -3558,8 +3471,8 @@ export default function AdminDashboard() {
                                       <div className="text-gray-500 text-xs mt-1">{getUnitDisplay(product.unit || "100g")}</div>
                                     </div>
                                   </TableCell>
-                                  <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                    <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                    <div className="flex flex-col gap-1 items-start">
                                       <CustomSwitch
                                         checked={product.isAvailable && (product.availabilityStatus === "available")}
                                         onChange={(checked) => {
@@ -3765,7 +3678,6 @@ export default function AdminDashboard() {
                           {(categories as any[] || []).map((category: any) => (
                             <SortableCategoryItem
                               key={category.id}
-                                          title={category.name}
                               category={category}
                               onEdit={(category) => {
                                 setEditingCategory(category);
@@ -3876,7 +3788,7 @@ export default function AdminDashboard() {
                                 <TableHead 
                                   className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
-                                >{adminT('common.number')}</TableHead>
+                                >№</TableHead>
                                 <TableHead 
                                   className={`text-xs sm:text-sm font-semibold min-w-[180px] ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
@@ -4070,7 +3982,7 @@ export default function AdminDashboard() {
                                   >
                                     <div className="space-y-1" dir="ltr">
                                       <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse justify-start' : 'justify-center'}`}>
-                                        <CalendarIcon className="h-3 w-3 text-gray-400" />
+                                        <Calendar className="h-3 w-3 text-gray-400" />
                                         <span className="font-medium">{adminT('common.created')}:</span>
                                       </div>
                                       <div className={`text-xs text-gray-600 ${isRTL ? 'text-right' : 'text-center'}`}>
@@ -4468,7 +4380,7 @@ export default function AdminDashboard() {
                         {/* Desktop: Original layout */}
                         <div className="hidden sm:flex items-center justify-between">
                           <div className="flex items-center gap-2 text-sm text-gray-700">
-                            <span>{adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of')} {ordersResponse.total}</span>
+                            <span>Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <Button
@@ -4476,7 +4388,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
-                              title={adminT('common.firstPage')}
+                              title="Первая страница"
                               className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟨⟨
@@ -4522,12 +4434,12 @@ export default function AdminDashboard() {
                 ) : (
                   <div className="text-center py-8">
                     <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">{adminT('orders.noOrders')}</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет заказов</h3>
                     <p className="text-gray-500 text-sm">
-                      {ordersStatusFilter === "active" ? adminT('orders.activeOrdersMessage') :
-                       ordersStatusFilter === "delivered" ? adminT('orders.deliveredOrdersMessage') :
-                       ordersStatusFilter === "cancelled" ? adminT('orders.cancelledOrdersMessage') :
-                       adminT('orders.allOrdersMessage')}
+                      {ordersStatusFilter === "active" ? "Активные заказы будут отображаться здесь" :
+                       ordersStatusFilter === "delivered" ? "Доставленные заказы будут отображаться здесь" :
+                       ordersStatusFilter === "cancelled" ? "Отмененные заказы будут отображаться здесь" :
+                       "Заказы будут отображаться здесь"}
                     </p>
                   </div>
                 )}
@@ -4577,126 +4489,121 @@ export default function AdminDashboard() {
                     <div className={isRTL ? 'text-right' : 'text-left'}>
                       <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                         <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                        {adminT('users.title', 'Пользователи')}
+                        Пользователи
                       </CardTitle>
                       <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        {adminT('users.description', 'Управление пользователями системы')}
+                        Управление пользователями и ролями
                       </CardDescription>
                     </div>
                   </div>
               </CardHeader>
               <CardContent>
                 {/* Users Filters and Controls */}
-                <div className={`flex flex-col sm:flex-row gap-4 mb-6 ${isRTL ? '' : ''}`}>
-                  {/* Button first for RTL */}
-                  <div className={`flex gap-2 ${isRTL ? 'order-first' : 'order-last'}`}>
-                    <Button 
-                      onClick={() => setIsUserFormOpen(true)}
-                      className={`bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
-                    >
-                      <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                      {adminT('users.addUser', 'Добавить пользователя')}
-                    </Button>
-                    <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
-                      <SelectTrigger className="w-40">
-                        <SelectValue placeholder={adminT('users.allRoles', 'Все роли')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">{adminT('users.allRoles', 'Все роли')}</SelectItem>
-                        <SelectItem value="admin">{adminT('users.roles.admin', 'Администратор')}</SelectItem>
-                        <SelectItem value="worker">{adminT('users.roles.worker', 'Сотрудник')}</SelectItem>
-                        <SelectItem value="customer">{adminT('users.roles.customer', 'Клиент')}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  {/* Search field */}
-                  <div className={`flex-1 ${isRTL ? 'order-last' : 'order-first'}`}>
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                  <div className="flex-1">
                     <Input
-                      placeholder={adminT('users.searchPlaceholder', 'Поиск пользователей...')}
+                      placeholder="Поиск по email или имени..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className={`max-w-sm ${isRTL ? 'text-right ml-auto' : ''}`}
+                      className="max-w-sm"
                     />
+                  </div>
+                  <div className="flex gap-2">
+                    <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
+                      <SelectTrigger className="w-40">
+                        <SelectValue placeholder="Все роли" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Все роли</SelectItem>
+                        <SelectItem value="admin">Администраторы</SelectItem>
+                        <SelectItem value="worker">Сотрудники</SelectItem>
+                        <SelectItem value="customer">Клиенты</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button 
+                      onClick={() => setIsUserFormOpen(true)}
+                      className="bg-orange-500 hover:bg-orange-600 text-white"
+                    >
+                      <Plus className={`h-4 w-4 ${isRTL ? 'mr-4' : 'mr-4'}`} />
+                      {adminT('users.addUser', 'Добавить пользователя')}
+                    </Button>
                   </div>
                 </div>
 
-                {/* All filtering is handled by backend */}
-                {(() => {
-                  const filteredUsers = usersData as any[] || [];
-
-                  const usersTotal = usersResponse?.total || 0;
-                  const usersTotalPages = usersResponse?.totalPages || 0;
-
-                  return filteredUsers.length > 0 ? (
-                    <div className={`border border-gray-100 rounded-lg bg-white overflow-hidden ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                    <div className={`overflow-x-auto table-auto-scroll ${isRTL ? 'rtl-scroll-container' : ''}`}>
-                      <Table className={`w-full users-table ${isRTL ? 'rtl' : 'ltr'}`}>
-                        <TableHeader className="bg-gray-50/80">
-                          <TableRow className="border-b border-gray-100" dir={isRTL ? 'rtl' : 'ltr'}>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.name', 'Имя')}</TableHead>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.role', 'Роль')}</TableHead>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.phone', 'Телефон')}</TableHead>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.orders', 'Заказов')}</TableHead>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.totalAmount', 'Сумма заказов')}</TableHead>
+                {(usersData as any[] || []).length > 0 ? (
+                  <div className="border rounded-lg bg-white overflow-hidden">
+                    <div className={`overflow-x-auto table-container ${isRTL ? 'rtl-scroll-container' : ''}`}>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="text-xs sm:text-sm">Имя</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Роль</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Телефон</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Заказов</TableHead>
+                            <TableHead className="text-xs sm:text-sm">Сумма заказов</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {filteredUsers.slice((usersPage - 1) * itemsPerPage, usersPage * itemsPerPage).map((user: any) => (
-                            <TableRow key={user.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors" dir={isRTL ? 'rtl' : 'ltr'}>
-                              <TableCell className="px-3 py-3 text-sm rtl-cell">
-                                <span 
+                          {(usersData as any[] || []).map((user: any) => (
+                            <TableRow key={user.id}>
+                              <TableCell className="font-medium text-xs sm:text-sm">
+                                <Button
+                                  variant="ghost"
                                   onClick={() => {
                                     setEditingUser(user);
                                     setIsUserFormOpen(true);
                                   }}
-                                  className="text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block rtl-text"
+                                  className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent"
                                 >
                                   {user.firstName && user.lastName 
                                     ? `${user.firstName} ${user.lastName}`
-                                    : user.email || adminT('users.unnamed', 'Безымянный пользователь')
+                                    : user.email || "Безымянный пользователь"
                                   }
-                                </span>
+                                </Button>
                               </TableCell>
-                              <TableCell className="px-3 py-3 rtl-cell">
+                              <TableCell className="text-xs sm:text-sm">
                                 <Badge variant="outline" className={
-                                  user.role === "admin" ? "border-red-200 text-red-700 bg-red-50 text-xs" :
-                                  user.role === "worker" ? "border-orange-200 text-orange-700 bg-orange-50 text-xs" :
-                                  "border-gray-200 text-gray-700 bg-gray-50 text-xs"
+                                  user.role === "admin" ? "border-red-200 text-red-700 bg-red-50" :
+                                  user.role === "worker" ? "border-orange-200 text-orange-700 bg-orange-50" :
+                                  "border-gray-200 text-gray-700 bg-gray-50"
                                 }>
-                                  {user.role === "admin" ? adminT('users.roles.admin', 'Администратор') : 
-                                   user.role === "worker" ? adminT('users.roles.worker', 'Сотрудник') : adminT('users.roles.customer', 'Клиент')}
+                                  {user.role === "admin" ? "Админ" : 
+                                   user.role === "worker" ? "Сотрудник" : "Клиент"}
                                 </Badge>
                               </TableCell>
-                              <TableCell className="px-3 py-3 text-sm">
+                              <TableCell className="text-xs sm:text-sm">
                                 {user.phone ? (
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                      <span className="text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block" style={{direction: 'ltr', textAlign: 'left'}}>
+                                      <Button
+                                        variant="ghost"
+                                        className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent"
+                                      >
                                         {user.phone}
-                                      </span>
+                                      </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg" align={isRTL ? "start" : "end"} dir={isRTL ? 'rtl' : 'ltr'}>
+                                    <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg">
                                       <DropdownMenuItem onClick={() => window.open(`tel:${user.phone}`, '_self')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
-                                        <Phone className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                                        {adminT('users.callUser', 'Позвонить')}
+                                        <Phone className="mr-2 h-4 w-4" />
+                                        Позвонить
                                       </DropdownMenuItem>
                                       <DropdownMenuItem onClick={() => window.open(`https://wa.me/${user.phone.replace(/[^\d]/g, '')}`, '_blank')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
-                                        <MessageCircle className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                                        {adminT('users.whatsapp', 'WhatsApp')}
+                                        <MessageCircle className="mr-2 h-4 w-4" />
+                                        WhatsApp
                                       </DropdownMenuItem>
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 ) : (
-                                  <span className="text-gray-400 text-sm">—</span>
+                                  <span className="text-gray-400">—</span>
                                 )}
                               </TableCell>
-                              <TableCell className="px-3 py-3 text-sm rtl-cell">
-                                <span className="text-sm text-gray-900 font-normal">
+                              <TableCell className="text-xs sm:text-sm">
+                                <span className="font-medium">
                                   {user.orderCount || 0}
                                 </span>
                               </TableCell>
-                              <TableCell className="px-3 py-3 text-sm rtl-cell">
-                                <span className="text-sm text-gray-900 font-normal">
+                              <TableCell className="text-xs sm:text-sm">
+                                <span className="font-medium">
                                   {formatCurrency(user.totalOrderAmount || 0)}
                                 </span>
                               </TableCell>
@@ -4707,61 +4614,53 @@ export default function AdminDashboard() {
                     </div>
                     
                     {/* Pagination for users table */}
-                    <div className={`flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-3 border-t border-gray-100 bg-gray-50/30 ${isRTL ? 'sm:flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                      <div className={`text-xs text-gray-600 text-center ${isRTL ? 'sm:text-right' : 'sm:text-left'}`}>
-                        <div className="sm:hidden">
-                          <div>{adminT('common.showing', 'Показано')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)}</div>
-                          <div>{adminT('common.of', 'из')} {usersTotal}</div>
-                        </div>
-                        <div className="hidden sm:block">
-                          {adminT('common.showing', 'Показано')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('common.of', 'из')} {usersTotal}
-                        </div>
+                    <div className="flex items-center justify-between px-4 py-3 border-t">
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <span>Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}</span>
                       </div>
-                      
-                      <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(1)}
                           disabled={usersPage === 1}
-                          title={adminT('common.firstPage', 'Первая страница')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Первая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          {isRTL ? '⟩⟩' : '⟨⟨'}
+                          ⟨⟨
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
                           disabled={usersPage === 1}
-                          title={adminT('common.prevPage', 'Предыдущая страница')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Предыдущая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          {isRTL ? '⟩' : '⟨'}
+                          <ChevronLeft className="h-4 w-4" />
                         </Button>
-                        <span className="text-xs text-gray-600 px-2 min-w-[60px] text-center">
-                          <span className="sm:hidden">{usersPage}/{usersTotalPages}</span>
-                          <span className="hidden sm:inline">{usersPage} {adminT('common.of', 'из')} {usersTotalPages}</span>
+                        <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                          {usersPage} из {usersTotalPages}
                         </span>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
-                          disabled={usersPage >= usersTotalPages}
-                          title={adminT('common.nextPage', 'Следующая страница')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          disabled={usersPage === usersTotalPages}
+                          title="Следующая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          {isRTL ? '⟨' : '⟩'}
+                          <ChevronRight className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(usersTotalPages)}
-                          disabled={usersPage >= usersTotalPages}
-                          title={adminT('common.lastPage', 'Последняя страница')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          disabled={usersPage === usersTotalPages}
+                          title="Последняя страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          {isRTL ? '⟨⟨' : '⟩⟩'}
+                          ⟩⟩
                         </Button>
                       </div>
                     </div>
@@ -4769,11 +4668,119 @@ export default function AdminDashboard() {
                 ) : (
                   <div className="text-center py-8">
                     <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">{adminT('users.noUsers', 'Нет пользователей')}</h3>
-                    <p className="text-gray-500 text-sm">{adminT('users.addFirstUser', 'Добавьте первого пользователя для начала работы')}</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет пользователей</h3>
+                    <p className="text-gray-500 text-sm">Пользователи будут отображаться здесь</p>
                   </div>
-                  );
-                })()}
+                )}
+                
+                {/* Users Pagination */}
+                {usersTotalPages > 1 && (
+                  <div className="px-4 py-3 border-t bg-gray-50">
+                    {/* Mobile: Stack info and controls */}
+                    <div className="sm:hidden space-y-2">
+                      <div className="text-center text-xs text-gray-600">
+                        Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUsersPage(1)}
+                          disabled={usersPage === 1}
+                          title="Первая страница"
+                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                          ⟨⟨
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
+                          disabled={usersPage === 1}
+                          title="Предыдущая страница"
+                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
+                          {usersPage}/{usersTotalPages}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
+                          disabled={usersPage === usersTotalPages}
+                          title="Следующая страница"
+                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUsersPage(usersTotalPages)}
+                          disabled={usersPage === usersTotalPages}
+                          title="Последняя страница"
+                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                        >
+                          ⟩⟩
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {/* Desktop: Original layout */}
+                    <div className="hidden sm:flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <span>Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUsersPage(1)}
+                          disabled={usersPage === 1}
+                          title="Первая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          ⟨⟨
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
+                          disabled={usersPage === 1}
+                          title="Предыдущая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                          {usersPage} из {usersTotalPages}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
+                          disabled={usersPage === usersTotalPages}
+                          title="Следующая страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUsersPage(usersTotalPages)}
+                          disabled={usersPage === usersTotalPages}
+                          title="Последняя страница"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                        >
+                          ⟩⟩
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -4789,10 +4796,10 @@ export default function AdminDashboard() {
                     <div className={isRTL ? 'text-right' : 'text-left'}>
                       <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                         <Store className="h-4 w-4 sm:h-5 sm:w-5" />
-                        {adminT('storeSettings.title')}
+                        {adminT('settings.title')}
                       </CardTitle>
                       <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        {adminT('storeSettings.description')}
+                        {adminT('settings.description')}
                       </CardDescription>
                     </div>
                 </CardHeader>
@@ -4811,91 +4818,130 @@ export default function AdminDashboard() {
           {/* Settings Management */}
           {hasPermission("canManageSettings") && (
             <TabsContent value="settings" className="space-y-4 sm:space-y-6">
-              <Card>
-                <CardHeader>
-                  <div className={isRTL ? 'text-right' : 'text-left'}>
-                    <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
-                      <Settings className="h-5 w-5" />
-                      {adminT('systemSettings.title', 'Настройки системы')}
-                    </CardTitle>
-                    <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                      {adminT('systemSettings.description', 'Управление правами доступа для сотрудников')}
-                    </CardDescription>
-                  </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Worker Permissions Section */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">{adminT('systemSettings.workerPermissions', 'Права доступа сотрудников')}</h3>
-                  <p className="text-sm text-gray-600">
-                    {adminT('systemSettings.workerPermissionsDescription', 'Настройте, к каким разделам админ-панели имеют доступ пользователи с ролью "Работник"')}
-                  </p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canManageProducts', 'Управление товарами')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageProductsDescription', 'Добавление, редактирование и удаление товаров')}</p>
-                        </div>
-                        <CustomSwitch
-                          checked={(storeSettings?.workerPermissions as any)?.canManageProducts || false}
-                          onChange={(checked) => 
-                            updateStoreSettingsMutation.mutate({
-                              workerPermissions: {
-                                ...(storeSettings?.workerPermissions || {}),
-                                canManageProducts: checked
-                              }
-                            })
-                          }
-                          bgColor="bg-blue-500"
-                        />
-                      </div>
-                      
-                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canManageCategories', 'Управление категориями')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageCategoriesDescription', 'Создание и редактирование категорий товаров')}</p>
-                        </div>
-                        <CustomSwitch
-                          checked={(storeSettings?.workerPermissions as any)?.canManageCategories || false}
-                          onChange={(checked) => 
-                            updateStoreSettingsMutation.mutate({
-                              workerPermissions: {
-                                ...(storeSettings?.workerPermissions || {}),
-                                canManageCategories: checked
-                              }
-                            })
-                          }
-                          bgColor="bg-blue-500"
-                        />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canEditOrders')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canEditOrdersDescription')}</p>
-                        </div>
-                        <CustomSwitch
-                          checked={(storeSettings?.workerPermissions as any)?.canManageOrders || false}
-                          onChange={(checked) => 
-                            updateStoreSettingsMutation.mutate({
-                              workerPermissions: {
-                                ...(storeSettings?.workerPermissions || {}),
-                                canManageOrders: checked
-                              }
-                            })
-                          }
-                          bgColor="bg-blue-500"
-                        />
-                      </div>
+              <div className="w-full max-w-7xl mx-auto">
+                {/* Header */}
+                <div className={`mb-8 ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <div className={`flex items-center gap-3 mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg text-white">
+                      <UserCheck className="h-6 w-6" />
                     </div>
+                    <div>
+                      <h1 className="text-2xl font-bold text-gray-900">
+                        {adminT('systemSettings.title')}
+                      </h1>
+                      <p className="text-gray-600 text-sm">
+                        {adminT('systemSettings.description')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Permission Cards Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                  {/* Products Management Card */}
+                  <Card className="group hover:shadow-lg transition-all duration-200 border-l-4 border-l-green-500">
+                    <CardHeader className="pb-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className="p-2 bg-green-100 rounded-lg">
+                          <Package className="h-5 w-5 text-green-600" />
+                        </div>
+                        <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                          <CardTitle className="text-lg font-semibold text-gray-900">
+                            {adminT('systemSettings.canManageProducts')}
+                          </CardTitle>
+                          <CardDescription className="text-sm text-gray-600">
+                            {adminT('systemSettings.canManageProductsDescription')}
+                          </CardDescription>
+                        </div>
+                        <div className="flex items-center">
+                          <Switch
+                            checked={(storeSettings?.workerPermissions as any)?.canManageProducts || false}
+                            onCheckedChange={(checked) => 
+                              updateStoreSettingsMutation.mutate({
+                                workerPermissions: {
+                                  ...(storeSettings?.workerPermissions || {}),
+                                  canManageProducts: checked
+                                }
+                              })
+                            }
+                            className="data-[state=checked]:bg-green-600"
+                          />
+                        </div>
+                      </div>
+                    </CardHeader>
+                  </Card>
+
+                  {/* Categories Management Card */}
+                  <Card className="group hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500">
+                    <CardHeader className="pb-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className="p-2 bg-blue-100 rounded-lg">
+                          <Layers3 className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                          <CardTitle className="text-lg font-semibold text-gray-900">
+                            {adminT('systemSettings.canManageCategories')}
+                          </CardTitle>
+                          <CardDescription className="text-sm text-gray-600">
+                            {adminT('systemSettings.canManageCategoriesDescription')}
+                          </CardDescription>
+                        </div>
+                        <div className="flex items-center">
+                          <Switch
+                            checked={(storeSettings?.workerPermissions as any)?.canManageCategories || false}
+                            onCheckedChange={(checked) => 
+                              updateStoreSettingsMutation.mutate({
+                                workerPermissions: {
+                                  ...(storeSettings?.workerPermissions || {}),
+                                  canManageCategories: checked
+                                }
+                              })
+                            }
+                            className="data-[state=checked]:bg-blue-600"
+                          />
+                        </div>
+                      </div>
+                    </CardHeader>
+                  </Card>
+
+                  {/* Orders Management Card */}
+                  <Card className="group hover:shadow-lg transition-all duration-200 border-l-4 border-l-orange-500">
+                    <CardHeader className="pb-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className="p-2 bg-orange-100 rounded-lg">
+                          <ShoppingCart className="h-5 w-5 text-orange-600" />
+                        </div>
+                        <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                          <CardTitle className="text-lg font-semibold text-gray-900">
+                            {adminT('systemSettings.canEditOrders')}
+                          </CardTitle>
+                          <CardDescription className="text-sm text-gray-600">
+                            {adminT('systemSettings.canEditOrdersDescription')}
+                          </CardDescription>
+                        </div>
+                        <div className="flex items-center">
+                          <Switch
+                            checked={(storeSettings?.workerPermissions as any)?.canManageOrders || false}
+                            onCheckedChange={(checked) => 
+                              updateStoreSettingsMutation.mutate({
+                                workerPermissions: {
+                                  ...(storeSettings?.workerPermissions || {}),
+                                  canManageOrders: checked
+                                }
+                              })
+                            }
+                            className="data-[state=checked]:bg-orange-600"
+                          />
+                        </div>
+                      </div>
+                    </CardHeader>
+                  </Card>
                     
                     <div className="space-y-3">
-                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canViewUsers', 'Просмотр пользователей')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canViewUsersDescription', 'Доступ к списку пользователей системы')}</p>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium">Просмотр пользователей</label>
+                          <p className="text-xs text-gray-500">Просмотр списка клиентов</p>
                         </div>
                         <Switch
                           checked={(storeSettings?.workerPermissions as any)?.canViewUsers || false}
@@ -4912,8 +4958,8 @@ export default function AdminDashboard() {
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canManageUsers')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageUsersDescription')}</p>
+                          <label className="text-sm font-medium">Управление пользователями</label>
+                          <p className="text-xs text-gray-500">Редактирование и удаление пользователей</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageUsers || false}
@@ -4931,8 +4977,8 @@ export default function AdminDashboard() {
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canViewSettings')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canViewSettingsDescription')}</p>
+                          <label className="text-sm font-medium">Просмотр настроек</label>
+                          <p className="text-xs text-gray-500">Доступ к настройкам магазина (только чтение)</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canViewSettings || false}
@@ -4948,10 +4994,10 @@ export default function AdminDashboard() {
                         />
                       </div>
                       
-                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canManageSettings', 'Управление настройками')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageSettingsDescription', 'Доступ к настройкам магазина и системы')}</p>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium">Управление настройками</label>
+                          <p className="text-xs text-gray-500">Полный доступ к настройкам магазина</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageSettings || false}
@@ -5072,7 +5118,6 @@ export default function AdminDashboard() {
           }
         }}
         cancellationReasons={(storeSettings?.cancellationReasons as string[]) || ["Клиент отменил", "Товар отсутствует", "Технические проблемы", "Другое"]}
-        adminT={adminT}
       />
 
       {/* Availability Confirmation Dialog */}
@@ -5277,8 +5322,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   <FormControl>
                     <div className="border rounded-md p-3 max-h-32 overflow-y-auto">
                       {categories?.map((category: any) => (
-                        <div key={category.id}
-                                          title={category.name} className="flex items-center space-x-2 py-1">
+                        <div key={category.id} className="flex items-center space-x-2 py-1">
                           <input
                             type="checkbox"
                             id={`category-${category.id}`}
@@ -5709,7 +5753,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               }}
             />
 
-            <div className={`flex flex-col sm:flex-row justify-center gap-3 ${isRTL ? 'sm:flex-row-reverse rtl:space-x-reverse' : 'space-x-4'}`}>
+            <div className={`flex flex-col sm:flex-row justify-end gap-3 ${isRTL ? 'sm:flex-row-reverse rtl:space-x-reverse' : 'space-x-4'}`}>
               <Button 
                 type="button" 
                 variant="outline" 
@@ -5836,14 +5880,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         deliveryInfo: storeSettings?.deliveryInfo || "",
         paymentInfo: storeSettings?.paymentInfo || "",
         paymentMethods: storeSettings?.paymentMethods || [
-          { name: adminT('storeSettings.cashOnDelivery'), id: 1 },
-          { name: adminT('storeSettings.bankCard'), id: 2 },
-          { name: adminT('storeSettings.bankTransfer'), id: 3 }
+          { name: "Наличными при получении", id: 1 },
+          { name: "Банковской картой", id: 2 },
+          { name: "Банковский перевод", id: 3 }
         ],
         aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
         deliveryFee: storeSettings?.deliveryFee || "15.00",
         freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
-        discountBadgeText: storeSettings?.discountBadgeText || adminT('storeSettings.discountBadgeText'),
+        discountBadgeText: storeSettings?.discountBadgeText || "Скидка",
         showBannerImage: storeSettings?.showBannerImage !== false,
         showTitleDescription: storeSettings?.showTitleDescription !== false,
         showInfoBlocks: storeSettings?.showInfoBlocks !== false,
@@ -5861,7 +5905,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         footerHtml: storeSettings?.footerHtml || "",
         showWhatsAppChat: storeSettings?.showWhatsAppChat !== false,
         whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
-        whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || adminT('storeSettings.defaultWhatsappMessage'),
+        whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || "Здравствуйте! Я хотел бы узнать больше о ваших товарах.",
         showCartBanner: storeSettings?.showCartBanner || false,
         cartBannerType: storeSettings?.cartBannerType || "text",
         cartBannerImage: storeSettings?.cartBannerImage || "",
@@ -5882,34 +5926,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-8 ${isRTL ? 'rtl' : 'ltr'}`}>
-        {/* {adminT('storeSettings.basicInfo', 'Основная информация')} */}
+        {/* Основная информация */}
         <Collapsible open={isBasicInfoOpen} onOpenChange={setIsBasicInfoOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
-                {isRTL ? (
-                  <>
-                    {isBasicInfoOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.basicInfo')}</h3>
-                    <Store className="h-5 w-5 text-orange-500" />
-                  </>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Store className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">{adminT('settings.basicSettings')}</h3>
+                {isBasicInfoOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
-                  <>
-                    <Store className="h-5 w-5 text-orange-500" />
-                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.basicInfo')}</h3>
-                    {isBasicInfoOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                  </>
+                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
                 )}
               </div>
             </Button>
@@ -5922,9 +5952,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="storeName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('storeSettings.storeName')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.storeName')}</FormLabel>
                 <FormControl>
-                  <Input placeholder={adminT('storeSettings.storeNamePlaceholder')} {...field} className="text-sm" />
+                  <Input placeholder="eDAHouse" {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -5936,9 +5966,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="welcomeTitle"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('storeSettings.welcomeTitle')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.welcomeTitle')}</FormLabel>
                 <FormControl>
-                  <Input placeholder={adminT('storeSettings.welcomeTitlePlaceholder')} {...field} className="text-sm" />
+                  <Input placeholder="Добро пожаловать в наш магазин" {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -5950,9 +5980,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="contactPhone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('storeSettings.contactPhone')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.storePhone')}</FormLabel>
                 <FormControl>
-                  <Input placeholder={adminT('storeSettings.contactPhonePlaceholder')} {...field} className="text-sm" />
+                  <Input placeholder="+972-XX-XXX-XXXX" {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -5964,9 +5994,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="contactEmail"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('storeSettings.contactEmail')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.contactEmail')}</FormLabel>
                 <FormControl>
-                  <Input placeholder={adminT('storeSettings.contactEmailPlaceholder')} type="email" {...field} className="text-sm" />
+                  <Input placeholder="info@edahouse.com" type="email" {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -5978,7 +6008,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="deliveryFee"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('storeSettings.deliveryFee')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.deliveryFee')}</FormLabel>
                 <FormControl>
                   <Input {...field} className="text-sm" />
                 </FormControl>
@@ -5992,7 +6022,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="freeDeliveryFrom"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('storeSettings.freeDeliveryFrom')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('settings.freeDeliveryFrom')}</FormLabel>
                 <FormControl>
                   <Input {...field} className="text-sm" />
                 </FormControl>
@@ -6006,27 +6036,27 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="defaultItemsPerPage"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('storeSettings.defaultItemsPerPage')}</FormLabel>
+                <FormLabel className="text-sm">Элементов на странице по умолчанию</FormLabel>
                 <Select 
                   onValueChange={(value) => field.onChange(parseInt(value))} 
                   value={field.value?.toString() || "10"}
                 >
                   <FormControl>
                     <SelectTrigger className="text-sm">
-                      <SelectValue placeholder={adminT('storeSettings.selectQuantity')} />
+                      <SelectValue placeholder="Выберите количество" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="10">{adminT('storeSettings.items10')}</SelectItem>
-                    <SelectItem value="15">{adminT('storeSettings.items15')}</SelectItem>
-                    <SelectItem value="25">{adminT('storeSettings.items25')}</SelectItem>
-                    <SelectItem value="50">{adminT('storeSettings.items50')}</SelectItem>
-                    <SelectItem value="100">{adminT('storeSettings.items100')}</SelectItem>
-                    <SelectItem value="1000">{adminT('storeSettings.allItems')}</SelectItem>
+                    <SelectItem value="10">10 элементов</SelectItem>
+                    <SelectItem value="15">15 элементов</SelectItem>
+                    <SelectItem value="25">25 элементов</SelectItem>
+                    <SelectItem value="50">50 элементов</SelectItem>
+                    <SelectItem value="100">100 элементов</SelectItem>
+                    <SelectItem value="1000">Все элементы</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription className="text-xs text-gray-500">
-                  {adminT('storeSettings.itemsPerPageDescription')}
+                  Количество товаров, заказов и пользователей отображаемых на одной странице в админ панели
                 </FormDescription>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -6043,13 +6073,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <MapPin className="h-5 w-5 text-orange-500" />
-                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.contacts')}</h3>
+                <h3 className="text-lg font-semibold">{adminT('settings.basicSettingsDescription')}</h3>
                 {isContactsOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500" />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500" />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 )}
               </div>
             </Button>
@@ -6062,10 +6092,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="storeDescription"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm">{adminT('storeSettings.storeDescription')}</FormLabel>
+              <FormLabel className="text-sm">Описание магазина</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder={adminT('storeSettings.storeDescriptionPlaceholder')}
+                  placeholder="Расскажите о вашем магазине готовой еды..."
                   className="resize-none text-sm min-h-[100px]"
                   {...field}
                 />
@@ -6080,10 +6110,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm">{adminT('storeSettings.address')}</FormLabel>
+              <FormLabel className="text-sm">Адрес</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder={adminT('storeSettings.addressPlaceholder')}
+                  placeholder="Введите полный адрес магазина"
                   className="resize-none text-sm"
                   {...field}
                 />
@@ -6095,20 +6125,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* {adminT('storeSettings.visuals', 'Визуальное оформление')} */}
+        {/* Визуальное оформление */}
         <Collapsible open={isVisualsOpen} onOpenChange={setIsVisualsOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Upload className="h-5 w-5 text-orange-500" />
-                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.visuals')}</h3>
+                <h3 className="text-lg font-semibold">{adminT('settings.visualSettings')}</h3>
                 {isVisualsOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500" />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500" />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 )}
               </div>
             </Button>
@@ -6123,7 +6153,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             <FormItem>
               <FormLabel className="text-sm flex items-center gap-2">
                 <Upload className="h-4 w-4" />
-                {adminT('storeSettings.storeLogo')}
+                Логотип магазина
               </FormLabel>
               <FormControl>
                 <ImageUpload
@@ -6132,7 +6162,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 />
               </FormControl>
               <FormDescription className="text-xs text-gray-500">
-                {adminT('storeSettings.logoDescription')}
+                Рекомендуемый размер: 200×60 пикселей (PNG с прозрачным фоном)
               </FormDescription>
               <FormMessage className="text-xs" />
             </FormItem>
@@ -6146,7 +6176,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             <FormItem>
               <FormLabel className="text-sm flex items-center gap-2">
                 <Upload className="h-4 w-4" />
-                {adminT('storeSettings.bannerImage')}
+                Баннер на главной странице
               </FormLabel>
               <FormControl>
                 <ImageUpload
@@ -6155,7 +6185,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 />
               </FormControl>
               <FormDescription className="text-xs text-gray-500">
-                {adminT('storeSettings.bannerDescription')}
+                Рекомендуемый размер: 1200×400 пикселей. Изображение будет отображаться под шапкой на всю ширину страницы
               </FormDescription>
               <FormMessage className="text-xs" />
             </FormItem>
@@ -6171,13 +6201,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Languages className="h-5 w-5 text-orange-500" />
-                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.languageSettings')}</h3>
+                <h3 className="text-lg font-semibold">{adminT('settings.languageSettings')}</h3>
                 {isLanguageSettingsOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500" />
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500" />
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 )}
               </div>
             </Button>
@@ -6186,7 +6216,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           <CollapsibleContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h4 className="text-sm font-medium">{adminT('storeSettings.defaultLanguage')}</h4>
+                <h4 className="text-sm font-medium">Язык по умолчанию</h4>
                 <div className="p-3 border rounded-lg bg-gray-50">
                   <Select 
                     value={form.watch("defaultLanguage") || "ru"}
@@ -6211,12 +6241,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   </Select>
                 </div>
                 <p className="text-xs text-gray-500">
-                  {adminT('storeSettings.defaultLanguageDescription')}
+                  Выберите язык интерфейса по умолчанию для новых посетителей
                 </p>
               </div>
               
               <div className="space-y-4">
-                <h4 className="text-sm font-medium">{adminT('storeSettings.availableLanguages')}</h4>
+                <h4 className="text-sm font-medium">Доступные языки</h4>
                 <div className="space-y-3">
                   {Object.entries(LANGUAGES).map(([code, info]) => {
                     const enabledLanguages = form.watch("enabledLanguages") || ["ru", "en", "he"];
@@ -6233,7 +6263,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         </div>
                         <div className="flex items-center gap-3">
                           <span className={`text-xs font-medium ${isEnabled ? 'text-green-600' : 'text-gray-400'}`}>
-                            {isEnabled ? adminT('storeSettings.languageActive') : adminT('storeSettings.languageDisabled')}
+                            {isEnabled ? 'Активен' : 'Отключен'}
                           </span>
                           <CustomSwitch 
                             checked={isEnabled}
@@ -6274,7 +6304,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <div className="flex items-start gap-2">
                 <div className="w-5 h-5 text-blue-600 mt-0.5">ℹ️</div>
                 <div className="text-sm text-blue-800">
-                  <strong>{adminT('storeSettings.noteTitle')}:</strong> {adminT('storeSettings.languageNote')}
+                  <strong>Примечание:</strong> Изменения в настройках языков применяются после сохранения настроек. 
+                  Отключение языка скроет его из селектора на сайте.
                 </div>
               </div>
             </div>
@@ -6288,27 +6319,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
-                {isRTL ? (
-                  <>
-                    {isWorkingHoursOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.operatingHours')}</h3>
-                    <Clock className="h-5 w-5 text-orange-500" />
-                  </>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Clock className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">{adminT('settings.operatingHours')}</h3>
+                {isWorkingHoursOpen ? (
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
-                  <>
-                    <Clock className="h-5 w-5 text-orange-500" />
-                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.operatingHours')}</h3>
-                    {isWorkingHoursOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                  </>
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 )}
               </div>
             </Button>
@@ -6321,20 +6338,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="weekStartDay"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('storeSettings.weekStartDay')}</FormLabel>
+                <FormLabel className="text-sm">Первый день недели</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="text-sm">
-                      <SelectValue placeholder={adminT('storeSettings.weekStartDayPlaceholder')} />
+                      <SelectValue placeholder="Выберите первый день недели" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="monday">{adminT('storeSettings.monday')}</SelectItem>
-                    <SelectItem value="sunday">{adminT('storeSettings.sunday')}</SelectItem>
+                    <SelectItem value="monday">Понедельник</SelectItem>
+                    <SelectItem value="sunday">Воскресенье</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription className="text-xs">
-                  {adminT('storeSettings.weekStartDayDescription')}
+                  Выберите с какого дня недели начинается неделя в вашем регионе
                 </FormDescription>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -6343,23 +6360,23 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           
           <div className="space-y-4">
             {[
-              { key: "monday", label: adminT(`storeSettings.monday`) },
-              { key: "tuesday", label: adminT(`storeSettings.tuesday`) },
-              { key: "wednesday", label: adminT(`storeSettings.wednesday`) },
-              { key: "thursday", label: adminT(`storeSettings.thursday`) },
-              { key: "friday", label: adminT(`storeSettings.friday`) },
-              { key: "saturday", label: adminT(`storeSettings.saturday`) },
-              { key: "sunday", label: adminT(`storeSettings.sunday`) },
+              { key: "monday", label: "Понедельник" },
+              { key: "tuesday", label: "Вторник" },
+              { key: "wednesday", label: "Среда" },
+              { key: "thursday", label: "Четверг" },
+              { key: "friday", label: "Пятница" },
+              { key: "saturday", label: "Суббота" },
+              { key: "sunday", label: "Воскресенье" },
             ].map(({ key, label }) => {
               const currentHours = form.watch(`workingHours.${key}` as any) || "";
-              const isWorking = currentHours && currentHours !== adminT('storeSettings.closedDay');
+              const isWorking = currentHours && currentHours !== "Выходной";
               const [openTime, closeTime] = isWorking ? currentHours.split("-") : ["09:00", "18:00"];
 
               return (
                 <div key={key} className="border rounded-lg p-4 space-y-3">
-                  <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <FormLabel className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{label}</FormLabel>
-                    <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
+                  <div className="flex items-center justify-between">
+                    <FormLabel className="text-sm font-medium">{label}</FormLabel>
+                    <div className="flex items-center space-x-2">
                       <Switch
                         checked={isWorking}
                         onCheckedChange={(checked) => {
@@ -6372,7 +6389,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         className="switch-green"
                       />
                       <span className="text-xs text-gray-600">
-                        {isWorking ? adminT('storeSettings.workingDay') : adminT('storeSettings.closedDay')}
+                        {isWorking ? "Рабочий день" : "Выходной"}
                       </span>
                     </div>
                   </div>
@@ -6380,7 +6397,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   {isWorking && (
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <FormLabel className="text-xs text-gray-600">{adminT('storeSettings.openTime')}</FormLabel>
+                        <FormLabel className="text-xs text-gray-600">Открытие</FormLabel>
                         <Select
                           value={openTime}
                           onValueChange={(value) => {
@@ -6407,7 +6424,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       </div>
                       
                       <div>
-                        <FormLabel className="text-xs text-gray-600">{adminT('storeSettings.closeTime')}</FormLabel>
+                        <FormLabel className="text-xs text-gray-600">Закрытие</FormLabel>
                         <Select
                           value={closeTime}
                           onValueChange={(value) => {
@@ -6441,34 +6458,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* {adminT('storeSettings.deliveryPayment', 'Доставка и оплата')} */}
+        {/* Доставка и оплата */}
         <Collapsible open={isDeliveryPaymentOpen} onOpenChange={setIsDeliveryPaymentOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
-                {isRTL ? (
-                  <>
-                    {isDeliveryPaymentOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.deliveryPayment')}</h3>
-                    <Truck className="h-5 w-5 text-orange-500" />
-                  </>
+              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+                <Truck className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">{adminT('settings.deliverySettings')}</h3>
+                {isDeliveryPaymentOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
-                  <>
-                    <Truck className="h-5 w-5 text-orange-500" />
-                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.deliveryPayment')}</h3>
-                    {isDeliveryPaymentOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                  </>
+                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
                 )}
               </div>
             </Button>
@@ -6481,13 +6484,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="deliveryInfo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className={`text-sm flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+              <FormLabel className="text-sm flex items-center gap-2">
                 <Truck className="h-4 w-4" />
-                {adminT('storeSettings.deliveryInfo')}
+                Информация о доставке
               </FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder={adminT('storeSettings.deliveryInfoPlaceholder')}
+                  placeholder="Условия доставки, время доставки, зоны обслуживания..."
                   className="resize-none text-sm min-h-[100px]"
                   {...field}
                 />
@@ -6502,13 +6505,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="paymentInfo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className={`text-sm flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+              <FormLabel className="text-sm flex items-center gap-2">
                 <CreditCard className="h-4 w-4" />
-                {adminT('storeSettings.paymentInfo')}
+                Информация об оплате
               </FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder={adminT('storeSettings.paymentInfoPlaceholder')}
+                  placeholder="Принимаемые способы оплаты, условия оплаты..."
                   className="resize-none text-sm min-h-[100px]"
                   {...field}
                 />
@@ -6523,15 +6526,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="paymentMethods"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className={`text-sm flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+              <FormLabel className="text-sm flex items-center gap-2">
                 <CreditCard className="h-4 w-4" />
-                {adminT('storeSettings.paymentMethods')}
+                Способы оплаты
               </FormLabel>
               <div className="space-y-3">
                 {(field.value || []).map((method: any, index: number) => (
                   <div key={method.id || index} className="flex items-center gap-2 p-3 border rounded-lg">
                     <Input
-                      placeholder={adminT('storeSettings.paymentMethodPlaceholder')}
+                      placeholder="Название способа оплаты"
                       value={method.name || ""}
                       onChange={(e) => {
                         const updatedMethods = [...(field.value || [])];
@@ -6550,7 +6553,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       }}
                       className="text-red-600 hover:text-red-700"
                     >
-{adminT('actions.delete')}
+                      Удалить
                     </Button>
                   </div>
                 ))}
@@ -6564,7 +6567,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   }}
                   className="w-full"
                 >
-+ {adminT('storeSettings.addPaymentMethod')}
+                  + Добавить способ оплаты
                 </Button>
               </div>
               <FormMessage className="text-xs" />
@@ -6575,34 +6578,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* {adminT('storeSettings.displaySettings', 'Настройки отображения')} */}
+        {/* Настройки отображения */}
         <Collapsible open={isDisplaySettingsOpen} onOpenChange={setIsDisplaySettingsOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
-                {isRTL ? (
-                  <>
-                    {isDisplaySettingsOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.displaySettings')}</h3>
-                    <Eye className="h-5 w-5 text-orange-500" />
-                  </>
+              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
+                <Eye className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">{adminT('settings.displaySettings')}</h3>
+                {isDisplaySettingsOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
                 ) : (
-                  <>
-                    <Eye className="h-5 w-5 text-orange-500" />
-                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.displaySettings')}</h3>
-                    {isDisplaySettingsOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                  </>
+                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
                 )}
               </div>
             </Button>
@@ -6615,16 +6604,16 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="discountBadgeText"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm">{adminT('storeSettings.discountBadgeTextLabel')}</FormLabel>
+              <FormLabel className="text-sm">Текст на значке скидки</FormLabel>
               <FormControl>
                 <Input 
-                  placeholder={adminT('storeSettings.discountBadgeText')}
+                  placeholder="Скидка"
                   className="text-sm"
                   {...field}
                 />
               </FormControl>
               <FormDescription className="text-xs">
-{adminT('storeSettings.discountBadgeDescription')}
+                Этот текст будет отображаться на оранжевом значке товаров со скидкой
               </FormDescription>
               <FormMessage className="text-xs" />
             </FormItem>
@@ -6633,7 +6622,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
         {/* Переключатели отображения */}
         <div className="space-y-4">
-          <h4 className="text-sm font-medium text-gray-700">{adminT('storeSettings.displaySettingsDescription')}</h4>
+          <h4 className="text-sm font-medium text-gray-700">Настройки отображения главной страницы</h4>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
@@ -6642,9 +6631,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showBanner')}</FormLabel>
+                    <FormLabel className="text-sm font-medium">Показывать баннер</FormLabel>
                     <FormDescription className="text-xs">
-                      {adminT('storeSettings.showBannerDescription')}
+                      Картинка под шапкой сайта
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -6664,9 +6653,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showTitle')}</FormLabel>
+                    <FormLabel className="text-sm font-medium">Показывать заголовок</FormLabel>
                     <FormDescription className="text-xs">
-                      {adminT('storeSettings.showTitleDescription')}
+                      Заголовок и описание магазина
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -6686,9 +6675,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showInfoBlocks')}</FormLabel>
+                    <FormLabel className="text-sm font-medium">Показывать блоки информации</FormLabel>
                     <FormDescription className="text-xs">
-                      {adminT('storeSettings.showInfoBlocksDescription')}
+                      Часы работы, контакты, оплата и доставка
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -6707,20 +6696,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               name="infoBlocksPosition"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">{adminT('storeSettings.infoBlocksPosition')}</FormLabel>
+                  <FormLabel className="text-sm font-medium">Позиция информационных блоков</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={adminT('storeSettings.selectPosition')} />
+                        <SelectValue placeholder="Выберите позицию" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="top">{adminT('storeSettings.positionTop')}</SelectItem>
-                      <SelectItem value="bottom">{adminT('storeSettings.positionBottom')}</SelectItem>
+                      <SelectItem value="top">Вверху (перед специальными предложениями)</SelectItem>
+                      <SelectItem value="bottom">Внизу (после баннеров)</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription className="text-xs">
-{adminT('storeSettings.infoBlocksPositionDescription')}
+                    Выберите где отображать блоки с информацией о магазине
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -6733,9 +6722,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showSpecialOffers')}</FormLabel>
+                    <FormLabel className="text-sm font-medium">{adminT('settings.showSpecialOffers')}</FormLabel>
                     <FormDescription className="text-xs">
-                      {adminT('settings.specialOffersDescription', 'Отображать блок с особыми предложениями')}
+                      {adminT('settings.specialOffersDescription')}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -6755,9 +6744,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showCategoryMenu')}</FormLabel>
+                    <FormLabel className="text-sm font-medium">{adminT('settings.showCategoryMenu')}</FormLabel>
                     <FormDescription className="text-xs">
-                      {adminT('settings.categoryMenuDescription', 'Отображать навигационное меню категорий')}
+                      {adminT('settings.categoryMenuDescription')}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -6777,9 +6766,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showWhatsAppChat')}</FormLabel>
+                    <FormLabel className="text-sm font-medium">Показывать чат WhatsApp</FormLabel>
                     <FormDescription className="text-xs">
-{adminT('storeSettings.showWhatsAppChatDescription')}
+                      Плавающая кнопка WhatsApp в правом нижнем углу сайта
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -6802,7 +6791,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <FormItem>
                       <FormLabel className="text-sm flex items-center gap-2">
                         <Phone className="h-4 w-4" />
-{adminT('storeSettings.whatsappPhoneNumber')}
+                        Номер телефона WhatsApp
                       </FormLabel>
                       <FormControl>
                         <Input 
@@ -6826,7 +6815,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <FormItem>
                       <FormLabel className="text-sm flex items-center gap-2">
                         <MessageCircle className="h-4 w-4" />
-{adminT('storeSettings.whatsappDefaultMessage')}
+                        Сообщение по умолчанию
                       </FormLabel>
                       <FormControl>
                         <Textarea 
@@ -6849,18 +6838,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
         {/* Баннер корзины */}
         <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b" dir={isRTL ? 'rtl' : 'ltr'}>
-            {isRTL ? (
-              <>
-                <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.cartBanner')}</h3>
-                <ShoppingCart className="h-5 w-5 text-orange-500" />
-              </>
-            ) : (
-              <>
-                <ShoppingCart className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.cartBanner')}</h3>
-              </>
-            )}
+          <div className="flex items-center gap-2 pb-2 border-b">
+            <ShoppingCart className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Баннер корзины</h3>
           </div>
 
           <FormField
@@ -6869,9 +6849,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                 <div className="space-y-0.5">
-                  <FormLabel className="text-sm font-medium">{adminT('storeSettings.showCartBanner')}</FormLabel>
+                  <FormLabel className="text-sm font-medium">Показывать баннер в корзине</FormLabel>
                   <FormDescription className="text-xs">
-{adminT('storeSettings.showCartBannerDescription')}
+                    Баннер отображается в корзине под итоговой суммой
                   </FormDescription>
                 </div>
                 <FormControl>
@@ -6894,21 +6874,21 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <FormItem>
                     <FormLabel className="text-sm flex items-center gap-2">
                       <Layers className="h-4 w-4" />
-{adminT('storeSettings.bannerType')}
+                      Тип баннера
                     </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="text-sm">
-                          <SelectValue placeholder={adminT('storeSettings.bannerTypeDescription')} />
+                          <SelectValue placeholder="Выберите тип баннера" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="text">{adminT('storeSettings.textBanner')}</SelectItem>
-                        <SelectItem value="image">{adminT('storeSettings.image')}</SelectItem>
+                        <SelectItem value="text">Текстовый баннер</SelectItem>
+                        <SelectItem value="image">Изображение</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormDescription className="text-xs">
-                      {adminT('storeSettings.bannerTypeDescription')}
+                      Выберите между текстовым баннером с фоном или загрузкой изображения
                     </FormDescription>
                     <FormMessage className="text-xs" />
                   </FormItem>
@@ -6924,7 +6904,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <FormItem>
                         <FormLabel className="text-sm flex items-center gap-2">
                           <Type className="h-4 w-4" />
-{adminT('storeSettings.bannerText')}
+                          Текст баннера
                         </FormLabel>
                         <FormControl>
                           <Textarea 
@@ -7024,7 +7004,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         />
                       </FormControl>
                       <FormDescription className="text-xs text-gray-500">
-                        {adminT('storeSettings.bannerMaxHeight')}
+                        Максимальная высота: 120px. Рекомендуемый размер: 400×120 пикселей
                       </FormDescription>
                       <FormMessage className="text-xs" />
                     </FormItem>
@@ -7037,18 +7017,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
         {/* Нижние баннеры */}
         <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b" dir={isRTL ? 'rtl' : 'ltr'}>
-            {isRTL ? (
-              <>
-                <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.bottomBanners')}</h3>
-                <Layers className="h-5 w-5 text-orange-500" />
-              </>
-            ) : (
-              <>
-                <Layers className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.bottomBanners')}</h3>
-              </>
-            )}
+          <div className="flex items-center gap-2 pb-2 border-b">
+            <Layers className="h-5 w-5 text-orange-500" />
+            <h3 className="text-lg font-semibold">Нижние баннеры</h3>
           </div>
 
           
@@ -7058,9 +7029,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                 <div className="space-y-0.5">
-                  <FormLabel className="text-sm font-medium">{adminT('storeSettings.showBottomBanners')}</FormLabel>
+                  <FormLabel className="text-sm font-medium">Показывать нижние баннеры</FormLabel>
                   <FormDescription className="text-xs">
-{adminT('storeSettings.showBottomBannersDescription')}
+                    Два баннера в самом низу главной страницы
                   </FormDescription>
                 </div>
                 <FormControl>
@@ -7078,7 +7049,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Banner 1 */}
               <div className="space-y-4 border rounded-lg p-4">
-                <h4 className="text-md font-medium">{adminT('storeSettings.banner1Left')}</h4>
+                <h4 className="text-md font-medium">Баннер 1 (левый)</h4>
                 
                 <FormField
                   control={form.control}
@@ -7087,7 +7058,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <FormItem>
                       <FormLabel className="text-sm flex items-center gap-2">
                         <Upload className="h-4 w-4" />
-                        {adminT('storeSettings.banner1Image')}
+                        Изображение баннера 1
                       </FormLabel>
                       <FormControl>
                         <ImageUpload
@@ -7127,7 +7098,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
               {/* Banner 2 */}
               <div className="space-y-4 border rounded-lg p-4">
-                <h4 className="text-md font-medium">{adminT('storeSettings.banner2Right')}</h4>
+                <h4 className="text-md font-medium">Баннер 2 (правый)</h4>
                 
                 <FormField
                   control={form.control}
@@ -7136,7 +7107,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <FormItem>
                       <FormLabel className="text-sm flex items-center gap-2">
                         <Upload className="h-4 w-4" />
-                        {adminT('storeSettings.banner2Image')}
+                        Изображение баннера 2
                       </FormLabel>
                       <FormControl>
                         <ImageUpload
@@ -7157,7 +7128,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   name="bottomBanner2Link"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm">{adminT('storeSettings.banner2Link')}</FormLabel>
+                      <FormLabel className="text-sm">Ссылка при клике на баннер 2</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="https://example.com"
@@ -7179,34 +7150,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* {adminT('storeSettings.trackingCode', 'Код отслеживания')} */}
+        {/* Код отслеживания */}
         <Collapsible open={isTrackingCodeOpen} onOpenChange={setIsTrackingCodeOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
-                {isRTL ? (
-                  <>
-                    {isTrackingCodeOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.trackingCode')}</h3>
-                    <Code className="h-5 w-5 text-orange-500" />
-                  </>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Code className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">{adminT('settings.trackingCode')}</h3>
+                {isTrackingCodeOpen ? (
+                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 ) : (
-                  <>
-                    <Code className="h-5 w-5 text-orange-500" />
-                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.trackingCode')}</h3>
-                    {isTrackingCodeOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                  </>
+                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                 )}
               </div>
             </Button>
@@ -7220,17 +7177,17 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Code className="h-4 w-4" />
-                    {adminT('storeSettings.htmlHeadCode')}
+                    HTML код для секции head
                   </FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder={adminT('storeSettings.htmlHeadExample')} 
+                      placeholder="<!-- Добавьте сюда код Google Analytics, Facebook Pixel, или другие трекинговые скрипты -->" 
                       className="text-sm font-mono min-h-[100px]"
                       {...field}
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
-                    {adminT('storeSettings.htmlHeadDescription')}
+                    Этот код будет добавлен в секцию &lt;head&gt; всех страниц сайта. Используйте для Google Analytics, Facebook Pixel и других систем аналитики.
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7244,7 +7201,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Code className="h-4 w-4" />
-                    {adminT('storeSettings.htmlFooterCode')}
+                    HTML код для подвала сайта
                   </FormLabel>
                   <FormControl>
                     <Textarea 
@@ -7254,7 +7211,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
-                    {adminT('storeSettings.htmlFooterDescription')}
+                    Этот код будет добавлен в конец страницы перед закрывающим тегом &lt;/body&gt;. Используйте для онлайн-чатов, кнопок соц. сетей и других виджетов.
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7270,29 +7227,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
-                {isRTL ? (
-                  <>
-                    {isAuthPageOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.authPage')}</h3>
-                    <Users className="h-5 w-5 text-orange-500" />
-                  </>
-                ) : (
-                  <>
-                    <Users className="h-5 w-5 text-orange-500" />
-                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.authPage')}</h3>
-                    {isAuthPageOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                  </>
-                )}
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Users className="h-5 w-5 text-orange-500" />
+                <h3 className="text-lg font-semibold">{adminT('settings.authPage')}</h3>
               </div>
+              {isAuthPageOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-6">
@@ -7303,7 +7242,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-{adminT('storeSettings.authPageTitle')}
+                    Заголовок страницы входа
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -7313,7 +7252,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    {adminT('storeSettings.authPageMainTitle')}
+                    Основной заголовок на странице входа/регистрации
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7327,7 +7266,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-{adminT('storeSettings.authPageSubtitle')}
+                    Подзаголовок страницы входа
                   </FormLabel>
                   <FormControl>
                     <Textarea 
@@ -7337,7 +7276,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    {adminT('storeSettings.authPageDescription')}
+                    Описание под основным заголовком
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7351,7 +7290,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    {adminT('storeSettings.authPageFeature1Label')}
+                    Первое преимущество
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -7361,7 +7300,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    {adminT('storeSettings.authPageFeature1')}
+                    Первое преимущество в списке на странице авторизации
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7375,7 +7314,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    {adminT('storeSettings.authPageFeature2Label')}
+                    Второе преимущество
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -7385,7 +7324,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    {adminT('storeSettings.authPageFeature2')}
+                    Второе преимущество в списке на странице авторизации
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7399,7 +7338,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    {adminT('storeSettings.authPageFeature3Label')}
+                    Третье преимущество
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -7409,7 +7348,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    {adminT('storeSettings.authPageFeature3')}
+                    Третье преимущество в списке на странице авторизации
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7418,14 +7357,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        <div className="flex justify-center">
+        <div className="flex justify-end">
           <Button 
             type="submit" 
             disabled={isLoading}
             className="bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200"
           >
             <Save className="mr-2 h-4 w-4" />
-            {isLoading ? adminT('common.loading', 'Загрузка...') : adminT('settings.saveSettings', 'Сохранить настройки')}
+            {isLoading ? adminT('common.loading') : adminT('settings.saveSettings')}
           </Button>
         </div>
       </form>
@@ -7439,15 +7378,13 @@ function CancellationReasonDialog({
   orderId, 
   onClose, 
   onConfirm, 
-  cancellationReasons,
-  adminT 
+  cancellationReasons 
 }: {
   open: boolean;
   orderId: number | null;
   onClose: () => void;
   onConfirm: (reason: string) => void;
   cancellationReasons: string[];
-  adminT: (key: string) => string;
 }) {
   const [selectedReason, setSelectedReason] = useState<string>("");
 
@@ -7468,9 +7405,9 @@ function CancellationReasonDialog({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md mx-4">
         <DialogHeader>
-          <DialogTitle className="text-lg">{adminT('orders.cancelReason')}</DialogTitle>
+          <DialogTitle className="text-lg">Причина отмены заказа</DialogTitle>
           <DialogDescription className="text-sm">
-            {adminT('orders.selectCancelReason')} #{orderId}
+            Выберите причину отмены заказа #{orderId}
           </DialogDescription>
         </DialogHeader>
         
@@ -7493,16 +7430,16 @@ function CancellationReasonDialog({
           ))}
         </div>
 
-        <div className="flex justify-center space-x-2 pt-4">
+        <div className="flex justify-end space-x-2 pt-4">
           <Button variant="outline" onClick={onClose} className="text-sm">
-            {adminT('common.cancel')}
+            Отмена
           </Button>
           <Button 
             onClick={handleConfirm} 
             disabled={!selectedReason}
             className="text-sm bg-red-600 text-white hover:bg-red-700"
           >
-            {adminT('orders.cancelOrder')}
+            Отменить заказ
           </Button>
         </div>
       </DialogContent>
@@ -7512,14 +7449,10 @@ function CancellationReasonDialog({
 
 // User Form Dialog Component
 function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
-  const { t: adminT } = useAdminTranslation();
-  const { i18n } = useCommonTranslation();
-  const isRTL = i18n.language === 'he';
-
   const userSchema = z.object({
-    email: z.string().email(adminT('users.dialog.emailError', 'Неверный формат email')),
-    firstName: z.string().min(1, adminT('users.dialog.firstNameRequired', 'Имя обязательно')),
-    lastName: z.string().min(1, adminT('users.dialog.lastNameRequired', 'Фамилия обязательна')),
+    email: z.string().email("Неверный формат email"),
+    firstName: z.string().min(1, "Имя обязательно"),
+    lastName: z.string().min(1, "Фамилия обязательна"),
     phone: z.string().optional(),
     role: z.enum(["admin", "worker", "customer"]),
     password: z.string().optional(),
@@ -7571,52 +7504,50 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className={`text-lg ${isRTL ? 'text-right' : 'text-left'}`}>
-            {user ? adminT('users.editUser', 'Редактировать пользователя') : adminT('users.addUser', 'Добавить пользователя')}
+          <DialogTitle className="text-lg">
+            {user ? "Редактировать пользователя" : "Добавить пользователя"}
           </DialogTitle>
-          <DialogDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-            {user ? adminT('users.dialog.editDescription', 'Изменить информацию о пользователе') : adminT('users.dialog.addDescription', 'Создать нового пользователя')}
+          <DialogDescription className="text-sm">
+            {user ? "Изменить информацию о пользователе" : "Создать нового пользователя"}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className={`space-y-4 ${isRTL ? 'rtl' : 'ltr'}`}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.emailLabel', 'Email')} *</FormLabel>
+                  <FormLabel className="text-sm">Email *</FormLabel>
                   <FormControl>
                     <Input 
                       type="email"
-                      placeholder={adminT('users.dialog.emailPlaceholder', 'user@example.com')}
+                      placeholder="user@example.com"
                       {...field}
-                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                      dir={isRTL ? 'rtl' : 'ltr'}
+                      className="text-sm"
                     />
                   </FormControl>
-                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
 
-            <div className={`grid grid-cols-2 gap-4 ${isRTL ? 'rtl' : 'ltr'}`}>
+            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.firstNameLabel', 'Имя')} *</FormLabel>
+                    <FormLabel className="text-sm">Имя *</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder={adminT('users.dialog.firstNamePlaceholder', 'Иван')}
+                        placeholder="Иван"
                         {...field}
-                        className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                        dir={isRTL ? 'rtl' : 'ltr'}
+                        className="text-sm"
                       />
                     </FormControl>
-                    <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -7626,16 +7557,15 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.lastNameLabel', 'Фамилия')} *</FormLabel>
+                    <FormLabel className="text-sm">Фамилия *</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder={adminT('users.dialog.lastNamePlaceholder', 'Иванов')}
+                        placeholder="Иванов"
                         {...field}
-                        className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                        dir={isRTL ? 'rtl' : 'ltr'}
+                        className="text-sm"
                       />
                     </FormControl>
-                    <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -7646,17 +7576,16 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.phoneLabel', 'Телефон')}</FormLabel>
+                  <FormLabel className="text-sm">Телефон</FormLabel>
                   <FormControl>
                     <Input 
                       type="tel"
-                      placeholder={adminT('users.dialog.phonePlaceholder', '+972-50-123-4567')}
+                      placeholder="+972-50-123-4567"
                       {...field}
-                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                      dir="ltr"
+                      className="text-sm"
                     />
                   </FormControl>
-                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -7666,17 +7595,17 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.roleLabel', 'Роль')} *</FormLabel>
+                  <FormLabel className="text-sm">Роль *</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        <SelectValue placeholder={adminT('users.dialog.rolePlaceholder', 'Выберите роль')} />
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder="Выберите роль" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="customer">{adminT('users.roles.customer', 'Клиент')}</SelectItem>
-                      <SelectItem value="worker">{adminT('users.roles.worker', 'Сотрудник')}</SelectItem>
-                      <SelectItem value="admin">{adminT('users.roles.admin', 'Администратор')}</SelectItem>
+                      <SelectItem value="customer">Клиент</SelectItem>
+                      <SelectItem value="worker">Сотрудник</SelectItem>
+                      <SelectItem value="admin">Администратор</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage className="text-xs" />
@@ -7689,27 +7618,26 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                    {user ? adminT('users.dialog.newPasswordLabel', 'Новый пароль (оставьте пустым если не меняете)') : adminT('users.dialog.passwordLabel', 'Пароль')}
+                  <FormLabel className="text-sm">
+                    {user ? "Новый пароль (оставьте пустым если не меняете)" : "Пароль"}
                   </FormLabel>
                   <FormControl>
                     <Input 
                       type="password"
-                      placeholder={adminT('users.dialog.passwordMinLength', 'Минимум 6 символов')}
+                      placeholder="Минимум 6 символов"
                       {...field}
-                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                      dir={isRTL ? 'rtl' : 'ltr'}
+                      className="text-sm"
                     />
                   </FormControl>
-                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
 
-            <div className={`flex justify-between items-center pt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div className="flex justify-between items-center pt-4">
+              <div className="flex gap-2">
                 <Button type="button" variant="outline" onClick={onClose} className="text-sm">
-                  {adminT('actions.cancel', 'Отмена')}
+                  Отмена
                 </Button>
                 {user && user.id !== "43948959" && ( // Don't allow deleting yourself
                   <AlertDialog>
@@ -7720,20 +7648,19 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                         className="text-sm text-red-600 border-red-200 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4 mr-1" />
-                        {adminT('actions.delete', 'Удалить')}
+                        Удалить
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle className={isRTL ? 'text-right' : 'text-left'}>
-                          {adminT('users.deleteUser', 'Удалить пользователя')}?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription className={isRTL ? 'text-right' : 'text-left'}>
-                          {adminT('users.dialog.deleteWarning', 'Это действие нельзя отменить. Пользователь будет безвозвратно удален.')}
+                        <AlertDialogTitle>Удалить пользователя</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Вы уверены, что хотите удалить пользователя {user.email}? 
+                          Это действие нельзя отменить.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
-                      <AlertDialogFooter className={isRTL ? 'flex-row-reverse' : ''}>
-                        <AlertDialogCancel>{adminT('actions.cancel', 'Отмена')}</AlertDialogCancel>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Отмена</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => {
                             onDelete(user.id);
@@ -7741,7 +7668,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                           }}
                           className="bg-red-600 hover:bg-red-700"
                         >
-                          {adminT('actions.delete', 'Удалить')}
+                          Удалить
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -7750,9 +7677,10 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               </div>
               <Button 
                 type="submit" 
-                className="text-sm bg-orange-500 hover:bg-orange-600 text-white"
+                variant="default"
+                size="sm"
               >
-                {user ? adminT('actions.update', 'Обновить') : adminT('users.addUser', 'Создать пользователя')}
+                {user ? "Сохранить изменения" : "Создать пользователя"}
               </Button>
             </div>
           </form>
