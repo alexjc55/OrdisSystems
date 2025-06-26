@@ -4901,8 +4901,8 @@ export default function AdminDashboard() {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Просмотр пользователей</label>
-                          <p className="text-xs text-gray-500">Просмотр списка клиентов</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canViewUsers')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canViewUsersDescription')}</p>
                         </div>
                         <Switch
                           checked={(storeSettings?.workerPermissions as any)?.canViewUsers || false}
@@ -4919,12 +4919,12 @@ export default function AdminDashboard() {
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Управление пользователями</label>
-                          <p className="text-xs text-gray-500">Редактирование и удаление пользователей</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageUsers')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageUsersDescription')}</p>
                         </div>
-                        <CustomSwitch
+                        <Switch
                           checked={(storeSettings?.workerPermissions as any)?.canManageUsers || false}
-                          onChange={(checked) => 
+                          onCheckedChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -4932,18 +4932,17 @@ export default function AdminDashboard() {
                               }
                             })
                           }
-                          bgColor="bg-blue-500"
                         />
                       </div>
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Просмотр настроек</label>
-                          <p className="text-xs text-gray-500">Доступ к настройкам магазина (только чтение)</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canViewSettings')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canViewSettingsDescription')}</p>
                         </div>
-                        <CustomSwitch
+                        <Switch
                           checked={(storeSettings?.workerPermissions as any)?.canViewSettings || false}
-                          onChange={(checked) => 
+                          onCheckedChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -4951,18 +4950,17 @@ export default function AdminDashboard() {
                               }
                             })
                           }
-                          bgColor="bg-blue-500"
                         />
                       </div>
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Управление настройками</label>
-                          <p className="text-xs text-gray-500">Полный доступ к настройкам магазина</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageSettings')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageSettingsDescription')}</p>
                         </div>
-                        <CustomSwitch
+                        <Switch
                           checked={(storeSettings?.workerPermissions as any)?.canManageSettings || false}
-                          onChange={(checked) => 
+                          onCheckedChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
@@ -4970,7 +4968,6 @@ export default function AdminDashboard() {
                               }
                             })
                           }
-                          bgColor="bg-blue-500"
                         />
                       </div>
                     </div>
