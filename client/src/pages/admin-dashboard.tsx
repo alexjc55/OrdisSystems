@@ -7086,7 +7086,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <FormItem>
                       <FormLabel className="text-sm flex items-center gap-2">
                         <Upload className="h-4 w-4" />
-                        Изображение баннера 1
+                        {adminT('storeSettings.banner1Image')}
                       </FormLabel>
                       <FormControl>
                         <ImageUpload
@@ -7135,7 +7135,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <FormItem>
                       <FormLabel className="text-sm flex items-center gap-2">
                         <Upload className="h-4 w-4" />
-                        Изображение баннера 2
+                        {adminT('storeSettings.banner2Image')}
                       </FormLabel>
                       <FormControl>
                         <ImageUpload
@@ -7156,7 +7156,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   name="bottomBanner2Link"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm">Ссылка при клике на баннер 2</FormLabel>
+                      <FormLabel className="text-sm">{adminT('storeSettings.banner2Link')}</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="https://example.com"
@@ -7223,7 +7223,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   </FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="<!-- Добавьте сюда код Google Analytics, Facebook Pixel, или другие трекинговые скрипты -->" 
+                      placeholder={adminT('storeSettings.htmlHeadExample')} 
                       className="text-sm font-mono min-h-[100px]"
                       {...field}
                     />
