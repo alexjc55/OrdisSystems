@@ -131,12 +131,6 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
-- June 26, 2025: Fixed admin dashboard data display and functionality
-  - Resolved critical JSX syntax errors and import issues in admin dashboard
-  - Restored data visualization for all admin sections (Orders, Products, Categories, Users)
-  - Fixed TypeScript type safety issues with API data handling
-  - Added proper search, filtering and display functionality for all sections
-  - Admin dashboard now shows real data from database instead of empty placeholders
 - June 26, 2025: Completed systematic elimination of hardcoded text in admin panel
   - Replaced all UI hardcoded Russian text with translation functions
   - Added comprehensive translations for admin settings sections in 3 languages
