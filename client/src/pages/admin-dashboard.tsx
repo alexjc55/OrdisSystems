@@ -6902,8 +6902,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="text">Текстовый баннер</SelectItem>
-                        <SelectItem value="image">Изображение</SelectItem>
+                        <SelectItem value="text">{adminT('storeSettings.textBanner')}</SelectItem>
+                        <SelectItem value="image">{adminT('storeSettings.image')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormDescription className="text-xs">
