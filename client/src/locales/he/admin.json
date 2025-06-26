@@ -702,6 +702,7 @@
     "cancelledOrdersMessage": "הזמנות שבוטלו יוצגו כאן",
     "allOrdersMessage": "הזמנות יוצגו כאן",
     "cancelReason": "סיבת ביטול הזמנה",
+    "selectCancelReason": "בחר סיבת ביטול",
     "number": "מס'"
   },
   "common": {

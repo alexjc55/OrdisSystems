@@ -7439,13 +7439,15 @@ function CancellationReasonDialog({
   orderId, 
   onClose, 
   onConfirm, 
-  cancellationReasons 
+  cancellationReasons,
+  adminT 
 }: {
   open: boolean;
   orderId: number | null;
   onClose: () => void;
   onConfirm: (reason: string) => void;
   cancellationReasons: string[];
+  adminT: (key: string) => string;
 }) {
   const [selectedReason, setSelectedReason] = useState<string>("");
 
@@ -7468,7 +7470,7 @@ function CancellationReasonDialog({
         <DialogHeader>
           <DialogTitle className="text-lg">{adminT('orders.cancelReason')}</DialogTitle>
           <DialogDescription className="text-sm">
-            Выберите причину отмены заказа #{orderId}
+            {adminT('orders.selectCancelReason', 'Выберите причину отмены заказа')} #{orderId}
           </DialogDescription>
         </DialogHeader>
         

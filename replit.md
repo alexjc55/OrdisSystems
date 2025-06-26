@@ -131,7 +131,12 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
-- June 23, 2025. Initial setup
+- June 26, 2025: Completed systematic elimination of hardcoded text in admin panel
+  - Replaced all UI hardcoded Russian text with translation functions
+  - Added comprehensive translations for admin settings sections in 3 languages
+  - Fixed RTL alignment issues for Hebrew interface (icons and arrows positioning)
+  - Resolved JSON syntax errors in translation files
+- June 23, 2025: Initial setup
 
 ## User Preferences
 

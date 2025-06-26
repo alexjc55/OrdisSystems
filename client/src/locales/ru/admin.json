@@ -165,6 +165,7 @@
     "cancelledOrdersMessage": "Отмененные заказы будут отображаться здесь",
     "allOrdersMessage": "Заказы будут отображаться здесь",
     "cancelReason": "Причина отмены заказа",
+    "selectCancelReason": "Выберите причину отмены заказа",
     "number": "№",
     "showCartBanner": "Показывать баннер корзины",
     "cartBannerType": "Тип баннера корзины",
