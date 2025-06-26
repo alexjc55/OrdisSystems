@@ -4810,24 +4810,11 @@ export default function AdminDashboard() {
           {/* Settings Management */}
           {hasPermission("canManageSettings") && (
             <TabsContent value="settings" className="space-y-4 sm:space-y-6">
-              <ModernAccessControl
-                accessSettings={storeSettings?.workerPermissions || {}}
-                users={usersResponse?.data || []}
-                onUpdateAccess={(data) => updateStoreSettingsMutation.mutate({
-                  workerPermissions: data
-                })}
-                onUpdateUserRole={(userId, role) => {
-                  console.log('Update user role:', userId, role);
-                }}
-                onDeleteUser={(userId) => {
-                  console.log('Delete user:', userId);
-                }}
-                isLoading={updateStoreSettingsMutation.isPending}
-              />
-              <CardContent className="space-y-6">
-                {/* Worker Permissions Section */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">{adminT('systemSettings.workerPermissions', 'Права доступа сотрудников')}</h3>
+              <Card className="bg-white border border-gray-200 shadow-sm">
+                <CardContent className="p-6 space-y-6">
+                  {/* Worker Permissions Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">{adminT('systemSettings.workerPermissions', 'Права доступа сотрудников')}</h3>
                   <p className="text-sm text-gray-600">
                     {adminT('systemSettings.workerPermissionsDescription', 'Настройте, к каким разделам админ-панели имеют доступ пользователи с ролью "Работник"')}
                   </p>
@@ -4970,9 +4957,9 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                </CardContent>
+              </Card>
+            </TabsContent>
           )}
 
           {/* Theme Management */}
@@ -4994,7 +4981,6 @@ export default function AdminDashboard() {
           )}
         </Tabs>
       </div>
-    </div>
 
       {/* Dialogs */}
       {isProductFormOpen && (
