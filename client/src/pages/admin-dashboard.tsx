@@ -101,6 +101,12 @@ export default function AdminDashboard() {
     enabled: activeTab === 'users'
   });
 
+  // Type guards for safe data access
+  const safeProducts = Array.isArray(products) ? products : [];
+  const safeCategories = Array.isArray(categories) ? categories : [];
+  const safeOrders = Array.isArray(orders) ? orders : [];
+  const safeUsers = Array.isArray(users) ? users : [];
+
   const { data: storeSettings } = useQuery({
     queryKey: ['/api/store-settings']
   });
@@ -158,15 +164,41 @@ export default function AdminDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12">
-                  <ShoppingCart className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-4 text-lg font-medium text-gray-900">
-                    {adminT('orders.empty.title', 'No orders yet')}
-                  </h3>
-                  <p className="mt-2 text-sm text-gray-500">
-                    {adminT('orders.empty.description', 'Orders will appear here when customers place them')}
-                  </p>
-                </div>
+                {safeOrders.length === 0 ? (
+                  <div className="text-center py-12">
+                    <ShoppingCart className="mx-auto h-12 w-12 text-gray-400" />
+                    <h3 className="mt-4 text-lg font-medium text-gray-900">
+                      {adminT('orders.empty.title', 'No orders yet')}
+                    </h3>
+                    <p className="mt-2 text-sm text-gray-500">
+                      {adminT('orders.empty.description', 'Orders will appear here when customers place them')}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {safeOrders.map((order: any) => (
+                      <div key={order.id} className="border rounded-lg p-4 bg-gray-50">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-medium">Заказ #{order.id}</h4>
+                            <p className="text-sm text-gray-600">
+                              Клиент: {order.customerName || 'Неизвестно'}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              Статус: <span className="capitalize">{order.status}</span>
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              Сумма: ₪{order.total}
+                            </p>
+                          </div>
+                          <Badge variant={order.status === 'pending' ? 'secondary' : 'default'}>
+                            {order.status}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -195,15 +227,86 @@ export default function AdminDashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12">
-                  <Package className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-4 text-lg font-medium text-gray-900">
-                    {adminT('products.empty.title', 'No products yet')}
-                  </h3>
-                  <p className="mt-2 text-sm text-gray-500">
-                    {adminT('products.empty.description', 'Add your first product to get started')}
-                  </p>
-                </div>
+                {safeProducts.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Package className="mx-auto h-12 w-12 text-gray-400" />
+                    <h3 className="mt-4 text-lg font-medium text-gray-900">
+                      {adminT('products.empty.title', 'No products yet')}
+                    </h3>
+                    <p className="mt-2 text-sm text-gray-500">
+                      {adminT('products.empty.description', 'Add your first product to get started')}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Search and filter controls */}
+                    <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                      <div className="flex-1">
+                        <Input
+                          placeholder={adminT('products.search', 'Поиск товаров...')}
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="w-full"
+                        />
+                      </div>
+                      <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger className="w-full sm:w-48">
+                          <SelectValue placeholder={adminT('products.filter', 'Фильтр')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Все товары</SelectItem>
+                          <SelectItem value="available">Доступные</SelectItem>
+                          <SelectItem value="unavailable">Недоступные</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Products grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {safeProducts
+                        .filter((product: any) => {
+                          const matchesSearch = searchTerm === '' || 
+                            product.name.toLowerCase().includes(searchTerm.toLowerCase());
+                          const matchesStatus = statusFilter === 'all' || 
+                            (statusFilter === 'available' && product.isAvailable) ||
+                            (statusFilter === 'unavailable' && !product.isAvailable);
+                          return matchesSearch && matchesStatus;
+                        })
+                        .map((product: any) => (
+                          <Card key={product.id} className="overflow-hidden">
+                            <CardContent className="p-4">
+                              <div className="flex justify-between items-start mb-2">
+                                <h4 className="font-medium truncate">{product.name}</h4>
+                                <Badge variant={product.isAvailable ? 'default' : 'secondary'}>
+                                  {product.isAvailable ? 'Доступен' : 'Недоступен'}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                                {product.description}
+                              </p>
+                              <div className="flex justify-between items-center">
+                                <span className="font-medium text-lg">
+                                  ₪{product.price || product.pricePerKg}
+                                </span>
+                                <div className="flex space-x-2">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => {
+                                      setEditingProduct(product);
+                                      setIsProductFormOpen(true);
+                                    }}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -232,15 +335,50 @@ export default function AdminDashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12">
-                  <BarChart3 className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-4 text-lg font-medium text-gray-900">
-                    {adminT('categories.empty.title', 'No categories yet')}
-                  </h3>
-                  <p className="mt-2 text-sm text-gray-500">
-                    {adminT('categories.empty.description', 'Create categories to organize your products')}
-                  </p>
-                </div>
+                {safeCategories.length === 0 ? (
+                  <div className="text-center py-12">
+                    <BarChart3 className="mx-auto h-12 w-12 text-gray-400" />
+                    <h3 className="mt-4 text-lg font-medium text-gray-900">
+                      {adminT('categories.empty.title', 'No categories yet')}
+                    </h3>
+                    <p className="mt-2 text-sm text-gray-500">
+                      {adminT('categories.empty.description', 'Create categories to organize your products')}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {safeCategories.map((category: any) => (
+                      <Card key={category.id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-2xl">{category.icon || '📂'}</span>
+                              <h4 className="font-medium">{category.name}</h4>
+                            </div>
+                            <div className="flex space-x-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setEditingCategory(category);
+                                  setIsCategoryFormOpen(true);
+                                }}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-2">
+                            {category.description || 'Описание отсутствует'}
+                          </p>
+                          <div className="text-sm text-gray-500">
+                            Товаров: {category.productCount || 0}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -269,15 +407,62 @@ export default function AdminDashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12">
-                  <Users className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-4 text-lg font-medium text-gray-900">
-                    {adminT('users.empty.title', 'No users to display')}
-                  </h3>
-                  <p className="mt-2 text-sm text-gray-500">
-                    {adminT('users.empty.description', 'User management features will be available here')}
-                  </p>
-                </div>
+                {safeUsers.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Users className="mx-auto h-12 w-12 text-gray-400" />
+                    <h3 className="mt-4 text-lg font-medium text-gray-900">
+                      {adminT('users.empty.title', 'No users to display')}
+                    </h3>
+                    <p className="mt-2 text-sm text-gray-500">
+                      {adminT('users.empty.description', 'User management features will be available here')}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="text-left p-2">Имя</th>
+                            <th className="text-left p-2">Email</th>
+                            <th className="text-left p-2">Роль</th>
+                            <th className="text-left p-2">Телефон</th>
+                            <th className="text-left p-2">Действия</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {safeUsers.map((user: any) => (
+                            <tr key={user.id} className="border-b hover:bg-gray-50">
+                              <td className="p-2">
+                                {user.firstName} {user.lastName}
+                              </td>
+                              <td className="p-2">{user.email}</td>
+                              <td className="p-2">
+                                <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                                  {user.role === 'admin' ? 'Администратор' : 
+                                   user.role === 'worker' ? 'Сотрудник' : 'Клиент'}
+                                </Badge>
+                              </td>
+                              <td className="p-2">{user.phone || '—'}</td>
+                              <td className="p-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    setEditingUser(user);
+                                    setIsUserFormOpen(true);
+                                  }}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
