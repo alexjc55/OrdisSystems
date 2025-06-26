@@ -4468,7 +4468,7 @@ export default function AdminDashboard() {
                         {/* Desktop: Original layout */}
                         <div className="hidden sm:flex items-center justify-between">
                           <div className="flex items-center gap-2 text-sm text-gray-700">
-                            <span>Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}</span>
+                            <span>{adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of')} {ordersResponse.total}</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <Button
@@ -7470,7 +7470,7 @@ function CancellationReasonDialog({
         <DialogHeader>
           <DialogTitle className="text-lg">{adminT('orders.cancelReason')}</DialogTitle>
           <DialogDescription className="text-sm">
-            {adminT('orders.selectCancelReason', 'Выберите причину отмены заказа')} #{orderId}
+            {adminT('orders.selectCancelReason')} #{orderId}
           </DialogDescription>
         </DialogHeader>
         
@@ -7495,14 +7495,14 @@ function CancellationReasonDialog({
 
         <div className="flex justify-center space-x-2 pt-4">
           <Button variant="outline" onClick={onClose} className="text-sm">
-            Отмена
+            {adminT('common.cancel')}
           </Button>
           <Button 
             onClick={handleConfirm} 
             disabled={!selectedReason}
             className="text-sm bg-red-600 text-white hover:bg-red-700"
           >
-            Отменить заказ
+            {adminT('orders.cancelOrder')}
           </Button>
         </div>
       </DialogContent>

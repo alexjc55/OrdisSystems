@@ -703,7 +703,12 @@
     "allOrdersMessage": "הזמנות יוצגו כאן",
     "cancelReason": "סיבת ביטול הזמנה",
     "selectCancelReason": "בחר סיבת ביטול",
-    "number": "מס'"
+    "number": "מס'",
+    "active": "פעילות",
+    "completed": "הושלמו",
+    "cancelled": "בוטלו",
+    "all": "כל ההזמנות",
+    "cancelOrder": "בטל הזמנה"
   },
   "common": {
     "showing": "מציג",

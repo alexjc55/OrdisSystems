@@ -175,7 +175,12 @@
     "allOrdersMessage": "Orders will be displayed here",
     "cancelReason": "Order Cancellation Reason",
     "selectCancelReason": "Select cancellation reason",
-    "number": "№"
+    "number": "№",
+    "active": "Active",
+    "completed": "Completed",
+    "cancelled": "Cancelled", 
+    "all": "All Orders",
+    "cancelOrder": "Cancel Order"
   },
   "systemSettings": {
     "title": "System Settings",
