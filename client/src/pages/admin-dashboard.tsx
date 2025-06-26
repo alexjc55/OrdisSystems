@@ -4984,6 +4984,8 @@ export default function AdminDashboard() {
           )}
         </Tabs>
       </div>
+    </div>
+      </div>
 
       {/* Product Form Dialog */}
       <ProductFormDialog
@@ -5117,10 +5119,7 @@ export default function AdminDashboard() {
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-          </TabsContent>
-
-        </Tabs>
-      </div>
+      </AlertDialog>
     </div>
   );
 }
