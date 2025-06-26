@@ -4818,124 +4818,85 @@ export default function AdminDashboard() {
           {/* Settings Management */}
           {hasPermission("canManageSettings") && (
             <TabsContent value="settings" className="space-y-4 sm:space-y-6">
-              <div className="w-full max-w-7xl mx-auto">
-                {/* Header */}
-                <div className={`mb-8 ${isRTL ? 'text-right' : 'text-left'}`}>
-                  <div className={`flex items-center gap-3 mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg text-white">
-                      <UserCheck className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <h1 className="text-2xl font-bold text-gray-900">
-                        {adminT('systemSettings.title')}
-                      </h1>
-                      <p className="text-gray-600 text-sm">
-                        {adminT('systemSettings.description')}
-                      </p>
-                    </div>
+              <Card>
+                <CardHeader>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                      <Settings className="h-5 w-5" />
+                      {adminT('systemSettings.title')}
+                    </CardTitle>
+                    <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {adminT('systemSettings.description')}
+                    </CardDescription>
                   </div>
-                </div>
-
-                {/* Permission Cards Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                  {/* Products Management Card */}
-                  <Card className="group hover:shadow-lg transition-all duration-200 border-l-4 border-l-green-500">
-                    <CardHeader className="pb-3">
-                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className="p-2 bg-green-100 rounded-lg">
-                          <Package className="h-5 w-5 text-green-600" />
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Worker Permissions Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">{adminT('systemSettings.workerPermissions')}</h3>
+                  <p className="text-sm text-gray-600">
+                    {adminT('systemSettings.workerPermissionsDescription')}
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageProducts')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageProductsDescription')}</p>
                         </div>
-                        <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
-                          <CardTitle className="text-lg font-semibold text-gray-900">
-                            {adminT('systemSettings.canManageProducts')}
-                          </CardTitle>
-                          <CardDescription className="text-sm text-gray-600">
-                            {adminT('systemSettings.canManageProductsDescription')}
-                          </CardDescription>
-                        </div>
-                        <div className="flex items-center">
-                          <Switch
-                            checked={(storeSettings?.workerPermissions as any)?.canManageProducts || false}
-                            onCheckedChange={(checked) => 
-                              updateStoreSettingsMutation.mutate({
-                                workerPermissions: {
-                                  ...(storeSettings?.workerPermissions || {}),
-                                  canManageProducts: checked
-                                }
-                              })
-                            }
-                            className="data-[state=checked]:bg-green-600"
-                          />
-                        </div>
+                        <CustomSwitch
+                          checked={(storeSettings?.workerPermissions as any)?.canManageProducts || false}
+                          onChange={(checked) => 
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canManageProducts: checked
+                              }
+                            })
+                          }
+                          bgColor="bg-blue-500"
+                        />
                       </div>
-                    </CardHeader>
-                  </Card>
-
-                  {/* Categories Management Card */}
-                  <Card className="group hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500">
-                    <CardHeader className="pb-3">
-                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className="p-2 bg-blue-100 rounded-lg">
-                          <Layers3 className="h-5 w-5 text-blue-600" />
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageCategories')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageCategoriesDescription')}</p>
                         </div>
-                        <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
-                          <CardTitle className="text-lg font-semibold text-gray-900">
-                            {adminT('systemSettings.canManageCategories')}
-                          </CardTitle>
-                          <CardDescription className="text-sm text-gray-600">
-                            {adminT('systemSettings.canManageCategoriesDescription')}
-                          </CardDescription>
-                        </div>
-                        <div className="flex items-center">
-                          <Switch
-                            checked={(storeSettings?.workerPermissions as any)?.canManageCategories || false}
-                            onCheckedChange={(checked) => 
-                              updateStoreSettingsMutation.mutate({
-                                workerPermissions: {
-                                  ...(storeSettings?.workerPermissions || {}),
-                                  canManageCategories: checked
-                                }
-                              })
-                            }
-                            className="data-[state=checked]:bg-blue-600"
-                          />
-                        </div>
+                        <CustomSwitch
+                          checked={(storeSettings?.workerPermissions as any)?.canManageCategories || false}
+                          onChange={(checked) => 
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canManageCategories: checked
+                              }
+                            })
+                          }
+                          bgColor="bg-blue-500"
+                        />
                       </div>
-                    </CardHeader>
-                  </Card>
-
-                  {/* Orders Management Card */}
-                  <Card className="group hover:shadow-lg transition-all duration-200 border-l-4 border-l-orange-500">
-                    <CardHeader className="pb-3">
-                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className="p-2 bg-orange-100 rounded-lg">
-                          <ShoppingCart className="h-5 w-5 text-orange-600" />
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canEditOrders')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canEditOrdersDescription')}</p>
                         </div>
-                        <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
-                          <CardTitle className="text-lg font-semibold text-gray-900">
-                            {adminT('systemSettings.canEditOrders')}
-                          </CardTitle>
-                          <CardDescription className="text-sm text-gray-600">
-                            {adminT('systemSettings.canEditOrdersDescription')}
-                          </CardDescription>
-                        </div>
-                        <div className="flex items-center">
-                          <Switch
-                            checked={(storeSettings?.workerPermissions as any)?.canManageOrders || false}
-                            onCheckedChange={(checked) => 
-                              updateStoreSettingsMutation.mutate({
-                                workerPermissions: {
-                                  ...(storeSettings?.workerPermissions || {}),
-                                  canManageOrders: checked
-                                }
-                              })
-                            }
-                            className="data-[state=checked]:bg-orange-600"
-                          />
-                        </div>
+                        <CustomSwitch
+                          checked={(storeSettings?.workerPermissions as any)?.canManageOrders || false}
+                          onChange={(checked) => 
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canManageOrders: checked
+                              }
+                            })
+                          }
+                          bgColor="bg-blue-500"
+                        />
                       </div>
-                    </CardHeader>
-                  </Card>
+                    </div>
                     
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">

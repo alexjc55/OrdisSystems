@@ -197,6 +197,8 @@
     "description": "Управление правами доступа для сотрудников",
     "workerPermissions": "Права доступа сотрудников",
     "workerPermissionsDescription": "Настройте, к каким разделам админ-панели имеют доступ пользователи с ролью \"Работник\"",
+    "canManageSettings": "Управление настройками",
+    "canManageSettingsDescription": "Полный доступ к настройкам магазина",
     "canManageProducts": "Управление товарами",
     "canManageProductsDescription": "Добавление, редактирование и удаление товаров",
     "canManageCategories": "Управление категориями",
