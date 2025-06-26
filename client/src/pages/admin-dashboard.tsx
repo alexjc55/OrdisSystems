@@ -3765,6 +3765,7 @@ export default function AdminDashboard() {
                           {(categories as any[] || []).map((category: any) => (
                             <SortableCategoryItem
                               key={category.id}
+                                          title={category.name}
                               category={category}
                               onEdit={(category) => {
                                 setEditingCategory(category);
@@ -4674,7 +4675,7 @@ export default function AdminDashboard() {
                                         {user.phone}
                                       </span>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg" align={isRTL ? "start" : "end"}>
+                                    <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg" align={isRTL ? "start" : "end"} dir={isRTL ? 'rtl' : 'ltr'}>
                                       <DropdownMenuItem onClick={() => window.open(`tel:${user.phone}`, '_self')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
                                         <Phone className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                                         {adminT('users.callUser', 'Позвонить')}
@@ -4796,9 +4797,11 @@ export default function AdminDashboard() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">{adminT('store.placeholder', 'Store settings configuration coming soon')}</p>
-                  </div>
+                  <StoreSettingsForm
+                    storeSettings={storeSettings}
+                    onSubmit={(data) => updateStoreSettingsMutation.mutate(data)}
+                    isLoading={updateStoreSettingsMutation.isPending}
+                  />
                 </CardContent>
               </Card>
             </div>
@@ -4808,11 +4811,22 @@ export default function AdminDashboard() {
           {/* Settings Management */}
           {hasPermission("canManageSettings") && (
             <TabsContent value="settings" className="space-y-4 sm:space-y-6">
-              <Card className="bg-white border border-gray-200 shadow-sm">
-                <CardContent className="p-6 space-y-6">
-                  {/* Worker Permissions Section */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">{adminT('systemSettings.workerPermissions', 'Права доступа сотрудников')}</h3>
+              <Card>
+                <CardHeader>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                      <Settings className="h-5 w-5" />
+                      {adminT('systemSettings.title', 'Настройки системы')}
+                    </CardTitle>
+                    <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {adminT('systemSettings.description', 'Управление правами доступа для сотрудников')}
+                    </CardDescription>
+                  </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Worker Permissions Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">{adminT('systemSettings.workerPermissions', 'Права доступа сотрудников')}</h3>
                   <p className="text-sm text-gray-600">
                     {adminT('systemSettings.workerPermissionsDescription', 'Настройте, к каким разделам админ-панели имеют доступ пользователи с ролью "Работник"')}
                   </p>
@@ -4955,48 +4969,36 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
+              </CardContent>
+            </Card>
+          </TabsContent>
           )}
 
           {/* Theme Management */}
           {hasPermission("canManageSettings") && (
             <TabsContent value="themes" className="space-y-4 sm:space-y-6">
-              <Card className="bg-white border border-gray-200 shadow-sm">
-                <CardContent className="p-6">
-                  <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {adminT('themes.title', 'Theme Management')}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      {adminT('themes.description', 'Customize the appearance of your store')}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              <ThemeManager />
             </TabsContent>
           )}
         </Tabs>
       </div>
 
-      {/* Dialogs */}
-      {isProductFormOpen && (
-        <ProductFormDialog
-          open={isProductFormOpen}
-          onClose={() => {
-            setIsProductFormOpen(false);
-            setEditingProduct(null);
-          }}
-          categories={categories}
-          product={editingProduct}
-          adminT={adminT}
-          onSubmit={(data: any) => {
-            // Set isAvailable based on availability status
-            const productData = {
-              ...data,
-              isAvailable: data.availabilityStatus !== 'completely_unavailable'
-            };
+      {/* Product Form Dialog */}
+      <ProductFormDialog
+        open={isProductFormOpen}
+        onClose={() => {
+          setIsProductFormOpen(false);
+          setEditingProduct(null);
+        }}
+        categories={categories}
+        product={editingProduct}
+        adminT={adminT}
+        onSubmit={(data: any) => {
+          // Set isAvailable based on availability status
+          const productData = {
+            ...data,
+            isAvailable: data.availabilityStatus !== 'completely_unavailable'
+          };
           
           if (editingProduct) {
             updateProductMutation.mutate({ id: editingProduct.id, ...productData });
@@ -5008,10 +5010,8 @@ export default function AdminDashboard() {
           deleteProductMutation.mutate(productId);
         }}
       />
-      )}
 
       {/* Category Form Dialog */}
-      {isCategoryFormOpen && (
       <CategoryFormDialog
         open={isCategoryFormOpen}
         onClose={() => {
@@ -5027,10 +5027,8 @@ export default function AdminDashboard() {
           }
         }}
       />
-      )}
 
       {/* User Form Dialog */}
-      {isUserFormOpen && (
       <UserFormDialog
         open={isUserFormOpen}
         onClose={() => {
@@ -5055,7 +5053,6 @@ export default function AdminDashboard() {
         }}
         onDelete={(userId: string) => deleteUserMutation.mutate(userId)}
       />
-      )}
 
       {/* Cancellation Reason Dialog */}
       <CancellationReasonDialog
@@ -5076,7 +5073,7 @@ export default function AdminDashboard() {
         }}
         cancellationReasons={(storeSettings?.cancellationReasons as string[]) || ["Клиент отменил", "Товар отсутствует", "Технические проблемы", "Другое"]}
         adminT={adminT}
-        />
+      />
 
       {/* Availability Confirmation Dialog */}
       <AlertDialog open={isAvailabilityDialogOpen} onOpenChange={setIsAvailabilityDialogOpen}>
@@ -5162,16 +5159,6 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
 
 // Form Dialog Components
 function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDelete, adminT }: any) {
-  const productSchema = z.object({
-    name: z.string().min(1),
-    description: z.string().optional(),
-    price: z.number().positive(),
-    unit: z.string().min(1),
-    category: z.string().min(1),
-    image: z.string().optional(),
-    available: z.boolean().default(true),
-  });
-  
   type ProductFormData = z.infer<typeof productSchema>;
   
   const form = useForm<ProductFormData>({
@@ -5192,10 +5179,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   });
 
   // Watch form values with useWatch to avoid re-render issues on mobile
-  const watchedValues = form.watch();
-  const isSpecialOffer = watchedValues.isSpecialOffer;
-  const discountType = watchedValues.discountType;
-  const unit = watchedValues.unit;
+  const isSpecialOffer = useWatch({ control: form.control, name: "isSpecialOffer" });
+  const discountType = useWatch({ control: form.control, name: "discountType" });
+  const unit = useWatch({ control: form.control, name: "unit" });
 
   // Reset form when product or dialog state changes
   useEffect(() => {
@@ -7531,9 +7517,9 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
   const isRTL = i18n.language === 'he';
 
   const userSchema = z.object({
-    email: z.string().email(),
-    firstName: z.string().min(1),
-    lastName: z.string().min(1),
+    email: z.string().email(adminT('users.dialog.emailError', 'Неверный формат email')),
+    firstName: z.string().min(1, adminT('users.dialog.firstNameRequired', 'Имя обязательно')),
+    lastName: z.string().min(1, adminT('users.dialog.lastNameRequired', 'Фамилия обязательна')),
     phone: z.string().optional(),
     role: z.enum(["admin", "worker", "customer"]),
     password: z.string().optional(),
@@ -7575,9 +7561,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
         });
       }
     }
-  }, [open, user]);
-
-
+  }, [open, user, form]);
 
   const handleSubmit = (data: UserFormData) => {
     onSubmit(data);
@@ -7700,7 +7684,6 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               )}
             />
 
-            {!user && (
             <FormField
               control={form.control}
               name="password"
@@ -7722,7 +7705,6 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                 </FormItem>
               )}
             />
-            )}
 
             <div className={`flex justify-between items-center pt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
