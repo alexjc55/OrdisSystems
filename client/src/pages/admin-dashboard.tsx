@@ -5077,7 +5077,6 @@ export default function AdminDashboard() {
         cancellationReasons={(storeSettings?.cancellationReasons as string[]) || ["Клиент отменил", "Товар отсутствует", "Технические проблемы", "Другое"]}
         adminT={adminT}
         />
-      )}
 
       {/* Availability Confirmation Dialog */}
       <AlertDialog open={isAvailabilityDialogOpen} onOpenChange={setIsAvailabilityDialogOpen}>
@@ -7578,15 +7577,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
     }
   }, [open, user]);
 
-  const userForm = useForm<UserFormData>({
-    resolver: zodResolver(userSchema),
-    defaultValues: {
-      name: user?.name || '',
-      email: user?.email || '',
-      phone: user?.phone || '',
-      role: user?.role || 'customer',
-    },
-  });
+
 
   const handleSubmit = (data: UserFormData) => {
     onSubmit(data);
@@ -7607,7 +7598,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className={`space-y-4 ${isRTL ? 'rtl' : 'ltr'}`}>
             <FormField
-              control={userForm.control}
+              control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
@@ -7667,7 +7658,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
             </div>
 
             <FormField
-              control={userForm.control}
+              control={form.control}
               name="phone"
               render={({ field }) => (
                 <FormItem>
@@ -7687,7 +7678,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
             />
 
             <FormField
-              control={userForm.control}
+              control={form.control}
               name="role"
               render={({ field }) => (
                 <FormItem>
@@ -7709,6 +7700,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               )}
             />
 
+            {!user && (
             <FormField
               control={form.control}
               name="password"
@@ -7730,6 +7722,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                 </FormItem>
               )}
             />
+            )}
 
             <div className={`flex justify-between items-center pt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
