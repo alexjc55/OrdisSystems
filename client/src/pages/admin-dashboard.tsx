@@ -7219,7 +7219,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Code className="h-4 w-4" />
-                    HTML код для секции head
+                    {adminT('storeSettings.htmlHeadCode')}
                   </FormLabel>
                   <FormControl>
                     <Textarea 
@@ -7229,7 +7229,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
-                    Этот код будет добавлен в секцию &lt;head&gt; всех страниц сайта. Используйте для Google Analytics, Facebook Pixel и других систем аналитики.
+                    {adminT('storeSettings.htmlHeadDescription')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7243,7 +7243,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Code className="h-4 w-4" />
-                    HTML код для подвала сайта
+                    {adminT('storeSettings.htmlFooterCode')}
                   </FormLabel>
                   <FormControl>
                     <Textarea 
@@ -7253,7 +7253,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
-                    Этот код будет добавлен в конец страницы перед закрывающим тегом &lt;/body&gt;. Используйте для онлайн-чатов, кнопок соц. сетей и других виджетов.
+                    {adminT('storeSettings.htmlFooterDescription')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
