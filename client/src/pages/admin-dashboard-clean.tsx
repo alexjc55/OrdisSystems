@@ -13,7 +13,8 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCommonTranslation, useAdminTranslation } from '@/hooks/use-language';
+import { useCommonTranslation } from '@/lib/i18n';
+import { useAdminTranslation } from '@/lib/i18n-admin';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
