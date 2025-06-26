@@ -3765,7 +3765,6 @@ export default function AdminDashboard() {
                           {(categories as any[] || []).map((category: any) => (
                             <SortableCategoryItem
                               key={category.id}
-                                          title={category.name}
                               category={category}
                               onEdit={(category) => {
                                 setEditingCategory(category);
@@ -4675,7 +4674,7 @@ export default function AdminDashboard() {
                                         {user.phone}
                                       </span>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg" align={isRTL ? "start" : "end"} dir={isRTL ? 'rtl' : 'ltr'}>
+                                    <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg" align={isRTL ? "start" : "end"}>
                                       <DropdownMenuItem onClick={() => window.open(`tel:${user.phone}`, '_self')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
                                         <Phone className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                                         {adminT('users.callUser', 'Позвонить')}
@@ -4984,25 +4983,24 @@ export default function AdminDashboard() {
           )}
         </Tabs>
       </div>
-    </div>
-      </div>
 
-      {/* Product Form Dialog */}
-      <ProductFormDialog
-        open={isProductFormOpen}
-        onClose={() => {
-          setIsProductFormOpen(false);
-          setEditingProduct(null);
-        }}
-        categories={categories}
-        product={editingProduct}
-        adminT={adminT}
-        onSubmit={(data: any) => {
-          // Set isAvailable based on availability status
-          const productData = {
-            ...data,
-            isAvailable: data.availabilityStatus !== 'completely_unavailable'
-          };
+      {/* Dialogs */}
+      {isProductFormOpen && (
+        <ProductFormDialog
+          open={isProductFormOpen}
+          onClose={() => {
+            setIsProductFormOpen(false);
+            setEditingProduct(null);
+          }}
+          categories={categories}
+          product={editingProduct}
+          adminT={adminT}
+          onSubmit={(data: any) => {
+            // Set isAvailable based on availability status
+            const productData = {
+              ...data,
+              isAvailable: data.availabilityStatus !== 'completely_unavailable'
+            };
           
           if (editingProduct) {
             updateProductMutation.mutate({ id: editingProduct.id, ...productData });
@@ -5193,9 +5191,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   });
 
   // Watch form values with useWatch to avoid re-render issues on mobile
-  const isSpecialOffer = useWatch({ control: form.control, name: "isSpecialOffer" });
-  const discountType = useWatch({ control: form.control, name: "discountType" });
-  const unit = useWatch({ control: form.control, name: "unit" });
+  const watchedValues = form.watch();
+  const isSpecialOffer = watchedValues.isSpecialOffer;
+  const discountType = watchedValues.discountType;
+  const unit = watchedValues.unit;
 
   // Reset form when product or dialog state changes
   useEffect(() => {
@@ -7531,9 +7530,9 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
   const isRTL = i18n.language === 'he';
 
   const userSchema = z.object({
-    email: z.string().email(adminT('users.dialog.emailError', 'Неверный формат email')),
-    firstName: z.string().min(1, adminT('users.dialog.firstNameRequired', 'Имя обязательно')),
-    lastName: z.string().min(1, adminT('users.dialog.lastNameRequired', 'Фамилия обязательна')),
+    email: z.string().email(),
+    firstName: z.string().min(1),
+    lastName: z.string().min(1),
     phone: z.string().optional(),
     role: z.enum(["admin", "worker", "customer"]),
     password: z.string().optional(),
