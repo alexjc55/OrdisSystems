@@ -187,8 +187,6 @@
     "description": "Manage access permissions for workers",
     "workerPermissions": "Worker Access Permissions",
     "workerPermissionsDescription": "Configure which admin panel sections users with \"Worker\" role can access",
-    "canManageSettings": "Manage Settings",
-    "canManageSettingsDescription": "Full access to store settings",
     "canManageProducts": "Manage Products",
     "canManageProductsDescription": "Add, edit and delete products",
     "canManageCategories": "Manage Categories",
