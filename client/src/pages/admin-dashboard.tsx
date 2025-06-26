@@ -5088,6 +5088,7 @@ export default function AdminDashboard() {
         cancellationReasons={(storeSettings?.cancellationReasons as string[]) || ["Клиент отменил", "Товар отсутствует", "Технические проблемы", "Другое"]}
         adminT={adminT}
         />
+      )}
 
       {/* Availability Confirmation Dialog */}
       <AlertDialog open={isAvailabilityDialogOpen} onOpenChange={setIsAvailabilityDialogOpen}>
