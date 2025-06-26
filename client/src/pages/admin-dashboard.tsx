@@ -6898,7 +6898,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="text-sm">
-                          <SelectValue placeholder="Выберите тип баннера" />
+                          <SelectValue placeholder={adminT('storeSettings.bannerTypeDescription')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -6907,7 +6907,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       </SelectContent>
                     </Select>
                     <FormDescription className="text-xs">
-                      Выберите между текстовым баннером с фоном или загрузкой изображения
+                      {adminT('storeSettings.bannerTypeDescription')}
                     </FormDescription>
                     <FormMessage className="text-xs" />
                   </FormItem>
@@ -7023,7 +7023,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         />
                       </FormControl>
                       <FormDescription className="text-xs text-gray-500">
-                        Максимальная высота: 120px. Рекомендуемый размер: 400×120 пикселей
+                        {adminT('storeSettings.bannerMaxHeight')}
                       </FormDescription>
                       <FormMessage className="text-xs" />
                     </FormItem>
@@ -7077,7 +7077,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Banner 1 */}
               <div className="space-y-4 border rounded-lg p-4">
-                <h4 className="text-md font-medium">Баннер 1 (левый)</h4>
+                <h4 className="text-md font-medium">{adminT('storeSettings.banner1Left')}</h4>
                 
                 <FormField
                   control={form.control}
@@ -7126,7 +7126,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
               {/* Banner 2 */}
               <div className="space-y-4 border rounded-lg p-4">
-                <h4 className="text-md font-medium">Баннер 2 (правый)</h4>
+                <h4 className="text-md font-medium">{adminT('storeSettings.banner2Right')}</h4>
                 
                 <FormField
                   control={form.control}
