@@ -4476,7 +4476,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
-                              title="Первая страница"
+                              title={adminT('common.firstPage')}
                               className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟨⟨
