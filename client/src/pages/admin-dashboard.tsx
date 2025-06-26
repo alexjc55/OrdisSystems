@@ -4975,6 +4975,52 @@ export default function AdminDashboard() {
           </TabsContent>
           )}
 
+          {/* Store Settings */}
+          {hasPermission("canManageSettings") && (
+            <TabsContent value="settings" className="space-y-4 sm:space-y-6">
+              <Card className="bg-white border border-gray-200 shadow-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Settings className="mr-2 h-5 w-5" />
+                    {adminT('settings.title', 'Store Settings')}
+                  </CardTitle>
+                  <CardDescription>
+                    {adminT('settings.description', 'Manage your store configuration')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-12">
+                    <Settings className="mx-auto h-12 w-12 text-gray-400" />
+                    <h3 className="mt-4 text-lg font-medium text-gray-900">
+                      {adminT('settings.empty.title', 'Settings panel')}
+                    </h3>
+                    <p className="mt-2 text-sm text-gray-500">
+                      {adminT('settings.empty.description', 'Configure your store settings here')}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+
+          {/* Access Control */}
+          {hasPermission("canManageUsers") && (
+            <TabsContent value="access" className="space-y-4 sm:space-y-6">
+              <Card className="bg-white border border-gray-200 shadow-sm">
+                <CardContent className="p-6">
+                  <div className="space-y-6">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {adminT('access.title', 'Access Control')}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {adminT('access.description', 'Manage user permissions and roles')}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+
           {/* Theme Management */}
           {hasPermission("canManageSettings") && (
             <TabsContent value="themes" className="space-y-4 sm:space-y-6">
@@ -4996,8 +5042,8 @@ export default function AdminDashboard() {
       </div>
     </div>
 
-      {/* Dialogs */}
-      {isProductFormOpen && (
+    {/* Dialogs */}
+    {isProductFormOpen && (
         <ProductFormDialog
           open={isProductFormOpen}
           onClose={() => {
