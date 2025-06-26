@@ -56,7 +56,8 @@ import {
   Save,
   RefreshCw
 } from 'lucide-react';
-import { useAdminTranslation, useCommonTranslation } from '@/lib/i18n';
+import { useAdminTranslation } from '@/lib/i18n-admin';
+import { useCommonTranslation } from '@/lib/i18n';
 import { toast } from '@/hooks/use-toast';
 
 const storeSettingsSchema = z.object({
