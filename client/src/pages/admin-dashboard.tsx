@@ -4796,11 +4796,9 @@ export default function AdminDashboard() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                  <ModernStoreSettings
-                    storeSettings={storeSettings}
-                    onSubmit={(data) => updateStoreSettingsMutation.mutate(data)}
-                    isLoading={updateStoreSettingsMutation.isPending}
-                  />
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">{adminT('store.placeholder', 'Store settings configuration coming soon')}</p>
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -5010,8 +5008,10 @@ export default function AdminDashboard() {
           deleteProductMutation.mutate(productId);
         }}
       />
+      )}
 
       {/* Category Form Dialog */}
+      {isCategoryFormOpen && (
       <CategoryFormDialog
         open={isCategoryFormOpen}
         onClose={() => {
@@ -5027,8 +5027,10 @@ export default function AdminDashboard() {
           }
         }}
       />
+      )}
 
       {/* User Form Dialog */}
+      {isUserFormOpen && (
       <UserFormDialog
         open={isUserFormOpen}
         onClose={() => {
@@ -5053,6 +5055,7 @@ export default function AdminDashboard() {
         }}
         onDelete={(userId: string) => deleteUserMutation.mutate(userId)}
       />
+      )}
 
       {/* Cancellation Reason Dialog */}
       <CancellationReasonDialog
@@ -7573,9 +7576,9 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
         });
       }
     }
-  }, [open, user, form]);
+  }, [open, user]);
 
-  const form = useForm<UserFormData>({
+  const userForm = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
     defaultValues: {
       name: user?.name || '',
@@ -7604,7 +7607,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className={`space-y-4 ${isRTL ? 'rtl' : 'ltr'}`}>
             <FormField
-              control={form.control}
+              control={userForm.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
@@ -7664,7 +7667,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
             </div>
 
             <FormField
-              control={form.control}
+              control={userForm.control}
               name="phone"
               render={({ field }) => (
                 <FormItem>
@@ -7684,7 +7687,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
             />
 
             <FormField
-              control={form.control}
+              control={userForm.control}
               name="role"
               render={({ field }) => (
                 <FormItem>
