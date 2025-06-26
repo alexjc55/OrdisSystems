@@ -57,7 +57,6 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useTranslation } from 'react-i18next';
 import { toast } from '@/hooks/use-toast';
 
 const storeSettingsSchema = z.object({
@@ -141,7 +140,7 @@ interface ModernStoreSettingsProps {
 
 // Image Upload Component
 function ImageUpload({ value, onChange }: { value: string; onChange: (value: string) => void }) {
-  const { t: adminT } = useAdminTranslation();
+  const { t: adminT } = useTranslation('admin');
   
   return (
     <div className="space-y-4">
@@ -170,7 +169,7 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (value: str
 }
 
 export default function ModernStoreSettings({ storeSettings, onSubmit, isLoading }: ModernStoreSettingsProps) {
-  const { t: adminT } = useAdminTranslation();
+  const { t: adminT } = useTranslation('admin');
   const { i18n } = useTranslation();
   const isRTL = i18n.language === 'he';
   

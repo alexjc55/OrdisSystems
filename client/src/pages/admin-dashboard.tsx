@@ -4968,6 +4968,11 @@ export default function AdminDashboard() {
                           bgColor="bg-blue-500"
                         />
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
             </TabsContent>
           )}
 
@@ -5112,7 +5117,10 @@ export default function AdminDashboard() {
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+          </TabsContent>
+
+        </Tabs>
+      </div>
     </div>
   );
 }
@@ -5156,6 +5164,16 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
 
 // Form Dialog Components
 function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDelete, adminT }: any) {
+  const productSchema = z.object({
+    name: z.string().min(1),
+    description: z.string().optional(),
+    price: z.number().positive(),
+    unit: z.string().min(1),
+    category: z.string().min(1),
+    image: z.string().optional(),
+    available: z.boolean().default(true),
+  });
+  
   type ProductFormData = z.infer<typeof productSchema>;
   
   const form = useForm<ProductFormData>({
@@ -7559,6 +7577,16 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
       }
     }
   }, [open, user, form]);
+
+  const form = useForm<UserFormData>({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      name: user?.name || '',
+      email: user?.email || '',
+      phone: user?.phone || '',
+      role: user?.role || 'customer',
+    },
+  });
 
   const handleSubmit = (data: UserFormData) => {
     onSubmit(data);

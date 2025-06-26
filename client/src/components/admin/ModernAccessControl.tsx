@@ -72,11 +72,8 @@ import {
   RefreshCw,
   AlertTriangle,
   CheckCircle,
-  ShoppingCart,
-  Package,
-  Clock
+  Package
 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { useTranslation } from 'react-i18next';
 import { toast } from '@/hooks/use-toast';
 
@@ -458,7 +455,7 @@ export default function ModernAccessControl({
                   {/* Order Management Permissions */}
                   <div className="space-y-4">
                     <h4 className="text-lg font-medium flex items-center gap-2">
-                      <ShoppingCart className="h-4 w-4" />
+                      <Package className="h-4 w-4" />
                       {adminT('accessControl.orderManagement', 'Order Management')}
                     </h4>
                     
@@ -713,7 +710,7 @@ export default function ModernAccessControl({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-2">
-                            <Clock className="h-4 w-4" />
+                            <RefreshCw className="h-4 w-4" />
                             {adminT('accessControl.sessionTimeout', 'Session Timeout (minutes)')}
                           </FormLabel>
                           <FormControl>
