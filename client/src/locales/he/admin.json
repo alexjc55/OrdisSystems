@@ -694,7 +694,15 @@
     "authPageDescription": "תיאור מתחת לכותרת הראשית",
     "authPageFeature1": "יתרון ראשון ברשימה בדף הרשאה",
     "authPageFeature2": "יתרון שני ברשימה בדף הרשאה",
-    "authPageFeature3": "יתרון שלישי ברשימה בדף הרשאה"
+    "authPageFeature3": "יתרון שלישי ברשימה בדף הרשאה",
+    "clientDeliveryInfo": "מידע לקוח ומשלוח",
+    "noOrders": "אין הזמנות",
+    "activeOrdersMessage": "הזמנות פעילות יוצגו כאן",
+    "deliveredOrdersMessage": "הזמנות שנמסרו יוצגו כאן",
+    "cancelledOrdersMessage": "הזמנות שבוטלו יוצגו כאן",
+    "allOrdersMessage": "הזמנות יוצגו כאן",
+    "cancelReason": "סיבת ביטול הזמנה",
+    "number": "מס'",
   },
   "common": {
     "showing": "מציג",

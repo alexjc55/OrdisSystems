@@ -1228,7 +1228,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
           <div className="space-y-2">
             {/* Customer Information and Delivery Details */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Информация о клиенте и доставке</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.clientDeliveryInfo')}</label>
               
               {/* Mobile Layout - Stack vertically */}
               <div className="grid grid-cols-1 gap-2 sm:hidden">
@@ -3876,7 +3876,7 @@ export default function AdminDashboard() {
                                 <TableHead 
                                   className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
-                                >№</TableHead>
+                                >{adminT('common.number')}</TableHead>
                                 <TableHead 
                                   className={`text-xs sm:text-sm font-semibold min-w-[180px] ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
@@ -4522,12 +4522,12 @@ export default function AdminDashboard() {
                 ) : (
                   <div className="text-center py-8">
                     <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет заказов</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">{adminT('orders.noOrders')}</h3>
                     <p className="text-gray-500 text-sm">
-                      {ordersStatusFilter === "active" ? "Активные заказы будут отображаться здесь" :
-                       ordersStatusFilter === "delivered" ? "Доставленные заказы будут отображаться здесь" :
-                       ordersStatusFilter === "cancelled" ? "Отмененные заказы будут отображаться здесь" :
-                       "Заказы будут отображаться здесь"}
+                      {ordersStatusFilter === "active" ? adminT('orders.activeOrdersMessage') :
+                       ordersStatusFilter === "delivered" ? adminT('orders.deliveredOrdersMessage') :
+                       ordersStatusFilter === "cancelled" ? adminT('orders.cancelledOrdersMessage') :
+                       adminT('orders.allOrdersMessage')}
                     </p>
                   </div>
                 )}
@@ -7312,7 +7312,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    Основной заголовок на странице входа/регистрации
+                    {adminT('storeSettings.authPageMainTitle')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7336,7 +7336,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    Описание под основным заголовком
+                    {adminT('storeSettings.authPageDescription')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7360,7 +7360,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    Первое преимущество в списке на странице авторизации
+                    {adminT('storeSettings.authPageFeature1')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7384,7 +7384,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    Второе преимущество в списке на странице авторизации
+                    {adminT('storeSettings.authPageFeature2')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7408,7 +7408,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    Третье преимущество в списке на странице авторизации
+                    {adminT('storeSettings.authPageFeature3')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7465,7 +7465,7 @@ function CancellationReasonDialog({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md mx-4">
         <DialogHeader>
-          <DialogTitle className="text-lg">Причина отмены заказа</DialogTitle>
+          <DialogTitle className="text-lg">{adminT('orders.cancelReason')}</DialogTitle>
           <DialogDescription className="text-sm">
             Выберите причину отмены заказа #{orderId}
           </DialogDescription>
