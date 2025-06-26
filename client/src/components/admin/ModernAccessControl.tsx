@@ -71,10 +71,13 @@ import {
   Save,
   RefreshCw,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  ShoppingCart,
+  Package,
+  Clock
 } from 'lucide-react';
-import { useAdminTranslation } from '@/lib/i18n-admin';
-import { useCommonTranslation } from '@/lib/i18n';
+import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { toast } from '@/hooks/use-toast';
 
 // Permission definitions
@@ -349,8 +352,8 @@ export default function ModernAccessControl({
   onDeleteUser, 
   isLoading 
 }: ModernAccessControlProps) {
-  const { t: adminT } = useAdminTranslation();
-  const { i18n } = useCommonTranslation();
+  const { t: adminT } = useTranslation('admin');
+  const { i18n } = useTranslation();
   const isRTL = i18n.language === 'he';
   
   const [activeTab, setActiveTab] = useState('permissions');

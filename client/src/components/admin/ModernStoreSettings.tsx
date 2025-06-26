@@ -56,8 +56,8 @@ import {
   Save,
   RefreshCw
 } from 'lucide-react';
-import { useAdminTranslation } from '@/lib/i18n-admin';
-import { useCommonTranslation } from '@/lib/i18n';
+import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { toast } from '@/hooks/use-toast';
 
 const storeSettingsSchema = z.object({
@@ -171,7 +171,7 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (value: str
 
 export default function ModernStoreSettings({ storeSettings, onSubmit, isLoading }: ModernStoreSettingsProps) {
   const { t: adminT } = useAdminTranslation();
-  const { i18n } = useCommonTranslation();
+  const { i18n } = useTranslation();
   const isRTL = i18n.language === 'he';
   
   const [activeTab, setActiveTab] = useState('general');

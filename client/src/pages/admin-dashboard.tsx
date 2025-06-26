@@ -4797,7 +4797,7 @@ export default function AdminDashboard() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                  <StoreSettingsForm
+                  <ModernStoreSettings
                     storeSettings={storeSettings}
                     onSubmit={(data) => updateStoreSettingsMutation.mutate(data)}
                     isLoading={updateStoreSettingsMutation.isPending}
@@ -4811,18 +4811,20 @@ export default function AdminDashboard() {
           {/* Settings Management */}
           {hasPermission("canManageSettings") && (
             <TabsContent value="settings" className="space-y-4 sm:space-y-6">
-              <Card>
-                <CardHeader>
-                  <div className={isRTL ? 'text-right' : 'text-left'}>
-                    <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
-                      <Settings className="h-5 w-5" />
-                      {adminT('systemSettings.title', 'Настройки системы')}
-                    </CardTitle>
-                    <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                      {adminT('systemSettings.description', 'Управление правами доступа для сотрудников')}
-                    </CardDescription>
-                  </div>
-              </CardHeader>
+              <ModernAccessControl
+                accessSettings={storeSettings?.workerPermissions || {}}
+                users={usersResponse?.data || []}
+                onUpdateAccess={(data) => updateStoreSettingsMutation.mutate({
+                  workerPermissions: data
+                })}
+                onUpdateUserRole={(userId, role) => {
+                  console.log('Update user role:', userId, role);
+                }}
+                onDeleteUser={(userId) => {
+                  console.log('Delete user:', userId);
+                }}
+                isLoading={updateStoreSettingsMutation.isPending}
+              />
               <CardContent className="space-y-6">
                 {/* Worker Permissions Section */}
                 <div className="space-y-4">
@@ -4966,12 +4968,7 @@ export default function AdminDashboard() {
                           bgColor="bg-blue-500"
                         />
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+            </TabsContent>
           )}
 
           {/* Theme Management */}
