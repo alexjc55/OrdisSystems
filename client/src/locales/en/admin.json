@@ -166,7 +166,15 @@
     "authPageDescription": "Description under the main title",
     "authPageFeature1": "First advantage in the authorization page list",
     "authPageFeature2": "Second advantage in the authorization page list",
-    "authPageFeature3": "Third advantage in the authorization page list"
+    "authPageFeature3": "Third advantage in the authorization page list",
+    "clientDeliveryInfo": "Client and Delivery Information",
+    "noOrders": "No Orders", 
+    "activeOrdersMessage": "Active orders will be displayed here",
+    "deliveredOrdersMessage": "Delivered orders will be displayed here",
+    "cancelledOrdersMessage": "Cancelled orders will be displayed here",
+    "allOrdersMessage": "Orders will be displayed here",
+    "cancelReason": "Order Cancellation Reason",
+    "number": "№"
   },
   "systemSettings": {
     "title": "System Settings",
