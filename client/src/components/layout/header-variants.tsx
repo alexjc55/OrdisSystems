@@ -152,8 +152,8 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
 function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
     <div className="relative w-full mb-6 sm:mb-8">
-      {/* Modern Overlay Banner - Adaptive Height with Padding */}
-      <div className="relative min-h-[14rem] sm:min-h-[12rem] md:min-h-[16rem] w-full overflow-hidden"
+      {/* Modern Overlay Banner - Full height on mobile, adaptive on larger screens */}
+      <div className="relative h-screen sm:min-h-[12rem] md:min-h-[16rem] w-full overflow-hidden"
            style={{ height: 'auto' }}>
         {/* Background Image */}
         <div 
@@ -169,7 +169,7 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
         {/* Content with internal padding */}
         <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
           <div className="max-w-sm sm:max-w-2xl md:max-w-4xl mx-auto">
-            <h1 className="text-4xl sm:text-4xl md:text-5xl font-medium sm:font-bold text-white mb-3 sm:mb-4 leading-tight" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+            <h1 className="text-5xl sm:text-4xl md:text-5xl font-medium sm:font-bold text-white mb-3 sm:mb-4 leading-tight" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-white max-w-sm sm:max-w-2xl mx-auto leading-normal sm:leading-relaxed mb-6" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
