@@ -19,6 +19,7 @@ export interface ThemeColors {
   infoLight: string;
   tomorrow: string;
   tomorrowLight: string;
+  outOfStock: string;
 
   // Neutral colors
   white: string;
@@ -119,6 +120,7 @@ export const defaultTheme: Theme = {
     infoLight: 'hsl(221, 83%, 96%)',
     tomorrow: 'hsl(262, 83%, 58%)',
     tomorrowLight: 'hsl(262, 83%, 96%)',
+    outOfStock: 'hsl(0, 84%, 60%)',
     white: 'hsl(0, 0%, 100%)',
     gray50: 'hsl(210, 40%, 98%)',
     gray100: 'hsl(210, 40%, 96%)',

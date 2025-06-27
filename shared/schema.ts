@@ -221,6 +221,11 @@ export const themes = pgTable("themes", {
   infoColor: varchar("info_color", { length: 20 }).notNull().default("hsl(221, 83%, 53%)"),
   infoLightColor: varchar("info_light_color", { length: 20 }).notNull().default("hsl(221, 83%, 96%)"),
   
+  // Tomorrow button and out of stock colors
+  tomorrowColor: varchar("tomorrow_color", { length: 20 }).notNull().default("hsl(262, 83%, 58%)"),
+  tomorrowLightColor: varchar("tomorrow_light_color", { length: 20 }).notNull().default("hsl(262, 83%, 96%)"),
+  outOfStockColor: varchar("out_of_stock_color", { length: 20 }).notNull().default("hsl(0, 84%, 60%)"),
+  
 
   
   // Neutral colors
