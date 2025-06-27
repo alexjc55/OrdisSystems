@@ -163,10 +163,11 @@ export default function ThemeManager() {
         description: "Тема создана успешно",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Theme creation error:", error);
       toast({
         title: "Ошибка",
-        description: "Не удалось создать тему",
+        description: error?.message || "Не удалось создать тему",
         variant: "destructive",
       });
     },
