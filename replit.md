@@ -131,6 +131,12 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 27, 2025: Reorganized theme management tabs for better organization
+  - Combined Brand, Status, and Neutral tabs into single unified "Colors" tab
+  - Added organized blocks within Colors tab (Brand, Status, Neutral sections)
+  - Streamlined interface from 5 tabs to 3 tabs (Basic, Colors, Visuals)
+  - Applied changes to both create and edit theme dialogs for consistency
+  - Maintained all color settings functionality while improving user experience
 - June 27, 2025: Completed WhatsApp settings integration in theme management with responsive layout
   - Fixed eye icon toggle functionality for visual display settings in theme creation and editing
   - Reordered category menu block to appear before info blocks as requested
