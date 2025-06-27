@@ -30,6 +30,14 @@ function VisualToggleButton({
   description: string;
   fieldName: string;
 }) {
+  const [enabled, setEnabled] = useState(isEnabled);
+
+  const handleToggle = () => {
+    const newState = !enabled;
+    setEnabled(newState);
+    onToggle();
+  };
+
   return (
     <div className="flex items-center justify-between p-3 border rounded-lg">
       <div className="space-y-0.5">
@@ -40,12 +48,12 @@ function VisualToggleButton({
         type="button"
         variant="ghost"
         size="sm"
-        onClick={onToggle}
-        className={`p-2 h-8 w-8 ${isEnabled ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+        onClick={handleToggle}
+        className={`p-2 h-8 w-8 ${enabled ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
       >
-        {isEnabled ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+        {enabled ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
       </Button>
-      <input type="hidden" name={fieldName} value={isEnabled ? "true" : "false"} />
+      <input type="hidden" name={fieldName} value={enabled ? "true" : "false"} />
     </div>
   );
 }
@@ -164,6 +172,14 @@ interface ThemeData {
   modernBlock2Text?: string;
   modernBlock3Icon?: string;
   modernBlock3Text?: string;
+  // Visual display settings
+  showBannerImage?: boolean;
+  showTitleDescription?: boolean;
+  showInfoBlocks?: boolean;
+  infoBlocksPosition?: string;
+  showSpecialOffers?: boolean;
+  showCategoryMenu?: boolean;
+  showWhatsAppChat?: boolean;
   whiteColor: string;
   gray50Color: string;
   gray100Color: string;
@@ -933,19 +949,19 @@ export default function ThemeManager() {
                       />
 
                       <VisualToggleButton 
-                        isEnabled={visualSettings.showInfoBlocks}
-                        onToggle={() => setVisualSettings(prev => ({ ...prev, showInfoBlocks: !prev.showInfoBlocks }))}
-                        label="Информационные блоки"
-                        description="Часы работы, контакты, доставка"
-                        fieldName="showInfoBlocks"
-                      />
-
-                      <VisualToggleButton 
                         isEnabled={visualSettings.showCategoryMenu}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showCategoryMenu: !prev.showCategoryMenu }))}
                         label="Меню категорий"
                         description="Навигационное меню категорий"
                         fieldName="showCategoryMenu"
+                      />
+
+                      <VisualToggleButton 
+                        isEnabled={visualSettings.showInfoBlocks}
+                        onToggle={() => setVisualSettings(prev => ({ ...prev, showInfoBlocks: !prev.showInfoBlocks }))}
+                        label="Информационные блоки"
+                        description="Часы работы, контакты, доставка"
+                        fieldName="showInfoBlocks"
                       />
                     </div>
                     
