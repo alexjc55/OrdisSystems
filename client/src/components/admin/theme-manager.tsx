@@ -740,19 +740,29 @@ export default function ThemeManager() {
                 </TabsContent>
 
                 <TabsContent value="neutral" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <ColorInput label="Белый" name="whiteColor" defaultValue="#ffffff" />
-                    <ColorInput label="Серый 50" name="gray50Color" defaultValue="#f8fafc" />
-                    <ColorInput label="Серый 100" name="gray100Color" defaultValue="#f1f5f9" />
-                    <ColorInput label="Серый 200" name="gray200Color" defaultValue="#e2e8f0" />
-                    <ColorInput label="Серый 300" name="gray300Color" defaultValue="#cbd5e1" />
-                    <ColorInput label="Серый 400" name="gray400Color" defaultValue="#94a3b8" />
-                    <ColorInput label="Серый 500" name="gray500Color" defaultValue="#64748b" />
-                    <ColorInput label="Серый 600" name="gray600Color" defaultValue="#475569" />
-                    <ColorInput label="Серый 700" name="gray700Color" defaultValue="#334155" />
-                    <ColorInput label="Серый 800" name="gray800Color" defaultValue="#1e293b" />
-                    <ColorInput label="Серый 900" name="gray900Color" defaultValue="#0f172a" />
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Основные нейтральные цвета</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <ColorInput label="Белый" name="whiteColor" defaultValue="#ffffff" />
+                        <ColorInput label="Серый 100 (фон)" name="gray100Color" defaultValue="#f1f5f9" />
+                        <ColorInput label="Серый 700 (текст)" name="gray700Color" defaultValue="#334155" />
+                      </div>
+                      <div className="text-sm text-gray-500 mt-2">
+                        ℹ️ Белый для фонов, серый 100 для вторичных кнопок, серый 700 для текста
+                      </div>
+                    </div>
                   </div>
+                  
+                  {/* Keep all grays for API compatibility but hide unused ones */}
+                  <input type="hidden" name="gray50Color" defaultValue="#f8fafc" />
+                  <input type="hidden" name="gray200Color" defaultValue="#e2e8f0" />
+                  <input type="hidden" name="gray300Color" defaultValue="#cbd5e1" />
+                  <input type="hidden" name="gray400Color" defaultValue="#94a3b8" />
+                  <input type="hidden" name="gray500Color" defaultValue="#64748b" />
+                  <input type="hidden" name="gray600Color" defaultValue="#475569" />
+                  <input type="hidden" name="gray800Color" defaultValue="#1e293b" />
+                  <input type="hidden" name="gray900Color" defaultValue="#0f172a" />
                 </TabsContent>
               </Tabs>
 
@@ -957,42 +967,75 @@ export default function ThemeManager() {
                     <ColorInput label="Цвет текста кнопок" name="primaryTextColor" defaultValue={editingTheme.primaryTextColor} />
                     <ColorInput label="Основной темный" name="primaryDarkColor" defaultValue={editingTheme.primaryDarkColor} />
                     <ColorInput label="Основной светлый" name="primaryLightColor" defaultValue={editingTheme.primaryLightColor} />
-                    <ColorInput label="Вторичный цвет" name="secondaryColor" defaultValue={editingTheme.secondaryColor} />
-                    <ColorInput label="Акцентный цвет" name="accentColor" defaultValue={editingTheme.accentColor} />
                   </div>
+                  <div className="text-sm text-gray-500 mt-2">
+                    ℹ️ Основные цвета влияют на кнопки "В корзину", ссылки и главные элементы интерфейса
+                  </div>
+                  {/* Keep secondary/accent for API compatibility but hide from UI */}
+                  <input type="hidden" name="secondaryColor" defaultValue={editingTheme.secondaryColor} />
+                  <input type="hidden" name="accentColor" defaultValue={editingTheme.accentColor} />
                 </TabsContent>
 
                 <TabsContent value="status" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <ColorInput label="Успех" name="successColor" defaultValue={editingTheme.successColor} />
-                    <ColorInput label="Успех светлый" name="successLightColor" defaultValue={editingTheme.successLightColor} />
-                    <ColorInput label="Предупреждение" name="warningColor" defaultValue={editingTheme.warningColor} />
-                    <ColorInput label="Предупреждение светлое" name="warningLightColor" defaultValue={editingTheme.warningLightColor} />
-                    <ColorInput label="Ошибка" name="errorColor" defaultValue={editingTheme.errorColor} />
-                    <ColorInput label="Ошибка светлая" name="errorLightColor" defaultValue={editingTheme.errorLightColor} />
-                    <ColorInput label="Информация" name="infoColor" defaultValue={editingTheme.infoColor} />
-                    <ColorInput label="Информация светлая" name="infoLightColor" defaultValue={editingTheme.infoLightColor} />
-                    <ColorInput label="Кнопка 'Завтра'" name="tomorrowColor" defaultValue={editingTheme.tomorrowColor} />
-                    <ColorInput label="Кнопка 'Завтра' (при наведении)" name="tomorrowDarkColor" defaultValue={editingTheme.tomorrowDarkColor} />
-                    <ColorInput label="Кнопка 'Завтра' (светлый)" name="tomorrowLightColor" defaultValue={editingTheme.tomorrowLightColor} />
-                    <ColorInput label="Цвет 'Закончился'" name="outOfStockColor" defaultValue={editingTheme.outOfStockColor} />
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Основные статусные цвета</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <ColorInput label="Успех" name="successColor" defaultValue={editingTheme.successColor} />
+                        <ColorInput label="Предупреждение" name="warningColor" defaultValue={editingTheme.warningColor} />
+                        <ColorInput label="Ошибка" name="errorColor" defaultValue={editingTheme.errorColor} />
+                        <ColorInput label="Информация" name="infoColor" defaultValue={editingTheme.infoColor} />
+                      </div>
+                      <div className="text-sm text-gray-500 mt-2">
+                        ℹ️ Используются в уведомлениях и статусных кнопках
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Специальные кнопки</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <ColorInput label="Кнопка 'Завтра'" name="tomorrowColor" defaultValue={editingTheme.tomorrowColor} />
+                        <ColorInput label="Кнопка 'Завтра' (при наведении)" name="tomorrowDarkColor" defaultValue={editingTheme.tomorrowDarkColor} />
+                        <ColorInput label="Цвет 'Закончился'" name="outOfStockColor" defaultValue={editingTheme.outOfStockColor} />
+                      </div>
+                      <div className="text-sm text-gray-500 mt-2">
+                        ℹ️ "Завтра" - для недоступных сегодня товаров, "Закончился" - для бейджей
+                      </div>
+                    </div>
                   </div>
+                  
+                  {/* Keep light variants for API compatibility but hide from UI */}
+                  <input type="hidden" name="successLightColor" defaultValue={editingTheme.successLightColor} />
+                  <input type="hidden" name="warningLightColor" defaultValue={editingTheme.warningLightColor} />
+                  <input type="hidden" name="errorLightColor" defaultValue={editingTheme.errorLightColor} />
+                  <input type="hidden" name="infoLightColor" defaultValue={editingTheme.infoLightColor} />
+                  <input type="hidden" name="tomorrowLightColor" defaultValue={editingTheme.tomorrowLightColor} />
                 </TabsContent>
 
                 <TabsContent value="neutral" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <ColorInput label="Белый" name="whiteColor" defaultValue={editingTheme.whiteColor} />
-                    <ColorInput label="Серый 50" name="gray50Color" defaultValue={editingTheme.gray50Color} />
-                    <ColorInput label="Серый 100" name="gray100Color" defaultValue={editingTheme.gray100Color} />
-                    <ColorInput label="Серый 200" name="gray200Color" defaultValue={editingTheme.gray200Color} />
-                    <ColorInput label="Серый 300" name="gray300Color" defaultValue={editingTheme.gray300Color} />
-                    <ColorInput label="Серый 400" name="gray400Color" defaultValue={editingTheme.gray400Color} />
-                    <ColorInput label="Серый 500" name="gray500Color" defaultValue={editingTheme.gray500Color} />
-                    <ColorInput label="Серый 600" name="gray600Color" defaultValue={editingTheme.gray600Color} />
-                    <ColorInput label="Серый 700" name="gray700Color" defaultValue={editingTheme.gray700Color} />
-                    <ColorInput label="Серый 800" name="gray800Color" defaultValue={editingTheme.gray800Color} />
-                    <ColorInput label="Серый 900" name="gray900Color" defaultValue={editingTheme.gray900Color} />
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Основные нейтральные цвета</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <ColorInput label="Белый" name="whiteColor" defaultValue={editingTheme.whiteColor} />
+                        <ColorInput label="Серый 100 (фон)" name="gray100Color" defaultValue={editingTheme.gray100Color} />
+                        <ColorInput label="Серый 700 (текст)" name="gray700Color" defaultValue={editingTheme.gray700Color} />
+                      </div>
+                      <div className="text-sm text-gray-500 mt-2">
+                        ℹ️ Белый для фонов, серый 100 для вторичных кнопок, серый 700 для текста
+                      </div>
+                    </div>
                   </div>
+                  
+                  {/* Keep all grays for API compatibility but hide unused ones */}
+                  <input type="hidden" name="gray50Color" defaultValue={editingTheme.gray50Color} />
+                  <input type="hidden" name="gray200Color" defaultValue={editingTheme.gray200Color} />
+                  <input type="hidden" name="gray300Color" defaultValue={editingTheme.gray300Color} />
+                  <input type="hidden" name="gray400Color" defaultValue={editingTheme.gray400Color} />
+                  <input type="hidden" name="gray500Color" defaultValue={editingTheme.gray500Color} />
+                  <input type="hidden" name="gray600Color" defaultValue={editingTheme.gray600Color} />
+                  <input type="hidden" name="gray800Color" defaultValue={editingTheme.gray800Color} />
+                  <input type="hidden" name="gray900Color" defaultValue={editingTheme.gray900Color} />
                 </TabsContent>
               </Tabs>
 
