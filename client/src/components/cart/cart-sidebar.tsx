@@ -322,7 +322,7 @@ export default function CartSidebar() {
               
               <Button 
                 onClick={handleCheckout}
-                className="w-full bg-gradient-to-r from-primary to-primary-hover hover:from-primary-hover hover:to-primary-dark hover:shadow-xl hover:shadow-primary/50 text-white font-semibold py-3 rounded-xl shadow-lg transition-shadow duration-200"
+                className="w-full bg-primary hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/50 text-white font-semibold py-3 rounded-xl shadow-lg transition-shadow duration-200"
                 size="lg"
               >
 {t('cart.checkout')}

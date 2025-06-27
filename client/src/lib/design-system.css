@@ -4,6 +4,7 @@
   --color-primary: hsl(24.6, 95%, 53.1%);
   --color-primary-dark: hsl(20.5, 90%, 48%);
   --color-primary-light: hsl(24.6, 95%, 96%);
+  --color-primary-foreground: hsl(0, 0%, 100%);
   --color-secondary: hsl(210, 40%, 98%);
   --color-accent: hsl(210, 40%, 85%);
   
@@ -55,6 +56,10 @@
   
   .text-primary-dark {
     color: var(--color-primary-dark) !important;
+  }
+  
+  .text-primary-foreground {
+    color: var(--color-primary-foreground) !important;
   }
   
   .border-primary {
