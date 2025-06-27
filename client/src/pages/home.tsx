@@ -245,13 +245,8 @@ export default function Home() {
     queryKey: ["/api/products"],
   });
 
-  // Fetch active theme to get header style
-  const { data: themes = [] } = useQuery<any[]>({
-    queryKey: ['/api/admin/themes'],
-  });
-  
-  const activeTheme = themes.find((theme: any) => theme.isActive);
-  const headerStyle = activeTheme?.headerStyle || 'classic';
+  // Get header style from store settings (accessible to all users)
+  const headerStyle = storeSettings?.headerStyle || 'classic';
 
   // Fetch products for selected category
   const { data: products = [], isLoading: productsLoading } = useQuery<ProductWithCategories[]>({

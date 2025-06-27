@@ -178,6 +178,7 @@ export const storeSettings = pgTable("store_settings", {
   authPageFeature3: varchar("auth_page_feature3", { length: 255 }).default("Широкий выбор блюд на любой вкус"),
   showCartBanner: boolean("show_cart_banner").default(false), // Enable/disable cart banner
   cartBannerType: varchar("cart_banner_type", { enum: ["image", "text"] }).default("text"), // Banner type
+  headerStyle: varchar("header_style", { enum: ["classic", "modern", "minimal"] }).default("classic"), // Header design style
   cartBannerImage: varchar("cart_banner_image", { length: 500 }), // Banner image URL
   cartBannerText: text("cart_banner_text"), // Banner text content
   cartBannerBgColor: varchar("cart_banner_bg_color", { length: 7 }).default("#f97316"), // Background color for text banner
