@@ -487,6 +487,7 @@ export default function ThemeManager() {
       infoColor: formData.get("infoColor") as string,
       infoLightColor: formData.get("infoLightColor") as string,
       tomorrowColor: formData.get("tomorrowColor") as string,
+      tomorrowDarkColor: formData.get("tomorrowDarkColor") as string,
       tomorrowLightColor: formData.get("tomorrowLightColor") as string,
       outOfStockColor: formData.get("outOfStockColor") as string,
       whiteColor: formData.get("whiteColor") as string,
