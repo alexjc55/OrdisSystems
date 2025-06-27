@@ -695,8 +695,8 @@ export default function ThemeManager() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex-1">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <Palette className="h-6 w-6" />
             Управление темами
@@ -707,7 +707,7 @@ export default function ThemeManager() {
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="btn-primary">
+            <Button className="btn-primary w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
               Создать тему
             </Button>

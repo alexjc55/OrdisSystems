@@ -131,6 +131,16 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 27, 2025: Improved mobile layout for theme management section header
+  - Changed header layout from horizontal to vertical stacking on mobile devices
+  - Separated title/description and "Create Theme" button on different lines for better mobile UX
+  - Added full-width button styling on mobile with responsive design (w-full sm:w-auto)
+  - Maintained desktop horizontal layout with proper spacing and alignment
+- June 27, 2025: Completed admin panel compactness improvements with eye icon buttons
+  - Replaced all Switch components with compact Eye/EyeOff icon buttons throughout admin settings
+  - Applied green color for enabled states and gray for disabled states
+  - Reduced interface density while maintaining clear visual feedback for toggle states
+  - Updated display settings, working hours, permissions, and feature toggles with new design
 - June 27, 2025: Made theme dialog tabs menu more compact with flex layout
   - Changed tab navigation from 4-column grid to single horizontal row
   - Added icons to each tab (Info, Briefcase, AlertCircle, Layers) with responsive text hiding on mobile
