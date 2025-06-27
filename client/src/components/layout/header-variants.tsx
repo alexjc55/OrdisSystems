@@ -112,7 +112,7 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
 
 function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
-    <div className="relative w-full mb-6 sm:mb-8">
+    <div className="relative w-full mb-6 sm:mb-8 mt-16">
       {/* Minimal Full Width Banner */}
       <div className="relative h-56 sm:h-48 md:h-64 w-full overflow-hidden">
         {/* Background Image with strong overlay */}
@@ -128,7 +128,7 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
         <div className="absolute inset-0 bg-white/85" />
         
         {/* Content */}
-        <div className="relative z-10 h-full flex items-center justify-center text-center px-4 sm:px-6 pt-12">
+        <div className="relative z-10 h-full flex items-center justify-center text-center px-4 sm:px-6">
           <div className="max-w-3xl">
             <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold sm:font-light text-gray-900 mb-2 sm:mb-4 tracking-wide">
               {storeSettings.welcomeTitle || "eDAHouse"}
