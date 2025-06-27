@@ -463,6 +463,9 @@ export default function ThemeManager() {
       tomorrowDarkColor: formData.get("tomorrowDarkColor") as string,
       tomorrowLightColor: formData.get("tomorrowLightColor") as string,
       outOfStockColor: formData.get("outOfStockColor") as string,
+      workingHoursIconColor: formData.get("workingHoursIconColor") as string,
+      contactsIconColor: formData.get("contactsIconColor") as string,
+      paymentDeliveryIconColor: formData.get("paymentDeliveryIconColor") as string,
       whiteColor: formData.get("whiteColor") as string,
       gray50Color: formData.get("gray50Color") as string,
       gray100Color: formData.get("gray100Color") as string,
@@ -515,6 +518,9 @@ export default function ThemeManager() {
       tomorrowDarkColor: convertColorToHsl(formData.get("tomorrowDarkColor") as string),
       tomorrowLightColor: convertColorToHsl(formData.get("tomorrowLightColor") as string),
       outOfStockColor: convertColorToHsl(formData.get("outOfStockColor") as string),
+      workingHoursIconColor: convertColorToHsl(formData.get("workingHoursIconColor") as string),
+      contactsIconColor: convertColorToHsl(formData.get("contactsIconColor") as string),
+      paymentDeliveryIconColor: convertColorToHsl(formData.get("paymentDeliveryIconColor") as string),
       whiteColor: convertColorToHsl(formData.get("whiteColor") as string),
       gray50Color: convertColorToHsl(formData.get("gray50Color") as string),
       gray100Color: convertColorToHsl(formData.get("gray100Color") as string),
@@ -560,6 +566,9 @@ export default function ThemeManager() {
       tomorrowDarkColor: "hsl(262, 83%, 48%)",
       tomorrowLightColor: "hsl(262, 83%, 96%)",
       outOfStockColor: "hsl(0, 84%, 60%)",
+      workingHoursIconColor: "hsl(220, 91%, 54%)",
+      contactsIconColor: "hsl(142, 76%, 36%)",
+      paymentDeliveryIconColor: "hsl(262, 83%, 58%)",
       whiteColor: "hsl(0, 0%, 100%)",
       gray50Color: "hsl(210, 40%, 98%)",
       gray100Color: "hsl(210, 40%, 96%)",
@@ -1011,6 +1020,18 @@ export default function ThemeManager() {
                       </div>
                       <div className="text-sm text-gray-500 mt-2">
                         ℹ️ "Завтра" - для недоступных сегодня товаров, "Закончился" - для бейджей
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Иконки информационных блоков</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <ColorInput label="Часы работы" name="workingHoursIconColor" defaultValue={editingTheme.workingHoursIconColor} />
+                        <ColorInput label="Контакты" name="contactsIconColor" defaultValue={editingTheme.contactsIconColor} />
+                        <ColorInput label="Оплата и доставка" name="paymentDeliveryIconColor" defaultValue={editingTheme.paymentDeliveryIconColor} />
+                      </div>
+                      <div className="text-sm text-gray-500 mt-2">
+                        ℹ️ Цвета круглых иконок в блоках "Часы работы", "Контакты" и "Оплата и доставка" на главной странице
                       </div>
                     </div>
                   </div>

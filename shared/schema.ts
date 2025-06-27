@@ -227,6 +227,11 @@ export const themes = pgTable("themes", {
   tomorrowLightColor: varchar("tomorrow_light_color", { length: 20 }).notNull().default("hsl(262, 83%, 96%)"),
   outOfStockColor: varchar("out_of_stock_color", { length: 20 }).notNull().default("hsl(0, 84%, 60%)"),
   
+  // Info block icon colors
+  workingHoursIconColor: varchar("working_hours_icon_color", { length: 20 }).notNull().default("hsl(220, 91%, 54%)"),
+  contactsIconColor: varchar("contacts_icon_color", { length: 20 }).notNull().default("hsl(142, 76%, 36%)"),
+  paymentDeliveryIconColor: varchar("payment_delivery_icon_color", { length: 20 }).notNull().default("hsl(262, 83%, 58%)"),
+  
 
   
   // Neutral colors
