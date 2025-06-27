@@ -52,10 +52,16 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
         {/* Glass Effect Content Card */}
         <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
           <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-md rounded-3xl p-6 sm:p-8 md:p-10 border border-white/20 shadow-2xl">
-            <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
+            <h1 
+              className="text-6xl sm:text-4xl md:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight" 
+              style={{ 
+                textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                fontSize: 'clamp(3.5rem, 10vw, 4rem)'
+              }}
+            >
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
-            <p className="text-sm sm:text-lg md:text-xl text-white/95 leading-relaxed max-w-2xl mx-auto mb-6" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+            <p className="text-lg sm:text-lg md:text-xl text-white/95 leading-relaxed max-w-2xl mx-auto mb-6" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
             
