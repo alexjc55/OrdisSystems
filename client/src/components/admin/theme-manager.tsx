@@ -920,7 +920,7 @@ export default function ThemeManager() {
                   Сброс
                 </Button>
 
-                {!theme.isActive && (
+                {!theme.isActive && !theme.id.includes('default_theme') && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button size="sm" variant="outline" className="text-destructive">

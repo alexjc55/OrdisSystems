@@ -1165,6 +1165,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (theme?.isActive) {
         return res.status(400).json({ message: "Cannot delete active theme" });
       }
+      
+      // Prevent deletion of default theme
+      if (id.includes('default_theme')) {
+        return res.status(400).json({ message: "Cannot delete default theme" });
+      }
 
       await storage.deleteTheme(id);
       res.status(204).send();
@@ -1220,33 +1225,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to create theme" });
-    }
-  });
-
-
-
-  app.delete('/api/admin/themes/:id', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
-      
-      if (!user || user.role !== 'admin') {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
-      const { id } = req.params;
-      
-      // Check if theme is currently active
-      const activeTheme = await storage.getActiveTheme();
-      if (activeTheme && activeTheme.id === id) {
-        return res.status(400).json({ message: "Cannot delete active theme" });
-      }
-
-      await storage.deleteTheme(id);
-      res.status(204).send();
-    } catch (error) {
-      console.error("Error deleting theme:", error);
-      res.status(500).json({ message: "Failed to delete theme" });
     }
   });
 
