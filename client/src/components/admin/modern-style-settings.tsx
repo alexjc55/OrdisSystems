@@ -21,44 +21,38 @@ export function ModernStyleSettings({ id, defaultValues }: ModernStyleSettingsPr
           {[1, 2, 3].map(num => (
             <div key={num} className="p-3 bg-white rounded border">
               <h5 className="text-xs font-medium mb-3">Блок {num}</h5>
-              <div className="space-y-3">
-                <div className="space-y-1">
-                  <Label htmlFor={`modernBlock${num}Icon${id.includes('Create') ? 'Create' : 'Edit'}`} className="text-xs">Иконка</Label>
-                  <select
-                    name={`modernBlock${num}Icon`}
-                    id={`modernBlock${num}Icon${id.includes('Create') ? 'Create' : 'Edit'}`}
-                    defaultValue={defaultValues?.[`modernBlock${num}Icon` as keyof typeof defaultValues] || ""}
-                    className="w-full px-2 py-1 border rounded text-xs bg-white"
-                  >
-                    <option value="">Выберите иконку</option>
-                    <option value="Clock">Часы</option>
-                    <option value="Phone">Телефон</option>
-                    <option value="CreditCard">Оплата</option>
-                    <option value="Truck">Доставка</option>
-                    <option value="MapPin">Местоположение</option>
-                    <option value="Shield">Безопасность</option>
-                    <option value="Star">Качество</option>
-                    <option value="Zap">Скорость</option>
-                    <option value="Heart">Забота</option>
-                    <option value="Award">Награды</option>
-                    <option value="Users">Команда</option>
-                    <option value="ThumbsUp">Одобрение</option>
-                    <option value="CheckCircle">Проверено</option>
-                    <option value="Gift">Подарки</option>
-                    <option value="Smile">Удовольствие</option>
-                  </select>
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor={`modernBlock${num}Text${id.includes('Create') ? 'Create' : 'Edit'}`} className="text-xs">Текст</Label>
-                  <input
-                    type="text"
-                    name={`modernBlock${num}Text`}
-                    id={`modernBlock${num}Text${id.includes('Create') ? 'Create' : 'Edit'}`}
-                    defaultValue={defaultValues?.[`modernBlock${num}Text` as keyof typeof defaultValues] || ""}
-                    placeholder="Описание преимущества"
-                    className="w-full px-2 py-1 border rounded text-xs"
-                  />
-                </div>
+              <div className="space-y-2">
+                <select
+                  name={`modernBlock${num}Icon`}
+                  id={`modernBlock${num}Icon${id.includes('Create') ? 'Create' : 'Edit'}`}
+                  defaultValue={defaultValues?.[`modernBlock${num}Icon` as keyof typeof defaultValues] || ""}
+                  className="w-full px-2 py-1 border rounded text-xs bg-white"
+                >
+                  <option value="">Выберите иконку</option>
+                  <option value="Clock">Часы</option>
+                  <option value="Phone">Телефон</option>
+                  <option value="CreditCard">Оплата</option>
+                  <option value="Truck">Доставка</option>
+                  <option value="MapPin">Местоположение</option>
+                  <option value="Shield">Безопасность</option>
+                  <option value="Star">Качество</option>
+                  <option value="Zap">Скорость</option>
+                  <option value="Heart">Забота</option>
+                  <option value="Award">Награды</option>
+                  <option value="Users">Команда</option>
+                  <option value="ThumbsUp">Одобрение</option>
+                  <option value="CheckCircle">Проверено</option>
+                  <option value="Gift">Подарки</option>
+                  <option value="Smile">Удовольствие</option>
+                </select>
+                <input
+                  type="text"
+                  name={`modernBlock${num}Text`}
+                  id={`modernBlock${num}Text${id.includes('Create') ? 'Create' : 'Edit'}`}
+                  defaultValue={defaultValues?.[`modernBlock${num}Text` as keyof typeof defaultValues] || ""}
+                  placeholder="Описание преимущества"
+                  className="w-full px-2 py-1 border rounded text-xs"
+                />
               </div>
             </div>
           ))}

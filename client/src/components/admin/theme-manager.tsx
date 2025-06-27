@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw } from "lucide-react";
+import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw, Info, Briefcase, AlertCircle, Layers } from "lucide-react";
 import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
 import { ModernStyleSettings } from "./modern-style-settings";
 
@@ -726,10 +726,22 @@ export default function ThemeManager() {
             }}>
               <Tabs defaultValue="basic" className="w-full">
                 <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="basic">Основное</TabsTrigger>
-                  <TabsTrigger value="brand">Бренд</TabsTrigger>
-                  <TabsTrigger value="status">Статусы</TabsTrigger>
-                  <TabsTrigger value="neutral">Нейтральные</TabsTrigger>
+                  <TabsTrigger value="basic" className="flex items-center gap-1" title="Основное">
+                    <Info className="h-4 w-4" />
+                    <span className="hidden sm:inline">Основное</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="brand" className="flex items-center gap-1" title="Бренд">
+                    <Briefcase className="h-4 w-4" />
+                    <span className="hidden sm:inline">Бренд</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="status" className="flex items-center gap-1" title="Статусы">
+                    <AlertCircle className="h-4 w-4" />
+                    <span className="hidden sm:inline">Статусы</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="neutral" className="flex items-center gap-1" title="Нейтральные">
+                    <Layers className="h-4 w-4" />
+                    <span className="hidden sm:inline">Нейтральные</span>
+                  </TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="basic" className="space-y-4">
@@ -1088,10 +1100,22 @@ export default function ThemeManager() {
             }}>
               <Tabs defaultValue="basic" className="w-full">
                 <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="basic">Основное</TabsTrigger>
-                  <TabsTrigger value="brand">Бренд</TabsTrigger>
-                  <TabsTrigger value="status">Статусы</TabsTrigger>
-                  <TabsTrigger value="neutral">Нейтральные</TabsTrigger>
+                  <TabsTrigger value="basic" className="flex items-center gap-1" title="Основное">
+                    <Info className="h-4 w-4" />
+                    <span className="hidden sm:inline">Основное</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="brand" className="flex items-center gap-1" title="Бренд">
+                    <Briefcase className="h-4 w-4" />
+                    <span className="hidden sm:inline">Бренд</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="status" className="flex items-center gap-1" title="Статусы">
+                    <AlertCircle className="h-4 w-4" />
+                    <span className="hidden sm:inline">Статусы</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="neutral" className="flex items-center gap-1" title="Нейтральные">
+                    <Layers className="h-4 w-4" />
+                    <span className="hidden sm:inline">Нейтральные</span>
+                  </TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="basic" className="space-y-4">
