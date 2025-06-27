@@ -445,7 +445,7 @@ export default function Home() {
                     }
                   })()}
                 </p>
-                <div className="w-24 h-1 bg-gradient-to-r from-primary to-orange-500 mx-auto rounded-full"></div>
+                <div className="w-24 h-1 bg-gradient-to-r from-primary to-primary-hover mx-auto rounded-full"></div>
               </div>
             </div>
           )}
@@ -484,7 +484,7 @@ export default function Home() {
                 <div className="mb-8">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                     <div className="flex items-center gap-4">
-                      <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg">
+                      <div className="p-3 bg-gradient-to-br from-primary to-primary-hover rounded-xl shadow-lg">
                         <Package className="h-7 w-7 text-white" />
                       </div>
                       <div>
@@ -497,7 +497,7 @@ export default function Home() {
                     <div className="flex justify-start md:justify-end mt-6 md:mt-0">
                       <Button
                         onClick={() => setSelectedCategoryId(0)}
-                        className="w-full md:w-auto bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 !text-white hover:!text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                        className="w-full md:w-auto bg-gradient-to-r from-primary to-primary-hover hover:from-primary-hover hover:to-primary !text-white hover:!text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                       >
                         <Package className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
                         {t('allProducts')}
@@ -524,7 +524,7 @@ export default function Home() {
                               </p>
                               
                               <div className="mt-auto">
-                                <Badge className="px-3 py-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold text-sm shadow-md">
+                                <Badge className="px-3 py-1 bg-gradient-to-r from-primary to-primary-hover text-white font-semibold text-sm shadow-md">
                                   {(category as any).productCount || 0} {t('dishesCount')}
                                 </Badge>
                               </div>

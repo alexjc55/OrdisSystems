@@ -803,7 +803,7 @@ export default function Checkout() {
 
                     <Button 
                       type="submit" 
-                      className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 text-lg shadow-lg"
+                      className="w-full bg-gradient-to-r from-primary to-primary-hover hover:from-primary-hover hover:to-primary-dark text-white font-semibold py-3 text-lg shadow-lg"
                       disabled={createAuthenticatedOrderMutation.isPending}
                     >
                       {createAuthenticatedOrderMutation.isPending ? tShop('checkout.processing') : tShop('checkout.placeOrder')}
@@ -1036,7 +1036,7 @@ export default function Checkout() {
 
                       <Button 
                         type="submit" 
-                        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 text-lg shadow-lg"
+                        className="w-full bg-gradient-to-r from-primary to-primary-hover hover:from-primary-hover hover:to-primary-dark text-white font-semibold py-3 text-lg shadow-lg"
                         disabled={registerAndOrderMutation.isPending}
                       >
                         {registerAndOrderMutation.isPending ? tShop('checkout.registeringAndProcessing') : tShop('checkout.registerAndPlaceOrder')}
@@ -1272,7 +1272,7 @@ export default function Checkout() {
 
                       <Button 
                         type="submit" 
-                        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 text-lg shadow-lg"
+                        className="w-full bg-gradient-to-r from-primary to-primary-hover hover:from-primary-hover hover:to-primary-dark text-white font-semibold py-3 text-lg shadow-lg"
                         disabled={createGuestOrderMutation.isPending}
                       >
                         {createGuestOrderMutation.isPending ? tShop('checkout.processing') : tShop('checkout.placeOrderAsGuest')}

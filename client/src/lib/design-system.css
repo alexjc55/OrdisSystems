@@ -49,6 +49,14 @@
     color: var(--color-primary) !important;
   }
   
+  .bg-primary-dark {
+    background-color: var(--color-primary-dark) !important;
+  }
+  
+  .text-primary-dark {
+    color: var(--color-primary-dark) !important;
+  }
+  
   .border-primary {
     border-color: var(--color-primary) !important;
   }
