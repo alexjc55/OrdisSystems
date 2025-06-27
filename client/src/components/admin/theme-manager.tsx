@@ -547,6 +547,14 @@ export default function ThemeManager() {
       modernBlock2Text: formData.get("modernBlock2Text") as string || "",
       modernBlock3Icon: formData.get("modernBlock3Icon") as string || "",
       modernBlock3Text: formData.get("modernBlock3Text") as string || "",
+      // Visual display settings
+      showBannerImage: formData.get("showBannerImage") === "true",
+      showTitleDescription: formData.get("showTitleDescription") === "true",
+      showInfoBlocks: formData.get("showInfoBlocks") === "true",
+      infoBlocksPosition: formData.get("infoBlocksPosition") as string || "top",
+      showSpecialOffers: formData.get("showSpecialOffers") === "true",
+      showCategoryMenu: formData.get("showCategoryMenu") === "true",
+      showWhatsAppChat: formData.get("showWhatsAppChat") === "true",
       whiteColor: formData.get("whiteColor") as string,
       gray50Color: formData.get("gray50Color") as string,
       gray100Color: formData.get("gray100Color") as string,
@@ -611,6 +619,14 @@ export default function ThemeManager() {
       modernBlock2Text: formData.get("modernBlock2Text") as string || "",
       modernBlock3Icon: formData.get("modernBlock3Icon") as string || "",
       modernBlock3Text: formData.get("modernBlock3Text") as string || "",
+      // Visual display settings
+      showBannerImage: formData.get("showBannerImage") === "true",
+      showTitleDescription: formData.get("showTitleDescription") === "true",
+      showInfoBlocks: formData.get("showInfoBlocks") === "true",
+      infoBlocksPosition: formData.get("infoBlocksPosition") as string || "top",
+      showSpecialOffers: formData.get("showSpecialOffers") === "true",
+      showCategoryMenu: formData.get("showCategoryMenu") === "true",
+      showWhatsAppChat: formData.get("showWhatsAppChat") === "true",
       whiteColor: convertColorToHsl(formData.get("whiteColor") as string),
       gray50Color: convertColorToHsl(formData.get("gray50Color") as string),
       gray100Color: convertColorToHsl(formData.get("gray100Color") as string),
@@ -1349,79 +1365,79 @@ export default function ThemeManager() {
                   <input type="hidden" name="accentColor" defaultValue={editingTheme.accentColor} />
                 </TabsContent>
 
-                <TabsContent value="visuals" className="space-y-4">
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="text-sm font-medium mb-3">Настройки отображения</h4>
-                      <div className="space-y-3">
-                        {/* Баннер */}
-                        <div className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="space-y-0.5">
-                            <div className="text-sm font-medium">Показывать баннер</div>
-                            <div className="text-xs text-gray-500">Главное изображение в шапке сайта</div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <input type="hidden" name="showBannerImage" defaultValue="true" />
-                        </div>
+                <TabsContent value="visuals" className="space-y-6">
+                  {/* Основные элементы отображения */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Основные элементы интерфейса</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <VisualToggleButton 
+                        isEnabled={editingTheme?.showBannerImage ?? true}
+                        onToggle={() => {}} // Will be handled by form submission
+                        label="Показывать баннер"
+                        description="Главное изображение в шапке сайта"
+                        fieldName="showBannerImage"
+                      />
 
-                        {/* Заголовок и описание */}
-                        <div className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="space-y-0.5">
-                            <div className="text-sm font-medium">Заголовок и описание</div>
-                            <div className="text-xs text-gray-500">Текстовая информация о магазине</div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <input type="hidden" name="showTitleDescription" defaultValue="true" />
-                        </div>
+                      <VisualToggleButton 
+                        isEnabled={editingTheme?.showTitleDescription ?? true}
+                        onToggle={() => {}} // Will be handled by form submission
+                        label="Заголовок и описание"
+                        description="Текстовая информация о магазине"
+                        fieldName="showTitleDescription"
+                      />
 
-                        {/* Информационные блоки */}
-                        <div className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="space-y-0.5">
-                            <div className="text-sm font-medium">Информационные блоки</div>
-                            <div className="text-xs text-gray-500">Часы работы, контакты, доставка</div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <input type="hidden" name="showInfoBlocks" defaultValue="true" />
-                        </div>
+                      <VisualToggleButton 
+                        isEnabled={editingTheme?.showInfoBlocks ?? true}
+                        onToggle={() => {}} // Will be handled by form submission
+                        label="Информационные блоки"
+                        description="Часы работы, контакты, доставка"
+                        fieldName="showInfoBlocks"
+                      />
 
-                        {/* Позиция информационных блоков */}
-                        <div className="space-y-2">
-                          <Label htmlFor="infoBlocksPositionEdit" className="text-sm font-medium">Позиция информационных блоков</Label>
-                          <select
-                            name="infoBlocksPosition"
-                            id="infoBlocksPositionEdit"
-                            defaultValue="top"
-                            className="w-full px-3 py-2 border rounded-md bg-white"
-                          >
-                            <option value="top">Сверху от товаров</option>
-                            <option value="bottom">Снизу от товаров</option>
-                          </select>
-                        </div>
-                      </div>
+                      <VisualToggleButton 
+                        isEnabled={editingTheme?.showCategoryMenu ?? true}
+                        onToggle={() => {}} // Will be handled by form submission
+                        label="Меню категорий"
+                        description="Навигационное меню категорий"
+                        fieldName="showCategoryMenu"
+                      />
                     </div>
+                    
+                    {/* Позиция информационных блоков */}
+                    <div className="mt-4 space-y-2">
+                      <Label htmlFor="infoBlocksPositionEdit" className="text-sm font-medium">Позиция информационных блоков</Label>
+                      <select
+                        name="infoBlocksPosition"
+                        id="infoBlocksPositionEdit"
+                        defaultValue={editingTheme?.infoBlocksPosition || "top"}
+                        className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                      >
+                        <option value="top">Сверху от товаров</option>
+                        <option value="bottom">Снизу от товаров</option>
+                      </select>
+                    </div>
+                  </div>
 
+                  {/* Дополнительные функции */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Дополнительные функции</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <VisualToggleButton 
+                        isEnabled={editingTheme?.showSpecialOffers ?? true}
+                        onToggle={() => {}} // Will be handled by form submission
+                        label="Особые предложения"
+                        description="Блок с особыми предложениями"
+                        fieldName="showSpecialOffers"
+                      />
 
+                      <VisualToggleButton 
+                        isEnabled={editingTheme?.showWhatsAppChat ?? true}
+                        onToggle={() => {}} // Will be handled by form submission
+                        label="WhatsApp чат"
+                        description="Кнопка связи через WhatsApp"
+                        fieldName="showWhatsAppChat"
+                      />
+                    </div>
                   </div>
                 </TabsContent>
 

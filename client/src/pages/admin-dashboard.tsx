@@ -6648,166 +6648,17 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
 
 
-        {/* Переключатели отображения */}
+        {/* Информация о переносе настроек */}
         <div className="space-y-4">
-          <h4 className="text-sm font-medium text-gray-700">{adminT('storeSettings.displaySettingsDescription')}</h4>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h4 className="text-sm font-medium text-blue-800 mb-2">Настройки отображения перенесены</h4>
+            <p className="text-xs text-blue-700">
+              Все настройки отображения элементов интерфейса теперь находятся в разделе "Управление темами" → вкладка "Визуалы".
+            </p>
+          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="showBannerImage"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showBanner')}</FormLabel>
-                    <FormDescription className="text-xs">
-                      {adminT('storeSettings.showBannerDescription')}
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => field.onChange(!field.value)}
-                      className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                    >
-                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                    </Button>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="showTitleDescription"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showTitle')}</FormLabel>
-                    <FormDescription className="text-xs">
-                      {adminT('storeSettings.showTitleDescription')}
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => field.onChange(!field.value)}
-                      className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                    >
-                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                    </Button>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="showInfoBlocks"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showInfoBlocks')}</FormLabel>
-                    <FormDescription className="text-xs">
-                      {adminT('storeSettings.showInfoBlocksDescription')}
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => field.onChange(!field.value)}
-                      className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                    >
-                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                    </Button>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="infoBlocksPosition"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium">{adminT('storeSettings.infoBlocksPosition')}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={adminT('storeSettings.selectPosition')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="top">{adminT('storeSettings.positionTop')}</SelectItem>
-                      <SelectItem value="bottom">{adminT('storeSettings.positionBottom')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription className="text-xs">
-{adminT('storeSettings.infoBlocksPositionDescription')}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="showSpecialOffers"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showSpecialOffers')}</FormLabel>
-                    <FormDescription className="text-xs">
-                      {adminT('settings.specialOffersDescription', 'Отображать блок с особыми предложениями')}
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => field.onChange(!field.value)}
-                      className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                    >
-                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                    </Button>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="showCategoryMenu"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('storeSettings.showCategoryMenu')}</FormLabel>
-                    <FormDescription className="text-xs">
-                      {adminT('settings.categoryMenuDescription', 'Отображать навигационное меню категорий')}
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => field.onChange(!field.value)}
-                      className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                    >
-                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                    </Button>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
+            {/* WhatsApp включение остается в админ панели для простоты доступа */}
             <FormField
               control={form.control}
               name="showWhatsAppChat"
@@ -6816,7 +6667,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <div className="space-y-0.5">
                     <FormLabel className="text-sm font-medium">{adminT('storeSettings.showWhatsAppChat')}</FormLabel>
                     <FormDescription className="text-xs">
-{adminT('storeSettings.showWhatsAppChatDescription')}
+                      {adminT('storeSettings.showWhatsAppChatDescription')}
                     </FormDescription>
                   </div>
                   <FormControl>
