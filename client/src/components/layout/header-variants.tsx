@@ -10,6 +10,15 @@ export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'he';
 
+  // Return loading state if storeSettings is not yet loaded
+  if (!storeSettings) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-500">Loading...</div>
+      </div>
+    );
+  }
+
   if (style === 'modern') {
     return <ModernHeader storeSettings={storeSettings} t={t} isRTL={isRTL} />;
   }
@@ -49,7 +58,7 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
         <InfoCard
           icon={<Clock className="w-6 h-6" />}
           title={t('home.working_hours')}
-          content={storeSettings.workingHours || "09:00 - 21:00"}
+          content={typeof storeSettings.workingHours === 'string' ? storeSettings.workingHours : "09:00 - 21:00"}
           iconColor="var(--color-working-hours-icon)"
           isRTL={isRTL}
         />
@@ -119,7 +128,7 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
         <ModernInfoCard
           icon={<Clock className="w-5 h-5" />}
           title={t('home.working_hours')}
-          content={storeSettings.workingHours || "09:00 - 21:00"}
+          content={typeof storeSettings.workingHours === 'string' ? storeSettings.workingHours : "09:00 - 21:00"}
           iconColor="var(--color-working-hours-icon)"
           isRTL={isRTL}
         />
@@ -174,7 +183,7 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
           <MinimalInfoItem
             icon={<Clock className="w-6 h-6" />}
             title={t('home.working_hours')}
-            content={storeSettings.workingHours || "09:00 - 21:00"}
+            content={typeof storeSettings.workingHours === 'string' ? storeSettings.workingHours : "09:00 - 21:00"}
             iconColor="var(--color-working-hours-icon)"
           />
           <MinimalInfoItem

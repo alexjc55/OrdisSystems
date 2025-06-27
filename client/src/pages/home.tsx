@@ -245,6 +245,14 @@ export default function Home() {
     queryKey: ["/api/products"],
   });
 
+  // Fetch active theme to get header style
+  const { data: themes = [] } = useQuery<any[]>({
+    queryKey: ['/api/admin/themes'],
+  });
+  
+  const activeTheme = themes.find((theme: any) => theme.isActive);
+  const headerStyle = activeTheme?.headerStyle || 'classic';
+
   // Fetch products for selected category
   const { data: products = [], isLoading: productsLoading } = useQuery<ProductWithCategories[]>({
     queryKey: ["/api/products", selectedCategoryId],
@@ -382,13 +390,13 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 overflow-x-hidden pt-16">
       <Header onResetView={handleResetView} />
       
-      {/* Simple Banner Image */}
-      {storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
-        <div 
-          className="w-full h-32 sm:h-40 lg:h-48 bg-cover bg-center"
-          style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
+      {/* Header Variant with Theme Style */}
+      <div className="container mx-auto px-4 py-8">
+        <HeaderVariant 
+          storeSettings={storeSettings} 
+          style={headerStyle as 'classic' | 'modern' | 'minimal'}
         />
-      )}
+      </div>
       
       <div className="flex overflow-x-hidden">
         {storeSettings?.showCategoryMenu !== false && (
