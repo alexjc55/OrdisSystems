@@ -111,8 +111,14 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
 }
 
 function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
-  // Check if button should be shown
-  const showButton = storeSettings.bannerButtonText && storeSettings.bannerButtonText.trim() !== '';
+  // Check if button should be shown - only if text is explicitly provided and not empty
+  const buttonText = storeSettings?.bannerButtonText;
+  const showButton = buttonText && 
+                     typeof buttonText === 'string' && 
+                     buttonText.trim() !== '';
+  
+  // Debug log
+  console.log('Banner button debug:', { buttonText, showButton, storeSettings: storeSettings });
   
   return (
     <div className="relative w-full mb-6 sm:mb-8">
