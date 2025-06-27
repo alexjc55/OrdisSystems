@@ -165,6 +165,12 @@
     color: white !important;
   }
   
+  /* Out of stock status overlay bar */
+  .out-of-stock-status-overlay {
+    background-color: var(--color-out-of-stock) !important;
+    opacity: 0.9;
+  }
+  
   .btn-primary:hover svg {
     color: var(--color-white) !important;
     fill: none !important;

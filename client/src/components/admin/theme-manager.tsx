@@ -231,6 +231,43 @@ export default function ThemeManager() {
         root.style.setProperty('--color-tomorrow-light', updatedTheme.tomorrowLightColor);
         root.style.setProperty('--color-out-of-stock', updatedTheme.outOfStockColor);
         
+        // Update shadows for special colors
+        const tomorrowRgb = (() => {
+          const color = updatedTheme.tomorrowColor;
+          if (color.includes('hsl')) {
+            const hslMatch = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+            if (hslMatch) {
+              const h = parseInt(hslMatch[1]) / 360;
+              const s = parseInt(hslMatch[2]) / 100;
+              const l = parseInt(hslMatch[3]) / 100;
+              
+              const c = (1 - Math.abs(2 * l - 1)) * s;
+              const x = c * (1 - Math.abs((h * 6) % 2 - 1));
+              const m = l - c / 2;
+              
+              let r = 0, g = 0, b = 0;
+              if (h >= 0 && h < 1/6) { r = c; g = x; b = 0; }
+              else if (h >= 1/6 && h < 2/6) { r = x; g = c; b = 0; }
+              else if (h >= 2/6 && h < 3/6) { r = 0; g = c; b = x; }
+              else if (h >= 3/6 && h < 4/6) { r = 0; g = x; b = c; }
+              else if (h >= 4/6 && h < 5/6) { r = x; g = 0; b = c; }
+              else if (h >= 5/6 && h < 1) { r = c; g = 0; b = x; }
+              
+              return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+            }
+          }
+          if (color.includes('#')) {
+            const hex = color.replace('#', '');
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            return [r, g, b];
+          }
+          return [239, 68, 68]; // fallback red
+        })();
+        
+        root.style.setProperty('--shadow-tomorrow', `0 4px 14px 0 rgba(${tomorrowRgb[0]}, ${tomorrowRgb[1]}, ${tomorrowRgb[2]}, 0.3)`);
+        
         // Update neutral colors
         root.style.setProperty('--color-white', updatedTheme.whiteColor);
         root.style.setProperty('--color-gray-50', updatedTheme.gray50Color);
