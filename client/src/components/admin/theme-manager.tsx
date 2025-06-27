@@ -226,6 +226,11 @@ export default function ThemeManager() {
         root.style.setProperty('--color-info', updatedTheme.infoColor);
         root.style.setProperty('--color-info-light', updatedTheme.infoLightColor);
         
+        // Update special colors
+        root.style.setProperty('--color-tomorrow', updatedTheme.tomorrowColor);
+        root.style.setProperty('--color-tomorrow-light', updatedTheme.tomorrowLightColor);
+        root.style.setProperty('--color-out-of-stock', updatedTheme.outOfStockColor);
+        
         // Update neutral colors
         root.style.setProperty('--color-white', updatedTheme.whiteColor);
         root.style.setProperty('--color-gray-50', updatedTheme.gray50Color);
