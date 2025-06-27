@@ -137,9 +137,48 @@ export default function ThemeManager() {
       const res = await apiRequest("PUT", `/api/admin/themes/${id}`, themeData);
       return await res.json();
     },
-    onSuccess: () => {
+    onSuccess: (updatedTheme) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/themes"] });
       setEditingTheme(null);
+      
+      // Apply theme immediately if it's the active theme
+      if (updatedTheme.isActive) {
+        // Apply colors directly to CSS custom properties
+        const root = document.documentElement;
+        
+        // Update primary colors which are most commonly used
+        root.style.setProperty('--color-primary', updatedTheme.primaryColor);
+        root.style.setProperty('--color-primary-dark', updatedTheme.primaryDarkColor);
+        root.style.setProperty('--color-primary-light', updatedTheme.primaryLightColor);
+        root.style.setProperty('--color-secondary', updatedTheme.secondaryColor);
+        root.style.setProperty('--color-accent', updatedTheme.accentColor);
+        
+        // Update status colors
+        root.style.setProperty('--color-success', updatedTheme.successColor);
+        root.style.setProperty('--color-success-light', updatedTheme.successLightColor);
+        root.style.setProperty('--color-warning', updatedTheme.warningColor);
+        root.style.setProperty('--color-warning-light', updatedTheme.warningLightColor);
+        root.style.setProperty('--color-error', updatedTheme.errorColor);
+        root.style.setProperty('--color-error-light', updatedTheme.errorLightColor);
+        root.style.setProperty('--color-info', updatedTheme.infoColor);
+        root.style.setProperty('--color-info-light', updatedTheme.infoLightColor);
+        
+        // Update neutral colors
+        root.style.setProperty('--color-white', updatedTheme.whiteColor);
+        root.style.setProperty('--color-gray-50', updatedTheme.gray50Color);
+        root.style.setProperty('--color-gray-100', updatedTheme.gray100Color);
+        root.style.setProperty('--color-gray-200', updatedTheme.gray200Color);
+        root.style.setProperty('--color-gray-300', updatedTheme.gray300Color);
+        root.style.setProperty('--color-gray-400', updatedTheme.gray400Color);
+        root.style.setProperty('--color-gray-500', updatedTheme.gray500Color);
+        root.style.setProperty('--color-gray-600', updatedTheme.gray600Color);
+        root.style.setProperty('--color-gray-700', updatedTheme.gray700Color);
+        root.style.setProperty('--color-gray-800', updatedTheme.gray800Color);
+        root.style.setProperty('--color-gray-900', updatedTheme.gray900Color);
+        
+        console.log('Applied theme colors to CSS variables');
+      }
+      
       toast({
         title: "Успешно",
         description: "Тема обновлена успешно",
