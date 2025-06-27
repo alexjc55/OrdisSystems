@@ -123,6 +123,12 @@ interface ThemeData {
   headerStyle: string;
   bannerButtonText?: string;
   bannerButtonLink?: string;
+  modernBlock1Icon?: string;
+  modernBlock1Text?: string;
+  modernBlock2Icon?: string;
+  modernBlock2Text?: string;
+  modernBlock3Icon?: string;
+  modernBlock3Text?: string;
   whiteColor: string;
   gray50Color: string;
   gray100Color: string;
@@ -491,6 +497,12 @@ export default function ThemeManager() {
       headerStyle: formData.get("headerStyle") as string,
       bannerButtonText: formData.get("bannerButtonText") as string || "Смотреть каталог",
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
+      modernBlock1Icon: formData.get("modernBlock1Icon") as string || "",
+      modernBlock1Text: formData.get("modernBlock1Text") as string || "",
+      modernBlock2Icon: formData.get("modernBlock2Icon") as string || "",
+      modernBlock2Text: formData.get("modernBlock2Text") as string || "",
+      modernBlock3Icon: formData.get("modernBlock3Icon") as string || "",
+      modernBlock3Text: formData.get("modernBlock3Text") as string || "",
       whiteColor: formData.get("whiteColor") as string,
       gray50Color: formData.get("gray50Color") as string,
       gray100Color: formData.get("gray100Color") as string,
@@ -549,6 +561,12 @@ export default function ThemeManager() {
       headerStyle: formData.get("headerStyle") as string,
       bannerButtonText: formData.get("bannerButtonText") as string || "Смотреть каталог",
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
+      modernBlock1Icon: formData.get("modernBlock1Icon") as string || "",
+      modernBlock1Text: formData.get("modernBlock1Text") as string || "",
+      modernBlock2Icon: formData.get("modernBlock2Icon") as string || "",
+      modernBlock2Text: formData.get("modernBlock2Text") as string || "",
+      modernBlock3Icon: formData.get("modernBlock3Icon") as string || "",
+      modernBlock3Text: formData.get("modernBlock3Text") as string || "",
       whiteColor: convertColorToHsl(formData.get("whiteColor") as string),
       gray50Color: convertColorToHsl(formData.get("gray50Color") as string),
       gray100Color: convertColorToHsl(formData.get("gray100Color") as string),
@@ -743,8 +761,12 @@ export default function ThemeManager() {
                         className="w-full px-3 py-2 border rounded-md bg-white"
                         onChange={(e) => {
                           const headerControls = document.getElementById('headerControlsCreate');
+                          const modernControls = document.getElementById('modernControlsCreate');
                           if (headerControls) {
                             headerControls.style.display = e.target.value === 'minimal' ? 'block' : 'none';
+                          }
+                          if (modernControls) {
+                            modernControls.style.display = e.target.value === 'modern' ? 'block' : 'none';
                           }
                         }}
                       >

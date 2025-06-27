@@ -248,6 +248,14 @@ export const themes = pgTable("themes", {
   bannerButtonText: varchar("banner_button_text", { length: 100 }).default("Смотреть каталог"),
   bannerButtonLink: varchar("banner_button_link", { length: 200 }).default("#categories"),
   
+  // Modern header style info blocks
+  modernBlock1Icon: varchar("modern_block1_icon", { length: 50 }).default(""),
+  modernBlock1Text: varchar("modern_block1_text", { length: 200 }).default(""),
+  modernBlock2Icon: varchar("modern_block2_icon", { length: 50 }).default(""),
+  modernBlock2Text: varchar("modern_block2_text", { length: 200 }).default(""),
+  modernBlock3Icon: varchar("modern_block3_icon", { length: 50 }).default(""),
+  modernBlock3Text: varchar("modern_block3_text", { length: 200 }).default(""),
+  
   // Neutral colors
   whiteColor: varchar("white_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),
   gray50Color: varchar("gray50_color", { length: 20 }).notNull().default("hsl(210, 40%, 98%)"),
