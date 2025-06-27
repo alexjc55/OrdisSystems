@@ -452,7 +452,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
         <div className="space-y-2">
           {/* Order Header */}
           <div className="flex items-center justify-between">
-            <div className="font-bold text-sm text-orange-600">#{order.id}</div>
+            <div className="font-bold text-sm text-primary">#{order.id}</div>
             <Badge className={`text-xs px-2 py-1 ${getStatusColor(order.status)}`}>
               {getStatusLabel(order.status)}
             </Badge>
@@ -480,7 +480,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 <DropdownMenuContent align="start" className="w-40">
                   <DropdownMenuItem 
                     onClick={() => window.location.href = `tel:${order.customerPhone}`}
-                    className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
+                    className="cursor-pointer hover:!text-primary hover:!bg-orange-50 focus:!text-primary focus:!bg-orange-50"
                   >
                     <Phone className="h-4 w-4 mr-2" />
                     {adminT('orders.call')}
@@ -490,7 +490,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                       const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
                       window.open(`https://wa.me/${cleanPhone}`, '_blank');
                     }}
-                    className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
+                    className="cursor-pointer hover:!text-primary hover:!bg-orange-50 focus:!text-primary focus:!bg-orange-50"
                   >
                     <MessageCircle className="h-4 w-4 mr-2" />
                     WhatsApp
@@ -1255,7 +1255,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       <DropdownMenuContent align="end" className="w-36">
                         <DropdownMenuItem 
                           onClick={() => window.location.href = `tel:${editedOrder.customerPhone}`}
-                          className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
+                          className="cursor-pointer hover:!text-primary hover:!bg-orange-50"
                         >
                           <Phone className="h-3 w-3 mr-2" />
                           {adminT('orders.call')}
@@ -1265,7 +1265,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                             const cleanPhone = editedOrder.customerPhone.replace(/[^\d+]/g, '');
                             window.open(`https://wa.me/${cleanPhone}`, '_blank');
                           }}
-                          className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
+                          className="cursor-pointer hover:!text-primary hover:!bg-orange-50"
                         >
                           <MessageCircle className="h-3 w-3 mr-2" />
                           WhatsApp
@@ -1348,7 +1348,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       <DropdownMenuContent align="end" className="w-36">
                         <DropdownMenuItem 
                           onClick={() => window.location.href = `tel:${editedOrder.customerPhone}`}
-                          className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
+                          className="cursor-pointer hover:!text-primary hover:!bg-orange-50"
                         >
                           <Phone className="h-3 w-3 mr-2" />
                           {adminT('orders.call')}
@@ -1358,7 +1358,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                             const cleanPhone = editedOrder.customerPhone.replace(/[^\d+]/g, '');
                             window.open(`https://wa.me/${cleanPhone}`, '_blank');
                           }}
-                          className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
+                          className="cursor-pointer hover:!text-primary hover:!bg-orange-50"
                         >
                           <MessageCircle className="h-3 w-3 mr-2" />
                           WhatsApp
@@ -1767,7 +1767,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     }))}
                     className="h-8 text-xs w-28"
                   />
-                  <p className="text-xs text-orange-600">
+                  <p className="text-xs text-primary">
                     * {adminT('orders.manualPriceNote')}
                   </p>
                   {!manualPriceOverride.enabled && (
@@ -3346,7 +3346,7 @@ export default function AdminDashboard() {
                                 <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>
                                   <button 
                                     onClick={() => handleSort("price")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                    className="flex items-center gap-1 hover:text-primary transition-colors flex-row-reverse"
                                   >
                                     {adminT('products.productPrice')}
                                     {sortField === "price" && (
@@ -3359,7 +3359,7 @@ export default function AdminDashboard() {
                                 <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>
                                   <button 
                                     onClick={() => handleSort("category")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                    className="flex items-center gap-1 hover:text-primary transition-colors flex-row-reverse"
                                   >
                                     {adminT('products.productCategory')}
                                     {sortField === "category" && (
@@ -3372,7 +3372,7 @@ export default function AdminDashboard() {
                                 <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>
                                   <button 
                                     onClick={() => handleSort("name")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                    className="flex items-center gap-1 hover:text-primary transition-colors flex-row-reverse"
                                   >
                                     {adminT('products.productName')}
                                     {sortField === "name" && (
@@ -3389,7 +3389,7 @@ export default function AdminDashboard() {
                                 <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                   <button 
                                     onClick={() => handleSort("name")}
-                                    className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
+                                    className={`flex items-center gap-1 hover:text-primary transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                                   >
                                     {adminT('products.productName')}
                                     {sortField === "name" && (
@@ -3402,7 +3402,7 @@ export default function AdminDashboard() {
                                 <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                   <button 
                                     onClick={() => handleSort("category")}
-                                    className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
+                                    className={`flex items-center gap-1 hover:text-primary transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                                   >
                                     {adminT('products.productCategory')}
                                     {sortField === "category" && (
@@ -3415,7 +3415,7 @@ export default function AdminDashboard() {
                                 <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                   <button 
                                     onClick={() => handleSort("price")}
-                                    className={`flex items-center gap-1 hover:text-orange-600 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
+                                    className={`flex items-center gap-1 hover:text-primary transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                                   >
                                     {adminT('products.productPrice')}
                                     {sortField === "price" && (
@@ -3473,7 +3473,7 @@ export default function AdminDashboard() {
                                                 : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
                                             )}
                                           </div>
-                                          <div className="text-orange-600 text-xs font-medium" dir="ltr">
+                                          <div className="text-primary text-xs font-medium" dir="ltr">
                                             -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
                                           </div>
                                         </div>
@@ -3489,7 +3489,7 @@ export default function AdminDashboard() {
                                         <span 
                                           key={category.id}
                                           title={category.name} 
-                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
+                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white hover:bg-primary shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
                                         >
                                           
                                           {category.name}
@@ -3503,7 +3503,7 @@ export default function AdminDashboard() {
                                         setEditingProduct(product);
                                         setIsProductFormOpen(true);
                                       }}
-                                      className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
+                                      className={`font-medium text-xs sm:text-sm hover:text-primary transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
                                     >
                                       {product.name}
                                     </button>
@@ -3518,7 +3518,7 @@ export default function AdminDashboard() {
                                         setEditingProduct(product);
                                         setIsProductFormOpen(true);
                                       }}
-                                      className={`font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
+                                      className={`font-medium text-xs sm:text-sm hover:text-primary transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
                                     >
                                       {product.name}
                                     </button>
@@ -3529,7 +3529,7 @@ export default function AdminDashboard() {
                                         <span 
                                           key={category.id}
                                           title={category.name} 
-                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
+                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white hover:bg-primary shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
                                         >
                                           
                                           {category.name}
@@ -3549,7 +3549,7 @@ export default function AdminDashboard() {
                                                 : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
                                             )}
                                           </div>
-                                          <div className="text-orange-600 text-xs font-medium" dir="ltr">
+                                          <div className="text-primary text-xs font-medium" dir="ltr">
                                             -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
                                           </div>
                                         </div>
@@ -3621,7 +3621,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(1)}
                           disabled={productsPage === 1}
                           title="Первая страница"
-                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           ⟨⟨
                         </Button>
@@ -3631,11 +3631,11 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
                           disabled={productsPage === 1}
                           title="Предыдущая страница"
-                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </Button>
-                        <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
+                        <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]">
                           {productsPage}/{productsTotalPages}
                         </span>
                         <Button
@@ -3644,7 +3644,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
                           disabled={productsPage === productsTotalPages}
                           title="Следующая страница"
-                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </Button>
@@ -3654,7 +3654,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(productsTotalPages)}
                           disabled={productsPage === productsTotalPages}
                           title="Последняя страница"
-                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           ⟩⟩
                         </Button>
@@ -3673,7 +3673,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(1)}
                           disabled={productsPage === 1}
                           title="Первая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
+                          className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           ⟨⟨
                         </Button>
@@ -3683,11 +3683,11 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
                           disabled={productsPage === 1}
                           title="Предыдущая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
+                          className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </Button>
-                        <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                        <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
                           {productsPage} из {productsTotalPages}
                         </span>
                         <Button
@@ -3696,7 +3696,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
                           disabled={productsPage === productsTotalPages}
                           title="Следующая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
+                          className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </Button>
@@ -3706,7 +3706,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(productsTotalPages)}
                           disabled={productsPage === productsTotalPages}
                           title="Последняя страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
+                          className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           ⟩⟩
                         </Button>
@@ -3816,7 +3816,7 @@ export default function AdminDashboard() {
                     variant={ordersViewMode === "table" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setOrdersViewMode("table")}
-                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "table" ? 'bg-primary text-white hover:bg-orange-600' : 'hover:bg-gray-200'}`}
+                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "table" ? 'bg-primary text-white hover:bg-primary' : 'hover:bg-gray-200'}`}
                   >
                     <Grid3X3 className={`h-3 w-3 mr-1 ${ordersViewMode === "table" ? 'text-white' : ''}`} />
                     {adminT('common.table', 'Таблица')}
@@ -3825,7 +3825,7 @@ export default function AdminDashboard() {
                     variant={ordersViewMode === "kanban" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setOrdersViewMode("kanban")}
-                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "kanban" ? 'bg-primary text-white hover:bg-orange-600' : 'hover:bg-gray-200'}`}
+                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "kanban" ? 'bg-primary text-white hover:bg-primary' : 'hover:bg-gray-200'}`}
                   >
                     <Columns className={`h-3 w-3 mr-1 ${ordersViewMode === "kanban" ? 'text-white' : ''}`} />
                     {adminT('common.kanban', 'Канбан')}
@@ -3901,7 +3901,7 @@ export default function AdminDashboard() {
                               {ordersResponse.data.map((order: any) => (
                                 <TableRow key={order.id} className="hover:bg-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
                                   <TableCell 
-                                    className={`font-bold text-xs sm:text-sm text-orange-600 ${isRTL ? 'text-right' : 'text-center'}`}
+                                    className={`font-bold text-xs sm:text-sm text-primary ${isRTL ? 'text-right' : 'text-center'}`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                   >
                                     <div className="flex flex-col items-center gap-1">
@@ -3911,7 +3911,7 @@ export default function AdminDashboard() {
                                           setEditingOrder(order);
                                           setIsOrderFormOpen(true);
                                         }}
-                                        className="inline-flex items-center justify-center h-8 w-8 rounded-md bg-primary hover:bg-orange-600 text-white border-2 border-orange-600 shadow-md transition-colors"
+                                        className="inline-flex items-center justify-center h-8 w-8 rounded-md bg-primary hover:bg-primary text-white border-2 border-orange-600 shadow-md transition-colors"
                                         title={adminT('orders.viewDetails')}
                                       >
                                         <Eye className="h-5 w-5" />
@@ -4119,7 +4119,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
                               title={adminT('common.firstPage')}
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟨⟨
                             </Button>
@@ -4129,11 +4129,11 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
                               title={adminT('common.previousPage')}
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
-                            <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
                               {ordersResponse.page} {adminT('common.of')} {ordersResponse.totalPages}
                             </span>
                             <Button
@@ -4142,7 +4142,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Следующая страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronRight className="h-4 w-4" />
                             </Button>
@@ -4152,7 +4152,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Последняя страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟩⟩
                             </Button>
@@ -4421,7 +4421,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
                               title="Первая страница"
-                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               ⟨⟨
                             </Button>
@@ -4431,11 +4431,11 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
                               title="Предыдущая страница"
-                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
-                            <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
+                            <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]">
                               {ordersResponse.page}/{ordersResponse.totalPages}
                             </span>
                             <Button
@@ -4444,7 +4444,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Следующая страница"
-                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               <ChevronRight className="h-4 w-4" />
                             </Button>
@@ -4454,7 +4454,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Последняя страница"
-                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               ⟩⟩
                             </Button>
@@ -4473,7 +4473,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
                               title={adminT('common.firstPage')}
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟨⟨
                             </Button>
@@ -4483,11 +4483,11 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
                               title="Предыдущая страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
-                            <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
                               {ordersResponse.page} из {ordersResponse.totalPages}
                             </span>
                             <Button
@@ -4496,7 +4496,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Следующая страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronRight className="h-4 w-4" />
                             </Button>
@@ -4506,7 +4506,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Последняя страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟩⟩
                             </Button>
@@ -4588,7 +4588,7 @@ export default function AdminDashboard() {
                   <div className={`flex gap-2 ${isRTL ? 'order-first' : 'order-last'}`}>
                     <Button 
                       onClick={() => setIsUserFormOpen(true)}
-                      className={`bg-primary hover:bg-orange-600 text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+                      className={`bg-primary hover:bg-primary text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
                     >
                       <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                       {adminT('users.addUser', 'Добавить пользователя')}
@@ -4721,7 +4721,7 @@ export default function AdminDashboard() {
                           onClick={() => setUsersPage(1)}
                           disabled={usersPage === 1}
                           title={adminT('common.firstPage', 'Первая страница')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-primary hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟩⟩' : '⟨⟨'}
                         </Button>
@@ -4731,7 +4731,7 @@ export default function AdminDashboard() {
                           onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
                           disabled={usersPage === 1}
                           title={adminT('common.prevPage', 'Предыдущая страница')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-primary hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟩' : '⟨'}
                         </Button>
@@ -4745,7 +4745,7 @@ export default function AdminDashboard() {
                           onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
                           disabled={usersPage >= usersTotalPages}
                           title={adminT('common.nextPage', 'Следующая страница')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-primary hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟨' : '⟩'}
                         </Button>
@@ -4755,7 +4755,7 @@ export default function AdminDashboard() {
                           onClick={() => setUsersPage(usersTotalPages)}
                           disabled={usersPage >= usersTotalPages}
                           title={adminT('common.lastPage', 'Последняя страница')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-primary hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟨⟨' : '⟩⟩'}
                         </Button>
@@ -5522,7 +5522,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 </Button>
                 <Button 
                   type="submit" 
-                  className="text-sm bg-primary text-white border-orange-500 hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2"
+                  className="text-sm bg-primary text-white border-primary hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2"
                 >
                   <Save className="h-4 w-4" />
                   {product ? adminT('products.dialog.saveButton') : adminT('products.dialog.createButton')}
@@ -5656,7 +5656,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                               variant={field.value === icon ? "default" : "outline"}
                               className={`h-10 w-10 p-0 text-lg ${
                                 field.value === icon 
-                                  ? "bg-primary border-orange-500 hover:bg-orange-600" 
+                                  ? "bg-primary border-primary hover:bg-primary" 
                                   : "hover:bg-orange-50 hover:border-orange-300"
                               }`}
                               onClick={() => field.onChange(icon)}
@@ -5716,7 +5716,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               </Button>
               <Button 
                 type="submit" 
-                className={`text-sm bg-primary text-white border-orange-500 hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+                className={`text-sm bg-primary text-white border-primary hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
               >
                 <Save className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                 {category ? adminT('actions.update', 'Обновить') : adminT('actions.create', 'Создать')}  
@@ -5894,11 +5894,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <ChevronDown className="h-5 w-5 text-gray-500" />
                     )}
                     <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.basicInfo')}</h3>
-                    <Store className="h-5 w-5 text-orange-500" />
+                    <Store className="h-5 w-5 text-primary" />
                   </>
                 ) : (
                   <>
-                    <Store className="h-5 w-5 text-orange-500" />
+                    <Store className="h-5 w-5 text-primary" />
                     <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.basicInfo')}</h3>
                     {isBasicInfoOpen ? (
                       <ChevronUp className="h-5 w-5 text-gray-500" />
@@ -6040,7 +6040,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                <MapPin className="h-5 w-5 text-orange-500" />
+                <MapPin className="h-5 w-5 text-primary" />
                 <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.contacts')}</h3>
                 {isContactsOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500" />
@@ -6099,7 +6099,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'ltr' : 'ltr'}>
-                <Upload className="h-5 w-5 text-orange-500" />
+                <Upload className="h-5 w-5 text-primary" />
                 <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.visuals')}</h3>
                 {isVisualsOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500" />
@@ -6168,7 +6168,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                <Languages className="h-5 w-5 text-orange-500" />
+                <Languages className="h-5 w-5 text-primary" />
                 <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.languageSettings')}</h3>
                 {isLanguageSettingsOpen ? (
                   <ChevronUp className="h-5 w-5 text-gray-500" />
@@ -6293,11 +6293,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <ChevronDown className="h-5 w-5 text-gray-500" />
                     )}
                     <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.operatingHours')}</h3>
-                    <Clock className="h-5 w-5 text-orange-500" />
+                    <Clock className="h-5 w-5 text-primary" />
                   </>
                 ) : (
                   <>
-                    <Clock className="h-5 w-5 text-orange-500" />
+                    <Clock className="h-5 w-5 text-primary" />
                     <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.operatingHours')}</h3>
                     {isWorkingHoursOpen ? (
                       <ChevronUp className="h-5 w-5 text-gray-500" />
@@ -6453,11 +6453,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <ChevronDown className="h-5 w-5 text-gray-500" />
                     )}
                     <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.deliveryPayment')}</h3>
-                    <Truck className="h-5 w-5 text-orange-500" />
+                    <Truck className="h-5 w-5 text-primary" />
                   </>
                 ) : (
                   <>
-                    <Truck className="h-5 w-5 text-orange-500" />
+                    <Truck className="h-5 w-5 text-primary" />
                     <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.deliveryPayment')}</h3>
                     {isDeliveryPaymentOpen ? (
                       <ChevronUp className="h-5 w-5 text-gray-500" />
@@ -6587,11 +6587,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <ChevronDown className="h-5 w-5 text-gray-500" />
                     )}
                     <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.displaySettings')}</h3>
-                    <Eye className="h-5 w-5 text-orange-500" />
+                    <Eye className="h-5 w-5 text-primary" />
                   </>
                 ) : (
                   <>
-                    <Eye className="h-5 w-5 text-orange-500" />
+                    <Eye className="h-5 w-5 text-primary" />
                     <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.displaySettings')}</h3>
                     {isDisplaySettingsOpen ? (
                       <ChevronUp className="h-5 w-5 text-gray-500" />
@@ -6849,11 +6849,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             {isRTL ? (
               <>
                 <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.cartBanner')}</h3>
-                <ShoppingCart className="h-5 w-5 text-orange-500" />
+                <ShoppingCart className="h-5 w-5 text-primary" />
               </>
             ) : (
               <>
-                <ShoppingCart className="h-5 w-5 text-orange-500" />
+                <ShoppingCart className="h-5 w-5 text-primary" />
                 <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.cartBanner')}</h3>
               </>
             )}
@@ -7037,11 +7037,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             {isRTL ? (
               <>
                 <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.bottomBanners')}</h3>
-                <Layers className="h-5 w-5 text-orange-500" />
+                <Layers className="h-5 w-5 text-primary" />
               </>
             ) : (
               <>
-                <Layers className="h-5 w-5 text-orange-500" />
+                <Layers className="h-5 w-5 text-primary" />
                 <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.bottomBanners')}</h3>
               </>
             )}
@@ -7191,11 +7191,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <ChevronDown className="h-5 w-5 text-gray-500" />
                     )}
                     <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.trackingCode')}</h3>
-                    <Code className="h-5 w-5 text-orange-500" />
+                    <Code className="h-5 w-5 text-primary" />
                   </>
                 ) : (
                   <>
-                    <Code className="h-5 w-5 text-orange-500" />
+                    <Code className="h-5 w-5 text-primary" />
                     <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.trackingCode')}</h3>
                     {isTrackingCodeOpen ? (
                       <ChevronUp className="h-5 w-5 text-gray-500" />
@@ -7275,11 +7275,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <ChevronDown className="h-5 w-5 text-gray-500" />
                     )}
                     <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.authPage')}</h3>
-                    <Users className="h-5 w-5 text-orange-500" />
+                    <Users className="h-5 w-5 text-primary" />
                   </>
                 ) : (
                   <>
-                    <Users className="h-5 w-5 text-orange-500" />
+                    <Users className="h-5 w-5 text-primary" />
                     <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.authPage')}</h3>
                     {isAuthPageOpen ? (
                       <ChevronUp className="h-5 w-5 text-gray-500" />
@@ -7480,7 +7480,7 @@ function CancellationReasonDialog({
                 value={reason}
                 checked={selectedReason === reason}
                 onChange={(e) => setSelectedReason(e.target.value)}
-                className="text-orange-500 focus:ring-orange-500"
+                className="text-primary focus:ring-orange-500"
               />
               <label htmlFor={`reason-${index}`} className="text-sm cursor-pointer">
                 {reason}
@@ -7746,7 +7746,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               </div>
               <Button 
                 type="submit" 
-                className="text-sm bg-primary hover:bg-orange-600 text-white"
+                className="text-sm bg-primary hover:bg-primary text-white"
               >
                 {user ? adminT('actions.update', 'Обновить') : adminT('users.addUser', 'Создать пользователя')}
               </Button>

@@ -351,7 +351,7 @@ export default function CartOverlay() {
                       <Card className="bg-gray-50">
                         <CardContent className="p-3">
                           <div className="flex items-start gap-2">
-                            <MapPin className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                            <MapPin className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                             <div>
                               <p className="text-sm font-medium text-gray-900 mb-1">{t('cart.delivery')}</p>
                               <p className="text-xs text-gray-600">{storeSettings.deliveryInfo}</p>
@@ -366,7 +366,7 @@ export default function CartOverlay() {
                       <Card className="bg-gray-50">
                         <CardContent className="p-3">
                           <div className="flex items-start gap-2">
-                            <Clock className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                            <Clock className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                             <div>
                               <p className="text-sm font-medium text-gray-900 mb-1">{tCommon('workingHours')}</p>
                               <div className="text-xs text-gray-600 space-y-0.5">
@@ -407,7 +407,7 @@ export default function CartOverlay() {
                       <Card className="bg-gray-50">
                         <CardContent className="p-3">
                           <div className="flex items-start gap-2">
-                            <CreditCard className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                            <CreditCard className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                             <div>
                               <p className="text-sm font-medium text-gray-900 mb-1">Способы оплаты</p>
                               <p className="text-xs text-gray-600">{storeSettings.paymentInfo}</p>
@@ -530,7 +530,7 @@ export default function CartOverlay() {
                     <CardContent className="p-4">
                       <div className="text-center space-y-3">
                         <div className="flex items-center justify-center gap-2 mb-3">
-                          <User className="h-5 w-5 text-orange-600" />
+                          <User className="h-5 w-5 text-primary" />
                           <h3 className="font-medium text-gray-900">{t('auth.loginOrContinueAsGuest')}</h3>
                         </div>
                         
@@ -541,7 +541,7 @@ export default function CartOverlay() {
                         <div className="flex gap-2">
                           <Button
                             onClick={() => window.location.href = '/api/login'}
-                            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
+                            className="flex-1 bg-primary hover:bg-primary text-white"
                           >
                             {t('auth.login')}
                           </Button>
@@ -677,7 +677,7 @@ export default function CartOverlay() {
               <Button
                 onClick={handleCheckout}
                 disabled={createOrderMutation.isPending || !deliveryAddress.trim() || !customerPhone.trim()}
-                className="w-full bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-white font-medium py-3 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:shadow-none"
+                className="w-full bg-primary hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-white font-medium py-3 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:shadow-none"
                 style={{ backgroundColor: 'hsl(16, 100%, 60%)', color: 'white' }}
               >
                 {createOrderMutation.isPending ? (

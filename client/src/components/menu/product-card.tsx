@@ -172,7 +172,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
         {/* Discount badge - only show if it's a special offer */}
         {product.isSpecialOffer && (
           <div className="absolute top-2 left-2">
-            <Badge className="bg-orange-500 text-white text-sm px-3 py-1.5 font-semibold shadow-lg">
+            <Badge className="bg-primary text-white text-sm px-3 py-1.5 font-semibold shadow-lg">
               <Star className="w-4 h-4 mr-1.5 rtl:mr-0 rtl:ml-1.5 fill-current" />
               {storeSettings?.discountBadgeText || 'Скидка'}
             </Badge>
@@ -216,7 +216,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                   <span className="text-lg line-through text-gray-400">
                     {formatCurrency(price)}
                   </span>
-                  <span className="text-2xl font-bold text-orange-600">
+                  <span className="text-2xl font-bold text-primary">
                     {formatCurrency(discountedPrice)}
                   </span>
 
@@ -317,7 +317,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             ) : (
               <Button
                 onClick={handleAddToCart}
-                className="w-full bg-orange-500 text-white hover:bg-orange-600 h-10 text-sm font-medium"
+                className="w-full bg-primary text-white hover:bg-primary h-10 text-sm font-medium"
               >
                 <ShoppingCart className="mr-1 rtl:mr-0 rtl:ml-1 h-3 w-3" />
                 {t('product.addToCart')}

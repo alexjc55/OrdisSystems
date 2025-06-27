@@ -515,7 +515,7 @@ export default function Home() {
                         <CardContent className="p-4 h-32 relative">
                           <div className="flex items-start justify-between gap-4 h-full">
                             <div className="flex-1 flex flex-col h-full">
-                              <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
+                              <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300">
                                 {category.name}
                               </h3>
                               
@@ -559,7 +559,7 @@ export default function Home() {
                     {specialOffers.length > slidesPerPage && (
                       <div className="hidden md:flex items-center gap-2">
                         <button
-                          className="swiper-button-prev-custom w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
+                          className="swiper-button-prev-custom w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary transition-colors shadow-sm"
                         >
                           {currentLanguage === 'he' ? 
                             <ChevronRight className="h-4 w-4" /> : 
@@ -567,7 +567,7 @@ export default function Home() {
                           }
                         </button>
                         <button
-                          className="swiper-button-next-custom w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm"
+                          className="swiper-button-next-custom w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary transition-colors shadow-sm"
                         >
                           {currentLanguage === 'he' ? 
                             <ChevronLeft className="h-4 w-4" /> : 

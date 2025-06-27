@@ -273,19 +273,19 @@ export default function AuthPage() {
           
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
                 ✓
               </div>
               <span className="text-gray-700">{storeSettings?.storeSettings?.authPageFeature1 || "Свежие готовые блюда каждый день"}</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
                 ✓
               </div>
               <span className="text-gray-700">{storeSettings?.storeSettings?.authPageFeature2 || "Быстрая доставка в удобное время"}</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
                 ✓
               </div>
               <span className="text-gray-700">{storeSettings?.storeSettings?.authPageFeature3 || "Широкий выбор блюд на любой вкус"}</span>
@@ -341,7 +341,7 @@ export default function AuthPage() {
                   
                   <Button
                     type="submit"
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+                    className="w-full bg-primary hover:bg-primary text-white"
                     disabled={loginMutation.isPending}
                   >
                     {loginMutation.isPending ? (
@@ -447,7 +447,7 @@ export default function AuthPage() {
                   
                   <Button
                     type="submit"
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+                    className="w-full bg-primary hover:bg-primary text-white"
                     disabled={registerMutation.isPending}
                   >
                     {registerMutation.isPending ? (

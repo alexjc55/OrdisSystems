@@ -380,7 +380,7 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
             </Button>
             <Button
               onClick={handleSubmit}
-              className="flex-1 bg-orange-500 hover:bg-orange-600"
+              className="flex-1 bg-primary hover:bg-primary"
               disabled={createOrderMutation.isPending || !formData.deliveryAddress || !formData.customerPhone}
             >
               {createOrderMutation.isPending ? t('checkout.processing') : `${t('checkout.orderFor')} ${formatCurrency(finalTotal)}`}
