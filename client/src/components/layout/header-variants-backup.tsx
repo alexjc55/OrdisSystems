@@ -34,9 +34,8 @@ export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
 function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
     <div className="relative w-full mb-6 sm:mb-8">
-      {/* Classic Gradient Overlay Banner - Auto height with min height */}
-      <div className="relative min-h-[14rem] sm:min-h-[12rem] md:min-h-[16rem] w-full overflow-hidden"
-           style={{ height: 'auto' }}>
+      {/* Classic Gradient Overlay Banner - Full Width */}
+      <div className="relative h-48 sm:h-64 md:h-80 w-full overflow-hidden">
         {/* Background Image with subtle animation */}
         <div 
           className="absolute inset-0 bg-cover bg-center w-full h-full"
@@ -49,23 +48,22 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-primary/60 to-transparent" />
         
-        {/* Glass Effect Content Card */}
-        <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
-          <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-md rounded-3xl p-6 sm:p-8 md:p-10 border border-white/20 shadow-2xl">
-            <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
+        {/* Content with glass effect */}
+        <div className="relative z-10 h-full flex items-center justify-start px-4 sm:px-6 md:px-16">
+          <div className="max-w-3xl backdrop-blur-sm bg-white/10 rounded-xl p-4 sm:p-8 border border-white/20">
+            <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-3 sm:mb-6 drop-shadow-xl">
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
-            <p className="text-sm sm:text-lg md:text-xl text-white/95 leading-relaxed max-w-2xl mx-auto mb-6" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+            <p className="text-sm sm:text-xl md:text-2xl text-white/95 drop-shadow-lg leading-relaxed mb-4">
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
-            
-            {/* Dotted decorative elements */}
-            <div className="flex items-center justify-center space-x-3 opacity-80">
-              <div className="w-2 h-2 bg-white/70 rounded-full"></div>
-              <div className="w-1 h-1 bg-white/50 rounded-full"></div>
-              <div className="w-3 h-3 bg-white/80 rounded-full"></div>
-              <div className="w-1 h-1 bg-white/50 rounded-full"></div>
-              <div className="w-2 h-2 bg-white/70 rounded-full"></div>
+            {/* Decorative vignette */}
+            <div className="flex items-center space-x-3 opacity-70">
+              <div className="w-6 h-px bg-white/50"></div>
+              <div className="w-1.5 h-1.5 bg-white/50 rounded-full"></div>
+              <div className="w-3 h-3 border border-white/50 rounded-full"></div>
+              <div className="w-1.5 h-1.5 bg-white/50 rounded-full"></div>
+              <div className="w-6 h-px bg-white/50"></div>
             </div>
           </div>
         </div>
@@ -120,7 +118,12 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 mt-4">
+    <div className={`
+      flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 mt-4
+      ${blocks.length === 1 ? 'justify-center' : ''}
+      ${blocks.length === 2 ? 'justify-center' : ''}
+      ${blocks.length === 3 ? 'justify-center' : ''}
+    `}>
       {blocks.map((block, index) => (
         <div 
           key={index}
@@ -140,6 +143,12 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
 }
 
 function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
+  // Check if button should be shown
+  const buttonText = storeSettings?.bannerButtonText;
+  const showButton = buttonText && 
+                     typeof buttonText === 'string' && 
+                     buttonText.trim() !== '';
+
   return (
     <div className="relative w-full mb-6 sm:mb-8">
       {/* Modern Overlay Banner - Adaptive Height with Padding */}
@@ -312,6 +321,76 @@ function MinimalInfoItem({ icon, title, content, iconColor }: any) {
       </div>
       <h3 className="text-base font-medium text-gray-900">{title}</h3>
       <p className="text-sm text-gray-600">{content}</p>
+    </div>
+  );
+}
+
+function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
+  // Function to get icon component by name
+  const getIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'clock': return <Clock className="h-5 w-5" />;
+      case 'phone': return <Phone className="h-5 w-5" />;
+      case 'truck': return <Truck className="h-5 w-5" />;
+      case 'credit-card': return <CreditCard className="h-5 w-5" />;
+      case 'star': return <Star className="h-5 w-5" />;
+      case 'shield': return <Shield className="h-5 w-5" />;
+      case 'heart': return <Heart className="h-5 w-5" />;
+      case 'chef-hat': return <ChefHat className="h-5 w-5" />;
+      default: return <Star className="h-5 w-5" />;
+    }
+  };
+
+  // Collect valid blocks (only show blocks with text)
+  const blocks = [];
+  
+  if (storeSettings?.modernBlock1Text?.trim()) {
+    blocks.push({
+      icon: getIcon(storeSettings.modernBlock1Icon),
+      text: storeSettings.modernBlock1Text
+    });
+  }
+  
+  if (storeSettings?.modernBlock2Text?.trim()) {
+    blocks.push({
+      icon: getIcon(storeSettings.modernBlock2Icon),
+      text: storeSettings.modernBlock2Text
+    });
+  }
+  
+  if (storeSettings?.modernBlock3Text?.trim()) {
+    blocks.push({
+      icon: getIcon(storeSettings.modernBlock3Icon),
+      text: storeSettings.modernBlock3Text
+    });
+  }
+
+  // Don't render anything if no blocks
+  if (blocks.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={`
+      flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 mt-4
+      ${blocks.length === 1 ? 'justify-center' : ''}
+      ${blocks.length === 2 ? 'justify-center' : ''}
+      ${blocks.length === 3 ? 'justify-center' : ''}
+    `}>
+      {blocks.map((block, index) => (
+        <div 
+          key={index}
+          className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-white/90 min-w-0"
+          style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+        >
+          <div className="flex-shrink-0 p-2 bg-white/20 rounded-full backdrop-blur-sm">
+            {block.icon}
+          </div>
+          <span className="text-sm sm:text-base font-medium text-center sm:text-left">
+            {block.text}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
