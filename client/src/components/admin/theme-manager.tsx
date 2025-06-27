@@ -16,6 +16,40 @@ import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw, Info
 import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
 import { ModernStyleSettings } from "./modern-style-settings";
 
+// Visual Toggle Button Component
+function VisualToggleButton({ 
+  isEnabled, 
+  onToggle, 
+  label, 
+  description,
+  fieldName 
+}: { 
+  isEnabled: boolean;
+  onToggle: () => void;
+  label: string;
+  description: string;
+  fieldName: string;
+}) {
+  return (
+    <div className="flex items-center justify-between p-3 border rounded-lg">
+      <div className="space-y-0.5">
+        <div className="text-sm font-medium">{label}</div>
+        <div className="text-xs text-gray-500">{description}</div>
+      </div>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={onToggle}
+        className={`p-2 h-8 w-8 ${isEnabled ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+      >
+        {isEnabled ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+      </Button>
+      <input type="hidden" name={fieldName} value={isEnabled.toString()} />
+    </div>
+  );
+}
+
 // Helper function to convert HEX to HSL
 function hexToHsl(hex: string): string {
   // Remove # if present
@@ -156,6 +190,15 @@ export default function ThemeManager() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingTheme, setEditingTheme] = useState<ThemeData | null>(null);
   const [previewTheme, setPreviewTheme] = useState<ThemeData | null>(null);
+  const [visualSettings, setVisualSettings] = useState({
+    showBannerImage: true,
+    showTitleDescription: true,
+    showInfoBlocks: true,
+    infoBlocksPosition: 'top',
+    showPrices: true,
+    showProductImages: true,
+    showCart: true
+  });
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
