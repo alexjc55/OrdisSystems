@@ -1030,24 +1030,24 @@ button:focus,
 /* Элементы меню - дефолтные стили с нормальным размером шрифта */
 /* Удалены проблемные глобальные стили для селекта */
 
-/* Оранжевый hover для выпадающих списков - по документации Radix UI */
+/* Primary color hover для выпадающих списков - по документации Radix UI */
 [data-radix-select-item][data-highlighted=""] {
-  background-color: #f97316 !important;
+  background-color: var(--color-primary) !important;
   color: white !important;
 }
 
 [data-radix-select-item]:hover {
-  background-color: #f97316 !important;
+  background-color: var(--color-primary) !important;
   color: white !important;
 }
 
 [data-radix-select-item][data-state="checked"][data-highlighted=""] {
-  background-color: #f97316 !important;
+  background-color: var(--color-primary) !important;
   color: white !important;
 }
 
 [data-radix-select-item][data-state="checked"]:hover {
-  background-color: #f97316 !important;
+  background-color: var(--color-primary) !important;
   color: white !important;
 }
 
@@ -1186,7 +1186,7 @@ button[role="switch"][data-state="checked"] > span,
 }
 
 .carousel-dot.bg-orange-500:hover {
-  background-color: rgb(249 115 22) !important;
+  background-color: var(--color-primary) !important;
 }
 
 /* Ensure switches don't inherit carousel dot styles */
@@ -1228,9 +1228,9 @@ nav a, nav button:not(.bg-orange-500):not(.border-orange-500) {
 
 nav a:hover, nav a:focus,
 nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg-orange-500):not(.border-orange-500):focus {
-  color: hsl(24.6, 95%, 53.1%) !important;
-  background-color: hsl(24.6, 95%, 96%) !important;
-  box-shadow: 0 4px 12px -2px rgba(249, 115, 22, 0.2) !important;
+  color: var(--color-primary) !important;
+  background-color: var(--color-primary-light) !important;
+  box-shadow: 0 4px 12px -2px var(--shadow-primary) !important;
 }
 
 /* Tab triggers - preserve original component styling */
@@ -1720,7 +1720,7 @@ html[dir="rtl"] button.whatsapp-button.whatsapp-button.whatsapp-button {
 .swiper-pagination-bullet-active-custom {
   width: 24px;
   border-radius: 12px;
-  background: rgb(249, 115, 22);
+  background: var(--color-primary);
 }
 
 /* Hide default Swiper navigation */
