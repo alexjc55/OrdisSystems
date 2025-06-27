@@ -377,7 +377,7 @@
   }
 
   .btn-tomorrow:hover {
-    background-color: var(--color-tomorrow) !important;
+    background-color: var(--color-tomorrow-dark) !important;
     background-image: none !important;
     box-shadow: var(--shadow-tomorrow) !important;
     color: var(--color-white) !important;
