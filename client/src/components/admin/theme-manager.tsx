@@ -1060,11 +1060,11 @@ export default function ThemeManager() {
                   </div>
                   
                   {/* Keep light variants for API compatibility but hide from UI */}
-                  <input type="hidden" name="successLightColor" defaultValue={editingTheme.successLightColor} />
-                  <input type="hidden" name="warningLightColor" defaultValue={editingTheme.warningLightColor} />
-                  <input type="hidden" name="errorLightColor" defaultValue={editingTheme.errorLightColor} />
-                  <input type="hidden" name="infoLightColor" defaultValue={editingTheme.infoLightColor} />
-                  <input type="hidden" name="tomorrowLightColor" defaultValue={editingTheme.tomorrowLightColor} />
+                  <input type="hidden" name="successLightColor" defaultValue="hsl(142, 76%, 96%)" />
+                  <input type="hidden" name="warningLightColor" defaultValue="hsl(38, 92%, 96%)" />
+                  <input type="hidden" name="errorLightColor" defaultValue="hsl(0, 84%, 96%)" />
+                  <input type="hidden" name="infoLightColor" defaultValue="hsl(221, 83%, 96%)" />
+                  <input type="hidden" name="tomorrowLightColor" defaultValue="hsl(262, 83%, 96%)" />
                 </TabsContent>
 
                 <TabsContent value="neutral" className="space-y-4">
@@ -1083,27 +1083,27 @@ export default function ThemeManager() {
                   </div>
                   
                   {/* Keep all grays for API compatibility but hide unused ones */}
-                  <input type="hidden" name="gray50Color" defaultValue={editingTheme.gray50Color} />
-                  <input type="hidden" name="gray200Color" defaultValue={editingTheme.gray200Color} />
-                  <input type="hidden" name="gray300Color" defaultValue={editingTheme.gray300Color} />
-                  <input type="hidden" name="gray400Color" defaultValue={editingTheme.gray400Color} />
-                  <input type="hidden" name="gray500Color" defaultValue={editingTheme.gray500Color} />
-                  <input type="hidden" name="gray600Color" defaultValue={editingTheme.gray600Color} />
-                  <input type="hidden" name="gray800Color" defaultValue={editingTheme.gray800Color} />
-                  <input type="hidden" name="gray900Color" defaultValue={editingTheme.gray900Color} />
+                  <input type="hidden" name="gray50Color" defaultValue="hsl(210, 40%, 98%)" />
+                  <input type="hidden" name="gray200Color" defaultValue="hsl(214, 32%, 91%)" />
+                  <input type="hidden" name="gray300Color" defaultValue="hsl(213, 27%, 84%)" />
+                  <input type="hidden" name="gray400Color" defaultValue="hsl(215, 20%, 65%)" />
+                  <input type="hidden" name="gray500Color" defaultValue="hsl(215, 16%, 47%)" />
+                  <input type="hidden" name="gray600Color" defaultValue="hsl(215, 19%, 35%)" />
+                  <input type="hidden" name="gray800Color" defaultValue="hsl(217, 33%, 17%)" />
+                  <input type="hidden" name="gray900Color" defaultValue="hsl(222, 47%, 11%)" />
                 </TabsContent>
               </Tabs>
 
               {/* Hidden inputs to ensure all theme data is submitted */}
-              <input type="hidden" name="fontFamilyPrimary" defaultValue={editingTheme.fontFamilyPrimary || "Poppins, sans-serif"} />
-              <input type="hidden" name="fontFamilySecondary" defaultValue={editingTheme.fontFamilySecondary || "Inter, sans-serif"} />
-              <input type="hidden" name="primaryShadow" defaultValue={editingTheme.primaryShadow || "0 4px 14px 0 rgba(255, 102, 0, 0.3)"} />
-              <input type="hidden" name="successShadow" defaultValue={editingTheme.successShadow || "0 4px 14px 0 rgba(34, 197, 94, 0.3)"} />
-              <input type="hidden" name="warningShadow" defaultValue={editingTheme.warningShadow || "0 4px 14px 0 rgba(245, 158, 11, 0.3)"} />
-              <input type="hidden" name="errorShadow" defaultValue={editingTheme.errorShadow || "0 4px 14px 0 rgba(239, 68, 68, 0.3)"} />
-              <input type="hidden" name="infoShadow" defaultValue={editingTheme.infoShadow || "0 4px 14px 0 rgba(59, 130, 246, 0.3)"} />
-              <input type="hidden" name="grayShadow" defaultValue={editingTheme.grayShadow || "0 4px 14px 0 rgba(107, 114, 128, 0.3)"} />
-              <input type="hidden" name="tomorrowShadow" defaultValue={editingTheme.tomorrowShadow || "0 4px 14px 0 rgba(147, 51, 234, 0.3)"} />
+              <input type="hidden" name="fontFamilyPrimary" defaultValue="Poppins, sans-serif" />
+              <input type="hidden" name="fontFamilySecondary" defaultValue="Inter, sans-serif" />
+              <input type="hidden" name="primaryShadow" defaultValue="0 4px 14px 0 rgba(255, 102, 0, 0.3)" />
+              <input type="hidden" name="successShadow" defaultValue="0 4px 14px 0 rgba(34, 197, 94, 0.3)" />
+              <input type="hidden" name="warningShadow" defaultValue="0 4px 14px 0 rgba(245, 158, 11, 0.3)" />
+              <input type="hidden" name="errorShadow" defaultValue="0 4px 14px 0 rgba(239, 68, 68, 0.3)" />
+              <input type="hidden" name="infoShadow" defaultValue="0 4px 14px 0 rgba(59, 130, 246, 0.3)" />
+              <input type="hidden" name="grayShadow" defaultValue="0 4px 14px 0 rgba(107, 114, 128, 0.3)" />
+              <input type="hidden" name="tomorrowShadow" defaultValue="0 4px 14px 0 rgba(147, 51, 234, 0.3)" />
               
               <div className="flex justify-end gap-2 mt-6">
                 <Button type="button" variant="outline" onClick={() => setEditingTheme(null)}>
