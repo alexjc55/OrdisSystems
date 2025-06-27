@@ -57,14 +57,7 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
             <p className="text-xl md:text-2xl text-white/95 mb-8 drop-shadow-lg leading-relaxed">
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-white text-primary px-8 py-4 rounded-lg font-semibold hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-lg">
-                Смотреть меню
-              </button>
-              <button className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-primary transition-all duration-300 text-lg">
-                Контакты
-              </button>
-            </div>
+
           </div>
         </div>
       </div>
@@ -97,9 +90,6 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
             <p className="text-xl md:text-3xl text-white/90 mb-8 drop-shadow-md max-w-3xl mx-auto leading-relaxed">
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
-            <button className="bg-primary hover:bg-primary/90 text-white px-12 py-5 rounded-xl font-semibold transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 text-xl">
-              Заказать сейчас
-            </button>
           </div>
         </div>
       </div>
@@ -109,30 +99,31 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
 
 function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
-    <div className="relative">
-      {/* Minimal Animated Background */}
-      <div className="relative h-40 md:h-48 rounded-2xl overflow-hidden">
-        {/* Animated Background Image */}
+    <div className="relative w-full">
+      {/* Minimal Full Width Banner */}
+      <div className="relative h-48 md:h-64 w-full overflow-hidden">
+        {/* Background Image with strong overlay */}
         <div 
-          className="absolute inset-0 bg-cover bg-center animate-pulse-slow"
+          className="absolute inset-0 bg-cover bg-center w-full h-full"
           style={{
             backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)',
             animation: 'float 6s ease-in-out infinite'
           }}
         />
         
-        {/* Subtle Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/40" />
+        {/* Strong White Overlay for readability */}
+        <div className="absolute inset-0 bg-white/85" />
         
         {/* Content */}
         <div className="relative z-10 h-full flex items-center justify-center text-center px-6">
-          <div className="backdrop-blur-sm bg-white/10 rounded-2xl p-6 border border-white/20">
-            <h1 className="text-2xl md:text-4xl font-light text-white mb-3 tracking-wide drop-shadow-lg">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl md:text-6xl font-light text-gray-900 mb-4 tracking-wide">
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
-            <p className="text-white/90 text-sm md:text-base font-light leading-relaxed max-w-md mx-auto drop-shadow-md">
+            <p className="text-gray-700 text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto">
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
+            <div className="w-16 h-1 bg-primary mx-auto mt-6"></div>
           </div>
         </div>
       </div>
