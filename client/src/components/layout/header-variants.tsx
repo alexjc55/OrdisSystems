@@ -69,7 +69,7 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
   return (
     <div className="relative w-full">
       {/* Modern Overlay Banner - Full Width */}
-      <div className="relative h-60 md:h-96 w-full overflow-hidden">
+      <div className="relative h-48 md:h-64 w-full overflow-hidden">
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center transform scale-105 w-full h-full"
@@ -84,10 +84,10 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
         {/* Content */}
         <div className="relative z-10 h-full flex items-center justify-center text-center px-6">
           <div className="max-w-4xl">
-            <h1 className="text-4xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
-            <p className="text-xl md:text-3xl text-white/90 mb-8 drop-shadow-md max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-white/90 mb-6 drop-shadow-md max-w-2xl mx-auto leading-relaxed">
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
           </div>
