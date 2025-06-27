@@ -113,7 +113,7 @@ export default function Header({ onResetView }: HeaderProps) {
               <ShoppingCart className="h-5 w-5" />
               {cartItemsCount > 0 && (
                 <Badge 
-                  className="absolute -top-1 -right-1 h-5 w-5 md:h-6 md:w-6 flex items-center justify-center text-xs p-0 bg-orange-500 hover:bg-orange-600 text-white border-2 border-white animate-pulse"
+                  className="absolute -top-1 -right-1 h-5 w-5 md:h-6 md:w-6 flex items-center justify-center text-xs p-0 bg-primary hover:bg-primary-hover text-white border-2 border-white animate-pulse"
                 >
                   {Math.round(cartItemsCount)}
                 </Badge>
@@ -180,7 +180,7 @@ export default function Header({ onResetView }: HeaderProps) {
             {!user && (
               <div className="hidden md:block">
                 <Button 
-                  className="bg-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-500/50 text-white transition-shadow duration-200"
+                  className="bg-primary hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/50 text-white transition-shadow duration-200"
                   onClick={() => window.location.href = '/auth'}
                 >
                   {t('login')}

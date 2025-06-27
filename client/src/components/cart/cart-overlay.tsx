@@ -547,7 +547,7 @@ export default function CartOverlay() {
                           </Button>
                           <Button
                             variant="outline"
-                            className="flex-1 border-orange-300 text-orange-700 hover:bg-orange-100"
+                            className="flex-1 border-primary text-primary hover:bg-primary-light"
                             onClick={() => {
                               // Просто продолжить как гость - ничего не делаем
                               // Пользователь может заполнить форму дальше
