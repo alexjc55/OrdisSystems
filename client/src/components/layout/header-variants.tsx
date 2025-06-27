@@ -138,12 +138,24 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
             </p>
             {/* Call to Action Button */}
             <div className="mt-6">
-              <a 
-                href={storeSettings.bannerButtonLink || "#categories"}
+              <button 
+                onClick={() => {
+                  const link = storeSettings.bannerButtonLink || "#categories";
+                  if (link.startsWith('#')) {
+                    const element = document.querySelector(link);
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  } else {
+                    window.location.href = link;
+                  }
+                }}
                 className="inline-flex items-center px-6 py-3 font-medium text-sm sm:text-base rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                 style={{
                   backgroundColor: 'var(--color-primary)',
-                  color: '#ffffff'
+                  color: 'var(--color-primary-foreground)',
+                  border: 'none',
+                  cursor: 'pointer'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = 'var(--color-primary-dark)';
@@ -153,7 +165,7 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
                 }}
               >
                 {storeSettings.bannerButtonText || "Смотреть каталог"}
-              </a>
+              </button>
             </div>
             {/* Decorative vignette */}
             <div className="flex items-center justify-center space-x-2 opacity-60 mt-4">
