@@ -113,7 +113,7 @@ export default function Header({ onResetView }: HeaderProps) {
               <ShoppingCart className="h-5 w-5" />
               {cartItemsCount > 0 && (
                 <Badge 
-                  className="absolute -top-1 -right-1 h-5 w-5 md:h-6 md:w-6 flex items-center justify-center text-xs p-0 bg-primary hover:bg-primary-hover text-white border-2 border-white animate-pulse font-bold"
+                  className="cart-badge absolute -top-1 -right-1 h-5 w-5 md:h-6 md:w-6 flex items-center justify-center text-xs p-0 bg-primary hover:bg-primary-hover text-white border-2 border-white animate-pulse font-bold"
                 >
                   {Math.round(cartItemsCount)}
                 </Badge>

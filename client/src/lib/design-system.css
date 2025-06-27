@@ -109,6 +109,12 @@
   .btn-primary:hover * {
     color: white !important;
   }
+
+  /* Cart badge - override all other styles */
+  .cart-badge,
+  .cart-badge * {
+    color: white !important;
+  }
   
   .btn-primary:hover svg {
     color: var(--color-white) !important;
