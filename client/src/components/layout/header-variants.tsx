@@ -75,18 +75,19 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
 }
 
 function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
-  // Function to get icon component by name
+  // Function to get icon component by name  
   const getIcon = (iconName: string) => {
+    const iconProps = "h-4 w-4 sm:h-5 sm:w-5";
     switch (iconName) {
-      case 'clock': return <Clock className="h-5 w-5" />;
-      case 'phone': return <Phone className="h-5 w-5" />;
-      case 'truck': return <Truck className="h-5 w-5" />;
-      case 'credit-card': return <CreditCard className="h-5 w-5" />;
-      case 'star': return <Star className="h-5 w-5" />;
-      case 'shield': return <Shield className="h-5 w-5" />;
-      case 'heart': return <Heart className="h-5 w-5" />;
-      case 'chef-hat': return <ChefHat className="h-5 w-5" />;
-      default: return <Star className="h-5 w-5" />;
+      case 'clock': return <Clock className={iconProps} />;
+      case 'phone': return <Phone className={iconProps} />;
+      case 'truck': return <Truck className={iconProps} />;
+      case 'credit-card': return <CreditCard className={iconProps} />;
+      case 'star': return <Star className={iconProps} />;
+      case 'shield': return <Shield className={iconProps} />;
+      case 'heart': return <Heart className={iconProps} />;
+      case 'chef-hat': return <ChefHat className={iconProps} />;
+      default: return <Star className={iconProps} />;
     }
   };
 
@@ -95,21 +96,21 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
   
   if (storeSettings?.modernBlock1Text?.trim()) {
     blocks.push({
-      icon: getIcon(storeSettings.modernBlock1Icon),
+      icon: getIcon(storeSettings.modernBlock1Icon || 'star'),
       text: storeSettings.modernBlock1Text
     });
   }
   
   if (storeSettings?.modernBlock2Text?.trim()) {
     blocks.push({
-      icon: getIcon(storeSettings.modernBlock2Icon),
+      icon: getIcon(storeSettings.modernBlock2Icon || 'star'),
       text: storeSettings.modernBlock2Text
     });
   }
   
   if (storeSettings?.modernBlock3Text?.trim()) {
     blocks.push({
-      icon: getIcon(storeSettings.modernBlock3Icon),
+      icon: getIcon(storeSettings.modernBlock3Icon || 'star'),
       text: storeSettings.modernBlock3Text
     });
   }
@@ -120,17 +121,26 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 mt-4">
+    <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 mt-4">
       {blocks.map((block, index) => (
         <div 
           key={index}
-          className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-white/90 min-w-0"
-          style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+          className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-white min-w-0"
+          style={{ 
+            textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
+            color: 'rgba(255, 255, 255, 0.95)'
+          }}
         >
-          <div className="flex-shrink-0 p-2 bg-white/20 rounded-full backdrop-blur-sm">
+          <div 
+            className="flex-shrink-0 p-1.5 sm:p-2 rounded-full backdrop-blur-sm"
+            style={{ 
+              backgroundColor: 'rgba(255, 255, 255, 0.15)',
+              color: 'white'
+            }}
+          >
             {block.icon}
           </div>
-          <span className="text-sm sm:text-base font-medium text-center sm:text-left">
+          <span className="text-xs sm:text-sm md:text-base font-medium text-center sm:text-left leading-tight">
             {block.text}
           </span>
         </div>

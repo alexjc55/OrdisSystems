@@ -6925,14 +6925,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="clock">🕒 Время работы</SelectItem>
-                          <SelectItem value="phone">📞 Телефон</SelectItem>
-                          <SelectItem value="truck">🚚 Доставка</SelectItem>
-                          <SelectItem value="credit-card">💳 Оплата</SelectItem>
-                          <SelectItem value="star">⭐ Качество</SelectItem>
-                          <SelectItem value="shield">🛡️ Гарантия</SelectItem>
-                          <SelectItem value="heart">❤️ Забота</SelectItem>
-                          <SelectItem value="chef-hat">👨‍🍳 Шеф-повар</SelectItem>
+                          <SelectItem value="clock">Время работы</SelectItem>
+                          <SelectItem value="phone">Телефон</SelectItem>
+                          <SelectItem value="truck">Доставка</SelectItem>
+                          <SelectItem value="credit-card">Оплата</SelectItem>
+                          <SelectItem value="star">Качество</SelectItem>
+                          <SelectItem value="shield">Гарантия</SelectItem>
+                          <SelectItem value="heart">Забота</SelectItem>
+                          <SelectItem value="chef-hat">Шеф-повар</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage className="text-xs" />
@@ -6977,14 +6977,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="clock">🕒 Время работы</SelectItem>
-                          <SelectItem value="phone">📞 Телефон</SelectItem>
-                          <SelectItem value="truck">🚚 Доставка</SelectItem>
-                          <SelectItem value="credit-card">💳 Оплата</SelectItem>
-                          <SelectItem value="star">⭐ Качество</SelectItem>
-                          <SelectItem value="shield">🛡️ Гарантия</SelectItem>
-                          <SelectItem value="heart">❤️ Забота</SelectItem>
-                          <SelectItem value="chef-hat">👨‍🍳 Шеф-повар</SelectItem>
+                          <SelectItem value="clock">Время работы</SelectItem>
+                          <SelectItem value="phone">Телефон</SelectItem>
+                          <SelectItem value="truck">Доставка</SelectItem>
+                          <SelectItem value="credit-card">Оплата</SelectItem>
+                          <SelectItem value="star">Качество</SelectItem>
+                          <SelectItem value="shield">Гарантия</SelectItem>
+                          <SelectItem value="heart">Забота</SelectItem>
+                          <SelectItem value="chef-hat">Шеф-повар</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage className="text-xs" />
@@ -7029,14 +7029,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="clock">🕒 Время работы</SelectItem>
-                          <SelectItem value="phone">📞 Телефон</SelectItem>
-                          <SelectItem value="truck">🚚 Доставка</SelectItem>
-                          <SelectItem value="credit-card">💳 Оплата</SelectItem>
-                          <SelectItem value="star">⭐ Качество</SelectItem>
-                          <SelectItem value="shield">🛡️ Гарантия</SelectItem>
-                          <SelectItem value="heart">❤️ Забота</SelectItem>
-                          <SelectItem value="chef-hat">👨‍🍳 Шеф-повар</SelectItem>
+                          <SelectItem value="clock">Время работы</SelectItem>
+                          <SelectItem value="phone">Телефон</SelectItem>
+                          <SelectItem value="truck">Доставка</SelectItem>
+                          <SelectItem value="credit-card">Оплата</SelectItem>
+                          <SelectItem value="star">Качество</SelectItem>
+                          <SelectItem value="shield">Гарантия</SelectItem>
+                          <SelectItem value="heart">Забота</SelectItem>
+                          <SelectItem value="chef-hat">Шеф-повар</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage className="text-xs" />
