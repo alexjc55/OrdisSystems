@@ -370,7 +370,7 @@ const baseThemeSchema = createInsertSchema(themes).omit({
 });
 
 export const insertThemeSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   name: z.string(),
   description: z.string().nullable().optional(),
   isActive: z.boolean().optional(),

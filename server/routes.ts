@@ -1086,6 +1086,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const themeData = insertThemeSchema.parse(req.body);
+      
+      // Generate ID if not provided
+      if (!themeData.id) {
+        themeData.id = `custom_theme_${Date.now()}`;
+      }
+      
       const theme = await storage.createTheme(themeData);
       res.status(201).json(theme);
     } catch (error) {
@@ -1217,6 +1223,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const themeData = insertThemeSchema.parse(req.body);
+      
+      // Generate ID if not provided
+      if (!themeData.id) {
+        themeData.id = `custom_theme_${Date.now()}`;
+      }
+      
       const theme = await storage.createTheme(themeData);
       res.status(201).json(theme);
     } catch (error) {
