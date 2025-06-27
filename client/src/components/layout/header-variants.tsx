@@ -33,9 +33,9 @@ export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
 
 function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
-    <div className="relative w-full mb-8">
+    <div className="relative w-full mb-6 sm:mb-8">
       {/* Classic Gradient Overlay Banner - Full Width */}
-      <div className="relative h-64 md:h-80 w-full overflow-hidden">
+      <div className="relative h-48 sm:h-64 md:h-80 w-full overflow-hidden">
         {/* Background Image with subtle animation */}
         <div 
           className="absolute inset-0 bg-cover bg-center w-full h-full"
@@ -49,12 +49,12 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
         <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-primary/60 to-transparent" />
         
         {/* Content with glass effect */}
-        <div className="relative z-10 h-full flex items-center justify-start px-6 md:px-16">
-          <div className="max-w-3xl backdrop-blur-sm bg-white/10 rounded-xl p-8 border border-white/20">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-xl">
+        <div className="relative z-10 h-full flex items-center justify-start px-4 sm:px-6 md:px-16">
+          <div className="max-w-3xl backdrop-blur-sm bg-white/10 rounded-xl p-4 sm:p-8 border border-white/20">
+            <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-3 sm:mb-6 drop-shadow-xl">
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
-            <p className="text-xl md:text-2xl text-white/95 mb-8 drop-shadow-lg leading-relaxed">
+            <p className="text-sm sm:text-xl md:text-2xl text-white/95 drop-shadow-lg leading-relaxed">
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
 
@@ -67,9 +67,9 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
 
 function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
-    <div className="relative w-full mb-8">
+    <div className="relative w-full mb-6 sm:mb-8">
       {/* Modern Overlay Banner - Full Width */}
-      <div className="relative h-48 md:h-64 w-full overflow-hidden">
+      <div className="relative h-40 sm:h-48 md:h-64 w-full overflow-hidden">
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center transform scale-105 w-full h-full"
@@ -82,12 +82,12 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
         <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/75 to-black/60" />
         
         {/* Content */}
-        <div className="relative z-10 h-full flex items-center justify-center text-center px-6">
+        <div className="relative z-10 h-full flex items-center justify-center text-center px-4 sm:px-6">
           <div className="max-w-4xl">
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-white mb-2 sm:mb-4" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
-            <p className="text-lg md:text-xl text-white mb-6 max-w-2xl mx-auto leading-relaxed" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
+            <p className="text-sm sm:text-lg md:text-xl text-white max-w-2xl mx-auto leading-relaxed" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
           </div>
@@ -99,9 +99,9 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
 
 function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
-    <div className="relative w-full mb-8">
+    <div className="relative w-full mb-6 sm:mb-8">
       {/* Minimal Full Width Banner */}
-      <div className="relative h-48 md:h-64 w-full overflow-hidden">
+      <div className="relative h-40 sm:h-48 md:h-64 w-full overflow-hidden">
         {/* Background Image with strong overlay */}
         <div 
           className="absolute inset-0 bg-cover bg-center w-full h-full"
