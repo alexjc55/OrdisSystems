@@ -131,6 +131,12 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 27, 2025: Fixed navigation menu hover color integration with theme system
+  - Resolved issue where navigation menu hover effects used hardcoded orange color
+  - Added Tailwind CSS variable updates (--primary, --primary-foreground) to theme application
+  - Fixed theme-manager.tsx to update both custom CSS and Tailwind variables on theme changes
+  - Updated applyTheme function in theme-system.ts for complete Tailwind integration
+  - Navigation menu now uses theme-configured primary color for hover states
 - June 27, 2025: Optimized theme management system interface
   - Completed comprehensive audit of all theme settings and their actual usage
   - Streamlined admin interface by hiding 8-10 unused color settings from UI
