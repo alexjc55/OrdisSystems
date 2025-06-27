@@ -478,6 +478,7 @@ export default function ThemeManager() {
       workingHoursIconColor: formData.get("workingHoursIconColor") as string,
       contactsIconColor: formData.get("contactsIconColor") as string,
       paymentDeliveryIconColor: formData.get("paymentDeliveryIconColor") as string,
+      headerStyle: formData.get("headerStyle") as string,
       whiteColor: formData.get("whiteColor") as string,
       gray50Color: formData.get("gray50Color") as string,
       gray100Color: formData.get("gray100Color") as string,
@@ -533,6 +534,7 @@ export default function ThemeManager() {
       workingHoursIconColor: convertColorToHsl(formData.get("workingHoursIconColor") as string),
       contactsIconColor: convertColorToHsl(formData.get("contactsIconColor") as string),
       paymentDeliveryIconColor: convertColorToHsl(formData.get("paymentDeliveryIconColor") as string),
+      headerStyle: formData.get("headerStyle") as string,
       whiteColor: convertColorToHsl(formData.get("whiteColor") as string),
       gray50Color: convertColorToHsl(formData.get("gray50Color") as string),
       gray100Color: convertColorToHsl(formData.get("gray100Color") as string),
@@ -1057,6 +1059,26 @@ export default function ThemeManager() {
                         ℹ️ Цвета круглых иконок в блоках "Часы работы", "Контакты" и "Оплата и доставка" на главной странице
                       </div>
                     </div>
+                    
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Стиль шапки сайта</h4>
+                      <div className="space-y-3">
+                        <Label htmlFor="headerStyle">Выберите стиль отображения шапки</Label>
+                        <select
+                          name="headerStyle"
+                          id="headerStyle"
+                          defaultValue={editingTheme.headerStyle || "classic"}
+                          className="w-full px-3 py-2 border rounded-md bg-white"
+                        >
+                          <option value="classic">Классический (текущий)</option>
+                          <option value="modern">Современный</option>
+                          <option value="minimal">Минималистичный</option>
+                        </select>
+                        <div className="text-sm text-gray-500">
+                          ℹ️ Влияет на отображение баннера, заголовка и описания сайта
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
                   {/* Keep light variants for API compatibility but hide from UI */}
@@ -1104,6 +1126,7 @@ export default function ThemeManager() {
               <input type="hidden" name="infoShadow" defaultValue="0 4px 14px 0 rgba(59, 130, 246, 0.3)" />
               <input type="hidden" name="grayShadow" defaultValue="0 4px 14px 0 rgba(107, 114, 128, 0.3)" />
               <input type="hidden" name="tomorrowShadow" defaultValue="0 4px 14px 0 rgba(147, 51, 234, 0.3)" />
+              <input type="hidden" name="headerStyle" defaultValue="classic" />
               
               <div className="flex justify-end gap-2 mt-6">
                 <Button type="button" variant="outline" onClick={() => setEditingTheme(null)}>

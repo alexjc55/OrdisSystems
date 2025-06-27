@@ -232,7 +232,9 @@ export const themes = pgTable("themes", {
   contactsIconColor: varchar("contacts_icon_color", { length: 20 }).default("hsl(142, 76%, 36%)"),
   paymentDeliveryIconColor: varchar("payment_delivery_icon_color", { length: 20 }).default("hsl(262, 83%, 58%)"),
   
-
+  // Header layout style
+  headerStyle: varchar("header_style", { length: 20 }).default("classic"), // "classic", "modern", "minimal"
+  
   
   // Neutral colors
   whiteColor: varchar("white_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),
@@ -395,6 +397,7 @@ export const insertThemeSchema = z.object({
   workingHoursIconColor: z.string().nullable().transform(val => val || "hsl(220, 91%, 54%)"),
   contactsIconColor: z.string().nullable().transform(val => val || "hsl(142, 76%, 36%)"),
   paymentDeliveryIconColor: z.string().nullable().transform(val => val || "hsl(262, 83%, 58%)"),
+  headerStyle: z.string().nullable().transform(val => val || "classic"),
   whiteColor: z.string().nullable().transform(val => val || "hsl(0, 0%, 100%)"),
   gray50Color: z.string().nullable().transform(val => val || "hsl(210, 40%, 98%)"),
   gray100Color: z.string().nullable().transform(val => val || "hsl(210, 40%, 96%)"),
