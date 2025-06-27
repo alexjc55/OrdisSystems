@@ -383,7 +383,7 @@
     border: none !important;
   }
 
-  .btn-ghost * {
+  .btn-ghost *:not(.cart-badge) {
     color: var(--color-gray-700) !important;
   }
   
@@ -401,7 +401,7 @@
     color: var(--color-gray-700) !important;
   }
 
-  .btn-ghost:hover * {
+  .btn-ghost:hover *:not(.cart-badge) {
     color: var(--color-gray-700) !important;
   }
   
