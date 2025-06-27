@@ -138,6 +138,7 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
   - Integrated all visual display settings into theme management with proper database synchronization
   - WhatsApp settings now appear conditionally when WhatsApp chat is enabled in both create and edit dialogs
   - Visual settings properly save and load when creating or editing themes
+  - Removed duplicate WhatsApp settings from admin display settings section (cleanup completed)
 - June 27, 2025: Improved mobile layout for theme management section header
   - Changed header layout from horizontal to vertical stacking on mobile devices
   - Separated title/description and "Create Theme" button on different lines for better mobile UX
