@@ -34,49 +34,13 @@ export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
 function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
     <div className="relative">
-      {/* Hero Banner */}
-      <div 
-        className="relative h-[400px] md:h-[500px] bg-cover bg-center rounded-2xl overflow-hidden"
-        style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/api/uploads/Edahouse_sign__source_1750184330403.png')`
-        }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-white px-4">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">
-              {storeSettings.welcomeTitle || "eDAHouse"}
-            </h1>
-            <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto drop-shadow-md">
-              {storeSettings.welcomeDescription || t('home.welcome_description')}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Info Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-        <InfoCard
-          icon={<Clock className="w-6 h-6" />}
-          title={t('home.working_hours')}
-          content={typeof storeSettings.workingHours === 'string' ? storeSettings.workingHours : "09:00 - 21:00"}
-          iconColor="var(--color-working-hours-icon)"
-          isRTL={isRTL}
+      {/* Simple Banner Image - same as original */}
+      {storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
+        <div 
+          className="w-full h-32 sm:h-40 lg:h-48 bg-cover bg-center"
+          style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
         />
-        <InfoCard
-          icon={<Phone className="w-6 h-6" />}
-          title={t('home.contacts')}
-          content={storeSettings.phone || "+972-XX-XXX-XXXX"}
-          iconColor="var(--color-contacts-icon)"
-          isRTL={isRTL}
-        />
-        <InfoCard
-          icon={<CreditCard className="w-6 h-6" />}
-          title={t('home.payment_delivery')}
-          content={t('home.payment_delivery_info')}
-          iconColor="var(--color-payment-delivery-icon)"
-          isRTL={isRTL}
-        />
-      </div>
+      )}
     </div>
   );
 }
@@ -84,13 +48,13 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
 function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
     <div className="relative">
-      {/* Modern Split Layout */}
+      {/* Modern Split Layout - only banner, title and description */}
       <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-3xl overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8 md:p-12">
           {/* Left Content */}
           <div className="flex flex-col justify-center space-y-6">
             <div className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary font-medium text-sm w-fit">
-              {t('home.fresh_daily')}
+              Свежие готовые блюда
             </div>
             
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
@@ -98,15 +62,15 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
             </h1>
             
             <p className="text-lg text-gray-600 leading-relaxed max-w-md">
-              {storeSettings.welcomeDescription || t('home.welcome_description')}
+              {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <button className="bg-primary text-white px-8 py-3 rounded-xl font-medium hover:bg-primary/90 transition-colors">
-                {t('home.order_now')}
+                Заказать сейчас
               </button>
               <button className="border border-gray-300 text-gray-700 px-8 py-3 rounded-xl font-medium hover:bg-gray-50 transition-colors">
-                {t('home.view_menu')}
+                Посмотреть меню
               </button>
             </div>
           </div>
@@ -116,36 +80,11 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
             <div 
               className="h-[300px] md:h-[400px] bg-cover bg-center rounded-2xl shadow-2xl"
               style={{
-                backgroundImage: `url('/api/uploads/Edahouse_sign__source_1750184330403.png')`
+                backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'
               }}
             />
           </div>
         </div>
-      </div>
-
-      {/* Modern Info Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-        <ModernInfoCard
-          icon={<Clock className="w-5 h-5" />}
-          title={t('home.working_hours')}
-          content={typeof storeSettings.workingHours === 'string' ? storeSettings.workingHours : "09:00 - 21:00"}
-          iconColor="var(--color-working-hours-icon)"
-          isRTL={isRTL}
-        />
-        <ModernInfoCard
-          icon={<Phone className="w-5 h-5" />}
-          title={t('home.contacts')}
-          content={storeSettings.phone || "+972-XX-XXX-XXXX"}
-          iconColor="var(--color-contacts-icon)"
-          isRTL={isRTL}
-        />
-        <ModernInfoCard
-          icon={<CreditCard className="w-5 h-5" />}
-          title={t('home.payment_delivery')}
-          content={t('home.payment_delivery_info')}
-          iconColor="var(--color-payment-delivery-icon)"
-          isRTL={isRTL}
-        />
       </div>
     </div>
   );
@@ -154,14 +93,14 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
 function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
     <div className="relative">
-      {/* Minimal Clean Layout */}
+      {/* Minimal Clean Layout - only banner, title and description */}
       <div className="text-center py-16 md:py-24">
         <h1 className="text-5xl md:text-7xl font-light text-gray-900 mb-6 tracking-tight">
           {storeSettings.welcomeTitle || "eDAHouse"}
         </h1>
         
         <p className="text-xl text-gray-500 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-          {storeSettings.welcomeDescription || t('home.welcome_description')}
+          {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
         </p>
 
         <div className="w-24 h-px bg-primary mx-auto mb-12"></div>
@@ -171,32 +110,8 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
           <div 
             className="h-[250px] md:h-[350px] bg-cover bg-center rounded-lg shadow-lg"
             style={{
-              backgroundImage: `url('/api/uploads/Edahouse_sign__source_1750184330403.png')`
+              backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'
             }}
-          />
-        </div>
-      </div>
-
-      {/* Minimal Info Strip */}
-      <div className="bg-gray-50 rounded-2xl p-6 md:p-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-          <MinimalInfoItem
-            icon={<Clock className="w-6 h-6" />}
-            title={t('home.working_hours')}
-            content={typeof storeSettings.workingHours === 'string' ? storeSettings.workingHours : "09:00 - 21:00"}
-            iconColor="var(--color-working-hours-icon)"
-          />
-          <MinimalInfoItem
-            icon={<Phone className="w-6 h-6" />}
-            title={t('home.contacts')}
-            content={storeSettings.phone || "+972-XX-XXX-XXXX"}
-            iconColor="var(--color-contacts-icon)"
-          />
-          <MinimalInfoItem
-            icon={<CreditCard className="w-6 h-6" />}
-            title={t('home.payment_delivery')}
-            content={t('home.payment_delivery_info')}
-            iconColor="var(--color-payment-delivery-icon)"
           />
         </div>
       </div>

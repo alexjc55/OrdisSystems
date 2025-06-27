@@ -390,7 +390,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 overflow-x-hidden pt-16">
       <Header onResetView={handleResetView} />
       
-      {/* Header Variant or Simple Banner based on theme */}
+      {/* Header Variant or Simple Banner based on theme - replaces banner + title/description */}
       {headerStyle !== 'classic' ? (
         <div className="container mx-auto px-4 py-8">
           <HeaderVariant 
@@ -419,8 +419,8 @@ export default function Home() {
         )}
 
         <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
-          {/* Title and Description */}
-          {storeSettings?.showTitleDescription !== false && (
+          {/* Title and Description - only show for classic style or when searching/filtering */}
+          {storeSettings?.showTitleDescription !== false && (headerStyle === 'classic' || searchQuery.length > 2 || selectedCategory) && (
             <div className="text-center-force mb-12">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight text-center-force">
                 <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">
@@ -471,10 +471,9 @@ export default function Home() {
 
 
 
-          {/* Information Blocks at top position - only show for classic style */}
+          {/* Information Blocks at top position */}
           {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && 
-           storeSettings.showInfoBlocks !== false && storeSettings.infoBlocksPosition === "top" && 
-           headerStyle === 'classic' && (
+           storeSettings.showInfoBlocks !== false && storeSettings.infoBlocksPosition === "top" && (
             <InfoBlocks 
               storeSettings={storeSettings} 
               t={t} 
@@ -826,10 +825,9 @@ export default function Home() {
         </div>
       )}
 
-      {/* Information Blocks at bottom position - only show for classic style */}
+      {/* Information Blocks at bottom position */}
       {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && 
-       storeSettings.showInfoBlocks !== false && storeSettings.infoBlocksPosition === "bottom" && 
-       headerStyle === 'classic' && (
+       storeSettings.showInfoBlocks !== false && storeSettings.infoBlocksPosition === "bottom" && (
         <div className="px-6 pb-6">
           <InfoBlocks 
             storeSettings={storeSettings} 
