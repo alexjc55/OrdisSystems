@@ -6038,6 +6038,27 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="discountBadgeText"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">{adminT('storeSettings.discountBadgeTextLabel')}</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder={adminT('storeSettings.discountBadgeText')}
+                    className="text-sm"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription className="text-xs">
+                  {adminT('storeSettings.discountBadgeDescription')}
+                </FormDescription>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -6616,26 +6637,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           
           <CollapsibleContent className="space-y-6">
 
-        <FormField
-          control={form.control}
-          name="discountBadgeText"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-sm">{adminT('storeSettings.discountBadgeTextLabel')}</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder={adminT('storeSettings.discountBadgeText')}
-                  className="text-sm"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription className="text-xs">
-{adminT('storeSettings.discountBadgeDescription')}
-              </FormDescription>
-              <FormMessage className="text-xs" />
-            </FormItem>
-          )}
-        />
+
 
         {/* Переключатели отображения */}
         <div className="space-y-4">
