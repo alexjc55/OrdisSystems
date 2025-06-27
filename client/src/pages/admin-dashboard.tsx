@@ -5798,6 +5798,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
       whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || "Здравствуйте! Я хотел бы узнать больше о ваших товарах.",
       showCartBanner: storeSettings?.showCartBanner || false,
+      bannerButtonText: storeSettings?.bannerButtonText || "Смотреть каталог",
+      bannerButtonLink: storeSettings?.bannerButtonLink || "#categories",
       cartBannerType: storeSettings?.cartBannerType || "text",
       cartBannerImage: storeSettings?.cartBannerImage || "",
       cartBannerText: storeSettings?.cartBannerText || "",

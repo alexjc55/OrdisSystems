@@ -136,8 +136,17 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
             <p className="text-gray-700 text-sm sm:text-lg md:text-xl font-semibold sm:font-light leading-relaxed max-w-2xl mx-auto mb-4">
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
+            {/* Call to Action Button */}
+            <div className="mt-6">
+              <a 
+                href={storeSettings.bannerButtonLink || "#categories"}
+                className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium text-sm sm:text-base rounded-lg hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl transform hover:scale-105 transition-transform duration-200"
+              >
+                {storeSettings.bannerButtonText || "Смотреть каталог"}
+              </a>
+            </div>
             {/* Decorative vignette */}
-            <div className="flex items-center justify-center space-x-2 opacity-60">
+            <div className="flex items-center justify-center space-x-2 opacity-60 mt-4">
               <div className="w-8 h-px bg-primary/40"></div>
               <div className="w-2 h-2 bg-primary/60 rounded-full"></div>
               <div className="w-4 h-px bg-primary/60"></div>

@@ -179,6 +179,8 @@ export const storeSettings = pgTable("store_settings", {
   showCartBanner: boolean("show_cart_banner").default(false), // Enable/disable cart banner
   cartBannerType: varchar("cart_banner_type", { enum: ["image", "text"] }).default("text"), // Banner type
   headerStyle: varchar("header_style", { enum: ["classic", "modern", "minimal"] }).default("classic"), // Header design style
+  bannerButtonText: varchar("banner_button_text", { length: 100 }).default("Смотреть каталог"), // Banner button text
+  bannerButtonLink: varchar("banner_button_link", { length: 500 }).default("#categories"), // Banner button link
   cartBannerImage: varchar("cart_banner_image", { length: 500 }), // Banner image URL
   cartBannerText: text("cart_banner_text"), // Banner text content
   cartBannerBgColor: varchar("cart_banner_bg_color", { length: 7 }).default("#f97316"), // Background color for text banner
