@@ -89,32 +89,73 @@
 /* Universal Button System - Overrides all other styles */
 @layer utilities {
   
-  .btn-primary {
+  .btn-primary,
+  .bg-primary,
+  button.bg-primary,
+  [role="button"].bg-primary {
     background-color: var(--color-primary) !important;
     color: var(--color-primary-foreground) !important;
     border: none !important;
   }
 
-  .btn-primary * {
+  .btn-primary *,
+  .bg-primary *,
+  button.bg-primary *,
+  [role="button"].bg-primary * {
     color: var(--color-primary-foreground) !important;
   }
   
-  .btn-primary svg {
+  .btn-primary svg,
+  .btn-primary [data-lucide],
+  .btn-primary .lucide,
+  .btn-primary i,
+  .btn-primary span,
+  .btn-primary .badge,
+  .btn-primary .cart-count {
     color: var(--color-primary-foreground) !important;
     fill: none !important;
     stroke: currentColor !important;
     stroke-width: 1.5 !important;
   }
 
-  .btn-primary:hover {
+  .btn-primary:hover,
+  .bg-primary:hover,
+  button.bg-primary:hover,
+  [role="button"].bg-primary:hover {
     background-color: var(--color-primary-dark) !important;
     background-image: none !important;
     box-shadow: var(--shadow-primary) !important;
     color: var(--color-primary-foreground) !important;
   }
 
-  .btn-primary:hover * {
+  .btn-primary:hover *,
+  .btn-primary:hover svg,
+  .btn-primary:hover [data-lucide],
+  .btn-primary:hover .lucide,
+  .btn-primary:hover i,
+  .btn-primary:hover span,
+  .btn-primary:hover .badge,
+  .btn-primary:hover .cart-count,
+  .bg-primary:hover *,
+  .bg-primary:hover svg,
+  .bg-primary:hover [data-lucide],
+  .bg-primary:hover .lucide,
+  .bg-primary:hover i,
+  .bg-primary:hover span,
+  .bg-primary:hover .badge,
+  .bg-primary:hover .cart-count,
+  button.bg-primary:hover *,
+  button.bg-primary:hover svg,
+  button.bg-primary:hover [data-lucide],
+  button.bg-primary:hover .lucide,
+  button.bg-primary:hover i,
+  button.bg-primary:hover span,
+  button.bg-primary:hover .badge,
+  button.bg-primary:hover .cart-count {
     color: var(--color-primary-foreground) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
   }
 
   /* Cart badge - override all other styles */
