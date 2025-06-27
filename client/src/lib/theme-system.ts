@@ -260,6 +260,11 @@ export function applyTheme(theme: Theme): void {
   // Update Tailwind CSS variables for hover:text-primary and other Tailwind classes
   root.style.setProperty('--primary', theme.colors.primary);
   root.style.setProperty('--primary-foreground', theme.colors.primaryText);
+  
+  // Update info block icon colors
+  root.style.setProperty('--color-working-hours-icon', theme.colors.workingHoursIcon || 'hsl(220, 91%, 54%)');
+  root.style.setProperty('--color-contacts-icon', theme.colors.contactsIcon || 'hsl(142, 76%, 36%)');
+  root.style.setProperty('--color-payment-delivery-icon', theme.colors.paymentDeliveryIcon || 'hsl(262, 83%, 58%)');
 
   // Apply typography variables
   Object.entries(theme.typography).forEach(([key, value]) => {

@@ -304,6 +304,17 @@ export default function ThemeManager() {
         root.style.setProperty('--primary', convertColorToHsl(updatedTheme.primaryColor));
         root.style.setProperty('--primary-foreground', convertColorToHsl(updatedTheme.primaryTextColor));
         
+        // Update info block icon colors
+        if (updatedTheme.workingHoursIconColor) {
+          root.style.setProperty('--color-working-hours-icon', convertColorToHsl(updatedTheme.workingHoursIconColor));
+        }
+        if (updatedTheme.contactsIconColor) {
+          root.style.setProperty('--color-contacts-icon', convertColorToHsl(updatedTheme.contactsIconColor));
+        }
+        if (updatedTheme.paymentDeliveryIconColor) {
+          root.style.setProperty('--color-payment-delivery-icon', convertColorToHsl(updatedTheme.paymentDeliveryIconColor));
+        }
+        
         console.log('Applied theme colors to CSS variables');
       }
       
@@ -1080,6 +1091,7 @@ export default function ThemeManager() {
               <input type="hidden" name="errorShadow" defaultValue={editingTheme.errorShadow || "0 4px 14px 0 rgba(239, 68, 68, 0.3)"} />
               <input type="hidden" name="infoShadow" defaultValue={editingTheme.infoShadow || "0 4px 14px 0 rgba(59, 130, 246, 0.3)"} />
               <input type="hidden" name="grayShadow" defaultValue={editingTheme.grayShadow || "0 4px 14px 0 rgba(107, 114, 128, 0.3)"} />
+              <input type="hidden" name="tomorrowShadow" defaultValue={editingTheme.tomorrowShadow || "0 4px 14px 0 rgba(147, 51, 234, 0.3)"} />
               
               <div className="flex justify-end gap-2 mt-6">
                 <Button type="button" variant="outline" onClick={() => setEditingTheme(null)}>

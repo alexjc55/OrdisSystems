@@ -74,7 +74,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
           <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
             <div className="p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full group-hover:scale-110 transition-transform duration-300">
+                <div className="p-3 rounded-full group-hover:scale-110 transition-transform duration-300" style={{ background: `linear-gradient(to bottom right, var(--color-working-hours-icon, hsl(220, 91%, 54%)), var(--color-working-hours-icon, hsl(220, 91%, 54%)))` }}>
                   <Clock className="h-5 w-5 text-white" />
                 </div>
                 <span className="font-semibold text-lg text-gray-800">{t('workingHours')}</span>
@@ -160,7 +160,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
           <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
             <div className="p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-full group-hover:scale-110 transition-transform duration-300">
+                <div className="p-3 rounded-full group-hover:scale-110 transition-transform duration-300" style={{ background: `linear-gradient(to bottom right, var(--color-contacts-icon, hsl(142, 76%, 36%)), var(--color-contacts-icon, hsl(142, 76%, 36%)))` }}>
                   <Phone className="h-5 w-5 text-white" />
                 </div>
                 <span className="font-semibold text-lg text-gray-800">{t('contacts')}</span>
@@ -190,7 +190,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
           <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden flex-1 flex flex-col">
             <div className="p-6 flex-1 flex flex-col">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full group-hover:scale-110 transition-transform duration-300">
+                <div className="p-3 rounded-full group-hover:scale-110 transition-transform duration-300" style={{ background: `linear-gradient(to bottom right, var(--color-payment-delivery-icon, hsl(262, 83%, 58%)), var(--color-payment-delivery-icon, hsl(262, 83%, 58%)))` }}>
                   <CreditCard className="h-5 w-5 text-white" />
                 </div>
                 <span className="font-semibold text-lg text-gray-800">Оплата и доставка</span>
