@@ -265,6 +265,10 @@ export const themes = pgTable("themes", {
   showCategoryMenu: boolean("show_category_menu").default(true),
   showWhatsAppChat: boolean("show_whatsapp_chat").default(true),
   
+  // WhatsApp settings
+  whatsappPhone: varchar("whatsapp_phone", { length: 20 }),
+  whatsappMessage: varchar("whatsapp_message", { length: 500 }).default("Здравствуйте! Хочу сделать заказ"),
+  
   // Neutral colors
   whiteColor: varchar("white_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),
   gray50Color: varchar("gray50_color", { length: 20 }).notNull().default("hsl(210, 40%, 98%)"),

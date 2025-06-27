@@ -35,7 +35,7 @@ function VisualToggleButton({
   const handleToggle = () => {
     const newState = !enabled;
     setEnabled(newState);
-    onToggle();
+    if (onToggle) onToggle();
   };
 
   return (
