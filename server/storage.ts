@@ -115,7 +115,7 @@ export interface IStorage {
 
   // Store settings
   getStoreSettings(): Promise<StoreSettings | undefined>;
-  updateStoreSettings(settings: InsertStoreSettings): Promise<StoreSettings>;
+  updateStoreSettings(settings: Partial<InsertStoreSettings>): Promise<StoreSettings>;
 
   // Theme management
   getThemes(): Promise<Theme[]>;

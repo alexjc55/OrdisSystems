@@ -360,6 +360,8 @@ export const insertStoreSettingsSchema = createInsertSchema(storeSettings).omit(
   enabledLanguages: z.array(z.string()).optional(),
 });
 
+export const updateStoreSettingsSchema = insertStoreSettingsSchema.partial();
+
 export const insertUserAddressSchema = createInsertSchema(userAddresses).omit({
   id: true,
   createdAt: true,

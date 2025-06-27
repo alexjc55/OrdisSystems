@@ -1127,6 +1127,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log("Theme update data:", themeData);
       const theme = await storage.updateTheme(id, themeData);
+      
+      // If this is the active theme and headerStyle was updated, sync with store settings
+      if (theme.isActive && themeData.headerStyle) {
+        await storage.updateStoreSettings({ headerStyle: themeData.headerStyle });
+      }
+      
       res.json(theme);
     } catch (error) {
       console.error("Error updating theme:", error);
@@ -1148,6 +1154,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const { id } = req.params;
       const theme = await storage.activateTheme(id);
+      
+      // Sync the active theme's headerStyle with store settings
+      if (theme.headerStyle) {
+        await storage.updateStoreSettings({ headerStyle: theme.headerStyle });
+      }
+      
       res.json(theme);
     } catch (error) {
       console.error("Error activating theme:", error);
