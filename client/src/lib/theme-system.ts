@@ -261,6 +261,17 @@ export function applyTheme(theme: Theme): void {
   root.style.setProperty('--primary', theme.colors.primary);
   root.style.setProperty('--primary-foreground', theme.colors.primaryText);
   
+  // Set primary-dark color for hover effects (darken primary by 10%)
+  const primaryHsl = theme.colors.primary.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+  if (primaryHsl) {
+    const [, h, s, l] = primaryHsl;
+    const darkerL = Math.max(0, parseInt(l) - 10);
+    const primaryDark = `hsl(${h}, ${s}%, ${darkerL}%)`;
+    root.style.setProperty('--color-primary-dark', primaryDark);
+  } else {
+    root.style.setProperty('--color-primary-dark', theme.colors.primary);
+  }
+  
   // Set tomorrow-dark color for hover effects (use tomorrowDark if available, otherwise darken tomorrow)
   const tomorrowDarkColor = theme.colors.tomorrowDark || theme.colors.tomorrow;
   root.style.setProperty('--color-tomorrow-dark', tomorrowDarkColor);

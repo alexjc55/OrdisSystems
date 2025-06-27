@@ -140,7 +140,17 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
             <div className="mt-6">
               <a 
                 href={storeSettings.bannerButtonLink || "#categories"}
-                className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium text-sm sm:text-base rounded-lg hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl transform hover:scale-105 transition-transform duration-200"
+                className="inline-flex items-center px-6 py-3 text-white font-medium text-sm sm:text-base rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                style={{
+                  backgroundColor: 'var(--color-primary)',
+                  color: 'var(--color-primary-foreground, #ffffff)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-primary-dark)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-primary)';
+                }}
               >
                 {storeSettings.bannerButtonText || "Смотреть каталог"}
               </a>
