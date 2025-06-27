@@ -24,6 +24,17 @@
   }
 }
 
+/* Modern header title responsive sizing */
+.modern-header-title {
+  font-size: 4rem !important;
+}
+
+@media (min-width: 640px) {
+  .modern-header-title {
+    font-size: 5rem !important;
+  }
+}
+
 /* Force yellow status colors */
 @layer utilities {
   .bg-yellow-100 {
