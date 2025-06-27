@@ -6656,11 +6656,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="switch-green"
-                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => field.onChange(!field.value)}
+                      className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                    >
+                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                    </Button>
                   </FormControl>
                 </FormItem>
               )}
@@ -6678,11 +6682,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="switch-green"
-                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => field.onChange(!field.value)}
+                      className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                    >
+                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                    </Button>
                   </FormControl>
                 </FormItem>
               )}
@@ -6700,11 +6708,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="switch-green"
-                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => field.onChange(!field.value)}
+                      className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                    >
+                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                    </Button>
                   </FormControl>
                 </FormItem>
               )}
@@ -6747,11 +6759,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="switch-green"
-                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => field.onChange(!field.value)}
+                      className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                    >
+                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                    </Button>
                   </FormControl>
                 </FormItem>
               )}
@@ -6769,11 +6785,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="switch-green"
-                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => field.onChange(!field.value)}
+                      className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                    >
+                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                    </Button>
                   </FormControl>
                 </FormItem>
               )}
@@ -6791,11 +6811,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="switch-green"
-                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => field.onChange(!field.value)}
+                      className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                    >
+                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                    </Button>
                   </FormControl>
                 </FormItem>
               )}
