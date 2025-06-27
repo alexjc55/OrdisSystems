@@ -15,6 +15,40 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw } from "lucide-react";
 import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
 
+// Helper function to convert HEX to HSL
+function hexToHsl(hex: string): string {
+  // Remove # if present
+  hex = hex.replace('#', '');
+  
+  // Parse RGB values
+  const r = parseInt(hex.substr(0, 2), 16) / 255;
+  const g = parseInt(hex.substr(2, 2), 16) / 255;
+  const b = parseInt(hex.substr(4, 2), 16) / 255;
+  
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0, s = 0, l = (max + min) / 2;
+  
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+  
+  // Convert to HSL format with proper rounding
+  const hDeg = Math.round(h * 360);
+  const sPercent = Math.round(s * 100);
+  const lPercent = Math.round(l * 100);
+  
+  return `hsl(${hDeg}, ${sPercent}%, ${lPercent}%)`;
+}
+
 // Helper function to convert HSL to HEX
 function hslToHex(hslString: string): string {
   // If it's already a hex color, return as is
@@ -338,12 +372,16 @@ export default function ThemeManager() {
   });
 
   const handleCreateTheme = (formData: FormData) => {
+    const convertColorToHsl = (color: string) => {
+      return color.startsWith('#') ? hexToHsl(color) : color;
+    };
+
     const themeData = {
       name: formData.get("name") as string,
       description: formData.get("description") as string,
-      primaryColor: formData.get("primaryColor") as string,
-      primaryTextColor: formData.get("primaryTextColor") as string,
-      primaryDarkColor: formData.get("primaryDarkColor") as string,
+      primaryColor: convertColorToHsl(formData.get("primaryColor") as string),
+      primaryTextColor: convertColorToHsl(formData.get("primaryTextColor") as string),
+      primaryDarkColor: convertColorToHsl(formData.get("primaryDarkColor") as string),
       primaryLightColor: formData.get("primaryLightColor") as string,
       secondaryColor: formData.get("secondaryColor") as string,
       accentColor: formData.get("accentColor") as string,
@@ -491,9 +529,9 @@ export default function ThemeManager() {
           <Input
             type="text"
             name={name}
-            defaultValue={defaultValue}
+            defaultValue={hexValue}
             className="flex-1"
-            placeholder="hsl(24.6, 95%, 53.1%)"
+            placeholder="#ff6600"
           />
         </div>
       </div>
