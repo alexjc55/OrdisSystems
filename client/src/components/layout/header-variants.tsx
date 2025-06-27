@@ -177,7 +177,7 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
             </p>
             
             {/* Decorative vignette */}
-            <div className="flex items-center justify-center space-x-2 opacity-80 mb-6">
+            <div className="flex items-center justify-center space-x-2 opacity-80 mb-8">
               <div className="w-8 h-px bg-white/60"></div>
               <div className="w-2 h-2 border border-white/60 rotate-45"></div>
               <div className="w-8 h-px bg-white/60"></div>
