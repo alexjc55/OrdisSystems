@@ -220,6 +220,10 @@ export const themes = pgTable("themes", {
   infoColor: varchar("info_color", { length: 20 }).notNull().default("hsl(221, 83%, 53%)"),
   infoLightColor: varchar("info_light_color", { length: 20 }).notNull().default("hsl(221, 83%, 96%)"),
   
+  // Tomorrow button color
+  tomorrowColor: varchar("tomorrow_color", { length: 20 }).notNull().default("hsl(262, 83%, 58%)"),
+  tomorrowLightColor: varchar("tomorrow_light_color", { length: 20 }).notNull().default("hsl(262, 83%, 96%)"),
+  
   // Neutral colors
   whiteColor: varchar("white_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),
   gray50Color: varchar("gray50_color", { length: 20 }).notNull().default("hsl(210, 40%, 98%)"),
@@ -243,6 +247,7 @@ export const themes = pgTable("themes", {
   warningShadow: varchar("warning_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(245, 158, 11, 0.3)"),
   errorShadow: varchar("error_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(239, 68, 68, 0.3)"),
   infoShadow: varchar("info_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(59, 130, 246, 0.3)"),
+  tomorrowShadow: varchar("tomorrow_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(147, 51, 234, 0.3)"),
   grayShadow: varchar("gray_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(107, 114, 128, 0.3)"),
   
   createdAt: timestamp("created_at").defaultNow(),

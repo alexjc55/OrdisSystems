@@ -164,7 +164,7 @@ export const defaultTheme: Theme = {
     md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
     lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
     xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-    primary: '0 4px 14px 0 rgba(255, 102, 0, 0.3)',
+    primary: '0 4px 14px 0 rgba(0, 0, 0, 0.15)',
     success: '0 4px 14px 0 rgba(34, 197, 94, 0.3)',
     warning: '0 4px 14px 0 rgba(245, 158, 11, 0.3)',
     error: '0 4px 14px 0 rgba(239, 68, 68, 0.3)',

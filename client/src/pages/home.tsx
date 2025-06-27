@@ -445,7 +445,7 @@ export default function Home() {
                     }
                   })()}
                 </p>
-                <div className="w-24 h-1 bg-gradient-to-r from-primary to-primary-hover mx-auto rounded-full"></div>
+                <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
               </div>
             </div>
           )}
