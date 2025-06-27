@@ -17,11 +17,11 @@ export function ModernStyleSettings({ id, defaultValues }: ModernStyleSettingsPr
     <div id={id} className="space-y-4" style={{ display: 'none' }}>
       <div className="p-4 bg-blue-50 rounded-lg border">
         <h4 className="text-sm font-medium mb-3">Информационные блоки (Современный стиль)</h4>
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[1, 2, 3].map(num => (
             <div key={num} className="p-3 bg-white rounded border">
-              <h5 className="text-xs font-medium mb-2">Блок {num}</h5>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <h5 className="text-xs font-medium mb-3">Блок {num}</h5>
+              <div className="space-y-3">
                 <div className="space-y-1">
                   <Label htmlFor={`modernBlock${num}Icon${id.includes('Create') ? 'Create' : 'Edit'}`} className="text-xs">Иконка</Label>
                   <select
