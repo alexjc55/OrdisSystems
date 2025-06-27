@@ -121,6 +121,8 @@ interface ThemeData {
   contactsIconColor: string;
   paymentDeliveryIconColor: string;
   headerStyle: string;
+  bannerButtonText?: string;
+  bannerButtonLink?: string;
   whiteColor: string;
   gray50Color: string;
   gray100Color: string;
@@ -487,6 +489,8 @@ export default function ThemeManager() {
       contactsIconColor: formData.get("contactsIconColor") as string,
       paymentDeliveryIconColor: formData.get("paymentDeliveryIconColor") as string,
       headerStyle: formData.get("headerStyle") as string,
+      bannerButtonText: formData.get("bannerButtonText") as string || "Смотреть каталог",
+      bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
       whiteColor: formData.get("whiteColor") as string,
       gray50Color: formData.get("gray50Color") as string,
       gray100Color: formData.get("gray100Color") as string,
@@ -543,6 +547,8 @@ export default function ThemeManager() {
       contactsIconColor: convertColorToHsl(formData.get("contactsIconColor") as string),
       paymentDeliveryIconColor: convertColorToHsl(formData.get("paymentDeliveryIconColor") as string),
       headerStyle: formData.get("headerStyle") as string,
+      bannerButtonText: formData.get("bannerButtonText") as string || "Смотреть каталог",
+      bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
       whiteColor: convertColorToHsl(formData.get("whiteColor") as string),
       gray50Color: convertColorToHsl(formData.get("gray50Color") as string),
       gray100Color: convertColorToHsl(formData.get("gray100Color") as string),
@@ -735,6 +741,12 @@ export default function ThemeManager() {
                         id="headerStyleCreate"
                         defaultValue="classic"
                         className="w-full px-3 py-2 border rounded-md bg-white"
+                        onChange={(e) => {
+                          const headerControls = document.getElementById('headerControlsCreate');
+                          if (headerControls) {
+                            headerControls.style.display = e.target.value === 'minimal' ? 'block' : 'none';
+                          }
+                        }}
                       >
                         <option value="classic">Классический (текущий дизайн)</option>
                         <option value="modern">Современный</option>
@@ -742,6 +754,43 @@ export default function ThemeManager() {
                       </select>
                       <div className="text-sm text-gray-500">
                         Влияет на отображение баннера и информационных блоков
+                      </div>
+                    </div>
+                    
+                    <div id="headerControlsCreate" className="space-y-4" style={{ display: 'none' }}>
+                      <div className="p-4 bg-gray-50 rounded-lg border">
+                        <h4 className="text-sm font-medium mb-3">Настройки кнопки для минималистичного стиля</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="bannerButtonTextCreate">Текст кнопки</Label>
+                            <input
+                              type="text"
+                              name="bannerButtonText"
+                              id="bannerButtonTextCreate"
+                              defaultValue="Смотреть каталог"
+                              placeholder="Смотреть каталог"
+                              className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                            />
+                            <div className="text-xs text-gray-500">
+                              Текст, который будет отображаться на кнопке
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="bannerButtonLinkCreate">Ссылка кнопки</Label>
+                            <input
+                              type="text"
+                              name="bannerButtonLink"
+                              id="bannerButtonLinkCreate"
+                              defaultValue="#categories"
+                              placeholder="#categories"
+                              className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                            />
+                            <div className="text-xs text-gray-500">
+                              Ссылка или якорь (#categories для блока категорий)
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1037,6 +1086,12 @@ export default function ThemeManager() {
                         id="headerStyleEdit"
                         defaultValue={editingTheme.headerStyle || "classic"}
                         className="w-full px-3 py-2 border rounded-md bg-white"
+                        onChange={(e) => {
+                          const headerControls = document.getElementById('headerControlsEdit');
+                          if (headerControls) {
+                            headerControls.style.display = e.target.value === 'minimal' ? 'block' : 'none';
+                          }
+                        }}
                       >
                         <option value="classic">Классический (текущий дизайн)</option>
                         <option value="modern">Современный</option>
@@ -1044,6 +1099,43 @@ export default function ThemeManager() {
                       </select>
                       <div className="text-sm text-gray-500">
                         Влияет на отображение баннера и информационных блоков
+                      </div>
+                    </div>
+                    
+                    <div id="headerControlsEdit" className="space-y-4" style={{ display: editingTheme.headerStyle === 'minimal' ? 'block' : 'none' }}>
+                      <div className="p-4 bg-gray-50 rounded-lg border">
+                        <h4 className="text-sm font-medium mb-3">Настройки кнопки для минималистичного стиля</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="bannerButtonTextEdit">Текст кнопки</Label>
+                            <input
+                              type="text"
+                              name="bannerButtonText"
+                              id="bannerButtonTextEdit"
+                              defaultValue={editingTheme.bannerButtonText || "Смотреть каталог"}
+                              placeholder="Смотреть каталог"
+                              className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                            />
+                            <div className="text-xs text-gray-500">
+                              Текст, который будет отображаться на кнопке
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="bannerButtonLinkEdit">Ссылка кнопки</Label>
+                            <input
+                              type="text"
+                              name="bannerButtonLink"
+                              id="bannerButtonLinkEdit"
+                              defaultValue={editingTheme.bannerButtonLink || "#categories"}
+                              placeholder="#categories"
+                              className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                            />
+                            <div className="text-xs text-gray-500">
+                              Ссылка или якорь (#categories для блока категорий)
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
