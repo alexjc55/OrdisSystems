@@ -1133,6 +1133,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // If this is the active theme and headerStyle was updated, sync with store settings via SQL
       if (theme.isActive && themeData.headerStyle) {
         await db.execute(sql.raw(`UPDATE store_settings SET header_style = '${themeData.headerStyle}' WHERE id = 1`));
+        // Add cache invalidation header to force refresh of store settings
+        res.set('X-Settings-Updated', 'true');
       }
       
       res.json(theme);
@@ -1157,9 +1159,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const theme = await storage.activateTheme(id);
       
-      // Sync the active theme's headerStyle with store settings
+      // Sync the active theme's headerStyle with store settings via SQL
       if (theme.headerStyle) {
-        await storage.updateStoreSettings({ headerStyle: theme.headerStyle });
+        await db.execute(sql.raw(`UPDATE store_settings SET header_style = '${theme.headerStyle}' WHERE id = 1`));
       }
       
       res.json(theme);

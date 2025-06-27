@@ -184,6 +184,8 @@ export default function ThemeManager() {
     },
     onSuccess: (updatedTheme) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/themes"] });
+      // Invalidate store settings to refresh header style for all users
+      queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
       setEditingTheme(null);
       
       // Apply theme immediately if it's the active theme
@@ -344,6 +346,8 @@ export default function ThemeManager() {
     },
     onSuccess: (activatedTheme) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/themes"] });
+      // Invalidate store settings to refresh header style for all users
+      queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
       
       // Apply the theme immediately to the UI
       const theme: Theme = {
