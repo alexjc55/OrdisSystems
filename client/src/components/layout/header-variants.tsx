@@ -168,7 +168,13 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
         {/* Content with internal padding */}
         <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
           <div className="max-w-sm sm:max-w-2xl md:max-w-4xl mx-auto">
-            <h1 className="text-8xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-4 leading-none" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+            <h1 
+              className="text-8xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-4 leading-none" 
+              style={{ 
+                textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+                fontSize: 'clamp(4rem, 12vw, 6rem)' 
+              }}
+            >
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
             <p className="text-xl sm:text-lg md:text-xl text-white max-w-sm sm:max-w-2xl mx-auto leading-normal sm:leading-relaxed mb-8" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
