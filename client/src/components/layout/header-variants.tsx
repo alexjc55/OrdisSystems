@@ -33,7 +33,7 @@ export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
 
 function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
-    <div className="relative w-full">
+    <div className="relative w-full mb-8">
       {/* Classic Gradient Overlay Banner - Full Width */}
       <div className="relative h-64 md:h-80 w-full overflow-hidden">
         {/* Background Image with subtle animation */}
@@ -67,7 +67,7 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
 
 function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
-    <div className="relative w-full">
+    <div className="relative w-full mb-8">
       {/* Modern Overlay Banner - Full Width */}
       <div className="relative h-48 md:h-64 w-full overflow-hidden">
         {/* Background Image */}
@@ -99,7 +99,7 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
 
 function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
-    <div className="relative w-full">
+    <div className="relative w-full mb-8">
       {/* Minimal Full Width Banner */}
       <div className="relative h-48 md:h-64 w-full overflow-hidden">
         {/* Background Image with strong overlay */}
