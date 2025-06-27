@@ -244,6 +244,9 @@ export const themes = pgTable("themes", {
   // Header layout style
   headerStyle: varchar("header_style", { length: 20 }).default("classic"), // "classic", "modern", "minimal"
   
+  // Banner button settings (for minimal header style)
+  bannerButtonText: varchar("banner_button_text", { length: 100 }).default("Смотреть каталог"),
+  bannerButtonLink: varchar("banner_button_link", { length: 200 }).default("#categories"),
   
   // Neutral colors
   whiteColor: varchar("white_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),

@@ -6855,54 +6855,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </div>
         </div>
 
-        {/* Banner Button Settings */}
-        <div className="space-y-4">
-          <h4 className="text-sm font-medium text-gray-700">Настройки кнопки баннера</h4>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="bannerButtonText"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm">Текст кнопки</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder={adminT('bannerButtonPlaceholder', 'Смотреть каталог')}
-                      className="text-sm"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription className="text-xs">
-                    Текст, который будет отображаться на кнопке в минималистичном баннере
-                  </FormDescription>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
 
-            <FormField
-              control={form.control}
-              name="bannerButtonLink"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm">Ссылка кнопки</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="#categories"
-                      className="text-sm"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription className="text-xs">
-                    Ссылка или якорь (#categories для блока категорий)
-                  </FormDescription>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
 
         {/* Modern Header Blocks Settings */}
         <div className="space-y-4">
