@@ -1159,9 +1159,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const theme = await storage.activateTheme(id);
       
-      // Sync the active theme's headerStyle with store settings via SQL
+      // Sync the active theme's headerStyle and banner button settings with store settings via SQL
       if (theme.headerStyle) {
         await db.execute(sql.raw(`UPDATE store_settings SET header_style = '${theme.headerStyle}' WHERE id = 1`));
+      }
+      
+      // Sync banner button settings for minimal header style
+      if (theme.bannerButtonText && theme.bannerButtonLink) {
+        await db.execute(sql.raw(`UPDATE store_settings SET banner_button_text = '${theme.bannerButtonText}', banner_button_link = '${theme.bannerButtonLink}' WHERE id = 1`));
       }
       
       res.json(theme);
