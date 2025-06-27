@@ -390,23 +390,11 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 overflow-x-hidden pt-16">
       <Header onResetView={handleResetView} />
       
-      {/* Header Variant or Simple Banner based on theme - replaces banner + title/description */}
-      {headerStyle !== 'classic' ? (
-        <div className="container mx-auto px-4 py-8">
-          <HeaderVariant 
-            storeSettings={storeSettings} 
-            style={headerStyle as 'classic' | 'modern' | 'minimal'}
-          />
-        </div>
-      ) : (
-        // Classic banner for classic style
-        storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
-          <div 
-            className="w-full h-32 sm:h-40 lg:h-48 bg-cover bg-center"
-            style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
-          />
-        )
-      )}
+      {/* Header Variant - Full width banners */}
+      <HeaderVariant 
+        storeSettings={storeSettings} 
+        style={headerStyle as 'classic' | 'modern' | 'minimal'}
+      />
       
       <div className="flex overflow-x-hidden">
         {storeSettings?.showCategoryMenu !== false && (
