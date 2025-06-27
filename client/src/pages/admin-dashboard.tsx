@@ -4893,17 +4893,22 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">{adminT('systemSettings.canViewUsers', 'Просмотр пользователей')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canViewUsersDescription', 'Доступ к списку пользователей системы')}</p>
                         </div>
-                        <Switch
-                          checked={(storeSettings?.workerPermissions as any)?.canViewUsers || false}
-                          onCheckedChange={(checked) => 
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canViewUsers: checked
+                                canViewUsers: !((storeSettings?.workerPermissions as any)?.canViewUsers || false)
                               }
                             })
                           }
-                        />
+                          className={`p-2 h-8 w-8 ${(storeSettings?.workerPermissions as any)?.canViewUsers ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                        >
+                          {(storeSettings?.workerPermissions as any)?.canViewUsers ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                        </Button>
                       </div>
                       
                       <div className="flex items-center justify-between">
@@ -6387,17 +6392,21 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <FormLabel className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{label}</FormLabel>
                     <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
-                      <Switch
-                        checked={isWorking}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            form.setValue(`workingHours.${key}` as any, "09:00-18:00");
-                          } else {
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (isWorking) {
                             form.setValue(`workingHours.${key}` as any, "");
+                          } else {
+                            form.setValue(`workingHours.${key}` as any, "09:00-18:00");
                           }
                         }}
-                        className="switch-green"
-                      />
+                        className={`p-2 h-8 w-8 ${isWorking ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                      >
+                        {isWorking ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                      </Button>
                       <span className="text-xs text-gray-600">
                         {isWorking ? adminT('storeSettings.workingDay') : adminT('storeSettings.closedDay')}
                       </span>
@@ -6911,11 +6920,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   </FormDescription>
                 </div>
                 <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    className="switch-green"
-                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => field.onChange(!field.value)}
+                    className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                  >
+                    {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  </Button>
                 </FormControl>
               </FormItem>
             )}
@@ -7100,11 +7113,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   </FormDescription>
                 </div>
                 <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    className="switch-green"
-                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => field.onChange(!field.value)}
+                    className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                  >
+                    {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  </Button>
                 </FormControl>
               </FormItem>
             )}
