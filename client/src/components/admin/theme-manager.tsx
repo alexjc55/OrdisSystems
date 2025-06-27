@@ -433,7 +433,8 @@ export default function ThemeManager() {
   });
 
   const handleCreateTheme = (formData: FormData) => {
-    const convertColorToHsl = (color: string) => {
+    const convertColorToHsl = (color: string | null) => {
+      if (!color) return '';
       return color.startsWith('#') ? hexToHsl(color) : color;
     };
 
@@ -484,7 +485,8 @@ export default function ThemeManager() {
   };
 
   const handleUpdateTheme = (formData: FormData, themeId: string) => {
-    const convertColorToHsl = (color: string) => {
+    const convertColorToHsl = (color: string | null) => {
+      if (!color) return '';
       return color.startsWith('#') ? hexToHsl(color) : color;
     };
 
