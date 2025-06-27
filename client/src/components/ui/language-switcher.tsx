@@ -73,8 +73,8 @@ export function LanguageSwitcher({
                 }}
                 className={`flex items-center justify-start px-2 py-1.5 text-sm rounded-md transition-colors ${
                   code === currentLanguage 
-                    ? "bg-orange-50 text-orange-600" 
-                    : "text-gray-700 hover:bg-orange-50 hover:text-orange-600"
+                    ? "bg-primary-light text-primary" 
+                    : "text-gray-700 hover:bg-primary-light hover:text-primary"
                 }`}
               >
                 <span className={`${info.flagClass} inline-block mr-2 rtl:mr-0 rtl:ml-2`}></span>
@@ -111,8 +111,8 @@ export function LanguageSwitcher({
               }}
               className={`w-full flex items-center justify-start px-3 py-2 text-sm rounded-md transition-colors ${
                 code === currentLanguage 
-                  ? "bg-orange-50 text-orange-600" 
-                  : "text-gray-700 hover:bg-orange-50 hover:text-orange-600"
+                  ? "bg-primary-light text-primary" 
+                  : "text-gray-700 hover:bg-primary-light hover:text-primary"
               }`}
             >
               <span className={`${info.flagClass} inline-block mr-3 rtl:mr-0 rtl:ml-3`}></span>

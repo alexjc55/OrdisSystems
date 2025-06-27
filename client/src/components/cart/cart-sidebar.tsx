@@ -140,7 +140,7 @@ export default function CartSidebar() {
                       <div className="flex items-start gap-3">
                         {/* Product Image Placeholder */}
                         <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <ShoppingCart className="h-6 w-6 text-orange-600" />
+                          <ShoppingCart className="h-6 w-6 text-primary" />
                         </div>
                         
                         {/* Product Info */}
@@ -189,7 +189,7 @@ export default function CartSidebar() {
                                     item.quantity - getIncrementValue(item.product.unit as ProductUnit),
                                     item.product.unit as ProductUnit
                                   )}
-                                  className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50"
+                                  className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary-light"
                                 >
                                   <Minus className="h-3 w-3" />
                                 </Button>
@@ -209,7 +209,7 @@ export default function CartSidebar() {
                                     item.quantity + getIncrementValue(item.product.unit as ProductUnit),
                                     item.product.unit as ProductUnit
                                   )}
-                                  className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50"
+                                  className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary-light"
                                 >
                                   <Plus className="h-3 w-3" />
                                 </Button>

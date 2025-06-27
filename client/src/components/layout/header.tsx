@@ -106,7 +106,7 @@ export default function Header({ onResetView }: HeaderProps) {
               onClick={toggleCart}
               className={`relative p-2 transition-all duration-200 ${
                 cartItemsCount > 0 
-                  ? "text-orange-600 hover:text-orange-700" 
+                  ? "text-primary hover:text-primary-hover" 
                   : "text-gray-600 hover:text-primary"
               }`}
             >
