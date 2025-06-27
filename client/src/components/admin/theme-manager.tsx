@@ -117,6 +117,10 @@ interface ThemeData {
   tomorrowDarkColor: string;
   tomorrowLightColor: string;
   outOfStockColor: string;
+  workingHoursIconColor: string;
+  contactsIconColor: string;
+  paymentDeliveryIconColor: string;
+  headerStyle: string;
   whiteColor: string;
   gray50Color: string;
   gray100Color: string;

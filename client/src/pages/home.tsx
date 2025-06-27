@@ -27,6 +27,7 @@ import Sidebar from "@/components/layout/sidebar";
 import CategoryNav from "@/components/menu/category-nav";
 import ProductCard from "@/components/menu/product-card";
 import CartSidebar from "@/components/cart/cart-sidebar";
+import { HeaderVariant } from "@/components/layout/header-variants";
 import { useCartStore } from "@/lib/cart";
 import { formatCurrency } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
