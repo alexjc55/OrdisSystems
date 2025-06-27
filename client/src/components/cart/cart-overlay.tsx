@@ -526,7 +526,7 @@ export default function CartOverlay() {
 
                 {/* Authentication options for guests */}
                 {!user && (
-                  <Card className="bg-orange-50 border-orange-200">
+                  <Card className="bg-primary-light border-primary">
                     <CardContent className="p-4">
                       <div className="text-center space-y-3">
                         <div className="flex items-center justify-center gap-2 mb-3">

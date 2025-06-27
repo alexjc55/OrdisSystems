@@ -33,7 +33,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             <p className="text-gray-600 mb-4">Произошла ошибка при загрузке страницы</p>
             <button 
               onClick={() => window.location.reload()}
-              className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
+              className="bg-primary text-white px-4 py-2 rounded hover:bg-primary-hover"
             >
               Обновить страницу
             </button>

@@ -199,7 +199,7 @@ export default function CartSidebar() {
                                   onChange={(e) => handleManualQuantityChange(item.product.id, e.target.value, item.product.unit as ProductUnit)}
                                   onBlur={() => handleQuantityBlur(item.product.id, item.product.unit as ProductUnit)}
                                   onKeyPress={(e) => handleQuantityKeyPress(e, item.product.id, item.product.unit as ProductUnit)}
-                                  className="w-16 h-8 text-center text-sm font-bold border-gray-200 focus:border-orange-300"
+                                  className="w-16 h-8 text-center text-sm font-bold border-gray-200 focus:border-primary"
                                 />
                                 <Button
                                   variant="outline"
@@ -250,7 +250,7 @@ export default function CartSidebar() {
           {/* Footer */}
           {items.length > 0 && (
             <div className="border-t bg-white p-4 space-y-4">
-              <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl p-4 border border-orange-200">
+              <div className="bg-gradient-to-r from-primary-light to-yellow-50 rounded-xl p-4 border border-primary">
                 {(() => {
                   const subtotal = getTotalPrice();
                   const freeDeliveryThreshold = storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null;
@@ -285,7 +285,7 @@ export default function CartSidebar() {
                       <Separator />
                       <div className="flex justify-between items-center">
                         <span className="text-lg font-semibold text-gray-700">{t('cart.total')}:</span>
-                        <span className="text-2xl font-bold text-orange-600">{formatCurrency(total)}</span>
+                        <span className="text-2xl font-bold text-primary">{formatCurrency(total)}</span>
                       </div>
                     </div>
                   );
@@ -322,7 +322,7 @@ export default function CartSidebar() {
               
               <Button 
                 onClick={handleCheckout}
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-500 hover:to-orange-600 hover:shadow-xl hover:shadow-orange-500/50 text-white font-semibold py-3 rounded-xl shadow-lg transition-shadow duration-200"
+                className="w-full bg-gradient-to-r from-primary to-primary-hover hover:from-primary-hover hover:to-primary-dark hover:shadow-xl hover:shadow-primary/50 text-white font-semibold py-3 rounded-xl shadow-lg transition-shadow duration-200"
                 size="lg"
               >
 {t('cart.checkout')}
