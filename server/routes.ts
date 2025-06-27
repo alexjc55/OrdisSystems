@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./auth";
 import bcrypt from "bcryptjs";
-import { insertCategorySchema, insertProductSchema, insertOrderSchema, insertStoreSettingsSchema, insertThemeSchema } from "@shared/schema";
+import { insertCategorySchema, insertProductSchema, insertOrderSchema, insertStoreSettingsSchema, insertThemeSchema, updateThemeSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
 import path from "path";

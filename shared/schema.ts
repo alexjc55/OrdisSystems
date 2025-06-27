@@ -353,6 +353,11 @@ export const insertThemeSchema = createInsertSchema(themes).omit({
   updatedAt: true,
 });
 
+export const updateThemeSchema = insertThemeSchema.partial().omit({
+  id: true,
+  isActive: true,
+});
+
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;

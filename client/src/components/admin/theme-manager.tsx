@@ -354,10 +354,16 @@ export default function ThemeManager() {
         <div className="flex gap-2">
           <Input
             type="color"
-            id={name}
-            name={name}
+            id={name + "_color"}
             defaultValue={hexValue}
             className="w-16 h-10 rounded cursor-pointer"
+            onChange={(e) => {
+              // Update the text input when color picker changes
+              const textInput = e.target.parentElement?.querySelector('input[type="text"]') as HTMLInputElement;
+              if (textInput) {
+                textInput.value = e.target.value;
+              }
+            }}
           />
           <Input
             type="text"
@@ -717,6 +723,16 @@ export default function ThemeManager() {
                   </div>
                 </TabsContent>
               </Tabs>
+
+              {/* Hidden inputs to ensure all theme data is submitted */}
+              <input type="hidden" name="fontFamilyPrimary" defaultValue={editingTheme.fontFamilyPrimary || "Poppins, sans-serif"} />
+              <input type="hidden" name="fontFamilySecondary" defaultValue={editingTheme.fontFamilySecondary || "Inter, sans-serif"} />
+              <input type="hidden" name="primaryShadow" defaultValue={editingTheme.primaryShadow || "0 4px 14px 0 rgba(255, 102, 0, 0.3)"} />
+              <input type="hidden" name="successShadow" defaultValue={editingTheme.successShadow || "0 4px 14px 0 rgba(34, 197, 94, 0.3)"} />
+              <input type="hidden" name="warningShadow" defaultValue={editingTheme.warningShadow || "0 4px 14px 0 rgba(245, 158, 11, 0.3)"} />
+              <input type="hidden" name="errorShadow" defaultValue={editingTheme.errorShadow || "0 4px 14px 0 rgba(239, 68, 68, 0.3)"} />
+              <input type="hidden" name="infoShadow" defaultValue={editingTheme.infoShadow || "0 4px 14px 0 rgba(59, 130, 246, 0.3)"} />
+              <input type="hidden" name="grayShadow" defaultValue={editingTheme.grayShadow || "0 4px 14px 0 rgba(107, 114, 128, 0.3)"} />
               
               <div className="flex justify-end gap-2 mt-6">
                 <Button type="button" variant="outline" onClick={() => setEditingTheme(null)}>
