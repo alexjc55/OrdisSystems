@@ -404,8 +404,8 @@ export default function Home() {
         )}
 
         <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
-          {/* Title and Description - only show for classic style or when searching/filtering */}
-          {storeSettings?.showTitleDescription !== false && (headerStyle === 'classic' || searchQuery.length > 2 || selectedCategory) && (
+          {/* Title and Description - only show when searching/filtering (classic style shows this in header) */}
+          {storeSettings?.showTitleDescription !== false && (searchQuery.length > 2 || selectedCategory) && (
             <div className="text-center-force mb-12">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight text-center-force">
                 <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">

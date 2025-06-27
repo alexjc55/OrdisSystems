@@ -53,7 +53,7 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
       {/* Pure Image Banner - No text overlay */}
       <div className="relative h-48 sm:h-56 overflow-hidden">
         <img 
-          src={storeSettings.backgroundImage || "/api/uploads/Edahouse_sign__source_1750184330403.png"} 
+          src={storeSettings.bannerImage || "/api/uploads/Edahouse_sign__source_1750184330403.png"} 
           alt="Background" 
           className="w-full h-full object-cover"
         />
