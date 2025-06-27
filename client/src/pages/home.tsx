@@ -483,7 +483,7 @@ export default function Home() {
             <div>
               {/* Category Overview */}
               {categories && categories.length > 0 && (
-                <div className="mb-8">
+                <div id="categories" className="mb-8">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                     <div className="flex items-center gap-4">
                       <div className="p-3 bg-primary rounded-xl shadow-lg">
