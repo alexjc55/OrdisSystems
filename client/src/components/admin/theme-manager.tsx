@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw, Info, Briefcase, AlertCircle, Layers } from "lucide-react";
+import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw, Info, Briefcase, AlertCircle, Layers, Upload, EyeOff } from "lucide-react";
 import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
 import { ModernStyleSettings } from "./modern-style-settings";
 
@@ -734,6 +734,10 @@ export default function ThemeManager() {
                     <Briefcase className="h-4 w-4" />
                     <span className="hidden sm:inline">Бренд</span>
                   </TabsTrigger>
+                  <TabsTrigger value="visuals" className="flex items-center gap-1 flex-1" title="Визуалы">
+                    <Upload className="h-4 w-4" />
+                    <span className="hidden sm:inline">Визуалы</span>
+                  </TabsTrigger>
                   <TabsTrigger value="status" className="flex items-center gap-1 flex-1" title="Статусы">
                     <AlertCircle className="h-4 w-4" />
                     <span className="hidden sm:inline">Статусы</span>
@@ -846,6 +850,136 @@ export default function ThemeManager() {
                   {/* Keep secondary/accent for API compatibility but hide from UI */}
                   <input type="hidden" name="secondaryColor" defaultValue="#f8fafc" />
                   <input type="hidden" name="accentColor" defaultValue="#e2e8f0" />
+                </TabsContent>
+
+                <TabsContent value="visuals" className="space-y-4">
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-sm font-medium mb-3">Настройки отображения</h4>
+                      <div className="space-y-3">
+                        {/* Баннер */}
+                        <div className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="space-y-0.5">
+                            <div className="text-sm font-medium">Показывать баннер</div>
+                            <div className="text-xs text-gray-500">Главное изображение в шапке сайта</div>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <input type="hidden" name="showBannerImage" defaultValue="true" />
+                        </div>
+
+                        {/* Заголовок и описание */}
+                        <div className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="space-y-0.5">
+                            <div className="text-sm font-medium">Заголовок и описание</div>
+                            <div className="text-xs text-gray-500">Текстовая информация о магазине</div>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <input type="hidden" name="showTitleDescription" defaultValue="true" />
+                        </div>
+
+                        {/* Информационные блоки */}
+                        <div className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="space-y-0.5">
+                            <div className="text-sm font-medium">Информационные блоки</div>
+                            <div className="text-xs text-gray-500">Часы работы, контакты, доставка</div>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <input type="hidden" name="showInfoBlocks" defaultValue="true" />
+                        </div>
+
+                        {/* Позиция информационных блоков */}
+                        <div className="space-y-2">
+                          <Label htmlFor="infoBlocksPositionCreate" className="text-sm font-medium">Позиция информационных блоков</Label>
+                          <select
+                            name="infoBlocksPosition"
+                            id="infoBlocksPositionCreate"
+                            defaultValue="top"
+                            className="w-full px-3 py-2 border rounded-md bg-white"
+                          >
+                            <option value="top">Сверху от товаров</option>
+                            <option value="bottom">Снизу от товаров</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-sm font-medium mb-3">Настройки каталога</h4>
+                      <div className="space-y-3">
+                        {/* Показ цен */}
+                        <div className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="space-y-0.5">
+                            <div className="text-sm font-medium">Показывать цены</div>
+                            <div className="text-xs text-gray-500">Отображение цен на товары</div>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <input type="hidden" name="showPrices" defaultValue="true" />
+                        </div>
+
+                        {/* Показ изображений товаров */}
+                        <div className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="space-y-0.5">
+                            <div className="text-sm font-medium">Изображения товаров</div>
+                            <div className="text-xs text-gray-500">Фотографии в карточках товаров</div>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <input type="hidden" name="showProductImages" defaultValue="true" />
+                        </div>
+
+                        {/* Показ корзины */}
+                        <div className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="space-y-0.5">
+                            <div className="text-sm font-medium">Корзина покупок</div>
+                            <div className="text-xs text-gray-500">Функционал добавления в корзину</div>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <input type="hidden" name="showCart" defaultValue="true" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </TabsContent>
 
                 <TabsContent value="status" className="space-y-4">
