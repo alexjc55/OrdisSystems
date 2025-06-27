@@ -6858,7 +6858,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <FormLabel className="text-sm">Текст кнопки</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Смотреть каталог"
+                      placeholder={adminT('bannerButtonPlaceholder', 'Смотреть каталог')}
                       className="text-sm"
                       {...field}
                     />
