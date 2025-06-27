@@ -111,14 +111,12 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
 }
 
 function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
-  // Check if button should be shown - only if text is explicitly provided and not empty
+  // Check if button should be shown - only if text is explicitly provided and not the default placeholder
   const buttonText = storeSettings?.bannerButtonText;
   const showButton = buttonText && 
                      typeof buttonText === 'string' && 
-                     buttonText.trim() !== '';
-  
-  // Debug log
-  console.log('Banner button debug:', { buttonText, showButton, storeSettings: storeSettings });
+                     buttonText.trim() !== '' &&
+                     buttonText !== 'Смотреть каталог'; // Don't show if it's the default placeholder value
   
   return (
     <div className="relative w-full mb-6 sm:mb-8">
