@@ -3876,7 +3876,7 @@ export default function AdminDashboard() {
                                 <TableHead 
                                   className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '80px'} : {textAlign: 'center', width: '80px'}}
-                                >{adminT('common.number')}</TableHead>
+                                >№</TableHead>
                                 <TableHead 
                                   className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '180px'} : {textAlign: 'center', width: '180px'}}
@@ -3912,10 +3912,10 @@ export default function AdminDashboard() {
                                           setEditingOrder(order);
                                           setIsOrderFormOpen(true);
                                         }}
-                                        className="h-6 w-6 p-0 hover:bg-orange-100"
+                                        className="h-7 w-7 p-1 hover:bg-orange-100 border border-orange-200 bg-orange-50"
                                         title={adminT('orders.viewDetails')}
                                       >
-                                        <Eye className="h-3 w-3 text-orange-600" />
+                                        <Eye className="h-4 w-4 text-orange-700" />
                                       </Button>
                                     </div>
                                   </TableCell>
