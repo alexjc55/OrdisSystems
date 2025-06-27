@@ -140,7 +140,7 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
           >
             {block.icon}
           </div>
-          <span className="text-sm sm:text-base font-medium leading-tight px-2 break-words">
+          <span className="text-base sm:text-lg font-medium leading-tight px-2 break-words">
             {block.text}
           </span>
         </div>
