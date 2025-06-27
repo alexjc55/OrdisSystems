@@ -114,7 +114,7 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
   return (
     <div className="relative w-full mb-6 sm:mb-8">
       {/* Minimal Full Width Banner */}
-      <div className="relative h-40 sm:h-48 md:h-64 w-full overflow-hidden">
+      <div className="relative h-56 sm:h-48 md:h-64 w-full overflow-hidden">
         {/* Background Image with strong overlay */}
         <div 
           className="absolute inset-0 bg-cover bg-center w-full h-full"
