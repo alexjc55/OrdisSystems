@@ -121,18 +121,18 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 mt-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mt-4 max-w-3xl mx-auto px-2">
       {blocks.map((block, index) => (
         <div 
           key={index}
-          className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-white min-w-0"
+          className="flex flex-col items-center justify-center text-center min-h-[4rem] sm:min-h-[5rem]"
           style={{ 
             textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
             color: 'rgba(255, 255, 255, 0.95)'
           }}
         >
           <div 
-            className="flex-shrink-0 p-1.5 sm:p-2 rounded-full backdrop-blur-sm"
+            className="flex-shrink-0 p-2 sm:p-2.5 rounded-full backdrop-blur-sm mb-2"
             style={{ 
               backgroundColor: 'rgba(255, 255, 255, 0.15)',
               color: 'white'
@@ -140,7 +140,7 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
           >
             {block.icon}
           </div>
-          <span className="text-xs sm:text-sm md:text-base font-medium text-center sm:text-left leading-tight">
+          <span className="text-xs sm:text-sm font-medium leading-tight px-1 break-words">
             {block.text}
           </span>
         </div>
