@@ -84,12 +84,12 @@
   
   .btn-primary {
     background-color: var(--color-primary) !important;
-    color: var(--color-white) !important;
+    color: white !important;
     border: none !important;
   }
 
   .btn-primary * {
-    color: var(--color-white) !important;
+    color: white !important;
   }
   
   .btn-primary svg {
@@ -103,11 +103,11 @@
     background-color: var(--color-primary) !important;
     background-image: none !important;
     box-shadow: var(--shadow-primary) !important;
-    color: var(--color-white) !important;
+    color: white !important;
   }
 
   .btn-primary:hover * {
-    color: var(--color-white) !important;
+    color: white !important;
   }
   
   .btn-primary:hover svg {
