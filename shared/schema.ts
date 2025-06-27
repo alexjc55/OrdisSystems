@@ -223,6 +223,7 @@ export const themes = pgTable("themes", {
   
   // Tomorrow button and out of stock colors
   tomorrowColor: varchar("tomorrow_color", { length: 20 }).notNull().default("hsl(262, 83%, 58%)"),
+  tomorrowDarkColor: varchar("tomorrow_dark_color", { length: 20 }).notNull().default("hsl(262, 83%, 48%)"),
   tomorrowLightColor: varchar("tomorrow_light_color", { length: 20 }).notNull().default("hsl(262, 83%, 96%)"),
   outOfStockColor: varchar("out_of_stock_color", { length: 20 }).notNull().default("hsl(0, 84%, 60%)"),
   

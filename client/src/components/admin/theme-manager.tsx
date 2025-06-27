@@ -232,6 +232,7 @@ export default function ThemeManager() {
         
         // Update special colors
         root.style.setProperty('--color-tomorrow', convertColorToHsl(updatedTheme.tomorrowColor));
+        root.style.setProperty('--color-tomorrow-dark', convertColorToHsl(updatedTheme.tomorrowDarkColor));
         root.style.setProperty('--color-tomorrow-light', convertColorToHsl(updatedTheme.tomorrowLightColor));
         root.style.setProperty('--color-out-of-stock', convertColorToHsl(updatedTheme.outOfStockColor));
         
@@ -928,6 +929,7 @@ export default function ThemeManager() {
                     <ColorInput label="Информация" name="infoColor" defaultValue={editingTheme.infoColor} />
                     <ColorInput label="Информация светлая" name="infoLightColor" defaultValue={editingTheme.infoLightColor} />
                     <ColorInput label="Кнопка 'Завтра'" name="tomorrowColor" defaultValue={editingTheme.tomorrowColor} />
+                    <ColorInput label="Кнопка 'Завтра' (при наведении)" name="tomorrowDarkColor" defaultValue={editingTheme.tomorrowDarkColor} />
                     <ColorInput label="Кнопка 'Завтра' (светлый)" name="tomorrowLightColor" defaultValue={editingTheme.tomorrowLightColor} />
                     <ColorInput label="Цвет 'Закончился'" name="outOfStockColor" defaultValue={editingTheme.outOfStockColor} />
                   </div>
