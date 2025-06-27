@@ -694,26 +694,49 @@ export default function ThemeManager() {
                     <ColorInput label="Цвет текста кнопок" name="primaryTextColor" defaultValue="#ffffff" />
                     <ColorInput label="Основной (темный)" name="primaryDarkColor" defaultValue="#e55a00" />
                     <ColorInput label="Основной (светлый)" name="primaryLightColor" defaultValue="#fff3f0" />
-                    <ColorInput label="Вторичный цвет" name="secondaryColor" defaultValue="#f8fafc" />
-                    <ColorInput label="Акцентный цвет" name="accentColor" defaultValue="#e2e8f0" />
                   </div>
+                  <div className="text-sm text-gray-500 mt-2">
+                    ℹ️ Основные цвета влияют на кнопки "В корзину", ссылки и главные элементы интерфейса
+                  </div>
+                  {/* Keep secondary/accent for API compatibility but hide from UI */}
+                  <input type="hidden" name="secondaryColor" defaultValue="#f8fafc" />
+                  <input type="hidden" name="accentColor" defaultValue="#e2e8f0" />
                 </TabsContent>
 
                 <TabsContent value="status" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <ColorInput label="Успех" name="successColor" defaultValue="#22c55e" />
-                    <ColorInput label="Успех (светлый)" name="successLightColor" defaultValue="#f0fdf4" />
-                    <ColorInput label="Предупреждение" name="warningColor" defaultValue="#f59e0b" />
-                    <ColorInput label="Предупреждение (светлый)" name="warningLightColor" defaultValue="#fffbeb" />
-                    <ColorInput label="Ошибка" name="errorColor" defaultValue="#ef4444" />
-                    <ColorInput label="Ошибка (светлый)" name="errorLightColor" defaultValue="#fef2f2" />
-                    <ColorInput label="Информация" name="infoColor" defaultValue="#3b82f6" />
-                    <ColorInput label="Информация (светлый)" name="infoLightColor" defaultValue="#eff6ff" />
-                    <ColorInput label="Кнопка 'Завтра'" name="tomorrowColor" defaultValue="#a855f7" />
-                    <ColorInput label="Кнопка 'Завтра' (при наведении)" name="tomorrowDarkColor" defaultValue="#9333ea" />
-                    <ColorInput label="Кнопка 'Завтра' (светлый)" name="tomorrowLightColor" defaultValue="#faf5ff" />
-                    <ColorInput label="Цвет 'Закончился'" name="outOfStockColor" defaultValue="#ef4444" />
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Основные статусные цвета</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <ColorInput label="Успех" name="successColor" defaultValue="#22c55e" />
+                        <ColorInput label="Предупреждение" name="warningColor" defaultValue="#f59e0b" />
+                        <ColorInput label="Ошибка" name="errorColor" defaultValue="#ef4444" />
+                        <ColorInput label="Информация" name="infoColor" defaultValue="#3b82f6" />
+                      </div>
+                      <div className="text-sm text-gray-500 mt-2">
+                        ℹ️ Используются в уведомлениях и статусных кнопках
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Специальные кнопки</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <ColorInput label="Кнопка 'Завтра'" name="tomorrowColor" defaultValue="#a855f7" />
+                        <ColorInput label="Кнопка 'Завтра' (при наведении)" name="tomorrowDarkColor" defaultValue="#9333ea" />
+                        <ColorInput label="Цвет 'Закончился'" name="outOfStockColor" defaultValue="#ef4444" />
+                      </div>
+                      <div className="text-sm text-gray-500 mt-2">
+                        ℹ️ "Завтра" - для недоступных сегодня товаров, "Закончился" - для бейджей
+                      </div>
+                    </div>
                   </div>
+                  
+                  {/* Keep light variants for API compatibility but hide from UI */}
+                  <input type="hidden" name="successLightColor" defaultValue="#f0fdf4" />
+                  <input type="hidden" name="warningLightColor" defaultValue="#fffbeb" />
+                  <input type="hidden" name="errorLightColor" defaultValue="#fef2f2" />
+                  <input type="hidden" name="infoLightColor" defaultValue="#eff6ff" />
+                  <input type="hidden" name="tomorrowLightColor" defaultValue="#faf5ff" />
                 </TabsContent>
 
                 <TabsContent value="neutral" className="space-y-4">
