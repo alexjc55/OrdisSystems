@@ -261,6 +261,10 @@ export function applyTheme(theme: Theme): void {
   root.style.setProperty('--primary', theme.colors.primary);
   root.style.setProperty('--primary-foreground', theme.colors.primaryText);
   
+  // Set tomorrow-dark color for hover effects (use tomorrowDark if available, otherwise darken tomorrow)
+  const tomorrowDarkColor = theme.colors.tomorrowDark || theme.colors.tomorrow;
+  root.style.setProperty('--color-tomorrow-dark', tomorrowDarkColor);
+  
   // Update info block icon colors
   root.style.setProperty('--color-working-hours-icon', theme.colors.workingHoursIcon || 'hsl(220, 91%, 54%)');
   root.style.setProperty('--color-contacts-icon', theme.colors.contactsIcon || 'hsl(142, 76%, 36%)');
