@@ -184,6 +184,19 @@ interface ThemeData {
   infoShadow: string;
   tomorrowShadow: string;
   grayShadow: string;
+  
+  // Visual display settings
+  showBannerImage?: boolean;
+  showTitleDescription?: boolean;
+  showInfoBlocks?: boolean;
+  infoBlocksPosition?: string;
+  showSpecialOffers?: boolean;
+  showCategoryMenu?: boolean;
+  showWhatsAppChat?: boolean;
+  
+  // WhatsApp settings
+  whatsappPhone?: string;
+  whatsappMessage?: string;
 }
 
 export default function ThemeManager() {

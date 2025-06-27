@@ -1182,6 +1182,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await db.execute(sql.raw(`UPDATE store_settings SET ${modernFields.join(', ')} WHERE id = 1`));
       }
       
+      // Sync visual display settings with store settings
+      const visualFields = [
+        `show_banner_image = ${theme.showBannerImage ?? true}`,
+        `show_title_description = ${theme.showTitleDescription ?? true}`,
+        `show_info_blocks = ${theme.showInfoBlocks ?? true}`,
+        `info_blocks_position = '${theme.infoBlocksPosition || 'top'}'`,
+        `show_special_offers = ${theme.showSpecialOffers ?? true}`,
+        `show_category_menu = ${theme.showCategoryMenu ?? true}`,
+        `show_whatsapp_chat = ${theme.showWhatsAppChat ?? true}`,
+        `whatsapp_phone_number = '${theme.whatsappPhone || ''}'`,
+        `whatsapp_default_message = '${theme.whatsappMessage || 'Здравствуйте! У меня есть вопрос по заказу.'}'`
+      ];
+      await db.execute(sql.raw(`UPDATE store_settings SET ${visualFields.join(', ')} WHERE id = 1`));
+      
       res.json(theme);
     } catch (error) {
       console.error("Error activating theme:", error);

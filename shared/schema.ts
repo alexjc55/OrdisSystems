@@ -452,7 +452,32 @@ export const insertThemeSchema = z.object({
   errorShadow: z.string().nullable().transform(val => val || "0 4px 14px 0 rgba(239, 68, 68, 0.3)"),
   infoShadow: z.string().nullable().transform(val => val || "0 4px 14px 0 rgba(59, 130, 246, 0.3)"),
   tomorrowShadow: z.string().nullable().transform(val => val || "0 4px 14px 0 rgba(147, 51, 234, 0.3)"),
-  grayShadow: z.string().nullable().transform(val => val || "0 4px 14px 0 rgba(107, 114, 128, 0.3)")
+  grayShadow: z.string().nullable().transform(val => val || "0 4px 14px 0 rgba(107, 114, 128, 0.3)"),
+  
+  // Banner button settings
+  bannerButtonText: z.string().nullable().transform(val => val || "Смотреть каталог"),
+  bannerButtonLink: z.string().nullable().transform(val => val || "#categories"),
+  
+  // Modern header style info blocks
+  modernBlock1Icon: z.string().nullable().transform(val => val || ""),
+  modernBlock1Text: z.string().nullable().transform(val => val || ""),
+  modernBlock2Icon: z.string().nullable().transform(val => val || ""),
+  modernBlock2Text: z.string().nullable().transform(val => val || ""),
+  modernBlock3Icon: z.string().nullable().transform(val => val || ""),
+  modernBlock3Text: z.string().nullable().transform(val => val || ""),
+  
+  // Visual display settings
+  showBannerImage: z.boolean().nullable().transform(val => val ?? true),
+  showTitleDescription: z.boolean().nullable().transform(val => val ?? true),
+  showInfoBlocks: z.boolean().nullable().transform(val => val ?? true),
+  infoBlocksPosition: z.string().nullable().transform(val => val || "top"),
+  showSpecialOffers: z.boolean().nullable().transform(val => val ?? true),
+  showCategoryMenu: z.boolean().nullable().transform(val => val ?? true),
+  showWhatsAppChat: z.boolean().nullable().transform(val => val ?? true),
+  
+  // WhatsApp settings
+  whatsappPhone: z.string().nullable().transform(val => val || ""),
+  whatsappMessage: z.string().nullable().transform(val => val || "Здравствуйте! У меня есть вопрос по заказу.")
 });
 
 export const updateThemeSchema = baseThemeSchema.partial().omit({
