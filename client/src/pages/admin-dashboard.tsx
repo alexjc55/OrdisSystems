@@ -5873,6 +5873,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         authPageFeature3: storeSettings?.authPageFeature3 || "",
         defaultLanguage: storeSettings?.defaultLanguage || "ru",
         enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
+        bannerButtonText: storeSettings?.bannerButtonText || "",
+        bannerButtonLink: storeSettings?.bannerButtonLink || "",
       } as any);
     }
   }, [storeSettings, form]);
