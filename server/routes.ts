@@ -1107,7 +1107,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { id } = req.params;
-      const themeData = insertThemeSchema.partial().parse(req.body);
+      
+      // Filter out null values and only send fields that were actually changed
+      const body = req.body;
+      const themeData: any = {};
+      
+      // Only include non-null values in the update
+      Object.keys(body).forEach(key => {
+        if (body[key] !== null && body[key] !== undefined && body[key] !== '') {
+          themeData[key] = body[key];
+        }
+      });
+      
+      console.log("Theme update data:", themeData);
       const theme = await storage.updateTheme(id, themeData);
       res.json(theme);
     } catch (error) {
@@ -1211,45 +1223,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/admin/themes/:id', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
-      
-      if (!user || user.role !== 'admin') {
-        return res.status(403).json({ message: "Admin access required" });
-      }
 
-      const { id } = req.params;
-      const themeData = insertThemeSchema.partial().parse(req.body);
-      const theme = await storage.updateTheme(id, themeData);
-      res.json(theme);
-    } catch (error) {
-      console.error("Error updating theme:", error);
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to update theme" });
-    }
-  });
-
-  app.post('/api/admin/themes/:id/activate', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
-      
-      if (!user || user.role !== 'admin') {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
-      const { id } = req.params;
-      const activatedTheme = await storage.activateTheme(id);
-      res.json(activatedTheme);
-    } catch (error) {
-      console.error("Error activating theme:", error);
-      res.status(500).json({ message: "Failed to activate theme" });
-    }
-  });
 
   app.delete('/api/admin/themes/:id', isAuthenticated, async (req: any, res) => {
     try {
