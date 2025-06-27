@@ -723,6 +723,23 @@ export default function ThemeManager() {
                         <Input id="fontFamilySecondary" name="fontFamilySecondary" defaultValue="Inter, sans-serif" />
                       </div>
                     </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="headerStyleCreate">Стиль шапки сайта</Label>
+                      <select
+                        name="headerStyle"
+                        id="headerStyleCreate"
+                        defaultValue="classic"
+                        className="w-full px-3 py-2 border rounded-md bg-white"
+                      >
+                        <option value="classic">Классический (текущий дизайн)</option>
+                        <option value="modern">Современный</option>
+                        <option value="minimal">Минималистичный</option>
+                      </select>
+                      <div className="text-sm text-gray-500">
+                        Влияет на отображение баннера и информационных блоков
+                      </div>
+                    </div>
                   </div>
                 </TabsContent>
 
@@ -780,25 +797,7 @@ export default function ThemeManager() {
                       </div>
                     </div>
                     
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Стиль шапки сайта</h4>
-                      <div className="space-y-3">
-                        <Label htmlFor="headerStyleCreate">Выберите стиль отображения шапки</Label>
-                        <select
-                          name="headerStyle"
-                          id="headerStyleCreate"
-                          defaultValue="classic"
-                          className="w-full px-3 py-2 border rounded-md bg-white"
-                        >
-                          <option value="classic">Классический (текущий)</option>
-                          <option value="modern">Современный</option>
-                          <option value="minimal">Минималистичный</option>
-                        </select>
-                        <div className="text-sm text-gray-500">
-                          ℹ️ Влияет на отображение баннера, заголовка и описания сайта
-                        </div>
-                      </div>
-                    </div>
+
                   </div>
                   
                   {/* Keep light variants for API compatibility but hide from UI */}
@@ -1027,6 +1026,22 @@ export default function ThemeManager() {
                       <Label htmlFor="edit-description">Описание</Label>
                       <Textarea id="edit-description" name="description" defaultValue={editingTheme.description || ""} />
                     </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="headerStyleEdit">Стиль шапки сайта</Label>
+                      <select
+                        name="headerStyle"
+                        id="headerStyleEdit"
+                        defaultValue={editingTheme.headerStyle || "classic"}
+                        className="w-full px-3 py-2 border rounded-md bg-white"
+                      >
+                        <option value="classic">Классический (текущий дизайн)</option>
+                        <option value="modern">Современный</option>
+                        <option value="minimal">Минималистичный</option>
+                      </select>
+                      <div className="text-sm text-gray-500">
+                        Влияет на отображение баннера и информационных блоков
+                      </div>
+                    </div>
                   </div>
                 </TabsContent>
 
@@ -1084,25 +1099,7 @@ export default function ThemeManager() {
                       </div>
                     </div>
                     
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Стиль шапки сайта</h4>
-                      <div className="space-y-3">
-                        <Label htmlFor="headerStyle">Выберите стиль отображения шапки</Label>
-                        <select
-                          name="headerStyle"
-                          id="headerStyle"
-                          defaultValue={editingTheme.headerStyle || "classic"}
-                          className="w-full px-3 py-2 border rounded-md bg-white"
-                        >
-                          <option value="classic">Классический (текущий)</option>
-                          <option value="modern">Современный</option>
-                          <option value="minimal">Минималистичный</option>
-                        </select>
-                        <div className="text-sm text-gray-500">
-                          ℹ️ Влияет на отображение баннера, заголовка и описания сайта
-                        </div>
-                      </div>
-                    </div>
+
                   </div>
                   
                   {/* Keep light variants for API compatibility but hide from UI */}

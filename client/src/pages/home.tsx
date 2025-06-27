@@ -27,6 +27,7 @@ import Sidebar from "@/components/layout/sidebar";
 import CategoryNav from "@/components/menu/category-nav";
 import ProductCard from "@/components/menu/product-card";
 import CartSidebar from "@/components/cart/cart-sidebar";
+import { HeaderVariant } from "@/components/layout/header-variants";
 import { useCartStore } from "@/lib/cart";
 import { formatCurrency } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
@@ -243,6 +244,14 @@ export default function Home() {
   const { data: allProducts = [], isLoading: allProductsLoading } = useQuery<ProductWithCategories[]>({
     queryKey: ["/api/products"],
   });
+
+  // Fetch active theme to get header style
+  const { data: themes = [] } = useQuery<any[]>({
+    queryKey: ['/api/admin/themes'],
+  });
+  
+  const activeTheme = themes.find((theme: any) => theme.isActive);
+  const headerStyle = activeTheme?.headerStyle || 'classic';
 
   // Fetch products for selected category
   const { data: products = [], isLoading: productsLoading } = useQuery<ProductWithCategories[]>({
