@@ -18,6 +18,11 @@
   --color-info: hsl(221, 83%, 53%);
   --color-info-light: hsl(221, 83%, 96%);
   
+  /* Special colors */
+  --color-tomorrow: hsl(0, 84%, 60%);
+  --color-tomorrow-light: hsl(280, 84%, 96%);
+  --color-out-of-stock: hsl(0, 84%, 60%);
+  
   /* Neutral colors */
   --color-white: hsl(0, 0%, 100%);
   --color-gray-50: hsl(210, 40%, 98%);
@@ -38,6 +43,8 @@
   --shadow-error: 0 4px 14px 0 rgba(239, 68, 68, 0.3);
   --shadow-info: 0 4px 14px 0 rgba(59, 130, 246, 0.3);
   --shadow-gray: 0 4px 14px 0 rgba(107, 114, 128, 0.3);
+  --shadow-tomorrow: 0 4px 14px 0 rgba(239, 68, 68, 0.3);
+  --shadow-out-of-stock: 0 4px 14px 0 rgba(239, 68, 68, 0.3);
 }
 
 /* Primary color utility classes */

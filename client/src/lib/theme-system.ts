@@ -247,6 +247,11 @@ export function applyTheme(theme: Theme): void {
   Object.entries(theme.colors).forEach(([key, value]) => {
     const cssVarName = `--color-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
     root.style.setProperty(cssVarName, value);
+    
+    // Debug log for tomorrow and outOfStock colors
+    if (key === 'tomorrow' || key === 'outOfStock') {
+      console.log(`Applied ${cssVarName}: ${value}`);
+    }
   });
   
   // Set the configured text color for primary elements
