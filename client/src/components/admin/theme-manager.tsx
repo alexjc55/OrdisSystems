@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw, Info, Briefcase, AlertCircle, Layers, Upload, EyeOff } from "lucide-react";
+import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw, Info, Briefcase, AlertCircle, Layers, Upload, EyeOff, MessageCircle, Phone } from "lucide-react";
 import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
 import { ModernStyleSettings } from "./modern-style-settings";
 
@@ -805,21 +805,13 @@ export default function ThemeManager() {
                     <Info className="h-4 w-4" />
                     <span className="hidden sm:inline">Основное</span>
                   </TabsTrigger>
-                  <TabsTrigger value="brand" className="flex items-center gap-1 flex-1" title="Бренд">
-                    <Briefcase className="h-4 w-4" />
-                    <span className="hidden sm:inline">Бренд</span>
+                  <TabsTrigger value="colors" className="flex items-center gap-1 flex-1" title="Цвета">
+                    <Palette className="h-4 w-4" />
+                    <span className="hidden sm:inline">Цвета</span>
                   </TabsTrigger>
                   <TabsTrigger value="visuals" className="flex items-center gap-1 flex-1" title="Визуалы">
-                    <Upload className="h-4 w-4" />
+                    <Eye className="h-4 w-4" />
                     <span className="hidden sm:inline">Визуалы</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="status" className="flex items-center gap-1 flex-1" title="Статусы">
-                    <AlertCircle className="h-4 w-4" />
-                    <span className="hidden sm:inline">Статусы</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="neutral" className="flex items-center gap-1 flex-1" title="Нейтральные">
-                    <Layers className="h-4 w-4" />
-                    <span className="hidden sm:inline">Нейтральные</span>
                   </TabsTrigger>
                 </TabsList>
                 
@@ -1001,6 +993,45 @@ export default function ThemeManager() {
                         fieldName="showWhatsAppChat"
                       />
                     </div>
+                    
+                    {/* WhatsApp настройки */}
+                    {visualSettings.showWhatsAppChat && (
+                      <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                        <h5 className="text-sm font-medium text-green-800 mb-3 flex items-center gap-2">
+                          <MessageCircle className="h-4 w-4" />
+                          Настройки WhatsApp
+                        </h5>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="whatsappPhoneCreate" className="text-sm font-medium">Номер телефона</Label>
+                            <input
+                              type="text"
+                              name="whatsappPhone"
+                              id="whatsappPhoneCreate"
+                              placeholder="+972501234567"
+                              className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                            />
+                            <div className="text-xs text-gray-500">
+                              Номер в международном формате с кодом страны
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="whatsappMessageCreate" className="text-sm font-medium">Сообщение по умолчанию</Label>
+                            <input
+                              type="text"
+                              name="whatsappMessage"
+                              id="whatsappMessageCreate"
+                              placeholder="Здравствуйте! Хочу сделать заказ"
+                              className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                            />
+                            <div className="text-xs text-gray-500">
+                              Текст, который будет отправлен автоматически
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </TabsContent>
 
