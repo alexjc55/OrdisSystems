@@ -34,13 +34,40 @@ export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
 function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
     <div className="relative">
-      {/* Simple Banner Image - same as original */}
-      {storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
+      {/* Classic Gradient Overlay Banner */}
+      <div className="relative h-56 md:h-72 rounded-2xl overflow-hidden">
+        {/* Background Image with subtle animation */}
         <div 
-          className="w-full h-32 sm:h-40 lg:h-48 bg-cover bg-center"
-          style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)',
+            animation: 'subtle-zoom 8s ease-in-out infinite'
+          }}
         />
-      )}
+        
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-primary/60 to-transparent" />
+        
+        {/* Content with glass effect */}
+        <div className="relative z-10 h-full flex items-center justify-start px-8 md:px-12">
+          <div className="max-w-2xl backdrop-blur-sm bg-white/10 rounded-xl p-6 border border-white/20">
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-xl">
+              {storeSettings.welcomeTitle || "eDAHouse"}
+            </h1>
+            <p className="text-lg md:text-xl text-white/95 mb-6 drop-shadow-lg leading-relaxed">
+              {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button className="bg-white text-primary px-6 py-3 rounded-lg font-semibold hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                Смотреть меню
+              </button>
+              <button className="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary transition-all duration-300">
+                Контакты
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -48,30 +75,30 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
 function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
     <div className="relative">
-      {/* Modern Compact Layout */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="flex flex-col md:flex-row items-center gap-6 p-6">
-          {/* Left Image */}
-          <div className="w-full md:w-48 h-32 md:h-24 bg-cover bg-center rounded-xl flex-shrink-0"
-               style={{
-                 backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'
-               }}
-          />
-          
-          {/* Content */}
-          <div className="flex-1 text-center md:text-left">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+      {/* Modern Overlay Banner */}
+      <div className="relative h-48 md:h-64 rounded-2xl overflow-hidden">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center transform scale-105"
+          style={{
+            backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'
+          }}
+        />
+        
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
+        
+        {/* Content */}
+        <div className="relative z-10 h-full flex items-center justify-center text-center px-6">
+          <div className="max-w-3xl">
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
-            <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+            <p className="text-lg md:text-xl text-white/90 mb-6 drop-shadow-md max-w-2xl mx-auto">
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
-          </div>
-
-          {/* CTA Button */}
-          <div className="flex-shrink-0">
-            <button className="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary/90 transition-colors text-sm">
-              Заказать
+            <button className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105">
+              Заказать сейчас
             </button>
           </div>
         </div>
@@ -83,24 +110,31 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
 function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
     <div className="relative">
-      {/* Minimal Clean Layout - compact version */}
-      <div className="text-center py-8">
-        {/* Image first */}
-        <div className="w-20 h-20 mx-auto mb-4 bg-cover bg-center rounded-full shadow-md"
-             style={{
-               backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'
-             }}
+      {/* Minimal Animated Background */}
+      <div className="relative h-40 md:h-48 rounded-2xl overflow-hidden">
+        {/* Animated Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center animate-pulse-slow"
+          style={{
+            backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)',
+            animation: 'float 6s ease-in-out infinite'
+          }}
         />
         
-        <h1 className="text-3xl md:text-4xl font-light text-gray-900 mb-2 tracking-tight">
-          {storeSettings.welcomeTitle || "eDAHouse"}
-        </h1>
+        {/* Subtle Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/40" />
         
-        <p className="text-gray-500 max-w-lg mx-auto font-light leading-relaxed">
-          {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
-        </p>
-
-        <div className="w-12 h-px bg-primary mx-auto mt-4"></div>
+        {/* Content */}
+        <div className="relative z-10 h-full flex items-center justify-center text-center px-6">
+          <div className="backdrop-blur-sm bg-white/10 rounded-2xl p-6 border border-white/20">
+            <h1 className="text-2xl md:text-4xl font-light text-white mb-3 tracking-wide drop-shadow-lg">
+              {storeSettings.welcomeTitle || "eDAHouse"}
+            </h1>
+            <p className="text-white/90 text-sm md:text-base font-light leading-relaxed max-w-md mx-auto drop-shadow-md">
+              {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
