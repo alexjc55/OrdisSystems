@@ -69,7 +69,7 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
   return (
     <div className="relative w-full mb-6 sm:mb-8">
       {/* Modern Overlay Banner - Full Width */}
-      <div className="relative h-40 sm:h-48 md:h-64 w-full overflow-hidden">
+      <div className="relative h-48 sm:h-56 md:h-64 w-full overflow-hidden">
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center transform scale-105 w-full h-full"
@@ -83,11 +83,11 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
         
         {/* Content */}
         <div className="relative z-10 h-full flex items-center justify-center text-center px-4 sm:px-6">
-          <div className="max-w-4xl">
-            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-white mb-2 sm:mb-4" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+          <div className="max-w-xs sm:max-w-2xl md:max-w-4xl">
+            <h1 className="text-xl sm:text-3xl md:text-5xl font-medium sm:font-bold text-white mb-2 sm:mb-4 leading-tight" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
-            <p className="text-sm sm:text-lg md:text-xl text-white max-w-2xl mx-auto leading-relaxed" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
+            <p className="text-xs sm:text-lg md:text-xl text-white max-w-xs sm:max-w-2xl mx-auto leading-snug sm:leading-relaxed" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
           </div>
