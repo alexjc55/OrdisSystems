@@ -895,9 +895,9 @@ export default function ThemeManager() {
                     className="btn-primary"
                     onClick={() => activateThemeMutation.mutate(theme.id)}
                     disabled={activateThemeMutation.isPending}
+                    title="Активировать тему"
                   >
-                    <Paintbrush className="h-4 w-4 mr-1" />
-                    Активировать
+                    <Paintbrush className="h-4 w-4" />
                   </Button>
                 )}
                 
@@ -905,9 +905,9 @@ export default function ThemeManager() {
                   size="sm"
                   variant="outline"
                   onClick={() => setEditingTheme(theme)}
+                  title="Настроить тему"
                 >
-                  <Settings className="h-4 w-4 mr-1" />
-                  Настроить
+                  <Settings className="h-4 w-4" />
                 </Button>
 
                 <Button
@@ -917,8 +917,7 @@ export default function ThemeManager() {
                   disabled={updateThemeMutation.isPending}
                   title="Сбросить все цвета к значениям по умолчанию"
                 >
-                  <RotateCcw className="h-4 w-4 mr-1" />
-                  Сброс
+                  <RotateCcw className="h-4 w-4" />
                 </Button>
 
                 {!theme.isActive && !theme.id.includes('default_theme') && (
