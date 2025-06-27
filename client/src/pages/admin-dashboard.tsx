@@ -124,7 +124,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
             }}
             className="cursor-pointer"
           >
-            <span className="text-xs font-medium text-white hover:text-white transition-colors bg-orange-500 hover:bg-orange-600 px-2.5 py-1 rounded-full backdrop-blur-sm shadow-sm">
+            <span className="text-xs font-medium text-white hover:text-white transition-colors bg-primary hover:bg-primary px-2.5 py-1 rounded-full backdrop-blur-sm shadow-sm">
               {category.productCount || 0} {adminT('categories.products')}
             </span>
           </div>
@@ -1430,7 +1430,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
           <Button 
             size="sm" 
             onClick={() => setShowAddItem(true)}
-            className="text-xs bg-orange-500 hover:bg-orange-600 text-white border-orange-500"
+            className="text-xs bg-primary hover:bg-primary text-white border-primary"
           >
             <Plus className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
             {adminT('orders.addProduct')}
@@ -1750,7 +1750,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     }))}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
               
@@ -2964,7 +2964,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-gray-600">Загрузка...</p>
         </div>
       </div>
@@ -3273,7 +3273,7 @@ export default function AdminDashboard() {
                       setEditingProduct(null);
                       setIsProductFormOpen(true);
                     }}
-                    className={`bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-1' : 'sm:order-2'}`}
+                    className={`bg-primary text-white hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-1' : 'sm:order-2'}`}
                     size="sm"
                   >
                     <Plus className={`h-4 w-4 ${isRTL ? 'mr-4' : 'mr-4'}`} />
@@ -3489,7 +3489,7 @@ export default function AdminDashboard() {
                                         <span 
                                           key={category.id}
                                           title={category.name} 
-                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
+                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
                                         >
                                           
                                           {category.name}
@@ -3529,7 +3529,7 @@ export default function AdminDashboard() {
                                         <span 
                                           key={category.id}
                                           title={category.name} 
-                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-orange-500 text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
+                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white hover:bg-orange-600 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
                                         >
                                           
                                           {category.name}
@@ -3621,7 +3621,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(1)}
                           disabled={productsPage === 1}
                           title="Первая страница"
-                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           ⟨⟨
                         </Button>
@@ -3631,7 +3631,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
                           disabled={productsPage === 1}
                           title="Предыдущая страница"
-                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </Button>
@@ -3644,7 +3644,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
                           disabled={productsPage === productsTotalPages}
                           title="Следующая страница"
-                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </Button>
@@ -3654,7 +3654,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(productsTotalPages)}
                           disabled={productsPage === productsTotalPages}
                           title="Последняя страница"
-                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           ⟩⟩
                         </Button>
@@ -3673,7 +3673,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(1)}
                           disabled={productsPage === 1}
                           title="Первая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           ⟨⟨
                         </Button>
@@ -3683,7 +3683,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
                           disabled={productsPage === 1}
                           title="Предыдущая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </Button>
@@ -3696,7 +3696,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
                           disabled={productsPage === productsTotalPages}
                           title="Следующая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </Button>
@@ -3706,7 +3706,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(productsTotalPages)}
                           disabled={productsPage === productsTotalPages}
                           title="Последняя страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           ⟩⟩
                         </Button>
@@ -3739,7 +3739,7 @@ export default function AdminDashboard() {
                       setEditingCategory(null);
                       setIsCategoryFormOpen(true);
                     }}
-                    className={`bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-1' : 'sm:order-2'}`}
+                    className={`bg-primary text-white hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-1' : 'sm:order-2'}`}
                     size="sm"
                   >
                     <Plus className={`${isRTL ? 'mr-4' : 'mr-4'} h-4 w-4`} />
@@ -3816,7 +3816,7 @@ export default function AdminDashboard() {
                     variant={ordersViewMode === "table" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setOrdersViewMode("table")}
-                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "table" ? 'bg-orange-500 text-white hover:bg-orange-600' : 'hover:bg-gray-200'}`}
+                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "table" ? 'bg-primary text-white hover:bg-orange-600' : 'hover:bg-gray-200'}`}
                   >
                     <Grid3X3 className={`h-3 w-3 mr-1 ${ordersViewMode === "table" ? 'text-white' : ''}`} />
                     {adminT('common.table', 'Таблица')}
@@ -3825,7 +3825,7 @@ export default function AdminDashboard() {
                     variant={ordersViewMode === "kanban" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setOrdersViewMode("kanban")}
-                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "kanban" ? 'bg-orange-500 text-white hover:bg-orange-600' : 'hover:bg-gray-200'}`}
+                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "kanban" ? 'bg-primary text-white hover:bg-orange-600' : 'hover:bg-gray-200'}`}
                   >
                     <Columns className={`h-3 w-3 mr-1 ${ordersViewMode === "kanban" ? 'text-white' : ''}`} />
                     {adminT('common.kanban', 'Канбан')}
@@ -3911,7 +3911,7 @@ export default function AdminDashboard() {
                                           setEditingOrder(order);
                                           setIsOrderFormOpen(true);
                                         }}
-                                        className="inline-flex items-center justify-center h-8 w-8 rounded-md bg-orange-500 hover:bg-orange-600 text-white border-2 border-orange-600 shadow-md transition-colors"
+                                        className="inline-flex items-center justify-center h-8 w-8 rounded-md bg-primary hover:bg-orange-600 text-white border-2 border-orange-600 shadow-md transition-colors"
                                         title={adminT('orders.viewDetails')}
                                       >
                                         <Eye className="h-5 w-5" />
@@ -4119,7 +4119,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
                               title={adminT('common.firstPage')}
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟨⟨
                             </Button>
@@ -4129,7 +4129,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
                               title={adminT('common.previousPage')}
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
@@ -4142,7 +4142,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Следующая страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronRight className="h-4 w-4" />
                             </Button>
@@ -4152,7 +4152,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Последняя страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟩⟩
                             </Button>
@@ -4421,7 +4421,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
                               title="Первая страница"
-                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               ⟨⟨
                             </Button>
@@ -4431,7 +4431,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
                               title="Предыдущая страница"
-                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
@@ -4444,7 +4444,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Следующая страница"
-                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               <ChevronRight className="h-4 w-4" />
                             </Button>
@@ -4454,7 +4454,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Последняя страница"
-                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               ⟩⟩
                             </Button>
@@ -4473,7 +4473,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
                               title={adminT('common.firstPage')}
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟨⟨
                             </Button>
@@ -4483,7 +4483,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
                               title="Предыдущая страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
@@ -4496,7 +4496,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Следующая страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronRight className="h-4 w-4" />
                             </Button>
@@ -4506,7 +4506,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Последняя страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟩⟩
                             </Button>
@@ -4588,7 +4588,7 @@ export default function AdminDashboard() {
                   <div className={`flex gap-2 ${isRTL ? 'order-first' : 'order-last'}`}>
                     <Button 
                       onClick={() => setIsUserFormOpen(true)}
-                      className={`bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+                      className={`bg-primary hover:bg-orange-600 text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
                     >
                       <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                       {adminT('users.addUser', 'Добавить пользователя')}
@@ -4721,7 +4721,7 @@ export default function AdminDashboard() {
                           onClick={() => setUsersPage(1)}
                           disabled={usersPage === 1}
                           title={adminT('common.firstPage', 'Первая страница')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-primary hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟩⟩' : '⟨⟨'}
                         </Button>
@@ -4731,7 +4731,7 @@ export default function AdminDashboard() {
                           onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
                           disabled={usersPage === 1}
                           title={adminT('common.prevPage', 'Предыдущая страница')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-primary hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟩' : '⟨'}
                         </Button>
@@ -4745,7 +4745,7 @@ export default function AdminDashboard() {
                           onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
                           disabled={usersPage >= usersTotalPages}
                           title={adminT('common.nextPage', 'Следующая страница')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-primary hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟨' : '⟩'}
                         </Button>
@@ -4755,7 +4755,7 @@ export default function AdminDashboard() {
                           onClick={() => setUsersPage(usersTotalPages)}
                           disabled={usersPage >= usersTotalPages}
                           title={adminT('common.lastPage', 'Последняя страница')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-orange-500 hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-orange-600 hover:bg-primary hover:text-white hover:border-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟨⟨' : '⟩⟩'}
                         </Button>
@@ -5408,7 +5408,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     <CustomSwitch
                       checked={Boolean(field.value)}
                       onChange={field.onChange}
-                      bgColor="bg-orange-500"
+                      bgColor="bg-primary"
                     />
                   </FormControl>
                 </FormItem>
@@ -5522,7 +5522,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 </Button>
                 <Button 
                   type="submit" 
-                  className="text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2"
+                  className="text-sm bg-primary text-white border-orange-500 hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2"
                 >
                   <Save className="h-4 w-4" />
                   {product ? adminT('products.dialog.saveButton') : adminT('products.dialog.createButton')}
@@ -5656,7 +5656,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                               variant={field.value === icon ? "default" : "outline"}
                               className={`h-10 w-10 p-0 text-lg ${
                                 field.value === icon 
-                                  ? "bg-orange-500 border-orange-500 hover:bg-orange-600" 
+                                  ? "bg-primary border-orange-500 hover:bg-orange-600" 
                                   : "hover:bg-orange-50 hover:border-orange-300"
                               }`}
                               onClick={() => field.onChange(icon)}
@@ -5716,7 +5716,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               </Button>
               <Button 
                 type="submit" 
-                className={`text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+                className={`text-sm bg-primary text-white border-orange-500 hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
               >
                 <Save className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                 {category ? adminT('actions.update', 'Обновить') : adminT('actions.create', 'Создать')}  
@@ -7418,7 +7418,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           <Button 
             type="submit" 
             disabled={isLoading}
-            className="bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200"
+            className="bg-primary text-white hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200"
           >
             <Save className="mr-2 h-4 w-4" />
             {isLoading ? adminT('common.loading', 'Загрузка...') : adminT('settings.saveSettings', 'Сохранить настройки')}
@@ -7746,7 +7746,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               </div>
               <Button 
                 type="submit" 
-                className="text-sm bg-orange-500 hover:bg-orange-600 text-white"
+                className="text-sm bg-primary hover:bg-orange-600 text-white"
               >
                 {user ? adminT('actions.update', 'Обновить') : adminT('users.addUser', 'Создать пользователя')}
               </Button>
