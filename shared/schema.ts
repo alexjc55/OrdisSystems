@@ -363,16 +363,71 @@ export const insertUserAddressSchema = createInsertSchema(userAddresses).omit({
   updatedAt: true,
 });
 
-export const insertThemeSchema = createInsertSchema(themes).omit({
+// Base schema without transform for updateThemeSchema
+const baseThemeSchema = createInsertSchema(themes).omit({
   createdAt: true,
   updatedAt: true,
-}).extend({
-  workingHoursIconColor: z.string().optional(),
-  contactsIconColor: z.string().optional(),
-  paymentDeliveryIconColor: z.string().optional(),
 });
 
-export const updateThemeSchema = insertThemeSchema.partial().omit({
+export const insertThemeSchema = baseThemeSchema.transform((data) => {
+  // Replace null values with default values
+  const defaults = {
+    primaryColor: "hsl(24.6, 95%, 53.1%)",
+    primaryTextColor: "hsl(0, 0%, 100%)",
+    primaryDarkColor: "hsl(20.5, 90%, 48%)",
+    primaryLightColor: "hsl(24.6, 95%, 96%)",
+    secondaryColor: "hsl(210, 40%, 98%)",
+    accentColor: "hsl(210, 40%, 85%)",
+    successColor: "hsl(142, 76%, 36%)",
+    successLightColor: "hsl(142, 76%, 96%)",
+    warningColor: "hsl(38, 92%, 50%)",
+    warningLightColor: "hsl(38, 92%, 96%)",
+    errorColor: "hsl(0, 84%, 60%)",
+    errorLightColor: "hsl(0, 84%, 96%)",
+    infoColor: "hsl(221, 83%, 53%)",
+    infoLightColor: "hsl(221, 83%, 96%)",
+    tomorrowColor: "hsl(262, 83%, 58%)",
+    tomorrowDarkColor: "hsl(262, 83%, 48%)",
+    tomorrowLightColor: "hsl(262, 83%, 96%)",
+    outOfStockColor: "hsl(0, 84%, 60%)",
+    workingHoursIconColor: "hsl(220, 91%, 54%)",
+    contactsIconColor: "hsl(142, 76%, 36%)",
+    paymentDeliveryIconColor: "hsl(262, 83%, 58%)",
+    whiteColor: "hsl(0, 0%, 100%)",
+    gray50Color: "hsl(210, 40%, 98%)",
+    gray100Color: "hsl(210, 40%, 96%)",
+    gray200Color: "hsl(214, 32%, 91%)",
+    gray300Color: "hsl(213, 27%, 84%)",
+    gray400Color: "hsl(215, 20%, 65%)",
+    gray500Color: "hsl(215, 16%, 47%)",
+    gray600Color: "hsl(215, 19%, 35%)",
+    gray700Color: "hsl(215, 25%, 27%)",
+    gray800Color: "hsl(217, 33%, 17%)",
+    gray900Color: "hsl(222, 47%, 11%)",
+    fontFamilyPrimary: "Poppins, sans-serif",
+    fontFamilySecondary: "Inter, sans-serif",
+    primaryShadow: "0 4px 14px 0 rgba(255, 102, 0, 0.3)",
+    successShadow: "0 4px 14px 0 rgba(34, 197, 94, 0.3)",
+    warningShadow: "0 4px 14px 0 rgba(245, 158, 11, 0.3)",
+    errorShadow: "0 4px 14px 0 rgba(239, 68, 68, 0.3)",
+    infoShadow: "0 4px 14px 0 rgba(59, 130, 246, 0.3)",
+    tomorrowShadow: "0 4px 14px 0 rgba(147, 51, 234, 0.3)",
+    grayShadow: "0 4px 14px 0 rgba(107, 114, 128, 0.3)"
+  };
+
+  const result: any = { ...data };
+  
+  // Replace null values with defaults
+  for (const [key, defaultValue] of Object.entries(defaults)) {
+    if (result[key] === null || result[key] === undefined) {
+      result[key] = defaultValue;
+    }
+  }
+  
+  return result;
+});
+
+export const updateThemeSchema = baseThemeSchema.partial().omit({
   id: true,
   isActive: true,
 });
