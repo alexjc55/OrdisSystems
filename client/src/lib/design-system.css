@@ -91,36 +91,36 @@
   
   .btn-primary {
     background-color: var(--color-primary) !important;
-    color: white !important;
+    color: var(--color-primary-foreground) !important;
     border: none !important;
   }
 
   .btn-primary * {
-    color: white !important;
+    color: var(--color-primary-foreground) !important;
   }
   
   .btn-primary svg {
-    color: var(--color-white) !important;
+    color: var(--color-primary-foreground) !important;
     fill: none !important;
     stroke: currentColor !important;
     stroke-width: 1.5 !important;
   }
 
   .btn-primary:hover {
-    background-color: var(--color-primary) !important;
+    background-color: var(--color-primary-dark) !important;
     background-image: none !important;
     box-shadow: var(--shadow-primary) !important;
-    color: white !important;
+    color: var(--color-primary-foreground) !important;
   }
 
   .btn-primary:hover * {
-    color: white !important;
+    color: var(--color-primary-foreground) !important;
   }
 
   /* Cart badge - override all other styles */
   .cart-badge,
   .cart-badge * {
-    color: white !important;
+    color: var(--color-primary-foreground) !important;
   }
 
   /* Tomorrow Button Variant */
