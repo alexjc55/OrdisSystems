@@ -3869,7 +3869,7 @@ export default function AdminDashboard() {
                     {/* Table View */}
                     {ordersViewMode === "table" && (
                       <div className={`border rounded-lg bg-white orders ${isRTL ? 'rtl' : 'ltr'} overflow-x-auto`} dir={isRTL ? 'rtl' : 'ltr'}>
-                        <div className={`w-full table-container ${isRTL ? 'rtl' : 'ltr'} min-w-[700px]`}>
+                        <div className={`w-full table-container ${isRTL ? 'rtl' : 'ltr'} min-w-[600px]`}>
                           <Table className={`${isRTL ? 'rtl' : ''} w-full table-fixed`}>
                             <TableHeader>
                               <TableRow dir={isRTL ? 'rtl' : 'ltr'}>
@@ -3879,15 +3879,15 @@ export default function AdminDashboard() {
                                 >{adminT('common.number')}</TableHead>
                                 <TableHead 
                                   className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '160px'} : {textAlign: 'center', width: '160px'}}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '180px'} : {textAlign: 'center', width: '180px'}}
                                 >{adminT('orders.customer', 'Клиент')}</TableHead>
                                 <TableHead 
                                   className={`text-xs sm:text-sm hidden sm:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '100px'} : {textAlign: 'center', width: '100px'}}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '120px'} : {textAlign: 'center', width: '120px'}}
                                 >{adminT('orders.statusHeader')}</TableHead>
                                 <TableHead 
                                   className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '90px'} : {textAlign: 'center', width: '90px'}}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '100px'} : {textAlign: 'center', width: '100px'}}
                                 >{adminT('orders.orderTotal')}</TableHead>
                                 <TableHead 
                                   className={`text-xs sm:text-sm hidden md:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
@@ -3908,7 +3908,10 @@ export default function AdminDashboard() {
                                       <Button
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() => setSelectedOrder(order)}
+                                        onClick={() => {
+                                          setEditingOrder(order);
+                                          setIsOrderFormOpen(true);
+                                        }}
                                         className="h-6 w-6 p-0 hover:bg-orange-100"
                                         title={adminT('orders.viewDetails')}
                                       >
@@ -4098,22 +4101,6 @@ export default function AdminDashboard() {
                                         </>
                                       )}
                                     </div>
-                                  </TableCell>
-                                  <TableCell 
-                                    className={`${isRTL ? 'text-right' : 'text-center'}`}
-                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
-                                  >
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm" 
-                                      className="text-xs h-8 px-2"
-                                      onClick={() => {
-                                        setEditingOrder(order);
-                                        setIsOrderFormOpen(true);
-                                      }}
-                                    >
-                                      <Eye className="h-3 w-3" />
-                                    </Button>
                                   </TableCell>
                                 </TableRow>
                               ))}
