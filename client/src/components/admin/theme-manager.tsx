@@ -211,6 +211,21 @@ export default function ThemeManager() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Initialize edit visual settings when editing theme changes
+  useEffect(() => {
+    if (editingTheme) {
+      setEditVisualSettings({
+        showBannerImage: editingTheme.showBannerImage ?? true,
+        showTitleDescription: editingTheme.showTitleDescription ?? true,
+        showInfoBlocks: editingTheme.showInfoBlocks ?? true,
+        infoBlocksPosition: editingTheme.infoBlocksPosition || 'top',
+        showSpecialOffers: editingTheme.showSpecialOffers ?? true,
+        showCategoryMenu: editingTheme.showCategoryMenu ?? true,
+        showWhatsAppChat: editingTheme.showWhatsAppChat ?? true
+      });
+    }
+  }, [editingTheme]);
+
   const { data: themes, isLoading } = useQuery<ThemeData[]>({
     queryKey: ["/api/admin/themes"],
   });
@@ -636,6 +651,8 @@ export default function ThemeManager() {
       showSpecialOffers: formData.get("showSpecialOffers") === "true",
       showCategoryMenu: formData.get("showCategoryMenu") === "true",
       showWhatsAppChat: formData.get("showWhatsAppChat") === "true",
+      whatsappPhone: formData.get("whatsappPhone") as string || "",
+      whatsappMessage: formData.get("whatsappMessage") as string || "Здравствуйте! У меня есть вопрос по заказу.",
       whiteColor: convertColorToHsl(formData.get("whiteColor") as string),
       gray50Color: convertColorToHsl(formData.get("gray50Color") as string),
       gray100Color: convertColorToHsl(formData.get("gray100Color") as string),
@@ -1380,35 +1397,35 @@ export default function ThemeManager() {
                     <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Основные элементы интерфейса</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <VisualToggleButton 
-                        isEnabled={editingTheme?.showBannerImage ?? true}
-                        onToggle={() => {}} // Will be handled by form submission
+                        isEnabled={editVisualSettings.showBannerImage}
+                        onToggle={() => setEditVisualSettings(prev => ({ ...prev, showBannerImage: !prev.showBannerImage }))}
                         label="Показывать баннер"
                         description="Главное изображение в шапке сайта"
                         fieldName="showBannerImage"
                       />
 
                       <VisualToggleButton 
-                        isEnabled={editingTheme?.showTitleDescription ?? true}
-                        onToggle={() => {}} // Will be handled by form submission
+                        isEnabled={editVisualSettings.showTitleDescription}
+                        onToggle={() => setEditVisualSettings(prev => ({ ...prev, showTitleDescription: !prev.showTitleDescription }))}
                         label="Заголовок и описание"
                         description="Текстовая информация о магазине"
                         fieldName="showTitleDescription"
                       />
 
                       <VisualToggleButton 
-                        isEnabled={editingTheme?.showInfoBlocks ?? true}
-                        onToggle={() => {}} // Will be handled by form submission
-                        label="Информационные блоки"
-                        description="Часы работы, контакты, доставка"
-                        fieldName="showInfoBlocks"
-                      />
-
-                      <VisualToggleButton 
-                        isEnabled={editingTheme?.showCategoryMenu ?? true}
-                        onToggle={() => {}} // Will be handled by form submission
+                        isEnabled={editVisualSettings.showCategoryMenu}
+                        onToggle={() => setEditVisualSettings(prev => ({ ...prev, showCategoryMenu: !prev.showCategoryMenu }))}
                         label="Меню категорий"
                         description="Навигационное меню категорий"
                         fieldName="showCategoryMenu"
+                      />
+
+                      <VisualToggleButton 
+                        isEnabled={editVisualSettings.showInfoBlocks}
+                        onToggle={() => setEditVisualSettings(prev => ({ ...prev, showInfoBlocks: !prev.showInfoBlocks }))}
+                        label="Информационные блоки"
+                        description="Часы работы, контакты, доставка"
+                        fieldName="showInfoBlocks"
                       />
                     </div>
                     
@@ -1418,7 +1435,8 @@ export default function ThemeManager() {
                       <select
                         name="infoBlocksPosition"
                         id="infoBlocksPositionEdit"
-                        defaultValue={editingTheme?.infoBlocksPosition || "top"}
+                        value={editVisualSettings.infoBlocksPosition}
+                        onChange={(e) => setEditVisualSettings(prev => ({ ...prev, infoBlocksPosition: e.target.value }))}
                         className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                       >
                         <option value="top">Сверху от товаров</option>
@@ -1432,21 +1450,55 @@ export default function ThemeManager() {
                     <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Дополнительные функции</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <VisualToggleButton 
-                        isEnabled={editingTheme?.showSpecialOffers ?? true}
-                        onToggle={() => {}} // Will be handled by form submission
+                        isEnabled={editVisualSettings.showSpecialOffers}
+                        onToggle={() => setEditVisualSettings(prev => ({ ...prev, showSpecialOffers: !prev.showSpecialOffers }))}
                         label="Особые предложения"
                         description="Блок с особыми предложениями"
                         fieldName="showSpecialOffers"
                       />
 
                       <VisualToggleButton 
-                        isEnabled={editingTheme?.showWhatsAppChat ?? true}
-                        onToggle={() => {}} // Will be handled by form submission
+                        isEnabled={editVisualSettings.showWhatsAppChat}
+                        onToggle={() => setEditVisualSettings(prev => ({ ...prev, showWhatsAppChat: !prev.showWhatsAppChat }))}
                         label="WhatsApp чат"
                         description="Кнопка связи через WhatsApp"
                         fieldName="showWhatsAppChat"
                       />
                     </div>
+
+                    {/* WhatsApp настройки */}
+                    {editVisualSettings.showWhatsAppChat && (
+                      <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-3">
+                        <h5 className="text-sm font-medium text-gray-800">Настройки WhatsApp</h5>
+                        <div className="grid grid-cols-1 gap-3">
+                          <div>
+                            <Label htmlFor="whatsappPhone" className="text-sm">Номер телефона</Label>
+                            <input
+                              type="text"
+                              name="whatsappPhone"
+                              id="whatsappPhone"
+                              defaultValue={editingTheme?.whatsappPhone || ""}
+                              placeholder="+972501234567"
+                              className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                            />
+                            <div className="text-xs text-gray-500 mt-1">
+                              Формат: +код_страны номер (например, +972501234567)
+                            </div>
+                          </div>
+                          <div>
+                            <Label htmlFor="whatsappMessage" className="text-sm">Сообщение по умолчанию</Label>
+                            <textarea
+                              name="whatsappMessage"
+                              id="whatsappMessage"
+                              defaultValue={editingTheme?.whatsappMessage || "Здравствуйте! У меня есть вопрос по заказу."}
+                              placeholder="Здравствуйте! У меня есть вопрос по заказу."
+                              rows={2}
+                              className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </TabsContent>
 
