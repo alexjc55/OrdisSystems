@@ -205,6 +205,7 @@ export const themes = pgTable("themes", {
   
   // Color configuration
   primaryColor: varchar("primary_color", { length: 20 }).notNull().default("hsl(24.6, 95%, 53.1%)"),
+  primaryTextColor: varchar("primary_text_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),
   primaryDarkColor: varchar("primary_dark_color", { length: 20 }).notNull().default("hsl(20.5, 90%, 48%)"),
   primaryLightColor: varchar("primary_light_color", { length: 20 }).notNull().default("hsl(24.6, 95%, 96%)"),
   secondaryColor: varchar("secondary_color", { length: 20 }).notNull().default("hsl(210, 40%, 98%)"),

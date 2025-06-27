@@ -2,6 +2,7 @@
 export interface ThemeColors {
   // Brand colors
   primary: string;
+  primaryText: string;
   primaryDark: string;
   primaryLight: string;
   secondary: string;
@@ -103,6 +104,7 @@ export const defaultTheme: Theme = {
   description: 'Стандартная тема оформления eDAHouse с оранжевыми акцентами',
   colors: {
     primary: 'hsl(24.6, 95%, 53.1%)',
+    primaryText: 'hsl(0, 0%, 100%)',
     primaryDark: 'hsl(20.5, 90%, 48%)',
     primaryLight: 'hsl(24.6, 95%, 96%)',
     secondary: 'hsl(210, 40%, 98%)',
@@ -179,28 +181,60 @@ export const defaultTheme: Theme = {
   },
 };
 
-// Helper function to determine if a color is light or dark
-function isLightColor(color: string): boolean {
-  // Convert HSL to RGB for luminance calculation
+// Helper function to convert color to RGB
+function colorToRgb(color: string): [number, number, number] {
   if (color.includes('hsl')) {
     const hslMatch = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
     if (hslMatch) {
-      const l = parseInt(hslMatch[3]);
-      return l > 60; // If lightness > 60%, consider it light
+      const h = parseInt(hslMatch[1]) / 360;
+      const s = parseInt(hslMatch[2]) / 100;
+      const l = parseInt(hslMatch[3]) / 100;
+      
+      const hue2rgb = (p: number, q: number, t: number) => {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      };
+      
+      let r, g, b;
+      if (s === 0) {
+        r = g = b = l;
+      } else {
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+      }
+      
+      return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     }
   }
   
-  // Default fallback for hex colors
   if (color.includes('#')) {
     const hex = color.replace('#', '');
     const r = parseInt(hex.substr(0, 2), 16);
     const g = parseInt(hex.substr(2, 2), 16);
     const b = parseInt(hex.substr(4, 2), 16);
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance > 0.6;
+    return [r, g, b];
   }
   
-  return false; // Default to dark text
+  // Default to black
+  return [0, 0, 0];
+}
+
+// Helper function to calculate luminance and determine contrast color
+function getContrastColor(backgroundColor: string): string {
+  const [r, g, b] = colorToRgb(backgroundColor);
+  
+  // Calculate relative luminance using WCAG formula
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  
+  // Return white for dark backgrounds, black for light backgrounds
+  return luminance > 0.5 ? 'hsl(0, 0%, 0%)' : 'hsl(0, 0%, 100%)';
 }
 
 // Theme application utilities
@@ -213,10 +247,8 @@ export function applyTheme(theme: Theme): void {
     root.style.setProperty(cssVarName, value);
   });
   
-  // Set appropriate foreground color for primary based on its lightness
-  const primaryColor = theme.colors.primary;
-  const foregroundColor = isLightColor(primaryColor) ? 'hsl(0, 0%, 0%)' : 'hsl(0, 0%, 100%)';
-  root.style.setProperty('--color-primary-foreground', foregroundColor);
+  // Set the configured text color for primary elements
+  root.style.setProperty('--color-primary-foreground', theme.colors.primaryText);
 
   // Apply typography variables
   Object.entries(theme.typography).forEach(([key, value]) => {
