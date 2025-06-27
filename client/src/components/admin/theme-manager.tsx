@@ -153,6 +153,30 @@ export default function ThemeManager() {
         root.style.setProperty('--color-secondary', updatedTheme.secondaryColor);
         root.style.setProperty('--color-accent', updatedTheme.accentColor);
         
+        // Auto-determine contrasting text color for primary background
+        const isLightPrimary = (() => {
+          const color = updatedTheme.primaryColor;
+          if (color.includes('hsl')) {
+            const hslMatch = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+            if (hslMatch) {
+              const l = parseInt(hslMatch[3]);
+              return l > 60;
+            }
+          }
+          if (color.includes('#')) {
+            const hex = color.replace('#', '');
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            return luminance > 0.6;
+          }
+          return false;
+        })();
+        
+        const foregroundColor = isLightPrimary ? 'hsl(0, 0%, 0%)' : 'hsl(0, 0%, 100%)';
+        root.style.setProperty('--color-primary-foreground', foregroundColor);
+        
         // Update status colors
         root.style.setProperty('--color-success', updatedTheme.successColor);
         root.style.setProperty('--color-success-light', updatedTheme.successLightColor);

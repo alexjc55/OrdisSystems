@@ -173,6 +173,30 @@ export const defaultTheme: Theme = {
   },
 };
 
+// Helper function to determine if a color is light or dark
+function isLightColor(color: string): boolean {
+  // Convert HSL to RGB for luminance calculation
+  if (color.includes('hsl')) {
+    const hslMatch = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+    if (hslMatch) {
+      const l = parseInt(hslMatch[3]);
+      return l > 60; // If lightness > 60%, consider it light
+    }
+  }
+  
+  // Default fallback for hex colors
+  if (color.includes('#')) {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.6;
+  }
+  
+  return false; // Default to dark text
+}
+
 // Theme application utilities
 export function applyTheme(theme: Theme): void {
   const root = document.documentElement;
@@ -182,6 +206,11 @@ export function applyTheme(theme: Theme): void {
     const cssVarName = `--color-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
     root.style.setProperty(cssVarName, value);
   });
+  
+  // Set appropriate foreground color for primary based on its lightness
+  const primaryColor = theme.colors.primary;
+  const foregroundColor = isLightColor(primaryColor) ? 'hsl(0, 0%, 0%)' : 'hsl(0, 0%, 100%)';
+  root.style.setProperty('--color-primary-foreground', foregroundColor);
 
   // Apply typography variables
   Object.entries(theme.typography).forEach(([key, value]) => {
