@@ -199,6 +199,15 @@ export default function ThemeManager() {
     showCategoryMenu: true,
     showWhatsAppChat: true
   });
+  const [editVisualSettings, setEditVisualSettings] = useState({
+    showBannerImage: true,
+    showTitleDescription: true,
+    showInfoBlocks: true,
+    infoBlocksPosition: 'top',
+    showSpecialOffers: true,
+    showCategoryMenu: true,
+    showWhatsAppChat: true
+  });
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
