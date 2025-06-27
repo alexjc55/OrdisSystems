@@ -257,6 +257,10 @@ export function applyTheme(theme: Theme): void {
   // Set the configured text color for primary elements
   root.style.setProperty('--color-primary-foreground', theme.colors.primaryText);
 
+  // Update Tailwind CSS variables for hover:text-primary and other Tailwind classes
+  root.style.setProperty('--primary', theme.colors.primary);
+  root.style.setProperty('--primary-foreground', theme.colors.primaryText);
+
   // Apply typography variables
   Object.entries(theme.typography).forEach(([key, value]) => {
     const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;

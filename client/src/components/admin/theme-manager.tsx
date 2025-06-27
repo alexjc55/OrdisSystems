@@ -300,6 +300,10 @@ export default function ThemeManager() {
         root.style.setProperty('--color-gray-800', convertColorToHsl(updatedTheme.gray800Color));
         root.style.setProperty('--color-gray-900', convertColorToHsl(updatedTheme.gray900Color));
         
+        // Update Tailwind CSS variables for hover:text-primary and other Tailwind classes
+        root.style.setProperty('--primary', convertColorToHsl(updatedTheme.primaryColor));
+        root.style.setProperty('--primary-foreground', convertColorToHsl(updatedTheme.primaryTextColor));
+        
         console.log('Applied theme colors to CSS variables');
       }
       
