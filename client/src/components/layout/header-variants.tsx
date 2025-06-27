@@ -49,62 +49,38 @@ export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
 
 function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
-    <>
-      {/* Classic Simple Banner */}
-      <div className="relative h-96 sm:h-[50vh] lg:h-[60vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src={storeSettings.backgroundImage || "/api/placeholder/1920/1080"} 
-            alt="Background" 
-            className="w-full h-full object-cover"
-          />
-          <div 
-            className="absolute inset-0 bg-black/50"
-            style={{
-              background: `linear-gradient(135deg, var(--color-primary, #ff6600) 0%, transparent 40%, rgba(0,0,0,0.4) 100%)`
-            }}
-          ></div>
-        </div>
-        
-        <div className="relative z-10 text-center px-6">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
-            {storeSettings.welcomeTitle || "eDAHouse"}
-          </h1>
-          <p className="text-lg sm:text-xl lg:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-            {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
-          </p>
-        </div>
+    <div className="relative h-64 sm:h-80 overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img 
+          src={storeSettings.backgroundImage || "/api/uploads/Edahouse_sign__source_1750184330403.png"} 
+          alt="Background" 
+          className="w-full h-full object-cover"
+        />
+        {/* Dark gradient overlay at bottom */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
       </div>
-
-      {/* Classic Info Blocks */}
-      <div className="bg-white py-16">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <InfoCard 
-              icon={getIconComponent("Clock")}
-              title={t('workingHours')}
-              content={typeof storeSettings.workingHours === 'string' ? storeSettings.workingHours : "Пн-Вс: 9:00-22:00"}
-              iconColor="var(--color-primary)"
-              isRTL={isRTL}
-            />
-            <InfoCard 
-              icon={getIconComponent("Phone")}
-              title={t('phoneNumber')}
-              content={storeSettings.phone || "+972-123-456-789"}
-              iconColor="var(--color-success)"
-              isRTL={isRTL}
-            />
-            <InfoCard 
-              icon={getIconComponent("MapPin")}
-              title={t('deliveryArea')}
-              content={storeSettings.deliveryArea || "Вся Израиль"}
-              iconColor="var(--color-warning)"
-              isRTL={isRTL}
-            />
+      
+      {/* Content overlay */}
+      <div className="absolute inset-0 flex items-end">
+        <div className="w-full text-center text-white p-6 pb-8">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+            {storeSettings.welcomeTitle || "О нашей еде"}
+          </h1>
+          <p className="text-lg sm:text-xl text-white/90 max-w-4xl mx-auto leading-relaxed" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+            {storeSettings.storeDescription || "Заказывай свежие блюда на развес — от повседневных обедов до праздничных угощений. Быстро, удобно и по-домашнему вкусно. Попробуй"}
+          </p>
+          
+          {/* Orange underline accent */}
+          <div className="mt-4 flex justify-center">
+            <div 
+              className="h-1 w-16 rounded-full"
+              style={{ backgroundColor: 'var(--color-primary, #ff6600)' }}
+            ></div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
