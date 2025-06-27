@@ -3912,10 +3912,10 @@ export default function AdminDashboard() {
                                           setEditingOrder(order);
                                           setIsOrderFormOpen(true);
                                         }}
-                                        className="h-7 w-7 p-1 hover:bg-orange-100 border border-orange-200 bg-orange-50"
+                                        className="h-8 w-8 p-1 hover:bg-orange-200 border-2 border-orange-300 bg-orange-100 shadow-sm"
                                         title={adminT('orders.viewDetails')}
                                       >
-                                        <Eye className="h-4 w-4 text-orange-700" />
+                                        <Eye className="h-5 w-5 text-orange-800 font-bold" />
                                       </Button>
                                     </div>
                                   </TableCell>
