@@ -73,10 +73,17 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
 }
 
 function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
+  // Check if button should be shown
+  const buttonText = storeSettings?.bannerButtonText;
+  const showButton = buttonText && 
+                     typeof buttonText === 'string' && 
+                     buttonText.trim() !== '';
+
   return (
     <div className="relative w-full mb-6 sm:mb-8">
-      {/* Modern Overlay Banner - Full Width */}
-      <div className="relative h-56 sm:h-56 md:h-64 w-full overflow-hidden">
+      {/* Modern Overlay Banner - Adaptive Height with Padding */}
+      <div className="relative min-h-[14rem] sm:min-h-[12rem] md:min-h-[16rem] w-full overflow-hidden"
+           style={{ height: 'auto' }}>
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center transform scale-105 w-full h-full"
@@ -88,17 +95,55 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/75 to-black/60" />
         
-        {/* Content */}
-        <div className="relative z-10 h-full flex items-center justify-center text-center px-4 sm:px-6">
-          <div className="max-w-sm sm:max-w-2xl md:max-w-4xl">
+        {/* Content with internal padding */}
+        <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
+          <div className="max-w-sm sm:max-w-2xl md:max-w-4xl mx-auto">
             <h1 className="text-3xl sm:text-3xl md:text-5xl font-medium sm:font-bold text-white mb-3 sm:mb-4 leading-tight" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-white max-w-sm sm:max-w-2xl mx-auto leading-normal sm:leading-relaxed mb-4" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
+            
+            {/* Call to Action Button */}
+            {showButton && (
+              <div className="mt-6 mb-2">
+                <button 
+                  onClick={() => {
+                    // Use provided link or default to categories section
+                    const link = storeSettings.bannerButtonLink && storeSettings.bannerButtonLink.trim() !== '' 
+                      ? storeSettings.bannerButtonLink 
+                      : "#categories";
+                    if (link.startsWith('#')) {
+                      const element = document.querySelector(link);
+                      if (element) {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    } else {
+                      window.location.href = link;
+                    }
+                  }}
+                  className="inline-flex items-center px-6 py-3 font-medium text-sm sm:text-base rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                  style={{
+                    backgroundColor: 'var(--color-primary)',
+                    color: 'var(--color-primary-foreground)',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--color-primary-dark)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--color-primary)';
+                  }}
+                >
+                  {storeSettings.bannerButtonText}
+                </button>
+              </div>
+            )}
+            
             {/* Decorative vignette */}
-            <div className="flex items-center justify-center space-x-2 opacity-80">
+            <div className="flex items-center justify-center space-x-2 opacity-80 mt-4">
               <div className="w-8 h-px bg-white/60"></div>
               <div className="w-2 h-2 border border-white/60 rotate-45"></div>
               <div className="w-8 h-px bg-white/60"></div>
