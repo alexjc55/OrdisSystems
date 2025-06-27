@@ -79,6 +79,9 @@ interface ThemeData {
   errorLightColor: string;
   infoColor: string;
   infoLightColor: string;
+  tomorrowColor: string;
+  tomorrowLightColor: string;
+  outOfStockColor: string;
   whiteColor: string;
   gray50Color: string;
   gray100Color: string;
@@ -822,6 +825,7 @@ export default function ThemeManager() {
                 <TabsContent value="brand" className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <ColorInput label="Основной цвет" name="primaryColor" defaultValue={editingTheme.primaryColor} />
+                    <ColorInput label="Цвет текста кнопок" name="primaryTextColor" defaultValue={editingTheme.primaryTextColor} />
                     <ColorInput label="Основной темный" name="primaryDarkColor" defaultValue={editingTheme.primaryDarkColor} />
                     <ColorInput label="Основной светлый" name="primaryLightColor" defaultValue={editingTheme.primaryLightColor} />
                     <ColorInput label="Вторичный цвет" name="secondaryColor" defaultValue={editingTheme.secondaryColor} />
@@ -839,6 +843,9 @@ export default function ThemeManager() {
                     <ColorInput label="Ошибка светлая" name="errorLightColor" defaultValue={editingTheme.errorLightColor} />
                     <ColorInput label="Информация" name="infoColor" defaultValue={editingTheme.infoColor} />
                     <ColorInput label="Информация светлая" name="infoLightColor" defaultValue={editingTheme.infoLightColor} />
+                    <ColorInput label="Кнопка 'Завтра'" name="tomorrowColor" defaultValue={editingTheme.tomorrowColor} />
+                    <ColorInput label="Кнопка 'Завтра' (светлый)" name="tomorrowLightColor" defaultValue={editingTheme.tomorrowLightColor} />
+                    <ColorInput label="Цвет 'Закончился'" name="outOfStockColor" defaultValue={editingTheme.outOfStockColor} />
                   </div>
                 </TabsContent>
 
