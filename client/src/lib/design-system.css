@@ -115,6 +115,48 @@
   .cart-badge * {
     color: white !important;
   }
+
+  /* Tomorrow Button Variant */
+  .btn-tomorrow {
+    background-color: var(--color-tomorrow) !important;
+    color: white !important;
+    border: none !important;
+  }
+
+  .btn-tomorrow * {
+    color: white !important;
+  }
+  
+  .btn-tomorrow svg {
+    color: white !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
+  }
+
+  .btn-tomorrow:hover {
+    background-color: var(--color-tomorrow) !important;
+    background-image: none !important;
+    box-shadow: var(--shadow-tomorrow) !important;
+    color: white !important;
+  }
+
+  .btn-tomorrow:hover * {
+    color: white !important;
+  }
+  
+  .btn-tomorrow:hover svg {
+    color: white !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
+  }
+
+  /* Out of stock overlay styles */
+  .out-of-stock-overlay {
+    background-color: var(--color-out-of-stock) !important;
+    color: white !important;
+  }
   
   .btn-primary:hover svg {
     color: var(--color-white) !important;

@@ -249,6 +249,7 @@ export default function ThemeManager() {
           infoLight: activatedTheme.infoLightColor,
           tomorrow: activatedTheme.tomorrowColor,
           tomorrowLight: activatedTheme.tomorrowLightColor,
+          outOfStock: activatedTheme.outOfStockColor,
           white: activatedTheme.whiteColor,
           gray50: activatedTheme.gray50Color,
           gray100: activatedTheme.gray100Color,
@@ -351,6 +352,9 @@ export default function ThemeManager() {
       errorLightColor: formData.get("errorLightColor") as string,
       infoColor: formData.get("infoColor") as string,
       infoLightColor: formData.get("infoLightColor") as string,
+      tomorrowColor: formData.get("tomorrowColor") as string,
+      tomorrowLightColor: formData.get("tomorrowLightColor") as string,
+      outOfStockColor: formData.get("outOfStockColor") as string,
       whiteColor: formData.get("whiteColor") as string,
       gray50Color: formData.get("gray50Color") as string,
       gray100Color: formData.get("gray100Color") as string,
@@ -394,6 +398,9 @@ export default function ThemeManager() {
       errorLightColor: formData.get("errorLightColor") as string,
       infoColor: formData.get("infoColor") as string,
       infoLightColor: formData.get("infoLightColor") as string,
+      tomorrowColor: formData.get("tomorrowColor") as string,
+      tomorrowLightColor: formData.get("tomorrowLightColor") as string,
+      outOfStockColor: formData.get("outOfStockColor") as string,
       whiteColor: formData.get("whiteColor") as string,
       gray50Color: formData.get("gray50Color") as string,
       gray100Color: formData.get("gray100Color") as string,
@@ -594,6 +601,9 @@ export default function ThemeManager() {
                     <ColorInput label="Ошибка (светлый)" name="errorLightColor" defaultValue="#fef2f2" />
                     <ColorInput label="Информация" name="infoColor" defaultValue="#3b82f6" />
                     <ColorInput label="Информация (светлый)" name="infoLightColor" defaultValue="#eff6ff" />
+                    <ColorInput label="Кнопка 'Завтра'" name="tomorrowColor" defaultValue="#a855f7" />
+                    <ColorInput label="Кнопка 'Завтра' (светлый)" name="tomorrowLightColor" defaultValue="#faf5ff" />
+                    <ColorInput label="Цвет 'Закончился'" name="outOfStockColor" defaultValue="#ef4444" />
                   </div>
                 </TabsContent>
 
