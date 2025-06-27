@@ -815,21 +815,13 @@ export default function ThemeManager() {
                     <Info className="h-4 w-4" />
                     <span className="hidden sm:inline">Основное</span>
                   </TabsTrigger>
-                  <TabsTrigger value="brand" className="flex items-center gap-1 flex-1" title="Бренд">
-                    <Briefcase className="h-4 w-4" />
-                    <span className="hidden sm:inline">Бренд</span>
+                  <TabsTrigger value="colors" className="flex items-center gap-1 flex-1" title="Цвета">
+                    <Palette className="h-4 w-4" />
+                    <span className="hidden sm:inline">Цвета</span>
                   </TabsTrigger>
                   <TabsTrigger value="visuals" className="flex items-center gap-1 flex-1" title="Визуалы">
                     <Upload className="h-4 w-4" />
                     <span className="hidden sm:inline">Визуалы</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="status" className="flex items-center gap-1 flex-1" title="Статусы">
-                    <AlertCircle className="h-4 w-4" />
-                    <span className="hidden sm:inline">Статусы</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="neutral" className="flex items-center gap-1 flex-1" title="Нейтральные">
-                    <Layers className="h-4 w-4" />
-                    <span className="hidden sm:inline">Нейтральные</span>
                   </TabsTrigger>
                 </TabsList>
                 
@@ -922,19 +914,99 @@ export default function ThemeManager() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="brand" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <ColorInput label="Основной цвет" name="primaryColor" defaultValue="#ff6600" />
-                    <ColorInput label="Цвет текста кнопок" name="primaryTextColor" defaultValue="#ffffff" />
-                    <ColorInput label="Основной (темный)" name="primaryDarkColor" defaultValue="#e55a00" />
-                    <ColorInput label="Основной (светлый)" name="primaryLightColor" defaultValue="#fff3f0" />
+                <TabsContent value="colors" className="space-y-6">
+                  {/* Бренд */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Бренд</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <ColorInput label="Основной цвет" name="primaryColor" defaultValue="#ff6600" />
+                      <ColorInput label="Цвет текста кнопок" name="primaryTextColor" defaultValue="#ffffff" />
+                      <ColorInput label="Основной (темный)" name="primaryDarkColor" defaultValue="#e55a00" />
+                      <ColorInput label="Основной (светлый)" name="primaryLightColor" defaultValue="#fff3f0" />
+                    </div>
+                    <div className="text-sm text-gray-500 mt-2">
+                      ℹ️ Основные цвета влияют на кнопки "В корзину", ссылки и главные элементы интерфейса
+                    </div>
+                    {/* Keep secondary/accent for API compatibility but hide from UI */}
+                    <input type="hidden" name="secondaryColor" defaultValue="#f8fafc" />
+                    <input type="hidden" name="accentColor" defaultValue="#e2e8f0" />
                   </div>
-                  <div className="text-sm text-gray-500 mt-2">
-                    ℹ️ Основные цвета влияют на кнопки "В корзину", ссылки и главные элементы интерфейса
+
+                  {/* Статусы */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Статусы</h4>
+                    <div className="space-y-4">
+                      <div>
+                        <h5 className="text-sm font-medium mb-2">Основные статусные цвета</h5>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <ColorInput label="Успех" name="successColor" defaultValue="#22c55e" />
+                          <ColorInput label="Предупреждение" name="warningColor" defaultValue="#f59e0b" />
+                          <ColorInput label="Ошибка" name="errorColor" defaultValue="#ef4444" />
+                          <ColorInput label="Информация" name="infoColor" defaultValue="#3b82f6" />
+                        </div>
+                        <div className="text-sm text-gray-500 mt-2">
+                          ℹ️ Используются в уведомлениях и статусных кнопках
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <h5 className="text-sm font-medium mb-2">Специальные кнопки</h5>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <ColorInput label="Кнопка 'Завтра'" name="tomorrowColor" defaultValue="#a855f7" />
+                          <ColorInput label="Кнопка 'Завтра' (при наведении)" name="tomorrowDarkColor" defaultValue="#9333ea" />
+                          <ColorInput label="Цвет 'Закончился'" name="outOfStockColor" defaultValue="#ef4444" />
+                        </div>
+                        <div className="text-sm text-gray-500 mt-2">
+                          ℹ️ "Завтра" - для недоступных сегодня товаров, "Закончился" - для бейджей
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <h5 className="text-sm font-medium mb-2">Иконки информационных блоков</h5>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <ColorInput label="Часы работы" name="workingHoursIconColor" defaultValue="#3b82f6" />
+                          <ColorInput label="Контакты" name="contactsIconColor" defaultValue="#22c55e" />
+                          <ColorInput label="Оплата и доставка" name="paymentDeliveryIconColor" defaultValue="#a855f7" />
+                        </div>
+                        <div className="text-sm text-gray-500 mt-2">
+                          ℹ️ Цвета круглых иконок в блоках "Часы работы", "Контакты" и "Оплата и доставка" на главной странице
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Keep light variants for API compatibility but hide from UI */}
+                    <input type="hidden" name="successLightColor" defaultValue="#f0fdf4" />
+                    <input type="hidden" name="warningLightColor" defaultValue="#fffbeb" />
+                    <input type="hidden" name="errorLightColor" defaultValue="#fef2f2" />
+                    <input type="hidden" name="infoLightColor" defaultValue="#eff6ff" />
+                    <input type="hidden" name="tomorrowLightColor" defaultValue="#faf5ff" />
                   </div>
-                  {/* Keep secondary/accent for API compatibility but hide from UI */}
-                  <input type="hidden" name="secondaryColor" defaultValue="#f8fafc" />
-                  <input type="hidden" name="accentColor" defaultValue="#e2e8f0" />
+
+                  {/* Нейтральные */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Нейтральные</h4>
+                    <div>
+                      <h5 className="text-sm font-medium mb-2">Основные нейтральные цвета</h5>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <ColorInput label="Белый" name="whiteColor" defaultValue="#ffffff" />
+                        <ColorInput label="Серый 100 (фон)" name="gray100Color" defaultValue="#f1f5f9" />
+                        <ColorInput label="Серый 700 (текст)" name="gray700Color" defaultValue="#334155" />
+                        <ColorInput label="Серый 900 (заголовки)" name="gray900Color" defaultValue="#0f172a" />
+                      </div>
+                      <div className="text-sm text-gray-500 mt-2">
+                        ℹ️ Нейтральные цвета для фонов, текста и базовых элементов интерфейса
+                      </div>
+                    </div>
+                    
+                    {/* Keep all gray variants for API compatibility but hide unused ones from UI */}
+                    <input type="hidden" name="gray50Color" defaultValue="#f8fafc" />
+                    <input type="hidden" name="gray200Color" defaultValue="#e2e8f0" />
+                    <input type="hidden" name="gray300Color" defaultValue="#cbd5e1" />
+                    <input type="hidden" name="gray400Color" defaultValue="#94a3b8" />
+                    <input type="hidden" name="gray500Color" defaultValue="#64748b" />
+                    <input type="hidden" name="gray600Color" defaultValue="#475569" />
+                    <input type="hidden" name="gray800Color" defaultValue="#1e293b" />
+                  </div>
                 </TabsContent>
 
                 <TabsContent value="visuals" className="space-y-6">
@@ -1048,81 +1120,7 @@ export default function ThemeManager() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="status" className="space-y-4">
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Основные статусные цвета</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <ColorInput label="Успех" name="successColor" defaultValue="#22c55e" />
-                        <ColorInput label="Предупреждение" name="warningColor" defaultValue="#f59e0b" />
-                        <ColorInput label="Ошибка" name="errorColor" defaultValue="#ef4444" />
-                        <ColorInput label="Информация" name="infoColor" defaultValue="#3b82f6" />
-                      </div>
-                      <div className="text-sm text-gray-500 mt-2">
-                        ℹ️ Используются в уведомлениях и статусных кнопках
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Специальные кнопки</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <ColorInput label="Кнопка 'Завтра'" name="tomorrowColor" defaultValue="#a855f7" />
-                        <ColorInput label="Кнопка 'Завтра' (при наведении)" name="tomorrowDarkColor" defaultValue="#9333ea" />
-                        <ColorInput label="Цвет 'Закончился'" name="outOfStockColor" defaultValue="#ef4444" />
-                      </div>
-                      <div className="text-sm text-gray-500 mt-2">
-                        ℹ️ "Завтра" - для недоступных сегодня товаров, "Закончился" - для бейджей
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Иконки информационных блоков</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <ColorInput label="Часы работы" name="workingHoursIconColor" defaultValue="#3b82f6" />
-                        <ColorInput label="Контакты" name="contactsIconColor" defaultValue="#22c55e" />
-                        <ColorInput label="Оплата и доставка" name="paymentDeliveryIconColor" defaultValue="#a855f7" />
-                      </div>
-                      <div className="text-sm text-gray-500 mt-2">
-                        ℹ️ Цвета круглых иконок в блоках "Часы работы", "Контакты" и "Оплата и доставка" на главной странице
-                      </div>
-                    </div>
-                    
 
-                  </div>
-                  
-                  {/* Keep light variants for API compatibility but hide from UI */}
-                  <input type="hidden" name="successLightColor" defaultValue="#f0fdf4" />
-                  <input type="hidden" name="warningLightColor" defaultValue="#fffbeb" />
-                  <input type="hidden" name="errorLightColor" defaultValue="#fef2f2" />
-                  <input type="hidden" name="infoLightColor" defaultValue="#eff6ff" />
-                  <input type="hidden" name="tomorrowLightColor" defaultValue="#faf5ff" />
-                </TabsContent>
-
-                <TabsContent value="neutral" className="space-y-4">
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Основные нейтральные цвета</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <ColorInput label="Белый" name="whiteColor" defaultValue="#ffffff" />
-                        <ColorInput label="Серый 100 (фон)" name="gray100Color" defaultValue="#f1f5f9" />
-                        <ColorInput label="Серый 700 (текст)" name="gray700Color" defaultValue="#334155" />
-                      </div>
-                      <div className="text-sm text-gray-500 mt-2">
-                        ℹ️ Белый для фонов, серый 100 для вторичных кнопок, серый 700 для текста
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Keep all grays for API compatibility but hide unused ones */}
-                  <input type="hidden" name="gray50Color" defaultValue="#f8fafc" />
-                  <input type="hidden" name="gray200Color" defaultValue="#e2e8f0" />
-                  <input type="hidden" name="gray300Color" defaultValue="#cbd5e1" />
-                  <input type="hidden" name="gray400Color" defaultValue="#94a3b8" />
-                  <input type="hidden" name="gray500Color" defaultValue="#64748b" />
-                  <input type="hidden" name="gray600Color" defaultValue="#475569" />
-                  <input type="hidden" name="gray800Color" defaultValue="#1e293b" />
-                  <input type="hidden" name="gray900Color" defaultValue="#0f172a" />
-                </TabsContent>
               </Tabs>
 
               {/* Hidden shadow inputs with defaults */}
@@ -1304,21 +1302,13 @@ export default function ThemeManager() {
                     <Info className="h-4 w-4" />
                     <span className="hidden sm:inline">Основное</span>
                   </TabsTrigger>
-                  <TabsTrigger value="brand" className="flex items-center gap-1 flex-1" title="Бренд">
-                    <Briefcase className="h-4 w-4" />
-                    <span className="hidden sm:inline">Бренд</span>
+                  <TabsTrigger value="colors" className="flex items-center gap-1 flex-1" title="Цвета">
+                    <Palette className="h-4 w-4" />
+                    <span className="hidden sm:inline">Цвета</span>
                   </TabsTrigger>
                   <TabsTrigger value="visuals" className="flex items-center gap-1 flex-1" title="Визуалы">
                     <Upload className="h-4 w-4" />
                     <span className="hidden sm:inline">Визуалы</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="status" className="flex items-center gap-1 flex-1" title="Статусы">
-                    <AlertCircle className="h-4 w-4" />
-                    <span className="hidden sm:inline">Статусы</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="neutral" className="flex items-center gap-1 flex-1" title="Нейтральные">
-                    <Layers className="h-4 w-4" />
-                    <span className="hidden sm:inline">Нейтральные</span>
                   </TabsTrigger>
                 </TabsList>
                 
