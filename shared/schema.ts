@@ -261,9 +261,9 @@ export const themes = pgTable("themes", {
   showTitleDescription: boolean("show_title_description").default(true),
   showInfoBlocks: boolean("show_info_blocks").default(true),
   infoBlocksPosition: varchar("info_blocks_position", { length: 10 }).default("top"), // "top" or "bottom"
-  showPrices: boolean("show_prices").default(true),
-  showProductImages: boolean("show_product_images").default(true),
-  showCart: boolean("show_cart").default(true),
+  showSpecialOffers: boolean("show_special_offers").default(true),
+  showCategoryMenu: boolean("show_category_menu").default(true),
+  showWhatsAppChat: boolean("show_whatsapp_chat").default(true),
   
   // Neutral colors
   whiteColor: varchar("white_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),

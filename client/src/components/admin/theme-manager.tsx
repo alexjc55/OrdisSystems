@@ -45,7 +45,7 @@ function VisualToggleButton({
       >
         {isEnabled ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
       </Button>
-      <input type="hidden" name={fieldName} value={isEnabled.toString()} />
+      <input type="hidden" name={fieldName} value={isEnabled ? "true" : "false"} />
     </div>
   );
 }
@@ -195,9 +195,9 @@ export default function ThemeManager() {
     showTitleDescription: true,
     showInfoBlocks: true,
     infoBlocksPosition: 'top',
-    showPrices: true,
-    showProductImages: true,
-    showCart: true
+    showSpecialOffers: true,
+    showCategoryMenu: true,
+    showWhatsAppChat: true
   });
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -895,79 +895,79 @@ export default function ThemeManager() {
                   <input type="hidden" name="accentColor" defaultValue="#e2e8f0" />
                 </TabsContent>
 
-                <TabsContent value="visuals" className="space-y-4">
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="text-sm font-medium mb-3">Настройки отображения</h4>
-                      <div className="space-y-3">
-                        <VisualToggleButton 
-                          isEnabled={visualSettings.showBannerImage}
-                          onToggle={() => setVisualSettings(prev => ({ ...prev, showBannerImage: !prev.showBannerImage }))}
-                          label="Показывать баннер"
-                          description="Главное изображение в шапке сайта"
-                          fieldName="showBannerImage"
-                        />
+                <TabsContent value="visuals" className="space-y-6">
+                  {/* Основные элементы отображения */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Основные элементы интерфейса</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <VisualToggleButton 
+                        isEnabled={visualSettings.showBannerImage}
+                        onToggle={() => setVisualSettings(prev => ({ ...prev, showBannerImage: !prev.showBannerImage }))}
+                        label="Показывать баннер"
+                        description="Главное изображение в шапке сайта"
+                        fieldName="showBannerImage"
+                      />
 
-                        <VisualToggleButton 
-                          isEnabled={visualSettings.showTitleDescription}
-                          onToggle={() => setVisualSettings(prev => ({ ...prev, showTitleDescription: !prev.showTitleDescription }))}
-                          label="Заголовок и описание"
-                          description="Текстовая информация о магазине"
-                          fieldName="showTitleDescription"
-                        />
+                      <VisualToggleButton 
+                        isEnabled={visualSettings.showTitleDescription}
+                        onToggle={() => setVisualSettings(prev => ({ ...prev, showTitleDescription: !prev.showTitleDescription }))}
+                        label="Заголовок и описание"
+                        description="Текстовая информация о магазине"
+                        fieldName="showTitleDescription"
+                      />
 
-                        <VisualToggleButton 
-                          isEnabled={visualSettings.showInfoBlocks}
-                          onToggle={() => setVisualSettings(prev => ({ ...prev, showInfoBlocks: !prev.showInfoBlocks }))}
-                          label="Информационные блоки"
-                          description="Часы работы, контакты, доставка"
-                          fieldName="showInfoBlocks"
-                        />
+                      <VisualToggleButton 
+                        isEnabled={visualSettings.showInfoBlocks}
+                        onToggle={() => setVisualSettings(prev => ({ ...prev, showInfoBlocks: !prev.showInfoBlocks }))}
+                        label="Информационные блоки"
+                        description="Часы работы, контакты, доставка"
+                        fieldName="showInfoBlocks"
+                      />
 
-                        {/* Позиция информационных блоков */}
-                        <div className="space-y-2">
-                          <Label htmlFor="infoBlocksPositionCreate" className="text-sm font-medium">Позиция информационных блоков</Label>
-                          <select
-                            name="infoBlocksPosition"
-                            id="infoBlocksPositionCreate"
-                            value={visualSettings.infoBlocksPosition}
-                            onChange={(e) => setVisualSettings(prev => ({ ...prev, infoBlocksPosition: e.target.value }))}
-                            className="w-full px-3 py-2 border rounded-md bg-white"
-                          >
-                            <option value="top">Сверху от товаров</option>
-                            <option value="bottom">Снизу от товаров</option>
-                          </select>
-                        </div>
-                      </div>
+                      <VisualToggleButton 
+                        isEnabled={visualSettings.showCategoryMenu}
+                        onToggle={() => setVisualSettings(prev => ({ ...prev, showCategoryMenu: !prev.showCategoryMenu }))}
+                        label="Меню категорий"
+                        description="Навигационное меню категорий"
+                        fieldName="showCategoryMenu"
+                      />
                     </div>
+                    
+                    {/* Позиция информационных блоков */}
+                    <div className="mt-4 space-y-2">
+                      <Label htmlFor="infoBlocksPositionCreate" className="text-sm font-medium">Позиция информационных блоков</Label>
+                      <select
+                        name="infoBlocksPosition"
+                        id="infoBlocksPositionCreate"
+                        value={visualSettings.infoBlocksPosition}
+                        onChange={(e) => setVisualSettings(prev => ({ ...prev, infoBlocksPosition: e.target.value }))}
+                        className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                      >
+                        <option value="top">Сверху от товаров</option>
+                        <option value="bottom">Снизу от товаров</option>
+                      </select>
+                    </div>
+                  </div>
 
-                    <div>
-                      <h4 className="text-sm font-medium mb-3">Настройки каталога</h4>
-                      <div className="space-y-3">
-                        <VisualToggleButton 
-                          isEnabled={visualSettings.showPrices}
-                          onToggle={() => setVisualSettings(prev => ({ ...prev, showPrices: !prev.showPrices }))}
-                          label="Показывать цены"
-                          description="Отображение цен на товары"
-                          fieldName="showPrices"
-                        />
+                  {/* Дополнительные функции */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Дополнительные функции</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <VisualToggleButton 
+                        isEnabled={visualSettings.showSpecialOffers}
+                        onToggle={() => setVisualSettings(prev => ({ ...prev, showSpecialOffers: !prev.showSpecialOffers }))}
+                        label="Особые предложения"
+                        description="Блок с особыми предложениями"
+                        fieldName="showSpecialOffers"
+                      />
 
-                        <VisualToggleButton 
-                          isEnabled={visualSettings.showProductImages}
-                          onToggle={() => setVisualSettings(prev => ({ ...prev, showProductImages: !prev.showProductImages }))}
-                          label="Изображения товаров"
-                          description="Фотографии в карточках товаров"
-                          fieldName="showProductImages"
-                        />
-
-                        <VisualToggleButton 
-                          isEnabled={visualSettings.showCart}
-                          onToggle={() => setVisualSettings(prev => ({ ...prev, showCart: !prev.showCart }))}
-                          label="Корзина покупок"
-                          description="Функционал добавления в корзину"
-                          fieldName="showCart"
-                        />
-                      </div>
+                      <VisualToggleButton 
+                        isEnabled={visualSettings.showWhatsAppChat}
+                        onToggle={() => setVisualSettings(prev => ({ ...prev, showWhatsAppChat: !prev.showWhatsAppChat }))}
+                        label="WhatsApp чат"
+                        description="Кнопка связи через WhatsApp"
+                        fieldName="showWhatsAppChat"
+                      />
                     </div>
                   </div>
                 </TabsContent>
@@ -1421,34 +1421,7 @@ export default function ThemeManager() {
                       </div>
                     </div>
 
-                    <div>
-                      <h4 className="text-sm font-medium mb-3">Настройки каталога</h4>
-                      <div className="space-y-3">
-                        <VisualToggleButton 
-                          isEnabled={visualSettings.showPrices}
-                          onToggle={() => setVisualSettings(prev => ({ ...prev, showPrices: !prev.showPrices }))}
-                          label="Показывать цены"
-                          description="Отображение цен на товары"
-                          fieldName="showPrices"
-                        />
 
-                        <VisualToggleButton 
-                          isEnabled={visualSettings.showProductImages}
-                          onToggle={() => setVisualSettings(prev => ({ ...prev, showProductImages: !prev.showProductImages }))}
-                          label="Изображения товаров"
-                          description="Фотографии в карточках товаров"
-                          fieldName="showProductImages"
-                        />
-
-                        <VisualToggleButton 
-                          isEnabled={visualSettings.showCart}
-                          onToggle={() => setVisualSettings(prev => ({ ...prev, showCart: !prev.showCart }))}
-                          label="Корзина покупок"
-                          description="Функционал добавления в корзину"
-                          fieldName="showCart"
-                        />
-                      </div>
-                    </div>
                   </div>
                 </TabsContent>
 
