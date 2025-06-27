@@ -3874,11 +3874,11 @@ export default function AdminDashboard() {
                             <TableHeader>
                               <TableRow dir={isRTL ? 'rtl' : 'ltr'}>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  className={`text-xs sm:text-sm w-12 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('common.number')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm font-semibold min-w-[180px] ${isRTL ? 'text-right' : 'text-center'}`}
+                                  className={`text-xs sm:text-sm font-semibold min-w-[120px] ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('orders.customer', 'Клиент')}</TableHead>
                                 <TableHead 

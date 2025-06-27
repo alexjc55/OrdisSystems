@@ -560,7 +560,7 @@
     "customer": "Клиент",
     "orderStatus": "Статус заказа",
     "orderTotal": "Сумма заказа",
-    "deliveryDate": "Дата доставки",
+    "deliveryDate": "Доставка",
     "deliveryTime": "Время доставки",
     "deliveryAddress": "Адрес доставки",
     "paymentMethod": "Способ оплаты",
