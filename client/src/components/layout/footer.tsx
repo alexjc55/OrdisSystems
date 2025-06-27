@@ -20,7 +20,7 @@ export function Footer() {
         <span className="text-white text-sm font-medium">
           {t('footer.poweredBy')} 
           <span 
-            className="cursor-pointer hover:underline ml-1 text-primary"
+            className="cursor-pointer hover:underline ml-1 text-orange-400"
             onClick={handleClick}
           >
             {t('footer.tryBusiness')}
