@@ -115,15 +115,15 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
         <div className="absolute inset-0 bg-white/85" />
         
         {/* Content */}
-        <div className="relative z-10 h-full flex items-center justify-center text-center px-6">
+        <div className="relative z-10 h-full flex items-center justify-center text-center px-4 sm:px-6">
           <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-light text-gray-900 mb-4 tracking-wide">
+            <h1 className="text-2xl sm:text-4xl md:text-6xl font-light text-gray-900 mb-2 sm:mb-4 tracking-wide">
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
-            <p className="text-gray-700 text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto">
+            <p className="text-gray-700 text-sm sm:text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto">
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
-            <div className="w-16 h-1 bg-primary mx-auto mt-6"></div>
+            <div className="w-12 sm:w-16 h-1 bg-primary mx-auto mt-3 sm:mt-6"></div>
           </div>
         </div>
       </div>
