@@ -131,6 +131,12 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 27, 2025: Added header style variants system to theme management
+  - Added headerStyle field to themes database schema with 'classic', 'modern', 'minimal' options
+  - Created HeaderVariant component with three distinct header layout styles
+  - Integrated header style selection into admin theme management interface
+  - Maintained backward compatibility with existing classic design as default
+  - User requested to keep original design, so main page uses classic InfoBlocks layout
 - June 27, 2025: Fixed navigation menu hover color integration with theme system
   - Resolved issue where navigation menu hover effects used hardcoded orange color
   - Added Tailwind CSS variable updates (--primary, --primary-foreground) to theme application

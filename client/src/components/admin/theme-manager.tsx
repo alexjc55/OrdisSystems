@@ -779,6 +779,26 @@ export default function ThemeManager() {
                         ℹ️ Цвета круглых иконок в блоках "Часы работы", "Контакты" и "Оплата и доставка" на главной странице
                       </div>
                     </div>
+                    
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Стиль шапки сайта</h4>
+                      <div className="space-y-3">
+                        <Label htmlFor="headerStyleCreate">Выберите стиль отображения шапки</Label>
+                        <select
+                          name="headerStyle"
+                          id="headerStyleCreate"
+                          defaultValue="classic"
+                          className="w-full px-3 py-2 border rounded-md bg-white"
+                        >
+                          <option value="classic">Классический (текущий)</option>
+                          <option value="modern">Современный</option>
+                          <option value="minimal">Минималистичный</option>
+                        </select>
+                        <div className="text-sm text-gray-500">
+                          ℹ️ Влияет на отображение баннера, заголовка и описания сайта
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
                   {/* Keep light variants for API compatibility but hide from UI */}
