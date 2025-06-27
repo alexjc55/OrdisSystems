@@ -48,41 +48,31 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
 function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
     <div className="relative">
-      {/* Modern Split Layout - only banner, title and description */}
-      <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-3xl overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8 md:p-12">
-          {/* Left Content */}
-          <div className="flex flex-col justify-center space-y-6">
-            <div className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary font-medium text-sm w-fit">
-              Свежие готовые блюда
-            </div>
-            
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+      {/* Modern Compact Layout */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="flex flex-col md:flex-row items-center gap-6 p-6">
+          {/* Left Image */}
+          <div className="w-full md:w-48 h-32 md:h-24 bg-cover bg-center rounded-xl flex-shrink-0"
+               style={{
+                 backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'
+               }}
+          />
+          
+          {/* Content */}
+          <div className="flex-1 text-center md:text-left">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
-            
-            <p className="text-lg text-gray-600 leading-relaxed max-w-md">
+            <p className="text-gray-600 text-sm md:text-base leading-relaxed">
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-primary text-white px-8 py-3 rounded-xl font-medium hover:bg-primary/90 transition-colors">
-                Заказать сейчас
-              </button>
-              <button className="border border-gray-300 text-gray-700 px-8 py-3 rounded-xl font-medium hover:bg-gray-50 transition-colors">
-                Посмотреть меню
-              </button>
-            </div>
           </div>
 
-          {/* Right Image */}
-          <div className="relative">
-            <div 
-              className="h-[300px] md:h-[400px] bg-cover bg-center rounded-2xl shadow-2xl"
-              style={{
-                backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'
-              }}
-            />
+          {/* CTA Button */}
+          <div className="flex-shrink-0">
+            <button className="bg-primary text-white px-6 py-2.5 rounded-lg font-medium hover:bg-primary/90 transition-colors text-sm">
+              Заказать
+            </button>
           </div>
         </div>
       </div>
@@ -93,27 +83,24 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
 function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
     <div className="relative">
-      {/* Minimal Clean Layout - only banner, title and description */}
-      <div className="text-center py-16 md:py-24">
-        <h1 className="text-5xl md:text-7xl font-light text-gray-900 mb-6 tracking-tight">
+      {/* Minimal Clean Layout - compact version */}
+      <div className="text-center py-8">
+        {/* Image first */}
+        <div className="w-20 h-20 mx-auto mb-4 bg-cover bg-center rounded-full shadow-md"
+             style={{
+               backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'
+             }}
+        />
+        
+        <h1 className="text-3xl md:text-4xl font-light text-gray-900 mb-2 tracking-tight">
           {storeSettings.welcomeTitle || "eDAHouse"}
         </h1>
         
-        <p className="text-xl text-gray-500 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+        <p className="text-gray-500 max-w-lg mx-auto font-light leading-relaxed">
           {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
         </p>
 
-        <div className="w-24 h-px bg-primary mx-auto mb-12"></div>
-
-        {/* Minimal Image */}
-        <div className="max-w-4xl mx-auto">
-          <div 
-            className="h-[250px] md:h-[350px] bg-cover bg-center rounded-lg shadow-lg"
-            style={{
-              backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'
-            }}
-          />
-        </div>
+        <div className="w-12 h-px bg-primary mx-auto mt-4"></div>
       </div>
     </div>
   );
