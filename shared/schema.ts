@@ -196,6 +196,12 @@ export const storeSettings = pgTable("store_settings", {
   }),
   defaultLanguage: varchar("default_language", { length: 5 }).default("ru"), // Default site language
   enabledLanguages: jsonb("enabled_languages").default(["ru", "en", "he"]), // Array of enabled language codes
+  modernBlock1Icon: varchar("modern_block1_icon", { length: 50 }), // Icon name for first modern block
+  modernBlock1Text: varchar("modern_block1_text", { length: 255 }), // Text for first modern block
+  modernBlock2Icon: varchar("modern_block2_icon", { length: 50 }), // Icon name for second modern block
+  modernBlock2Text: varchar("modern_block2_text", { length: 255 }), // Text for second modern block
+  modernBlock3Icon: varchar("modern_block3_icon", { length: 50 }), // Icon name for third modern block
+  modernBlock3Text: varchar("modern_block3_text", { length: 255 }), // Text for third modern block
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

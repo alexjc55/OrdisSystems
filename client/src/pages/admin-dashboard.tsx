@@ -5875,6 +5875,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
         bannerButtonText: storeSettings?.bannerButtonText || "",
         bannerButtonLink: storeSettings?.bannerButtonLink || "",
+        modernBlock1Icon: storeSettings?.modernBlock1Icon || "",
+        modernBlock1Text: storeSettings?.modernBlock1Text || "",
+        modernBlock2Icon: storeSettings?.modernBlock2Icon || "",
+        modernBlock2Text: storeSettings?.modernBlock2Text || "",
+        modernBlock3Icon: storeSettings?.modernBlock3Icon || "",
+        modernBlock3Text: storeSettings?.modernBlock3Text || "",
       } as any);
     }
   }, [storeSettings, form]);
@@ -6893,6 +6899,170 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 </FormItem>
               )}
             />
+          </div>
+        </div>
+
+        {/* Modern Header Blocks Settings */}
+        <div className="space-y-4">
+          <h4 className="text-sm font-medium text-gray-700">Информационные блоки (Современный стиль)</h4>
+          <p className="text-xs text-gray-500">Настройка до 3 блоков с иконками для современного стиля шапки. Пустые блоки не отображаются.</p>
+          
+          <div className="space-y-6">
+            {/* Block 1 */}
+            <div className="border rounded-lg p-4 space-y-4">
+              <h5 className="text-sm font-medium text-gray-600">Блок 1</h5>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="modernBlock1Icon"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Иконка</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="text-sm">
+                            <SelectValue placeholder="Выберите иконку" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="clock">🕒 Время работы</SelectItem>
+                          <SelectItem value="phone">📞 Телефон</SelectItem>
+                          <SelectItem value="truck">🚚 Доставка</SelectItem>
+                          <SelectItem value="credit-card">💳 Оплата</SelectItem>
+                          <SelectItem value="star">⭐ Качество</SelectItem>
+                          <SelectItem value="shield">🛡️ Гарантия</SelectItem>
+                          <SelectItem value="heart">❤️ Забота</SelectItem>
+                          <SelectItem value="chef-hat">👨‍🍳 Шеф-повар</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="modernBlock1Text"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Текст</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Например: Работаем 24/7"
+                          className="text-sm"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Block 2 */}
+            <div className="border rounded-lg p-4 space-y-4">
+              <h5 className="text-sm font-medium text-gray-600">Блок 2</h5>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="modernBlock2Icon"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Иконка</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="text-sm">
+                            <SelectValue placeholder="Выберите иконку" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="clock">🕒 Время работы</SelectItem>
+                          <SelectItem value="phone">📞 Телефон</SelectItem>
+                          <SelectItem value="truck">🚚 Доставка</SelectItem>
+                          <SelectItem value="credit-card">💳 Оплата</SelectItem>
+                          <SelectItem value="star">⭐ Качество</SelectItem>
+                          <SelectItem value="shield">🛡️ Гарантия</SelectItem>
+                          <SelectItem value="heart">❤️ Забота</SelectItem>
+                          <SelectItem value="chef-hat">👨‍🍳 Шеф-повар</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="modernBlock2Text"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Текст</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Например: Бесплатная доставка"
+                          className="text-sm"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Block 3 */}
+            <div className="border rounded-lg p-4 space-y-4">
+              <h5 className="text-sm font-medium text-gray-600">Блок 3</h5>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="modernBlock3Icon"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Иконка</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="text-sm">
+                            <SelectValue placeholder="Выберите иконку" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="clock">🕒 Время работы</SelectItem>
+                          <SelectItem value="phone">📞 Телефон</SelectItem>
+                          <SelectItem value="truck">🚚 Доставка</SelectItem>
+                          <SelectItem value="credit-card">💳 Оплата</SelectItem>
+                          <SelectItem value="star">⭐ Качество</SelectItem>
+                          <SelectItem value="shield">🛡️ Гарантия</SelectItem>
+                          <SelectItem value="heart">❤️ Забота</SelectItem>
+                          <SelectItem value="chef-hat">👨‍🍳 Шеф-повар</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="modernBlock3Text"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Текст</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Например: Свежие продукты"
+                          className="text-sm"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
           </div>
         </div>
 

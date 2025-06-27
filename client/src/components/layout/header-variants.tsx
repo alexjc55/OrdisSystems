@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Clock, Phone, CreditCard } from 'lucide-react';
+import { Clock, Phone, CreditCard, Truck, Star, Shield, Heart, ChefHat } from 'lucide-react';
 
 interface HeaderVariantProps {
   storeSettings: any;
@@ -101,53 +101,19 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
             <h1 className="text-3xl sm:text-3xl md:text-5xl font-medium sm:font-bold text-white mb-3 sm:mb-4 leading-tight" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-white max-w-sm sm:max-w-2xl mx-auto leading-normal sm:leading-relaxed mb-4" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
+            <p className="text-base sm:text-lg md:text-xl text-white max-w-sm sm:max-w-2xl mx-auto leading-normal sm:leading-relaxed mb-6" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
             
-            {/* Call to Action Button */}
-            {showButton && (
-              <div className="mt-6 mb-2">
-                <button 
-                  onClick={() => {
-                    // Use provided link or default to categories section
-                    const link = storeSettings.bannerButtonLink && storeSettings.bannerButtonLink.trim() !== '' 
-                      ? storeSettings.bannerButtonLink 
-                      : "#categories";
-                    if (link.startsWith('#')) {
-                      const element = document.querySelector(link);
-                      if (element) {
-                        element.scrollIntoView({ behavior: 'smooth' });
-                      }
-                    } else {
-                      window.location.href = link;
-                    }
-                  }}
-                  className="inline-flex items-center px-6 py-3 font-medium text-sm sm:text-base rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-                  style={{
-                    backgroundColor: 'var(--color-primary)',
-                    color: 'var(--color-primary-foreground)',
-                    border: 'none',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--color-primary-dark)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--color-primary)';
-                  }}
-                >
-                  {storeSettings.bannerButtonText}
-                </button>
-              </div>
-            )}
-            
             {/* Decorative vignette */}
-            <div className="flex items-center justify-center space-x-2 opacity-80 mt-4">
+            <div className="flex items-center justify-center space-x-2 opacity-80 mb-6">
               <div className="w-8 h-px bg-white/60"></div>
               <div className="w-2 h-2 border border-white/60 rotate-45"></div>
               <div className="w-8 h-px bg-white/60"></div>
             </div>
+
+            {/* Modern Info Blocks */}
+            <ModernInfoBlocks storeSettings={storeSettings} />
           </div>
         </div>
       </div>
@@ -285,6 +251,76 @@ function MinimalInfoItem({ icon, title, content, iconColor }: any) {
       </div>
       <h3 className="text-base font-medium text-gray-900">{title}</h3>
       <p className="text-sm text-gray-600">{content}</p>
+    </div>
+  );
+}
+
+function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
+  // Function to get icon component by name
+  const getIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'clock': return <Clock className="h-5 w-5" />;
+      case 'phone': return <Phone className="h-5 w-5" />;
+      case 'truck': return <Truck className="h-5 w-5" />;
+      case 'credit-card': return <CreditCard className="h-5 w-5" />;
+      case 'star': return <Star className="h-5 w-5" />;
+      case 'shield': return <Shield className="h-5 w-5" />;
+      case 'heart': return <Heart className="h-5 w-5" />;
+      case 'chef-hat': return <ChefHat className="h-5 w-5" />;
+      default: return <Star className="h-5 w-5" />;
+    }
+  };
+
+  // Collect valid blocks (only show blocks with text)
+  const blocks = [];
+  
+  if (storeSettings?.modernBlock1Text?.trim()) {
+    blocks.push({
+      icon: getIcon(storeSettings.modernBlock1Icon),
+      text: storeSettings.modernBlock1Text
+    });
+  }
+  
+  if (storeSettings?.modernBlock2Text?.trim()) {
+    blocks.push({
+      icon: getIcon(storeSettings.modernBlock2Icon),
+      text: storeSettings.modernBlock2Text
+    });
+  }
+  
+  if (storeSettings?.modernBlock3Text?.trim()) {
+    blocks.push({
+      icon: getIcon(storeSettings.modernBlock3Icon),
+      text: storeSettings.modernBlock3Text
+    });
+  }
+
+  // Don't render anything if no blocks
+  if (blocks.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={`
+      flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 mt-4
+      ${blocks.length === 1 ? 'justify-center' : ''}
+      ${blocks.length === 2 ? 'justify-center' : ''}
+      ${blocks.length === 3 ? 'justify-center' : ''}
+    `}>
+      {blocks.map((block, index) => (
+        <div 
+          key={index}
+          className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-white/90 min-w-0"
+          style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+        >
+          <div className="flex-shrink-0 p-2 bg-white/20 rounded-full backdrop-blur-sm">
+            {block.icon}
+          </div>
+          <span className="text-sm sm:text-base font-medium text-center sm:text-left">
+            {block.text}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
