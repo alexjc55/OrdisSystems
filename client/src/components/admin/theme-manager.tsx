@@ -1011,6 +1011,40 @@ export default function ThemeManager() {
                         fieldName="showWhatsAppChat"
                       />
                     </div>
+
+                    {/* WhatsApp настройки */}
+                    {visualSettings.showWhatsAppChat && (
+                      <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-3">
+                        <h5 className="text-sm font-medium text-gray-800">Настройки WhatsApp</h5>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div>
+                            <Label htmlFor="whatsappPhoneCreate" className="text-sm">Номер телефона</Label>
+                            <input
+                              type="text"
+                              name="whatsappPhone"
+                              id="whatsappPhoneCreate"
+                              defaultValue=""
+                              placeholder="+972501234567"
+                              className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                            />
+                            <div className="text-xs text-gray-500 mt-1">
+                              Формат: +код_страны номер (например, +972501234567)
+                            </div>
+                          </div>
+                          <div>
+                            <Label htmlFor="whatsappMessageCreate" className="text-sm">Сообщение по умолчанию</Label>
+                            <textarea
+                              name="whatsappMessage"
+                              id="whatsappMessageCreate"
+                              defaultValue="Здравствуйте! У меня есть вопрос по заказу."
+                              placeholder="Здравствуйте! У меня есть вопрос по заказу."
+                              rows={2}
+                              className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </TabsContent>
 
@@ -1470,7 +1504,7 @@ export default function ThemeManager() {
                     {editVisualSettings.showWhatsAppChat && (
                       <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-3">
                         <h5 className="text-sm font-medium text-gray-800">Настройки WhatsApp</h5>
-                        <div className="grid grid-cols-1 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           <div>
                             <Label htmlFor="whatsappPhone" className="text-sm">Номер телефона</Label>
                             <input
