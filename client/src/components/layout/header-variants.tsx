@@ -111,10 +111,15 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
 }
 
 function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
+  // Check if button should be shown
+  const showButton = storeSettings.bannerButtonText && storeSettings.bannerButtonText.trim() !== '';
+  // Adjust height based on button presence
+  const heightClass = showButton ? "h-72 sm:h-64 md:h-80" : "h-56 sm:h-48 md:h-64";
+  
   return (
     <div className="relative w-full mb-6 sm:mb-8">
       {/* Minimal Full Width Banner */}
-      <div className="relative h-72 sm:h-64 md:h-80 w-full overflow-hidden">
+      <div className={`relative ${heightClass} w-full overflow-hidden`}>
         {/* Background Image with strong overlay */}
         <div 
           className="absolute inset-0 bg-cover bg-center w-full h-full"
@@ -136,37 +141,42 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
             <p className="text-gray-700 text-sm sm:text-lg md:text-xl font-semibold sm:font-light leading-relaxed max-w-2xl mx-auto mb-4">
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
-            {/* Call to Action Button */}
-            <div className="mt-6">
-              <button 
-                onClick={() => {
-                  const link = storeSettings.bannerButtonLink || "#categories";
-                  if (link.startsWith('#')) {
-                    const element = document.querySelector(link);
-                    if (element) {
-                      element.scrollIntoView({ behavior: 'smooth' });
+            {/* Call to Action Button - only show if button text is provided */}
+            {showButton && (
+              <div className="mt-6">
+                <button 
+                  onClick={() => {
+                    // Use provided link or default to categories section
+                    const link = storeSettings.bannerButtonLink && storeSettings.bannerButtonLink.trim() !== '' 
+                      ? storeSettings.bannerButtonLink 
+                      : "#categories";
+                    if (link.startsWith('#')) {
+                      const element = document.querySelector(link);
+                      if (element) {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    } else {
+                      window.location.href = link;
                     }
-                  } else {
-                    window.location.href = link;
-                  }
-                }}
-                className="inline-flex items-center px-6 py-3 font-medium text-sm sm:text-base rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-                style={{
-                  backgroundColor: 'var(--color-primary)',
-                  color: 'var(--color-primary-foreground)',
-                  border: 'none',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--color-primary-dark)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--color-primary)';
-                }}
-              >
-                {storeSettings.bannerButtonText || "Смотреть каталог"}
-              </button>
-            </div>
+                  }}
+                  className="inline-flex items-center px-6 py-3 font-medium text-sm sm:text-base rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                  style={{
+                    backgroundColor: 'var(--color-primary)',
+                    color: 'var(--color-primary-foreground)',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--color-primary-dark)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--color-primary)';
+                  }}
+                >
+                  {storeSettings.bannerButtonText}
+                </button>
+              </div>
+            )}
             {/* Decorative vignette */}
             <div className="flex items-center justify-center space-x-2 opacity-60 mt-4">
               <div className="w-8 h-px bg-primary/40"></div>
