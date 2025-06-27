@@ -79,15 +79,15 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
         />
         
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/75 to-black/60" />
         
         {/* Content */}
         <div className="relative z-10 h-full flex items-center justify-center text-center px-6">
           <div className="max-w-4xl">
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
-            <p className="text-lg md:text-xl text-white/90 mb-6 drop-shadow-md max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-white mb-6 max-w-2xl mx-auto leading-relaxed" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
               {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
             </p>
           </div>
