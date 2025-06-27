@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings } from "lucide-react";
+import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw } from "lucide-react";
 import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
 
 // Helper function to convert HSL to HEX
@@ -418,6 +418,47 @@ export default function ThemeManager() {
     updateThemeMutation.mutate({ id: themeId, ...themeData });
   };
 
+  const handleResetToDefault = (themeId: string) => {
+    const defaultColors = {
+      primaryColor: "hsl(24.6, 95%, 53.1%)",
+      primaryTextColor: "hsl(0, 0%, 100%)",
+      primaryDarkColor: "hsl(20.5, 90%, 48%)",
+      primaryLightColor: "hsl(24.6, 95%, 96%)",
+      secondaryColor: "hsl(210, 40%, 98%)",
+      accentColor: "hsl(210, 40%, 85%)",
+      successColor: "hsl(142, 76%, 36%)",
+      successLightColor: "hsl(142, 76%, 96%)",
+      warningColor: "hsl(38, 92%, 50%)",
+      warningLightColor: "hsl(38, 92%, 96%)",
+      errorColor: "hsl(0, 84%, 60%)",
+      errorLightColor: "hsl(0, 84%, 96%)",
+      infoColor: "hsl(221, 83%, 53%)",
+      infoLightColor: "hsl(221, 83%, 96%)",
+      whiteColor: "hsl(0, 0%, 100%)",
+      gray50Color: "hsl(210, 40%, 98%)",
+      gray100Color: "hsl(210, 40%, 96%)",
+      gray200Color: "hsl(214, 32%, 91%)",
+      gray300Color: "hsl(213, 27%, 84%)",
+      gray400Color: "hsl(215, 20%, 65%)",
+      gray500Color: "hsl(215, 16%, 47%)",
+      gray600Color: "hsl(215, 19%, 35%)",
+      gray700Color: "hsl(215, 25%, 27%)",
+      gray800Color: "hsl(217, 33%, 17%)",
+      gray900Color: "hsl(222, 84%, 5%)",
+      fontFamilyPrimary: "system-ui, -apple-system, sans-serif",
+      fontFamilySecondary: "Georgia, serif",
+      primaryShadow: "0 4px 14px 0 rgba(251, 146, 60, 0.3)",
+      successShadow: "0 4px 14px 0 rgba(34, 197, 94, 0.3)",
+      warningShadow: "0 4px 14px 0 rgba(251, 191, 36, 0.3)",
+      errorShadow: "0 4px 14px 0 rgba(239, 68, 68, 0.3)",
+      infoShadow: "0 4px 14px 0 rgba(59, 130, 246, 0.3)",
+      tomorrowShadow: "0 4px 14px 0 rgba(147, 51, 234, 0.3)",
+      grayShadow: "0 4px 14px 0 rgba(107, 114, 128, 0.3)"
+    };
+
+    updateThemeMutation.mutate({ id: themeId, ...defaultColors });
+  };
+
   const ColorInput = ({ label, name, defaultValue }: { label: string; name: string; defaultValue: string }) => {
     const hexValue = hslToHex(defaultValue);
     return (
@@ -535,6 +576,7 @@ export default function ThemeManager() {
                 <TabsContent value="brand" className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <ColorInput label="Основной цвет" name="primaryColor" defaultValue="#ff6600" />
+                    <ColorInput label="Цвет текста кнопок" name="primaryTextColor" defaultValue="#ffffff" />
                     <ColorInput label="Основной (темный)" name="primaryDarkColor" defaultValue="#e55a00" />
                     <ColorInput label="Основной (светлый)" name="primaryLightColor" defaultValue="#fff3f0" />
                     <ColorInput label="Вторичный цвет" name="secondaryColor" defaultValue="#f8fafc" />
@@ -670,6 +712,17 @@ export default function ThemeManager() {
                 >
                   <Settings className="h-4 w-4 mr-1" />
                   Настроить
+                </Button>
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleResetToDefault(theme.id)}
+                  disabled={updateThemeMutation.isPending}
+                  title="Сбросить все цвета к значениям по умолчанию"
+                >
+                  <RotateCcw className="h-4 w-4 mr-1" />
+                  Сброс
                 </Button>
 
                 {!theme.isActive && (
