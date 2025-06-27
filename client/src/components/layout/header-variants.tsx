@@ -151,9 +151,9 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
 
 function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
-    <div className="relative w-full mb-6 sm:mb-8">
+    <div className="relative w-full mb-0 sm:mb-8">
       {/* Modern Overlay Banner - Full height on mobile, adaptive on larger screens */}
-      <div className="relative h-screen sm:h-auto sm:min-h-[12rem] md:min-h-[16rem] w-full overflow-hidden">
+      <div className="relative h-dvh sm:h-auto sm:min-h-[12rem] md:min-h-[16rem] w-full overflow-hidden">
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center transform scale-105 w-full h-full"

@@ -131,6 +131,15 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 27, 2025: Completed adaptive info blocks system for modern header style
+  - Added database fields for 3 customizable info blocks (modernBlock1Text/Icon, etc.)
+  - Integrated icon selection and text configuration in admin panel theme settings
+  - Implemented responsive grid layout (1 column mobile, 2 tablet, 3 desktop)
+  - Applied theme color integration for icon backgrounds using CSS variables
+  - Replaced emoji icons with Lucide React icons for professional appearance
+  - Added full-screen mobile banner height with h-dvh for proper viewport handling
+  - Enhanced typography scaling for mobile readability (text-5xl headers, text-lg descriptions)
+  - Implemented gradient overlay (lighter top, darker bottom) for improved contrast
 - June 27, 2025: Fixed header style synchronization between admin and public views
   - Added headerStyle field to store_settings table for public access
   - Updated HeaderVariant to use headerStyle from public settings instead of admin themes
