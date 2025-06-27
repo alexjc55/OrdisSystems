@@ -1,5 +1,21 @@
 import { useTranslation } from 'react-i18next';
-import { Clock, Phone, CreditCard, Truck, Star, Shield, Heart, ChefHat } from 'lucide-react';
+import { Clock, Phone, MapPin, CreditCard, Truck, Star, Shield, Heart, ChefHat } from 'lucide-react';
+
+// Helper function to get icon component
+const getIconComponent = (iconName: string) => {
+  const iconProps = "h-6 w-6";
+  switch (iconName) {
+    case 'Clock': return <Clock className={iconProps} />;
+    case 'Phone': return <Phone className={iconProps} />;
+    case 'MapPin': return <MapPin className={iconProps} />;
+    case 'Truck': return <Truck className={iconProps} />;
+    case 'Star': return <Star className={iconProps} />;
+    case 'Shield': return <Shield className={iconProps} />;
+    case 'Heart': return <Heart className={iconProps} />;
+    case 'ChefHat': return <ChefHat className={iconProps} />;
+    default: return <Clock className={iconProps} />;
+  }
+};
 
 interface HeaderVariantProps {
   storeSettings: any;
@@ -33,44 +49,62 @@ export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
 
 function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
-    <div className="relative w-full mb-6 sm:mb-8">
-      {/* Classic Gradient Overlay Banner - Auto height with min height */}
-      <div className="relative min-h-[14rem] sm:min-h-[12rem] md:min-h-[16rem] w-full overflow-hidden"
-           style={{ height: 'auto' }}>
-        {/* Background Image with subtle animation */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center w-full h-full"
-          style={{
-            backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)',
-            animation: 'subtle-zoom 8s ease-in-out infinite'
-          }}
-        />
+    <>
+      {/* Classic Simple Banner */}
+      <div className="relative h-96 sm:h-[50vh] lg:h-[60vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={storeSettings.backgroundImage || "/api/placeholder/1920/1080"} 
+            alt="Background" 
+            className="w-full h-full object-cover"
+          />
+          <div 
+            className="absolute inset-0 bg-black/50"
+            style={{
+              background: `linear-gradient(135deg, var(--color-primary, #ff6600) 0%, transparent 40%, rgba(0,0,0,0.4) 100%)`
+            }}
+          ></div>
+        </div>
         
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-primary/60 to-transparent" />
-        
-        {/* Glass Effect Content Card */}
-        <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
-          <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-md rounded-3xl p-6 sm:p-8 md:p-10 border border-white/20 shadow-2xl">
-            <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
-              {storeSettings.welcomeTitle || "eDAHouse"}
-            </h1>
-            <p className="text-sm sm:text-lg md:text-xl text-white/95 leading-relaxed max-w-2xl mx-auto mb-6" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-              {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
-            </p>
-            
-            {/* Dotted decorative elements */}
-            <div className="flex items-center justify-center space-x-3 opacity-80">
-              <div className="w-2 h-2 bg-white/70 rounded-full"></div>
-              <div className="w-1 h-1 bg-white/50 rounded-full"></div>
-              <div className="w-3 h-3 bg-white/80 rounded-full"></div>
-              <div className="w-1 h-1 bg-white/50 rounded-full"></div>
-              <div className="w-2 h-2 bg-white/70 rounded-full"></div>
-            </div>
+        <div className="relative z-10 text-center px-6">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
+            {storeSettings.welcomeTitle || "eDAHouse"}
+          </h1>
+          <p className="text-lg sm:text-xl lg:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+            {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
+          </p>
+        </div>
+      </div>
+
+      {/* Classic Info Blocks */}
+      <div className="bg-white py-16">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <InfoCard 
+              icon={getIconComponent("Clock")}
+              title={t('workingHours')}
+              content={typeof storeSettings.workingHours === 'string' ? storeSettings.workingHours : "Пн-Вс: 9:00-22:00"}
+              iconColor="var(--color-primary)"
+              isRTL={isRTL}
+            />
+            <InfoCard 
+              icon={getIconComponent("Phone")}
+              title={t('phoneNumber')}
+              content={storeSettings.phone || "+972-123-456-789"}
+              iconColor="var(--color-success)"
+              isRTL={isRTL}
+            />
+            <InfoCard 
+              icon={getIconComponent("MapPin")}
+              title={t('deliveryArea')}
+              content={storeSettings.deliveryArea || "Вся Израиль"}
+              iconColor="var(--color-warning)"
+              isRTL={isRTL}
+            />
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
