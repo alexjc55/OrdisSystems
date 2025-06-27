@@ -131,6 +131,19 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 27, 2025: Fixed header style synchronization between admin and public views
+  - Added headerStyle field to store_settings table for public access
+  - Updated HeaderVariant to use headerStyle from public settings instead of admin themes
+  - Fixed issue where mobile users couldn't see selected header style due to authentication barriers
+  - Implemented automatic synchronization when admin changes header style in theme settings
+  - All users now see consistent header design regardless of authentication status
+- June 27, 2025: Completed mobile-optimized header banner system with decorative elements
+  - Optimized all header styles for mobile devices with responsive height and text sizing
+  - Added elegant decorative vignettes to all header styles for enhanced visual appeal
+  - Fixed text readability with proper contrast ratios and shadow effects
+  - Modern style: 85% background overlay with geometric vignette
+  - Classic style: optimized glass card with dotted decorative elements
+  - Minimal style: responsive sizing with theme-colored accent elements
 - June 27, 2025: Completed full-width modern header banner system
   - Redesigned all three header styles (classic, modern, minimal) with full-width banners
   - Classic: gradient overlay with theme color + glass effect card + smooth zoom animation

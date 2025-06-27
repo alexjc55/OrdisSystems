@@ -941,7 +941,7 @@ export class DatabaseStorage implements IStorage {
     return settings;
   }
 
-  async updateStoreSettings(settings: InsertStoreSettings): Promise<StoreSettings> {
+  async updateStoreSettings(settings: Partial<InsertStoreSettings>): Promise<StoreSettings> {
     const existingSettings = await this.getStoreSettings();
     
     if (existingSettings) {

@@ -1,10 +1,12 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { db } from "./db";
 import { setupAuth, isAuthenticated } from "./auth";
 import bcrypt from "bcryptjs";
-import { insertCategorySchema, insertProductSchema, insertOrderSchema, insertStoreSettingsSchema, insertThemeSchema, updateThemeSchema } from "@shared/schema";
+import { insertCategorySchema, insertProductSchema, insertOrderSchema, insertStoreSettingsSchema, updateStoreSettingsSchema, insertThemeSchema, updateThemeSchema } from "@shared/schema";
 import { z } from "zod";
+import { sql } from "drizzle-orm";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -1128,9 +1130,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Theme update data:", themeData);
       const theme = await storage.updateTheme(id, themeData);
       
-      // If this is the active theme and headerStyle was updated, sync with store settings
+      // If this is the active theme and headerStyle was updated, sync with store settings via SQL
       if (theme.isActive && themeData.headerStyle) {
-        await storage.updateStoreSettings({ headerStyle: themeData.headerStyle });
+        await db.execute(sql.raw(`UPDATE store_settings SET header_style = '${themeData.headerStyle}' WHERE id = 1`));
       }
       
       res.json(theme);
