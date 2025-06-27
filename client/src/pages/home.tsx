@@ -390,12 +390,22 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 overflow-x-hidden pt-16">
       <Header onResetView={handleResetView} />
       
-      {/* Simple Banner Image */}
-      {storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
-        <div 
-          className="w-full h-32 sm:h-40 lg:h-48 bg-cover bg-center"
-          style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
-        />
+      {/* Header Variant or Simple Banner based on theme */}
+      {headerStyle !== 'classic' ? (
+        <div className="container mx-auto px-4 py-8">
+          <HeaderVariant 
+            storeSettings={storeSettings} 
+            style={headerStyle as 'classic' | 'modern' | 'minimal'}
+          />
+        </div>
+      ) : (
+        // Classic banner for classic style
+        storeSettings?.bannerImage && storeSettings?.showBannerImage !== false && (
+          <div 
+            className="w-full h-32 sm:h-40 lg:h-48 bg-cover bg-center"
+            style={{ backgroundImage: `url(${storeSettings.bannerImage})` }}
+          />
+        )
       )}
       
       <div className="flex overflow-x-hidden">
@@ -461,9 +471,10 @@ export default function Home() {
 
 
 
-          {/* Information Blocks at top position */}
+          {/* Information Blocks at top position - only show for classic style */}
           {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && 
-           storeSettings.showInfoBlocks !== false && storeSettings.infoBlocksPosition === "top" && (
+           storeSettings.showInfoBlocks !== false && storeSettings.infoBlocksPosition === "top" && 
+           headerStyle === 'classic' && (
             <InfoBlocks 
               storeSettings={storeSettings} 
               t={t} 
@@ -815,9 +826,10 @@ export default function Home() {
         </div>
       )}
 
-      {/* Information Blocks at bottom position */}
+      {/* Information Blocks at bottom position - only show for classic style */}
       {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && 
-       storeSettings.showInfoBlocks !== false && storeSettings.infoBlocksPosition === "bottom" && (
+       storeSettings.showInfoBlocks !== false && storeSettings.infoBlocksPosition === "bottom" && 
+       headerStyle === 'classic' && (
         <div className="px-6 pb-6">
           <InfoBlocks 
             storeSettings={storeSettings} 
