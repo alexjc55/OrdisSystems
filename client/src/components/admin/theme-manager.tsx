@@ -247,6 +247,8 @@ export default function ThemeManager() {
           errorLight: activatedTheme.errorLightColor,
           info: activatedTheme.infoColor,
           infoLight: activatedTheme.infoLightColor,
+          tomorrow: activatedTheme.tomorrowColor,
+          tomorrowLight: activatedTheme.tomorrowLightColor,
           white: activatedTheme.whiteColor,
           gray50: activatedTheme.gray50Color,
           gray100: activatedTheme.gray100Color,
@@ -290,6 +292,7 @@ export default function ThemeManager() {
           warning: activatedTheme.warningShadow,
           error: activatedTheme.errorShadow,
           info: activatedTheme.infoShadow,
+          tomorrow: activatedTheme.tomorrowShadow,
           gray: activatedTheme.grayShadow,
         },
       };
@@ -365,6 +368,7 @@ export default function ThemeManager() {
       warningShadow: formData.get("warningShadow") as string,
       errorShadow: formData.get("errorShadow") as string,
       infoShadow: formData.get("infoShadow") as string,
+      tomorrowShadow: formData.get("tomorrowShadow") as string || "0 4px 14px 0 rgba(147, 51, 234, 0.3)",
       grayShadow: formData.get("grayShadow") as string,
     };
 
