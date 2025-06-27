@@ -113,13 +113,12 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
 function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   // Check if button should be shown
   const showButton = storeSettings.bannerButtonText && storeSettings.bannerButtonText.trim() !== '';
-  // Adjust height based on button presence
-  const heightClass = showButton ? "h-72 sm:h-64 md:h-80" : "h-56 sm:h-48 md:h-64";
   
   return (
     <div className="relative w-full mb-6 sm:mb-8">
-      {/* Minimal Full Width Banner */}
-      <div className={`relative ${heightClass} w-full overflow-hidden`}>
+      {/* Minimal Full Width Banner - Auto height with min height */}
+      <div className="relative min-h-[14rem] sm:min-h-[12rem] md:min-h-[16rem] w-full overflow-hidden"
+           style={{ height: 'auto' }}>
         {/* Background Image with strong overlay */}
         <div 
           className="absolute inset-0 bg-cover bg-center w-full h-full"
@@ -133,8 +132,8 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
         <div className="absolute inset-0 bg-white/85" />
         
         {/* Content */}
-        <div className="relative z-10 h-full flex items-center justify-center text-center px-4 sm:px-6 pt-12 pb-12">
-          <div className="max-w-3xl">
+        <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
+          <div className="max-w-3xl mx-auto">
             <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold sm:font-light text-gray-900 mb-2 sm:mb-4 tracking-wide">
               {storeSettings.welcomeTitle || "eDAHouse"}
             </h1>
