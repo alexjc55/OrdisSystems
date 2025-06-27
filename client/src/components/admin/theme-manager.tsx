@@ -725,7 +725,7 @@ export default function ThemeManager() {
               handleCreateTheme(formData);
             }}>
               <Tabs defaultValue="basic" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
+                <TabsList className="flex w-full">
                   <TabsTrigger value="basic" className="flex items-center gap-1" title="Основное">
                     <Info className="h-4 w-4" />
                     <span className="hidden sm:inline">Основное</span>
@@ -1099,7 +1099,7 @@ export default function ThemeManager() {
               handleUpdateTheme(formData, editingTheme.id);
             }}>
               <Tabs defaultValue="basic" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
+                <TabsList className="flex w-full">
                   <TabsTrigger value="basic" className="flex items-center gap-1" title="Основное">
                     <Info className="h-4 w-4" />
                     <span className="hidden sm:inline">Основное</span>
