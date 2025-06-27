@@ -66,6 +66,7 @@ interface ThemeData {
   description: string;
   isActive: boolean;
   primaryColor: string;
+  primaryTextColor: string;
   primaryDarkColor: string;
   primaryLightColor: string;
   secondaryColor: string;
@@ -78,8 +79,6 @@ interface ThemeData {
   errorLightColor: string;
   infoColor: string;
   infoLightColor: string;
-  tomorrowColor: string;
-  tomorrowLightColor: string;
   whiteColor: string;
   gray50Color: string;
   gray100Color: string;
@@ -235,6 +234,7 @@ export default function ThemeManager() {
         description: activatedTheme.description,
         colors: {
           primary: activatedTheme.primaryColor,
+          primaryText: activatedTheme.primaryTextColor,
           primaryDark: activatedTheme.primaryDarkColor,
           primaryLight: activatedTheme.primaryLightColor,
           secondary: activatedTheme.secondaryColor,
