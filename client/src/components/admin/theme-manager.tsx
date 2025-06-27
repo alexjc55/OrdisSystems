@@ -726,19 +726,19 @@ export default function ThemeManager() {
             }}>
               <Tabs defaultValue="basic" className="w-full">
                 <TabsList className="flex w-full">
-                  <TabsTrigger value="basic" className="flex items-center gap-1" title="Основное">
+                  <TabsTrigger value="basic" className="flex items-center gap-1 flex-1" title="Основное">
                     <Info className="h-4 w-4" />
                     <span className="hidden sm:inline">Основное</span>
                   </TabsTrigger>
-                  <TabsTrigger value="brand" className="flex items-center gap-1" title="Бренд">
+                  <TabsTrigger value="brand" className="flex items-center gap-1 flex-1" title="Бренд">
                     <Briefcase className="h-4 w-4" />
                     <span className="hidden sm:inline">Бренд</span>
                   </TabsTrigger>
-                  <TabsTrigger value="status" className="flex items-center gap-1" title="Статусы">
+                  <TabsTrigger value="status" className="flex items-center gap-1 flex-1" title="Статусы">
                     <AlertCircle className="h-4 w-4" />
                     <span className="hidden sm:inline">Статусы</span>
                   </TabsTrigger>
-                  <TabsTrigger value="neutral" className="flex items-center gap-1" title="Нейтральные">
+                  <TabsTrigger value="neutral" className="flex items-center gap-1 flex-1" title="Нейтральные">
                     <Layers className="h-4 w-4" />
                     <span className="hidden sm:inline">Нейтральные</span>
                   </TabsTrigger>
@@ -1100,19 +1100,19 @@ export default function ThemeManager() {
             }}>
               <Tabs defaultValue="basic" className="w-full">
                 <TabsList className="flex w-full">
-                  <TabsTrigger value="basic" className="flex items-center gap-1" title="Основное">
+                  <TabsTrigger value="basic" className="flex items-center gap-1 flex-1" title="Основное">
                     <Info className="h-4 w-4" />
                     <span className="hidden sm:inline">Основное</span>
                   </TabsTrigger>
-                  <TabsTrigger value="brand" className="flex items-center gap-1" title="Бренд">
+                  <TabsTrigger value="brand" className="flex items-center gap-1 flex-1" title="Бренд">
                     <Briefcase className="h-4 w-4" />
                     <span className="hidden sm:inline">Бренд</span>
                   </TabsTrigger>
-                  <TabsTrigger value="status" className="flex items-center gap-1" title="Статусы">
+                  <TabsTrigger value="status" className="flex items-center gap-1 flex-1" title="Статусы">
                     <AlertCircle className="h-4 w-4" />
                     <span className="hidden sm:inline">Статусы</span>
                   </TabsTrigger>
-                  <TabsTrigger value="neutral" className="flex items-center gap-1" title="Нейтральные">
+                  <TabsTrigger value="neutral" className="flex items-center gap-1 flex-1" title="Нейтральные">
                     <Layers className="h-4 w-4" />
                     <span className="hidden sm:inline">Нейтральные</span>
                   </TabsTrigger>

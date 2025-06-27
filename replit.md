@@ -131,6 +131,11 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 27, 2025: Made theme dialog tabs menu more compact with flex layout
+  - Changed tab navigation from 4-column grid to single horizontal row
+  - Added icons to each tab (Info, Briefcase, AlertCircle, Layers) with responsive text hiding on mobile
+  - Implemented equal-width distribution with flex-1 for professional appearance
+  - Applied changes to both create and edit theme dialogs for consistency
 - June 27, 2025: Completed admin panel settings reorganization and theme management integration
   - Moved banner button settings (text and link) from store display settings to theme management 
   - Added banner button fields to themes database schema with proper defaults
