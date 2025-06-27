@@ -708,7 +708,8 @@
     "completed": "הושלמו",
     "cancelled": "בוטלו",
     "all": "כל ההזמנות",
-    "cancelOrder": "בטל הזמנה"
+    "cancelOrder": "בטל הזמנה",
+    "viewDetails": "צפה"
   },
   "common": {
     "showing": "מציג",
