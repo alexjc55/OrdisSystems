@@ -51,7 +51,7 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
   return (
     <>
       {/* Pure Image Banner - No text overlay */}
-      <div className="relative h-48 sm:h-56 overflow-hidden">
+      <div className="relative h-32 sm:h-40 overflow-hidden">
         <img 
           src={storeSettings.bannerImage || "/api/uploads/Edahouse_sign__source_1750184330403.png"} 
           alt="Background" 
@@ -60,7 +60,7 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
       </div>
       
       {/* Text Content Section Below Banner */}
-      <div className="bg-white py-12 text-center">
+      <div className="bg-gray-50 py-12 text-center">
         <div className="container mx-auto px-6">
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
             {storeSettings.welcomeTitle || "О нашей еде"}
