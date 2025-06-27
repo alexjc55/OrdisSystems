@@ -900,56 +900,29 @@ export default function ThemeManager() {
                     <div>
                       <h4 className="text-sm font-medium mb-3">Настройки отображения</h4>
                       <div className="space-y-3">
-                        {/* Баннер */}
-                        <div className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="space-y-0.5">
-                            <div className="text-sm font-medium">Показывать баннер</div>
-                            <div className="text-xs text-gray-500">Главное изображение в шапке сайта</div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <input type="hidden" name="showBannerImage" defaultValue="true" />
-                        </div>
+                        <VisualToggleButton 
+                          isEnabled={visualSettings.showBannerImage}
+                          onToggle={() => setVisualSettings(prev => ({ ...prev, showBannerImage: !prev.showBannerImage }))}
+                          label="Показывать баннер"
+                          description="Главное изображение в шапке сайта"
+                          fieldName="showBannerImage"
+                        />
 
-                        {/* Заголовок и описание */}
-                        <div className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="space-y-0.5">
-                            <div className="text-sm font-medium">Заголовок и описание</div>
-                            <div className="text-xs text-gray-500">Текстовая информация о магазине</div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <input type="hidden" name="showTitleDescription" defaultValue="true" />
-                        </div>
+                        <VisualToggleButton 
+                          isEnabled={visualSettings.showTitleDescription}
+                          onToggle={() => setVisualSettings(prev => ({ ...prev, showTitleDescription: !prev.showTitleDescription }))}
+                          label="Заголовок и описание"
+                          description="Текстовая информация о магазине"
+                          fieldName="showTitleDescription"
+                        />
 
-                        {/* Информационные блоки */}
-                        <div className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="space-y-0.5">
-                            <div className="text-sm font-medium">Информационные блоки</div>
-                            <div className="text-xs text-gray-500">Часы работы, контакты, доставка</div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <input type="hidden" name="showInfoBlocks" defaultValue="true" />
-                        </div>
+                        <VisualToggleButton 
+                          isEnabled={visualSettings.showInfoBlocks}
+                          onToggle={() => setVisualSettings(prev => ({ ...prev, showInfoBlocks: !prev.showInfoBlocks }))}
+                          label="Информационные блоки"
+                          description="Часы работы, контакты, доставка"
+                          fieldName="showInfoBlocks"
+                        />
 
                         {/* Позиция информационных блоков */}
                         <div className="space-y-2">
@@ -957,7 +930,8 @@ export default function ThemeManager() {
                           <select
                             name="infoBlocksPosition"
                             id="infoBlocksPositionCreate"
-                            defaultValue="top"
+                            value={visualSettings.infoBlocksPosition}
+                            onChange={(e) => setVisualSettings(prev => ({ ...prev, infoBlocksPosition: e.target.value }))}
                             className="w-full px-3 py-2 border rounded-md bg-white"
                           >
                             <option value="top">Сверху от товаров</option>
@@ -970,56 +944,29 @@ export default function ThemeManager() {
                     <div>
                       <h4 className="text-sm font-medium mb-3">Настройки каталога</h4>
                       <div className="space-y-3">
-                        {/* Показ цен */}
-                        <div className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="space-y-0.5">
-                            <div className="text-sm font-medium">Показывать цены</div>
-                            <div className="text-xs text-gray-500">Отображение цен на товары</div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <input type="hidden" name="showPrices" defaultValue="true" />
-                        </div>
+                        <VisualToggleButton 
+                          isEnabled={visualSettings.showPrices}
+                          onToggle={() => setVisualSettings(prev => ({ ...prev, showPrices: !prev.showPrices }))}
+                          label="Показывать цены"
+                          description="Отображение цен на товары"
+                          fieldName="showPrices"
+                        />
 
-                        {/* Показ изображений товаров */}
-                        <div className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="space-y-0.5">
-                            <div className="text-sm font-medium">Изображения товаров</div>
-                            <div className="text-xs text-gray-500">Фотографии в карточках товаров</div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <input type="hidden" name="showProductImages" defaultValue="true" />
-                        </div>
+                        <VisualToggleButton 
+                          isEnabled={visualSettings.showProductImages}
+                          onToggle={() => setVisualSettings(prev => ({ ...prev, showProductImages: !prev.showProductImages }))}
+                          label="Изображения товаров"
+                          description="Фотографии в карточках товаров"
+                          fieldName="showProductImages"
+                        />
 
-                        {/* Показ корзины */}
-                        <div className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="space-y-0.5">
-                            <div className="text-sm font-medium">Корзина покупок</div>
-                            <div className="text-xs text-gray-500">Функционал добавления в корзину</div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <input type="hidden" name="showCart" defaultValue="true" />
-                        </div>
+                        <VisualToggleButton 
+                          isEnabled={visualSettings.showCart}
+                          onToggle={() => setVisualSettings(prev => ({ ...prev, showCart: !prev.showCart }))}
+                          label="Корзина покупок"
+                          description="Функционал добавления в корзину"
+                          fieldName="showCart"
+                        />
                       </div>
                     </div>
                   </div>
@@ -1477,56 +1424,29 @@ export default function ThemeManager() {
                     <div>
                       <h4 className="text-sm font-medium mb-3">Настройки каталога</h4>
                       <div className="space-y-3">
-                        {/* Показ цен */}
-                        <div className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="space-y-0.5">
-                            <div className="text-sm font-medium">Показывать цены</div>
-                            <div className="text-xs text-gray-500">Отображение цен на товары</div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <input type="hidden" name="showPrices" defaultValue="true" />
-                        </div>
+                        <VisualToggleButton 
+                          isEnabled={visualSettings.showPrices}
+                          onToggle={() => setVisualSettings(prev => ({ ...prev, showPrices: !prev.showPrices }))}
+                          label="Показывать цены"
+                          description="Отображение цен на товары"
+                          fieldName="showPrices"
+                        />
 
-                        {/* Показ изображений товаров */}
-                        <div className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="space-y-0.5">
-                            <div className="text-sm font-medium">Изображения товаров</div>
-                            <div className="text-xs text-gray-500">Фотографии в карточках товаров</div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <input type="hidden" name="showProductImages" defaultValue="true" />
-                        </div>
+                        <VisualToggleButton 
+                          isEnabled={visualSettings.showProductImages}
+                          onToggle={() => setVisualSettings(prev => ({ ...prev, showProductImages: !prev.showProductImages }))}
+                          label="Изображения товаров"
+                          description="Фотографии в карточках товаров"
+                          fieldName="showProductImages"
+                        />
 
-                        {/* Показ корзины */}
-                        <div className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="space-y-0.5">
-                            <div className="text-sm font-medium">Корзина покупок</div>
-                            <div className="text-xs text-gray-500">Функционал добавления в корзину</div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="p-2 h-8 w-8 text-green-600 hover:text-green-700"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <input type="hidden" name="showCart" defaultValue="true" />
-                        </div>
+                        <VisualToggleButton 
+                          isEnabled={visualSettings.showCart}
+                          onToggle={() => setVisualSettings(prev => ({ ...prev, showCart: !prev.showCart }))}
+                          label="Корзина покупок"
+                          description="Функционал добавления в корзину"
+                          fieldName="showCart"
+                        />
                       </div>
                     </div>
                   </div>
