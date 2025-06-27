@@ -114,6 +114,7 @@ interface ThemeData {
   infoColor: string;
   infoLightColor: string;
   tomorrowColor: string;
+  tomorrowDarkColor: string;
   tomorrowLightColor: string;
   outOfStockColor: string;
   whiteColor: string;
@@ -441,6 +442,7 @@ export default function ThemeManager() {
       infoColor: formData.get("infoColor") as string,
       infoLightColor: formData.get("infoLightColor") as string,
       tomorrowColor: formData.get("tomorrowColor") as string,
+      tomorrowDarkColor: formData.get("tomorrowDarkColor") as string,
       tomorrowLightColor: formData.get("tomorrowLightColor") as string,
       outOfStockColor: formData.get("outOfStockColor") as string,
       whiteColor: formData.get("whiteColor") as string,
@@ -530,6 +532,10 @@ export default function ThemeManager() {
       errorLightColor: "hsl(0, 84%, 96%)",
       infoColor: "hsl(221, 83%, 53%)",
       infoLightColor: "hsl(221, 83%, 96%)",
+      tomorrowColor: "hsl(262, 83%, 58%)",
+      tomorrowDarkColor: "hsl(262, 83%, 48%)",
+      tomorrowLightColor: "hsl(262, 83%, 96%)",
+      outOfStockColor: "hsl(0, 84%, 60%)",
       whiteColor: "hsl(0, 0%, 100%)",
       gray50Color: "hsl(210, 40%, 98%)",
       gray100Color: "hsl(210, 40%, 96%)",
@@ -691,6 +697,7 @@ export default function ThemeManager() {
                     <ColorInput label="Информация" name="infoColor" defaultValue="#3b82f6" />
                     <ColorInput label="Информация (светлый)" name="infoLightColor" defaultValue="#eff6ff" />
                     <ColorInput label="Кнопка 'Завтра'" name="tomorrowColor" defaultValue="#a855f7" />
+                    <ColorInput label="Кнопка 'Завтра' (при наведении)" name="tomorrowDarkColor" defaultValue="#9333ea" />
                     <ColorInput label="Кнопка 'Завтра' (светлый)" name="tomorrowLightColor" defaultValue="#faf5ff" />
                     <ColorInput label="Цвет 'Закончился'" name="outOfStockColor" defaultValue="#ef4444" />
                   </div>
