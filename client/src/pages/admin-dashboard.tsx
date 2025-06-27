@@ -3868,34 +3868,34 @@ export default function AdminDashboard() {
                   <>
                     {/* Table View */}
                     {ordersViewMode === "table" && (
-                      <div className={`border rounded-lg bg-white orders ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                        <div className={`w-full table-container ${isRTL ? 'rtl' : 'ltr'}`}>
-                          <Table className={`${isRTL ? 'rtl' : ''}`}>
+                      <div className={`border rounded-lg bg-white orders ${isRTL ? 'rtl' : 'ltr'} overflow-x-auto`} dir={isRTL ? 'rtl' : 'ltr'}>
+                        <div className={`w-full table-container ${isRTL ? 'rtl' : 'ltr'} min-w-[800px]`}>
+                          <Table className={`${isRTL ? 'rtl' : ''} w-full table-fixed`}>
                             <TableHeader>
                               <TableRow dir={isRTL ? 'rtl' : 'ltr'}>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm w-12 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '60px'} : {textAlign: 'center', width: '60px'}}
                                 >{adminT('common.number')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm font-semibold min-w-[120px] ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '140px'} : {textAlign: 'center', width: '140px'}}
                                 >{adminT('orders.customer', 'Клиент')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm hidden sm:table-cell w-32 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  className={`text-xs sm:text-sm hidden sm:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '100px'} : {textAlign: 'center', width: '100px'}}
                                 >{adminT('orders.statusHeader')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm w-28 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '90px'} : {textAlign: 'center', width: '90px'}}
                                 >{adminT('orders.orderTotal')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm hidden md:table-cell w-36 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  className={`text-xs sm:text-sm hidden md:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '120px'} : {textAlign: 'center', width: '120px'}}
                                 >{adminT('orders.orderDate')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '80px'} : {textAlign: 'center', width: '80px'}}
                                 >{adminT('common.actions')}</TableHead>
                               </TableRow>
                             </TableHeader>
