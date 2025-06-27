@@ -78,6 +78,8 @@ interface ThemeData {
   errorLightColor: string;
   infoColor: string;
   infoLightColor: string;
+  tomorrowColor: string;
+  tomorrowLightColor: string;
   whiteColor: string;
   gray50Color: string;
   gray100Color: string;
@@ -96,6 +98,7 @@ interface ThemeData {
   warningShadow: string;
   errorShadow: string;
   infoShadow: string;
+  tomorrowShadow: string;
   grayShadow: string;
 }
 

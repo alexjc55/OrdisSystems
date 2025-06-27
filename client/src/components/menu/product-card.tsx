@@ -309,7 +309,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             product.availabilityStatus === 'out_of_stock_today' ? (
               <Button
                 onClick={handleAddToCart}
-                className="w-full bg-blue-500 text-white hover:bg-blue-600 h-10 text-sm font-medium"
+                className="w-full btn-tomorrow h-10 text-sm font-medium"
               >
                 <ShoppingCart className="mr-1 rtl:mr-0 rtl:ml-1 h-3 w-3" />
                 {t('orderForTomorrow')}

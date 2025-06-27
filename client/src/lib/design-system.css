@@ -297,6 +297,42 @@
     stroke-width: 1.5 !important;
   }
 
+  /* Tomorrow Button Variant */
+  .btn-tomorrow {
+    background-color: var(--color-tomorrow) !important;
+    color: var(--color-white) !important;
+    border: none !important;
+  }
+
+  .btn-tomorrow * {
+    color: var(--color-white) !important;
+  }
+  
+  .btn-tomorrow svg {
+    color: var(--color-white) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
+  }
+
+  .btn-tomorrow:hover {
+    background-color: var(--color-tomorrow) !important;
+    background-image: none !important;
+    box-shadow: var(--shadow-tomorrow) !important;
+    color: var(--color-white) !important;
+  }
+
+  .btn-tomorrow:hover * {
+    color: var(--color-white) !important;
+  }
+  
+  .btn-tomorrow:hover svg {
+    color: var(--color-white) !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
+  }
+
   /* Outline Button Variant */
   .btn-outline {
     background-color: transparent !important;

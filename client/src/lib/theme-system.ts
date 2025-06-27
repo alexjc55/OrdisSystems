@@ -16,6 +16,8 @@ export interface ThemeColors {
   errorLight: string;
   info: string;
   infoLight: string;
+  tomorrow: string;
+  tomorrowLight: string;
 
   // Neutral colors
   white: string;
@@ -79,6 +81,7 @@ export interface ThemeShadows {
   warning: string;
   error: string;
   info: string;
+  tomorrow: string;
   gray: string;
 }
 
@@ -112,6 +115,8 @@ export const defaultTheme: Theme = {
     errorLight: 'hsl(0, 84%, 96%)',
     info: 'hsl(221, 83%, 53%)',
     infoLight: 'hsl(221, 83%, 96%)',
+    tomorrow: 'hsl(262, 83%, 58%)',
+    tomorrowLight: 'hsl(262, 83%, 96%)',
     white: 'hsl(0, 0%, 100%)',
     gray50: 'hsl(210, 40%, 98%)',
     gray100: 'hsl(210, 40%, 96%)',
@@ -169,6 +174,7 @@ export const defaultTheme: Theme = {
     warning: '0 4px 14px 0 rgba(245, 158, 11, 0.3)',
     error: '0 4px 14px 0 rgba(239, 68, 68, 0.3)',
     info: '0 4px 14px 0 rgba(59, 130, 246, 0.3)',
+    tomorrow: '0 4px 14px 0 rgba(147, 51, 234, 0.3)',
     gray: '0 4px 14px 0 rgba(107, 114, 128, 0.3)',
   },
 };
