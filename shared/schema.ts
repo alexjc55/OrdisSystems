@@ -256,6 +256,15 @@ export const themes = pgTable("themes", {
   modernBlock3Icon: varchar("modern_block3_icon", { length: 50 }).default(""),
   modernBlock3Text: varchar("modern_block3_text", { length: 200 }).default(""),
   
+  // Visual display settings
+  showBannerImage: boolean("show_banner_image").default(true),
+  showTitleDescription: boolean("show_title_description").default(true),
+  showInfoBlocks: boolean("show_info_blocks").default(true),
+  infoBlocksPosition: varchar("info_blocks_position", { length: 10 }).default("top"), // "top" or "bottom"
+  showPrices: boolean("show_prices").default(true),
+  showProductImages: boolean("show_product_images").default(true),
+  showCart: boolean("show_cart").default(true),
+  
   // Neutral colors
   whiteColor: varchar("white_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),
   gray50Color: varchar("gray50_color", { length: 20 }).notNull().default("hsl(210, 40%, 98%)"),
