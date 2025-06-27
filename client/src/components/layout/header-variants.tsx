@@ -77,7 +77,7 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
 function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
   // Function to get icon component by name  
   const getIcon = (iconName: string) => {
-    const iconProps = "h-4 w-4 sm:h-5 sm:w-5";
+    const iconProps = "h-5 w-5 sm:h-6 sm:w-6";
     switch (iconName) {
       case 'clock': return <Clock className={iconProps} />;
       case 'phone': return <Phone className={iconProps} />;
@@ -121,26 +121,26 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mt-4 max-w-3xl mx-auto px-2">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mt-4 max-w-4xl mx-auto px-2">
       {blocks.map((block, index) => (
         <div 
           key={index}
-          className="flex flex-col items-center justify-center text-center min-h-[4rem] sm:min-h-[5rem]"
+          className="flex flex-col items-center justify-center text-center min-h-[5rem] sm:min-h-[6rem]"
           style={{ 
             textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
             color: 'rgba(255, 255, 255, 0.95)'
           }}
         >
           <div 
-            className="flex-shrink-0 p-2 sm:p-2.5 rounded-full backdrop-blur-sm mb-2"
+            className="flex-shrink-0 p-3 sm:p-3.5 rounded-full mb-3"
             style={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.15)',
-              color: 'white'
+              backgroundColor: 'var(--color-primary)',
+              color: 'var(--color-primary-foreground)'
             }}
           >
             {block.icon}
           </div>
-          <span className="text-xs sm:text-sm font-medium leading-tight px-1 break-words">
+          <span className="text-sm sm:text-base font-medium leading-tight px-2 break-words">
             {block.text}
           </span>
         </div>
