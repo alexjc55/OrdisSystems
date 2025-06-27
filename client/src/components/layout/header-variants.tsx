@@ -49,30 +49,28 @@ export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
 
 function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
-    <div className="relative h-64 sm:h-80 overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
+    <>
+      {/* Pure Image Banner - No text overlay */}
+      <div className="relative h-48 sm:h-56 overflow-hidden">
         <img 
           src={storeSettings.backgroundImage || "/api/uploads/Edahouse_sign__source_1750184330403.png"} 
           alt="Background" 
           className="w-full h-full object-cover"
         />
-        {/* Dark gradient overlay at bottom */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
       </div>
       
-      {/* Content overlay */}
-      <div className="absolute inset-0 flex items-end">
-        <div className="w-full text-center text-white p-6 pb-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+      {/* Text Content Section Below Banner */}
+      <div className="bg-white py-12 text-center">
+        <div className="container mx-auto px-6">
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
             {storeSettings.welcomeTitle || "О нашей еде"}
           </h1>
-          <p className="text-lg sm:text-xl text-white/90 max-w-4xl mx-auto leading-relaxed" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+          <p className="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-6">
             {storeSettings.storeDescription || "Заказывай свежие блюда на развес — от повседневных обедов до праздничных угощений. Быстро, удобно и по-домашнему вкусно. Попробуй"}
           </p>
           
           {/* Orange underline accent */}
-          <div className="mt-4 flex justify-center">
+          <div className="flex justify-center">
             <div 
               className="h-1 w-16 rounded-full"
               style={{ backgroundColor: 'var(--color-primary, #ff6600)' }}
@@ -80,7 +78,7 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
