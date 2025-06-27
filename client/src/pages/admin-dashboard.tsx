@@ -3905,18 +3905,16 @@ export default function AdminDashboard() {
                                   >
                                     <div className="flex flex-col items-center gap-1">
                                       <span>#{order.id}</span>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
+                                      <button
                                         onClick={() => {
                                           setEditingOrder(order);
                                           setIsOrderFormOpen(true);
                                         }}
-                                        className="h-8 w-8 p-1 hover:bg-orange-200 border-2 border-orange-300 bg-orange-100 shadow-sm"
+                                        className="inline-flex items-center justify-center h-8 w-8 rounded-md bg-orange-500 hover:bg-orange-600 text-white border-2 border-orange-600 shadow-md transition-colors"
                                         title={adminT('orders.viewDetails')}
                                       >
-                                        <Eye className="h-5 w-5 text-orange-800 font-bold" />
-                                      </Button>
+                                        <Eye className="h-5 w-5" />
+                                      </button>
                                     </div>
                                   </TableCell>
                                   <TableCell 
