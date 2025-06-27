@@ -163,8 +163,8 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
           }}
         />
         
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/75 to-black/60" />
+        {/* Dark Gradient Overlay - lighter at top, darker at bottom */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/80 to-black/90" />
         
         {/* Content with internal padding */}
         <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
