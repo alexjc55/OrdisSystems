@@ -816,6 +816,8 @@ export default function ThemeManager() {
                         </div>
                       </div>
                     </div>
+                    
+                    <ModernStyleSettings id="modernControlsCreate" />
                   </div>
                 </TabsContent>
 
@@ -1111,8 +1113,12 @@ export default function ThemeManager() {
                         className="w-full px-3 py-2 border rounded-md bg-white"
                         onChange={(e) => {
                           const headerControls = document.getElementById('headerControlsEdit');
+                          const modernControls = document.getElementById('modernControlsEdit');
                           if (headerControls) {
                             headerControls.style.display = e.target.value === 'minimal' ? 'block' : 'none';
+                          }
+                          if (modernControls) {
+                            modernControls.style.display = e.target.value === 'modern' ? 'block' : 'none';
                           }
                         }}
                       >
@@ -1161,6 +1167,18 @@ export default function ThemeManager() {
                         </div>
                       </div>
                     </div>
+                    
+                    <ModernStyleSettings 
+                      id="modernControlsEdit" 
+                      defaultValues={{
+                        modernBlock1Icon: editingTheme.modernBlock1Icon,
+                        modernBlock1Text: editingTheme.modernBlock1Text,
+                        modernBlock2Icon: editingTheme.modernBlock2Icon,
+                        modernBlock2Text: editingTheme.modernBlock2Text,
+                        modernBlock3Icon: editingTheme.modernBlock3Icon,
+                        modernBlock3Text: editingTheme.modernBlock3Text,
+                      }}
+                    />
                   </div>
                 </TabsContent>
 

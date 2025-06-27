@@ -1169,6 +1169,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await db.execute(sql.raw(`UPDATE store_settings SET banner_button_text = '${theme.bannerButtonText}', banner_button_link = '${theme.bannerButtonLink}' WHERE id = 1`));
       }
       
+      // Sync modern style info blocks settings
+      if (theme.headerStyle === 'modern') {
+        const modernFields = [
+          `modern_block1_icon = '${theme.modernBlock1Icon || ''}'`,
+          `modern_block1_text = '${theme.modernBlock1Text || ''}'`,
+          `modern_block2_icon = '${theme.modernBlock2Icon || ''}'`,
+          `modern_block2_text = '${theme.modernBlock2Text || ''}'`,
+          `modern_block3_icon = '${theme.modernBlock3Icon || ''}'`,
+          `modern_block3_text = '${theme.modernBlock3Text || ''}'`
+        ];
+        await db.execute(sql.raw(`UPDATE store_settings SET ${modernFields.join(', ')} WHERE id = 1`));
+      }
+      
       res.json(theme);
     } catch (error) {
       console.error("Error activating theme:", error);

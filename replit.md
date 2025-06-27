@@ -131,6 +131,15 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 27, 2025: Completed admin panel settings reorganization and theme management integration
+  - Moved banner button settings (text and link) from store display settings to theme management 
+  - Added banner button fields to themes database schema with proper defaults
+  - Integrated ModernStyleSettings component for modern header style info block configuration
+  - Added 6 new database fields for modern style info blocks (icon and text for each of 3 blocks)
+  - Removed duplicate settings from store settings form to eliminate redundancy
+  - Enhanced theme activation to sync banner buttons and modern blocks with store settings
+  - Created reusable ModernStyleSettings component with proper icon selection and responsive layout
+  - Settings now properly organized: basic store info in settings, styling controls in theme management
 - June 27, 2025: Completed adaptive info blocks system for modern header style
   - Added database fields for 3 customizable info blocks (modernBlock1Text/Icon, etc.)
   - Integrated icon selection and text configuration in admin panel theme settings
