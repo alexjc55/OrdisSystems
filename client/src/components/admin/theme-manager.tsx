@@ -1047,20 +1047,22 @@ export default function ThemeManager() {
                       />
                     </div>
                     
-                    {/* Позиция информационных блоков */}
-                    <div className="mt-4 space-y-2">
-                      <Label htmlFor="infoBlocksPositionCreate" className="text-sm font-medium">Позиция информационных блоков</Label>
-                      <select
-                        name="infoBlocksPosition"
-                        id="infoBlocksPositionCreate"
-                        value={visualSettings.infoBlocksPosition}
-                        onChange={(e) => setVisualSettings(prev => ({ ...prev, infoBlocksPosition: e.target.value }))}
-                        className="w-full px-3 py-2 border rounded-md bg-white text-sm"
-                      >
-                        <option value="top">Сверху от товаров</option>
-                        <option value="bottom">Снизу от товаров</option>
-                      </select>
-                    </div>
+                    {/* Позиция информационных блоков - показывается только если включены инфо блоки */}
+                    {visualSettings.showInfoBlocks && (
+                      <div className="mt-4 space-y-2">
+                        <Label htmlFor="infoBlocksPositionCreate" className="text-sm font-medium">Позиция информационных блоков</Label>
+                        <select
+                          name="infoBlocksPosition"
+                          id="infoBlocksPositionCreate"
+                          value={visualSettings.infoBlocksPosition}
+                          onChange={(e) => setVisualSettings(prev => ({ ...prev, infoBlocksPosition: e.target.value }))}
+                          className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                        >
+                          <option value="top">Сверху от товаров</option>
+                          <option value="bottom">Снизу от товаров</option>
+                        </select>
+                      </div>
+                    )}
                   </div>
 
                   {/* Дополнительные функции */}
@@ -1533,20 +1535,22 @@ export default function ThemeManager() {
                       />
                     </div>
                     
-                    {/* Позиция информационных блоков */}
-                    <div className="mt-4 space-y-2">
-                      <Label htmlFor="infoBlocksPositionEdit" className="text-sm font-medium">Позиция информационных блоков</Label>
-                      <select
-                        name="infoBlocksPosition"
-                        id="infoBlocksPositionEdit"
-                        value={editVisualSettings.infoBlocksPosition}
-                        onChange={(e) => setEditVisualSettings(prev => ({ ...prev, infoBlocksPosition: e.target.value }))}
-                        className="w-full px-3 py-2 border rounded-md bg-white text-sm"
-                      >
-                        <option value="top">Сверху от товаров</option>
-                        <option value="bottom">Снизу от товаров</option>
-                      </select>
-                    </div>
+                    {/* Позиция информационных блоков - показывается только если включены инфо блоки */}
+                    {editVisualSettings.showInfoBlocks && (
+                      <div className="mt-4 space-y-2">
+                        <Label htmlFor="infoBlocksPositionEdit" className="text-sm font-medium">Позиция информационных блоков</Label>
+                        <select
+                          name="infoBlocksPosition"
+                          id="infoBlocksPositionEdit"
+                          value={editVisualSettings.infoBlocksPosition}
+                          onChange={(e) => setEditVisualSettings(prev => ({ ...prev, infoBlocksPosition: e.target.value }))}
+                          className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                        >
+                          <option value="top">Сверху от товаров</option>
+                          <option value="bottom">Снизу от товаров</option>
+                        </select>
+                      </div>
+                    )}
                   </div>
 
                   {/* Дополнительные функции */}
