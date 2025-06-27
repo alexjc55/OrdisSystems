@@ -183,6 +183,10 @@ export default function ThemeManager() {
       
       // Apply theme immediately if it's the active theme
       if (updatedTheme.isActive) {
+        // Get the full theme data from cache or fetch it
+        const cachedThemes = queryClient.getQueryData<ThemeData[]>(["/api/admin/themes"]);
+        const fullTheme = cachedThemes?.find(t => t.id === updatedTheme.id);
+        const themeToApply = fullTheme || updatedTheme;
         // Apply colors directly to CSS custom properties
         const root = document.documentElement;
         
@@ -191,11 +195,11 @@ export default function ThemeManager() {
           return color.startsWith('#') ? hexToHsl(color) : color;
         };
         
-        root.style.setProperty('--color-primary', convertColorToHsl(updatedTheme.primaryColor));
-        root.style.setProperty('--color-primary-dark', convertColorToHsl(updatedTheme.primaryDarkColor));
-        root.style.setProperty('--color-primary-light', convertColorToHsl(updatedTheme.primaryLightColor));
-        root.style.setProperty('--color-secondary', convertColorToHsl(updatedTheme.secondaryColor));
-        root.style.setProperty('--color-accent', convertColorToHsl(updatedTheme.accentColor));
+        root.style.setProperty('--color-primary', convertColorToHsl(themeToApply.primaryColor));
+        root.style.setProperty('--color-primary-dark', convertColorToHsl(themeToApply.primaryDarkColor));
+        root.style.setProperty('--color-primary-light', convertColorToHsl(themeToApply.primaryLightColor));
+        root.style.setProperty('--color-secondary', convertColorToHsl(themeToApply.secondaryColor));
+        root.style.setProperty('--color-accent', convertColorToHsl(themeToApply.accentColor));
         
         // Auto-determine contrasting text color for primary background
         const isLightPrimary = (() => {
@@ -219,23 +223,32 @@ export default function ThemeManager() {
         })();
         
         // Use the custom primary text color from theme settings
-        root.style.setProperty('--color-primary-foreground', convertColorToHsl(updatedTheme.primaryTextColor));
+        root.style.setProperty('--color-primary-foreground', convertColorToHsl(themeToApply.primaryTextColor));
         
         // Update status colors
-        root.style.setProperty('--color-success', convertColorToHsl(updatedTheme.successColor));
-        root.style.setProperty('--color-success-light', convertColorToHsl(updatedTheme.successLightColor));
-        root.style.setProperty('--color-warning', convertColorToHsl(updatedTheme.warningColor));
-        root.style.setProperty('--color-warning-light', convertColorToHsl(updatedTheme.warningLightColor));
-        root.style.setProperty('--color-error', convertColorToHsl(updatedTheme.errorColor));
-        root.style.setProperty('--color-error-light', convertColorToHsl(updatedTheme.errorLightColor));
-        root.style.setProperty('--color-info', convertColorToHsl(updatedTheme.infoColor));
-        root.style.setProperty('--color-info-light', convertColorToHsl(updatedTheme.infoLightColor));
+        root.style.setProperty('--color-success', convertColorToHsl(themeToApply.successColor));
+        root.style.setProperty('--color-success-light', convertColorToHsl(themeToApply.successLightColor));
+        root.style.setProperty('--color-warning', convertColorToHsl(themeToApply.warningColor));
+        root.style.setProperty('--color-warning-light', convertColorToHsl(themeToApply.warningLightColor));
+        root.style.setProperty('--color-error', convertColorToHsl(themeToApply.errorColor));
+        root.style.setProperty('--color-error-light', convertColorToHsl(themeToApply.errorLightColor));
+        root.style.setProperty('--color-info', convertColorToHsl(themeToApply.infoColor));
+        root.style.setProperty('--color-info-light', convertColorToHsl(themeToApply.infoLightColor));
         
         // Update special colors
-        root.style.setProperty('--color-tomorrow', convertColorToHsl(updatedTheme.tomorrowColor));
-        root.style.setProperty('--color-tomorrow-dark', convertColorToHsl(updatedTheme.tomorrowDarkColor));
-        root.style.setProperty('--color-tomorrow-light', convertColorToHsl(updatedTheme.tomorrowLightColor));
-        root.style.setProperty('--color-out-of-stock', convertColorToHsl(updatedTheme.outOfStockColor));
+        if (themeToApply.tomorrowColor) {
+          root.style.setProperty('--color-tomorrow', convertColorToHsl(themeToApply.tomorrowColor));
+        }
+        if (themeToApply.tomorrowDarkColor) {
+          root.style.setProperty('--color-tomorrow-dark', convertColorToHsl(themeToApply.tomorrowDarkColor));
+          console.log('Applied --color-tomorrow-dark:', convertColorToHsl(themeToApply.tomorrowDarkColor));
+        }
+        if (themeToApply.tomorrowLightColor) {
+          root.style.setProperty('--color-tomorrow-light', convertColorToHsl(themeToApply.tomorrowLightColor));
+        }
+        if (themeToApply.outOfStockColor) {
+          root.style.setProperty('--color-out-of-stock', convertColorToHsl(themeToApply.outOfStockColor));
+        }
         
         // Update shadows for special colors
         const tomorrowRgb = (() => {
