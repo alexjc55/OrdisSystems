@@ -131,7 +131,7 @@ button:focus,
   }
 }
 
-/* RTL Support with Hebrew Font Optimization */
+/* RTL Support for Hebrew and Arabic with unified behavior */
 @layer base {
   html[dir="rtl"] {
     --text-align-start: right;
@@ -140,11 +140,20 @@ button:focus,
     --margin-end: 1rem;
     --padding-start: 0;
     --padding-end: 1rem;
-    font-family: 'Assistant', 'Noto Sans Hebrew', system-ui, -apple-system, sans-serif;
-    font-feature-settings: "kern" 1, "liga" 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Language-specific font families */
+  html[dir="rtl"][lang="he"] {
+    font-family: 'Assistant', 'Noto Sans Hebrew', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+  
+  html[dir="rtl"][lang="ar"] {
+    font-family: 'Noto Sans Arabic', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "kern" 1, "liga" 1;
   }
   
   /* RTL/LTR container direction control for admin dashboard */
@@ -239,20 +248,145 @@ button:focus,
     direction: ltr !important;
   }
 
-  /* Arabic font support */
+  /* Arabic font support with identical RTL behavior to Hebrew */
   [lang="ar"], [lang="ar"] * {
     font-family: 'Noto Sans Arabic', system-ui, -apple-system, sans-serif !important;
+    font-feature-settings: "kern" 1, "liga" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* Hebrew font support */
   [lang="he"], [lang="he"] * {
     font-family: 'Assistant', 'Noto Sans Hebrew', system-ui, -apple-system, sans-serif !important;
+    font-feature-settings: "kern" 1, "liga" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Ensure proper RTL text rendering for Arabic */
-  [dir="rtl"][lang="ar"] {
-    font-feature-settings: 'liga' 1, 'calt' 1, 'kern' 1;
-    text-rendering: optimizeLegibility;
+  /* Unified RTL behavior for both Arabic and Hebrew languages */
+  [dir="rtl"][lang="ar"],
+  [dir="rtl"][lang="he"] {
+    --text-align-start: right;
+    --text-align-end: left;
+    --margin-start: 0;
+    --margin-end: 1rem;
+    --padding-start: 0;
+    --padding-end: 1rem;
+  }
+  
+  /* Unified RTL admin panel styles */
+  [dir="rtl"][lang="ar"] .admin-panel,
+  [dir="rtl"][lang="he"] .admin-panel {
+    direction: rtl !important;
+  }
+  
+  /* Unified RTL button alignment */
+  [dir="rtl"][lang="ar"] .admin-actions,
+  [dir="rtl"][lang="he"] .admin-actions {
+    justify-content: flex-start !important;
+  }
+  
+  /* Unified RTL form field alignment */
+  [dir="rtl"][lang="ar"] .form-field,
+  [dir="rtl"][lang="he"] .form-field {
+    text-align: right !important;
+  }
+  
+  /* Unified RTL table styling */
+  [dir="rtl"][lang="ar"] .admin-table th,
+  [dir="rtl"][lang="ar"] .admin-table td,
+  [dir="rtl"][lang="he"] .admin-table th,
+  [dir="rtl"][lang="he"] .admin-table td {
+    text-align: right !important;
+  }
+  
+  /* Unified RTL sidebar styling */
+  [dir="rtl"][lang="ar"] .admin-sidebar,
+  [dir="rtl"][lang="he"] .admin-sidebar {
+    border-left: none !important;
+    border-right: 1px solid #e5e7eb !important;
+  }
+  
+  /* Unified RTL navigation menu */
+  [dir="rtl"][lang="ar"] .nav-menu,
+  [dir="rtl"][lang="he"] .nav-menu {
+    text-align: right !important;
+  }
+  
+  /* Unified RTL icon positioning */
+  [dir="rtl"][lang="ar"] .icon-left,
+  [dir="rtl"][lang="he"] .icon-left {
+    margin-left: 0.5rem !important;
+    margin-right: 0 !important;
+  }
+  
+  [dir="rtl"][lang="ar"] .icon-right,
+  [dir="rtl"][lang="he"] .icon-right {
+    margin-right: 0.5rem !important;
+    margin-left: 0 !important;
+  }
+  
+  /* Unified RTL flex layouts */
+  [dir="rtl"][lang="ar"] .flex-row-reverse,
+  [dir="rtl"][lang="he"] .flex-row-reverse {
+    flex-direction: row !important;
+  }
+  
+  /* Unified RTL tab navigation */
+  [dir="rtl"][lang="ar"] .tabs-list,
+  [dir="rtl"][lang="he"] .tabs-list {
+    justify-content: flex-start !important;
+  }
+  
+  /* Unified RTL dialog content */
+  [dir="rtl"][lang="ar"] .dialog-content,
+  [dir="rtl"][lang="he"] .dialog-content {
+    text-align: right !important;
+  }
+  
+  /* Unified RTL dropdown menu */
+  [dir="rtl"][lang="ar"] .dropdown-menu,
+  [dir="rtl"][lang="he"] .dropdown-menu {
+    text-align: right !important;
+  }
+  
+  /* Unified RTL card layout */
+  [dir="rtl"][lang="ar"] .card-header,
+  [dir="rtl"][lang="he"] .card-header {
+    text-align: right !important;
+  }
+  
+  /* Unified RTL status badges */
+  [dir="rtl"][lang="ar"] .status-badge,
+  [dir="rtl"][lang="he"] .status-badge {
+    text-align: center !important;
+  }
+  
+  /* Unified RTL pagination */
+  [dir="rtl"][lang="ar"] .pagination,
+  [dir="rtl"][lang="he"] .pagination {
+    direction: rtl !important;
+  }
+  
+  /* Unified RTL input fields */
+  [dir="rtl"][lang="ar"] input,
+  [dir="rtl"][lang="ar"] textarea,
+  [dir="rtl"][lang="ar"] select,
+  [dir="rtl"][lang="he"] input,
+  [dir="rtl"][lang="he"] textarea,
+  [dir="rtl"][lang="he"] select {
+    text-align: right !important;
+  }
+  
+  /* Unified RTL search fields */
+  [dir="rtl"][lang="ar"] .search-input,
+  [dir="rtl"][lang="he"] .search-input {
+    text-align: right !important;
+    padding-right: 2.5rem !important;
+    padding-left: 0.75rem !important;
   }
 
   /* Arabic numerals should remain as western numerals as requested */
