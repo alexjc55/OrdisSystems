@@ -174,6 +174,13 @@
     "confirmPassword": "Confirm password",
     "repeatPassword": "Repeat password",
     "setPassword": "Set password",
+    "registrationAndOrderCompleted": "Registration completed and order placed!",
+    "canNowPlaceOrder": "You can now place an order",
+    "orderPlaced": "Order placed!",
+    "orderError": "Error placing order",
+    "yourOrder": "Your order",
+    "orderAccepted": "Order #{{orderId}} accepted. You can now track status in your profile",
+    "orderAcceptedForProcessing": "Order #{{orderId}} accepted for processing",
     "loginOrContinueAsGuest": "Login or continue as guest",
     "loginBenefit": "Login to save your data and order history",
     "continueAsGuest": "Continue as guest",
@@ -198,6 +205,10 @@
     "tryAgain": "Try again",
     "networkError": "Network error",
     "serverError": "Server error"
+  },
+  "pageNotFound": {
+    "title": "404 Page Not Found",
+    "description": "The requested page does not exist or has been moved"
   },
   "footer": {
     "poweredBy": "Powered by Ordis.",
