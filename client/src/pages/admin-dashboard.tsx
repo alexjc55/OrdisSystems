@@ -2154,35 +2154,35 @@ export default function AdminDashboard() {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [activeTab, setActiveTab] = useState("products");
 
-  // Set default tab based on worker permissions (only on initial load)
-  const [hasSetInitialTab, setHasSetInitialTab] = useState(false);
-  const initialStoreSettingsRef = useRef<any>(null);
+  // TEMPORARILY DISABLED - Set default tab based on worker permissions 
+  // const [hasSetInitialTab, setHasSetInitialTab] = useState(false);
+  // const initialStoreSettingsRef = useRef<any>(null);
   
-  useEffect(() => {
-    // Only set initial tab once when first getting user and settings data
-    if (user?.role === "worker" && storeSettings && !hasSetInitialTab && !initialStoreSettingsRef.current) {
-      initialStoreSettingsRef.current = storeSettings;
-      const workerPermissions = (storeSettings?.workerPermissions as any) || {};
-      let defaultTab = "products";
+  // useEffect(() => {
+  //   // Only set initial tab once when first getting user and settings data
+  //   if (user?.role === "worker" && storeSettings && !hasSetInitialTab && !initialStoreSettingsRef.current) {
+  //     initialStoreSettingsRef.current = storeSettings;
+  //     const workerPermissions = (storeSettings?.workerPermissions as any) || {};
+  //     let defaultTab = "products";
       
-      if (workerPermissions.canManageProducts) {
-        defaultTab = "products";
-      } else if (workerPermissions.canManageCategories) {
-        defaultTab = "categories";
-      } else if (workerPermissions.canManageOrders) {
-        defaultTab = "orders";
-      } else if (workerPermissions.canViewUsers) {
-        defaultTab = "users";
-      } else if (workerPermissions.canViewSettings) {
-        defaultTab = "store";
-      } else if (workerPermissions.canManageSettings) {
-        defaultTab = "settings";
-      }
+  //     if (workerPermissions.canManageProducts) {
+  //       defaultTab = "products";
+  //     } else if (workerPermissions.canManageCategories) {
+  //       defaultTab = "categories";
+  //     } else if (workerPermissions.canManageOrders) {
+  //       defaultTab = "orders";
+  //     } else if (workerPermissions.canViewUsers) {
+  //       defaultTab = "users";
+  //     } else if (workerPermissions.canViewSettings) {
+  //       defaultTab = "store";
+  //     } else if (workerPermissions.canManageSettings) {
+  //       defaultTab = "settings";
+  //     }
       
-      setActiveTab(defaultTab);
-      setHasSetInitialTab(true);
-    }
-  }, [user, storeSettings, hasSetInitialTab]);
+  //     setActiveTab(defaultTab);
+  //     setHasSetInitialTab(true);
+  //   }
+  // }, [user, storeSettings, hasSetInitialTab]);
 
   // Orders management state
   const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
