@@ -2996,7 +2996,7 @@ export default function AdminDashboard() {
       
       const matchesStatus = selectedStatusFilter === "all" ||
         (selectedStatusFilter === "available" && product.isAvailable) ||
-        (selectedStatusFilter === "unavailable" && !product.isAvailable) ||
+        (selectedStatusFilter === "unavailable" && (!product.isAvailable || product.availabilityStatus === "out_of_stock_today")) ||
         (selectedStatusFilter === "with_discount" && (product.isSpecialOffer || (product.discountValue && parseFloat(product.discountValue) > 0)));
       
       return matchesSearch && matchesCategory && matchesStatus;
