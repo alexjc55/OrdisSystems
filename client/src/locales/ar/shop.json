@@ -61,5 +61,127 @@
   "helpful": "مفيد",
   "notHelpful": "غير مفيد",
   "verified": "مؤكد",
-  "unverified": "غير مؤكد"
+  "unverified": "غير مؤكد",
+  "units": {
+    "piece": "قطعة",
+    "kg": "كيلو",
+    "gram": "جرام",
+    "liter": "لتر",
+    "bottle": "زجاجة",
+    "pack": "عبوة",
+    "box": "صندوق",
+    "per100g": "لكل 100 جرام"
+  },
+  "availability": {
+    "available": "متوفر",
+    "outOfStock": "نفد المخزون",
+    "outOfStockToday": "نفد المخزون اليوم",
+    "limitedStock": "مخزون محدود",
+    "orderForTomorrow": "طلب للغد",
+    "availableToday": "متوفر اليوم",
+    "availableTomorrow": "متوفر غداً"
+  },
+  "cart": {
+    "addToCart": "إضافة إلى السلة",
+    "removeFromCart": "إزالة من السلة",
+    "updateQuantity": "تحديث الكمية",
+    "cartEmpty": "السلة فارغة",
+    "cartTotal": "إجمالي السلة",
+    "checkout": "الدفع",
+    "continueShopping": "متابعة التسوق",
+    "cartItems": "عناصر السلة",
+    "quantity": "الكمية",
+    "price": "السعر",
+    "total": "الإجمالي",
+    "subtotal": "المجموع الفرعي",
+    "tax": "الضريبة",
+    "shipping": "الشحن",
+    "discount": "الخصم",
+    "finalTotal": "الإجمالي النهائي"
+  },
+  "checkout": {
+    "orderSummary": "ملخص الطلب",
+    "deliveryInfo": "معلومات التوصيل",
+    "paymentMethod": "طريقة الدفع",
+    "deliveryAddress": "عنوان التوصيل",
+    "deliveryDate": "تاريخ التوصيل",
+    "deliveryTime": "وقت التوصيل",
+    "customerInfo": "معلومات العميل",
+    "phoneNumber": "رقم الهاتف",
+    "email": "البريد الإلكتروني",
+    "orderNotes": "ملاحظات الطلب",
+    "placeOrder": "تأكيد الطلب",
+    "orderPlaced": "تم تقديم الطلب",
+    "orderConfirmed": "تم تأكيد الطلب",
+    "orderProcessing": "جاري معالجة الطلب"
+  },
+  "filters": {
+    "filterBy": "تصفية حسب",
+    "category": "الفئة",
+    "price": "السعر",
+    "availability": "التوفر",
+    "rating": "التقييم",
+    "brand": "العلامة التجارية",
+    "sortBy": "ترتيب حسب",
+    "sortAsc": "تصاعدي",
+    "sortDesc": "تنازلي",
+    "priceRange": "نطاق السعر",
+    "from": "من",
+    "to": "إلى",
+    "apply": "تطبيق",
+    "clear": "مسح",
+    "reset": "إعادة تعيين"
+  },
+  "search": {
+    "searchProducts": "البحث في المنتجات",
+    "searchResults": "نتائج البحث",
+    "noResults": "لا توجد نتائج",
+    "resultsFor": "نتائج البحث عن",
+    "suggestions": "اقتراحات",
+    "popularSearches": "عمليات البحث الشائعة"
+  },
+  "product": {
+    "details": "تفاصيل المنتج",
+    "description": "الوصف",
+    "ingredients": "المكونات",
+    "nutrition": "القيم الغذائية",
+    "storage": "التخزين",
+    "expiry": "تاريخ الانتهاء",
+    "weight": "الوزن",
+    "dimensions": "الأبعاد",
+    "manufacturer": "الشركة المصنعة",
+    "origin": "بلد المنشأ",
+    "barcode": "الرمز الشريطي",
+    "sku": "رمز المنتج"
+  },
+  "categories": {
+    "allCategories": "جميع الفئات",
+    "viewAll": "عرض الكل",
+    "featured": "مميز",
+    "newArrivals": "وصل حديثاً",
+    "bestsellers": "الأكثر مبيعاً",
+    "onSale": "في التخفيضات"
+  },
+  "errors": {
+    "productNotFound": "المنتج غير موجود",
+    "categoryNotFound": "الفئة غير موجودة",
+    "outOfStock": "المنتج غير متوفر",
+    "quantityExceeded": "تم تجاوز الكمية المتاحة",
+    "addToCartFailed": "فشل في إضافة المنتج إلى السلة",
+    "updateCartFailed": "فشل في تحديث السلة",
+    "checkoutFailed": "فشل في عملية الدفع",
+    "orderFailed": "فشل في إنشاء الطلب"
+  },
+  "success": {
+    "addedToCart": "تمت إضافة المنتج إلى السلة",
+    "cartUpdated": "تم تحديث السلة",
+    "orderPlaced": "تم تقديم الطلب بنجاح",
+    "orderConfirmed": "تم تأكيد الطلب"
+  },
+  "loading": {
+    "loadingProducts": "جاري تحميل المنتجات...",
+    "loadingCategories": "جاري تحميل الفئات...",
+    "processing": "جاري المعالجة...",
+    "placingOrder": "جاري تقديم الطلب..."
+  }
 }
