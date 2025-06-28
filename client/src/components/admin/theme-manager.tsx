@@ -16,6 +16,7 @@ import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw, Info
 import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
 import { ModernStyleSettings } from "./modern-style-settings";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { useTranslation } from 'react-i18next';
 
 
 // Visual Toggle Button Component
@@ -261,6 +262,7 @@ export default function ThemeManager() {
   const [createBottomBanner2Url, setCreateBottomBanner2Url] = useState('');
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t: adminT } = useTranslation('admin');
 
   // Initialize edit visual settings when editing theme changes
   useEffect(() => {
@@ -304,15 +306,15 @@ export default function ThemeManager() {
       
       setIsCreateDialogOpen(false);
       toast({
-        title: "Успешно",
-        description: "Тема создана и активирована успешно",
+        title: adminT("themes.success"),
+        description: adminT("themes.createSuccess"),
       });
     },
     onError: (error: any) => {
       console.error("Theme creation error:", error);
       toast({
-        title: "Ошибка",
-        description: error?.message || "Не удалось создать тему",
+        title: adminT("themes.error"),
+        description: error?.message || adminT("themes.createError"),
         variant: "destructive",
       });
     },
