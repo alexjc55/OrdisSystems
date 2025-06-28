@@ -797,6 +797,23 @@
       "deleteFailed": "המחיקה נכשלה",
       "createFailed": "היצירה נכשלה",
       "loadFailed": "הטעינה נכשלה"
-    }
+    },
+    "orderStatusChanged": "סטטוס ההזמנה שונה ל: {{status}}",
+    "orderCancelled": "ההזמנה בוטלה",
+    "orderCreated": "ההזמנה נוצרה",
+    "orderUpdated": "ההזמנה עודכנה",
+    "orderDeleted": "ההזמנה נמחקה",
+    "userCreated": "המשתמש נוצר",
+    "userUpdated": "המשתמש עודכן",
+    "userDeleted": "המשתמש נמחק",
+    "productCreated": "המוצר נוצר",
+    "productUpdated": "המוצר עודכן",
+    "productDeleted": "המוצר נמחק",
+    "categoryCreated": "הקטגוריה נוצרה",
+    "categoryUpdated": "הקטגוריה עודכנה",
+    "categoryDeleted": "הקטגוריה נמחקה",
+    "themeCreated": "הנושא נוצר",
+    "themeUpdated": "הנושא עודכן",
+    "themeDeleted": "הנושא נמחק"
   }
 }

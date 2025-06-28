@@ -797,6 +797,23 @@
       "saved": "Успешно сохранено",
       "settingsUpdated": "Настройки обновлены",
       "updated": "Успешно обновлено"
-    }
+    },
+    "orderStatusChanged": "Статус заказа изменён на: {{status}}",
+    "orderCancelled": "Заказ отменён",
+    "orderCreated": "Заказ создан",
+    "orderUpdated": "Заказ обновлён",
+    "orderDeleted": "Заказ удалён",
+    "userCreated": "Пользователь создан",
+    "userUpdated": "Пользователь обновлён",
+    "userDeleted": "Пользователь удалён",
+    "productCreated": "Товар создан",
+    "productUpdated": "Товар обновлён",
+    "productDeleted": "Товар удалён",
+    "categoryCreated": "Категория создана",
+    "categoryUpdated": "Категория обновлена",
+    "categoryDeleted": "Категория удалена",
+    "themeCreated": "Тема создана",
+    "themeUpdated": "Тема обновлена",
+    "themeDeleted": "Тема удалена"
   }
 }

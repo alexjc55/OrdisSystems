@@ -799,6 +799,23 @@
       "saved": "Successfully saved",
       "settingsUpdated": "Settings updated",
       "updated": "Successfully updated"
-    }
+    },
+    "orderStatusChanged": "Order status changed to: {{status}}",
+    "orderCancelled": "Order cancelled",
+    "orderCreated": "Order created",
+    "orderUpdated": "Order updated",
+    "orderDeleted": "Order deleted",
+    "userCreated": "User created",
+    "userUpdated": "User updated",
+    "userDeleted": "User deleted",
+    "productCreated": "Product created",
+    "productUpdated": "Product updated",
+    "productDeleted": "Product deleted",
+    "categoryCreated": "Category created",
+    "categoryUpdated": "Category updated",
+    "categoryDeleted": "Category deleted",
+    "themeCreated": "Theme created",
+    "themeUpdated": "Theme updated",
+    "themeDeleted": "Theme deleted"
   }
 }
