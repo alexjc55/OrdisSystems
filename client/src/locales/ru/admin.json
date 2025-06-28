@@ -81,8 +81,8 @@
     "storeDescription": "Описание магазина",
     "logoUrl": "URL логотипа",
     "bannerImage": "Изображение баннера",
-    "contactPhone": "Контактный телефон",
-    "contactEmail": "Контактный email",
+    "contactPhone": "Телефон для связи",
+    "contactEmail": "Email для связи",
     "address": "Адрес",
     "deliveryFee": "Стоимость доставки",
     "freeDeliveryFrom": "Бесплатная доставка от",
@@ -91,7 +91,7 @@
     "showTitleDescription": "Показывать заголовок и описание",
     "showInfoBlocks": "Показывать информационные блоки",
     "showSpecialOffers": "Показывать спецпредложения",
-    "showCategoryMenu": "Показывать меню категорий",
+    "showCategoryMenu": "Показать меню категорий",
     "bottomBanner1Url": "URL нижнего баннера 1",
     "bottomBanner1Link": "Ссылка нижнего баннера 1",
     "bottomBanner2Url": "URL нижнего баннера 2",
@@ -179,7 +179,58 @@
     "showBanner": "Показать баннер",
     "showBannerDescription": "Отображать баннер на главной странице",
     "showInfoBlocksDescription": "Отображать информационные блоки",
-    "showTitle": "Показать заголовок"
+    "showTitle": "Показать заголовок",
+    "addressPlaceholder": "Введите адрес",
+    "allItems": "Все товары",
+    "authPageFeature1Description": "Описание функции 1 страницы авторизации",
+    "authPageFeature1Icon": "Иконка функции 1 страницы авторизации",
+    "authPageFeature2Description": "Описание функции 2 страницы авторизации",
+    "authPageFeature2Icon": "Иконка функции 2 страницы авторизации",
+    "authPageFeature3Description": "Описание функции 3 страницы авторизации",
+    "authPageFeature3Icon": "Иконка функции 3 страницы авторизации",
+    "bannerDescription": "Описание баннера",
+    "bottomBanner1Text": "Текст нижнего баннера 1",
+    "bottomBanner2Text": "Текст нижнего баннера 2",
+    "cartBannerLink": "Ссылка баннера корзины",
+    "cartBannerTitle": "Заголовок баннера корзины",
+    "categoryMenuPosition": "Позиция меню категорий",
+    "defaultDeliveryDescription": "Описание доставки по умолчанию",
+    "defaultDeliveryTitle": "Заголовок доставки по умолчанию",
+    "defaultLanguageDescription": "Выберите язык по умолчанию для интерфейса",
+    "defaultPaymentDescription": "Описание оплаты по умолчанию",
+    "defaultPaymentTitle": "Заголовок оплаты по умолчанию",
+    "deliveryDescription": "Описание доставки",
+    "deliveryTitle": "Заголовок доставки",
+    "enableCategoryMenu": "Включить меню категорий",
+    "enableCategoryMenuDescription": "Показывать меню категорий в шапке",
+    "enableInfoBlocks": "Включить информационные блоки",
+    "enableWhatsApp": "Включить WhatsApp",
+    "enableWhatsAppDescription": "Показывать кнопку WhatsApp на сайте",
+    "footerText": "Текст подвала",
+    "headerBannerImage": "Изображение баннера в шапке",
+    "headerBannerText": "Текст баннера в шапке",
+    "headerBannerTitle": "Заголовок баннера в шапке",
+    "imageUrl": "URL изображения",
+    "infoBlock1Description": "Описание информационного блока 1",
+    "infoBlock1Icon": "Иконка информационного блока 1",
+    "infoBlock1Title": "Заголовок информационного блока 1",
+    "infoBlock2Description": "Описание информационного блока 2",
+    "infoBlock2Icon": "Иконка информационного блока 2",
+    "infoBlock2Title": "Заголовок информационного блока 2",
+    "infoBlock3Description": "Описание информационного блока 3",
+    "infoBlock3Icon": "Иконка информационного блока 3",
+    "infoBlock3Title": "Заголовок информационного блока 3",
+    "paymentDescription": "Описание оплаты",
+    "paymentTitle": "Заголовок оплаты",
+    "selectBannerType": "Выберите тип баннера",
+    "selectIcon": "Выберите иконку",
+    "showCategoryMenuDescription": "Отображать меню категорий на главной странице",
+    "storeLogo": "Логотип магазина",
+    "trackingCodeEnabled": "Код отслеживания включен",
+    "welcomeDescription": "Описание приветствия",
+    "welcomeSubtitle": "Подзаголовок приветствия",
+    "whatsappMessage": "Сообщение WhatsApp",
+    "whatsappPhone": "Телефон WhatsApp"
   },
   "systemSettings": {
     "title": "Настройки системы",
@@ -527,7 +578,33 @@
       "usernameError": "Недопустимое имя пользователя",
       "usernameLabel": "Имя пользователя",
       "usernamePlaceholder": "Введите имя пользователя"
-    }
+    },
+    "statistics": {
+      "activeCount": "Активных пользователей",
+      "adminCount": "Администраторов",
+      "customerCount": "Клиентов",
+      "totalCount": "Всего пользователей",
+      "workerCount": "Сотрудников"
+    },
+    "filters": {
+      "role": "По роли",
+      "status": "По статусу"
+    },
+    "roles": {
+      "admin": "Администратор",
+      "customer": "Клиент",
+      "worker": "Сотрудник"
+    },
+    "searchPlaceholder": "Поиск пользователей...",
+    "table": {
+      "name": "Имя",
+      "orders": "Заказы",
+      "phone": "Телефон",
+      "role": "Роль",
+      "totalAmount": "Общая сумма"
+    },
+    "unnamed": "Без имени",
+    "whatsapp": "WhatsApp"
   },
   "orders": {
     "title": "Заказы",
@@ -680,5 +757,21 @@
     "manageSettings": "Управление настройками",
     "viewReports": "Просмотр отчётов",
     "accessAdmin": "Доступ к админ-панели"
+  },
+  "notifications": {
+    "error": {
+      "createFailed": "Ошибка создания",
+      "deleteFailed": "Ошибка удаления",
+      "loadFailed": "Ошибка загрузки",
+      "saveFailed": "Ошибка сохранения",
+      "updateFailed": "Ошибка обновления"
+    },
+    "success": {
+      "created": "Успешно создано",
+      "deleted": "Успешно удалено",
+      "saved": "Успешно сохранено",
+      "settingsUpdated": "Настройки обновлены",
+      "updated": "Успешно обновлено"
+    }
   }
 }
