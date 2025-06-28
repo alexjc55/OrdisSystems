@@ -14,7 +14,7 @@ interface ModernStyleSettingsProps {
 
 export function ModernStyleSettings({ id, defaultValues }: ModernStyleSettingsProps) {
   return (
-    <div id={id} className="space-y-4" style={{ display: 'none' }}>
+    <div id={id} className="space-y-4">
       <div className="p-4 bg-blue-50 rounded-lg border">
         <h4 className="text-sm font-medium mb-3">Информационные блоки (Современный стиль)</h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
