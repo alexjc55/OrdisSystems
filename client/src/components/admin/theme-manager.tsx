@@ -245,6 +245,16 @@ export default function ThemeManager() {
     showCartBanner: false,
     showBottomBanners: false
   });
+  const [editCartBannerType, setEditCartBannerType] = useState('text');
+  const [createCartBannerType, setCreateCartBannerType] = useState('text');
+  
+  // States for image URLs
+  const [editCartBannerImage, setEditCartBannerImage] = useState('');
+  const [editBottomBanner1Url, setEditBottomBanner1Url] = useState('');
+  const [editBottomBanner2Url, setEditBottomBanner2Url] = useState('');
+  const [createCartBannerImage, setCreateCartBannerImage] = useState('');
+  const [createBottomBanner1Url, setCreateBottomBanner1Url] = useState('');
+  const [createBottomBanner2Url, setCreateBottomBanner2Url] = useState('');
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -262,6 +272,10 @@ export default function ThemeManager() {
         showCartBanner: editingTheme.showCartBanner ?? false,
         showBottomBanners: editingTheme.showBottomBanners ?? false
       });
+      setEditCartBannerType(editingTheme.cartBannerType || 'text');
+      setEditCartBannerImage(editingTheme.cartBannerImage || '');
+      setEditBottomBanner1Url(editingTheme.bottomBanner1Url || '');
+      setEditBottomBanner2Url(editingTheme.bottomBanner2Url || '');
     }
   }, [editingTheme]);
 
@@ -1245,68 +1259,74 @@ export default function ThemeManager() {
                         <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
                           <h5 className="text-sm font-medium text-gray-800">Настройки баннера корзины</h5>
                           
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <Label htmlFor="cartBannerTypeCreate" className="text-sm">Тип баннера</Label>
-                              <select
-                                name="cartBannerType"
-                                id="cartBannerTypeCreate"
-                                defaultValue="text"
-                                className="w-full px-3 py-2 border rounded-md bg-white text-sm"
-                              >
-                                <option value="text">Текстовый</option>
-                                <option value="image">Изображение</option>
-                              </select>
-                            </div>
-                            <div>
-                              <Label htmlFor="cartBannerTextCreate" className="text-sm">Текст баннера</Label>
-                              <input
-                                type="text"
-                                name="cartBannerText"
-                                id="cartBannerTextCreate"
-                                defaultValue=""
-                                placeholder="Специальное предложение!"
-                                className="w-full px-3 py-2 border rounded-md bg-white text-sm"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <Label htmlFor="cartBannerBgColorCreate" className="text-sm">Цвет фона</Label>
-                              <Input
-                                type="color"
-                                name="cartBannerBgColor"
-                                id="cartBannerBgColorCreate"
-                                defaultValue="#f97316"
-                                className="w-full h-10"
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="cartBannerTextColorCreate" className="text-sm">Цвет текста</Label>
-                              <Input
-                                type="color"
-                                name="cartBannerTextColor"
-                                id="cartBannerTextColorCreate"
-                                defaultValue="#ffffff"
-                                className="w-full h-10"
-                              />
-                            </div>
-                          </div>
-
                           <div>
-                            <Label htmlFor="cartBannerImageCreate" className="text-sm font-medium">Изображение баннера</Label>
-                            <ImageUpload
-                              value=""
-                              onChange={(url: string) => {
-                                // Update form data will be handled by the form submission
-                              }}
-                            />
-                            <input type="hidden" name="cartBannerImage" value="" />
-                            <div className="text-xs text-gray-500 mt-1">
-                              Рекомендуемый размер: 800x200 пикселей
-                            </div>
+                            <Label htmlFor="cartBannerTypeCreate" className="text-sm">Тип баннера</Label>
+                            <select
+                              name="cartBannerType"
+                              id="cartBannerTypeCreate"
+                              value={createCartBannerType}
+                              onChange={(e) => setCreateCartBannerType(e.target.value)}
+                              className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                            >
+                              <option value="text">Текстовый</option>
+                              <option value="image">Изображение</option>
+                            </select>
                           </div>
+
+                          {createCartBannerType === 'text' && (
+                            <>
+                              <div>
+                                <Label htmlFor="cartBannerTextCreate" className="text-sm">Текст баннера</Label>
+                                <input
+                                  type="text"
+                                  name="cartBannerText"
+                                  id="cartBannerTextCreate"
+                                  defaultValue=""
+                                  placeholder="Специальное предложение!"
+                                  className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                                />
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <Label htmlFor="cartBannerBgColorCreate" className="text-sm">Цвет фона</Label>
+                                  <Input
+                                    type="color"
+                                    name="cartBannerBgColor"
+                                    id="cartBannerBgColorCreate"
+                                    defaultValue="#f97316"
+                                    className="w-full h-10"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="cartBannerTextColorCreate" className="text-sm">Цвет текста</Label>
+                                  <Input
+                                    type="color"
+                                    name="cartBannerTextColor"
+                                    id="cartBannerTextColorCreate"
+                                    defaultValue="#ffffff"
+                                    className="w-full h-10"
+                                  />
+                                </div>
+                              </div>
+                            </>
+                          )}
+
+                          {createCartBannerType === 'image' && (
+                            <div>
+                              <Label htmlFor="cartBannerImageCreate" className="text-sm font-medium">Изображение баннера</Label>
+                              <ImageUpload
+                                value=""
+                                onChange={(url: string) => {
+                                  // Update form data will be handled by the form submission
+                                }}
+                              />
+                              <input type="hidden" name="cartBannerImage" value="" />
+                              <div className="text-xs text-gray-500 mt-1">
+                                Рекомендуемый размер: 800x200 пикселей
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -1935,68 +1955,74 @@ export default function ThemeManager() {
                         <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
                           <h5 className="text-sm font-medium text-gray-800">Настройки баннера корзины</h5>
                           
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <Label htmlFor="cartBannerType" className="text-sm">Тип баннера</Label>
-                              <select
-                                name="cartBannerType"
-                                id="cartBannerType"
-                                defaultValue={editingTheme?.cartBannerType || "text"}
-                                className="w-full px-3 py-2 border rounded-md bg-white text-sm"
-                              >
-                                <option value="text">Текстовый</option>
-                                <option value="image">Изображение</option>
-                              </select>
-                            </div>
-                            <div>
-                              <Label htmlFor="cartBannerText" className="text-sm">Текст баннера</Label>
-                              <input
-                                type="text"
-                                name="cartBannerText"
-                                id="cartBannerText"
-                                defaultValue={editingTheme?.cartBannerText || ""}
-                                placeholder="Специальное предложение!"
-                                className="w-full px-3 py-2 border rounded-md bg-white text-sm"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <Label htmlFor="cartBannerBgColor" className="text-sm">Цвет фона</Label>
-                              <Input
-                                type="color"
-                                name="cartBannerBgColor"
-                                id="cartBannerBgColor"
-                                defaultValue={editingTheme?.cartBannerBgColor || "#f97316"}
-                                className="w-full h-10"
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="cartBannerTextColor" className="text-sm">Цвет текста</Label>
-                              <Input
-                                type="color"
-                                name="cartBannerTextColor"
-                                id="cartBannerTextColor"
-                                defaultValue={editingTheme?.cartBannerTextColor || "#ffffff"}
-                                className="w-full h-10"
-                              />
-                            </div>
-                          </div>
-
                           <div>
-                            <Label htmlFor="cartBannerImage" className="text-sm font-medium">Изображение баннера</Label>
-                            <ImageUpload
-                              value={editingTheme?.cartBannerImage || ""}
-                              onChange={(url: string) => {
-                                // Update form data will be handled by the form submission
-                              }}
-                            />
-                            <input type="hidden" name="cartBannerImage" value={editingTheme?.cartBannerImage || ""} />
-                            <div className="text-xs text-gray-500 mt-1">
-                              Рекомендуемый размер: 800x200 пикселей
-                            </div>
+                            <Label htmlFor="cartBannerType" className="text-sm">Тип баннера</Label>
+                            <select
+                              name="cartBannerType"
+                              id="cartBannerType"
+                              value={editCartBannerType}
+                              onChange={(e) => setEditCartBannerType(e.target.value)}
+                              className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                            >
+                              <option value="text">Текстовый</option>
+                              <option value="image">Изображение</option>
+                            </select>
                           </div>
+
+                          {editCartBannerType === 'text' && (
+                            <>
+                              <div>
+                                <Label htmlFor="cartBannerText" className="text-sm">Текст баннера</Label>
+                                <input
+                                  type="text"
+                                  name="cartBannerText"
+                                  id="cartBannerText"
+                                  defaultValue={editingTheme?.cartBannerText || ""}
+                                  placeholder="Специальное предложение!"
+                                  className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                                />
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <Label htmlFor="cartBannerBgColor" className="text-sm">Цвет фона</Label>
+                                  <Input
+                                    type="color"
+                                    name="cartBannerBgColor"
+                                    id="cartBannerBgColor"
+                                    defaultValue={editingTheme?.cartBannerBgColor || "#f97316"}
+                                    className="w-full h-10"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="cartBannerTextColor" className="text-sm">Цвет текста</Label>
+                                  <Input
+                                    type="color"
+                                    name="cartBannerTextColor"
+                                    id="cartBannerTextColor"
+                                    defaultValue={editingTheme?.cartBannerTextColor || "#ffffff"}
+                                    className="w-full h-10"
+                                  />
+                                </div>
+                              </div>
+                            </>
+                          )}
+
+                          {editCartBannerType === 'image' && (
+                            <div>
+                              <Label htmlFor="cartBannerImage" className="text-sm font-medium">Изображение баннера</Label>
+                              <ImageUpload
+                                value={editCartBannerImage}
+                                onChange={(url: string) => {
+                                  setEditCartBannerImage(url);
+                                }}
+                              />
+                              <input type="hidden" name="cartBannerImage" value={editCartBannerImage} />
+                              <div className="text-xs text-gray-500 mt-1">
+                                Рекомендуемый размер: 800x200 пикселей
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -2025,12 +2051,12 @@ export default function ThemeManager() {
                               <div>
                                 <Label htmlFor="bottomBanner1Url" className="text-sm">Изображение</Label>
                                 <ImageUpload
-                                  value={editingTheme?.bottomBanner1Url || ""}
+                                  value={editBottomBanner1Url}
                                   onChange={(url: string) => {
-                                    // Update form data will be handled by the form submission
+                                    setEditBottomBanner1Url(url);
                                   }}
                                 />
-                                <input type="hidden" name="bottomBanner1Url" value={editingTheme?.bottomBanner1Url || ""} />
+                                <input type="hidden" name="bottomBanner1Url" value={editBottomBanner1Url} />
                               </div>
                               <div>
                                 <Label htmlFor="bottomBanner1Link" className="text-sm">Ссылка</Label>
