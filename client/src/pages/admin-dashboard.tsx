@@ -2160,6 +2160,34 @@ export default function AdminDashboard() {
     console.trace("ActiveTab change stack trace");
   }, [activeTab]);
 
+  // Prevent tab switching when current tab becomes unavailable due to permission changes
+  const isCurrentTabAccessible = useMemo(() => {
+    if (!storeSettings) return true; // Allow during loading
+    
+    switch (activeTab) {
+      case 'products': return hasPermission("canManageProducts");
+      case 'categories': return hasPermission("canManageCategories");
+      case 'orders': return hasPermission("canManageOrders");
+      case 'users': return hasPermission("canViewUsers");
+      case 'store': return hasPermission("canViewSettings");
+      case 'settings': return hasPermission("canManageSettings");
+      case 'themes': return hasPermission("canManageThemes");
+      default: return true;
+    }
+  }, [activeTab, storeSettings, user]);
+
+  // Keep user on current tab if it's still accessible
+  const previouslyAccessibleTab = useRef(activeTab);
+  useEffect(() => {
+    if (isCurrentTabAccessible) {
+      previouslyAccessibleTab.current = activeTab;
+    } else if (previouslyAccessibleTab.current && storeSettings) {
+      // If current tab becomes inaccessible but was previously accessible,
+      // and we have settings loaded, restore the previous tab
+      setActiveTab(previouslyAccessibleTab.current);
+    }
+  }, [isCurrentTabAccessible, storeSettings]);
+
   // TEMPORARILY DISABLED - Set default tab based on worker permissions 
   // const [hasSetInitialTab, setHasSetInitialTab] = useState(false);
   // const initialStoreSettingsRef = useRef<any>(null);
