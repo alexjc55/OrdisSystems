@@ -249,9 +249,13 @@ export default function ThemeManager() {
   const [createCartBannerType, setCreateCartBannerType] = useState('text');
   
   // States for image URLs
+  const [editLogoUrl, setEditLogoUrl] = useState('');
+  const [editBannerImageUrl, setEditBannerImageUrl] = useState('');
   const [editCartBannerImage, setEditCartBannerImage] = useState('');
   const [editBottomBanner1Url, setEditBottomBanner1Url] = useState('');
   const [editBottomBanner2Url, setEditBottomBanner2Url] = useState('');
+  const [createLogoUrl, setCreateLogoUrl] = useState('');
+  const [createBannerImageUrl, setCreateBannerImageUrl] = useState('');
   const [createCartBannerImage, setCreateCartBannerImage] = useState('');
   const [createBottomBanner1Url, setCreateBottomBanner1Url] = useState('');
   const [createBottomBanner2Url, setCreateBottomBanner2Url] = useState('');
@@ -273,6 +277,8 @@ export default function ThemeManager() {
         showBottomBanners: editingTheme.showBottomBanners ?? false
       });
       setEditCartBannerType(editingTheme.cartBannerType || 'text');
+      setEditLogoUrl(editingTheme.logoUrl || '');
+      setEditBannerImageUrl(editingTheme.bannerImageUrl || '');
       setEditCartBannerImage(editingTheme.cartBannerImage || '');
       setEditBottomBanner1Url(editingTheme.bottomBanner1Url || '');
       setEditBottomBanner2Url(editingTheme.bottomBanner2Url || '');
@@ -927,13 +933,12 @@ export default function ThemeManager() {
                           Логотип магазина
                         </Label>
                         <ImageUpload
-                          value=""
+                          value={createLogoUrl}
                           onChange={(url) => {
-                            const input = document.querySelector('input[name="logoUrl"]') as HTMLInputElement;
-                            if (input) input.value = url;
+                            setCreateLogoUrl(url);
                           }}
                         />
-                        <input type="hidden" name="logoUrl" />
+                        <input type="hidden" name="logoUrl" value={createLogoUrl} />
                         <div className="text-xs text-gray-500 mt-2">
                           Логотип для отображения в шапке сайта
                         </div>
@@ -945,13 +950,12 @@ export default function ThemeManager() {
                           Картинка баннера
                         </Label>
                         <ImageUpload
-                          value=""
+                          value={createBannerImageUrl}
                           onChange={(url) => {
-                            const input = document.querySelector('input[name="bannerImageUrl"]') as HTMLInputElement;
-                            if (input) input.value = url;
+                            setCreateBannerImageUrl(url);
                           }}
                         />
-                        <input type="hidden" name="bannerImageUrl" />
+                        <input type="hidden" name="bannerImageUrl" value={createBannerImageUrl} />
                         <div className="text-xs text-gray-500 mt-2">
                           Фоновое изображение для баннера на главной странице
                         </div>
