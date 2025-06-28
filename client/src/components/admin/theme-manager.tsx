@@ -294,12 +294,18 @@ export default function ThemeManager() {
       const res = await apiRequest("POST", "/api/admin/themes", themeData);
       return await res.json();
     },
-    onSuccess: () => {
+    onSuccess: (newTheme) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/themes"] });
+      
+      // Automatically activate the newly created theme
+      if (newTheme && newTheme.id) {
+        activateThemeMutation.mutate(newTheme.id);
+      }
+      
       setIsCreateDialogOpen(false);
       toast({
         title: "Успешно",
-        description: "Тема создана успешно",
+        description: "Тема создана и активирована успешно",
       });
     },
     onError: (error: any) => {
@@ -459,6 +465,16 @@ export default function ThemeManager() {
         
         console.log('Applied theme colors to CSS variables');
       }
+
+      // Automatically activate the theme if it's the current active theme
+      const currentActiveTheme = themes?.find(theme => theme.isActive);
+      if (currentActiveTheme && currentActiveTheme.id === updatedTheme.id) {
+        // Trigger theme activation to sync with store settings
+        activateThemeMutation.mutate(updatedTheme.id);
+      }
+      
+      // Force refresh of store settings to show logo and banner changes immediately
+      queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
       
       toast({
         title: "Успешно",
