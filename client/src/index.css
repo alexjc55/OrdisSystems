@@ -1520,7 +1520,6 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
   /* Input adjustments - exclude quantity inputs in product cards */
   input:not([class*="w-16"]):not([class*="text-center"]), 
   textarea {
-    min-height: 44px !important;
     font-size: 1rem !important;
   }
   
@@ -1655,10 +1654,10 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
     display: none !important;
   }
   
-  /* Full width inputs - only for text inputs and textareas, exclude category selector */
+  /* Font size adjustments for mobile inputs */
   input:not([class*="w-16"]):not([class*="text-center"]), 
   textarea {
-    width: 100% !important;
+    font-size: 1rem !important;
   }
   
   /* Exclude category selector block from mobile styling */
