@@ -31,6 +31,20 @@
     "apply": "החל",
     "error": "שגיאה"
   },
+  "themes": {
+    "title": "ניהול עיצובים",
+    "description": "נהל ערכות צבעים ועיצובי אתר",
+    "success": "הצלחה",
+    "error": "שגיאה",
+    "createSuccess": "עיצוב נוצר והופעל בהצלחה",
+    "createError": "נכשל ביצירת עיצוב",
+    "updateSuccess": "עיצוב עודכן בהצלחה",
+    "updateError": "נכשל בעדכון עיצוב",
+    "activateSuccess": "עיצוב הופעל בהצלחה",
+    "activateError": "נכשל בהפעלת עיצוב",
+    "deleteSuccess": "עיצוב נמחק בהצלחה",
+    "deleteError": "נכשל במחיקת עיצוב"
+  },
   "storeSettings": {
     "title": "הגדרות חנות",
     "description": "תיאור הגדרות פרמטרים בסיסיים של החנות",

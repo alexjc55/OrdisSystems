@@ -1094,6 +1094,20 @@
     "table": "ترجمة مفقودة",
     "tryDifferentSearch": "ترجمة مفقودة"
   },
+  "themes": {
+    "title": "إدارة القوالب",
+    "description": "إدارة أنظمة الألوان وقوالب تصميم الموقع",
+    "success": "نجح",
+    "error": "خطأ",
+    "createSuccess": "تم إنشاء وتفعيل القالب بنجاح",
+    "createError": "فشل في إنشاء القالب",
+    "updateSuccess": "تم تحديث القالب بنجاح",
+    "updateError": "فشل في تحديث القالب",
+    "activateSuccess": "تم تفعيل القالب بنجاح",
+    "activateError": "فشل في تفعيل القالب",
+    "deleteSuccess": "تم حذف القالب بنجاح",
+    "deleteError": "فشل في حذف القالب"
+  },
   "imageUpload": {
     "selectFile": "ترجمة مفقودة",
     "uploading": "ترجمة مفقودة"
