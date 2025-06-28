@@ -131,6 +131,12 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Enhanced admin system settings with theme access management and eye icon controls
+  - Added "Управление темами" (Theme Management) permission option in system settings
+  - Replaced all switch toggles with eye/eye-off icon buttons for more compact interface design
+  - Updated permission logic to support separate theme management access control
+  - Added canManageThemes field to database schema and worker permissions
+  - Enhanced admin panel with more granular access control for different features
 - June 28, 2025: Added "Next Day Order" filter to admin products section
   - Added new filter option "Заказ на другой день" (Next Day Order) in admin product filters
   - Updated filtering logic to show products with availabilityStatus "out_of_stock_today"

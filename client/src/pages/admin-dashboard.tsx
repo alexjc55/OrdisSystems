@@ -3253,7 +3253,7 @@ export default function AdminDashboard() {
                       <span className="admin-tab-text">{adminT('tabs.permissions')}</span>
                     </TabsTrigger>
                   )}
-                  {hasPermission("canManageSettings") && (
+                  {(hasPermission("canManageSettings") || hasPermission("canManageThemes")) && (
                     <TabsTrigger value="themes" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.themes')}>
                       <Palette className="w-4 h-4 mr-1" />
                       <span className="admin-tab-text">{adminT('tabs.themes')}</span>
@@ -5035,7 +5035,7 @@ export default function AdminDashboard() {
           )}
 
           {/* Theme Management */}
-          {hasPermission("canManageSettings") && (
+          {(hasPermission("canManageSettings") || hasPermission("canManageThemes")) && (
             <TabsContent value="themes" className="space-y-4 sm:space-y-6">
               <ThemeManager />
             </TabsContent>
