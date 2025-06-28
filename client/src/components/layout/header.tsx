@@ -95,7 +95,7 @@ export default function Header({ onResetView }: HeaderProps) {
             {/* Language Switcher - Desktop only, multiple languages only */}
             {storeSettings?.enabledLanguages && storeSettings.enabledLanguages.length > 1 && (
               <div className="hidden md:block">
-                <LanguageSwitcher variant="compact" />
+                <LanguageSwitcher variant="compact" showFlag={false} />
               </div>
             )}
             
@@ -285,7 +285,6 @@ export default function Header({ onResetView }: HeaderProps) {
                                 : 'text-gray-700 hover:bg-gray-50'
                             }`}
                           >
-                            <span className="text-sm mr-1 rtl:ml-1 rtl:mr-0">{lang.flag}</span>
                             <span className="text-xs whitespace-nowrap">{lang.name}</span>
                           </button>
                         ))}
