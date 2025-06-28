@@ -131,6 +131,15 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Completed comprehensive banner management system integration
+  - Moved all banner settings from store settings to theme management "Visual" tab
+  - Added conditional field display for cart banner - shows only relevant fields based on banner type (text vs image)
+  - Fixed image loading from database - existing logos, header banners, cart banners, and bottom banners properly display
+  - Implemented proper state management for all banner image uploads with real-time preview
+  - Added cart banner type selection with conditional field visibility
+  - Created bottom banners section with dual banner support and link configuration
+  - Enhanced ImageUpload component integration with proper value/onChange pattern
+  - Consolidated banner management into unified theme system for better organization
 - June 27, 2025: Reorganized theme management tabs for better organization
   - Combined Brand, Status, and Neutral tabs into single unified "Colors" tab
   - Added organized blocks within Colors tab (Brand, Status, Neutral sections)

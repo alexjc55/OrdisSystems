@@ -1316,12 +1316,12 @@ export default function ThemeManager() {
                             <div>
                               <Label htmlFor="cartBannerImageCreate" className="text-sm font-medium">Изображение баннера</Label>
                               <ImageUpload
-                                value=""
+                                value={createCartBannerImage}
                                 onChange={(url: string) => {
-                                  // Update form data will be handled by the form submission
+                                  setCreateCartBannerImage(url);
                                 }}
                               />
-                              <input type="hidden" name="cartBannerImage" value="" />
+                              <input type="hidden" name="cartBannerImage" value={createCartBannerImage} />
                               <div className="text-xs text-gray-500 mt-1">
                                 Рекомендуемый размер: 800x200 пикселей
                               </div>
@@ -1355,12 +1355,12 @@ export default function ThemeManager() {
                               <div>
                                 <Label htmlFor="bottomBanner1UrlCreate" className="text-sm">Изображение</Label>
                                 <ImageUpload
-                                  value=""
+                                  value={createBottomBanner1Url}
                                   onChange={(url: string) => {
-                                    // Update form data will be handled by the form submission
+                                    setCreateBottomBanner1Url(url);
                                   }}
                                 />
-                                <input type="hidden" name="bottomBanner1Url" value="" />
+                                <input type="hidden" name="bottomBanner1Url" value={createBottomBanner1Url} />
                               </div>
                               <div>
                                 <Label htmlFor="bottomBanner1LinkCreate" className="text-sm">Ссылка</Label>
@@ -1381,12 +1381,12 @@ export default function ThemeManager() {
                               <div>
                                 <Label htmlFor="bottomBanner2UrlCreate" className="text-sm">Изображение</Label>
                                 <ImageUpload
-                                  value=""
+                                  value={createBottomBanner2Url}
                                   onChange={(url: string) => {
-                                    // Update form data will be handled by the form submission
+                                    setCreateBottomBanner2Url(url);
                                   }}
                                 />
-                                <input type="hidden" name="bottomBanner2Url" value="" />
+                                <input type="hidden" name="bottomBanner2Url" value={createBottomBanner2Url} />
                               </div>
                               <div>
                                 <Label htmlFor="bottomBanner2LinkCreate" className="text-sm">Ссылка</Label>
@@ -2077,12 +2077,12 @@ export default function ThemeManager() {
                               <div>
                                 <Label htmlFor="bottomBanner2Url" className="text-sm">Изображение</Label>
                                 <ImageUpload
-                                  value={editingTheme?.bottomBanner2Url || ""}
+                                  value={editBottomBanner2Url}
                                   onChange={(url: string) => {
-                                    // Update form data will be handled by the form submission
+                                    setEditBottomBanner2Url(url);
                                   }}
                                 />
-                                <input type="hidden" name="bottomBanner2Url" value={editingTheme?.bottomBanner2Url || ""} />
+                                <input type="hidden" name="bottomBanner2Url" value={editBottomBanner2Url} />
                               </div>
                               <div>
                                 <Label htmlFor="bottomBanner2Link" className="text-sm">Ссылка</Label>
