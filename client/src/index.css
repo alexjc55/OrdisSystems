@@ -157,12 +157,213 @@ button:focus,
   }
   
   /* RTL/LTR container direction control for admin dashboard */
-  .rtl {
+  .rtl,
+  [dir="rtl"],
+  html[dir="rtl"] body {
     direction: rtl !important;
   }
   
-  .ltr {
+  .ltr,
+  [dir="ltr"],
+  html[dir="ltr"] body {
     direction: ltr !important;
+  }
+  
+  /* Force RTL for Arabic admin interface */
+  html[lang="ar"],
+  html[lang="ar"] body,
+  html[lang="ar"] *,
+  html[lang="ar"] .admin-dashboard,
+  html[lang="ar"] .admin-content,
+  html[lang="ar"] main,
+  html[lang="ar"] .container,
+  html[lang="ar"] .max-w-7xl {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+  
+  /* Global RTL styles for all Arabic content */
+  html[lang="ar"] div,
+  html[lang="ar"] section,
+  html[lang="ar"] article,
+  html[lang="ar"] aside,
+  html[lang="ar"] nav,
+  html[lang="ar"] header,
+  html[lang="ar"] footer {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+  
+  /* Specific admin components RTL */
+  html[lang="ar"] .admin-sidebar,
+  html[lang="ar"] .admin-main,
+  html[lang="ar"] .admin-tabs,
+  html[lang="ar"] .admin-table,
+  html[lang="ar"] .admin-form {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+  
+  /* Force RTL for flex containers in Arabic */
+  html[lang="ar"] .flex {
+    direction: rtl !important;
+  }
+  
+  /* Arabic text alignment overrides */
+  html[lang="ar"] p,
+  html[lang="ar"] h1,
+  html[lang="ar"] h2,
+  html[lang="ar"] h3,
+  html[lang="ar"] h4,
+  html[lang="ar"] h5,
+  html[lang="ar"] h6,
+  html[lang="ar"] span,
+  html[lang="ar"] label,
+  html[lang="ar"] button {
+    text-align: right !important;
+    direction: rtl !important;
+  }
+  
+  /* Force RTL for table components */
+  html[lang="ar"] table,
+  html[lang="ar"] thead,
+  html[lang="ar"] tbody,
+  html[lang="ar"] tr,
+  html[lang="ar"] th,
+  html[lang="ar"] td {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+  
+  /* Force RTL for form components */
+  html[lang="ar"] form,
+  html[lang="ar"] input,
+  html[lang="ar"] textarea,
+  html[lang="ar"] select,
+  html[lang="ar"] .form-field {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+  
+  /* Force RTL for navigation and tabs */
+  html[lang="ar"] .tabs,
+  html[lang="ar"] .tab-list,
+  html[lang="ar"] .tab-trigger,
+  html[lang="ar"] .tab-content {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+  
+  /* Override any LTR styles for Arabic */
+  html[lang="ar"] .text-left {
+    text-align: right !important;
+  }
+  
+  html[lang="ar"] .justify-start {
+    justify-content: flex-end !important;
+  }
+  
+  html[lang="ar"] .justify-end {
+    justify-content: flex-start !important;
+  }
+  
+  /* Ensure Arabic numbers/codes remain LTR when needed */
+  html[lang="ar"] .ltr-content,
+  html[lang="ar"] .phone-number,
+  html[lang="ar"] .price,
+  html[lang="ar"] .id {
+    direction: ltr !important;
+    text-align: left !important;
+  }
+  
+  /* Critical: Force RTL for ALL admin dashboard elements */
+  html[lang="ar"] [data-radix-collection-item],
+  html[lang="ar"] [role="tablist"],
+  html[lang="ar"] [role="tab"],
+  html[lang="ar"] [role="tabpanel"],
+  html[lang="ar"] [role="dialog"],
+  html[lang="ar"] [role="menu"],
+  html[lang="ar"] [role="menuitem"],
+  html[lang="ar"] .radix-dropdown-menu,
+  html[lang="ar"] .radix-select,
+  html[lang="ar"] .radix-tabs {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+  
+  /* Force RTL for Shadcn/Radix components */
+  html[lang="ar"] .shadcn-table,
+  html[lang="ar"] .data-table,
+  html[lang="ar"] .admin-dashboard > *,
+  html[lang="ar"] .main-content > *,
+  html[lang="ar"] .page-container > * {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+  
+  /* Critical override for all containers */
+  html[lang="ar"] .container,
+  html[lang="ar"] .w-full,
+  html[lang="ar"] .max-w-md,
+  html[lang="ar"] .max-w-lg,
+  html[lang="ar"] .max-w-xl,
+  html[lang="ar"] .max-w-2xl,
+  html[lang="ar"] .max-w-4xl,
+  html[lang="ar"] .max-w-6xl,
+  html[lang="ar"] .max-w-7xl {
+    direction: rtl !important;
+  }
+  
+  /* Force RTL for grid and flex layouts */
+  html[lang="ar"] .grid,
+  html[lang="ar"] .flex,
+  html[lang="ar"] .inline-flex {
+    direction: rtl !important;
+  }
+  
+  /* Specific overrides for admin components that might be LTR */
+  html[lang="ar"] .space-x-2 > *,
+  html[lang="ar"] .space-x-4 > *,
+  html[lang="ar"] .gap-2,
+  html[lang="ar"] .gap-4 {
+    direction: rtl !important;
+  }
+  
+  /* CRITICAL: Universal RTL override for all Arabic content */
+  html[lang="ar"] * {
+    direction: inherit !important;
+  }
+  
+  /* Root RTL enforcement */
+  html[lang="ar"] {
+    direction: rtl !important;
+  }
+  
+  /* Force all admin layout components to RTL */
+  html[lang="ar"] .admin-layout,
+  html[lang="ar"] .admin-wrapper,
+  html[lang="ar"] .admin-container,
+  html[lang="ar"] .content-wrapper,
+  html[lang="ar"] .main-wrapper {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+  
+  /* Override any framework defaults */
+  html[lang="ar"] [class*="flex"],
+  html[lang="ar"] [class*="grid"],
+  html[lang="ar"] [class*="container"],
+  html[lang="ar"] [class*="wrapper"] {
+    direction: rtl !important;
+  }
+  
+  /* Ensure card and panel components are RTL */
+  html[lang="ar"] .card,
+  html[lang="ar"] .panel,
+  html[lang="ar"] .section,
+  html[lang="ar"] .widget {
+    direction: rtl !important;
+    text-align: right !important;
   }
   
   /* Orders section RTL styling */
