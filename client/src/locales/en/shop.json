@@ -23,6 +23,7 @@
   "banner1": "Banner 1",
   "banner2": "Banner 2",
   "categories": "Categories",
+  "categoriesText": "Categories",
   "categoriesCount": "{{count}} categories",
   "allProducts": "All Products",
   "allCategories": "All Categories",

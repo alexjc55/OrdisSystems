@@ -23,6 +23,7 @@
   "banner1": "באנר 1",
   "banner2": "באנר 2",
   "categories": "קטגוריות",
+  "categoriesText": "קטגוריות",
   "categoriesCount": "{{count}} קטגוריות",
   "allProducts": "כל המוצרים",
   "filterByCategory": "סינון לפי קטגוריה",
