@@ -69,7 +69,7 @@ import {
 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/ui/dropdown-menu';
 import { useToast } from '../hooks/use-toast';
-import { useAdminTranslation, useCommonTranslation } from '../lib/i18n';
+import { useTranslation } from 'react-i18next';
 import { 
   DndContext, 
   closestCenter, 
@@ -89,7 +89,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { createInsertSchema } from 'drizzle-zod';
-import { products, categories, orders, storeSettings, themes, users as usersTable } from '../../shared/schema';
+import { products, categories, orders, storeSettings, themes, users as usersTable } from '../../../shared/schema';
 import { ImageUpload } from '../components/ui/image-upload';
 import type { Dispatch, SetStateAction } from 'react';
 
@@ -119,7 +119,7 @@ type CategoryWithCount = {
 function useStatusChangeHandler() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const { t: adminT } = useAdminTranslation();
+  const { t: adminT, i18n } = useTranslation("admin");
 
   return useMutation({
     mutationFn: async ({ orderId, status }: { orderId: number; status: string }) => {
@@ -148,8 +148,8 @@ function useStatusChangeHandler() {
 
 // Draggable Order Card Component
 function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
-  const { t: adminT } = useAdminTranslation();
-  const { i18n } = useCommonTranslation();
+  const { t: adminT, i18n } = useTranslation("admin");
+  
   const isRTL = i18n.language === 'he';
 
   const getStatusVariant = (status: string) => {
@@ -267,8 +267,8 @@ function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { 
 
 // Regular Order Card Component  
 function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
-  const { t: adminT } = useAdminTranslation();
-  const { i18n } = useCommonTranslation();
+  const { t: adminT, i18n } = useTranslation("admin");
+  
   const isRTL = i18n.language === 'he';
 
   const getStatusColor = (status: string) => {
@@ -694,8 +694,8 @@ function ItemDiscountDialog({
 // Main Admin Dashboard Component
 export default function AdminDashboard() {
   // State management
-  const { t: adminT } = useAdminTranslation();
-  const { i18n } = useCommonTranslation();
+  const { t: adminT, i18n } = useTranslation("admin");
+  
   const isRTL = i18n.language === 'he';
   
   // Modal states for tile-based interface
@@ -843,8 +843,8 @@ function StoreSettingsForm({
   trackingModalOpen: boolean;
   setTrackingModalOpen: (open: boolean) => void;
 }) {
-  const { t: adminT } = useAdminTranslation();
-  const { i18n } = useCommonTranslation();
+  const { t: adminT, i18n } = useTranslation("admin");
+  
   const isRTL = i18n.language === 'he';
   
   const form = useForm({
