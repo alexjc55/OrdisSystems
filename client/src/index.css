@@ -1517,8 +1517,8 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
 
 
   
-  /* Input adjustments - exclude quantity inputs in product cards */
-  input:not([class*="w-16"]):not([class*="text-center"]), textarea, select {
+  /* Input adjustments - exclude quantity inputs in product cards and dropdown triggers */
+  input:not([class*="w-16"]):not([class*="text-center"]):not([role="combobox"]), textarea, select:not([role="combobox"]) {
     min-height: 44px !important;
     font-size: 1rem !important;
   }
