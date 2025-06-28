@@ -16,6 +16,7 @@ import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw, Info
 import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
 import { ModernStyleSettings } from "./modern-style-settings";
 
+
 // Visual Toggle Button Component
 function VisualToggleButton({ 
   isEnabled, 
