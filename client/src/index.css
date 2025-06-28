@@ -1518,7 +1518,9 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
 
   
   /* Input adjustments - exclude quantity inputs in product cards and dropdown triggers */
-  input:not([class*="w-16"]):not([class*="text-center"]):not([role="combobox"]), textarea, select:not([role="combobox"]) {
+  input:not([class*="w-16"]):not([class*="text-center"]):not([role="combobox"]):not([data-radix-select-trigger]):not([aria-haspopup]):not([data-state]):not([data-placeholder]), 
+  textarea, 
+  select:not([role="combobox"]):not([data-radix-select-trigger]):not([aria-haspopup]):not([data-state]):not([data-placeholder]) {
     min-height: 44px !important;
     font-size: 1rem !important;
   }
@@ -1655,8 +1657,8 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
   }
   
   /* Full width inputs - exclude dropdown triggers and combobox elements */
-  input:not([role="combobox"]):not([data-radix-collection-item]), 
-  select:not([role="combobox"]):not([data-radix-collection-item]), 
+  input:not([role="combobox"]):not([data-radix-collection-item]):not([data-radix-select-trigger]):not([aria-haspopup]):not([data-state]):not([data-placeholder]), 
+  select:not([role="combobox"]):not([data-radix-collection-item]):not([data-radix-select-trigger]):not([aria-haspopup]):not([data-state]):not([data-placeholder]), 
   textarea {
     width: 100% !important;
   }
