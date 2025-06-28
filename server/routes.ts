@@ -1130,11 +1130,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Theme update data:", themeData);
       const theme = await storage.updateTheme(id, themeData);
       
-      // If this is the active theme and headerStyle was updated, sync with store settings via SQL
-      if (theme.isActive && themeData.headerStyle) {
-        await db.execute(sql.raw(`UPDATE store_settings SET header_style = '${themeData.headerStyle}' WHERE id = 1`));
-        // Add cache invalidation header to force refresh of store settings
-        res.set('X-Settings-Updated', 'true');
+      // If this is the active theme, sync all settings with store settings via SQL
+      if (theme.isActive) {
+        const updateFields = [];
+        
+        // Sync header style
+        if (themeData.headerStyle) {
+          updateFields.push(`header_style = '${themeData.headerStyle}'`);
+        }
+        
+        // Sync banner button settings
+        if (themeData.bannerButtonText !== undefined) {
+          updateFields.push(`banner_button_text = '${themeData.bannerButtonText || 'Смотреть каталог'}'`);
+        }
+        if (themeData.bannerButtonLink !== undefined) {
+          updateFields.push(`banner_button_link = '${themeData.bannerButtonLink || '#categories'}'`);
+        }
+        
+        // Sync modern style info blocks settings
+        if (themeData.headerStyle === 'modern' || theme.headerStyle === 'modern') {
+          if (themeData.modernBlock1Icon !== undefined) updateFields.push(`modern_block1_icon = '${themeData.modernBlock1Icon || ''}'`);
+          if (themeData.modernBlock1Text !== undefined) updateFields.push(`modern_block1_text = '${themeData.modernBlock1Text || ''}'`);
+          if (themeData.modernBlock2Icon !== undefined) updateFields.push(`modern_block2_icon = '${themeData.modernBlock2Icon || ''}'`);
+          if (themeData.modernBlock2Text !== undefined) updateFields.push(`modern_block2_text = '${themeData.modernBlock2Text || ''}'`);
+          if (themeData.modernBlock3Icon !== undefined) updateFields.push(`modern_block3_icon = '${themeData.modernBlock3Icon || ''}'`);
+          if (themeData.modernBlock3Text !== undefined) updateFields.push(`modern_block3_text = '${themeData.modernBlock3Text || ''}'`);
+        }
+        
+        // Sync visual display settings
+        if (themeData.showBannerImage !== undefined) updateFields.push(`show_banner_image = ${themeData.showBannerImage}`);
+        if (themeData.showTitleDescription !== undefined) updateFields.push(`show_title_description = ${themeData.showTitleDescription}`);
+        if (themeData.showInfoBlocks !== undefined) updateFields.push(`show_info_blocks = ${themeData.showInfoBlocks}`);
+        if (themeData.infoBlocksPosition !== undefined) updateFields.push(`info_blocks_position = '${themeData.infoBlocksPosition || 'top'}'`);
+        if (themeData.showSpecialOffers !== undefined) updateFields.push(`show_special_offers = ${themeData.showSpecialOffers}`);
+        if (themeData.showCategoryMenu !== undefined) updateFields.push(`show_category_menu = ${themeData.showCategoryMenu}`);
+        if (themeData.showWhatsAppChat !== undefined) updateFields.push(`show_whatsapp_chat = ${themeData.showWhatsAppChat}`);
+        if (themeData.whatsappPhone !== undefined) updateFields.push(`whatsapp_phone_number = '${themeData.whatsappPhone || ''}'`);
+        if (themeData.whatsappMessage !== undefined) updateFields.push(`whatsapp_default_message = '${themeData.whatsappMessage || 'Здравствуйте! У меня есть вопрос по заказу.'}'`);
+        
+        // Execute the update if there are fields to update
+        if (updateFields.length > 0) {
+          await db.execute(sql.raw(`UPDATE store_settings SET ${updateFields.join(', ')} WHERE id = 1`));
+          // Add cache invalidation header to force refresh of store settings
+          res.set('X-Settings-Updated', 'true');
+        }
       }
       
       res.json(theme);
