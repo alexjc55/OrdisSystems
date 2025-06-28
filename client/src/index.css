@@ -1350,8 +1350,8 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
     line-height: 1.75rem !important;
   }
   
-  /* Button adjustments - exclude carousel dots and other small indicators */
-  button:not(.carousel-dot-modern):not([class*="carousel"]):not([class*="dot"]):not([class*="indicator"]):not([style*="width: 8px"]):not([style*="height: 8px"]):not([class*="embla"]):not([data-carousel="dot"]):not([aria-label*="slide"]):not([class*="w-2"]):not([class*="h-2"]) {
+  /* Button adjustments - exclude carousel dots, dropdown triggers and other small indicators */
+  button:not(.carousel-dot-modern):not([class*="carousel"]):not([class*="dot"]):not([class*="indicator"]):not([style*="width: 8px"]):not([style*="height: 8px"]):not([class*="embla"]):not([data-carousel="dot"]):not([aria-label*="slide"]):not([class*="w-2"]):not([class*="h-2"]):not([data-state]):not([aria-haspopup]):not([role="combobox"]) {
     min-height: 44px !important;
     font-size: 0.875rem !important;
   }
@@ -1655,10 +1655,17 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
     display: none !important;
   }
   
-  /* Full width inputs - only for text inputs and textareas */
+  /* Full width inputs - only for text inputs and textareas, exclude category selector */
   input:not([class*="w-16"]):not([class*="text-center"]), 
   textarea {
     width: 100% !important;
+  }
+  
+  /* Exclude category selector block from mobile styling */
+  .category-selector-block,
+  .category-selector-block * {
+    width: auto !important;
+    min-height: auto !important;
   }
 }
 

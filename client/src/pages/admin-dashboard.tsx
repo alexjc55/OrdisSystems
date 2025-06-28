@@ -5286,7 +5286,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 <FormItem>
                   <FormLabel className="text-sm">{adminT('products.dialog.categoryLabel')}</FormLabel>
                   <FormControl>
-                    <div className="border rounded-md p-3 max-h-32 overflow-y-auto">
+                    <div className="border rounded-md p-3 max-h-32 overflow-y-auto category-selector-block">
                       {categories?.map((category: any) => (
                         <div key={category.id}
                                           title={category.name} className="flex items-center space-x-2 py-1">
