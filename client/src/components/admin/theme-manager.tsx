@@ -162,6 +162,22 @@ interface ThemeData {
   bannerButtonLink?: string;
   logoUrl?: string;
   bannerImageUrl?: string;
+  
+  // Cart banner settings
+  showCartBanner?: boolean;
+  cartBannerType?: string;
+  cartBannerImage?: string;
+  cartBannerText?: string;
+  cartBannerBgColor?: string;
+  cartBannerTextColor?: string;
+  
+  // Bottom banners settings
+  showBottomBanners?: boolean;
+  bottomBanner1Url?: string;
+  bottomBanner1Link?: string;
+  bottomBanner2Url?: string;
+  bottomBanner2Link?: string;
+  
   modernBlock1Icon?: string;
   modernBlock1Text?: string;
   modernBlock2Icon?: string;
@@ -584,6 +600,19 @@ export default function ThemeManager() {
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
       logoUrl: formData.get("logoUrl") as string || "",
       bannerImageUrl: formData.get("bannerImageUrl") as string || "",
+      // Cart banner settings
+      showCartBanner: formData.get("showCartBanner") === "true",
+      cartBannerType: formData.get("cartBannerType") as string || "text",
+      cartBannerImage: formData.get("cartBannerImage") as string || "",
+      cartBannerText: formData.get("cartBannerText") as string || "",
+      cartBannerBgColor: formData.get("cartBannerBgColor") as string || "#f97316",
+      cartBannerTextColor: formData.get("cartBannerTextColor") as string || "#ffffff",
+      // Bottom banners settings
+      showBottomBanners: formData.get("showBottomBanners") === "true",
+      bottomBanner1Url: formData.get("bottomBanner1Url") as string || "",
+      bottomBanner1Link: formData.get("bottomBanner1Link") as string || "",
+      bottomBanner2Url: formData.get("bottomBanner2Url") as string || "",
+      bottomBanner2Link: formData.get("bottomBanner2Link") as string || "",
       modernBlock1Icon: formData.get("modernBlock1Icon") as string || "",
       modernBlock1Text: formData.get("modernBlock1Text") as string || "",
       modernBlock2Icon: formData.get("modernBlock2Icon") as string || "",
@@ -658,6 +687,19 @@ export default function ThemeManager() {
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
       logoUrl: formData.get("logoUrl") as string || "",
       bannerImageUrl: formData.get("bannerImageUrl") as string || "",
+      // Cart banner settings
+      showCartBanner: editVisualSettings.showCartBanner,
+      cartBannerType: formData.get("cartBannerType") as string || "text",
+      cartBannerImage: formData.get("cartBannerImage") as string || "",
+      cartBannerText: formData.get("cartBannerText") as string || "",
+      cartBannerBgColor: formData.get("cartBannerBgColor") as string || "#f97316",
+      cartBannerTextColor: formData.get("cartBannerTextColor") as string || "#ffffff",
+      // Bottom banners settings
+      showBottomBanners: editVisualSettings.showBottomBanners,
+      bottomBanner1Url: formData.get("bottomBanner1Url") as string || "",
+      bottomBanner1Link: formData.get("bottomBanner1Link") as string || "",
+      bottomBanner2Url: formData.get("bottomBanner2Url") as string || "",
+      bottomBanner2Link: formData.get("bottomBanner2Link") as string || "",
       modernBlock1Icon: formData.get("modernBlock1Icon") as string || "",
       modernBlock1Text: formData.get("modernBlock1Text") as string || "",
       modernBlock2Icon: formData.get("modernBlock2Icon") as string || "",

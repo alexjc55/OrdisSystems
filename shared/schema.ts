@@ -252,6 +252,21 @@ export const themes = pgTable("themes", {
   logoUrl: varchar("logo_url", { length: 500 }).default(""),
   bannerImageUrl: varchar("banner_image_url", { length: 500 }).default(""),
   
+  // Cart banner settings
+  showCartBanner: boolean("show_cart_banner").default(false),
+  cartBannerType: varchar("cart_banner_type", { length: 10 }).default("text"),
+  cartBannerImage: varchar("cart_banner_image", { length: 500 }).default(""),
+  cartBannerText: text("cart_banner_text").default(""),
+  cartBannerBgColor: varchar("cart_banner_bg_color", { length: 7 }).default("#f97316"),
+  cartBannerTextColor: varchar("cart_banner_text_color", { length: 7 }).default("#ffffff"),
+  
+  // Bottom banners settings
+  showBottomBanners: boolean("show_bottom_banners").default(false),
+  bottomBanner1Url: varchar("bottom_banner1_url", { length: 500 }).default(""),
+  bottomBanner1Link: varchar("bottom_banner1_link", { length: 500 }).default(""),
+  bottomBanner2Url: varchar("bottom_banner2_url", { length: 500 }).default(""),
+  bottomBanner2Link: varchar("bottom_banner2_link", { length: 500 }).default(""),
+  
   // Modern header style info blocks
   modernBlock1Icon: varchar("modern_block1_icon", { length: 50 }).default(""),
   modernBlock1Text: varchar("modern_block1_text", { length: 200 }).default(""),
