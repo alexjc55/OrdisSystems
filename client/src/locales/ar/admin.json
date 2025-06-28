@@ -1133,7 +1133,9 @@
     "tomorrowButton": "زر 'غداً'",
     "tomorrowButtonHover": "زر 'غداً' (عند التمرير)",
     "outOfStockButton": "زر 'نفد المخزون'",
-    "neutralColorsDescription": "ألوان للخلفيات والحدود والعناصر الثانوية"
+    "neutralColorsDescription": "ألوان للخلفيات والحدود والعناصر الثانوية",
+    "noThemes": "لا توجد قوالب",
+    "createFirstTheme": "إنشاء قالب التصميم الأول للموقع"
   },
   "colorLabels": {
     "primaryColor": "اللون الأساسي",
@@ -1166,6 +1168,9 @@
     "storeLogo": "شعار المتجر",
     "bannerImage": "صورة البانر"
   },
+  "creating": "إنشاء...",
+  "deleteConfirmation": "لا يمكن التراجع عن هذا الإجراء. القالب",
+  "deleteForever": "سيتم حذفه نهائياً",
   "imageUpload": {
     "selectFile": "ترجمة مفقودة",
     "uploading": "ترجمة مفقودة"

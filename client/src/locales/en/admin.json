@@ -70,7 +70,9 @@
     "tomorrowButton": "Tomorrow Button",
     "tomorrowButtonHover": "Tomorrow Button (hover)",
     "outOfStockButton": "Out of Stock Button",
-    "neutralColorsDescription": "Colors for backgrounds, borders and secondary elements"
+    "neutralColorsDescription": "Colors for backgrounds, borders and secondary elements",
+    "noThemes": "No Themes",
+    "createFirstTheme": "Create your first site design theme"
   },
   "colorLabels": {
     "primaryColor": "Primary Color",

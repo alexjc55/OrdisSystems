@@ -70,7 +70,9 @@
     "tomorrowButton": "כפתור 'מחר'",
     "tomorrowButtonHover": "כפתור 'מחר' (ריחוף)",
     "outOfStockButton": "כפתור 'אזל המלאי'",
-    "neutralColorsDescription": "צבעים לרקעים, גבולות ואלמנטים משניים"
+    "neutralColorsDescription": "צבעים לרקעים, גבולות ואלמנטים משניים",
+    "noThemes": "אין עיצובים",
+    "createFirstTheme": "צור את עיצוב האתר הראשון שלך"
   },
   "colorLabels": {
     "primaryColor": "צבע עיקרי",
@@ -103,6 +105,9 @@
     "storeLogo": "לוגו החנות",
     "bannerImage": "תמונת באנר"
   },
+  "creating": "יוצר...",
+  "deleteConfirmation": "פעולה זו לא ניתנת לביטול. עיצוב",
+  "deleteForever": "יימחק לצמיתות",
   "storeSettings": {
     "title": "הגדרות חנות",
     "description": "תיאור הגדרות פרמטרים בסיסיים של החנות",

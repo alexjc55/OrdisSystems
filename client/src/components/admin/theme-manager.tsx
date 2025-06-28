@@ -1126,19 +1126,19 @@ export default function ThemeManager() {
                     <input type="hidden" name="tomorrowLightColor" defaultValue="#faf5ff" />
                   </div>
 
-                  {/* Нейтральные */}
+                  {/* Neutral */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Нейтральные</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themes.neutralColors")}</h4>
                     <div>
-                      <h5 className="text-sm font-medium mb-2">Основные нейтральные цвета</h5>
+                      <h5 className="text-sm font-medium mb-2">{adminT("neutralLabels.mainNeutralColors")}</h5>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <ColorInput label="Белый" name="whiteColor" defaultValue="#ffffff" />
-                        <ColorInput label="Серый 100 (фон)" name="gray100Color" defaultValue="#f1f5f9" />
-                        <ColorInput label="Серый 700 (текст)" name="gray700Color" defaultValue="#334155" />
-                        <ColorInput label="Серый 900 (заголовки)" name="gray900Color" defaultValue="#0f172a" />
+                        <ColorInput label={adminT("neutralLabels.white")} name="whiteColor" defaultValue="#ffffff" />
+                        <ColorInput label={adminT("neutralLabels.gray100")} name="gray100Color" defaultValue="#f1f5f9" />
+                        <ColorInput label={adminT("neutralLabels.gray700")} name="gray700Color" defaultValue="#334155" />
+                        <ColorInput label={adminT("neutralLabels.gray900")} name="gray900Color" defaultValue="#0f172a" />
                       </div>
                       <div className="text-sm text-gray-500 mt-2">
-                        ℹ️ Нейтральные цвета для фонов, текста и базовых элементов интерфейса
+                        ℹ️ {adminT("themes.neutralColorsDescription")}
                       </div>
                     </div>
                     
