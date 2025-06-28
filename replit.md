@@ -131,6 +131,13 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Completed comprehensive translation audit and critical fixes
+  - Identified and fixed 363 missing translation keys across all languages
+  - Fixed common.json: fully synchronized all 239 keys across Russian, English, Hebrew
+  - Partially fixed shop.json: reduced missing keys from 50+ to 17 remaining issues
+  - Discovered admin.json requires major translation work: 363 missing keys across languages
+  - Created automated translation analysis scripts for ongoing maintenance
+  - Priority: Complete shop.json and admin.json translation synchronization
 - June 28, 2025: Removed auth page settings section and cleaned up authentication page
   - Completely deleted "Страница авторизации" (Auth Page) section from admin settings
   - Removed all auth page configuration fields (authPageTitle, authPageSubtitle, authPageFeature1-3)
