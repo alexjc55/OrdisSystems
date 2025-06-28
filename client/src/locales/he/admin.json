@@ -616,7 +616,10 @@
       "rolePlaceholder": "בחר תפקיד",
       "passwordMinLength": "סיסמה חייבת להכיל לפחות 6 תווים",
       "newPasswordLabel": "סיסמה חדשה (השאר ריק אם לא משנה)",
-      "deleteWarning": "פעולה זו לא ניתנת לביטול. המשתמש יימחק לצמיתות."
+      "deleteWarning": "פעולה זו לא ניתנת לביטול. המשתמש יימחק לצמיתות.",
+      "usernameError": "שם משתמש לא תקין",
+      "usernameLabel": "שם משתמש",
+      "usernamePlaceholder": "הכנס שם משתמש"
     },
     "created": "משתמש נוצר",
     "createSuccess": "משתמש נוסף בהצלחה",
@@ -673,7 +676,18 @@
     "userUpdated": "משתמש עודכן",
     "userUpdatedDescription": "משתמש עודכן בהצלחה",
     "usernameRequired": "שם משתמש נדרש",
-    "workerUsers": "משתמשי עובד"
+    "workerUsers": "משתמשי עובד",
+    "filters": {
+      "role": "לפי תפקיד",
+      "status": "לפי סטטוס"
+    },
+    "statistics": {
+      "activeCount": "משתמשים פעילים",
+      "adminCount": "מנהלים",
+      "customerCount": "לקוחות",
+      "totalCount": "סך הכל משתמשים",
+      "workerCount": "עובדים"
+    }
   },
   "orders": {
     "title": "הזמנות",

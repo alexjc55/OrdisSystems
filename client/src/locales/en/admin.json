@@ -555,7 +555,10 @@
       "rolePlaceholder": "Select role",
       "passwordMinLength": "Password must be at least 6 characters",
       "newPasswordLabel": "New password (leave empty if not changing)",
-      "deleteWarning": "This action cannot be undone. The user will be permanently deleted."
+      "deleteWarning": "This action cannot be undone. The user will be permanently deleted.",
+      "usernameError": "Invalid username",
+      "usernameLabel": "Username",
+      "usernamePlaceholder": "Enter username"
     },
     "created": "User created",
     "createSuccess": "User successfully added",
@@ -612,7 +615,18 @@
     "userPhone": "User phone",
     "userRole": "User role",
     "userStatus": "User status",
-    "workerUsers": "Worker users"
+    "workerUsers": "Worker users",
+    "filters": {
+      "role": "By role",
+      "status": "By status"
+    },
+    "statistics": {
+      "activeCount": "Active users",
+      "adminCount": "Administrators",
+      "customerCount": "Customers",
+      "totalCount": "Total users",
+      "workerCount": "Workers"
+    }
   },
   "orders": {
     "title": "Orders",
