@@ -131,6 +131,13 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Implemented new tile-based settings interface in admin panel
+  - Replaced accordion-style settings with modern tile grid layout (2-3 columns responsive)
+  - Created colorful themed tiles for each settings section with hover effects and animations
+  - Each tile displays icon, title, description and "Configure" action with scale/shadow transitions
+  - Tiles organized by function: Basic Info (blue), Working Hours (green), Payment/Delivery (purple), Language (orange), Tracking (gray), Auth (red)
+  - Clicking tiles expands corresponding settings sections below for familiar workflow
+  - Improved visual navigation and reduced cognitive load with clear section separation
 - June 28, 2025: Optimized working hours section layout for better compactness and visual comfort
   - Reorganized days of week into responsive two-column grid layout (mobile: 1 column, desktop: 2 columns)
   - Changed time controls to vertical stacking (opening time above closing time) for space efficiency

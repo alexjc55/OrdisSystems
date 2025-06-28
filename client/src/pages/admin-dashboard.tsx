@@ -1,4 +1,34 @@
 /**
+ * ADMIN DASHBOARD BACKUP - Created June 28, 2025 13:56
+ * 
+ * This backup includes the current state of the admin dashboard with:
+ * - Complete banner management system integrated into theme management
+ * - Fixed database schema with proper logo_url and banner_image_url fields
+ * - Enhanced synchronization between themes table and store_settings table
+ * - All visual changes properly reflect on live website
+ * - Multi-language support (Russian, English, Hebrew)
+ * - RTL layout support for Hebrew interface
+ * - Theme customization system with comprehensive color management
+ * - Mobile-responsive design
+ * - All existing features and UI patterns preserved
+ * 
+ * Recent fixes included:
+ * - Added banner_image_url column to store_settings table
+ * - Resolved duplicate field definitions in database schema
+ * - Fixed state management for image uploads in theme editor
+ * - Enhanced server-side synchronization for all banner types
+ * 
+ * ВАЖНО: НЕ ИЗМЕНЯТЬ ДИЗАЙН АДМИН-ПАНЕЛИ БЕЗ ЯВНОГО ЗАПРОСА!
+ * 
+ * Правила для разработчика:
+ * - НЕ изменять существующий дизайн и компоновку интерфейса
+ * - НЕ заменять на "более удобные" решения без запроса
+ * - НЕ менять стили, цвета, расположение элементов
+ * - ТОЛЬКО добавлять новый функционал или исправлять то, что конкретно просят
+ * - Сохранять все существующие UI паттерны и структуру
+ * 
+ * Последнее обновление: исправлены переводы ролей пользователей
+ *//**
  * ВАЖНО: НЕ ИЗМЕНЯТЬ ДИЗАЙН АДМИН-ПАНЕЛИ БЕЗ ЯВНОГО ЗАПРОСА!
  * 
  * Правила для разработчика:
@@ -5734,469 +5764,6 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   );
 }
 
-// Settings Section Dialog Components
-function BasicInfoDialog({ open, onClose, form, onSubmit, adminT, isRTL }: any) {
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-            <Store className="h-5 w-5 text-primary" />
-            {adminT('storeSettings.basicInfo')}
-          </DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="storeName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.storeName')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={adminT('storeSettings.storeNamePlaceholder')} {...field} className="text-sm" />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="welcomeTitle"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.welcomeTitle')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={adminT('storeSettings.welcomeTitlePlaceholder')} {...field} className="text-sm" />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="contactPhone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.contactPhone')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={adminT('storeSettings.contactPhonePlaceholder')} {...field} className="text-sm" />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="contactEmail"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.contactEmail')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={adminT('storeSettings.contactEmailPlaceholder')} type="email" {...field} className="text-sm" />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="deliveryFee"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.deliveryFee')}</FormLabel>
-                    <FormControl>
-                      <Input {...field} className="text-sm" />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="freeDeliveryFrom"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.freeDeliveryFrom')}</FormLabel>
-                    <FormControl>
-                      <Input {...field} className="text-sm" />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="grid grid-cols-1 gap-6">
-              <FormField
-                control={form.control}
-                name="storeDescription"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.storeDescription')}</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder={adminT('storeSettings.storeDescriptionPlaceholder')} {...field} className="text-sm min-h-[100px]" />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.address')}</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder={adminT('storeSettings.addressPlaceholder')} {...field} className="text-sm" />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex justify-end gap-3">
-              <Button type="button" variant="outline" onClick={onClose}>
-                {adminT('actions.cancel')}
-              </Button>
-              <Button type="submit">
-                {adminT('actions.save')}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function WorkingHoursDialog({ open, onClose, form, onSubmit, adminT, isRTL }: any) {
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-            <Clock className="h-5 w-5 text-primary" />
-            {adminT('storeSettings.operatingHours')}
-          </DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="weekStartDay"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm">{adminT('storeSettings.weekStartDay')}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="text-sm">
-                        <SelectValue placeholder={adminT('storeSettings.weekStartDayPlaceholder')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="monday">{adminT('storeSettings.monday')}</SelectItem>
-                      <SelectItem value="sunday">{adminT('storeSettings.sunday')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription className="text-xs">
-                    {adminT('storeSettings.weekStartDayDescription')}
-                  </FormDescription>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[
-                { key: "monday", label: adminT(`storeSettings.monday`) },
-                { key: "tuesday", label: adminT(`storeSettings.tuesday`) },
-                { key: "wednesday", label: adminT(`storeSettings.wednesday`) },
-                { key: "thursday", label: adminT(`storeSettings.thursday`) },
-                { key: "friday", label: adminT(`storeSettings.friday`) },
-                { key: "saturday", label: adminT(`storeSettings.saturday`) },
-                { key: "sunday", label: adminT(`storeSettings.sunday`) },
-              ].map(({ key, label }) => {
-                const currentHours = form.watch(`workingHours.${key}` as any) || "";
-                const isWorking = currentHours && currentHours !== adminT('storeSettings.closedDay');
-                const [openTime, closeTime] = isWorking ? currentHours.split("-") : ["09:00", "18:00"];
-
-                return (
-                  <div key={key} className={`border rounded-lg p-3 space-y-2 ${isWorking ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                      <FormLabel className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{label}</FormLabel>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          if (isWorking) {
-                            form.setValue(`workingHours.${key}` as any, "");
-                          } else {
-                            form.setValue(`workingHours.${key}` as any, "09:00-18:00");
-                          }
-                        }}
-                        className={`p-1 h-7 w-7 ${isWorking ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                      >
-                        {isWorking ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                    
-                    <div className="text-xs text-center font-medium">
-                      {isWorking ? (
-                        <span className="text-green-700">{adminT('storeSettings.workingDay')}</span>
-                      ) : (
-                        <span className="text-gray-500">{adminT('storeSettings.closedDay')}</span>
-                      )}
-                    </div>
-                    
-                    {isWorking && (
-                      <div className="space-y-2">
-                        <div>
-                          <FormLabel className="text-xs text-gray-600 block mb-1">{adminT('storeSettings.openTime')}</FormLabel>
-                          <Select
-                            value={openTime}
-                            onValueChange={(value) => {
-                              const currentClose = closeTime || "18:00";
-                              form.setValue(`workingHours.${key}` as any, `${value}-${currentClose}`);
-                            }}
-                          >
-                            <SelectTrigger className="text-xs h-8">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {Array.from({ length: 48 }, (_, i) => {
-                                const hour = Math.floor(i / 2);
-                                const minute = i % 2 === 0 ? "00" : "30";
-                                const time = `${hour.toString().padStart(2, "0")}:${minute}`;
-                                return (
-                                  <SelectItem key={time} value={time}>
-                                    {time}
-                                  </SelectItem>
-                                );
-                              })}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        <div>
-                          <FormLabel className="text-xs text-gray-600 block mb-1">{adminT('storeSettings.closeTime')}</FormLabel>
-                          <Select
-                            value={closeTime}
-                            onValueChange={(value) => {
-                              const currentOpen = openTime || "09:00";
-                              form.setValue(`workingHours.${key}` as any, `${currentOpen}-${value}`);
-                            }}
-                          >
-                            <SelectTrigger className="text-xs h-8">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {Array.from({ length: 48 }, (_, i) => {
-                                const hour = Math.floor(i / 2);
-                                const minute = i % 2 === 0 ? "00" : "30";
-                                const time = `${hour.toString().padStart(2, "0")}:${minute}`;
-                                return (
-                                  <SelectItem key={time} value={time}>
-                                    {time}
-                                  </SelectItem>
-                                );
-                              })}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex justify-end gap-3">
-              <Button type="button" variant="outline" onClick={onClose}>
-                {adminT('actions.cancel')}
-              </Button>
-              <Button type="submit">
-                {adminT('actions.save')}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function PaymentDeliveryDialog({ open, onClose, form, onSubmit, adminT, isRTL }: any) {
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-            <CreditCard className="h-5 w-5 text-primary" />
-            {adminT('storeSettings.deliveryAndPayment')}
-          </DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-6">
-              <FormField
-                control={form.control}
-                name="deliveryInfo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.deliveryInfo')}</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder={adminT('storeSettings.deliveryInfoPlaceholder')} {...field} className="text-sm min-h-[100px]" />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="paymentInfo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.paymentInfo')}</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder={adminT('storeSettings.paymentInfoPlaceholder')} {...field} className="text-sm min-h-[100px]" />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex justify-end gap-3">
-              <Button type="button" variant="outline" onClick={onClose}>
-                {adminT('actions.cancel')}
-              </Button>
-              <Button type="submit">
-                {adminT('actions.save')}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function LanguageSettingsDialog({ open, onClose, form, onSubmit, adminT, isRTL }: any) {
-  const languageOptions = {
-    ru: { name: "Русский", nativeName: "Русский", flag: "🇷🇺" },
-    en: { name: "English", nativeName: "English", flag: "🇺🇸" },
-    he: { name: "Hebrew", nativeName: "עברית", flag: "🇮🇱" }
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-            <Globe className="h-5 w-5 text-primary" />
-            {adminT('storeSettings.languageSettings')}
-          </DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="defaultLanguage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm">{adminT('storeSettings.defaultLanguage')}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="text-sm">
-                        <SelectValue placeholder={adminT('storeSettings.selectDefaultLanguage')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="ru">🇷🇺 Русский</SelectItem>
-                      <SelectItem value="en">🇺🇸 English</SelectItem>
-                      <SelectItem value="he">🇮🇱 עברית</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription className="text-xs">
-                    {adminT('storeSettings.defaultLanguageDescription')}
-                  </FormDescription>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
-
-            <div className="space-y-4">
-              <FormLabel className="text-sm font-medium">{adminT('storeSettings.enabledLanguages')}</FormLabel>
-              {Object.entries(languageOptions).map(([code, info]) => {
-                const enabledLanguages = form.watch("enabledLanguages") || ["ru", "en", "he"];
-                const isEnabled = enabledLanguages.includes(code);
-                
-                return (
-                  <div key={code} className="flex items-center justify-between p-3 border rounded-lg bg-gray-50">
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">{(info as any).flag}</span>
-                      <div className="flex flex-col">
-                        <span className="font-medium">{(info as any).name}</span>
-                        <span className="text-xs text-gray-500">{(info as any).nativeName}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className={`text-xs font-medium ${isEnabled ? 'text-green-600' : 'text-gray-400'}`}>
-                        {isEnabled ? adminT('storeSettings.languageActive') : adminT('storeSettings.languageDisabled')}
-                      </span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          const currentEnabled = form.getValues("enabledLanguages") || ["ru", "en", "he"];
-                          const currentDefault = form.getValues("defaultLanguage") || "ru";
-                          let newEnabled;
-                          
-                          if (isEnabled) {
-                            newEnabled = currentEnabled.filter((lang: string) => lang !== code);
-                            if (currentDefault === code && newEnabled.length > 0) {
-                              form.setValue("defaultLanguage", newEnabled[0]);
-                            }
-                          } else {
-                            newEnabled = [...currentEnabled, code];
-                          }
-                          
-                          form.setValue("enabledLanguages", newEnabled);
-                        }}
-                        className={`p-1 h-7 w-7 ${isEnabled ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                      >
-                        {isEnabled ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex gap-3">
-                <div className="w-5 h-5 text-blue-600 mt-0.5">ℹ️</div>
-                <div className="text-sm text-blue-800">
-                  <strong>{adminT('storeSettings.noteTitle')}:</strong> {adminT('storeSettings.languageNote')}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-3">
-              <Button type="button" variant="outline" onClick={onClose}>
-                {adminT('actions.cancel')}
-              </Button>
-              <Button type="submit">
-                {adminT('actions.save')}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
 // Store Settings Form Component
 function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   storeSettings: any;
@@ -6206,13 +5773,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he';
-
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
   const [isVisualsOpen, setIsVisualsOpen] = useState(false);
   const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
   const [isWorkingHoursOpen, setIsWorkingHoursOpen] = useState(false);
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
+  const [isDisplaySettingsOpen, setIsDisplaySettingsOpen] = useState(false);
   const [isTrackingCodeOpen, setIsTrackingCodeOpen] = useState(false);
   const [isAuthPageOpen, setIsAuthPageOpen] = useState(false);
   
@@ -6742,7 +6309,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </Button>
           </CollapsibleTrigger>
           
-          <CollapsibleContent className="space-y-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
+          <CollapsibleContent className="space-y-6">
           
           <FormField
             control={form.control}
@@ -6769,7 +6336,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             )}
           />
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-4">
             {[
               { key: "monday", label: adminT(`storeSettings.monday`) },
               { key: "tuesday", label: adminT(`storeSettings.tuesday`) },
@@ -6784,7 +6351,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               const [openTime, closeTime] = isWorking ? currentHours.split("-") : ["09:00", "18:00"];
 
               return (
-                <div key={key} className={`border rounded-lg p-3 space-y-2 ${isWorking ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                <div key={key} className="border rounded-lg p-4 space-y-3">
                   <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <FormLabel className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{label}</FormLabel>
                     <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
@@ -6799,25 +6366,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             form.setValue(`workingHours.${key}` as any, "09:00-18:00");
                           }
                         }}
-                        className={`p-1 h-7 w-7 ${isWorking ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                        className={`p-2 h-8 w-8 ${isWorking ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
                       >
                         {isWorking ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                       </Button>
+                      <span className="text-xs text-gray-600">
+                        {isWorking ? adminT('storeSettings.workingDay') : adminT('storeSettings.closedDay')}
+                      </span>
                     </div>
                   </div>
                   
-                  <div className="text-xs text-center font-medium">
-                    {isWorking ? (
-                      <span className="text-green-700">{adminT('storeSettings.workingDay')}</span>
-                    ) : (
-                      <span className="text-gray-500">{adminT('storeSettings.closedDay')}</span>
-                    )}
-                  </div>
-                  
                   {isWorking && (
-                    <div className="space-y-2">
+                    <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <FormLabel className="text-xs text-gray-600 block mb-1">{adminT('storeSettings.openTime')}</FormLabel>
+                        <FormLabel className="text-xs text-gray-600">{adminT('storeSettings.openTime')}</FormLabel>
                         <Select
                           value={openTime}
                           onValueChange={(value) => {
@@ -6825,7 +6387,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             form.setValue(`workingHours.${key}` as any, `${value}-${currentClose}`);
                           }}
                         >
-                          <SelectTrigger className="text-xs h-8">
+                          <SelectTrigger className="text-xs">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -6844,7 +6406,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       </div>
                       
                       <div>
-                        <FormLabel className="text-xs text-gray-600 block mb-1">{adminT('storeSettings.closeTime')}</FormLabel>
+                        <FormLabel className="text-xs text-gray-600">{adminT('storeSettings.closeTime')}</FormLabel>
                         <Select
                           value={closeTime}
                           onValueChange={(value) => {
@@ -6852,7 +6414,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             form.setValue(`workingHours.${key}` as any, `${currentOpen}-${value}`);
                           }}
                         >
-                          <SelectTrigger className="text-xs h-8">
+                          <SelectTrigger className="text-xs">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -7012,6 +6574,396 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
+        {/* {adminT('storeSettings.displaySettings', 'Настройки отображения')} */}
+        <Collapsible open={isDisplaySettingsOpen} onOpenChange={setIsDisplaySettingsOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {isRTL ? (
+                  <>
+                    {isDisplaySettingsOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.displaySettings')}</h3>
+                    <Eye className="h-5 w-5 text-primary" />
+                  </>
+                ) : (
+                  <>
+                    <Eye className="h-5 w-5 text-primary" />
+                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.displaySettings')}</h3>
+                    {isDisplaySettingsOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </>
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="space-y-6">
+
+
+
+        {/* Информация о переносе настроек */}
+        <div className="space-y-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h4 className="text-sm font-medium text-blue-800 mb-2">Настройки отображения перенесены</h4>
+            <p className="text-xs text-blue-700">
+              Все настройки отображения элементов интерфейса (включая WhatsApp) теперь находятся в разделе "Управление темами" → вкладка "Визуалы".
+            </p>
+          </div>
+        </div>
+
+
+
+
+
+        {/* Баннер корзины */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 pb-2 border-b" dir={isRTL ? 'rtl' : 'ltr'}>
+            {isRTL ? (
+              <>
+                <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.cartBanner')}</h3>
+                <ShoppingCart className="h-5 w-5 text-primary" />
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="h-5 w-5 text-primary" />
+                <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.cartBanner')}</h3>
+              </>
+            )}
+          </div>
+
+          <FormField
+            control={form.control}
+            name="showCartBanner"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-sm font-medium">{adminT('storeSettings.showCartBanner')}</FormLabel>
+                  <FormDescription className="text-xs">
+{adminT('storeSettings.showCartBannerDescription')}
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => field.onChange(!field.value)}
+                    className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                  >
+                    {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  </Button>
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          {form.watch("showCartBanner") && (
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="cartBannerType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm flex items-center gap-2">
+                      <Layers className="h-4 w-4" />
+{adminT('storeSettings.bannerType')}
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="text-sm">
+                          <SelectValue placeholder={adminT('storeSettings.bannerTypeDescription')} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="text">{adminT('storeSettings.textBanner')}</SelectItem>
+                        <SelectItem value="image">{adminT('storeSettings.image')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription className="text-xs">
+                      {adminT('storeSettings.bannerTypeDescription')}
+                    </FormDescription>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              {form.watch("cartBannerType") === "text" && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="cartBannerText"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm flex items-center gap-2">
+                          <Type className="h-4 w-4" />
+{adminT('storeSettings.bannerText')}
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Бесплатная доставка от 100₪!"
+                            {...field} 
+                            className="text-sm min-h-[60px]" 
+                          />
+                        </FormControl>
+                        <FormDescription className="text-xs">
+                          Текст для отображения в баннере корзины
+                        </FormDescription>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="cartBannerBgColor"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm flex items-center gap-2">
+                          <Palette className="h-4 w-4" />
+                          Цвет фона
+                        </FormLabel>
+                        <FormControl>
+                          <div className="flex items-center gap-2">
+                            <Input 
+                              type="color"
+                              {...field} 
+                              className="w-12 h-8 p-0 border rounded" 
+                            />
+                            <Input 
+                              type="text"
+                              {...field} 
+                              placeholder="#f97316"
+                              className="text-sm flex-1" 
+                            />
+                          </div>
+                        </FormControl>
+                        <FormDescription className="text-xs">
+                          Цвет фона для текстового баннера
+                        </FormDescription>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="cartBannerTextColor"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm flex items-center gap-2">
+                          <Type className="h-4 w-4" />
+                          Цвет текста
+                        </FormLabel>
+                        <FormControl>
+                          <div className="flex items-center gap-2">
+                            <Input 
+                              type="color"
+                              {...field} 
+                              className="w-12 h-8 p-0 border rounded" 
+                            />
+                            <Input 
+                              type="text"
+                              {...field} 
+                              placeholder="#ffffff"
+                              className="text-sm flex-1" 
+                            />
+                          </div>
+                        </FormControl>
+                        <FormDescription className="text-xs">
+                          Цвет текста для текстового баннера
+                        </FormDescription>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+
+              {form.watch("cartBannerType") === "image" && (
+                <FormField
+                  control={form.control}
+                  name="cartBannerImage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm flex items-center gap-2">
+                        <Upload className="h-4 w-4" />
+                        Изображение баннера
+                      </FormLabel>
+                      <FormControl>
+                        <ImageUpload
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs text-gray-500">
+                        {adminT('storeSettings.bannerMaxHeight')}
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Нижние баннеры */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 pb-2 border-b" dir={isRTL ? 'rtl' : 'ltr'}>
+            {isRTL ? (
+              <>
+                <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.bottomBanners')}</h3>
+                <Layers className="h-5 w-5 text-primary" />
+              </>
+            ) : (
+              <>
+                <Layers className="h-5 w-5 text-primary" />
+                <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.bottomBanners')}</h3>
+              </>
+            )}
+          </div>
+
+          
+          <FormField
+            control={form.control}
+            name="showBottomBanners"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-sm font-medium">{adminT('storeSettings.showBottomBanners')}</FormLabel>
+                  <FormDescription className="text-xs">
+{adminT('storeSettings.showBottomBannersDescription')}
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => field.onChange(!field.value)}
+                    className={`p-2 h-8 w-8 ${field.value ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                  >
+                    {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  </Button>
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          {form.watch("showBottomBanners") && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Banner 1 */}
+              <div className="space-y-4 border rounded-lg p-4">
+                <h4 className="text-md font-medium">{adminT('storeSettings.banner1Left')}</h4>
+                
+                <FormField
+                  control={form.control}
+                  name="bottomBanner1Url"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm flex items-center gap-2">
+                        <Upload className="h-4 w-4" />
+                        {adminT('storeSettings.banner1Image')}
+                      </FormLabel>
+                      <FormControl>
+                        <ImageUpload
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs text-gray-500">
+                        Рекомендуемый размер: 660×260 пикселей (соотношение 2.5:1)
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="bottomBanner1Link"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Ссылка при клике на баннер 1</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="https://example.com"
+                          {...field} 
+                          className="text-sm" 
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs">
+                        Необязательно. Оставьте пустым, если переход не нужен
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Banner 2 */}
+              <div className="space-y-4 border rounded-lg p-4">
+                <h4 className="text-md font-medium">{adminT('storeSettings.banner2Right')}</h4>
+                
+                <FormField
+                  control={form.control}
+                  name="bottomBanner2Url"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm flex items-center gap-2">
+                        <Upload className="h-4 w-4" />
+                        {adminT('storeSettings.banner2Image')}
+                      </FormLabel>
+                      <FormControl>
+                        <ImageUpload
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs text-gray-500">
+                        Рекомендуемый размер: 660×260 пикселей (соотношение 2.5:1)
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="bottomBanner2Link"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('storeSettings.banner2Link')}</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="https://example.com"
+                          {...field} 
+                          className="text-sm" 
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs">
+                        Необязательно. Оставьте пустым, если переход не нужен
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+          </CollapsibleContent>
+        </Collapsible>
 
         {/* {adminT('storeSettings.trackingCode', 'Код отслеживания')} */}
         <Collapsible open={isTrackingCodeOpen} onOpenChange={setIsTrackingCodeOpen} className="space-y-6">
