@@ -466,19 +466,7 @@ export default function Home() {
             />
           )}
 
-          {/* Search Bar */}
-          <div className="mb-8">
-            <div className="relative max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                type="text"
-                placeholder={t('searchPlaceholder')}
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10 bg-white border-gray-300"
-              />
-            </div>
-          </div>
+
 
           {/* Special Offers or Category View */}
           {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && (
@@ -648,7 +636,7 @@ export default function Home() {
             <div>
               {/* Category Header - Back Button Only */}
               {selectedCategory && (
-                <div className="mb-6">
+                <div className="mb-3">
                   <div className="flex justify-end">
                     <Button
                       onClick={handleResetView}
