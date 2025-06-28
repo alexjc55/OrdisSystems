@@ -2154,6 +2154,12 @@ export default function AdminDashboard() {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [activeTab, setActiveTab] = useState("products");
 
+  // Debug: Track all activeTab changes
+  useEffect(() => {
+    console.log("ActiveTab changed to:", activeTab);
+    console.trace("ActiveTab change stack trace");
+  }, [activeTab]);
+
   // TEMPORARILY DISABLED - Set default tab based on worker permissions 
   // const [hasSetInitialTab, setHasSetInitialTab] = useState(false);
   // const initialStoreSettingsRef = useRef<any>(null);
