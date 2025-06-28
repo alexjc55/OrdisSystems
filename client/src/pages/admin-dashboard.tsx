@@ -2131,28 +2131,25 @@ export default function AdminDashboard() {
     queryKey: ["/api/settings"]
   });
 
+  // Stable permissions reference to prevent tab switching during mutations
+  const stablePermissions = useRef<any>({});
+  
+  // Update stable permissions when storeSettings change
+  useEffect(() => {
+    if (storeSettings?.workerPermissions) {
+      stablePermissions.current = storeSettings.workerPermissions;
+    }
+  }, [storeSettings]);
+
   // Helper function to check worker permissions
   const hasPermission = (permission: string) => {
     if (user?.role === "admin") return true;
     if (user?.role !== "worker") return false;
     
-    // Use stable permissions during mutations to prevent tab switching
-    const permissions = isBlockingTabSwitches 
-      ? (stablePermissions.current || {})
-      : (storeSettings?.workerPermissions as any) || {};
-    
-    return permissions[permission] === true;
+    // Use stable permissions to prevent tab switching during settings updates
+    const workerPermissions = stablePermissions.current || {};
+    return workerPermissions[permission] === true;
   };
-
-  // Keep stable reference to permissions during mutations
-  const stablePermissions = useRef<any>({});
-  
-  // Update stable permissions when storeSettings change (but not during mutations)
-  useEffect(() => {
-    if (storeSettings && !isBlockingTabSwitches) {
-      stablePermissions.current = storeSettings.workerPermissions || {};
-    }
-  }, [storeSettings, isBlockingTabSwitches]);
 
   // State for forms and filters
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
@@ -2167,52 +2164,30 @@ export default function AdminDashboard() {
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [activeTab, setActiveTab] = useState("products");
-  const [isBlockingTabSwitches, setIsBlockingTabSwitches] = useState(false);
 
-  // Debug: Track all activeTab changes
+  // Set default tab based on worker permissions
   useEffect(() => {
-    console.log("ActiveTab changed to:", activeTab);
-    console.trace("ActiveTab change stack trace");
-  }, [activeTab]);
-
-  // Custom setActiveTab that respects blocking
-  const safeSetActiveTab = (newTab: string) => {
-    if (!isBlockingTabSwitches) {
-      setActiveTab(newTab);
-    } else {
-      console.log("Tab switch blocked during settings save:", newTab);
+    if (user?.role === "worker" && storeSettings) {
+      const workerPermissions = (storeSettings?.workerPermissions as any) || {};
+      let defaultTab = "products";
+      
+      if (workerPermissions.canManageProducts) {
+        defaultTab = "products";
+      } else if (workerPermissions.canManageCategories) {
+        defaultTab = "categories";
+      } else if (workerPermissions.canManageOrders) {
+        defaultTab = "orders";
+      } else if (workerPermissions.canViewUsers) {
+        defaultTab = "users";
+      } else if (workerPermissions.canViewSettings) {
+        defaultTab = "store";
+      } else if (workerPermissions.canManageSettings) {
+        defaultTab = "settings";
+      }
+      
+      setActiveTab(defaultTab);
     }
-  };
-
-  // TEMPORARILY DISABLED - Set default tab based on worker permissions 
-  // const [hasSetInitialTab, setHasSetInitialTab] = useState(false);
-  // const initialStoreSettingsRef = useRef<any>(null);
-  
-  // useEffect(() => {
-  //   // Only set initial tab once when first getting user and settings data
-  //   if (user?.role === "worker" && storeSettings && !hasSetInitialTab && !initialStoreSettingsRef.current) {
-  //     initialStoreSettingsRef.current = storeSettings;
-  //     const workerPermissions = (storeSettings?.workerPermissions as any) || {};
-  //     let defaultTab = "products";
-      
-  //     if (workerPermissions.canManageProducts) {
-  //       defaultTab = "products";
-  //     } else if (workerPermissions.canManageCategories) {
-  //       defaultTab = "categories";
-  //     } else if (workerPermissions.canManageOrders) {
-  //       defaultTab = "orders";
-  //     } else if (workerPermissions.canViewUsers) {
-  //       defaultTab = "users";
-  //     } else if (workerPermissions.canViewSettings) {
-  //       defaultTab = "store";
-  //     } else if (workerPermissions.canManageSettings) {
-  //       defaultTab = "settings";
-  //     }
-      
-  //     setActiveTab(defaultTab);
-  //     setHasSetInitialTab(true);
-  //   }
-  // }, [user, storeSettings, hasSetInitialTab]);
+  }, [user, storeSettings]);
 
   // Orders management state
   const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
@@ -2776,9 +2751,6 @@ export default function AdminDashboard() {
   // Store settings mutation
   const updateStoreSettingsMutation = useMutation({
     mutationFn: async (settingsData: any) => {
-      // Block tab switches during save operation
-      setIsBlockingTabSwitches(true);
-      
       // Clean up empty numeric fields to prevent database errors
       const cleanedData = { ...settingsData };
       
@@ -2796,20 +2768,18 @@ export default function AdminDashboard() {
       const response = await apiRequest('PUT', '/api/settings', cleanedData);
       return await response.json();
     },
-    onSuccess: (updatedSettings) => {
+    onSuccess: () => {
       // Update cache data directly instead of invalidating to prevent tab switching
-      queryClient.setQueryData(['/api/settings'], updatedSettings);
+      queryClient.setQueryData(['/api/settings'], (oldData: any) => {
+        if (!oldData) return oldData;
+        return { ...oldData };
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/settings'] });
       toast({ title: adminT('settings.saved'), description: adminT('settings.saveSuccess') });
-      
-      // Unblock tab switches after successful save
-      setTimeout(() => setIsBlockingTabSwitches(false), 500);
     },
     onError: (error: any) => {
       console.error("Store settings update error:", error);
       toast({ title: adminT('common.error'), description: adminT('settings.saveError'), variant: "destructive" });
-      
-      // Unblock tab switches after error
-      setIsBlockingTabSwitches(false);
     }
   });
 
@@ -3084,11 +3054,11 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={safeSetActiveTab} className="space-y-4 sm:space-y-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
           <div>
             {/* Mobile Dropdown Menu */}
             <div className="block sm:hidden mb-4">
-              <Select value={activeTab} onValueChange={safeSetActiveTab}>
+              <Select value={activeTab} onValueChange={setActiveTab}>
                 <SelectTrigger className="w-full bg-white border-gray-200 h-12">
                   <SelectValue>
                     <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -4875,22 +4845,18 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">{adminT('systemSettings.canManageProducts', 'Управление товарами')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canManageProductsDescription', 'Добавление, редактирование и удаление товаров')}</p>
                         </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => 
+                        <CustomSwitch
+                          checked={(storeSettings?.workerPermissions as any)?.canManageProducts || false}
+                          onChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canManageProducts: !((storeSettings?.workerPermissions as any)?.canManageProducts || false)
+                                canManageProducts: checked
                               }
                             })
                           }
-                          className={`p-2 h-8 w-8 ${(storeSettings?.workerPermissions as any)?.canManageProducts ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                        >
-                          {(storeSettings?.workerPermissions as any)?.canManageProducts ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                        </Button>
+                          bgColor="bg-blue-500"
+                        />
                       </div>
                       
                       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -4898,45 +4864,37 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">{adminT('systemSettings.canManageCategories', 'Управление категориями')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canManageCategoriesDescription', 'Создание и редактирование категорий товаров')}</p>
                         </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => 
+                        <CustomSwitch
+                          checked={(storeSettings?.workerPermissions as any)?.canManageCategories || false}
+                          onChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canManageCategories: !((storeSettings?.workerPermissions as any)?.canManageCategories || false)
+                                canManageCategories: checked
                               }
                             })
                           }
-                          className={`p-2 h-8 w-8 ${(storeSettings?.workerPermissions as any)?.canManageCategories ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                        >
-                          {(storeSettings?.workerPermissions as any)?.canManageCategories ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                        </Button>
+                          bgColor="bg-blue-500"
+                        />
                       </div>
                       
-                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                      <div className="flex items-center justify-between">
+                        <div>
                           <label className="text-sm font-medium">{adminT('systemSettings.canEditOrders')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canEditOrdersDescription')}</p>
                         </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => 
+                        <CustomSwitch
+                          checked={(storeSettings?.workerPermissions as any)?.canManageOrders || false}
+                          onChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canManageOrders: !((storeSettings?.workerPermissions as any)?.canManageOrders || false)
+                                canManageOrders: checked
                               }
                             })
                           }
-                          className={`p-2 h-8 w-8 ${(storeSettings?.workerPermissions as any)?.canManageOrders ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                        >
-                          {(storeSettings?.workerPermissions as any)?.canManageOrders ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                        </Button>
+                          bgColor="bg-blue-500"
+                        />
                       </div>
                     </div>
                     
@@ -4964,50 +4922,42 @@ export default function AdminDashboard() {
                         </Button>
                       </div>
                       
-                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                      <div className="flex items-center justify-between">
+                        <div>
                           <label className="text-sm font-medium">{adminT('systemSettings.canManageUsers')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canManageUsersDescription')}</p>
                         </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => 
+                        <CustomSwitch
+                          checked={(storeSettings?.workerPermissions as any)?.canManageUsers || false}
+                          onChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canManageUsers: !((storeSettings?.workerPermissions as any)?.canManageUsers || false)
+                                canManageUsers: checked
                               }
                             })
                           }
-                          className={`p-2 h-8 w-8 ${(storeSettings?.workerPermissions as any)?.canManageUsers ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                        >
-                          {(storeSettings?.workerPermissions as any)?.canManageUsers ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                        </Button>
+                          bgColor="bg-blue-500"
+                        />
                       </div>
                       
-                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                      <div className="flex items-center justify-between">
+                        <div>
                           <label className="text-sm font-medium">{adminT('systemSettings.canViewSettings')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canViewSettingsDescription')}</p>
                         </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => 
+                        <CustomSwitch
+                          checked={(storeSettings?.workerPermissions as any)?.canViewSettings || false}
+                          onChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canViewSettings: !((storeSettings?.workerPermissions as any)?.canViewSettings || false)
+                                canViewSettings: checked
                               }
                             })
                           }
-                          className={`p-2 h-8 w-8 ${(storeSettings?.workerPermissions as any)?.canViewSettings ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                        >
-                          {(storeSettings?.workerPermissions as any)?.canViewSettings ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                        </Button>
+                          bgColor="bg-blue-500"
+                        />
                       </div>
                       
                       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -5015,45 +4965,18 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">{adminT('systemSettings.canManageSettings', 'Управление настройками')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canManageSettingsDescription', 'Доступ к настройкам магазина и системы')}</p>
                         </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => 
+                        <CustomSwitch
+                          checked={(storeSettings?.workerPermissions as any)?.canManageSettings || false}
+                          onChange={(checked) => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canManageSettings: !((storeSettings?.workerPermissions as any)?.canManageSettings || false)
+                                canManageSettings: checked
                               }
                             })
                           }
-                          className={`p-2 h-8 w-8 ${(storeSettings?.workerPermissions as any)?.canManageSettings ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                        >
-                          {(storeSettings?.workerPermissions as any)?.canManageSettings ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                      
-                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canManageThemes', 'Управление темами')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageThemesDescription', 'Создание, редактирование и настройка тем оформления')}</p>
-                        </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => 
-                            updateStoreSettingsMutation.mutate({
-                              workerPermissions: {
-                                ...(storeSettings?.workerPermissions || {}),
-                                canManageThemes: !((storeSettings?.workerPermissions as any)?.canManageThemes || false)
-                              }
-                            })
-                          }
-                          className={`p-2 h-8 w-8 ${(storeSettings?.workerPermissions as any)?.canManageThemes ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
-                        >
-                          {(storeSettings?.workerPermissions as any)?.canManageThemes ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                        </Button>
+                          bgColor="bg-blue-500"
+                        />
                       </div>
                     </div>
                   </div>
@@ -5064,7 +4987,7 @@ export default function AdminDashboard() {
           )}
 
           {/* Theme Management */}
-          {(hasPermission("canManageSettings") || hasPermission("canManageThemes")) && (
+          {hasPermission("canManageSettings") && (
             <TabsContent value="themes" className="space-y-4 sm:space-y-6">
               <ThemeManager />
             </TabsContent>
