@@ -2051,13 +2051,12 @@ export default function ThemeManager() {
                               <div>
                                 <Label htmlFor="bottomBanner2Url" className="text-sm">Изображение</Label>
                                 <ImageUpload
-                                  name="bottomBanner2Url"
-                                  currentImageUrl={editingTheme?.bottomBanner2Url || ""}
-                                  onImageChange={(url) => {
+                                  value={editingTheme?.bottomBanner2Url || ""}
+                                  onChange={(url: string) => {
                                     // Update form data will be handled by the form submission
                                   }}
-                                  className="mt-1"
                                 />
+                                <input type="hidden" name="bottomBanner2Url" value={editingTheme?.bottomBanner2Url || ""} />
                               </div>
                               <div>
                                 <Label htmlFor="bottomBanner2Link" className="text-sm">Ссылка</Label>
