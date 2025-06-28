@@ -1265,24 +1265,24 @@ export default function ThemeManager() {
                     )}
                   </div>
 
-                  {/* Баннеры корзины */}
+                  {/* Cart Banners */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Баннер в корзине</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("visualLabels.cartBanner")}</h4>
                     <div className="space-y-4">
                       <VisualToggleButton 
                         isEnabled={visualSettings.showCartBanner}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showCartBanner: !prev.showCartBanner }))}
-                        label="Показывать баннер в корзине"
-                        description="Рекламный баннер для привлечения внимания"
+                        label={adminT("visualLabels.showCartBanner")}
+                        description={adminT("visualLabels.showCartBannerDescription")}
                         fieldName="showCartBanner"
                       />
 
                       {visualSettings.showCartBanner && (
                         <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
-                          <h5 className="text-sm font-medium text-gray-800">Настройки баннера корзины</h5>
+                          <h5 className="text-sm font-medium text-gray-800">{adminT("visualLabels.cartBannerSettings")}</h5>
                           
                           <div>
-                            <Label htmlFor="cartBannerTypeCreate" className="text-sm">Тип баннера</Label>
+                            <Label htmlFor="cartBannerTypeCreate" className="text-sm">{adminT("visualLabels.bannerType")}</Label>
                             <select
                               name="cartBannerType"
                               id="cartBannerTypeCreate"
@@ -1290,28 +1290,28 @@ export default function ThemeManager() {
                               onChange={(e) => setCreateCartBannerType(e.target.value)}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             >
-                              <option value="text">Текстовый</option>
-                              <option value="image">Изображение</option>
+                              <option value="text">{adminT("visualLabels.textBanner")}</option>
+                              <option value="image">{adminT("visualLabels.imageBanner")}</option>
                             </select>
                           </div>
 
                           {createCartBannerType === 'text' && (
                             <>
                               <div>
-                                <Label htmlFor="cartBannerTextCreate" className="text-sm">Текст баннера</Label>
+                                <Label htmlFor="cartBannerTextCreate" className="text-sm">{adminT("visualLabels.bannerText")}</Label>
                                 <input
                                   type="text"
                                   name="cartBannerText"
                                   id="cartBannerTextCreate"
                                   defaultValue=""
-                                  placeholder="Специальное предложение!"
+                                  placeholder={adminT("visualLabels.bannerTextPlaceholder")}
                                   className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                                 />
                               </div>
 
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                  <Label htmlFor="cartBannerBgColorCreate" className="text-sm">Цвет фона</Label>
+                                  <Label htmlFor="cartBannerBgColorCreate" className="text-sm">{adminT("visualLabels.backgroundColor")}</Label>
                                   <Input
                                     type="color"
                                     name="cartBannerBgColor"
@@ -1321,7 +1321,7 @@ export default function ThemeManager() {
                                   />
                                 </div>
                                 <div>
-                                  <Label htmlFor="cartBannerTextColorCreate" className="text-sm">Цвет текста</Label>
+                                  <Label htmlFor="cartBannerTextColorCreate" className="text-sm">{adminT("visualLabels.textColor")}</Label>
                                   <Input
                                     type="color"
                                     name="cartBannerTextColor"
@@ -1336,7 +1336,7 @@ export default function ThemeManager() {
 
                           {createCartBannerType === 'image' && (
                             <div>
-                              <Label htmlFor="cartBannerImageCreate" className="text-sm font-medium">Изображение баннера</Label>
+                              <Label htmlFor="cartBannerImageCreate" className="text-sm font-medium">{adminT("visualLabels.bannerImage")}</Label>
                               <ImageUpload
                                 value={createCartBannerImage}
                                 onChange={(url: string) => {
@@ -1345,7 +1345,7 @@ export default function ThemeManager() {
                               />
                               <input type="hidden" name="cartBannerImage" value={createCartBannerImage} />
                               <div className="text-xs text-gray-500 mt-1">
-                                Рекомендуемый размер: 800x200 пикселей
+                                {adminT("visualLabels.recommendedSize")}
                               </div>
                             </div>
                           )}

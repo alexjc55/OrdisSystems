@@ -127,7 +127,18 @@
     "phoneFormat": "Формат: +код_страны номер (например, +972501234567)",
     "defaultMessage": "Сообщение по умолчанию",
     "defaultMessageValue": "Здравствуйте! У меня есть вопрос по заказу.",
-    "defaultMessagePlaceholder": "Введите сообщение по умолчанию"
+    "defaultMessagePlaceholder": "Введите сообщение по умолчанию",
+    "cartBanner": "Баннер в корзине",
+    "showCartBanner": "Показывать баннер в корзине",
+    "showCartBannerDescription": "Рекламный баннер для привлечения внимания",
+    "cartBannerSettings": "Настройки баннера корзины",
+    "bannerType": "Тип баннера",
+    "textBanner": "Текстовый",
+    "imageBanner": "Изображение",
+    "bannerText": "Текст баннера",
+    "bannerTextPlaceholder": "Специальное предложение!",
+    "backgroundColor": "Цвет фона",
+    "textColor": "Цвет текста"
   },
   "tabLabels": {
     "basic": "Основное",

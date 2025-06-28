@@ -123,8 +123,10 @@
     "whatsappChatDescription": "WhatsApp contact button",
     "whatsappSettings": "WhatsApp Settings",
     "phoneNumber": "Phone Number",
-    "phoneNumberPlaceholder": "Enter phone number",
+    "phoneNumberPlaceholder": "+972501234567",
+    "phoneFormat": "Format: +country_code number (example: +972501234567)",
     "defaultMessage": "Default Message",
+    "defaultMessageValue": "Hello! I have a question about my order.",
     "defaultMessagePlaceholder": "Enter default message"
   },
   "tabLabels": {

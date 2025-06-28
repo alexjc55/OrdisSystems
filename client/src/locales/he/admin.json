@@ -123,8 +123,10 @@
     "whatsappChatDescription": "כפתור קשר WhatsApp",
     "whatsappSettings": "הגדרות WhatsApp",
     "phoneNumber": "מספר טלפון",
-    "phoneNumberPlaceholder": "הזן מספר טלפון",
+    "phoneNumberPlaceholder": "+972501234567",
+    "phoneFormat": "פורמט: +קוד_מדינה מספר (דוגמה: +972501234567)",
     "defaultMessage": "הודעה ברירת מחדל",
+    "defaultMessageValue": "שלום! יש לי שאלה לגבי ההזמנה שלי.",
     "defaultMessagePlaceholder": "הזן הודעה ברירת מחדל"
   },
   "tabLabels": {

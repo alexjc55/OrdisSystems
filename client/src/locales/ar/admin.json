@@ -1186,8 +1186,10 @@
     "whatsappChatDescription": "زر الاتصال عبر WhatsApp",
     "whatsappSettings": "إعدادات WhatsApp",
     "phoneNumber": "رقم الهاتف",
-    "phoneNumberPlaceholder": "أدخل رقم الهاتف",
+    "phoneNumberPlaceholder": "+972501234567",
+    "phoneFormat": "التنسيق: +رمز_البلد الرقم (مثال: +972501234567)",
     "defaultMessage": "الرسالة الافتراضية",
+    "defaultMessageValue": "مرحباً! لدي سؤال حول طلبي.",
     "defaultMessagePlaceholder": "أدخل الرسالة الافتراضية"
   },
   "tabLabels": {
