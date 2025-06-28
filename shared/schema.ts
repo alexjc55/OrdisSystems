@@ -248,6 +248,10 @@ export const themes = pgTable("themes", {
   bannerButtonText: varchar("banner_button_text", { length: 100 }).default("Смотреть каталог"),
   bannerButtonLink: varchar("banner_button_link", { length: 200 }).default("#categories"),
   
+  // Image URLs
+  logoUrl: varchar("logo_url", { length: 500 }).default(""),
+  bannerImageUrl: varchar("banner_image_url", { length: 500 }).default(""),
+  
   // Modern header style info blocks
   modernBlock1Icon: varchar("modern_block1_icon", { length: 50 }).default(""),
   modernBlock1Text: varchar("modern_block1_text", { length: 200 }).default(""),

@@ -159,6 +159,8 @@ interface ThemeData {
   headerStyle: string;
   bannerButtonText?: string;
   bannerButtonLink?: string;
+  logoUrl?: string;
+  bannerImageUrl?: string;
   modernBlock1Icon?: string;
   modernBlock1Text?: string;
   modernBlock2Icon?: string;
@@ -579,6 +581,8 @@ export default function ThemeManager() {
       headerStyle: formData.get("headerStyle") as string,
       bannerButtonText: formData.get("bannerButtonText") as string || "Смотреть каталог",
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
+      logoUrl: formData.get("logoUrl") as string || "",
+      bannerImageUrl: formData.get("bannerImageUrl") as string || "",
       modernBlock1Icon: formData.get("modernBlock1Icon") as string || "",
       modernBlock1Text: formData.get("modernBlock1Text") as string || "",
       modernBlock2Icon: formData.get("modernBlock2Icon") as string || "",
@@ -651,6 +655,8 @@ export default function ThemeManager() {
       headerStyle: formData.get("headerStyle") as string,
       bannerButtonText: formData.get("bannerButtonText") as string || "Смотреть каталог",
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
+      logoUrl: formData.get("logoUrl") as string || "",
+      bannerImageUrl: formData.get("bannerImageUrl") as string || "",
       modernBlock1Icon: formData.get("modernBlock1Icon") as string || "",
       modernBlock1Text: formData.get("modernBlock1Text") as string || "",
       modernBlock2Icon: formData.get("modernBlock2Icon") as string || "",
@@ -1337,6 +1343,41 @@ export default function ThemeManager() {
                     <div className="space-y-2">
                       <Label htmlFor="edit-description">Описание</Label>
                       <Textarea id="edit-description" name="description" defaultValue={editingTheme.description || ""} />
+                    </div>
+                    
+                    {/* Изображения */}
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-logo-url" className="flex items-center gap-2">
+                          <Upload className="h-4 w-4" />
+                          URL логотипа
+                        </Label>
+                        <Input 
+                          id="edit-logo-url" 
+                          name="logoUrl" 
+                          defaultValue={editingTheme.logoUrl || ""} 
+                          placeholder="https://example.com/logo.png"
+                        />
+                        <div className="text-xs text-gray-500">
+                          Ссылка на логотип магазина для отображения в шапке
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-banner-url" className="flex items-center gap-2">
+                          <Upload className="h-4 w-4" />
+                          URL картинки баннера
+                        </Label>
+                        <Input 
+                          id="edit-banner-url" 
+                          name="bannerImageUrl" 
+                          defaultValue={editingTheme.bannerImageUrl || ""} 
+                          placeholder="https://example.com/banner.jpg"
+                        />
+                        <div className="text-xs text-gray-500">
+                          Фоновое изображение для баннера на главной странице
+                        </div>
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="headerStyleEdit">Стиль шапки сайта</Label>
