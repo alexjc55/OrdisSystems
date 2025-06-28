@@ -3008,6 +3008,7 @@ export default function AdminDashboard() {
       const matchesStatus = selectedStatusFilter === "all" ||
         (selectedStatusFilter === "available" && product.isAvailable) ||
         (selectedStatusFilter === "unavailable" && !product.isAvailable) ||
+        (selectedStatusFilter === "out_of_stock_today" && product.availabilityStatus === "out_of_stock_today") ||
         (selectedStatusFilter === "with_discount" && (product.isSpecialOffer || (product.discountValue && parseFloat(product.discountValue) > 0)));
       
       return matchesSearch && matchesCategory && matchesStatus;
@@ -3335,6 +3336,7 @@ export default function AdminDashboard() {
                           <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{adminT('products.allProducts', 'Все товары')}</SelectItem>
                           <SelectItem value="available" className="text-gray-900 hover:bg-gray-100">{adminT('products.availableProducts', 'Доступные товары')}</SelectItem>
                           <SelectItem value="unavailable" className="text-gray-900 hover:bg-gray-100">{adminT('products.unavailableProducts', 'Недоступные товары')}</SelectItem>
+                          <SelectItem value="out_of_stock_today" className="text-gray-900 hover:bg-gray-100">{adminT('products.preorderProducts', 'Заказ на другой день')}</SelectItem>
                           <SelectItem value="with_discount" className="text-gray-900 hover:bg-gray-100">{adminT('products.productsWithDiscount', 'Товары со скидкой')}</SelectItem>
                         </SelectContent>
                       </Select>

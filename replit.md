@@ -131,6 +131,10 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Added "Next Day Order" filter to admin products section
+  - Added new filter option "Заказ на другой день" (Next Day Order) in admin product filters
+  - Updated filtering logic to show products with availabilityStatus "out_of_stock_today"
+  - Enhanced admin panel product management with better filtering capabilities
 - June 28, 2025: Fixed mobile styling issues for product editing form
   - Completely removed problematic CSS rules (min-height: 44px, width: 100%) affecting category selection dropdown
   - Changed product edit form buttons layout: "Cancel" and "Save" now display in single row on mobile instead of stacked
