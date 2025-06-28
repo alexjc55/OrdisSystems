@@ -25,6 +25,9 @@
   "categories": "קטגוריות",
   "categoriesCount": "{{count}} קטגוריות",
   "allProducts": "כל המוצרים",
+  "filterByCategory": "סינון לפי קטגוריה",
+  "filterByDiscount": "סינון לפי הנחה",
+  "total": "סה״כ",
   "days": {
     "mon": "ב'",
     "tue": "ג'",
@@ -136,7 +139,9 @@
     "ml": "מ״ל",
     "l": "ליטר",
     "perPiece": "ליחידה",
-    "perKg": "לק״ג"
+    "perKg": "לק״ג",
+    "gram": "גרם",
+    "grams": "גרמים"
   },
   "auth": {
     "welcome": "ברוכים הבאים",
