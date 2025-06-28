@@ -1157,6 +1157,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (themeData.modernBlock3Text !== undefined) updateFields.push(`modern_block3_text = '${themeData.modernBlock3Text || ''}'`);
         }
         
+        // Sync logo and banner images (CRITICAL FOR DISPLAY)
+        if (themeData.logoUrl !== undefined) updateFields.push(`logo_url = '${themeData.logoUrl || ''}'`);
+        if (themeData.bannerImageUrl !== undefined) updateFields.push(`banner_image_url = '${themeData.bannerImageUrl || ''}'`);
+        
+        // Sync cart banner settings
+        if (themeData.showCartBanner !== undefined) updateFields.push(`show_cart_banner = ${themeData.showCartBanner}`);
+        if (themeData.cartBannerType !== undefined) updateFields.push(`cart_banner_type = '${themeData.cartBannerType || 'text'}'`);
+        if (themeData.cartBannerImage !== undefined) updateFields.push(`cart_banner_image = '${themeData.cartBannerImage || ''}'`);
+        if (themeData.cartBannerText !== undefined) updateFields.push(`cart_banner_text = '${themeData.cartBannerText || ''}'`);
+        if (themeData.cartBannerBgColor !== undefined) updateFields.push(`cart_banner_bg_color = '${themeData.cartBannerBgColor || '#f97316'}'`);
+        if (themeData.cartBannerTextColor !== undefined) updateFields.push(`cart_banner_text_color = '${themeData.cartBannerTextColor || '#ffffff'}'`);
+        
+        // Sync bottom banners
+        if (themeData.showBottomBanners !== undefined) updateFields.push(`show_bottom_banners = ${themeData.showBottomBanners}`);
+        if (themeData.bottomBanner1Url !== undefined) updateFields.push(`bottom_banner1_url = '${themeData.bottomBanner1Url || ''}'`);
+        if (themeData.bottomBanner1Link !== undefined) updateFields.push(`bottom_banner1_link = '${themeData.bottomBanner1Link || ''}'`);
+        if (themeData.bottomBanner2Url !== undefined) updateFields.push(`bottom_banner2_url = '${themeData.bottomBanner2Url || ''}'`);
+        if (themeData.bottomBanner2Link !== undefined) updateFields.push(`bottom_banner2_link = '${themeData.bottomBanner2Link || ''}'`);
+
         // Sync visual display settings
         if (themeData.showBannerImage !== undefined) updateFields.push(`show_banner_image = ${themeData.showBannerImage}`);
         if (themeData.showTitleDescription !== undefined) updateFields.push(`show_title_description = ${themeData.showTitleDescription}`);
@@ -1221,6 +1240,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await db.execute(sql.raw(`UPDATE store_settings SET ${modernFields.join(', ')} WHERE id = 1`));
       }
       
+      // Sync logo and banner images (CRITICAL FOR DISPLAY)
+      const imageFields = [
+        `logo_url = '${theme.logoUrl || ''}'`,
+        `banner_image_url = '${theme.bannerImageUrl || ''}'`
+      ];
+      await db.execute(sql.raw(`UPDATE store_settings SET ${imageFields.join(', ')} WHERE id = 1`));
+      
+      // Sync cart banner settings
+      const cartBannerFields = [
+        `show_cart_banner = ${theme.showCartBanner ?? false}`,
+        `cart_banner_type = '${theme.cartBannerType || 'text'}'`,
+        `cart_banner_image = '${theme.cartBannerImage || ''}'`,
+        `cart_banner_text = '${theme.cartBannerText || ''}'`,
+        `cart_banner_bg_color = '${theme.cartBannerBgColor || '#f97316'}'`,
+        `cart_banner_text_color = '${theme.cartBannerTextColor || '#ffffff'}'`
+      ];
+      await db.execute(sql.raw(`UPDATE store_settings SET ${cartBannerFields.join(', ')} WHERE id = 1`));
+      
+      // Sync bottom banners
+      const bottomBannerFields = [
+        `show_bottom_banners = ${theme.showBottomBanners ?? false}`,
+        `bottom_banner1_url = '${theme.bottomBanner1Url || ''}'`,
+        `bottom_banner1_link = '${theme.bottomBanner1Link || ''}'`,
+        `bottom_banner2_url = '${theme.bottomBanner2Url || ''}'`,
+        `bottom_banner2_link = '${theme.bottomBanner2Link || ''}'`
+      ];
+      await db.execute(sql.raw(`UPDATE store_settings SET ${bottomBannerFields.join(', ')} WHERE id = 1`));
+
       // Sync all visual display settings with store settings
       const visualFields = [
         `show_banner_image = ${theme.showBannerImage ?? true}`,
