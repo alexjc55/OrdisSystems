@@ -6279,7 +6279,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </Button>
           </CollapsibleTrigger>
           
-          <CollapsibleContent className="space-y-6">
+          <CollapsibleContent className="space-y-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
           
           <FormField
             control={form.control}
@@ -6306,7 +6306,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             )}
           />
           
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               { key: "monday", label: adminT(`storeSettings.monday`) },
               { key: "tuesday", label: adminT(`storeSettings.tuesday`) },
@@ -6321,7 +6321,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               const [openTime, closeTime] = isWorking ? currentHours.split("-") : ["09:00", "18:00"];
 
               return (
-                <div key={key} className="border rounded-lg p-4 space-y-3">
+                <div key={key} className={`border rounded-lg p-3 space-y-2 ${isWorking ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
                   <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <FormLabel className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{label}</FormLabel>
                     <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
@@ -6336,20 +6336,25 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             form.setValue(`workingHours.${key}` as any, "09:00-18:00");
                           }
                         }}
-                        className={`p-2 h-8 w-8 ${isWorking ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                        className={`p-1 h-7 w-7 ${isWorking ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
                       >
                         {isWorking ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                       </Button>
-                      <span className="text-xs text-gray-600">
-                        {isWorking ? adminT('storeSettings.workingDay') : adminT('storeSettings.closedDay')}
-                      </span>
                     </div>
                   </div>
                   
+                  <div className="text-xs text-center font-medium">
+                    {isWorking ? (
+                      <span className="text-green-700">{adminT('storeSettings.workingDay')}</span>
+                    ) : (
+                      <span className="text-gray-500">{adminT('storeSettings.closedDay')}</span>
+                    )}
+                  </div>
+                  
                   {isWorking && (
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
                       <div>
-                        <FormLabel className="text-xs text-gray-600">{adminT('storeSettings.openTime')}</FormLabel>
+                        <FormLabel className="text-xs text-gray-600 block mb-1">{adminT('storeSettings.openTime')}</FormLabel>
                         <Select
                           value={openTime}
                           onValueChange={(value) => {
@@ -6357,7 +6362,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             form.setValue(`workingHours.${key}` as any, `${value}-${currentClose}`);
                           }}
                         >
-                          <SelectTrigger className="text-xs">
+                          <SelectTrigger className="text-xs h-8">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -6376,7 +6381,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       </div>
                       
                       <div>
-                        <FormLabel className="text-xs text-gray-600">{adminT('storeSettings.closeTime')}</FormLabel>
+                        <FormLabel className="text-xs text-gray-600 block mb-1">{adminT('storeSettings.closeTime')}</FormLabel>
                         <Select
                           value={closeTime}
                           onValueChange={(value) => {
@@ -6384,7 +6389,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             form.setValue(`workingHours.${key}` as any, `${currentOpen}-${value}`);
                           }}
                         >
-                          <SelectTrigger className="text-xs">
+                          <SelectTrigger className="text-xs h-8">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>

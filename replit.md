@@ -131,6 +131,12 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Optimized working hours section layout for better compactness and visual comfort
+  - Reorganized days of week into responsive two-column grid layout (mobile: 1 column, desktop: 2 columns)
+  - Changed time controls to vertical stacking (opening time above closing time) for space efficiency
+  - Added visual indicators: green background for working days, gray for closed days
+  - Added light gray background to entire section for better visual separation from white interface
+  - Reduced element sizes and padding for more compact display
 - June 28, 2025: Completely removed display settings section from admin panel as requested
   - Deleted entire "Настройки отображения" (Display Settings) section from admin settings
   - Removed associated state variables (isDisplaySettingsOpen, setIsDisplaySettingsOpen)
