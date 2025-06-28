@@ -138,7 +138,17 @@
     "bannerText": "Текст баннера",
     "bannerTextPlaceholder": "Специальное предложение!",
     "backgroundColor": "Цвет фона",
-    "textColor": "Цвет текста"
+    "textColor": "Цвет текста",
+    "bannerImage": "Изображение баннера",
+    "recommendedSize": "Рекомендуемый размер: 800x200 пикселей",
+    "bottomBanners": "Нижние баннеры",
+    "showBottomBanners": "Показывать нижние баннеры",
+    "showBottomBannersDescription": "Рекламные баннеры внизу страницы",
+    "bottomBannerSettings": "Настройки нижних баннеров",
+    "firstBanner": "Первый баннер",
+    "secondBanner": "Второй баннер",
+    "link": "Ссылка",
+    "linkPlaceholder": "https://example.com"
   },
   "tabLabels": {
     "basic": "Основное",

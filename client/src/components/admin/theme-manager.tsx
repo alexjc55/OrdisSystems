@@ -1354,28 +1354,28 @@ export default function ThemeManager() {
                     </div>
                   </div>
 
-                  {/* Нижние баннеры */}
+                  {/* Bottom Banners */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Нижние баннеры</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("visualLabels.bottomBanners")}</h4>
                     <div className="space-y-4">
                       <VisualToggleButton 
                         isEnabled={visualSettings.showBottomBanners}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showBottomBanners: !prev.showBottomBanners }))}
-                        label="Показывать нижние баннеры"
-                        description="Рекламные баннеры внизу страницы"
+                        label={adminT("visualLabels.showBottomBanners")}
+                        description={adminT("visualLabels.showBottomBannersDescription")}
                         fieldName="showBottomBanners"
                       />
 
                       {visualSettings.showBottomBanners && (
                         <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
-                          <h5 className="text-sm font-medium text-gray-800">Настройки нижних баннеров</h5>
+                          <h5 className="text-sm font-medium text-gray-800">{adminT("visualLabels.bottomBannerSettings")}</h5>
                           
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Первый баннер */}
+                            {/* First Banner */}
                             <div className="space-y-3">
-                              <h6 className="text-sm font-medium text-gray-700">Первый баннер</h6>
+                              <h6 className="text-sm font-medium text-gray-700">{adminT("visualLabels.firstBanner")}</h6>
                               <div>
-                                <Label htmlFor="bottomBanner1UrlCreate" className="text-sm">Изображение</Label>
+                                <Label htmlFor="bottomBanner1UrlCreate" className="text-sm">{adminT("visualLabels.bannerImage")}</Label>
                                 <ImageUpload
                                   value={createBottomBanner1Url}
                                   onChange={(url: string) => {
@@ -1385,23 +1385,23 @@ export default function ThemeManager() {
                                 <input type="hidden" name="bottomBanner1Url" value={createBottomBanner1Url} />
                               </div>
                               <div>
-                                <Label htmlFor="bottomBanner1LinkCreate" className="text-sm">Ссылка</Label>
+                                <Label htmlFor="bottomBanner1LinkCreate" className="text-sm">{adminT("visualLabels.link")}</Label>
                                 <input
                                   type="url"
                                   name="bottomBanner1Link"
                                   id="bottomBanner1LinkCreate"
                                   defaultValue=""
-                                  placeholder="https://example.com"
+                                  placeholder={adminT("visualLabels.linkPlaceholder")}
                                   className="w-full px-3 py-2 border rounded-md bg-white text-sm mt-1"
                                 />
                               </div>
                             </div>
 
-                            {/* Второй баннер */}
+                            {/* Second Banner */}
                             <div className="space-y-3">
-                              <h6 className="text-sm font-medium text-gray-700">Второй баннер</h6>
+                              <h6 className="text-sm font-medium text-gray-700">{adminT("visualLabels.secondBanner")}</h6>
                               <div>
-                                <Label htmlFor="bottomBanner2UrlCreate" className="text-sm">Изображение</Label>
+                                <Label htmlFor="bottomBanner2UrlCreate" className="text-sm">{adminT("visualLabels.bannerImage")}</Label>
                                 <ImageUpload
                                   value={createBottomBanner2Url}
                                   onChange={(url: string) => {
@@ -1411,13 +1411,13 @@ export default function ThemeManager() {
                                 <input type="hidden" name="bottomBanner2Url" value={createBottomBanner2Url} />
                               </div>
                               <div>
-                                <Label htmlFor="bottomBanner2LinkCreate" className="text-sm">Ссылка</Label>
+                                <Label htmlFor="bottomBanner2LinkCreate" className="text-sm">{adminT("visualLabels.link")}</Label>
                                 <input
                                   type="url"
                                   name="bottomBanner2Link"
                                   id="bottomBanner2LinkCreate"
                                   defaultValue=""
-                                  placeholder="https://example.com"
+                                  placeholder={adminT("visualLabels.linkPlaceholder")}
                                   className="w-full px-3 py-2 border rounded-md bg-white text-sm mt-1"
                                 />
                               </div>
