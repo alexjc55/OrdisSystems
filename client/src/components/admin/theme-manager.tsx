@@ -230,7 +230,9 @@ export default function ThemeManager() {
     infoBlocksPosition: 'top',
     showSpecialOffers: true,
     showCategoryMenu: true,
-    showWhatsAppChat: true
+    showWhatsAppChat: true,
+    showCartBanner: false,
+    showBottomBanners: false
   });
   const [editVisualSettings, setEditVisualSettings] = useState({
     showBannerImage: true,
@@ -239,7 +241,9 @@ export default function ThemeManager() {
     infoBlocksPosition: 'top',
     showSpecialOffers: true,
     showCategoryMenu: true,
-    showWhatsAppChat: true
+    showWhatsAppChat: true,
+    showCartBanner: false,
+    showBottomBanners: false
   });
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -254,7 +258,9 @@ export default function ThemeManager() {
         infoBlocksPosition: editingTheme.infoBlocksPosition || 'top',
         showSpecialOffers: editingTheme.showSpecialOffers ?? true,
         showCategoryMenu: editingTheme.showCategoryMenu ?? true,
-        showWhatsAppChat: editingTheme.showWhatsAppChat ?? true
+        showWhatsAppChat: editingTheme.showWhatsAppChat ?? true,
+        showCartBanner: editingTheme.showCartBanner ?? false,
+        showBottomBanners: editingTheme.showBottomBanners ?? false
       });
     }
   }, [editingTheme]);
