@@ -141,7 +141,7 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
   - ROOT CAUSE: Translation keys conflicting between string values and object structures
   - SOLUTION IMPLEMENTED: Updated home page to use specific non-conflicting translation keys
     - Changed t('delivery') to t('cart.delivery') - uses existing cart object string value
-    - Changed t('payment') to t('paymentMethod') - uses existing string key without conflicts
+    - Changed t('paymentAndDelivery') to t('paymentMethod') & t('cart.delivery') - combines two working keys
     - Removed duplicate string keys from Arabic common.json that conflicted with shop.json objects
   - SYSTEMATIC CLEANUP: Fixed 40+ Arabic text entries incorrectly placed in Russian translation file
     - Corrected Russian cart section with proper Russian translations
