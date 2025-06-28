@@ -4846,18 +4846,25 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">{adminT('systemSettings.canManageProducts', 'Управление товарами')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canManageProductsDescription', 'Добавление, редактирование и удаление товаров')}</p>
                         </div>
-                        <CustomSwitch
-                          checked={(storeSettings?.workerPermissions as any)?.canManageProducts || false}
-                          onChange={(checked) => 
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canManageProducts: checked
+                                canManageProducts: !((storeSettings?.workerPermissions as any)?.canManageProducts || false)
                               }
                             })
                           }
-                          bgColor="bg-blue-500"
-                        />
+                          className="h-8 w-8 p-0"
+                        >
+                          {(storeSettings?.workerPermissions as any)?.canManageProducts ? (
+                            <Eye className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <EyeOff className="h-4 w-4 text-gray-400" />
+                          )}
+                        </Button>
                       </div>
                       
                       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -4865,37 +4872,51 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">{adminT('systemSettings.canManageCategories', 'Управление категориями')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canManageCategoriesDescription', 'Создание и редактирование категорий товаров')}</p>
                         </div>
-                        <CustomSwitch
-                          checked={(storeSettings?.workerPermissions as any)?.canManageCategories || false}
-                          onChange={(checked) => 
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canManageCategories: checked
+                                canManageCategories: !((storeSettings?.workerPermissions as any)?.canManageCategories || false)
                               }
                             })
                           }
-                          bgColor="bg-blue-500"
-                        />
+                          className="h-8 w-8 p-0"
+                        >
+                          {(storeSettings?.workerPermissions as any)?.canManageCategories ? (
+                            <Eye className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <EyeOff className="h-4 w-4 text-gray-400" />
+                          )}
+                        </Button>
                       </div>
                       
-                      <div className="flex items-center justify-between">
-                        <div>
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
                           <label className="text-sm font-medium">{adminT('systemSettings.canEditOrders')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canEditOrdersDescription')}</p>
                         </div>
-                        <CustomSwitch
-                          checked={(storeSettings?.workerPermissions as any)?.canManageOrders || false}
-                          onChange={(checked) => 
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canManageOrders: checked
+                                canManageOrders: !((storeSettings?.workerPermissions as any)?.canManageOrders || false)
                               }
                             })
                           }
-                          bgColor="bg-blue-500"
-                        />
+                          className="h-8 w-8 p-0"
+                        >
+                          {(storeSettings?.workerPermissions as any)?.canManageOrders ? (
+                            <Eye className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <EyeOff className="h-4 w-4 text-gray-400" />
+                          )}
+                        </Button>
                       </div>
                     </div>
                     
