@@ -3152,7 +3152,7 @@ export default function AdminDashboard() {
                       </div>
                     </SelectItem>
                   )}
-                  {hasPermission("canManageSettings") && (
+                  {(hasPermission("canManageSettings") || hasPermission("canManageThemes")) && (
                     <SelectItem value="themes" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         {!isRTL && <Palette className="w-5 h-5" />}
@@ -3171,7 +3171,7 @@ export default function AdminDashboard() {
               {isRTL ? (
                 // RTL order: reverse the tab order
                 <>
-                  {hasPermission("canManageSettings") && (
+                  {(hasPermission("canManageSettings") || hasPermission("canManageThemes")) && (
                     <TabsTrigger value="themes" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.themes')}>
                       <Palette className="w-4 h-4 ml-1" />
                       <span className="admin-tab-text">{adminT('tabs.themes')}</span>
@@ -4923,42 +4923,56 @@ export default function AdminDashboard() {
                         </Button>
                       </div>
                       
-                      <div className="flex items-center justify-between">
-                        <div>
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
                           <label className="text-sm font-medium">{adminT('systemSettings.canManageUsers')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canManageUsersDescription')}</p>
                         </div>
-                        <CustomSwitch
-                          checked={(storeSettings?.workerPermissions as any)?.canManageUsers || false}
-                          onChange={(checked) => 
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canManageUsers: checked
+                                canManageUsers: !((storeSettings?.workerPermissions as any)?.canManageUsers || false)
                               }
                             })
                           }
-                          bgColor="bg-blue-500"
-                        />
+                          className="h-8 w-8 p-0"
+                        >
+                          {(storeSettings?.workerPermissions as any)?.canManageUsers ? (
+                            <Eye className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <EyeOff className="h-4 w-4 text-gray-400" />
+                          )}
+                        </Button>
                       </div>
                       
-                      <div className="flex items-center justify-between">
-                        <div>
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
                           <label className="text-sm font-medium">{adminT('systemSettings.canViewSettings')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canViewSettingsDescription')}</p>
                         </div>
-                        <CustomSwitch
-                          checked={(storeSettings?.workerPermissions as any)?.canViewSettings || false}
-                          onChange={(checked) => 
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canViewSettings: checked
+                                canViewSettings: !((storeSettings?.workerPermissions as any)?.canViewSettings || false)
                               }
                             })
                           }
-                          bgColor="bg-blue-500"
-                        />
+                          className="h-8 w-8 p-0"
+                        >
+                          {(storeSettings?.workerPermissions as any)?.canViewSettings ? (
+                            <Eye className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <EyeOff className="h-4 w-4 text-gray-400" />
+                          )}
+                        </Button>
                       </div>
                       
                       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -4966,18 +4980,51 @@ export default function AdminDashboard() {
                           <label className="text-sm font-medium">{adminT('systemSettings.canManageSettings', 'Управление настройками')}</label>
                           <p className="text-xs text-gray-500">{adminT('systemSettings.canManageSettingsDescription', 'Доступ к настройкам магазина и системы')}</p>
                         </div>
-                        <CustomSwitch
-                          checked={(storeSettings?.workerPermissions as any)?.canManageSettings || false}
-                          onChange={(checked) => 
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canManageSettings: checked
+                                canManageSettings: !((storeSettings?.workerPermissions as any)?.canManageSettings || false)
                               }
                             })
                           }
-                          bgColor="bg-blue-500"
-                        />
+                          className="h-8 w-8 p-0"
+                        >
+                          {(storeSettings?.workerPermissions as any)?.canManageSettings ? (
+                            <Eye className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <EyeOff className="h-4 w-4 text-gray-400" />
+                          )}
+                        </Button>
+                      </div>
+                      
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageThemes', 'Управление темами')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageThemesDescription', 'Доступ к созданию и редактированию тем оформления')}</p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => 
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canManageThemes: !((storeSettings?.workerPermissions as any)?.canManageThemes || false)
+                              }
+                            })
+                          }
+                          className="h-8 w-8 p-0"
+                        >
+                          {(storeSettings?.workerPermissions as any)?.canManageThemes ? (
+                            <Eye className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <EyeOff className="h-4 w-4 text-gray-400" />
+                          )}
+                        </Button>
                       </div>
                     </div>
                   </div>
