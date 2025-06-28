@@ -131,6 +131,13 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Fixed Arabic language translation issues and RTL layout
+  - Massively expanded Arabic admin translation file from 277 to 530+ keys
+  - Added all missing translation keys (tabs, actions, storeSettings sections)
+  - Fixed incomplete Arabic admin interface translations
+  - Removed flags from all language switchers for better mobile layout
+  - Arabic now displays properly without falling back to English/Russian text
+  - Improved RTL alignment for Arabic language in admin dashboard
 - June 28, 2025: Added Arabic language support to multi-language system
   - Created complete Arabic translation files (common.json, shop.json, admin.json)
   - Added Arabic font support with Noto Sans Arabic
