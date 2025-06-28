@@ -2154,9 +2154,11 @@ export default function AdminDashboard() {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [activeTab, setActiveTab] = useState("products");
 
-  // Set default tab based on worker permissions
+  // Set default tab based on worker permissions (only on initial load)
+  const [hasSetInitialTab, setHasSetInitialTab] = useState(false);
+  
   useEffect(() => {
-    if (user?.role === "worker" && storeSettings) {
+    if (user?.role === "worker" && storeSettings && !hasSetInitialTab) {
       const workerPermissions = (storeSettings?.workerPermissions as any) || {};
       let defaultTab = "products";
       
@@ -2175,8 +2177,9 @@ export default function AdminDashboard() {
       }
       
       setActiveTab(defaultTab);
+      setHasSetInitialTab(true);
     }
-  }, [user, storeSettings]);
+  }, [user, storeSettings, hasSetInitialTab]);
 
   // Orders management state
   const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
