@@ -36,7 +36,7 @@ export function ModernStyleSettings({ id, defaultValues }: ModernStyleSettingsPr
                   <option value="MapPin">Местоположение</option>
                   <option value="Shield">Безопасность</option>
                   <option value="Star">Качество</option>
-                  <option value="Zap">Скорость</option>
+                  <option value="ChefHat">Повар</option>
                   <option value="Heart">Забота</option>
                   <option value="Award">Награды</option>
                   <option value="Users">Команда</option>
