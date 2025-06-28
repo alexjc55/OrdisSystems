@@ -2760,13 +2760,9 @@ export default function AdminDashboard() {
       const response = await apiRequest('PUT', '/api/settings', cleanedData);
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: (updatedSettings) => {
       // Update cache data directly instead of invalidating to prevent tab switching
-      queryClient.setQueryData(['/api/settings'], (oldData: any) => {
-        if (!oldData) return oldData;
-        return { ...oldData };
-      });
-      queryClient.invalidateQueries({ queryKey: ['/api/settings'] });
+      queryClient.setQueryData(['/api/settings'], updatedSettings);
       toast({ title: adminT('settings.saved'), description: adminT('settings.saveSuccess') });
     },
     onError: (error: any) => {
