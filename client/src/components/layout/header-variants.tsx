@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Clock, Phone, MapPin, CreditCard, Truck, Star, Shield, Heart, ChefHat } from 'lucide-react';
+import { Clock, Phone, MapPin, CreditCard, Truck, Star, Shield, Heart, ChefHat, Zap, Award, Users, ThumbsUp, CheckCircle, Gift, Smile } from 'lucide-react';
 
 // Helper function to get icon component
 const getIconComponent = (iconName: string) => {
@@ -91,14 +91,22 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
   const getIcon = (iconName: string) => {
     const iconProps = "h-5 w-5 sm:h-6 sm:w-6";
     switch (iconName) {
-      case 'clock': return <Clock className={iconProps} />;
-      case 'phone': return <Phone className={iconProps} />;
-      case 'truck': return <Truck className={iconProps} />;
-      case 'credit-card': return <CreditCard className={iconProps} />;
-      case 'star': return <Star className={iconProps} />;
-      case 'shield': return <Shield className={iconProps} />;
-      case 'heart': return <Heart className={iconProps} />;
-      case 'chef-hat': return <ChefHat className={iconProps} />;
+      case 'Clock': return <Clock className={iconProps} />;
+      case 'Phone': return <Phone className={iconProps} />;
+      case 'Truck': return <Truck className={iconProps} />;
+      case 'CreditCard': return <CreditCard className={iconProps} />;
+      case 'Star': return <Star className={iconProps} />;
+      case 'Shield': return <Shield className={iconProps} />;
+      case 'Heart': return <Heart className={iconProps} />;
+      case 'ChefHat': return <ChefHat className={iconProps} />;
+      case 'MapPin': return <MapPin className={iconProps} />;
+      case 'Zap': return <Zap className={iconProps} />;
+      case 'Award': return <Award className={iconProps} />;
+      case 'Users': return <Users className={iconProps} />;
+      case 'ThumbsUp': return <ThumbsUp className={iconProps} />;
+      case 'CheckCircle': return <CheckCircle className={iconProps} />;
+      case 'Gift': return <Gift className={iconProps} />;
+      case 'Smile': return <Smile className={iconProps} />;
       default: return <Star className={iconProps} />;
     }
   };

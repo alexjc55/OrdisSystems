@@ -1401,17 +1401,19 @@ export default function ThemeManager() {
                       </div>
                     </div>
                     
-                    <ModernStyleSettings 
-                      id="modernControlsEdit" 
-                      defaultValues={{
-                        modernBlock1Icon: editingTheme.modernBlock1Icon,
-                        modernBlock1Text: editingTheme.modernBlock1Text,
-                        modernBlock2Icon: editingTheme.modernBlock2Icon,
-                        modernBlock2Text: editingTheme.modernBlock2Text,
-                        modernBlock3Icon: editingTheme.modernBlock3Icon,
-                        modernBlock3Text: editingTheme.modernBlock3Text,
-                      }}
-                    />
+                    <div id="modernControlsEdit" className="space-y-4" style={{ display: editingTheme.headerStyle === 'modern' ? 'block' : 'none' }}>
+                      <ModernStyleSettings 
+                        id="modernControlsEditInner" 
+                        defaultValues={{
+                          modernBlock1Icon: editingTheme.modernBlock1Icon,
+                          modernBlock1Text: editingTheme.modernBlock1Text,
+                          modernBlock2Icon: editingTheme.modernBlock2Icon,
+                          modernBlock2Text: editingTheme.modernBlock2Text,
+                          modernBlock3Icon: editingTheme.modernBlock3Icon,
+                          modernBlock3Text: editingTheme.modernBlock3Text,
+                        }}
+                      />
+                    </div>
                   </div>
                 </TabsContent>
 
