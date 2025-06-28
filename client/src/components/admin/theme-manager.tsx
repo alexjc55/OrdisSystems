@@ -855,6 +855,39 @@ export default function ThemeManager() {
                       <Label htmlFor="description">Описание</Label>
                       <Textarea id="description" name="description" placeholder="Описание темы..." />
                     </div>
+                    
+                    {/* Изображения */}
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="logo-url" className="flex items-center gap-2">
+                          <Upload className="h-4 w-4" />
+                          URL логотипа
+                        </Label>
+                        <Input 
+                          id="logo-url" 
+                          name="logoUrl" 
+                          placeholder="https://example.com/logo.png"
+                        />
+                        <div className="text-xs text-gray-500">
+                          Ссылка на логотип магазина для отображения в шапке
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="banner-url" className="flex items-center gap-2">
+                          <Upload className="h-4 w-4" />
+                          URL картинки баннера
+                        </Label>
+                        <Input 
+                          id="banner-url" 
+                          name="bannerImageUrl" 
+                          placeholder="https://example.com/banner.jpg"
+                        />
+                        <div className="text-xs text-gray-500">
+                          Фоновое изображение для баннера на главной странице
+                        </div>
+                      </div>
+                    </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="fontFamilyPrimary">Основной шрифт</Label>
