@@ -891,24 +891,24 @@ export default function ThemeManager() {
         <div className="flex-1">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <Palette className="h-6 w-6" />
-            Управление темами
+            {adminT("themes.title")}
           </h2>
           <p className="text-muted-foreground">
-            Управляйте цветовыми схемами и темами оформления сайта
+            {adminT("themes.description")}
           </p>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button className="btn-primary w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
-              Создать тему
+              {adminT("themes.createTheme")}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Создание новой темы</DialogTitle>
+              <DialogTitle>{adminT("themes.createNew")}</DialogTitle>
               <DialogDescription>
-                Настройте цвета и параметры для новой темы оформления
+                {adminT("themes.createDescription")}
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={(e) => {

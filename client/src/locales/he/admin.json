@@ -36,6 +36,9 @@
     "description": "נהל ערכות צבעים ועיצובי אתר",
     "success": "הצלחה",
     "error": "שגיאה",
+    "createTheme": "יצור עיצוב",
+    "createNew": "יצירת עיצוב חדש",
+    "createDescription": "הגדר צבעים ופרמטרים לעיצוב חדש",
     "createSuccess": "עיצוב נוצר והופעל בהצלחה",
     "createError": "נכשל ביצירת עיצוב",
     "updateSuccess": "עיצוב עודכן בהצלחה",
@@ -43,7 +46,12 @@
     "activateSuccess": "עיצוב הופעל בהצלחה",
     "activateError": "נכשל בהפעלת עיצוב",
     "deleteSuccess": "עיצוב נמחק בהצלחה",
-    "deleteError": "נכשל במחיקת עיצוב"
+    "deleteError": "נכשל במחיקת עיצוב",
+    "editTheme": "ערוך עיצוב",
+    "deleteTheme": "מחק עיצוב",
+    "activateTheme": "הפעל",
+    "activeTheme": "עיצוב פעיל",
+    "availableThemes": "עיצובים זמינים"
   },
   "storeSettings": {
     "title": "הגדרות חנות",

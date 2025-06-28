@@ -1099,6 +1099,9 @@
     "description": "إدارة أنظمة الألوان وقوالب تصميم الموقع",
     "success": "نجح",
     "error": "خطأ",
+    "createTheme": "إنشاء قالب",
+    "createNew": "إنشاء قالب جديد",
+    "createDescription": "تكوين الألوان والمعاملات للقالب الجديد",
     "createSuccess": "تم إنشاء وتفعيل القالب بنجاح",
     "createError": "فشل في إنشاء القالب",
     "updateSuccess": "تم تحديث القالب بنجاح",
@@ -1106,7 +1109,12 @@
     "activateSuccess": "تم تفعيل القالب بنجاح",
     "activateError": "فشل في تفعيل القالب",
     "deleteSuccess": "تم حذف القالب بنجاح",
-    "deleteError": "فشل في حذف القالب"
+    "deleteError": "فشل في حذف القالب",
+    "editTheme": "تعديل القالب",
+    "deleteTheme": "حذف القالب",
+    "activateTheme": "تفعيل",
+    "activeTheme": "القالب النشط",
+    "availableThemes": "القوالب المتاحة"
   },
   "imageUpload": {
     "selectFile": "ترجمة مفقودة",

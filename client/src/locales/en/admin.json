@@ -36,6 +36,9 @@
     "description": "Manage color schemes and site design themes",
     "success": "Success",
     "error": "Error",
+    "createTheme": "Create Theme",
+    "createNew": "Create New Theme",
+    "createDescription": "Configure colors and parameters for new design theme",
     "createSuccess": "Theme created and activated successfully",
     "createError": "Failed to create theme",
     "updateSuccess": "Theme updated successfully",
@@ -43,7 +46,12 @@
     "activateSuccess": "Theme activated successfully",
     "activateError": "Failed to activate theme",
     "deleteSuccess": "Theme deleted successfully",
-    "deleteError": "Failed to delete theme"
+    "deleteError": "Failed to delete theme",
+    "editTheme": "Edit Theme",
+    "deleteTheme": "Delete Theme",
+    "activateTheme": "Activate",
+    "activeTheme": "Active Theme",
+    "availableThemes": "Available Themes"
   },
   "storeSettings": {
     "title": "Store Settings",
