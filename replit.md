@@ -131,6 +131,11 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Cleaned up admin panel display settings section as requested
+  - Completely cleared "Настройки отображения" (Display Settings) section in admin panel
+  - Removed all banner and visual configuration controls from settings tab
+  - Added informational message directing users to theme management for visual settings
+  - All visual settings now properly centralized in "Управление темами" → "Визуалы" tab
 - June 28, 2025: Created admin dashboard backup and resolved database schema issues
   - Created admin-dashboard-backup-20250628_135649.tsx for safety
   - Added missing banner_image_url column to store_settings table via SQL migration
