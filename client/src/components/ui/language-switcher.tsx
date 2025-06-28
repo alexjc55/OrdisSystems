@@ -13,7 +13,7 @@ interface LanguageSwitcherProps {
 
 export function LanguageSwitcher({ 
   variant = "button", 
-  showFlag = true, 
+  showFlag = false, 
   showText = true 
 }: LanguageSwitcherProps) {
   const { currentLanguage, currentLanguageInfo, languages, changeLanguage } = useLanguage();

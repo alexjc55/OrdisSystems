@@ -95,7 +95,7 @@ export default function Header({ onResetView }: HeaderProps) {
             {/* Language Switcher - Desktop only, multiple languages only */}
             {storeSettings?.enabledLanguages && storeSettings.enabledLanguages.length > 1 && (
               <div className="hidden md:block">
-                <LanguageSwitcher variant="compact" showFlag={false} />
+                <LanguageSwitcher variant="compact" />
               </div>
             )}
             
