@@ -262,8 +262,8 @@
     "description": "الصفحة المطلوبة غير موجودة أو تم نقلها"
   },
   "footer": {
-    "poweredBy": "مدعوم من Ordis.",
-    "tryBusiness": "جربه لعملك."
+    "poweredBy": "Powered by Ordis.",
+    "tryBusiness": "Try it for your business."
   },
   "auth": {
     "login": "تسجيل الدخول",
