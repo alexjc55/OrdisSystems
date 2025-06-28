@@ -5779,7 +5779,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const [deliveryPaymentModalOpen, setDeliveryPaymentModalOpen] = useState(false);
   const [languageModalOpen, setLanguageModalOpen] = useState(false);
   const [trackingModalOpen, setTrackingModalOpen] = useState(false);
-  const [authPageModalOpen, setAuthPageModalOpen] = useState(false);
   
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
@@ -5787,9 +5786,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
   const [isWorkingHoursOpen, setIsWorkingHoursOpen] = useState(false);
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
-  const [isDisplaySettingsOpen, setIsDisplaySettingsOpen] = useState(false);
   const [isTrackingCodeOpen, setIsTrackingCodeOpen] = useState(false);
-  const [isAuthPageOpen, setIsAuthPageOpen] = useState(false);
   
   const form = useForm({
     resolver: zodResolver(storeSettingsSchema),
@@ -6114,41 +6111,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </div>
           </div>
 
-          {/* Authentication Page Tile */}
-          <div
-            onClick={() => setAuthPageModalOpen(true)}
-            className="relative overflow-hidden rounded-xl p-6 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg group border border-gray-200"
-            style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)' }}
-          >
-            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-6 translate-x-6"></div>
-            <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-4 -translate-x-4"></div>
-            
-            <div className="relative z-10">
-              <div className="flex items-start justify-between mb-3">
-                <div className="p-2 bg-white/20 rounded-lg">
-                  <Users className="h-6 w-6 text-white" />
-                </div>
-                <div className="text-xs px-2 py-1 bg-white/20 rounded-full text-white">
-                  {adminT('common.configure', 'Настроить')}
-                </div>
-              </div>
-              
-              <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-gray-100 transition-colors">
-                {adminT('storeSettings.authPage')}
-              </h3>
-              
-              <p className="text-sm text-white/80 leading-relaxed">
-                {adminT('storeSettings.authPageDescription', 'Настройки страницы авторизации')}
-              </p>
-              
-              <div className="mt-4 flex items-center justify-between">
-                <span className="text-xs text-white/60 font-medium">
-                  {adminT('common.clickToConfigure', 'Нажмите для настройки')}
-                </span>
-                <ChevronRight className="h-4 w-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" />
-              </div>
-            </div>
-          </div>
+
         </div>
 
         {/* Basic Info Modal */}
@@ -6208,7 +6171,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <FormItem>
                       <FormLabel className="text-sm">{adminT('storeSettings.contactEmail')}</FormLabel>
                       <FormControl>
-                        <Input placeholder={adminT('storeSettings.contactEmailPlaceholder')} {...field} className="text-sm" />
+                        <Input placeholder={adminT('storeSettings.contactEmailPlaceholder')} type="email" {...field} className="text-sm" />
                       </FormControl>
                       <FormMessage className="text-xs" />
                     </FormItem>
@@ -6216,16 +6179,77 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 />
                 <FormField
                   control={form.control}
-                  name="logoUrl"
+                  name="deliveryFee"
                   render={({ field }) => (
-                    <FormItem className="md:col-span-2">
-                      <FormLabel className="text-sm">{adminT('storeSettings.logoUrl')}</FormLabel>
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('storeSettings.deliveryFee')}</FormLabel>
                       <FormControl>
-                        <ImageUpload
-                          value={field.value}
-                          onChange={field.onChange}
+                        <Input {...field} className="text-sm" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="freeDeliveryFrom"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('storeSettings.freeDeliveryFrom')}</FormLabel>
+                      <FormControl>
+                        <Input {...field} className="text-sm" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="defaultItemsPerPage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('storeSettings.defaultItemsPerPage')}</FormLabel>
+                      <Select 
+                        onValueChange={(value) => field.onChange(parseInt(value))} 
+                        value={field.value?.toString() || "10"}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="text-sm">
+                            <SelectValue placeholder={adminT('storeSettings.selectQuantity')} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="10">{adminT('storeSettings.items10')}</SelectItem>
+                          <SelectItem value="15">{adminT('storeSettings.items15')}</SelectItem>
+                          <SelectItem value="25">{adminT('storeSettings.items25')}</SelectItem>
+                          <SelectItem value="50">{adminT('storeSettings.items50')}</SelectItem>
+                          <SelectItem value="100">{adminT('storeSettings.items100')}</SelectItem>
+                          <SelectItem value="1000">{adminT('storeSettings.allItems')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormDescription className="text-xs text-gray-500">
+                        {adminT('storeSettings.itemsPerPageDescription')}
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="discountBadgeText"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('storeSettings.discountBadgeTextLabel')}</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder={adminT('storeSettings.discountBadgeText')}
+                          className="text-sm"
+                          {...field}
                         />
                       </FormControl>
+                      <FormDescription className="text-xs">
+                        {adminT('storeSettings.discountBadgeDescription')}
+                      </FormDescription>
                       <FormMessage className="text-xs" />
                     </FormItem>
                   )}
@@ -6458,67 +6482,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </DialogContent>
         </Dialog>
 
-        {/* Authentication Page Modal */}
-        <Dialog open={authPageModalOpen} onOpenChange={setAuthPageModalOpen}>
-          <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-primary" />
-                {adminT('storeSettings.authPage')}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 gap-6">
-                <FormField
-                  control={form.control}
-                  name="authPageBackgroundUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('storeSettings.authPageBackgroundUrl')}</FormLabel>
-                      <FormControl>
-                        <ImageUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="authPageTitle"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('storeSettings.authPageTitle')}</FormLabel>
-                      <FormControl>
-                        <Input placeholder={adminT('storeSettings.authPageTitlePlaceholder')} {...field} className="text-sm" />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="authPageDescription"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('storeSettings.authPageDescription')}</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder={adminT('storeSettings.authPageDescriptionPlaceholder')} 
-                          {...field} 
-                          className="text-sm min-h-[80px]" 
-                        />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+
         
         {/* {adminT('storeSettings.basicInfo', 'Основная информация')} */}
         <Collapsible open={isBasicInfoOpen} onOpenChange={setIsBasicInfoOpen} className="space-y-6">
