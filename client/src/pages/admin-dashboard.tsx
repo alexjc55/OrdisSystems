@@ -6544,40 +6544,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* {adminT('storeSettings.displaySettings', 'Настройки отображения')} */}
-        <Collapsible open={isDisplaySettingsOpen} onOpenChange={setIsDisplaySettingsOpen} className="space-y-6">
-          <CollapsibleTrigger asChild>
-            <Button 
-              variant="ghost" 
-              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
-            >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
-                {isRTL ? (
-                  <>
-                    {isDisplaySettingsOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.displaySettings')}</h3>
-                    <Eye className="h-5 w-5 text-primary" />
-                  </>
-                ) : (
-                  <>
-                    <Eye className="h-5 w-5 text-primary" />
-                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.displaySettings')}</h3>
-                    {isDisplaySettingsOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
-                  </>
-                )}
-              </div>
-            </Button>
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent className="space-y-6">
+        {/* Секция "Настройки отображения" удалена - все настройки перенесены в управление темами */}
+
 
 
 
@@ -6932,8 +6900,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             </div>
           )}
         </div>
-          </CollapsibleContent>
-        </Collapsible>
 
         {/* {adminT('storeSettings.trackingCode', 'Код отслеживания')} */}
         <Collapsible open={isTrackingCodeOpen} onOpenChange={setIsTrackingCodeOpen} className="space-y-6">
