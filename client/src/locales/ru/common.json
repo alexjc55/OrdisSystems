@@ -308,5 +308,6 @@
   "footer": {
     "poweredBy": "Powered by Ordis.",
     "tryBusiness": "Try it for your business."
-  }
+  },
+  "error": "Ошибка"
 }

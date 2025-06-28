@@ -308,5 +308,6 @@
     "deliveryDateRequired": "Select delivery date",
     "deliveryTimeRequired": "Select delivery time",
     "paymentMethodRequired": "Select payment method"
-  }
+  },
+  "error": "Error"
 }

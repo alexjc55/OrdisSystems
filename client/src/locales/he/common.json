@@ -308,5 +308,6 @@
     "deliveryDateRequired": "בחר תאריך משלוח",
     "deliveryTimeRequired": "בחר זמן משלוח",
     "paymentMethodRequired": "בחר אמצעי תשלום"
-  }
+  },
+  "error": "שגיאה"
 }
