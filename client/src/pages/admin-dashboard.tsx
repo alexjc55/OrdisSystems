@@ -5773,13 +5773,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he';
-  // Modal states for settings sections
-  const [basicInfoModalOpen, setBasicInfoModalOpen] = useState(false);
-  const [workingHoursModalOpen, setWorkingHoursModalOpen] = useState(false);
-  const [deliveryPaymentModalOpen, setDeliveryPaymentModalOpen] = useState(false);
-  const [languageModalOpen, setLanguageModalOpen] = useState(false);
-  const [trackingModalOpen, setTrackingModalOpen] = useState(false);
-  const [authPageModalOpen, setAuthPageModalOpen] = useState(false);
+  const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
+  const [isContactsOpen, setIsContactsOpen] = useState(false);
+  const [isVisualsOpen, setIsVisualsOpen] = useState(false);
+  const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
+  const [isWorkingHoursOpen, setIsWorkingHoursOpen] = useState(false);
+  const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
+  const [isDisplaySettingsOpen, setIsDisplaySettingsOpen] = useState(false);
+  const [isTrackingCodeOpen, setIsTrackingCodeOpen] = useState(false);
+  const [isAuthPageOpen, setIsAuthPageOpen] = useState(false);
   
   const form = useForm({
     resolver: zodResolver(storeSettingsSchema),
