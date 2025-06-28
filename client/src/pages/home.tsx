@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { useShopTranslation, useLanguage, useCommonTranslation } from "@/hooks/use-language";
+import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
@@ -57,10 +57,9 @@ import {
 import type { CategoryWithCount, ProductWithCategories } from "@shared/schema";
 
 // InfoBlocks Component for reusable information cards
-const InfoBlocks = memo(({ storeSettings, t, commonT, currentLanguage }: {
+const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
   storeSettings: any;
   t: (key: string) => string;
-  commonT: (key: string) => string;
   currentLanguage: string;
 }) => {
   if (!storeSettings || storeSettings.showInfoBlocks === false) {
@@ -195,7 +194,7 @@ const InfoBlocks = memo(({ storeSettings, t, commonT, currentLanguage }: {
                 <div className="p-3 rounded-full group-hover:scale-110 transition-transform duration-300" style={{ background: `linear-gradient(to bottom right, var(--color-payment-delivery-icon, hsl(262, 83%, 58%)), var(--color-payment-delivery-icon, hsl(262, 83%, 58%)))` }}>
                   <CreditCard className="h-5 w-5 text-white" />
                 </div>
-                <span className="font-semibold text-lg text-gray-800">{commonT('paymentAndDelivery')}</span>
+                <span className="font-semibold text-lg text-gray-800">{t('paymentMethod')} & {t('cart.delivery')}</span>
               </div>
               <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
                 {storeSettings.deliveryInfo && (
@@ -232,7 +231,6 @@ export default function Home() {
   const { isOpen: isCartOpen, addItem } = useCartStore();
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
-  const { t: commonT } = useCommonTranslation();
   const { currentLanguage } = useLanguage();
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -466,7 +464,6 @@ export default function Home() {
             <InfoBlocks 
               storeSettings={storeSettings} 
               t={t} 
-              commonT={commonT}
               currentLanguage={currentLanguage} 
             />
           )}
@@ -816,7 +813,6 @@ export default function Home() {
           <InfoBlocks 
             storeSettings={storeSettings} 
             t={t} 
-            commonT={commonT}
             currentLanguage={currentLanguage} 
           />
         </div>
