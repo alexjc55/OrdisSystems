@@ -97,7 +97,11 @@
     "per100g": "per 100g",
     "per100ml": "per 100ml",
     "perKg": "per kg",
-    "perPiece": "per piece"
+    "perPiece": "per piece",
+    "g": "g",
+    "ml": "ml",
+    "l": "l",
+    "per": "per"
   },
   "auth": {
     "welcome": "Welcome",
