@@ -205,7 +205,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                 )}
                 {storeSettings.paymentInfo && (
                   <div>
-                    <span className="text-gray-700 text-base font-bold block mb-2">{t('paymentMethod')}:</span>
+                    <span className="text-gray-700 text-base font-bold block mb-2">{t('payment')}:</span>
                     <span className="text-gray-800 text-base leading-relaxed">{storeSettings.paymentInfo}</span>
                   </div>
                 )}
