@@ -1008,21 +1008,21 @@ export default function ThemeManager() {
                           }
                         }}
                       >
-                        <option value="classic">Классический (текущий дизайн)</option>
-                        <option value="modern">Современный</option>
-                        <option value="minimal">Минималистичный</option>
+                        <option value="classic">{adminT("themes.classic")}</option>
+                        <option value="modern">{adminT("themes.modern")}</option>
+                        <option value="minimal">{adminT("themes.minimal")}</option>
                       </select>
                       <div className="text-sm text-gray-500">
-                        Влияет на отображение баннера и информационных блоков
+                        {adminT("themes.headerStyleDescription")}
                       </div>
                     </div>
                     
                     <div id="headerControlsCreate" className="space-y-4" style={{ display: 'none' }}>
                       <div className="p-4 bg-gray-50 rounded-lg border">
-                        <h4 className="text-sm font-medium mb-3">Настройки кнопки для минималистичного стиля</h4>
+                        <h4 className="text-sm font-medium mb-3">{adminT("themes.minimalButtonSettings")}</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="bannerButtonTextCreate">Текст кнопки</Label>
+                            <Label htmlFor="bannerButtonTextCreate">{adminT("themes.buttonText")}</Label>
                             <input
                               type="text"
                               name="bannerButtonText"
@@ -1032,12 +1032,12 @@ export default function ThemeManager() {
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500">
-                              Текст, который будет отображаться на кнопке
+                              {adminT("themes.buttonTextDescription")}
                             </div>
                           </div>
                           
                           <div className="space-y-2">
-                            <Label htmlFor="bannerButtonLinkCreate">Ссылка кнопки</Label>
+                            <Label htmlFor="bannerButtonLinkCreate">{adminT("themes.buttonLink")}</Label>
                             <input
                               type="text"
                               name="bannerButtonLink"
@@ -1047,7 +1047,7 @@ export default function ThemeManager() {
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500">
-                              Ссылка или якорь (#categories для блока категорий)
+                              {adminT("themes.buttonLinkDescription")}
                             </div>
                           </div>
                         </div>
@@ -1059,17 +1059,17 @@ export default function ThemeManager() {
                 </TabsContent>
 
                 <TabsContent value="colors" className="space-y-6">
-                  {/* Бренд */}
+                  {/* Brand */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Бренд</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themes.brandColors")}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <ColorInput label="Основной цвет" name="primaryColor" defaultValue="#ff6600" />
-                      <ColorInput label="Цвет текста кнопок" name="primaryTextColor" defaultValue="#ffffff" />
-                      <ColorInput label="Основной (темный)" name="primaryDarkColor" defaultValue="#e55a00" />
-                      <ColorInput label="Основной (светлый)" name="primaryLightColor" defaultValue="#fff3f0" />
+                      <ColorInput label={adminT("colorLabels.primaryColor")} name="primaryColor" defaultValue="#ff6600" />
+                      <ColorInput label={adminT("colorLabels.primaryTextColor")} name="primaryTextColor" defaultValue="#ffffff" />
+                      <ColorInput label={adminT("colorLabels.primaryDarkColor")} name="primaryDarkColor" defaultValue="#e55a00" />
+                      <ColorInput label={adminT("colorLabels.primaryLightColor")} name="primaryLightColor" defaultValue="#fff3f0" />
                     </div>
                     <div className="text-sm text-gray-500 mt-2">
-                      ℹ️ Основные цвета влияют на кнопки "В корзину", ссылки и главные элементы интерфейса
+                      ℹ️ {adminT("themes.brandColorsDescription")}
                     </div>
                     {/* Keep secondary/accent for API compatibility but hide from UI */}
                     <input type="hidden" name="secondaryColor" defaultValue="#f8fafc" />
