@@ -50,34 +50,38 @@ export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
 function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
   return (
     <>
-      {/* Pure Image Banner - No text overlay */}
-      <div className="relative h-32 sm:h-40 overflow-hidden">
-        <img 
-          src={storeSettings.bannerImage || "/api/uploads/Edahouse_sign__source_1750184330403.png"} 
-          alt="Background" 
-          className="w-full h-full object-cover"
-        />
-      </div>
+      {/* Pure Image Banner - Only show if enabled */}
+      {storeSettings?.showBannerImage !== false && (
+        <div className="relative h-32 sm:h-40 overflow-hidden">
+          <img 
+            src={storeSettings.bannerImage || "/api/uploads/Edahouse_sign__source_1750184330403.png"} 
+            alt="Background" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
       
-      {/* Text Content Section Below Banner */}
-      <div className="bg-gray-50 py-12 text-center">
-        <div className="container mx-auto px-6">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-            {storeSettings.welcomeTitle || "О нашей еде"}
-          </h1>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-6">
-            {storeSettings.storeDescription || "Заказывай свежие блюда на развес — от повседневных обедов до праздничных угощений. Быстро, удобно и по-домашнему вкусно. Попробуй"}
-          </p>
-          
-          {/* Orange underline accent */}
-          <div className="flex justify-center">
-            <div 
-              className="h-1 w-16 rounded-full"
-              style={{ backgroundColor: 'var(--color-primary, #ff6600)' }}
-            ></div>
+      {/* Text Content Section Below Banner - Only show if enabled */}
+      {storeSettings?.showTitleDescription !== false && (
+        <div className="bg-gray-50 py-12 text-center">
+          <div className="container mx-auto px-6">
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
+              {storeSettings.welcomeTitle || "О нашей еде"}
+            </h1>
+            <p className="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-6">
+              {storeSettings.storeDescription || "Заказывай свежие блюда на развес — от повседневных обедов до праздничных угощений. Быстро, удобно и по-домашнему вкусно. Попробуй"}
+            </p>
+            
+            {/* Orange underline accent */}
+            <div className="flex justify-center">
+              <div 
+                className="h-1 w-16 rounded-full"
+                style={{ backgroundColor: 'var(--color-primary, #ff6600)' }}
+              ></div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
@@ -158,6 +162,11 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
 }
 
 function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
+  // Only show header if banner is enabled, otherwise return null
+  if (storeSettings?.showBannerImage === false) {
+    return null;
+  }
+
   return (
     <div className="relative w-full mb-0 sm:mb-8">
       {/* Modern Overlay Banner - Full height on mobile, adaptive on larger screens */}
@@ -173,39 +182,46 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
         {/* Dark Gradient Overlay - lighter at top, darker at bottom */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/80 to-black/90" />
         
-        {/* Content with internal padding */}
-        <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
-          <div className="max-w-sm sm:max-w-2xl md:max-w-4xl mx-auto">
-            <h1 
-              className="font-bold text-white mb-4 sm:mb-4 leading-none modern-header-title"
-              style={{ 
-                textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-                lineHeight: '1 !important'
-              }}
-            >
-              {storeSettings.welcomeTitle || "eDAHouse"}
-            </h1>
-            <p className="text-xl sm:text-lg md:text-xl text-white max-w-sm sm:max-w-2xl mx-auto leading-normal sm:leading-relaxed mb-8" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
-              {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
-            </p>
+        {/* Content with internal padding - Only show title/description if enabled */}
+        {storeSettings?.showTitleDescription !== false && (
+          <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
+            <div className="max-w-sm sm:max-w-2xl md:max-w-4xl mx-auto">
+              <h1 
+                className="font-bold text-white mb-4 sm:mb-4 leading-none modern-header-title"
+                style={{ 
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+                  lineHeight: '1 !important'
+                }}
+              >
+                {storeSettings.welcomeTitle || "eDAHouse"}
+              </h1>
+              <p className="text-xl sm:text-lg md:text-xl text-white max-w-sm sm:max-w-2xl mx-auto leading-normal sm:leading-relaxed mb-8" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
+                {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
+              </p>
             
-            {/* Decorative vignette */}
-            <div className="flex items-center justify-center space-x-2 opacity-80 mb-8">
-              <div className="w-8 h-px bg-white/60"></div>
-              <div className="w-2 h-2 border border-white/60 rotate-45"></div>
-              <div className="w-8 h-px bg-white/60"></div>
-            </div>
+              {/* Decorative vignette */}
+              <div className="flex items-center justify-center space-x-2 opacity-80 mb-8">
+                <div className="w-8 h-px bg-white/60"></div>
+                <div className="w-2 h-2 border border-white/60 rotate-45"></div>
+                <div className="w-8 h-px bg-white/60"></div>
+              </div>
 
-            {/* Modern Info Blocks */}
-            <ModernInfoBlocks storeSettings={storeSettings} />
+              {/* Modern Info Blocks */}
+              <ModernInfoBlocks storeSettings={storeSettings} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
 
 function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
+  // Only show header if banner is enabled, otherwise return null
+  if (storeSettings?.showBannerImage === false) {
+    return null;
+  }
+
   // Check if button should be shown - only if text is explicitly provided
   const buttonText = storeSettings?.bannerButtonText;
   const showButton = buttonText && 
@@ -229,61 +245,63 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
         {/* Strong White Overlay for readability */}
         <div className="absolute inset-0 bg-white/85" />
         
-        {/* Content */}
-        <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
-          <div className="max-w-3xl mx-auto">
-            <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold sm:font-light text-gray-900 mb-2 sm:mb-4 tracking-wide">
-              {storeSettings.welcomeTitle || "eDAHouse"}
-            </h1>
-            <p className="text-gray-700 text-sm sm:text-lg md:text-xl font-semibold sm:font-light leading-relaxed max-w-2xl mx-auto mb-4">
-              {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
-            </p>
-            {/* Call to Action Button - only show if button text is provided */}
-            {showButton && (
-              <div className="mt-6">
-                <button 
-                  onClick={() => {
-                    // Use provided link or default to categories section
-                    const link = storeSettings.bannerButtonLink && storeSettings.bannerButtonLink.trim() !== '' 
-                      ? storeSettings.bannerButtonLink 
-                      : "#categories";
-                    if (link.startsWith('#')) {
-                      const element = document.querySelector(link);
-                      if (element) {
-                        element.scrollIntoView({ behavior: 'smooth' });
+        {/* Content - Only show title/description if enabled */}
+        {storeSettings?.showTitleDescription !== false && (
+          <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
+            <div className="max-w-3xl mx-auto">
+              <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold sm:font-light text-gray-900 mb-2 sm:mb-4 tracking-wide">
+                {storeSettings.welcomeTitle || "eDAHouse"}
+              </h1>
+              <p className="text-gray-700 text-sm sm:text-lg md:text-xl font-semibold sm:font-light leading-relaxed max-w-2xl mx-auto mb-4">
+                {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
+              </p>
+              {/* Call to Action Button - only show if button text is provided */}
+              {showButton && (
+                <div className="mt-6">
+                  <button 
+                    onClick={() => {
+                      // Use provided link or default to categories section
+                      const link = storeSettings.bannerButtonLink && storeSettings.bannerButtonLink.trim() !== '' 
+                        ? storeSettings.bannerButtonLink 
+                        : "#categories";
+                      if (link.startsWith('#')) {
+                        const element = document.querySelector(link);
+                        if (element) {
+                          element.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      } else {
+                        window.location.href = link;
                       }
-                    } else {
-                      window.location.href = link;
-                    }
-                  }}
-                  className="inline-flex items-center px-6 py-3 font-medium text-sm sm:text-base rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-                  style={{
-                    backgroundColor: 'var(--color-primary)',
-                    color: 'var(--color-primary-foreground)',
-                    border: 'none',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--color-primary-dark)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--color-primary)';
-                  }}
-                >
-                  {storeSettings.bannerButtonText}
-                </button>
+                    }}
+                    className="inline-flex items-center px-6 py-3 font-medium text-sm sm:text-base rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                    style={{
+                      backgroundColor: 'var(--color-primary)',
+                      color: 'var(--color-primary-foreground)',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'var(--color-primary-dark)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'var(--color-primary)';
+                    }}
+                  >
+                    {storeSettings.bannerButtonText}
+                  </button>
+                </div>
+              )}
+              {/* Decorative vignette */}
+              <div className="flex items-center justify-center space-x-2 opacity-60 mt-4">
+                <div className="w-8 h-px bg-primary/40"></div>
+                <div className="w-2 h-2 bg-primary/60 rounded-full"></div>
+                <div className="w-4 h-px bg-primary/60"></div>
+                <div className="w-2 h-2 bg-primary/60 rounded-full"></div>
+                <div className="w-8 h-px bg-primary/40"></div>
               </div>
-            )}
-            {/* Decorative vignette */}
-            <div className="flex items-center justify-center space-x-2 opacity-60 mt-4">
-              <div className="w-8 h-px bg-primary/40"></div>
-              <div className="w-2 h-2 bg-primary/60 rounded-full"></div>
-              <div className="w-4 h-px bg-primary/60"></div>
-              <div className="w-2 h-2 bg-primary/60 rounded-full"></div>
-              <div className="w-8 h-px bg-primary/40"></div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
