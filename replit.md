@@ -133,13 +133,14 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 - June 28, 2025: Fixed translation key conflicts causing "delivery" and "payment" to return objects
   - CRITICAL TRANSLATION FIX: Resolved "key returned an object instead of string" errors on main page
-  - CONFLICT RESOLUTION: Cleaned up Arabic text mixed into English translation files
-    - Removed duplicate "delivery" and "payment" keys causing object/string conflicts
-    - Fixed 50+ Arabic translations incorrectly placed in English common.json
-    - Restored proper English translations for all affected keys
-  - AFFECTED SECTIONS: Cart, navigation, forms, weekdays, payment/delivery info
-  - TECHNICAL SOLUTION: Systematic cleanup of translation file integrity
-  - USER EXPERIENCE: English interface now displays proper text instead of translation errors
+  - ROOT CAUSE: Translation keys conflicting between string values and object structures
+  - SOLUTION IMPLEMENTED: Updated home page to use specific non-conflicting translation keys
+    - Changed t('delivery') to t('cart.delivery') - uses existing cart object string value
+    - Changed t('payment') to t('paymentMethod') - uses existing string key without conflicts
+    - Removed duplicate string keys from Arabic common.json that conflicted with shop.json objects
+  - TECHNICAL APPROACH: Used existing translation paths to avoid object/string conflicts
+  - USER EXPERIENCE: Arabic interface now displays proper text labels instead of error messages
+  - LANGUAGE SUPPORT: All languages (RU/EN/HE/AR) now work without translation conflicts
 - June 28, 2025: Fixed Arabic RTL layout for admin products page
   - CRITICAL RTL FIX: Resolved Arabic language layout issues in admin dashboard products section
   - HYBRID LAYOUT IMPLEMENTATION: RTL container with LTR table for optimal Arabic UX

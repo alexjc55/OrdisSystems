@@ -199,13 +199,13 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
               <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
                 {storeSettings.deliveryInfo && (
                   <div>
-                    <span className="text-gray-700 text-base font-bold block mb-2">{t('delivery')}:</span>
+                    <span className="text-gray-700 text-base font-bold block mb-2">{t('cart.delivery')}:</span>
                     <span className="text-gray-800 text-base leading-relaxed">{storeSettings.deliveryInfo}</span>
                   </div>
                 )}
                 {storeSettings.paymentInfo && (
                   <div>
-                    <span className="text-gray-700 text-base font-bold block mb-2">{t('payment')}:</span>
+                    <span className="text-gray-700 text-base font-bold block mb-2">{t('paymentMethod')}:</span>
                     <span className="text-gray-800 text-base leading-relaxed">{storeSettings.paymentInfo}</span>
                   </div>
                 )}
