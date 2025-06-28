@@ -5339,7 +5339,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                                 field.onChange(currentIds.filter((id: number) => id !== category.id));
                               }
                             }}
-                            className="rounded border-gray-300"
+                            className="rounded border-gray-300 w-4 h-4 flex-shrink-0"
                           />
                           <label htmlFor={`category-${category.id}`} className="text-sm cursor-pointer flex-1">
                             {category.icon} {category.name}
