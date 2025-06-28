@@ -5526,18 +5526,18 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 <div></div>
               )}
               
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex flex-row gap-3">
                 <Button 
                   type="button" 
                   variant="outline" 
                   onClick={onClose} 
-                  className="text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200"
+                  className="text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200 flex-1"
                 >
                   {adminT('products.dialog.cancelButton')}
                 </Button>
                 <Button 
                   type="submit" 
-                  className="text-sm bg-primary text-white border-primary hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2"
+                  className="text-sm bg-primary text-white border-primary hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2 flex-1"
                 >
                   <Save className="h-4 w-4" />
                   {product ? adminT('products.dialog.saveButton') : adminT('products.dialog.createButton')}

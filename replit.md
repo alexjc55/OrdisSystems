@@ -131,7 +131,10 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
-- June 28, 2025: Fixed UI/UX issues identified by user
+- June 28, 2025: Fixed mobile styling issues for product editing form
+  - Completely removed problematic CSS rules (min-height: 44px, width: 100%) affecting category selection dropdown
+  - Changed product edit form buttons layout: "Cancel" and "Save" now display in single row on mobile instead of stacked
+  - Fixed UI/UX issues identified by user
   - Fixed "All Products" button functionality - now properly redirects using handleCategorySelect(0)
   - Removed duplicate category information on category pages to eliminate redundancy
   - Fixed duplicate "per" word in English product cards by updating unit translations
