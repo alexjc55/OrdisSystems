@@ -1221,7 +1221,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await db.execute(sql.raw(`UPDATE store_settings SET ${modernFields.join(', ')} WHERE id = 1`));
       }
       
-      // Sync visual display settings with store settings
+      // Sync all visual display settings with store settings
       const visualFields = [
         `show_banner_image = ${theme.showBannerImage ?? true}`,
         `show_title_description = ${theme.showTitleDescription ?? true}`,
