@@ -81,6 +81,13 @@
     "availableToday": "متوفر اليوم",
     "availableTomorrow": "متوفر غداً"
   },
+  "product": {
+    "addToCart": "إضافة إلى السلة",
+    "outOfStock": "نفد المخزون",
+    "quantity": "الكمية",
+    "weight": "الوزن",
+    "grams": "جرام"
+  },
   "cart": {
     "addToCart": "إضافة إلى السلة",
     "removeFromCart": "إزالة من السلة",

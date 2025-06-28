@@ -175,7 +175,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                 )}
                 {storeSettings.contactEmail && (
                   <div className="text-base sm:text-lg flex justify-between">
-                    <span className="text-gray-700 font-bold">Email:</span>
+                    <span className="text-gray-700 font-bold">{t('email')}:</span>
                     <span className="text-gray-700 break-all">{storeSettings.contactEmail}</span>
                   </div>
                 )}
@@ -194,7 +194,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                 <div className="p-3 rounded-full group-hover:scale-110 transition-transform duration-300" style={{ background: `linear-gradient(to bottom right, var(--color-payment-delivery-icon, hsl(262, 83%, 58%)), var(--color-payment-delivery-icon, hsl(262, 83%, 58%)))` }}>
                   <CreditCard className="h-5 w-5 text-white" />
                 </div>
-                <span className="font-semibold text-lg text-gray-800">Оплата и доставка</span>
+                <span className="font-semibold text-lg text-gray-800">{t('paymentAndDelivery')}</span>
               </div>
               <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
                 {storeSettings.deliveryInfo && (
