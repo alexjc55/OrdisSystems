@@ -2136,9 +2136,23 @@ export default function AdminDashboard() {
     if (user?.role === "admin") return true;
     if (user?.role !== "worker") return false;
     
-    const workerPermissions = (storeSettings?.workerPermissions as any) || {};
-    return workerPermissions[permission] === true;
+    // Use stable permissions during mutations to prevent tab switching
+    const permissions = isBlockingTabSwitches 
+      ? (stablePermissions.current || {})
+      : (storeSettings?.workerPermissions as any) || {};
+    
+    return permissions[permission] === true;
   };
+
+  // Keep stable reference to permissions during mutations
+  const stablePermissions = useRef<any>({});
+  
+  // Update stable permissions when storeSettings change (but not during mutations)
+  useEffect(() => {
+    if (storeSettings && !isBlockingTabSwitches) {
+      stablePermissions.current = storeSettings.workerPermissions || {};
+    }
+  }, [storeSettings, isBlockingTabSwitches]);
 
   // State for forms and filters
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
@@ -2153,6 +2167,7 @@ export default function AdminDashboard() {
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [activeTab, setActiveTab] = useState("products");
+  const [isBlockingTabSwitches, setIsBlockingTabSwitches] = useState(false);
 
   // Debug: Track all activeTab changes
   useEffect(() => {
@@ -2160,33 +2175,14 @@ export default function AdminDashboard() {
     console.trace("ActiveTab change stack trace");
   }, [activeTab]);
 
-  // Prevent tab switching when current tab becomes unavailable due to permission changes
-  const isCurrentTabAccessible = useMemo(() => {
-    if (!storeSettings) return true; // Allow during loading
-    
-    switch (activeTab) {
-      case 'products': return hasPermission("canManageProducts");
-      case 'categories': return hasPermission("canManageCategories");
-      case 'orders': return hasPermission("canManageOrders");
-      case 'users': return hasPermission("canViewUsers");
-      case 'store': return hasPermission("canViewSettings");
-      case 'settings': return hasPermission("canManageSettings");
-      case 'themes': return hasPermission("canManageThemes");
-      default: return true;
+  // Custom setActiveTab that respects blocking
+  const safeSetActiveTab = (newTab: string) => {
+    if (!isBlockingTabSwitches) {
+      setActiveTab(newTab);
+    } else {
+      console.log("Tab switch blocked during settings save:", newTab);
     }
-  }, [activeTab, storeSettings, user]);
-
-  // Keep user on current tab if it's still accessible
-  const previouslyAccessibleTab = useRef(activeTab);
-  useEffect(() => {
-    if (isCurrentTabAccessible) {
-      previouslyAccessibleTab.current = activeTab;
-    } else if (previouslyAccessibleTab.current && storeSettings) {
-      // If current tab becomes inaccessible but was previously accessible,
-      // and we have settings loaded, restore the previous tab
-      setActiveTab(previouslyAccessibleTab.current);
-    }
-  }, [isCurrentTabAccessible, storeSettings]);
+  };
 
   // TEMPORARILY DISABLED - Set default tab based on worker permissions 
   // const [hasSetInitialTab, setHasSetInitialTab] = useState(false);
@@ -2780,6 +2776,9 @@ export default function AdminDashboard() {
   // Store settings mutation
   const updateStoreSettingsMutation = useMutation({
     mutationFn: async (settingsData: any) => {
+      // Block tab switches during save operation
+      setIsBlockingTabSwitches(true);
+      
       // Clean up empty numeric fields to prevent database errors
       const cleanedData = { ...settingsData };
       
@@ -2801,10 +2800,16 @@ export default function AdminDashboard() {
       // Update cache data directly instead of invalidating to prevent tab switching
       queryClient.setQueryData(['/api/settings'], updatedSettings);
       toast({ title: adminT('settings.saved'), description: adminT('settings.saveSuccess') });
+      
+      // Unblock tab switches after successful save
+      setTimeout(() => setIsBlockingTabSwitches(false), 500);
     },
     onError: (error: any) => {
       console.error("Store settings update error:", error);
       toast({ title: adminT('common.error'), description: adminT('settings.saveError'), variant: "destructive" });
+      
+      // Unblock tab switches after error
+      setIsBlockingTabSwitches(false);
     }
   });
 
@@ -3079,11 +3084,11 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-8">
+        <Tabs value={activeTab} onValueChange={safeSetActiveTab} className="space-y-4 sm:space-y-8">
           <div>
             {/* Mobile Dropdown Menu */}
             <div className="block sm:hidden mb-4">
-              <Select value={activeTab} onValueChange={setActiveTab}>
+              <Select value={activeTab} onValueChange={safeSetActiveTab}>
                 <SelectTrigger className="w-full bg-white border-gray-200 h-12">
                   <SelectValue>
                     <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
