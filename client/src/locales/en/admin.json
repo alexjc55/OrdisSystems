@@ -275,6 +275,8 @@
     "canManageUsersDescription": "Edit and delete users",
     "canViewSettings": "View Settings",
     "canViewSettingsDescription": "Access to store settings (read only)",
+    "canManageThemes": "Manage Themes",
+    "canManageThemesDescription": "Create, edit and configure design themes",
     "canViewAnalytics": "View Analytics",
     "canViewAnalyticsDescription": "Access to reports and statistics",
     "canManageThemes": "Manage Themes",

@@ -4991,6 +4991,29 @@ export default function AdminDashboard() {
                           {(storeSettings?.workerPermissions as any)?.canManageSettings ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                         </Button>
                       </div>
+                      
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageThemes', 'Управление темами')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageThemesDescription', 'Создание, редактирование и настройка тем оформления')}</p>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => 
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canManageThemes: !((storeSettings?.workerPermissions as any)?.canManageThemes || false)
+                              }
+                            })
+                          }
+                          className={`p-2 h-8 w-8 ${(storeSettings?.workerPermissions as any)?.canManageThemes ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                        >
+                          {(storeSettings?.workerPermissions as any)?.canManageThemes ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -5000,7 +5023,7 @@ export default function AdminDashboard() {
           )}
 
           {/* Theme Management */}
-          {hasPermission("canManageSettings") && (
+          {(hasPermission("canManageSettings") || hasPermission("canManageThemes")) && (
             <TabsContent value="themes" className="space-y-4 sm:space-y-6">
               <ThemeManager />
             </TabsContent>
