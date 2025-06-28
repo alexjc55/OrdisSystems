@@ -150,6 +150,7 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
     - Final fix: Changed remaining t('payment') to t('paymentMethod') on line 208 of home.tsx
     - Added string version of paymentMethod to Arabic shop.json outside checkout object
     - Fixed Arabic footer translations to remain in English as requested
+    - Added CSS override to force footer LTR direction on Arabic language (html[lang="ar"] footer)
   - USER EXPERIENCE: All language interfaces now display proper text labels instead of error messages
   - LANGUAGE SUPPORT: Complete translation coverage for all languages (RU/EN/HE/AR)
 - June 28, 2025: Fixed Arabic RTL layout for admin products page

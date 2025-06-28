@@ -188,10 +188,15 @@ button:focus,
   html[lang="ar"] article,
   html[lang="ar"] aside,
   html[lang="ar"] nav,
-  html[lang="ar"] header,
-  html[lang="ar"] footer {
+  html[lang="ar"] header {
     direction: rtl !important;
     text-align: right !important;
+  }
+  
+  /* Footer should always remain LTR */
+  html[lang="ar"] footer {
+    direction: ltr !important;
+    text-align: left !important;
   }
   
   /* Specific admin components RTL */
