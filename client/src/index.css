@@ -1654,8 +1654,10 @@ nav button:not(.bg-orange-500):not(.border-orange-500):hover, nav button:not(.bg
     display: none !important;
   }
   
-  /* Full width inputs */
-  input, select, textarea {
+  /* Full width inputs - exclude dropdown triggers and combobox elements */
+  input:not([role="combobox"]):not([data-radix-collection-item]), 
+  select:not([role="combobox"]):not([data-radix-collection-item]), 
+  textarea {
     width: 100% !important;
   }
 }

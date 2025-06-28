@@ -3777,7 +3777,6 @@ export default function AdminDashboard() {
                           {(categories as any[] || []).map((category: any) => (
                             <SortableCategoryItem
                               key={category.id}
-                                          title={category.name}
                               category={category}
                               onEdit={(category) => {
                                 setEditingCategory(category);
@@ -4682,7 +4681,7 @@ export default function AdminDashboard() {
                                         {user.phone}
                                       </span>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg" align={isRTL ? "start" : "end"} dir={isRTL ? 'rtl' : 'ltr'}>
+                                    <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg" align={isRTL ? "start" : "end"}>
                                       <DropdownMenuItem onClick={() => window.open(`tel:${user.phone}`, '_self')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
                                         <Phone className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                                         {adminT('users.callUser', 'Позвонить')}
