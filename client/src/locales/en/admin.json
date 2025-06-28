@@ -115,7 +115,17 @@
     "categoryMenuDescription": "Navigation category menu",
     "infoBlocksPosition": "Info Blocks Position",
     "beforeCategories": "Before Categories",
-    "afterCategories": "After Categories"
+    "afterCategories": "After Categories",
+    "additionalFeatures": "Additional Features",
+    "specialOffers": "Special Offers",
+    "specialOffersDescription": "Special offers block",
+    "whatsappChat": "WhatsApp Chat",
+    "whatsappChatDescription": "WhatsApp contact button",
+    "whatsappSettings": "WhatsApp Settings",
+    "phoneNumber": "Phone Number",
+    "phoneNumberPlaceholder": "Enter phone number",
+    "defaultMessage": "Default Message",
+    "defaultMessagePlaceholder": "Enter default message"
   },
   "tabLabels": {
     "basic": "Basic",

@@ -1178,7 +1178,17 @@
     "categoryMenuDescription": "قائمة تنقل الفئات",
     "infoBlocksPosition": "موضع كتل المعلومات",
     "beforeCategories": "قبل الفئات",
-    "afterCategories": "بعد الفئات"
+    "afterCategories": "بعد الفئات",
+    "additionalFeatures": "ميزات إضافية",
+    "specialOffers": "عروض خاصة",
+    "specialOffersDescription": "كتلة العروض الخاصة",
+    "whatsappChat": "دردشة WhatsApp",
+    "whatsappChatDescription": "زر الاتصال عبر WhatsApp",
+    "whatsappSettings": "إعدادات WhatsApp",
+    "phoneNumber": "رقم الهاتف",
+    "phoneNumberPlaceholder": "أدخل رقم الهاتف",
+    "defaultMessage": "الرسالة الافتراضية",
+    "defaultMessagePlaceholder": "أدخل الرسالة الافتراضية"
   },
   "tabLabels": {
     "basic": "أساسي",

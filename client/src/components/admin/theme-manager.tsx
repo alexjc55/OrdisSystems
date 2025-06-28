@@ -1191,10 +1191,10 @@ export default function ThemeManager() {
                       />
                     </div>
                     
-                    {/* Позиция информационных блоков - показывается только если включены инфо блоки */}
+                    {/* Info Blocks Position - shows only if info blocks are enabled */}
                     {visualSettings.showInfoBlocks && (
                       <div className="mt-4 space-y-2">
-                        <Label htmlFor="infoBlocksPositionCreate" className="text-sm font-medium">Позиция информационных блоков</Label>
+                        <Label htmlFor="infoBlocksPositionCreate" className="text-sm font-medium">{adminT("visualLabels.infoBlocksPosition")}</Label>
                         <select
                           name="infoBlocksPosition"
                           id="infoBlocksPositionCreate"
@@ -1202,60 +1202,60 @@ export default function ThemeManager() {
                           onChange={(e) => setVisualSettings(prev => ({ ...prev, infoBlocksPosition: e.target.value }))}
                           className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                         >
-                          <option value="top">Сверху от товаров</option>
-                          <option value="bottom">Снизу от товаров</option>
+                          <option value="top">{adminT("visualLabels.beforeCategories")}</option>
+                          <option value="bottom">{adminT("visualLabels.afterCategories")}</option>
                         </select>
                       </div>
                     )}
                   </div>
 
-                  {/* Дополнительные функции */}
+                  {/* Additional Features */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Дополнительные функции</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("visualLabels.additionalFeatures")}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <VisualToggleButton 
                         isEnabled={visualSettings.showSpecialOffers}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showSpecialOffers: !prev.showSpecialOffers }))}
-                        label="Особые предложения"
-                        description="Блок с особыми предложениями"
+                        label={adminT("visualLabels.specialOffers")}
+                        description={adminT("visualLabels.specialOffersDescription")}
                         fieldName="showSpecialOffers"
                       />
 
                       <VisualToggleButton 
                         isEnabled={visualSettings.showWhatsAppChat}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showWhatsAppChat: !prev.showWhatsAppChat }))}
-                        label="WhatsApp чат"
-                        description="Кнопка связи через WhatsApp"
+                        label={adminT("visualLabels.whatsappChat")}
+                        description={adminT("visualLabels.whatsappChatDescription")}
                         fieldName="showWhatsAppChat"
                       />
                     </div>
 
-                    {/* WhatsApp настройки */}
+                    {/* WhatsApp Settings */}
                     {visualSettings.showWhatsAppChat && (
                       <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-3">
-                        <h5 className="text-sm font-medium text-gray-800">Настройки WhatsApp</h5>
+                        <h5 className="text-sm font-medium text-gray-800">{adminT("visualLabels.whatsappSettings")}</h5>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           <div>
-                            <Label htmlFor="whatsappPhoneCreate" className="text-sm">Номер телефона</Label>
+                            <Label htmlFor="whatsappPhoneCreate" className="text-sm">{adminT("visualLabels.phoneNumber")}</Label>
                             <input
                               type="text"
                               name="whatsappPhone"
                               id="whatsappPhoneCreate"
                               defaultValue=""
-                              placeholder="+972501234567"
+                              placeholder={adminT("visualLabels.phoneNumberPlaceholder")}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500 mt-1">
-                              Формат: +код_страны номер (например, +972501234567)
+                              {adminT("visualLabels.phoneFormat")}
                             </div>
                           </div>
                           <div>
-                            <Label htmlFor="whatsappMessageCreate" className="text-sm">Сообщение по умолчанию</Label>
+                            <Label htmlFor="whatsappMessageCreate" className="text-sm">{adminT("visualLabels.defaultMessage")}</Label>
                             <textarea
                               name="whatsappMessage"
                               id="whatsappMessageCreate"
-                              defaultValue="Здравствуйте! У меня есть вопрос по заказу."
-                              placeholder="Здравствуйте! У меня есть вопрос по заказу."
+                              defaultValue={adminT("visualLabels.defaultMessageValue")}
+                              placeholder={adminT("visualLabels.defaultMessagePlaceholder")}
                               rows={2}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none"
                             />

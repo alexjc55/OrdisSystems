@@ -115,7 +115,19 @@
     "categoryMenuDescription": "Навигационное меню категорий",
     "infoBlocksPosition": "Позиция информационных блоков",
     "beforeCategories": "Перед категориями",
-    "afterCategories": "После категорий"
+    "afterCategories": "После категорий",
+    "additionalFeatures": "Дополнительные функции",
+    "specialOffers": "Особые предложения",
+    "specialOffersDescription": "Блок с особыми предложениями",
+    "whatsappChat": "WhatsApp чат",
+    "whatsappChatDescription": "Кнопка связи через WhatsApp",
+    "whatsappSettings": "Настройки WhatsApp",
+    "phoneNumber": "Номер телефона",
+    "phoneNumberPlaceholder": "+972501234567",
+    "phoneFormat": "Формат: +код_страны номер (например, +972501234567)",
+    "defaultMessage": "Сообщение по умолчанию",
+    "defaultMessageValue": "Здравствуйте! У меня есть вопрос по заказу.",
+    "defaultMessagePlaceholder": "Введите сообщение по умолчанию"
   },
   "tabLabels": {
     "basic": "Основное",
