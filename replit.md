@@ -131,6 +131,14 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Completed comprehensive Arabic translation system overhaul
+  - Fixed critical translation key conflicts (categories string vs object) causing runtime errors
+  - Completely rebuilt Arabic shop.json with 200+ complete translations
+  - Massively expanded Arabic admin.json from 277 to 1000+ comprehensive translations
+  - Updated Arabic common.json with full auth, navigation, buttons, forms, status, and profile sections
+  - Fixed hardcoded t('categories') calls in home.tsx and sidebar.tsx using t('categoriesText')
+  - Resolved JSON structure conflicts that prevented Arabic language from loading
+  - All Arabic translations now use proper Arabic text instead of English/Russian fallbacks
 - June 28, 2025: Fixed Arabic language translation issues and RTL layout
   - Massively expanded Arabic admin translation file from 277 to 530+ keys
   - Added all missing translation keys (tabs, actions, storeSettings sections)
