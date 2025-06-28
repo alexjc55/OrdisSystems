@@ -131,6 +131,12 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Created admin dashboard backup and resolved database schema issues
+  - Created admin-dashboard-backup-20250628_135649.tsx for safety
+  - Added missing banner_image_url column to store_settings table via SQL migration
+  - Resolved duplicate field definitions that caused schema compilation errors
+  - Fixed state management synchronization between themes and store settings
+  - All banner management changes now properly reflect on live website
 - June 28, 2025: Completed comprehensive banner management system integration
   - Moved all banner settings from store settings to theme management "Visual" tab
   - Added conditional field display for cart banner - shows only relevant fields based on banner type (text vs image)
