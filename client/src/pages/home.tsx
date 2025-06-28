@@ -646,20 +646,18 @@ export default function Home() {
           {/* Category/Product List View */}
           {(selectedCategory || selectedCategoryId === 0 || searchQuery.length > 2) && (
             <div>
-              {/* Category Header - Back Button Only */}
+              {/* Back Button for Category View */}
               {selectedCategory && (
-                <div className="mb-6">
-                  <div className="flex justify-end">
-                    <Button
-                      onClick={handleResetView}
-                      variant="ghost"
-                      size="sm"
-                      className="flex items-center gap-1 text-gray-600 hover:text-gray-800 shrink-0"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                      <span className="hidden sm:inline">{t('buttons.back', 'Назад')}</span>
-                    </Button>
-                  </div>
+                <div className="mb-4">
+                  <Button
+                    onClick={handleResetView}
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center gap-1 text-gray-600 hover:text-gray-800"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    <span className="hidden sm:inline">{t('buttons.back', 'Назад')}</span>
+                  </Button>
                 </div>
               )}
 
