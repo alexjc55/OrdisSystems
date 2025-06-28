@@ -2994,6 +2994,15 @@ export default function AdminDashboard() {
       const matchesCategory = selectedCategoryFilter === "all" || 
         product.categories?.some((cat: any) => cat.id === parseInt(selectedCategoryFilter));
       
+      // Debug: Log product data when filter is unavailable
+      if (selectedStatusFilter === "unavailable") {
+        console.log(`Product ${product.name}:`, {
+          isAvailable: product.isAvailable,
+          availabilityStatus: product.availabilityStatus,
+          matches: (!product.isAvailable || product.availabilityStatus === "out_of_stock_today")
+        });
+      }
+      
       const matchesStatus = selectedStatusFilter === "all" ||
         (selectedStatusFilter === "available" && product.isAvailable) ||
         (selectedStatusFilter === "unavailable" && (!product.isAvailable || product.availabilityStatus === "out_of_stock_today")) ||
