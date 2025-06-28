@@ -1636,7 +1636,6 @@ export default function ThemeManager() {
               <input type="hidden" name="infoShadow" defaultValue="0 4px 14px 0 rgba(59, 130, 246, 0.3)" />
               <input type="hidden" name="grayShadow" defaultValue="0 4px 14px 0 rgba(107, 114, 128, 0.3)" />
               <input type="hidden" name="tomorrowShadow" defaultValue="0 4px 14px 0 rgba(147, 51, 234, 0.3)" />
-              <input type="hidden" name="headerStyle" defaultValue="classic" />
               
               <div className="flex justify-end gap-2 mt-6">
                 <Button type="button" variant="outline" onClick={() => setEditingTheme(null)}>
