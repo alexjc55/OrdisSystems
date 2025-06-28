@@ -479,14 +479,14 @@ export default function ThemeManager() {
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
       
       toast({
-        title: "Успешно",
-        description: "Тема обновлена успешно",
+        title: adminT("themes.success"),
+        description: adminT("themes.updateSuccess"),
       });
     },
     onError: () => {
       toast({
-        title: "Ошибка",
-        description: "Не удалось обновить тему",
+        title: adminT("themes.error"),
+        description: adminT("themes.updateError"),
         variant: "destructive",
       });
     },
@@ -576,14 +576,14 @@ export default function ThemeManager() {
       applyTheme(theme);
       
       toast({
-        title: "Успешно",
-        description: "Тема активирована успешно",
+        title: adminT("themes.success"),
+        description: adminT("themes.activateSuccess"),
       });
     },
     onError: () => {
       toast({
-        title: "Ошибка",
-        description: "Не удалось активировать тему",
+        title: adminT("themes.error"),
+        description: adminT("themes.activateError"),
         variant: "destructive",
       });
     },
@@ -596,14 +596,14 @@ export default function ThemeManager() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/themes"] });
       toast({
-        title: "Успешно",
-        description: "Тема удалена успешно",
+        title: adminT("themes.success"),
+        description: adminT("themes.deleteSuccess"),
       });
     },
     onError: () => {
       toast({
-        title: "Ошибка",
-        description: "Не удалось удалить тему",
+        title: adminT("themes.error"),
+        description: adminT("themes.deleteError"),
         variant: "destructive",
       });
     },
@@ -868,7 +868,7 @@ export default function ThemeManager() {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Управление темами</h2>
+          <h2 className="text-2xl font-bold">{adminT("themes.title")}</h2>
         </div>
         <Card>
           <CardContent className="p-6">

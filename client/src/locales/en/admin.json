@@ -31,6 +31,20 @@
     "apply": "Apply",
     "error": "Error"
   },
+  "themes": {
+    "title": "Theme Management",
+    "description": "Manage color schemes and site design themes",
+    "success": "Success",
+    "error": "Error",
+    "createSuccess": "Theme created and activated successfully",
+    "createError": "Failed to create theme",
+    "updateSuccess": "Theme updated successfully",
+    "updateError": "Failed to update theme",
+    "activateSuccess": "Theme activated successfully",
+    "activateError": "Failed to activate theme",
+    "deleteSuccess": "Theme deleted successfully",
+    "deleteError": "Failed to delete theme"
+  },
   "storeSettings": {
     "title": "Store Settings",
     "description": "Configuration of basic store parameters",
