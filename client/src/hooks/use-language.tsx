@@ -22,7 +22,7 @@ export function useLanguage() {
   
   // Get enabled languages from database settings with fixed order (Hebrew first)
   const getEnabledLanguages = () => {
-    const languageOrder = ['he', 'ru', 'en']; // Hebrew first as requested
+    const languageOrder = ['he', 'ar', 'ru', 'en']; // Hebrew first, then Arabic as requested
     
     if (storeSettings?.enabledLanguages && Array.isArray(storeSettings.enabledLanguages)) {
       const enabledLangs: Record<string, any> = {};
@@ -55,7 +55,7 @@ export function useLanguage() {
     languages: getEnabledLanguages(), // Use enabled languages from database
     allLanguages: LANGUAGES, // All available languages
     defaultLanguage: storeSettings?.defaultLanguage || 'ru',
-    enabledLanguages: storeSettings?.enabledLanguages || ['ru', 'en', 'he'],
+    enabledLanguages: storeSettings?.enabledLanguages || ['ru', 'en', 'he', 'ar'],
     changeLanguage,
   };
 }
