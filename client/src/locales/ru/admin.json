@@ -70,7 +70,9 @@
     "tomorrowButton": "Кнопка 'Завтра'",
     "tomorrowButtonHover": "Кнопка 'Завтра' (при наведении)",
     "outOfStockButton": "Кнопка 'Закончилось'",
-    "neutralColorsDescription": "Цвета для фонов, границ и второстепенных элементов"
+    "neutralColorsDescription": "Цвета для фонов, границ и второстепенных элементов",
+    "noThemes": "Нет тем",
+    "createFirstTheme": "Создайте свою первую тему оформления для сайта"
   },
   "colorLabels": {
     "primaryColor": "Основной цвет",
@@ -103,6 +105,11 @@
     "storeLogo": "Логотип магазина",
     "bannerImage": "Изображение баннера"
   },
+  "creating": "Создание...",
+  "deleteConfirmation": "Это действие нельзя отменить. Тема",
+  "deleteForever": "будет удалена навсегда",
+  "noThemes": "Нет тем",
+  "createFirstTheme": "Создайте свою первую тему оформления для сайта",
   "storeSettings": {
     "description": "Конфигурация основных параметров магазина",
     "title": "Настройки магазина",

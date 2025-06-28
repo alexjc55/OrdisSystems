@@ -1446,11 +1446,11 @@ export default function ThemeManager() {
 
               <div className="flex justify-end gap-2 mt-6">
                 <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                  Отмена
+                  {adminT("cancel")}
                 </Button>
                 <Button type="submit" className="btn-primary" disabled={createThemeMutation.isPending}>
                   <Save className="h-4 w-4 mr-2" />
-                  {createThemeMutation.isPending ? "Создание..." : "Создать тему"}
+                  {createThemeMutation.isPending ? adminT("creating") : adminT("themes.createTheme")}
                 </Button>
               </div>
             </form>
@@ -1555,18 +1555,18 @@ export default function ThemeManager() {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Удалить тему?</AlertDialogTitle>
+                        <AlertDialogTitle>{adminT("themes.deleteTheme")}?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Это действие нельзя отменить. Тема "{theme.name}" будет удалена навсегда.
+                          {adminT("deleteConfirmation")} "{theme.name}" {adminT("deleteForever")}.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Отмена</AlertDialogCancel>
+                        <AlertDialogCancel>{adminT("cancel")}</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => deleteThemeMutation.mutate(theme.id)}
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
-                          Удалить
+                          {adminT("delete")}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -1582,13 +1582,13 @@ export default function ThemeManager() {
         <Card>
           <CardContent className="p-12 text-center">
             <Palette className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Нет тем</h3>
+            <h3 className="text-lg font-semibold mb-2">{adminT("themes.noThemes")}</h3>
             <p className="text-muted-foreground mb-4">
-              Создайте свою первую тему оформления для сайта
+              {adminT("themes.createFirstTheme")}
             </p>
             <Button onClick={() => setIsCreateDialogOpen(true)} className="btn-primary">
               <Plus className="h-4 w-4 mr-2" />
-              Создать тему
+              {adminT("themes.createTheme")}
             </Button>
           </CardContent>
         </Card>

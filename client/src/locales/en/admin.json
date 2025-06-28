@@ -103,6 +103,9 @@
     "storeLogo": "Store Logo",
     "bannerImage": "Banner Image"
   },
+  "creating": "Creating...",
+  "deleteConfirmation": "This action cannot be undone. Theme",
+  "deleteForever": "will be deleted forever",
   "storeSettings": {
     "title": "Store Settings",
     "description": "Configuration of basic store parameters",
