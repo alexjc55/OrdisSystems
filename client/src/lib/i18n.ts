@@ -15,6 +15,10 @@ import commonHe from '../locales/he/common.json';
 import shopHe from '../locales/he/shop.json';
 import adminHe from '../locales/he/admin.json';
 
+import commonAr from '../locales/ar/common.json';
+import shopAr from '../locales/ar/shop.json';
+import adminAr from '../locales/ar/admin.json';
+
 // Language configuration with CSS flag classes for better browser compatibility
 // Hebrew first as requested
 export const LANGUAGES = {
@@ -24,6 +28,13 @@ export const LANGUAGES = {
     dir: 'rtl',
     flag: 'HE',
     flagClass: 'flag-he'
+  },
+  ar: {
+    name: 'Arabic',
+    nativeName: 'العربية',
+    dir: 'rtl',
+    flag: 'AR',
+    flagClass: 'flag-ar'
   },
   ru: { 
     name: 'Русский', 
@@ -59,6 +70,11 @@ const resources = {
     common: commonHe,
     shop: shopHe,
     admin: adminHe,
+  },
+  ar: {
+    common: commonAr,
+    shop: shopAr,
+    admin: adminAr,
   },
 };
 
