@@ -28,7 +28,7 @@ import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { useAdminTranslation, useCommonTranslation } from "@/hooks/use-language";
+import { useTranslation } from 'react-i18next';
 import { LANGUAGES } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { apiRequest } from "@/lib/queryClient";
@@ -425,7 +425,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
     }
   };
 
-  const { t: adminT } = useAdminTranslation();
+  const { t: adminT, i18n } = useTranslation("admin");
   
   const getStatusLabel = (status: string) => {
     switch (status) {
@@ -2064,8 +2064,8 @@ function ItemDiscountDialog({
 export default function AdminDashboard() {
   const { user, isLoading } = useAuth();
   const { toast } = useToast();
-  const { t: adminT } = useAdminTranslation();
-  const { t: commonT, i18n } = useCommonTranslation();
+  const { t: adminT, i18n } = useTranslation("admin");
+  // const { t: commonT, i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he';
   const queryClient = useQueryClient();
 
@@ -5546,8 +5546,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
 }
 
 function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
-  const { t: adminT } = useAdminTranslation();
-  const { i18n } = useCommonTranslation();
+  const { t: adminT, i18n } = useTranslation("admin");
+  
   const isRTL = i18n.language === 'he';
   
   const form = useForm({
@@ -5744,8 +5744,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   onSubmit: (data: any) => void;
   isLoading: boolean;
 }) {
-  const { t: adminT } = useAdminTranslation();
-  const { i18n } = useCommonTranslation();
+  const { t: adminT, i18n } = useTranslation("admin");
+  
   const isRTL = i18n.language === 'he';
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
