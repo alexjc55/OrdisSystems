@@ -5953,7 +5953,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       id: 'language',
       title: adminT('storeSettings.languageSettings'),
       description: adminT('storeSettings.languageDescription', 'Языки интерфейса и локализация'),
-      icon: Globe,
+      icon: Settings,
       color: 'bg-orange-500',
       isOpen: isLanguageSettingsOpen,
       setIsOpen: setIsLanguageSettingsOpen
@@ -5962,7 +5962,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       id: 'tracking',
       title: adminT('storeSettings.trackingCode'),
       description: adminT('storeSettings.trackingDescription', 'Коды аналитики и отслеживания'),
-      icon: BarChart3,
+      icon: Settings,
       color: 'bg-gray-500',
       isOpen: isTrackingCodeOpen,
       setIsOpen: setIsTrackingCodeOpen
@@ -5971,7 +5971,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       id: 'auth-page',
       title: adminT('storeSettings.authPage'),
       description: adminT('storeSettings.authPageDescription', 'Настройки страницы авторизации'),
-      icon: Shield,
+      icon: Users,
       color: 'bg-red-500',
       isOpen: isAuthPageOpen,
       setIsOpen: setIsAuthPageOpen
@@ -5997,7 +5997,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     ${tile.isOpen ? 'ring-2 ring-primary ring-opacity-50 shadow-md' : ''}
                   `}
                   style={{
-                    background: `linear-gradient(135deg, ${tile.color.replace('bg-', '').replace('-500', '')}, ${tile.color.replace('bg-', '').replace('-500', '')}dd)`
+                    background: tile.color === 'bg-blue-500' ? 'linear-gradient(135deg, #3b82f6, #2563eb)' :
+                              tile.color === 'bg-green-500' ? 'linear-gradient(135deg, #10b981, #059669)' :
+                              tile.color === 'bg-purple-500' ? 'linear-gradient(135deg, #8b5cf6, #7c3aed)' :
+                              tile.color === 'bg-orange-500' ? 'linear-gradient(135deg, #f97316, #ea580c)' :
+                              tile.color === 'bg-gray-500' ? 'linear-gradient(135deg, #6b7280, #4b5563)' :
+                              'linear-gradient(135deg, #ef4444, #dc2626)'
                   }}
                 >
                   {/* Background decorative elements */}
