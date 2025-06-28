@@ -620,6 +620,32 @@ button:focus,
     text-align: right !important;
   }
   
+  /* Arabic products page: RTL container with LTR table */
+  html[lang="ar"] .products-container,
+  html[lang="ar"] [data-tab="products"],
+  html[lang="ar"] .products-tab-content {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+  
+  /* Force LTR for products table content within RTL container */
+  html[lang="ar"] .products-container table,
+  html[lang="ar"] [data-tab="products"] table,
+  html[lang="ar"] .products-tab-content table,
+  html[lang="ar"] .products-container .table-container table,
+  html[lang="ar"] [data-tab="products"] .table-container table {
+    direction: ltr !important;
+    text-align: left !important;
+  }
+  
+  html[lang="ar"] .products-container table th,
+  html[lang="ar"] .products-container table td,
+  html[lang="ar"] [data-tab="products"] table th,
+  html[lang="ar"] [data-tab="products"] table td {
+    direction: ltr !important;
+    text-align: left !important;
+  }
+  
   /* Products table specific RTL fix - force LTR for products table only */
   [dir="rtl"] .products .table-container table {
     direction: ltr !important;

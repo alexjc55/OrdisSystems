@@ -131,6 +131,18 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Fixed Arabic RTL layout for admin products page
+  - CRITICAL RTL FIX: Resolved Arabic language layout issues in admin dashboard products section
+  - HYBRID LAYOUT IMPLEMENTATION: RTL container with LTR table for optimal Arabic UX
+    - Container (products-container): RTL direction for Arabic language consistency
+    - Table content: LTR direction for proper data display (IDs, prices, technical info)
+    - Added CSS selectors: html[lang="ar"] .products-container, [data-tab="products"]
+  - TECHNICAL SOLUTION: Enhanced CSS rules in index.css with specific Arabic targeting
+    - RTL enforcement for products container and controls
+    - LTR override for table headers and cells within RTL container
+    - Preserved existing Hebrew RTL functionality without conflicts
+  - COMPONENT UPDATES: Added products-container class and data-tab="products" attribute
+  - USER EXPERIENCE: Arabic admin users now have proper RTL interface with readable data tables
 - June 28, 2025: Completed comprehensive theme management internationalization
   - COMPLETE ELIMINATION: Systematically replaced all hardcoded Russian texts in ThemeManager component
   - FULL TRANSLATION COVERAGE: Added 50+ new translation keys across all 4 languages (RU/EN/HE/AR)

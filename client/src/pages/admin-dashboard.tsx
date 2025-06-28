@@ -3267,7 +3267,7 @@ export default function AdminDashboard() {
 
           {/* Products Management */}
           {hasPermission("canManageProducts") && (
-            <TabsContent value="products" className="space-y-4 sm:space-y-6">
+            <TabsContent value="products" className="space-y-4 sm:space-y-6 products-container" data-tab="products">
               <Card>
                 <CardHeader>
                   <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
