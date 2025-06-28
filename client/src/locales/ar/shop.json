@@ -314,5 +314,103 @@
     "print": "طباعة",
     "export": "تصدير",
     "import": "استيراد"
+  },
+  "specialOffers": "عروض خاصة",
+  "noSearchResults": "لا توجد نتائج للبحث",
+  "categories": "الفئات",
+  "categoriesCount": "{{count}} فئات",
+  "allCategories": "جميع الفئات",
+  "filterByCategory": "فلترة حسب الفئة",
+  "filterByDiscount": "فلترة حسب الخصم",
+  "onlyDiscounted": "المخفضة فقط",
+  "total": "الإجمالي",
+  "days": {
+    "mon": "الاثنين",
+    "tue": "الثلاثاء",
+    "wed": "الأربعاء",
+    "thu": "الخميس",
+    "fri": "الجمعة",
+    "sat": "السبت",
+    "sun": "الأحد",
+    "monday": "الاثنين",
+    "tuesday": "الثلاثاء",
+    "wednesday": "الأربعاء",
+    "thursday": "الخميس",
+    "friday": "الجمعة",
+    "saturday": "السبت",
+    "sunday": "الأحد"
+  },
+  "time": {
+    "hours": "ساعات",
+    "minutes": "دقائق",
+    "am": "ص",
+    "pm": "م",
+    "now": "الآن",
+    "morning": "الصباح",
+    "afternoon": "بعد الظهر",
+    "evening": "المساء",
+    "night": "الليل"
+  },
+  "units": {
+    "kg": "كيلو",
+    "g": "جرام",
+    "per100g": "لكل 100 جرام",
+    "piece": "قطعة",
+    "unit": "وحدة",
+    "pack": "علبة",
+    "bottle": "زجاجة",
+    "liter": "لتر",
+    "ml": "مل",
+    "per": "لكل"
+  },
+  "availability": {
+    "inStock": "متوفر",
+    "outOfStock": "غير متوفر",
+    "limitedStock": "مخزون محدود",
+    "comingSoon": "قريباً",
+    "preOrder": "طلب مسبق",
+    "backOrder": "طلب مؤجل"
+  },
+  "delivery": {
+    "estimatedTime": "الوقت المتوقع",
+    "deliveryFee": "رسوم التوصيل",
+    "freeDelivery": "توصيل مجاني",
+    "express": "سريع",
+    "standard": "عادي",
+    "pickup": "استلام",
+    "zones": "مناطق التوصيل"
+  },
+  "payment": {
+    "methods": "طرق الدفع",
+    "cash": "نقدي",
+    "card": "بطاقة",
+    "online": "إلكتروني",
+    "wallet": "محفظة"
+  },
+  "currency": {
+    "symbol": "₪",
+    "code": "ILS",
+    "name": "شيكل"
+  },
+  "status": {
+    "new": "جديد",
+    "popular": "شائع",
+    "bestseller": "الأكثر مبيعاً",
+    "featured": "مميز",
+    "sale": "تخفيض",
+    "limited": "محدود"
+  },
+  "notifications": {
+    "added": "تمت الإضافة",
+    "removed": "تم الحذف",
+    "updated": "تم التحديث",
+    "error": "خطأ",
+    "success": "نجح",
+    "loading": "جاري التحميل"
+  },
+  "meta": {
+    "description": "متجر إلكتروني للأطعمة الجاهزة",
+    "keywords": "طعام، توصيل، مطعم، وجبات",
+    "title": "متجر الطعام الإلكتروني"
   }
 }
