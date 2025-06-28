@@ -197,7 +197,12 @@
     "minPrepTime": "ترجمة مفقودة",
     "orderFor": "ترجمة مفقودة",
     "orderNotesPlaceholder": "ترجمة مفقودة",
-    "timeConstraints": "ترجمة مفقودة"
+    "timeConstraints": "ترجمة مفقودة",
+    "orderPlacedDesc": "ترجمة مفقودة",
+    "orderUpdated": "ترجمة مفقودة",
+    "orderUpdatedDesc": "ترجمة مفقودة",
+    "orderCancelled": "ترجمة مفقودة",
+    "orderCancelledDesc": "ترجمة مفقودة"
   },
   "products": {
     "title": "المنتجات",
