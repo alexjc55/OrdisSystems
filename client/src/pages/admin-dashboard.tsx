@@ -5734,6 +5734,469 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   );
 }
 
+// Settings Section Dialog Components
+function BasicInfoDialog({ open, onClose, form, onSubmit, adminT, isRTL }: any) {
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Store className="h-5 w-5 text-primary" />
+            {adminT('storeSettings.basicInfo')}
+          </DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="storeName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.storeName')}</FormLabel>
+                    <FormControl>
+                      <Input placeholder={adminT('storeSettings.storeNamePlaceholder')} {...field} className="text-sm" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="welcomeTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.welcomeTitle')}</FormLabel>
+                    <FormControl>
+                      <Input placeholder={adminT('storeSettings.welcomeTitlePlaceholder')} {...field} className="text-sm" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="contactPhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.contactPhone')}</FormLabel>
+                    <FormControl>
+                      <Input placeholder={adminT('storeSettings.contactPhonePlaceholder')} {...field} className="text-sm" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="contactEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.contactEmail')}</FormLabel>
+                    <FormControl>
+                      <Input placeholder={adminT('storeSettings.contactEmailPlaceholder')} type="email" {...field} className="text-sm" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="deliveryFee"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.deliveryFee')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} className="text-sm" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="freeDeliveryFrom"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.freeDeliveryFrom')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} className="text-sm" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-6">
+              <FormField
+                control={form.control}
+                name="storeDescription"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.storeDescription')}</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder={adminT('storeSettings.storeDescriptionPlaceholder')} {...field} className="text-sm min-h-[100px]" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.address')}</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder={adminT('storeSettings.addressPlaceholder')} {...field} className="text-sm" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button type="button" variant="outline" onClick={onClose}>
+                {adminT('actions.cancel')}
+              </Button>
+              <Button type="submit">
+                {adminT('actions.save')}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function WorkingHoursDialog({ open, onClose, form, onSubmit, adminT, isRTL }: any) {
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Clock className="h-5 w-5 text-primary" />
+            {adminT('storeSettings.operatingHours')}
+          </DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="weekStartDay"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">{adminT('storeSettings.weekStartDay')}</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder={adminT('storeSettings.weekStartDayPlaceholder')} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="monday">{adminT('storeSettings.monday')}</SelectItem>
+                      <SelectItem value="sunday">{adminT('storeSettings.sunday')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription className="text-xs">
+                    {adminT('storeSettings.weekStartDayDescription')}
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { key: "monday", label: adminT(`storeSettings.monday`) },
+                { key: "tuesday", label: adminT(`storeSettings.tuesday`) },
+                { key: "wednesday", label: adminT(`storeSettings.wednesday`) },
+                { key: "thursday", label: adminT(`storeSettings.thursday`) },
+                { key: "friday", label: adminT(`storeSettings.friday`) },
+                { key: "saturday", label: adminT(`storeSettings.saturday`) },
+                { key: "sunday", label: adminT(`storeSettings.sunday`) },
+              ].map(({ key, label }) => {
+                const currentHours = form.watch(`workingHours.${key}` as any) || "";
+                const isWorking = currentHours && currentHours !== adminT('storeSettings.closedDay');
+                const [openTime, closeTime] = isWorking ? currentHours.split("-") : ["09:00", "18:00"];
+
+                return (
+                  <div key={key} className={`border rounded-lg p-3 space-y-2 ${isWorking ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <FormLabel className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{label}</FormLabel>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (isWorking) {
+                            form.setValue(`workingHours.${key}` as any, "");
+                          } else {
+                            form.setValue(`workingHours.${key}` as any, "09:00-18:00");
+                          }
+                        }}
+                        className={`p-1 h-7 w-7 ${isWorking ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                      >
+                        {isWorking ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                    
+                    <div className="text-xs text-center font-medium">
+                      {isWorking ? (
+                        <span className="text-green-700">{adminT('storeSettings.workingDay')}</span>
+                      ) : (
+                        <span className="text-gray-500">{adminT('storeSettings.closedDay')}</span>
+                      )}
+                    </div>
+                    
+                    {isWorking && (
+                      <div className="space-y-2">
+                        <div>
+                          <FormLabel className="text-xs text-gray-600 block mb-1">{adminT('storeSettings.openTime')}</FormLabel>
+                          <Select
+                            value={openTime}
+                            onValueChange={(value) => {
+                              const currentClose = closeTime || "18:00";
+                              form.setValue(`workingHours.${key}` as any, `${value}-${currentClose}`);
+                            }}
+                          >
+                            <SelectTrigger className="text-xs h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Array.from({ length: 48 }, (_, i) => {
+                                const hour = Math.floor(i / 2);
+                                const minute = i % 2 === 0 ? "00" : "30";
+                                const time = `${hour.toString().padStart(2, "0")}:${minute}`;
+                                return (
+                                  <SelectItem key={time} value={time}>
+                                    {time}
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div>
+                          <FormLabel className="text-xs text-gray-600 block mb-1">{adminT('storeSettings.closeTime')}</FormLabel>
+                          <Select
+                            value={closeTime}
+                            onValueChange={(value) => {
+                              const currentOpen = openTime || "09:00";
+                              form.setValue(`workingHours.${key}` as any, `${currentOpen}-${value}`);
+                            }}
+                          >
+                            <SelectTrigger className="text-xs h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Array.from({ length: 48 }, (_, i) => {
+                                const hour = Math.floor(i / 2);
+                                const minute = i % 2 === 0 ? "00" : "30";
+                                const time = `${hour.toString().padStart(2, "0")}:${minute}`;
+                                return (
+                                  <SelectItem key={time} value={time}>
+                                    {time}
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button type="button" variant="outline" onClick={onClose}>
+                {adminT('actions.cancel')}
+              </Button>
+              <Button type="submit">
+                {adminT('actions.save')}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function PaymentDeliveryDialog({ open, onClose, form, onSubmit, adminT, isRTL }: any) {
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <CreditCard className="h-5 w-5 text-primary" />
+            {adminT('storeSettings.deliveryAndPayment')}
+          </DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="deliveryInfo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.deliveryInfo')}</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder={adminT('storeSettings.deliveryInfoPlaceholder')} {...field} className="text-sm min-h-[100px]" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="paymentInfo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.paymentInfo')}</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder={adminT('storeSettings.paymentInfoPlaceholder')} {...field} className="text-sm min-h-[100px]" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button type="button" variant="outline" onClick={onClose}>
+                {adminT('actions.cancel')}
+              </Button>
+              <Button type="submit">
+                {adminT('actions.save')}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function LanguageSettingsDialog({ open, onClose, form, onSubmit, adminT, isRTL }: any) {
+  const languageOptions = {
+    ru: { name: "Русский", nativeName: "Русский", flag: "🇷🇺" },
+    en: { name: "English", nativeName: "English", flag: "🇺🇸" },
+    he: { name: "Hebrew", nativeName: "עברית", flag: "🇮🇱" }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Globe className="h-5 w-5 text-primary" />
+            {adminT('storeSettings.languageSettings')}
+          </DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="defaultLanguage"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">{adminT('storeSettings.defaultLanguage')}</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder={adminT('storeSettings.selectDefaultLanguage')} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="ru">🇷🇺 Русский</SelectItem>
+                      <SelectItem value="en">🇺🇸 English</SelectItem>
+                      <SelectItem value="he">🇮🇱 עברית</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription className="text-xs">
+                    {adminT('storeSettings.defaultLanguageDescription')}
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <div className="space-y-4">
+              <FormLabel className="text-sm font-medium">{adminT('storeSettings.enabledLanguages')}</FormLabel>
+              {Object.entries(languageOptions).map(([code, info]) => {
+                const enabledLanguages = form.watch("enabledLanguages") || ["ru", "en", "he"];
+                const isEnabled = enabledLanguages.includes(code);
+                
+                return (
+                  <div key={code} className="flex items-center justify-between p-3 border rounded-lg bg-gray-50">
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">{(info as any).flag}</span>
+                      <div className="flex flex-col">
+                        <span className="font-medium">{(info as any).name}</span>
+                        <span className="text-xs text-gray-500">{(info as any).nativeName}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`text-xs font-medium ${isEnabled ? 'text-green-600' : 'text-gray-400'}`}>
+                        {isEnabled ? adminT('storeSettings.languageActive') : adminT('storeSettings.languageDisabled')}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          const currentEnabled = form.getValues("enabledLanguages") || ["ru", "en", "he"];
+                          const currentDefault = form.getValues("defaultLanguage") || "ru";
+                          let newEnabled;
+                          
+                          if (isEnabled) {
+                            newEnabled = currentEnabled.filter((lang: string) => lang !== code);
+                            if (currentDefault === code && newEnabled.length > 0) {
+                              form.setValue("defaultLanguage", newEnabled[0]);
+                            }
+                          } else {
+                            newEnabled = [...currentEnabled, code];
+                          }
+                          
+                          form.setValue("enabledLanguages", newEnabled);
+                        }}
+                        className={`p-1 h-7 w-7 ${isEnabled ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                      >
+                        {isEnabled ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex gap-3">
+                <div className="w-5 h-5 text-blue-600 mt-0.5">ℹ️</div>
+                <div className="text-sm text-blue-800">
+                  <strong>{adminT('storeSettings.noteTitle')}:</strong> {adminT('storeSettings.languageNote')}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <Button type="button" variant="outline" onClick={onClose}>
+                {adminT('actions.cancel')}
+              </Button>
+              <Button type="submit">
+                {adminT('actions.save')}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 // Store Settings Form Component
 function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   storeSettings: any;
@@ -5743,13 +6206,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he';
+
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
   const [isVisualsOpen, setIsVisualsOpen] = useState(false);
   const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
   const [isWorkingHoursOpen, setIsWorkingHoursOpen] = useState(false);
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
-
   const [isTrackingCodeOpen, setIsTrackingCodeOpen] = useState(false);
   const [isAuthPageOpen, setIsAuthPageOpen] = useState(false);
   
