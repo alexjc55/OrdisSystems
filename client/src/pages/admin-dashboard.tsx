@@ -5920,15 +5920,127 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
     }
   }, [storeSettings, form]);
 
+  // Settings tiles configuration
+  const settingsTiles = [
+    {
+      id: 'basic-info',
+      title: adminT('storeSettings.basicInfo'),
+      description: adminT('storeSettings.basicInfoDescription', 'Название магазина, контактная информация'),
+      icon: Store,
+      color: 'bg-blue-500',
+      isOpen: isBasicInfoOpen,
+      setIsOpen: setIsBasicInfoOpen
+    },
+    {
+      id: 'working-hours',
+      title: adminT('storeSettings.workingHours'),
+      description: adminT('storeSettings.workingHoursDescription', 'Режим работы по дням недели'),
+      icon: Clock,
+      color: 'bg-green-500',
+      isOpen: isWorkingHoursOpen,
+      setIsOpen: setIsWorkingHoursOpen
+    },
+    {
+      id: 'delivery-payment',
+      title: adminT('storeSettings.deliveryPayment'),
+      description: adminT('storeSettings.deliveryPaymentDescription', 'Способы доставки и оплаты'),
+      icon: CreditCard,
+      color: 'bg-purple-500',
+      isOpen: isDeliveryPaymentOpen,
+      setIsOpen: setIsDeliveryPaymentOpen
+    },
+    {
+      id: 'language',
+      title: adminT('storeSettings.languageSettings'),
+      description: adminT('storeSettings.languageDescription', 'Языки интерфейса и локализация'),
+      icon: Globe,
+      color: 'bg-orange-500',
+      isOpen: isLanguageSettingsOpen,
+      setIsOpen: setIsLanguageSettingsOpen
+    },
+    {
+      id: 'tracking',
+      title: adminT('storeSettings.trackingCode'),
+      description: adminT('storeSettings.trackingDescription', 'Коды аналитики и отслеживания'),
+      icon: BarChart3,
+      color: 'bg-gray-500',
+      isOpen: isTrackingCodeOpen,
+      setIsOpen: setIsTrackingCodeOpen
+    },
+    {
+      id: 'auth-page',
+      title: adminT('storeSettings.authPage'),
+      description: adminT('storeSettings.authPageDescription', 'Настройки страницы авторизации'),
+      icon: Shield,
+      color: 'bg-red-500',
+      isOpen: isAuthPageOpen,
+      setIsOpen: setIsAuthPageOpen
+    }
+  ];
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-8 ${isRTL ? 'rtl' : 'ltr'}`}>
-        {/* {adminT('storeSettings.basicInfo', 'Основная информация')} */}
+        
+        {/* Settings Tiles Grid */}
+        <div className="mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {settingsTiles.map((tile) => {
+              const IconComponent = tile.icon;
+              return (
+                <div
+                  key={tile.id}
+                  onClick={() => tile.setIsOpen(!tile.isOpen)}
+                  className={`
+                    relative overflow-hidden rounded-xl p-6 cursor-pointer transition-all duration-300 
+                    hover:scale-105 hover:shadow-lg group border border-gray-200
+                    ${tile.isOpen ? 'ring-2 ring-primary ring-opacity-50 shadow-md' : ''}
+                  `}
+                  style={{
+                    background: `linear-gradient(135deg, ${tile.color.replace('bg-', '').replace('-500', '')}, ${tile.color.replace('bg-', '').replace('-500', '')}dd)`
+                  }}
+                >
+                  {/* Background decorative elements */}
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-6 translate-x-6"></div>
+                  <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-4 -translate-x-4"></div>
+                  
+                  <div className="relative z-10">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="p-2 bg-white/20 rounded-lg">
+                        <IconComponent className="h-6 w-6 text-white" />
+                      </div>
+                      <div className={`text-xs px-2 py-1 bg-white/20 rounded-full text-white transition-all ${tile.isOpen ? 'scale-110' : ''}`}>
+                        {tile.isOpen ? adminT('common.opened', 'Открыто') : adminT('common.configure', 'Настроить')}
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-gray-100 transition-colors">
+                      {tile.title}
+                    </h3>
+                    
+                    <p className="text-sm text-white/80 leading-relaxed">
+                      {tile.description}
+                    </p>
+                    
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-xs text-white/60 font-medium">
+                        {adminT('common.clickToConfigure', 'Нажмите для настройки')}
+                      </span>
+                      <ChevronRight className="h-4 w-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Expanded Settings Sections */}
         <Collapsible open={isBasicInfoOpen} onOpenChange={setIsBasicInfoOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
-              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent sr-only"
             >
               <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
                 {isRTL ? (
