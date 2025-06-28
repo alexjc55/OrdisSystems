@@ -28,7 +28,7 @@ export default function Sidebar({
       <aside className="hidden lg:block w-64 bg-white shadow-sm border-r border-gray-200">
         <div className="p-6">
           <h2 className="text-lg font-poppins font-semibold text-gray-900 mb-4">
-{t('categories')}
+{t('categoriesText')}
           </h2>
           <div className="space-y-2">
             {[...Array(5)].map((_, i) => (
@@ -50,7 +50,7 @@ export default function Sidebar({
     <aside className="hidden lg:block w-64 bg-white shadow-sm border-r border-gray-200">
       <div className="p-6">
         <h2 className="text-lg font-poppins font-semibold text-gray-900 mb-4">
-{t('categories')}
+{t('categoriesText')}
         </h2>
         <ScrollArea className="h-[calc(100vh-8rem)]">
           <nav className="space-y-1">

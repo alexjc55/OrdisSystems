@@ -3,7 +3,7 @@
   "description": "إدارة المتجر",
   "tabs": {
     "products": "المنتجات",
-    "categories": "الفئات",
+    "categoriesTab": "الفئات",
     "orders": "الطلبات",
     "users": "المستخدمون",
     "settings": "الإعدادات",

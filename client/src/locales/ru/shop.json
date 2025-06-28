@@ -23,6 +23,7 @@
   "banner1": "Баннер 1",
   "banner2": "Баннер 2",
   "categories": "Категории",
+  "categoriesText": "Категории",
   "categoriesCount": "{{count}} категорий",
   "allProducts": "Все товары",
   "allCategories": "Все категории",

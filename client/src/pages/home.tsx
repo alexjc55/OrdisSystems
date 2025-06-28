@@ -495,7 +495,7 @@ export default function Home() {
                       </div>
                       <div>
                         <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                          {t('categories')}
+                          {t('categoriesText')}
                         </h2>
                         <p className="text-gray-600 font-medium">{t('selectCategoryDescription')}</p>
                       </div>
