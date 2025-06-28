@@ -103,6 +103,20 @@
     "gray700": "Серый 700 (текст)",
     "gray900": "Серый 900 (заголовки)"
   },
+  "visualLabels": {
+    "mainInterfaceElements": "Основные элементы интерфейса",
+    "showBanner": "Показывать баннер",
+    "showBannerDescription": "Главное изображение в шапке сайта",
+    "titleDescription": "Заголовок и описание",
+    "titleDescriptionDesc": "Текстовая информация о магазине",
+    "infoBlocks": "Информационные блоки",
+    "infoBlocksDescription": "Часы работы, контакты, доставка",
+    "categoryMenu": "Меню категорий",
+    "categoryMenuDescription": "Навигационное меню категорий",
+    "infoBlocksPosition": "Позиция информационных блоков",
+    "beforeCategories": "Перед категориями",
+    "afterCategories": "После категорий"
+  },
   "tabLabels": {
     "basic": "Основное",
     "colors": "Цвета", 

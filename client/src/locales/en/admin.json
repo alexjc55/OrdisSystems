@@ -96,6 +96,27 @@
     "iconColors": "Info Block Icons",
     "iconColorsDescription": "Colors for round icons in \"Working Hours\", \"Contacts\" and \"Payment and Delivery\" blocks on homepage"
   },
+  "neutralLabels": {
+    "mainNeutralColors": "Main Neutral Colors",
+    "white": "White",
+    "gray100": "Gray 100 (background)",
+    "gray700": "Gray 700 (text)",
+    "gray900": "Gray 900 (headings)"
+  },
+  "visualLabels": {
+    "mainInterfaceElements": "Main Interface Elements",
+    "showBanner": "Show Banner",
+    "showBannerDescription": "Main image in site header",
+    "titleDescription": "Title and Description",
+    "titleDescriptionDesc": "Text information about the store",
+    "infoBlocks": "Info Blocks",
+    "infoBlocksDescription": "Working hours, contacts, delivery",
+    "categoryMenu": "Category Menu",
+    "categoryMenuDescription": "Navigation category menu",
+    "infoBlocksPosition": "Info Blocks Position",
+    "beforeCategories": "Before Categories",
+    "afterCategories": "After Categories"
+  },
   "tabLabels": {
     "basic": "Basic",
     "colors": "Colors",

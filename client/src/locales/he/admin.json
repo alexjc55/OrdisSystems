@@ -96,6 +96,27 @@
     "iconColors": "אייקוני בלוקי מידע",
     "iconColorsDescription": "צבעים לאייקונים עגולים בבלוקים \"שעות פעילות\", \"צור קשר\" ו\"תשלום ומשלוח\" בעמוד הבית"
   },
+  "neutralLabels": {
+    "mainNeutralColors": "צבעים נייטראליים עיקריים",
+    "white": "לבן",
+    "gray100": "אפור 100 (רקע)",
+    "gray700": "אפור 700 (טקסט)",
+    "gray900": "אפור 900 (כותרות)"
+  },
+  "visualLabels": {
+    "mainInterfaceElements": "אלמנטי ממשק עיקריים",
+    "showBanner": "הצג באנר",
+    "showBannerDescription": "תמונה ראשית בכותרת האתר",
+    "titleDescription": "כותרת ותיאור",
+    "titleDescriptionDesc": "מידע טקסטואלי על החנות",
+    "infoBlocks": "בלוקי מידע",
+    "infoBlocksDescription": "שעות פעילות, צור קשר, משלוח",
+    "categoryMenu": "תפריט קטגוריות",
+    "categoryMenuDescription": "תפריט ניווט קטגוריות",
+    "infoBlocksPosition": "מיקום בלוקי מידע",
+    "beforeCategories": "לפני קטגוריות",
+    "afterCategories": "אחרי קטגוריות"
+  },
   "tabLabels": {
     "basic": "בסיסי",
     "colors": "צבעים",

@@ -1154,39 +1154,39 @@ export default function ThemeManager() {
                 </TabsContent>
 
                 <TabsContent value="visuals" className="space-y-6">
-                  {/* Основные элементы отображения */}
+                  {/* Main Display Elements */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Основные элементы интерфейса</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("visualLabels.mainInterfaceElements")}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <VisualToggleButton 
                         isEnabled={visualSettings.showBannerImage}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showBannerImage: !prev.showBannerImage }))}
-                        label="Показывать баннер"
-                        description="Главное изображение в шапке сайта"
+                        label={adminT("visualLabels.showBanner")}
+                        description={adminT("visualLabels.showBannerDescription")}
                         fieldName="showBannerImage"
                       />
 
                       <VisualToggleButton 
                         isEnabled={visualSettings.showTitleDescription}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showTitleDescription: !prev.showTitleDescription }))}
-                        label="Заголовок и описание"
-                        description="Текстовая информация о магазине"
+                        label={adminT("visualLabels.titleDescription")}
+                        description={adminT("visualLabels.titleDescriptionDesc")}
                         fieldName="showTitleDescription"
                       />
 
                       <VisualToggleButton 
                         isEnabled={visualSettings.showInfoBlocks}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showInfoBlocks: !prev.showInfoBlocks }))}
-                        label="Информационные блоки"
-                        description="Часы работы, контакты, доставка"
+                        label={adminT("visualLabels.infoBlocks")}
+                        description={adminT("visualLabels.infoBlocksDescription")}
                         fieldName="showInfoBlocks"
                       />
 
                       <VisualToggleButton 
                         isEnabled={visualSettings.showCategoryMenu}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showCategoryMenu: !prev.showCategoryMenu }))}
-                        label="Меню категорий"
-                        description="Навигационное меню категорий"
+                        label={adminT("visualLabels.categoryMenu")}
+                        description={adminT("visualLabels.categoryMenuDescription")}
                         fieldName="showCategoryMenu"
                       />
                     </div>

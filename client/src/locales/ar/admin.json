@@ -1159,6 +1159,27 @@
     "iconColors": "أيقونات كتل المعلومات",
     "iconColorsDescription": "ألوان الأيقونات الدائرية في كتل \"ساعات العمل\" و\"جهات الاتصال\" و\"الدفع والتوصيل\" في الصفحة الرئيسية"
   },
+  "neutralLabels": {
+    "mainNeutralColors": "الألوان المحايدة الرئيسية",
+    "white": "أبيض",
+    "gray100": "رمادي 100 (خلفية)",
+    "gray700": "رمادي 700 (نص)",
+    "gray900": "رمادي 900 (عناوين)"
+  },
+  "visualLabels": {
+    "mainInterfaceElements": "عناصر الواجهة الرئيسية",
+    "showBanner": "إظهار البانر",
+    "showBannerDescription": "الصورة الرئيسية في رأس الموقع",
+    "titleDescription": "العنوان والوصف",
+    "titleDescriptionDesc": "معلومات نصية عن المتجر",
+    "infoBlocks": "كتل المعلومات",
+    "infoBlocksDescription": "ساعات العمل، جهات الاتصال، التوصيل",
+    "categoryMenu": "قائمة الفئات",
+    "categoryMenuDescription": "قائمة تنقل الفئات",
+    "infoBlocksPosition": "موضع كتل المعلومات",
+    "beforeCategories": "قبل الفئات",
+    "afterCategories": "بعد الفئات"
+  },
   "tabLabels": {
     "basic": "أساسي",
     "colors": "ألوان",
