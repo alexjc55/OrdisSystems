@@ -5753,7 +5753,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
   const [isWorkingHoursOpen, setIsWorkingHoursOpen] = useState(false);
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
-  const [isDisplaySettingsOpen, setIsDisplaySettingsOpen] = useState(false);
+
   const [isTrackingCodeOpen, setIsTrackingCodeOpen] = useState(false);
   const [isAuthPageOpen, setIsAuthPageOpen] = useState(false);
   
@@ -6540,8 +6540,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         </Collapsible>
 
         {/* Секция "Настройки отображения" удалена - все настройки перенесены в управление темами */}
-
-        </Collapsible>
 
         {/* Код отслеживания */}
         <Collapsible open={isTrackingCodeOpen} onOpenChange={setIsTrackingCodeOpen} className="space-y-6">
