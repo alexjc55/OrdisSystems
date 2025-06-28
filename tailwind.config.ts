@@ -8,6 +8,7 @@ export default {
       fontFamily: {
         'sans': ['Inter', 'Poppins', 'system-ui', '-apple-system', 'sans-serif'],
         'hebrew': ['Assistant', 'Noto Sans Hebrew', 'system-ui', '-apple-system', 'sans-serif'],
+        'arabic': ['Noto Sans Arabic', 'system-ui', '-apple-system', 'sans-serif'],
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -238,6 +238,29 @@ button:focus,
     text-align: left !important;
     direction: ltr !important;
   }
+
+  /* Arabic font support */
+  [lang="ar"], [lang="ar"] * {
+    font-family: 'Noto Sans Arabic', system-ui, -apple-system, sans-serif !important;
+  }
+
+  /* Hebrew font support */
+  [lang="he"], [lang="he"] * {
+    font-family: 'Assistant', 'Noto Sans Hebrew', system-ui, -apple-system, sans-serif !important;
+  }
+
+  /* Ensure proper RTL text rendering for Arabic */
+  [dir="rtl"][lang="ar"] {
+    font-feature-settings: 'liga' 1, 'calt' 1, 'kern' 1;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Arabic numerals should remain as western numerals as requested */
+  [lang="ar"] .western-numerals {
+    direction: ltr;
+    unicode-bidi: embed;
+    font-feature-settings: 'lnum' 1;
+  }
   
   [dir="rtl"] .table-container table {
     direction: rtl !important;

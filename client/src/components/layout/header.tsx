@@ -251,10 +251,11 @@ export default function Header({ onResetView }: HeaderProps) {
               
               {/* Language Switcher */}
               {(() => {
-                const languages: Array<{ code: 'ru' | 'en' | 'he', flag: string, name: string }> = [
+                const languages: Array<{ code: 'ru' | 'en' | 'he' | 'ar', flag: string, name: string }> = [
                   { code: 'ru', flag: '🇷🇺', name: 'Русский' },
                   { code: 'en', flag: '🇺🇸', name: 'English' },
-                  { code: 'he', flag: '🇮🇱', name: 'עברית' }
+                  { code: 'he', flag: '🇮🇱', name: 'עברית' },
+                  { code: 'ar', flag: '🇸🇦', name: 'العربية' }
                 ];
                 
                 // Don't show language switcher if only 1 language

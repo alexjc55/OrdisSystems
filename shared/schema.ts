@@ -197,7 +197,25 @@ export const storeSettings = pgTable("store_settings", {
     canManageThemes: false
   }),
   defaultLanguage: varchar("default_language", { length: 5 }).default("ru"), // Default site language
-  enabledLanguages: jsonb("enabled_languages").default(["ru", "en", "he"]), // Array of enabled language codes
+  enabledLanguages: jsonb("enabled_languages").default(["ru", "en", "he", "ar"]), // Array of enabled language codes
+  
+  // Arabic language fields
+  storeNameAr: varchar("store_name_ar", { length: 255 }),
+  welcomeTitleAr: varchar("welcome_title_ar", { length: 255 }),
+  storeDescriptionAr: text("store_description_ar"),
+  deliveryInfoAr: text("delivery_info_ar"),
+  
+  // Hebrew fields (for completeness)
+  storeNameHe: varchar("store_name_he", { length: 255 }),
+  welcomeTitleHe: varchar("welcome_title_he", { length: 255 }),
+  storeDescriptionHe: text("store_description_he"),
+  deliveryInfoHe: text("delivery_info_he"),
+  
+  // English fields (for completeness)
+  storeNameEn: varchar("store_name_en", { length: 255 }),
+  welcomeTitleEn: varchar("welcome_title_en", { length: 255 }),
+  storeDescriptionEn: text("store_description_en"),
+  deliveryInfoEn: text("delivery_info_en"),
   modernBlock1Icon: varchar("modern_block1_icon", { length: 50 }), // Icon name for first modern block
   modernBlock1Text: varchar("modern_block1_text", { length: 255 }), // Text for first modern block
   modernBlock2Icon: varchar("modern_block2_icon", { length: 50 }), // Icon name for second modern block
