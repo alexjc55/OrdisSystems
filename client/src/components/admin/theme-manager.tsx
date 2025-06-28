@@ -1628,11 +1628,11 @@ export default function ThemeManager() {
                 <TabsContent value="basic" className="space-y-4">
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="edit-name">Название темы</Label>
+                      <Label htmlFor="edit-name">{adminT("name")}</Label>
                       <Input id="edit-name" name="name" defaultValue={editingTheme.name} required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="edit-description">Описание</Label>
+                      <Label htmlFor="edit-description">{adminT("description")}</Label>
                       <Textarea id="edit-description" name="description" defaultValue={editingTheme.description || ""} />
                     </div>
                     
