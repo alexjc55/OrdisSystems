@@ -15,6 +15,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw, Info, Briefcase, AlertCircle, Layers, Upload, EyeOff } from "lucide-react";
 import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
 import { ModernStyleSettings } from "./modern-style-settings";
+import { ImageUpload } from "@/components/ui/image-upload";
 
 
 // Visual Toggle Button Component
@@ -857,33 +858,39 @@ export default function ThemeManager() {
                     </div>
                     
                     {/* Изображения */}
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="logo-url" className="flex items-center gap-2">
+                    <div className="space-y-6">
+                      <div>
+                        <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          URL логотипа
+                          Логотип магазина
                         </Label>
-                        <Input 
-                          id="logo-url" 
-                          name="logoUrl" 
-                          placeholder="https://example.com/logo.png"
+                        <ImageUpload
+                          value=""
+                          onChange={(url) => {
+                            const input = document.querySelector('input[name="logoUrl"]') as HTMLInputElement;
+                            if (input) input.value = url;
+                          }}
                         />
-                        <div className="text-xs text-gray-500">
-                          Ссылка на логотип магазина для отображения в шапке
+                        <input type="hidden" name="logoUrl" />
+                        <div className="text-xs text-gray-500 mt-2">
+                          Логотип для отображения в шапке сайта
                         </div>
                       </div>
                       
-                      <div className="space-y-2">
-                        <Label htmlFor="banner-url" className="flex items-center gap-2">
+                      <div>
+                        <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          URL картинки баннера
+                          Картинка баннера
                         </Label>
-                        <Input 
-                          id="banner-url" 
-                          name="bannerImageUrl" 
-                          placeholder="https://example.com/banner.jpg"
+                        <ImageUpload
+                          value=""
+                          onChange={(url) => {
+                            const input = document.querySelector('input[name="bannerImageUrl"]') as HTMLInputElement;
+                            if (input) input.value = url;
+                          }}
                         />
-                        <div className="text-xs text-gray-500">
+                        <input type="hidden" name="bannerImageUrl" />
+                        <div className="text-xs text-gray-500 mt-2">
                           Фоновое изображение для баннера на главной странице
                         </div>
                       </div>
@@ -1379,35 +1386,39 @@ export default function ThemeManager() {
                     </div>
                     
                     {/* Изображения */}
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="edit-logo-url" className="flex items-center gap-2">
+                    <div className="space-y-6">
+                      <div>
+                        <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          URL логотипа
+                          Логотип магазина
                         </Label>
-                        <Input 
-                          id="edit-logo-url" 
-                          name="logoUrl" 
-                          defaultValue={editingTheme.logoUrl || ""} 
-                          placeholder="https://example.com/logo.png"
+                        <ImageUpload
+                          value={editingTheme.logoUrl || ""}
+                          onChange={(url) => {
+                            const input = document.querySelector('input[name="logoUrl"]') as HTMLInputElement;
+                            if (input) input.value = url;
+                          }}
                         />
-                        <div className="text-xs text-gray-500">
-                          Ссылка на логотип магазина для отображения в шапке
+                        <input type="hidden" name="logoUrl" defaultValue={editingTheme.logoUrl || ""} />
+                        <div className="text-xs text-gray-500 mt-2">
+                          Логотип для отображения в шапке сайта
                         </div>
                       </div>
                       
-                      <div className="space-y-2">
-                        <Label htmlFor="edit-banner-url" className="flex items-center gap-2">
+                      <div>
+                        <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          URL картинки баннера
+                          Картинка баннера
                         </Label>
-                        <Input 
-                          id="edit-banner-url" 
-                          name="bannerImageUrl" 
-                          defaultValue={editingTheme.bannerImageUrl || ""} 
-                          placeholder="https://example.com/banner.jpg"
+                        <ImageUpload
+                          value={editingTheme.bannerImageUrl || ""}
+                          onChange={(url) => {
+                            const input = document.querySelector('input[name="bannerImageUrl"]') as HTMLInputElement;
+                            if (input) input.value = url;
+                          }}
                         />
-                        <div className="text-xs text-gray-500">
+                        <input type="hidden" name="bannerImageUrl" defaultValue={editingTheme.bannerImageUrl || ""} />
+                        <div className="text-xs text-gray-500 mt-2">
                           Фоновое изображение для баннера на главной странице
                         </div>
                       </div>
