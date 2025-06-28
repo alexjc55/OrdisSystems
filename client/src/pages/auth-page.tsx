@@ -259,40 +259,6 @@ export default function AuthPage() {
       </div>
       
       <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
-          {/* Hero Section */}
-          <div className="hidden lg:block space-y-6">
-            <div className="space-y-4">
-            <h1 className="text-4xl font-bold text-gray-900">
-              {storeSettings?.storeSettings?.authPageTitle || "Добро пожаловать в eDAHouse"}
-            </h1>
-            <p className="text-xl text-gray-600">
-              {storeSettings?.storeSettings?.authPageSubtitle || "Готовые блюда высокого качества с доставкой на дом"}
-            </p>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                ✓
-              </div>
-              <span className="text-gray-700">{storeSettings?.storeSettings?.authPageFeature1 || "Свежие готовые блюда каждый день"}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                ✓
-              </div>
-              <span className="text-gray-700">{storeSettings?.storeSettings?.authPageFeature2 || "Быстрая доставка в удобное время"}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                ✓
-              </div>
-              <span className="text-gray-700">{storeSettings?.storeSettings?.authPageFeature3 || "Широкий выбор блюд на любой вкус"}</span>
-            </div>
-          </div>
-        </div>
-
         {/* Auth Forms */}
         <Card className="w-full max-w-md mx-auto">
           <CardHeader>
@@ -338,11 +304,11 @@ export default function AuthPage() {
                       </p>
                     )}
                   </div>
-                  
+
                   <Button
                     type="submit"
-                    className="w-full bg-primary hover:bg-primary text-white"
                     disabled={loginMutation.isPending}
+                    className="w-full"
                   >
                     {loginMutation.isPending ? (
                       <>
@@ -355,11 +321,11 @@ export default function AuthPage() {
                   </Button>
                 </form>
               </TabsContent>
-              
+
               <TabsContent value="register" className="space-y-4">
                 <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="reg-username">{getAuthText('username')} *</Label>
+                    <Label htmlFor="reg-username">{getAuthText('username')}</Label>
                     <Input
                       id="reg-username"
                       {...registerForm.register("username")}
@@ -371,11 +337,11 @@ export default function AuthPage() {
                       </p>
                     )}
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <Label htmlFor="email">{getAuthText('email')}</Label>
+                    <Label htmlFor="reg-email">{getAuthText('email')}</Label>
                     <Input
-                      id="email"
+                      id="reg-email"
                       type="email"
                       {...registerForm.register("email")}
                       placeholder={getAuthText('emailPlaceholder')}
@@ -386,8 +352,8 @@ export default function AuthPage() {
                       </p>
                     )}
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
+
+                  <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">{getAuthText('firstName')}</Label>
                       <Input
@@ -405,7 +371,7 @@ export default function AuthPage() {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="phone">{getAuthText('phone')}</Label>
                     <Input
@@ -414,9 +380,9 @@ export default function AuthPage() {
                       placeholder={getAuthText('phonePlaceholder')}
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <Label htmlFor="reg-password">{getAuthText('password')} *</Label>
+                    <Label htmlFor="reg-password">{getAuthText('password')}</Label>
                     <Input
                       id="reg-password"
                       type="password"
@@ -429,9 +395,9 @@ export default function AuthPage() {
                       </p>
                     )}
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">{getAuthText('confirmPassword')} *</Label>
+                    <Label htmlFor="confirmPassword">{getAuthText('confirmPassword')}</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
@@ -444,11 +410,11 @@ export default function AuthPage() {
                       </p>
                     )}
                   </div>
-                  
+
                   <Button
                     type="submit"
-                    className="w-full bg-primary hover:bg-primary text-white"
                     disabled={registerMutation.isPending}
+                    className="w-full"
                   >
                     {registerMutation.isPending ? (
                       <>
@@ -464,7 +430,6 @@ export default function AuthPage() {
             </Tabs>
           </CardContent>
         </Card>
-        </div>
       </div>
     </div>
   );

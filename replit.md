@@ -131,6 +131,12 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Removed auth page settings section and cleaned up authentication page
+  - Completely deleted "Страница авторизации" (Auth Page) section from admin settings
+  - Removed all auth page configuration fields (authPageTitle, authPageSubtitle, authPageFeature1-3)
+  - Removed associated state variables (isAuthPageOpen, setIsAuthPageOpen)
+  - Removed left informational panel (Hero Section) from authentication page
+  - Authentication page now shows only centered login/registration form without promotional content
 - June 28, 2025: Optimized working hours section layout for better compactness and visual comfort
   - Reorganized days of week into responsive two-column grid layout (mobile: 1 column, desktop: 2 columns)
   - Changed time controls to vertical stacking (opening time above closing time) for space efficiency

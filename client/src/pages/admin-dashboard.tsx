@@ -5751,7 +5751,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
 
   const [isTrackingCodeOpen, setIsTrackingCodeOpen] = useState(false);
-  const [isAuthPageOpen, setIsAuthPageOpen] = useState(false);
+
   
   const form = useForm({
     resolver: zodResolver(storeSettingsSchema),
@@ -5871,11 +5871,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         cartBannerText: storeSettings?.cartBannerText || "",
         cartBannerBgColor: storeSettings?.cartBannerBgColor || "#f97316",
         cartBannerTextColor: storeSettings?.cartBannerTextColor || "#ffffff",
-        authPageTitle: storeSettings?.authPageTitle || "",
-        authPageSubtitle: storeSettings?.authPageSubtitle || "",
-        authPageFeature1: storeSettings?.authPageFeature1 || "",
-        authPageFeature2: storeSettings?.authPageFeature2 || "",
-        authPageFeature3: storeSettings?.authPageFeature3 || "",
+
         defaultLanguage: storeSettings?.defaultLanguage || "ru",
         enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
         bannerButtonText: storeSettings?.bannerButtonText || "",
