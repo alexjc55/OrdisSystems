@@ -5928,7 +5928,479 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-8 ${isRTL ? 'rtl' : 'ltr'}`}>
-        {/* {adminT('storeSettings.basicInfo', 'Основная информация')} */}
+        
+        {/* Tile-based Settings Interface */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          {/* Basic Info Tile */}
+          <div
+            onClick={() => setBasicInfoModalOpen(true)}
+            className="relative overflow-hidden rounded-xl p-6 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg group border border-gray-200"
+            style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' }}
+          >
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-6 translate-x-6"></div>
+            <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-4 -translate-x-4"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-start justify-between mb-3">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Store className="h-6 w-6 text-white" />
+                </div>
+                <div className="text-xs px-2 py-1 bg-white/20 rounded-full text-white">
+                  {adminT('common.configure', 'Настроить')}
+                </div>
+              </div>
+              
+              <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-gray-100 transition-colors">
+                {adminT('storeSettings.basicInfo')}
+              </h3>
+              
+              <p className="text-sm text-white/80 leading-relaxed">
+                {adminT('storeSettings.basicInfoDescription', 'Основная информация о магазине')}
+              </p>
+              
+              <div className="mt-4 flex items-center justify-between">
+                <span className="text-xs text-white/60 font-medium">
+                  {adminT('common.clickToConfigure', 'Нажмите для настройки')}
+                </span>
+                <ChevronRight className="h-4 w-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              </div>
+            </div>
+          </div>
+
+          {/* Working Hours Tile */}
+          <div
+            onClick={() => setWorkingHoursModalOpen(true)}
+            className="relative overflow-hidden rounded-xl p-6 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg group border border-gray-200"
+            style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+          >
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-6 translate-x-6"></div>
+            <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-4 -translate-x-4"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-start justify-between mb-3">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Clock4 className="h-6 w-6 text-white" />
+                </div>
+                <div className="text-xs px-2 py-1 bg-white/20 rounded-full text-white">
+                  {adminT('common.configure', 'Настроить')}
+                </div>
+              </div>
+              
+              <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-gray-100 transition-colors">
+                {adminT('storeSettings.workingHours')}
+              </h3>
+              
+              <p className="text-sm text-white/80 leading-relaxed">
+                {adminT('storeSettings.workingHoursDescription', 'Режим работы магазина')}
+              </p>
+              
+              <div className="mt-4 flex items-center justify-between">
+                <span className="text-xs text-white/60 font-medium">
+                  {adminT('common.clickToConfigure', 'Нажмите для настройки')}
+                </span>
+                <ChevronRight className="h-4 w-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              </div>
+            </div>
+          </div>
+
+          {/* Delivery & Payment Tile */}
+          <div
+            onClick={() => setDeliveryPaymentModalOpen(true)}
+            className="relative overflow-hidden rounded-xl p-6 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg group border border-gray-200"
+            style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }}
+          >
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-6 translate-x-6"></div>
+            <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-4 -translate-x-4"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-start justify-between mb-3">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <CreditCard className="h-6 w-6 text-white" />
+                </div>
+                <div className="text-xs px-2 py-1 bg-white/20 rounded-full text-white">
+                  {adminT('common.configure', 'Настроить')}
+                </div>
+              </div>
+              
+              <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-gray-100 transition-colors">
+                {adminT('storeSettings.deliveryPayment')}
+              </h3>
+              
+              <p className="text-sm text-white/80 leading-relaxed">
+                {adminT('storeSettings.deliveryPaymentDescription', 'Доставка и оплата')}
+              </p>
+              
+              <div className="mt-4 flex items-center justify-between">
+                <span className="text-xs text-white/60 font-medium">
+                  {adminT('common.clickToConfigure', 'Нажмите для настройки')}
+                </span>
+                <ChevronRight className="h-4 w-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              </div>
+            </div>
+          </div>
+
+          {/* Language Settings Tile */}
+          <div
+            onClick={() => setLanguageModalOpen(true)}
+            className="relative overflow-hidden rounded-xl p-6 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg group border border-gray-200"
+            style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
+          >
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-6 translate-x-6"></div>
+            <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-4 -translate-x-4"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-start justify-between mb-3">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Languages className="h-6 w-6 text-white" />
+                </div>
+                <div className="text-xs px-2 py-1 bg-white/20 rounded-full text-white">
+                  {adminT('common.configure', 'Настроить')}
+                </div>
+              </div>
+              
+              <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-gray-100 transition-colors">
+                {adminT('storeSettings.languages')}
+              </h3>
+              
+              <p className="text-sm text-white/80 leading-relaxed">
+                {adminT('storeSettings.languagesDescription', 'Настройки языков')}
+              </p>
+              
+              <div className="mt-4 flex items-center justify-between">
+                <span className="text-xs text-white/60 font-medium">
+                  {adminT('common.clickToConfigure', 'Нажмите для настройки')}
+                </span>
+                <ChevronRight className="h-4 w-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              </div>
+            </div>
+          </div>
+
+          {/* Analytics & Tracking Tile */}
+          <div
+            onClick={() => setTrackingModalOpen(true)}
+            className="relative overflow-hidden rounded-xl p-6 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg group border border-gray-200"
+            style={{ background: 'linear-gradient(135deg, #6b7280, #4b5563)' }}
+          >
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-6 translate-x-6"></div>
+            <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-4 -translate-x-4"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-start justify-between mb-3">
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <Activity className="h-6 w-6 text-white" />
+                </div>
+                <div className="text-xs px-2 py-1 bg-white/20 rounded-full text-white">
+                  {adminT('common.configure', 'Настроить')}
+                </div>
+              </div>
+              
+              <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-gray-100 transition-colors">
+                {adminT('storeSettings.tracking')}
+              </h3>
+              
+              <p className="text-sm text-white/80 leading-relaxed">
+                {adminT('storeSettings.trackingDescription', 'Аналитика и отслеживание')}
+              </p>
+              
+              <div className="mt-4 flex items-center justify-between">
+                <span className="text-xs text-white/60 font-medium">
+                  {adminT('common.clickToConfigure', 'Нажмите для настройки')}
+                </span>
+                <ChevronRight className="h-4 w-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Basic Info Modal */}
+        <Dialog open={basicInfoModalOpen} onOpenChange={setBasicInfoModalOpen}>
+          <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Store className="h-5 w-5 text-primary" />
+                {adminT('storeSettings.basicInfo')}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="storeName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('storeSettings.storeName')}</FormLabel>
+                      <FormControl>
+                        <Input placeholder={adminT('storeSettings.storeNamePlaceholder')} {...field} className="text-sm" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="contactPhone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('storeSettings.contactPhone')}</FormLabel>
+                      <FormControl>
+                        <Input placeholder={adminT('storeSettings.contactPhonePlaceholder')} {...field} className="text-sm" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <FormField
+                control={form.control}
+                name="storeDescription"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.storeDescription')}</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder={adminT('storeSettings.storeDescriptionPlaceholder')} 
+                        {...field} 
+                        className="text-sm min-h-[80px]" 
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="contactEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('storeSettings.contactEmail')}</FormLabel>
+                      <FormControl>
+                        <Input placeholder={adminT('storeSettings.contactEmailPlaceholder')} {...field} className="text-sm" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('storeSettings.address')}</FormLabel>
+                      <FormControl>
+                        <Input placeholder={adminT('storeSettings.addressPlaceholder')} {...field} className="text-sm" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Working Hours Modal */}
+        <Dialog open={workingHoursModalOpen} onOpenChange={setWorkingHoursModalOpen}>
+          <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Clock4 className="h-5 w-5 text-primary" />
+                {adminT('storeSettings.workingHours')}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
+                  <FormField
+                    key={day}
+                    control={form.control}
+                    name={`workingHours.${day}` as any}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm">{adminT(`storeSettings.days.${day}`)}</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder={adminT('storeSettings.workingHoursPlaceholder')} 
+                            {...field} 
+                            className="text-sm"
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                ))}
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delivery & Payment Modal */}
+        <Dialog open={deliveryPaymentModalOpen} onOpenChange={setDeliveryPaymentModalOpen}>
+          <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <CreditCard className="h-5 w-5 text-primary" />
+                {adminT('storeSettings.deliveryPayment')}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="deliveryFee"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('storeSettings.deliveryFee')}</FormLabel>
+                      <FormControl>
+                        <Input placeholder="15.00" {...field} className="text-sm" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="freeDeliveryFrom"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('storeSettings.freeDeliveryFrom')}</FormLabel>
+                      <FormControl>
+                        <Input placeholder="100.00" {...field} className="text-sm" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <FormField
+                control={form.control}
+                name="deliveryInfo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.deliveryInfo')}</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder={adminT('storeSettings.deliveryInfoPlaceholder')} 
+                        {...field} 
+                        className="text-sm min-h-[80px]" 
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="paymentInfo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.paymentInfo')}</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder={adminT('storeSettings.paymentInfoPlaceholder')} 
+                        {...field} 
+                        className="text-sm min-h-[80px]" 
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Language Settings Modal */}
+        <Dialog open={languageModalOpen} onOpenChange={setLanguageModalOpen}>
+          <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Languages className="h-5 w-5 text-primary" />
+                {adminT('storeSettings.languages')}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="welcomeTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.welcomeTitle')}</FormLabel>
+                    <FormControl>
+                      <Input placeholder={adminT('storeSettings.welcomeTitlePlaceholder')} {...field} className="text-sm" />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-blue-800 mb-2">{adminT('storeSettings.languageNote')}</h4>
+                <p className="text-xs text-blue-700">
+                  {adminT('storeSettings.languageNoteDescription', 'Языковые настройки управляются автоматически системой интернационализации.')}
+                </p>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Analytics & Tracking Modal */}
+        <Dialog open={trackingModalOpen} onOpenChange={setTrackingModalOpen}>
+          <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Activity className="h-5 w-5 text-primary" />
+                {adminT('storeSettings.tracking')}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="headerHtml"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.headerHtml')}</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder={adminT('storeSettings.headerHtmlPlaceholder')} 
+                        {...field} 
+                        className="text-sm min-h-[100px]" 
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="footerHtml"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.footerHtml')}</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder={adminT('storeSettings.footerHtmlPlaceholder')} 
+                        {...field} 
+                        className="text-sm min-h-[100px]" 
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Original sections preserved but hidden (for backward compatibility) */}
+        <div style={{ display: 'none' }}>
         <Collapsible open={isBasicInfoOpen} onOpenChange={setIsBasicInfoOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
@@ -6579,8 +7051,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* {adminT('storeSettings.displaySettings', 'Настройки отображения')} */}
-        <Collapsible open={isDisplaySettingsOpen} onOpenChange={setIsDisplaySettingsOpen} className="space-y-6">
+        {/* Display Settings section removed - functionality moved to theme management */}
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
