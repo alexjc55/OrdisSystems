@@ -624,20 +624,20 @@ export default function ThemeManager() {
       headerStyle: formData.get("headerStyle") as string,
       bannerButtonText: formData.get("bannerButtonText") as string || "Смотреть каталог",
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
-      logoUrl: formData.get("logoUrl") as string || "",
-      bannerImageUrl: formData.get("bannerImageUrl") as string || "",
+      logoUrl: createLogoUrl,
+      bannerImageUrl: createBannerImageUrl,
       // Cart banner settings
       showCartBanner: formData.get("showCartBanner") === "true",
       cartBannerType: formData.get("cartBannerType") as string || "text",
-      cartBannerImage: formData.get("cartBannerImage") as string || "",
+      cartBannerImage: createCartBannerImage,
       cartBannerText: formData.get("cartBannerText") as string || "",
       cartBannerBgColor: formData.get("cartBannerBgColor") as string || "#f97316",
       cartBannerTextColor: formData.get("cartBannerTextColor") as string || "#ffffff",
       // Bottom banners settings
       showBottomBanners: formData.get("showBottomBanners") === "true",
-      bottomBanner1Url: formData.get("bottomBanner1Url") as string || "",
+      bottomBanner1Url: createBottomBanner1Url,
       bottomBanner1Link: formData.get("bottomBanner1Link") as string || "",
-      bottomBanner2Url: formData.get("bottomBanner2Url") as string || "",
+      bottomBanner2Url: createBottomBanner2Url,
       bottomBanner2Link: formData.get("bottomBanner2Link") as string || "",
       modernBlock1Icon: formData.get("modernBlock1Icon") as string || "",
       modernBlock1Text: formData.get("modernBlock1Text") as string || "",
@@ -711,20 +711,20 @@ export default function ThemeManager() {
       headerStyle: formData.get("headerStyle") as string,
       bannerButtonText: formData.get("bannerButtonText") as string || "Смотреть каталог",
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
-      logoUrl: formData.get("logoUrl") as string || "",
-      bannerImageUrl: formData.get("bannerImageUrl") as string || "",
+      logoUrl: editLogoUrl,
+      bannerImageUrl: editBannerImageUrl,
       // Cart banner settings
       showCartBanner: editVisualSettings.showCartBanner,
       cartBannerType: formData.get("cartBannerType") as string || "text",
-      cartBannerImage: formData.get("cartBannerImage") as string || "",
+      cartBannerImage: editCartBannerImage,
       cartBannerText: formData.get("cartBannerText") as string || "",
       cartBannerBgColor: formData.get("cartBannerBgColor") as string || "#f97316",
       cartBannerTextColor: formData.get("cartBannerTextColor") as string || "#ffffff",
       // Bottom banners settings
       showBottomBanners: editVisualSettings.showBottomBanners,
-      bottomBanner1Url: formData.get("bottomBanner1Url") as string || "",
+      bottomBanner1Url: editBottomBanner1Url,
       bottomBanner1Link: formData.get("bottomBanner1Link") as string || "",
-      bottomBanner2Url: formData.get("bottomBanner2Url") as string || "",
+      bottomBanner2Url: editBottomBanner2Url,
       bottomBanner2Link: formData.get("bottomBanner2Link") as string || "",
       modernBlock1Icon: formData.get("modernBlock1Icon") as string || "",
       modernBlock1Text: formData.get("modernBlock1Text") as string || "",
@@ -1626,13 +1626,12 @@ export default function ThemeManager() {
                           Логотип магазина
                         </Label>
                         <ImageUpload
-                          value={editingTheme.logoUrl || ""}
+                          value={editLogoUrl}
                           onChange={(url) => {
-                            const input = document.querySelector('input[name="logoUrl"]') as HTMLInputElement;
-                            if (input) input.value = url;
+                            setEditLogoUrl(url);
                           }}
                         />
-                        <input type="hidden" name="logoUrl" defaultValue={editingTheme.logoUrl || ""} />
+                        <input type="hidden" name="logoUrl" value={editLogoUrl} />
                         <div className="text-xs text-gray-500 mt-2">
                           Логотип для отображения в шапке сайта
                         </div>
@@ -1644,13 +1643,12 @@ export default function ThemeManager() {
                           Картинка баннера
                         </Label>
                         <ImageUpload
-                          value={editingTheme.bannerImageUrl || ""}
+                          value={editBannerImageUrl}
                           onChange={(url) => {
-                            const input = document.querySelector('input[name="bannerImageUrl"]') as HTMLInputElement;
-                            if (input) input.value = url;
+                            setEditBannerImageUrl(url);
                           }}
                         />
-                        <input type="hidden" name="bannerImageUrl" defaultValue={editingTheme.bannerImageUrl || ""} />
+                        <input type="hidden" name="bannerImageUrl" value={editBannerImageUrl} />
                         <div className="text-xs text-gray-500 mt-2">
                           Фоновое изображение для баннера на главной странице
                         </div>
