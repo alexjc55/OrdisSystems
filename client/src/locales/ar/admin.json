@@ -1135,6 +1135,19 @@
     "outOfStockButton": "زر 'نفد المخزون'",
     "neutralColorsDescription": "ألوان للخلفيات والحدود والعناصر الثانوية"
   },
+  "colorLabels": {
+    "primaryColor": "اللون الأساسي",
+    "primaryTextColor": "لون نص الأزرار",
+    "primaryDarkColor": "أساسي (داكن)",
+    "primaryLightColor": "أساسي (فاتح)",
+    "successColor": "نجاح",
+    "warningColor": "تحذير",
+    "errorColor": "خطأ",
+    "infoColor": "معلومات",
+    "tomorrowColor": "زر 'غداً'",
+    "tomorrowDarkColor": "زر 'غداً' (عند التمرير)",
+    "outOfStockColor": "زر 'نفد المخزون'"
+  },
   "imageUpload": {
     "selectFile": "ترجمة مفقودة",
     "uploading": "ترجمة مفقودة"

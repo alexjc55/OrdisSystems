@@ -72,6 +72,28 @@
     "outOfStockButton": "Кнопка 'Закончилось'",
     "neutralColorsDescription": "Цвета для фонов, границ и второстепенных элементов"
   },
+  "colorLabels": {
+    "primaryColor": "Основной цвет",
+    "primaryTextColor": "Цвет текста кнопок",
+    "primaryDarkColor": "Основной (темный)",
+    "primaryLightColor": "Основной (светлый)",
+    "successColor": "Успех",
+    "warningColor": "Предупреждение",
+    "errorColor": "Ошибка",
+    "infoColor": "Информация",
+    "tomorrowColor": "Кнопка 'Завтра'",
+    "tomorrowDarkColor": "Кнопка 'Завтра' (при наведении)",
+    "outOfStockColor": "Кнопка 'Закончилось'",
+    "workingHoursIconColor": "Часы работы",
+    "contactsIconColor": "Контакты", 
+    "paymentDeliveryIconColor": "Оплата и доставка"
+  },
+  "statusLabels": {
+    "mainStatusColors": "Основные статусные цвета",
+    "specialButtonsDescription": "\"Завтра\" - для недоступных сегодня товаров, \"Закончился\" - для бейджей",
+    "iconColors": "Иконки информационных блоков",
+    "iconColorsDescription": "Цвета круглых иконок в блоках \"Часы работы\", \"Контакты\" и \"Оплата и доставка\" на главной странице"
+  },
   "storeSettings": {
     "description": "Конфигурация основных параметров магазина",
     "title": "Настройки магазина",

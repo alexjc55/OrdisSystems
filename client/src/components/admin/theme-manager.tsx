@@ -1076,32 +1076,32 @@ export default function ThemeManager() {
                     <input type="hidden" name="accentColor" defaultValue="#e2e8f0" />
                   </div>
 
-                  {/* Статусы */}
+                  {/* Status */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Статусы</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themes.statusColors")}</h4>
                     <div className="space-y-4">
                       <div>
-                        <h5 className="text-sm font-medium mb-2">Основные статусные цвета</h5>
+                        <h5 className="text-sm font-medium mb-2">{adminT("statusLabels.mainStatusColors")}</h5>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <ColorInput label="Успех" name="successColor" defaultValue="#22c55e" />
-                          <ColorInput label="Предупреждение" name="warningColor" defaultValue="#f59e0b" />
-                          <ColorInput label="Ошибка" name="errorColor" defaultValue="#ef4444" />
-                          <ColorInput label="Информация" name="infoColor" defaultValue="#3b82f6" />
+                          <ColorInput label={adminT("colorLabels.successColor")} name="successColor" defaultValue="#22c55e" />
+                          <ColorInput label={adminT("colorLabels.warningColor")} name="warningColor" defaultValue="#f59e0b" />
+                          <ColorInput label={adminT("colorLabels.errorColor")} name="errorColor" defaultValue="#ef4444" />
+                          <ColorInput label={adminT("colorLabels.infoColor")} name="infoColor" defaultValue="#3b82f6" />
                         </div>
                         <div className="text-sm text-gray-500 mt-2">
-                          ℹ️ Используются в уведомлениях и статусных кнопках
+                          ℹ️ {adminT("themes.statusColorsDescription")}
                         </div>
                       </div>
                       
                       <div>
-                        <h5 className="text-sm font-medium mb-2">Специальные кнопки</h5>
+                        <h5 className="text-sm font-medium mb-2">{adminT("themes.specialButtons")}</h5>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <ColorInput label="Кнопка 'Завтра'" name="tomorrowColor" defaultValue="#a855f7" />
-                          <ColorInput label="Кнопка 'Завтра' (при наведении)" name="tomorrowDarkColor" defaultValue="#9333ea" />
-                          <ColorInput label="Цвет 'Закончился'" name="outOfStockColor" defaultValue="#ef4444" />
+                          <ColorInput label={adminT("colorLabels.tomorrowColor")} name="tomorrowColor" defaultValue="#a855f7" />
+                          <ColorInput label={adminT("colorLabels.tomorrowDarkColor")} name="tomorrowDarkColor" defaultValue="#9333ea" />
+                          <ColorInput label={adminT("colorLabels.outOfStockColor")} name="outOfStockColor" defaultValue="#ef4444" />
                         </div>
                         <div className="text-sm text-gray-500 mt-2">
-                          ℹ️ "Завтра" - для недоступных сегодня товаров, "Закончился" - для бейджей
+                          ℹ️ {adminT("statusLabels.specialButtonsDescription")}
                         </div>
                       </div>
                       

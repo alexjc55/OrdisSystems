@@ -72,6 +72,28 @@
     "outOfStockButton": "Out of Stock Button",
     "neutralColorsDescription": "Colors for backgrounds, borders and secondary elements"
   },
+  "colorLabels": {
+    "primaryColor": "Primary Color",
+    "primaryTextColor": "Button Text Color",
+    "primaryDarkColor": "Primary (Dark)",
+    "primaryLightColor": "Primary (Light)",
+    "successColor": "Success",
+    "warningColor": "Warning",
+    "errorColor": "Error",
+    "infoColor": "Info",
+    "tomorrowColor": "Tomorrow Button",
+    "tomorrowDarkColor": "Tomorrow Button (Hover)",
+    "outOfStockColor": "Out of Stock Button",
+    "workingHoursIconColor": "Working Hours",
+    "contactsIconColor": "Contacts",
+    "paymentDeliveryIconColor": "Payment and Delivery"
+  },
+  "statusLabels": {
+    "mainStatusColors": "Main Status Colors",
+    "specialButtonsDescription": "\"Tomorrow\" - for items unavailable today, \"Out of Stock\" - for badges",
+    "iconColors": "Info Block Icons",
+    "iconColorsDescription": "Colors for round icons in \"Working Hours\", \"Contacts\" and \"Payment and Delivery\" blocks on homepage"
+  },
   "storeSettings": {
     "title": "Store Settings",
     "description": "Configuration of basic store parameters",

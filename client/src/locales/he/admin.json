@@ -72,6 +72,28 @@
     "outOfStockButton": "כפתור 'אזל המלאי'",
     "neutralColorsDescription": "צבעים לרקעים, גבולות ואלמנטים משניים"
   },
+  "colorLabels": {
+    "primaryColor": "צבע עיקרי",
+    "primaryTextColor": "צבע טקסט כפתורים",
+    "primaryDarkColor": "עיקרי (כהה)",
+    "primaryLightColor": "עיקרי (בהיר)",
+    "successColor": "הצלחה",
+    "warningColor": "אזהרה",
+    "errorColor": "שגיאה",
+    "infoColor": "מידע",
+    "tomorrowColor": "כפתור 'מחר'",
+    "tomorrowDarkColor": "כפתור 'מחר' (ריחוף)",
+    "outOfStockColor": "כפתור 'אזל המלאי'",
+    "workingHoursIconColor": "שעות פעילות",
+    "contactsIconColor": "צור קשר",
+    "paymentDeliveryIconColor": "תשלום ומשלוח"
+  },
+  "statusLabels": {
+    "mainStatusColors": "צבעי סטטוס עיקריים",
+    "specialButtonsDescription": "\"מחר\" - למוצרים שלא זמינים היום, \"אזל המלאי\" - לתגיות",
+    "iconColors": "אייקוני בלוקי מידע",
+    "iconColorsDescription": "צבעים לאייקונים עגולים בבלוקים \"שעות פעילות\", \"צור קשר\" ו\"תשלום ומשלוח\" בעמוד הבית"
+  },
   "storeSettings": {
     "title": "הגדרות חנות",
     "description": "תיאור הגדרות פרמטרים בסיסיים של החנות",
