@@ -2156,9 +2156,12 @@ export default function AdminDashboard() {
 
   // Set default tab based on worker permissions (only on initial load)
   const [hasSetInitialTab, setHasSetInitialTab] = useState(false);
+  const initialStoreSettingsRef = useRef<any>(null);
   
   useEffect(() => {
-    if (user?.role === "worker" && storeSettings && !hasSetInitialTab) {
+    // Only set initial tab once when first getting user and settings data
+    if (user?.role === "worker" && storeSettings && !hasSetInitialTab && !initialStoreSettingsRef.current) {
+      initialStoreSettingsRef.current = storeSettings;
       const workerPermissions = (storeSettings?.workerPermissions as any) || {};
       let defaultTab = "products";
       
