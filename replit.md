@@ -131,6 +131,11 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Fixed three critical UI/UX issues
+  - Fixed "All Products" button functionality on home page (changed setSelectedCategoryId to handleCategorySelect)
+  - Removed duplicate category information on category pages for cleaner interface
+  - Fixed duplicate "per" word in English product card translations (updated units.per100g, per100ml, etc.)
+  - Optimized screen space usage with compact "Back" button placement
 - June 28, 2025: Completed comprehensive translation synchronization project
   - Identified and fixed ALL 363 missing translation keys across all languages
   - Fixed common.json: fully synchronized all 239 keys across Russian, English, Hebrew

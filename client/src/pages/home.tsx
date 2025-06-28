@@ -646,9 +646,9 @@ export default function Home() {
           {/* Category/Product List View */}
           {(selectedCategory || selectedCategoryId === 0 || searchQuery.length > 2) && (
             <div>
-              {/* Back Button for Category View */}
+              {/* Back Button for Category View - compact placement */}
               {selectedCategory && (
-                <div className="mb-4">
+                <div className="flex justify-start mb-4">
                   <Button
                     onClick={handleResetView}
                     variant="ghost"
