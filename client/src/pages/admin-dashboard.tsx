@@ -1,19 +1,4 @@
 /**
- * ADMIN DASHBOARD BACKUP - Created June 23, 2025 21:45
- * 
- * This backup includes the current state of the admin dashboard with:
- * - Complete admin panel functionality
- * - Multi-language support (Russian, English, Hebrew)
- * - RTL layout support for Hebrew interface
- * - Drag-and-drop category ordering
- * - Order management with kanban-style interface
- * - Product and category management
- * - User management with role assignments
- * - Store settings configuration
- * - Theme customization system
- * - Mobile-responsive design
- * - All existing features and UI patterns preserved
- * 
  * ВАЖНО: НЕ ИЗМЕНЯТЬ ДИЗАЙН АДМИН-ПАНЕЛИ БЕЗ ЯВНОГО ЗАПРОСА!
  * 
  * Правила для разработчика:
@@ -22,13 +7,15 @@
  * - НЕ менять стили, цвета, расположение элементов
  * - ТОЛЬКО добавлять новый функционал или исправлять то, что конкретно просят
  * - Сохранять все существующие UI паттерны и структуру
+ * 
+ * Последнее обновление: исправлены переводы ролей пользователей
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { useTranslation } from 'react-i18next';
+import { useAdminTranslation, useCommonTranslation } from "@/hooks/use-language";
 import { LANGUAGES } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { apiRequest } from "@/lib/queryClient";
@@ -49,10 +36,15 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { formatCurrency, getUnitLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
+import { applyTheme } from "@/lib/theme-system";
+import { format } from "date-fns";
+import { ru, enUS, he } from "date-fns/locale";
 import { insertStoreSettingsSchema, type StoreSettings, type CategoryWithCount } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
@@ -132,7 +124,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
             }}
             className="cursor-pointer"
           >
-            <span className="text-xs font-medium text-white hover:text-white transition-colors bg-orange-500 hover:bg-orange-600 px-2.5 py-1 rounded-full backdrop-blur-sm shadow-sm">
+            <span className="text-xs font-medium text-white hover:text-white transition-colors bg-primary hover:bg-primary px-2.5 py-1 rounded-full backdrop-blur-sm shadow-sm">
               {category.productCount || 0} {adminT('categories.products')}
             </span>
           </div>
@@ -260,7 +252,7 @@ import {
   ChevronRight,
   Grid3X3,
   Columns,
-  Calendar,
+  Calendar as CalendarIcon,
   MapPin,
   Phone,
   Eye,
@@ -274,7 +266,8 @@ import {
   Settings,
   Languages,
   Layers3,
-  UserCheck
+  UserCheck,
+  MoreHorizontal
 } from "lucide-react";
 
 // Validation schemas
@@ -415,7 +408,7 @@ function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { 
 function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
       case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'ready': return 'bg-green-100 text-green-800 border-green-200';
@@ -425,18 +418,32 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
     }
   };
 
-  const { t: adminT, i18n } = useTranslation("admin");
+  const { t: adminT } = useAdminTranslation();
   
   const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'pending': return adminT('orders.status.pending');
-      case 'confirmed': return adminT('orders.status.confirmed');
-      case 'preparing': return adminT('orders.status.preparing');
-      case 'ready': return adminT('orders.status.ready');
-      case 'delivered': return adminT('orders.status.delivered');
-      case 'cancelled': return adminT('orders.status.cancelled');
-      default: return status;
+    console.log('OrderCard getStatusLabel called with status:', status);
+    console.log('adminT function:', adminT);
+    
+    if (status === 'pending') {
+      const pendingTranslation = adminT('orders.status.pending');
+      console.log('Pending translation result:', pendingTranslation);
+      console.log('Pending translation type:', typeof pendingTranslation);
+      console.log('Pending translation length:', pendingTranslation?.length);
     }
+    
+    const result = (() => {
+      switch (status) {
+        case 'pending': return adminT('orders.status.pending') || 'Ожидает';
+        case 'confirmed': return adminT('orders.status.confirmed') || 'Подтвержден';
+        case 'preparing': return adminT('orders.status.preparing') || 'Готовится';
+        case 'ready': return adminT('orders.status.ready') || 'Готов';
+        case 'delivered': return adminT('orders.status.delivered') || 'Доставлен';
+        case 'cancelled': return adminT('orders.status.cancelled') || 'Отменен';
+        default: return status;
+      }
+    })();
+    console.log('OrderCard getStatusLabel result:', result);
+    return result;
   };
 
   return (
@@ -445,7 +452,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
         <div className="space-y-2">
           {/* Order Header */}
           <div className="flex items-center justify-between">
-            <div className="font-bold text-sm text-orange-600">#{order.id}</div>
+            <div className="font-bold text-sm text-primary">#{order.id}</div>
             <Badge className={`text-xs px-2 py-1 ${getStatusColor(order.status)}`}>
               {getStatusLabel(order.status)}
             </Badge>
@@ -473,7 +480,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 <DropdownMenuContent align="start" className="w-40">
                   <DropdownMenuItem 
                     onClick={() => window.location.href = `tel:${order.customerPhone}`}
-                    className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
+                    className="cursor-pointer hover:!text-primary hover:!bg-orange-50 focus:!text-primary focus:!bg-orange-50"
                   >
                     <Phone className="h-4 w-4 mr-2" />
                     {adminT('orders.call')}
@@ -483,7 +490,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                       const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
                       window.open(`https://wa.me/${cleanPhone}`, '_blank');
                     }}
-                    className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50 focus:!text-orange-600 focus:!bg-orange-50"
+                    className="cursor-pointer hover:!text-primary hover:!bg-orange-50 focus:!text-primary focus:!bg-orange-50"
                   >
                     <MessageCircle className="h-4 w-4 mr-2" />
                     WhatsApp
@@ -555,7 +562,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
           {order.deliveryDate && order.deliveryTime && (
             <div className="space-y-1 text-xs text-gray-500">
               <div className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
+                <CalendarIcon className="h-3 w-3" />
                 {order.deliveryDate}
               </div>
               <div className="flex items-center gap-1">
@@ -603,16 +610,16 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 }
               }}
             >
-              <SelectTrigger className="w-20 h-7 text-xs">
+              <SelectTrigger className="w-24 h-7 text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pending">{getStatusLabel('pending')}</SelectItem>
-                <SelectItem value="confirmed">{getStatusLabel('confirmed')}</SelectItem>
-                <SelectItem value="preparing">{getStatusLabel('preparing')}</SelectItem>
-                <SelectItem value="ready">{getStatusLabel('ready')}</SelectItem>
-                <SelectItem value="delivered">{getStatusLabel('delivered')}</SelectItem>
-                <SelectItem value="cancelled">{getStatusLabel('cancelled')}</SelectItem>
+                <SelectItem value="pending">{adminT('orders.status.pending')}</SelectItem>
+                <SelectItem value="confirmed">{adminT('orders.status.confirmed')}</SelectItem>
+                <SelectItem value="preparing">{adminT('orders.status.preparing')}</SelectItem>
+                <SelectItem value="ready">{adminT('orders.status.ready')}</SelectItem>
+                <SelectItem value="delivered">{adminT('orders.status.delivered')}</SelectItem>
+                <SelectItem value="cancelled">{adminT('orders.status.cancelled')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -630,7 +637,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   // Status color function for consistent styling
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
       case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'ready': return 'bg-green-100 text-green-800 border-green-200';
@@ -703,6 +710,18 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   const [showAddItem, setShowAddItem] = useState(false);
   const [editedOrderItems, setEditedOrderItems] = useState(order.items || []);
   const [showDiscountDialog, setShowDiscountDialog] = useState<number | null>(null);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [mobileDatePickerOpen, setMobileDatePickerOpen] = useState(false);
+
+  // Get locale for calendar based on current language
+  const getCalendarLocale = () => {
+    const currentLanguage = localStorage.getItem('language') || 'ru';
+    switch (currentLanguage) {
+      case 'en': return enUS;
+      case 'he': return he;
+      default: return ru;
+    }
+  };
 
   const updateOrderMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -1089,32 +1108,32 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 </SelectTrigger>
                 <SelectContent className="z-[10000]">
                   <SelectItem value="pending">
-                    <span className="text-xs font-medium text-yellow-800">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-yellow-800">
                       {adminT('orders.status.pending')}
                     </span>
                   </SelectItem>
                   <SelectItem value="confirmed">
-                    <span className="text-xs font-medium text-blue-800">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-blue-800">
                       {adminT('orders.status.confirmed')}
                     </span>
                   </SelectItem>
                   <SelectItem value="preparing">
-                    <span className="text-xs font-medium text-orange-800">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-orange-800">
                       {adminT('orders.status.preparing')}
                     </span>
                   </SelectItem>
                   <SelectItem value="ready">
-                    <span className="text-xs font-medium text-green-800">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-green-800">
                       {adminT('orders.status.ready')}
                     </span>
                   </SelectItem>
                   <SelectItem value="delivered">
-                    <span className="text-xs font-medium text-gray-800">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-gray-800">
                       {adminT('orders.status.delivered')}
                     </span>
                   </SelectItem>
                   <SelectItem value="cancelled">
-                    <span className="text-xs font-medium text-red-800">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-red-800">
                       {adminT('orders.status.cancelled')}
                     </span>
                   </SelectItem>
@@ -1156,32 +1175,32 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 </SelectTrigger>
                 <SelectContent className="z-[10000]">
                   <SelectItem value="pending" className="bg-yellow-50 hover:bg-yellow-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-yellow-100 text-yellow-800">
                       {adminT('orders.status.pending')}
                     </span>
                   </SelectItem>
                   <SelectItem value="confirmed" className="bg-blue-50 hover:bg-blue-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-blue-100 text-blue-800">
                       {adminT('orders.status.confirmed')}
                     </span>
                   </SelectItem>
                   <SelectItem value="preparing" className="bg-orange-50 hover:bg-orange-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-orange-100 text-orange-800">
                       {adminT('orders.status.preparing')}
                     </span>
                   </SelectItem>
                   <SelectItem value="ready" className="bg-green-50 hover:bg-green-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-green-100 text-green-800">
                       {adminT('orders.status.ready')}
                     </span>
                   </SelectItem>
                   <SelectItem value="delivered" className="bg-gray-50 hover:bg-gray-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-gray-100 text-gray-800">
                       {adminT('orders.status.delivered')}
                     </span>
                   </SelectItem>
                   <SelectItem value="cancelled" className="bg-red-50 hover:bg-red-100">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-red-100 text-red-800">
                       {adminT('orders.status.cancelled')}
                     </span>
                   </SelectItem>
@@ -1210,7 +1229,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
           <div className="space-y-2">
             {/* Customer Information and Delivery Details */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Информация о клиенте и доставке</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.clientDeliveryInfo')}</label>
               
               {/* Mobile Layout - Stack vertically */}
               <div className="grid grid-cols-1 gap-2 sm:hidden">
@@ -1236,7 +1255,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       <DropdownMenuContent align="end" className="w-36">
                         <DropdownMenuItem 
                           onClick={() => window.location.href = `tel:${editedOrder.customerPhone}`}
-                          className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
+                          className="cursor-pointer hover:!text-primary hover:!bg-orange-50"
                         >
                           <Phone className="h-3 w-3 mr-2" />
                           {adminT('orders.call')}
@@ -1246,7 +1265,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                             const cleanPhone = editedOrder.customerPhone.replace(/[^\d+]/g, '');
                             window.open(`https://wa.me/${cleanPhone}`, '_blank');
                           }}
-                          className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
+                          className="cursor-pointer hover:!text-primary hover:!bg-orange-50"
                         >
                           <MessageCircle className="h-3 w-3 mr-2" />
                           WhatsApp
@@ -1262,12 +1281,31 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   className="text-sm h-8"
                 />
                 <div className="grid grid-cols-2 gap-2">
-                  <Input
-                    type="date"
-                    value={editedOrder.deliveryDate}
-                    onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
-                    className="text-sm h-8"
-                  />
+                  <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="text-sm h-8 justify-start text-left font-normal"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "PPP", { locale: getCalendarLocale() }) : adminT('orders.selectDate')}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <CalendarComponent
+                        mode="single"
+                        selected={editedOrder.deliveryDate ? new Date(editedOrder.deliveryDate) : undefined}
+                        onSelect={(date) => {
+                          if (date) {
+                            setEditedOrder(prev => ({ ...prev, deliveryDate: format(date, "yyyy-MM-dd") }));
+                            setDatePickerOpen(false);
+                          }
+                        }}
+                        locale={getCalendarLocale()}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <Select
                     value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
                     onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
@@ -1310,7 +1348,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       <DropdownMenuContent align="end" className="w-36">
                         <DropdownMenuItem 
                           onClick={() => window.location.href = `tel:${editedOrder.customerPhone}`}
-                          className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
+                          className="cursor-pointer hover:!text-primary hover:!bg-orange-50"
                         >
                           <Phone className="h-3 w-3 mr-2" />
                           {adminT('orders.call')}
@@ -1320,7 +1358,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                             const cleanPhone = editedOrder.customerPhone.replace(/[^\d+]/g, '');
                             window.open(`https://wa.me/${cleanPhone}`, '_blank');
                           }}
-                          className="cursor-pointer hover:!text-orange-600 hover:!bg-orange-50"
+                          className="cursor-pointer hover:!text-primary hover:!bg-orange-50"
                         >
                           <MessageCircle className="h-3 w-3 mr-2" />
                           WhatsApp
@@ -1335,12 +1373,31 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   placeholder={adminT('orders.addressPlaceholder')}
                   className="text-sm h-8"
                 />
-                <Input
-                  type="date"
-                  value={editedOrder.deliveryDate}
-                  onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
-                  className="text-sm h-8"
-                />
+                <Popover open={mobileDatePickerOpen} onOpenChange={setMobileDatePickerOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="text-sm h-8 justify-start text-left font-normal"
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "PPP", { locale: getCalendarLocale() }) : adminT('orders.selectDate')}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={editedOrder.deliveryDate ? new Date(editedOrder.deliveryDate) : undefined}
+                      onSelect={(date) => {
+                        if (date) {
+                          setEditedOrder(prev => ({ ...prev, deliveryDate: format(date, "yyyy-MM-dd") }));
+                          setMobileDatePickerOpen(false);
+                        }
+                      }}
+                      locale={getCalendarLocale()}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
                 <Select
                   value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
                   onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
@@ -1373,7 +1430,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
           <Button 
             size="sm" 
             onClick={() => setShowAddItem(true)}
-            className="text-xs bg-orange-500 hover:bg-orange-600 text-white border-orange-500"
+            className="text-xs bg-primary hover:bg-primary text-white border-primary"
           >
             <Plus className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
             {adminT('orders.addProduct')}
@@ -1693,7 +1750,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     }))}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
               
@@ -1710,7 +1767,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     }))}
                     className="h-8 text-xs w-28"
                   />
-                  <p className="text-xs text-orange-600">
+                  <p className="text-xs text-primary">
                     * {adminT('orders.manualPriceNote')}
                   </p>
                   {!manualPriceOverride.enabled && (
@@ -1773,7 +1830,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
       )}
 
       {/* Actions */}
-      <div className="flex justify-end gap-3 pt-4 border-t">
+      <div className="flex justify-center gap-3 pt-4 border-t">
         <Button variant="outline" onClick={onClose}>
           {adminT('common.cancel')}
         </Button>
@@ -2064,8 +2121,8 @@ function ItemDiscountDialog({
 export default function AdminDashboard() {
   const { user, isLoading } = useAuth();
   const { toast } = useToast();
-  const { t: adminT, i18n } = useTranslation("admin");
-  // const { t: commonT, i18n } = useCommonTranslation();
+  const { t: adminT } = useAdminTranslation();
+  const { t: commonT, i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he';
   const queryClient = useQueryClient();
 
@@ -2208,6 +2265,25 @@ export default function AdminDashboard() {
   // User management state
   const [isUserFormOpen, setIsUserFormOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
+  
+  const handleDeleteUser = async (userId: string) => {
+    if (window.confirm(adminT('users.deleteConfirm', 'Вы уверены, что хотите удалить этого пользователя?'))) {
+      try {
+        await apiRequest('DELETE', `/api/admin/users/${userId}`);
+        toast({
+          title: adminT('users.deleted'),
+          description: adminT('users.deleteSuccess', 'Пользователь успешно удален'),
+        });
+        queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      } catch (error: any) {
+        toast({
+          title: adminT('common.error'),
+          description: error.message || adminT('users.deleteError'),
+          variant: "destructive",
+        });
+      }
+    }
+  };
   const [usersRoleFilter, setUsersRoleFilter] = useState("all");
 
   // Drag and drop sensors
@@ -2303,7 +2379,7 @@ export default function AdminDashboard() {
   // Status color helper function
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
       case 'confirmed': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'preparing': return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'ready': return 'bg-green-100 text-green-800 border-green-200';
@@ -2373,13 +2449,14 @@ export default function AdminDashboard() {
   });
 
   const { data: usersResponse, isLoading: usersLoading } = useQuery({
-    queryKey: ["/api/admin/users", usersPage, searchQuery, storeSettings?.defaultItemsPerPage],
+    queryKey: ["/api/admin/users", usersPage, searchQuery, usersRoleFilter, storeSettings?.defaultItemsPerPage],
     queryFn: async () => {
       const limit = storeSettings?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
         page: usersPage.toString(),
         limit: limit.toString(),
-        search: searchQuery
+        search: searchQuery,
+        status: usersRoleFilter
       });
       const response = await fetch(`/api/admin/users?${params}`);
       if (!response.ok) throw new Error('Failed to fetch users');
@@ -2887,7 +2964,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-gray-600">Загрузка...</p>
         </div>
       </div>
@@ -3196,7 +3273,7 @@ export default function AdminDashboard() {
                       setEditingProduct(null);
                       setIsProductFormOpen(true);
                     }}
-                    className={`bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-1' : 'sm:order-2'}`}
+                    className={`bg-primary text-white hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-1' : 'sm:order-2'}`}
                     size="sm"
                   >
                     <Plus className={`h-4 w-4 ${isRTL ? 'mr-4' : 'mr-4'}`} />
@@ -3227,7 +3304,8 @@ export default function AdminDashboard() {
                           <SelectItem value="all">{adminT('products.allCategories', 'Все категории')}</SelectItem>
                           {(categories as any[] || []).map((category: any) => (
                             <SelectItem 
-                              key={category.id} 
+                              key={category.id}
+                                          title={category.name} 
                               value={category.id.toString()}
                             >
                               {category.name}
@@ -3268,7 +3346,7 @@ export default function AdminDashboard() {
                                 <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>
                                   <button 
                                     onClick={() => handleSort("price")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                    className="flex items-center gap-1 hover:text-primary transition-colors flex-row-reverse"
                                   >
                                     {adminT('products.productPrice')}
                                     {sortField === "price" && (
@@ -3281,7 +3359,7 @@ export default function AdminDashboard() {
                                 <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>
                                   <button 
                                     onClick={() => handleSort("category")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                    className="flex items-center gap-1 hover:text-primary transition-colors flex-row-reverse"
                                   >
                                     {adminT('products.productCategory')}
                                     {sortField === "category" && (
@@ -3294,7 +3372,7 @@ export default function AdminDashboard() {
                                 <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>
                                   <button 
                                     onClick={() => handleSort("name")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors flex-row-reverse"
+                                    className="flex items-center gap-1 hover:text-primary transition-colors flex-row-reverse"
                                   >
                                     {adminT('products.productName')}
                                     {sortField === "name" && (
@@ -3308,10 +3386,10 @@ export default function AdminDashboard() {
                             ) : (
                               // LTR order: Name, Category, Price, Status (normal)
                               <>
-                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                   <button 
                                     onClick={() => handleSort("name")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                    className={`flex items-center gap-1 hover:text-primary transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                                   >
                                     {adminT('products.productName')}
                                     {sortField === "name" && (
@@ -3321,10 +3399,10 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                 </TableHead>
-                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                   <button 
                                     onClick={() => handleSort("category")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                    className={`flex items-center gap-1 hover:text-primary transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                                   >
                                     {adminT('products.productCategory')}
                                     {sortField === "category" && (
@@ -3334,10 +3412,10 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                 </TableHead>
-                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>
+                                <TableHead className={`min-w-[100px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                                   <button 
                                     onClick={() => handleSort("price")}
-                                    className="flex items-center gap-1 hover:text-orange-600 transition-colors"
+                                    className={`flex items-center gap-1 hover:text-primary transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
                                   >
                                     {adminT('products.productPrice')}
                                     {sortField === "price" && (
@@ -3347,7 +3425,7 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                 </TableHead>
-                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-left`}>{adminT('products.productStatus')}</TableHead>
+                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('products.productStatus')}</TableHead>
                               </>
                             )}
                           </TableRow>
@@ -3395,7 +3473,7 @@ export default function AdminDashboard() {
                                                 : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
                                             )}
                                           </div>
-                                          <div className="text-orange-600 text-xs font-medium" dir="ltr">
+                                          <div className="text-primary text-xs font-medium" dir="ltr">
                                             -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
                                           </div>
                                         </div>
@@ -3406,21 +3484,26 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
-                                    <div className="flex flex-wrap gap-1 justify-end">
+                                    <div className="flex flex-wrap gap-1.5 justify-center">
                                       {product.categories?.map((category: any) => (
-                                        <Badge key={category.id} variant="outline" className="text-xs">
+                                        <span 
+                                          key={category.id}
+                                          title={category.name} 
+                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white hover:bg-primary shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
+                                        >
+                                          
                                           {category.name}
-                                        </Badge>
+                                        </span>
                                       ))}
                                     </div>
                                   </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right max-w-[150px] w-[150px]">
                                     <button
                                       onClick={() => {
                                         setEditingProduct(product);
                                         setIsProductFormOpen(true);
                                       }}
-                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-right"
+                                      className={`font-medium text-xs sm:text-sm hover:text-primary transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
                                     >
                                       {product.name}
                                     </button>
@@ -3429,27 +3512,32 @@ export default function AdminDashboard() {
                               ) : (
                                 // LTR order: Name, Category, Price, Status (normal)
                                 <>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                  <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'} max-w-[150px] w-[150px]`}>
                                     <button
                                       onClick={() => {
                                         setEditingProduct(product);
                                         setIsProductFormOpen(true);
                                       }}
-                                      className="font-medium text-xs sm:text-sm hover:text-orange-600 transition-colors cursor-pointer text-left"
+                                      className={`font-medium text-xs sm:text-sm hover:text-primary transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
                                     >
                                       {product.name}
                                     </button>
                                   </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
-                                    <div className="flex flex-wrap gap-1">
+                                  <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                                    <div className="flex flex-wrap gap-1.5 justify-center">
                                       {product.categories?.map((category: any) => (
-                                        <Badge key={category.id} variant="outline" className="text-xs">
+                                        <span 
+                                          key={category.id}
+                                          title={category.name} 
+                                          className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white hover:bg-primary shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
+                                        >
+                                          
                                           {category.name}
-                                        </Badge>
+                                        </span>
                                       ))}
                                     </div>
                                   </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
+                                  <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                                     <div className={`text-xs sm:text-sm p-2 rounded ${product.isSpecialOffer && product.discountType && product.discountValue ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
                                       {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) ? (
                                         <div className="space-y-1">
@@ -3461,7 +3549,7 @@ export default function AdminDashboard() {
                                                 : Math.max(0, parseFloat(product.price || product.pricePerKg || "0") - parseFloat(product.discountValue))
                                             )}
                                           </div>
-                                          <div className="text-orange-600 text-xs font-medium" dir="ltr">
+                                          <div className="text-primary text-xs font-medium" dir="ltr">
                                             -{product.discountType === "percentage" ? `${product.discountValue}%` : formatCurrency(parseFloat(product.discountValue))}
                                           </div>
                                         </div>
@@ -3471,8 +3559,8 @@ export default function AdminDashboard() {
                                       <div className="text-gray-500 text-xs mt-1">{getUnitDisplay(product.unit || "100g")}</div>
                                     </div>
                                   </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-left">
-                                    <div className="flex flex-col gap-1 items-start">
+                                  <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                                    <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
                                       <CustomSwitch
                                         checked={product.isAvailable && (product.availabilityStatus === "available")}
                                         onChange={(checked) => {
@@ -3533,7 +3621,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(1)}
                           disabled={productsPage === 1}
                           title="Первая страница"
-                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           ⟨⟨
                         </Button>
@@ -3543,11 +3631,11 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
                           disabled={productsPage === 1}
                           title="Предыдущая страница"
-                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </Button>
-                        <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
+                        <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]">
                           {productsPage}/{productsTotalPages}
                         </span>
                         <Button
@@ -3556,7 +3644,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
                           disabled={productsPage === productsTotalPages}
                           title="Следующая страница"
-                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </Button>
@@ -3566,7 +3654,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(productsTotalPages)}
                           disabled={productsPage === productsTotalPages}
                           title="Последняя страница"
-                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                          className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           ⟩⟩
                         </Button>
@@ -3585,7 +3673,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(1)}
                           disabled={productsPage === 1}
                           title="Первая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           ⟨⟨
                         </Button>
@@ -3595,11 +3683,11 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
                           disabled={productsPage === 1}
                           title="Предыдущая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </Button>
-                        <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                        <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
                           {productsPage} из {productsTotalPages}
                         </span>
                         <Button
@@ -3608,7 +3696,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
                           disabled={productsPage === productsTotalPages}
                           title="Следующая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </Button>
@@ -3618,7 +3706,7 @@ export default function AdminDashboard() {
                           onClick={() => setProductsPage(productsTotalPages)}
                           disabled={productsPage === productsTotalPages}
                           title="Последняя страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           ⟩⟩
                         </Button>
@@ -3651,7 +3739,7 @@ export default function AdminDashboard() {
                       setEditingCategory(null);
                       setIsCategoryFormOpen(true);
                     }}
-                    className={`bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-1' : 'sm:order-2'}`}
+                    className={`bg-primary text-white hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-1' : 'sm:order-2'}`}
                     size="sm"
                   >
                     <Plus className={`${isRTL ? 'mr-4' : 'mr-4'} h-4 w-4`} />
@@ -3678,6 +3766,7 @@ export default function AdminDashboard() {
                           {(categories as any[] || []).map((category: any) => (
                             <SortableCategoryItem
                               key={category.id}
+                                          title={category.name}
                               category={category}
                               onEdit={(category) => {
                                 setEditingCategory(category);
@@ -3727,7 +3816,7 @@ export default function AdminDashboard() {
                     variant={ordersViewMode === "table" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setOrdersViewMode("table")}
-                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "table" ? 'bg-orange-500 text-white hover:bg-orange-600' : 'hover:bg-gray-200'}`}
+                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "table" ? 'bg-primary text-white hover:bg-primary' : 'hover:bg-gray-200'}`}
                   >
                     <Grid3X3 className={`h-3 w-3 mr-1 ${ordersViewMode === "table" ? 'text-white' : ''}`} />
                     {adminT('common.table', 'Таблица')}
@@ -3736,7 +3825,7 @@ export default function AdminDashboard() {
                     variant={ordersViewMode === "kanban" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setOrdersViewMode("kanban")}
-                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "kanban" ? 'bg-orange-500 text-white hover:bg-orange-600' : 'hover:bg-gray-200'}`}
+                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "kanban" ? 'bg-primary text-white hover:bg-primary' : 'hover:bg-gray-200'}`}
                   >
                     <Columns className={`h-3 w-3 mr-1 ${ordersViewMode === "kanban" ? 'text-white' : ''}`} />
                     {adminT('common.kanban', 'Канбан')}
@@ -3780,44 +3869,55 @@ export default function AdminDashboard() {
                   <>
                     {/* Table View */}
                     {ordersViewMode === "table" && (
-                      <div className={`border rounded-lg bg-white orders ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                        <div className={`w-full table-container ${isRTL ? 'rtl' : 'ltr'}`}>
-                          <Table className={`${isRTL ? 'rtl' : ''}`}>
+                      <div className={`border rounded-lg bg-white orders ${isRTL ? 'rtl' : 'ltr'} overflow-x-auto`} dir={isRTL ? 'rtl' : 'ltr'}>
+                        <div className={`w-full table-container ${isRTL ? 'rtl' : 'ltr'} min-w-[600px]`}>
+                          <Table className={`${isRTL ? 'rtl' : ''} w-full table-fixed`}>
                             <TableHeader>
                               <TableRow dir={isRTL ? 'rtl' : 'ltr'}>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '80px'} : {textAlign: 'center', width: '80px'}}
                                 >№</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm font-semibold min-w-[180px] ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '180px'} : {textAlign: 'center', width: '180px'}}
                                 >{adminT('orders.customer', 'Клиент')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm hidden sm:table-cell w-32 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  className={`text-xs sm:text-sm hidden sm:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '120px'} : {textAlign: 'center', width: '120px'}}
                                 >{adminT('orders.statusHeader')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm w-28 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '100px'} : {textAlign: 'center', width: '100px'}}
                                 >{adminT('orders.orderTotal')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm hidden md:table-cell w-36 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  className={`text-xs sm:text-sm hidden md:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '120px'} : {textAlign: 'center', width: '120px'}}
                                 >{adminT('orders.orderDate')}</TableHead>
-                                <TableHead 
-                                  className={`text-xs sm:text-sm w-16 font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
-                                >{adminT('common.actions')}</TableHead>
+
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {ordersResponse.data.map((order: any) => (
                                 <TableRow key={order.id} className="hover:bg-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
                                   <TableCell 
-                                    className={`font-bold text-xs sm:text-sm text-orange-600 ${isRTL ? 'text-right' : 'text-center'}`}
+                                    className={`font-bold text-xs sm:text-sm text-primary ${isRTL ? 'text-right' : 'text-center'}`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
-                                  >#{order.id}</TableCell>
+                                  >
+                                    <div className="flex flex-col items-center gap-1">
+                                      <span>#{order.id}</span>
+                                      <button
+                                        onClick={() => {
+                                          setEditingOrder(order);
+                                          setIsOrderFormOpen(true);
+                                        }}
+                                        className="inline-flex items-center justify-center h-8 w-8 rounded-md bg-primary hover:bg-primary text-white border-2 border-orange-600 shadow-md transition-colors"
+                                        title={adminT('orders.viewDetails')}
+                                      >
+                                        <Eye className="h-5 w-5" />
+                                      </button>
+                                    </div>
+                                  </TableCell>
                                   <TableCell 
                                     className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'} px-3`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'left'}}
@@ -3982,7 +4082,7 @@ export default function AdminDashboard() {
                                   >
                                     <div className="space-y-1" dir="ltr">
                                       <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse justify-start' : 'justify-center'}`}>
-                                        <Calendar className="h-3 w-3 text-gray-400" />
+                                        <CalendarIcon className="h-3 w-3 text-gray-400" />
                                         <span className="font-medium">{adminT('common.created')}:</span>
                                       </div>
                                       <div className={`text-xs text-gray-600 ${isRTL ? 'text-right' : 'text-center'}`}>
@@ -4000,22 +4100,6 @@ export default function AdminDashboard() {
                                         </>
                                       )}
                                     </div>
-                                  </TableCell>
-                                  <TableCell 
-                                    className={`${isRTL ? 'text-right' : 'text-center'}`}
-                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
-                                  >
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm" 
-                                      className="text-xs h-8 px-2"
-                                      onClick={() => {
-                                        setEditingOrder(order);
-                                        setIsOrderFormOpen(true);
-                                      }}
-                                    >
-                                      <Eye className="h-3 w-3" />
-                                    </Button>
                                   </TableCell>
                                 </TableRow>
                               ))}
@@ -4035,7 +4119,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
                               title={adminT('common.firstPage')}
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟨⟨
                             </Button>
@@ -4045,11 +4129,11 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
                               title={adminT('common.previousPage')}
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
-                            <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
                               {ordersResponse.page} {adminT('common.of')} {ordersResponse.totalPages}
                             </span>
                             <Button
@@ -4058,7 +4142,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Следующая страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronRight className="h-4 w-4" />
                             </Button>
@@ -4068,7 +4152,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Последняя страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟩⟩
                             </Button>
@@ -4337,7 +4421,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
                               title="Первая страница"
-                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               ⟨⟨
                             </Button>
@@ -4347,11 +4431,11 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
                               title="Предыдущая страница"
-                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
-                            <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
+                            <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]">
                               {ordersResponse.page}/{ordersResponse.totalPages}
                             </span>
                             <Button
@@ -4360,7 +4444,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Следующая страница"
-                              className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               <ChevronRight className="h-4 w-4" />
                             </Button>
@@ -4370,7 +4454,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Последняя страница"
-                              className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               ⟩⟩
                             </Button>
@@ -4380,7 +4464,7 @@ export default function AdminDashboard() {
                         {/* Desktop: Original layout */}
                         <div className="hidden sm:flex items-center justify-between">
                           <div className="flex items-center gap-2 text-sm text-gray-700">
-                            <span>Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}</span>
+                            <span>{adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of')} {ordersResponse.total}</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <Button
@@ -4388,8 +4472,8 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
-                              title="Первая страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              title={adminT('common.firstPage')}
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟨⟨
                             </Button>
@@ -4399,11 +4483,11 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
                               title="Предыдущая страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronLeft className="h-4 w-4" />
                             </Button>
-                            <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
+                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
                               {ordersResponse.page} из {ordersResponse.totalPages}
                             </span>
                             <Button
@@ -4412,7 +4496,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Следующая страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               <ChevronRight className="h-4 w-4" />
                             </Button>
@@ -4422,7 +4506,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title="Последняя страница"
-                              className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                              className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟩⟩
                             </Button>
@@ -4434,12 +4518,12 @@ export default function AdminDashboard() {
                 ) : (
                   <div className="text-center py-8">
                     <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет заказов</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">{adminT('orders.noOrders')}</h3>
                     <p className="text-gray-500 text-sm">
-                      {ordersStatusFilter === "active" ? "Активные заказы будут отображаться здесь" :
-                       ordersStatusFilter === "delivered" ? "Доставленные заказы будут отображаться здесь" :
-                       ordersStatusFilter === "cancelled" ? "Отмененные заказы будут отображаться здесь" :
-                       "Заказы будут отображаться здесь"}
+                      {ordersStatusFilter === "active" ? adminT('orders.activeOrdersMessage') :
+                       ordersStatusFilter === "delivered" ? adminT('orders.deliveredOrdersMessage') :
+                       ordersStatusFilter === "cancelled" ? adminT('orders.cancelledOrdersMessage') :
+                       adminT('orders.allOrdersMessage')}
                     </p>
                   </div>
                 )}
@@ -4489,121 +4573,126 @@ export default function AdminDashboard() {
                     <div className={isRTL ? 'text-right' : 'text-left'}>
                       <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                         <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                        Пользователи
+                        {adminT('users.title', 'Пользователи')}
                       </CardTitle>
                       <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        Управление пользователями и ролями
+                        {adminT('users.description', 'Управление пользователями системы')}
                       </CardDescription>
                     </div>
                   </div>
               </CardHeader>
               <CardContent>
                 {/* Users Filters and Controls */}
-                <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                  <div className="flex-1">
-                    <Input
-                      placeholder="Поиск по email или имени..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="max-w-sm"
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
-                      <SelectTrigger className="w-40">
-                        <SelectValue placeholder="Все роли" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Все роли</SelectItem>
-                        <SelectItem value="admin">Администраторы</SelectItem>
-                        <SelectItem value="worker">Сотрудники</SelectItem>
-                        <SelectItem value="customer">Клиенты</SelectItem>
-                      </SelectContent>
-                    </Select>
+                <div className={`flex flex-col sm:flex-row gap-4 mb-6 ${isRTL ? '' : ''}`}>
+                  {/* Button first for RTL */}
+                  <div className={`flex gap-2 ${isRTL ? 'order-first' : 'order-last'}`}>
                     <Button 
                       onClick={() => setIsUserFormOpen(true)}
-                      className="bg-orange-500 hover:bg-orange-600 text-white"
+                      className={`bg-primary hover:bg-primary text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
                     >
-                      <Plus className={`h-4 w-4 ${isRTL ? 'mr-4' : 'mr-4'}`} />
+                      <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                       {adminT('users.addUser', 'Добавить пользователя')}
                     </Button>
+                    <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
+                      <SelectTrigger className="w-40">
+                        <SelectValue placeholder={adminT('users.allRoles', 'Все роли')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{adminT('users.allRoles', 'Все роли')}</SelectItem>
+                        <SelectItem value="admin">{adminT('users.roles.admin', 'Администратор')}</SelectItem>
+                        <SelectItem value="worker">{adminT('users.roles.worker', 'Сотрудник')}</SelectItem>
+                        <SelectItem value="customer">{adminT('users.roles.customer', 'Клиент')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {/* Search field */}
+                  <div className={`flex-1 ${isRTL ? 'order-last' : 'order-first'}`}>
+                    <Input
+                      placeholder={adminT('users.searchPlaceholder', 'Поиск пользователей...')}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className={`max-w-sm ${isRTL ? 'text-right ml-auto' : ''}`}
+                    />
                   </div>
                 </div>
 
-                {(usersData as any[] || []).length > 0 ? (
-                  <div className="border rounded-lg bg-white overflow-hidden">
-                    <div className={`overflow-x-auto table-container ${isRTL ? 'rtl-scroll-container' : ''}`}>
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="text-xs sm:text-sm">Имя</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Роль</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Телефон</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Заказов</TableHead>
-                            <TableHead className="text-xs sm:text-sm">Сумма заказов</TableHead>
+                {/* All filtering is handled by backend */}
+                {(() => {
+                  const filteredUsers = usersData as any[] || [];
+
+                  const usersTotal = usersResponse?.total || 0;
+                  const usersTotalPages = usersResponse?.totalPages || 0;
+
+                  return filteredUsers.length > 0 ? (
+                    <div className={`border border-gray-100 rounded-lg bg-white overflow-hidden ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                    <div className={`overflow-x-auto table-auto-scroll ${isRTL ? 'rtl-scroll-container' : ''}`}>
+                      <Table className={`w-full users-table ${isRTL ? 'rtl' : 'ltr'}`}>
+                        <TableHeader className="bg-gray-50/80">
+                          <TableRow className="border-b border-gray-100" dir={isRTL ? 'rtl' : 'ltr'}>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.name', 'Имя')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.role', 'Роль')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.phone', 'Телефон')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.orders', 'Заказов')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.totalAmount', 'Сумма заказов')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {(usersData as any[] || []).map((user: any) => (
-                            <TableRow key={user.id}>
-                              <TableCell className="font-medium text-xs sm:text-sm">
-                                <Button
-                                  variant="ghost"
+                          {filteredUsers.slice((usersPage - 1) * itemsPerPage, usersPage * itemsPerPage).map((user: any) => (
+                            <TableRow key={user.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors" dir={isRTL ? 'rtl' : 'ltr'}>
+                              <TableCell className="px-3 py-3 text-sm rtl-cell">
+                                <span 
                                   onClick={() => {
                                     setEditingUser(user);
                                     setIsUserFormOpen(true);
                                   }}
-                                  className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent"
+                                  className="text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block rtl-text"
                                 >
                                   {user.firstName && user.lastName 
                                     ? `${user.firstName} ${user.lastName}`
-                                    : user.email || "Безымянный пользователь"
+                                    : user.email || adminT('users.unnamed', 'Безымянный пользователь')
                                   }
-                                </Button>
+                                </span>
                               </TableCell>
-                              <TableCell className="text-xs sm:text-sm">
+                              <TableCell className="px-3 py-3 rtl-cell">
                                 <Badge variant="outline" className={
-                                  user.role === "admin" ? "border-red-200 text-red-700 bg-red-50" :
-                                  user.role === "worker" ? "border-orange-200 text-orange-700 bg-orange-50" :
-                                  "border-gray-200 text-gray-700 bg-gray-50"
+                                  user.role === "admin" ? "border-red-200 text-red-700 bg-red-50 text-xs" :
+                                  user.role === "worker" ? "border-orange-200 text-orange-700 bg-orange-50 text-xs" :
+                                  "border-gray-200 text-gray-700 bg-gray-50 text-xs"
                                 }>
-                                  {user.role === "admin" ? "Админ" : 
-                                   user.role === "worker" ? "Сотрудник" : "Клиент"}
+                                  {user.role === "admin" ? adminT('users.roles.admin', 'Администратор') : 
+                                   user.role === "worker" ? adminT('users.roles.worker', 'Сотрудник') : adminT('users.roles.customer', 'Клиент')}
                                 </Badge>
                               </TableCell>
-                              <TableCell className="text-xs sm:text-sm">
+                              <TableCell className="px-3 py-3 text-sm">
                                 {user.phone ? (
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                      <Button
-                                        variant="ghost"
-                                        className="h-auto p-0 font-medium text-blue-600 hover:text-blue-800 hover:bg-transparent"
-                                      >
+                                      <span className="text-blue-600 hover:text-blue-800 cursor-pointer text-sm font-normal w-full block" style={{direction: 'ltr', textAlign: 'left'}}>
                                         {user.phone}
-                                      </Button>
+                                      </span>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg">
+                                    <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg" align={isRTL ? "start" : "end"} dir={isRTL ? 'rtl' : 'ltr'}>
                                       <DropdownMenuItem onClick={() => window.open(`tel:${user.phone}`, '_self')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
-                                        <Phone className="mr-2 h-4 w-4" />
-                                        Позвонить
+                                        <Phone className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                                        {adminT('users.callUser', 'Позвонить')}
                                       </DropdownMenuItem>
                                       <DropdownMenuItem onClick={() => window.open(`https://wa.me/${user.phone.replace(/[^\d]/g, '')}`, '_blank')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
-                                        <MessageCircle className="mr-2 h-4 w-4" />
-                                        WhatsApp
+                                        <MessageCircle className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                                        {adminT('users.whatsapp', 'WhatsApp')}
                                       </DropdownMenuItem>
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 ) : (
-                                  <span className="text-gray-400">—</span>
+                                  <span className="text-gray-400 text-sm">—</span>
                                 )}
                               </TableCell>
-                              <TableCell className="text-xs sm:text-sm">
-                                <span className="font-medium">
+                              <TableCell className="px-3 py-3 text-sm rtl-cell">
+                                <span className="text-sm text-gray-900 font-normal">
                                   {user.orderCount || 0}
                                 </span>
                               </TableCell>
-                              <TableCell className="text-xs sm:text-sm">
-                                <span className="font-medium">
+                              <TableCell className="px-3 py-3 text-sm rtl-cell">
+                                <span className="text-sm text-gray-900 font-normal">
                                   {formatCurrency(user.totalOrderAmount || 0)}
                                 </span>
                               </TableCell>
@@ -4614,53 +4703,61 @@ export default function AdminDashboard() {
                     </div>
                     
                     {/* Pagination for users table */}
-                    <div className="flex items-center justify-between px-4 py-3 border-t">
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <span>Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}</span>
+                    <div className={`flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-3 border-t border-gray-100 bg-gray-50/30 ${isRTL ? 'sm:flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                      <div className={`text-xs text-gray-600 text-center ${isRTL ? 'sm:text-right' : 'sm:text-left'}`}>
+                        <div className="sm:hidden">
+                          <div>{adminT('common.showing', 'Показано')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)}</div>
+                          <div>{adminT('common.of', 'из')} {usersTotal}</div>
+                        </div>
+                        <div className="hidden sm:block">
+                          {adminT('common.showing', 'Показано')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('common.of', 'из')} {usersTotal}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      
+                      <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(1)}
                           disabled={usersPage === 1}
-                          title="Первая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          title={adminT('common.firstPage', 'Первая страница')}
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          ⟨⟨
+                          {isRTL ? '⟩⟩' : '⟨⟨'}
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
                           disabled={usersPage === 1}
-                          title="Предыдущая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          title={adminT('common.prevPage', 'Предыдущая страница')}
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <ChevronLeft className="h-4 w-4" />
+                          {isRTL ? '⟩' : '⟨'}
                         </Button>
-                        <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
-                          {usersPage} из {usersTotalPages}
+                        <span className="text-xs text-gray-600 px-2 min-w-[60px] text-center">
+                          <span className="sm:hidden">{usersPage}/{usersTotalPages}</span>
+                          <span className="hidden sm:inline">{usersPage} {adminT('common.of', 'из')} {usersTotalPages}</span>
                         </span>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
-                          disabled={usersPage === usersTotalPages}
-                          title="Следующая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          disabled={usersPage >= usersTotalPages}
+                          title={adminT('common.nextPage', 'Следующая страница')}
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <ChevronRight className="h-4 w-4" />
+                          {isRTL ? '⟨' : '⟩'}
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(usersTotalPages)}
-                          disabled={usersPage === usersTotalPages}
-                          title="Последняя страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
+                          disabled={usersPage >= usersTotalPages}
+                          title={adminT('common.lastPage', 'Последняя страница')}
+                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          ⟩⟩
+                          {isRTL ? '⟨⟨' : '⟩⟩'}
                         </Button>
                       </div>
                     </div>
@@ -4668,119 +4765,11 @@ export default function AdminDashboard() {
                 ) : (
                   <div className="text-center py-8">
                     <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Нет пользователей</h3>
-                    <p className="text-gray-500 text-sm">Пользователи будут отображаться здесь</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">{adminT('users.noUsers', 'Нет пользователей')}</h3>
+                    <p className="text-gray-500 text-sm">{adminT('users.addFirstUser', 'Добавьте первого пользователя для начала работы')}</p>
                   </div>
-                )}
-                
-                {/* Users Pagination */}
-                {usersTotalPages > 1 && (
-                  <div className="px-4 py-3 border-t bg-gray-50">
-                    {/* Mobile: Stack info and controls */}
-                    <div className="sm:hidden space-y-2">
-                      <div className="text-center text-xs text-gray-600">
-                        Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}
-                      </div>
-                      <div className="flex items-center justify-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setUsersPage(1)}
-                          disabled={usersPage === 1}
-                          title="Первая страница"
-                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          ⟨⟨
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
-                          disabled={usersPage === 1}
-                          title="Предыдущая страница"
-                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                        </Button>
-                        <span className="text-sm font-medium px-4 bg-white border border-orange-500 rounded h-9 flex items-center justify-center min-w-[60px]">
-                          {usersPage}/{usersTotalPages}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
-                          disabled={usersPage === usersTotalPages}
-                          title="Следующая страница"
-                          className="h-9 w-9 p-0 bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setUsersPage(usersTotalPages)}
-                          disabled={usersPage === usersTotalPages}
-                          title="Последняя страница"
-                          className="h-9 w-9 p-0 text-xs bg-white text-orange-500 hover:bg-orange-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                        >
-                          ⟩⟩
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    {/* Desktop: Original layout */}
-                    <div className="hidden sm:flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <span>Показано {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} из {usersTotal}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setUsersPage(1)}
-                          disabled={usersPage === 1}
-                          title="Первая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                        >
-                          ⟨⟨
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
-                          disabled={usersPage === 1}
-                          title="Предыдущая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                        </Button>
-                        <span className="text-sm font-medium px-3 py-1 bg-white border border-orange-500 rounded h-8 flex items-center">
-                          {usersPage} из {usersTotalPages}
-                        </span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
-                          disabled={usersPage === usersTotalPages}
-                          title="Следующая страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setUsersPage(usersTotalPages)}
-                          disabled={usersPage === usersTotalPages}
-                          title="Последняя страница"
-                          className="h-8 px-3 bg-white border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:ring-offset-0"
-                        >
-                          ⟩⟩
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                  );
+                })()}
               </CardContent>
             </Card>
           </TabsContent>
@@ -4796,10 +4785,10 @@ export default function AdminDashboard() {
                     <div className={isRTL ? 'text-right' : 'text-left'}>
                       <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                         <Store className="h-4 w-4 sm:h-5 sm:w-5" />
-                        {adminT('settings.title')}
+                        {adminT('storeSettings.title')}
                       </CardTitle>
                       <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        {adminT('settings.description')}
+                        {adminT('storeSettings.description')}
                       </CardDescription>
                     </div>
                 </CardHeader>
@@ -4823,27 +4812,27 @@ export default function AdminDashboard() {
                   <div className={isRTL ? 'text-right' : 'text-left'}>
                     <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                       <Settings className="h-5 w-5" />
-                      Настройки системы
+                      {adminT('systemSettings.title', 'Настройки системы')}
                     </CardTitle>
                     <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                      Управление правами доступа для сотрудников
+                      {adminT('systemSettings.description', 'Управление правами доступа для сотрудников')}
                     </CardDescription>
                   </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Worker Permissions Section */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Права доступа сотрудников</h3>
+                  <h3 className="text-lg font-medium">{adminT('systemSettings.workerPermissions', 'Права доступа сотрудников')}</h3>
                   <p className="text-sm text-gray-600">
-                    Настройте, к каким разделам админ-панели имеют доступ пользователи с ролью "Работник"
+                    {adminT('systemSettings.workerPermissionsDescription', 'Настройте, к каким разделам админ-панели имеют доступ пользователи с ролью "Работник"')}
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <label className="text-sm font-medium">Управление товарами</label>
-                          <p className="text-xs text-gray-500">Добавление, редактирование и удаление товаров</p>
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageProducts', 'Управление товарами')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageProductsDescription', 'Добавление, редактирование и удаление товаров')}</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageProducts || false}
@@ -4859,10 +4848,10 @@ export default function AdminDashboard() {
                         />
                       </div>
                       
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <label className="text-sm font-medium">Управление категориями</label>
-                          <p className="text-xs text-gray-500">Добавление, редактирование и удаление категорий</p>
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageCategories', 'Управление категориями')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageCategoriesDescription', 'Создание и редактирование категорий товаров')}</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageCategories || false}
@@ -4880,8 +4869,8 @@ export default function AdminDashboard() {
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Управление заказами</label>
-                          <p className="text-xs text-gray-500">Просмотр и изменение статуса заказов</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canEditOrders')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canEditOrdersDescription')}</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageOrders || false}
@@ -4899,28 +4888,33 @@ export default function AdminDashboard() {
                     </div>
                     
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <label className="text-sm font-medium">Просмотр пользователей</label>
-                          <p className="text-xs text-gray-500">Просмотр списка клиентов</p>
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canViewUsers', 'Просмотр пользователей')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canViewUsersDescription', 'Доступ к списку пользователей системы')}</p>
                         </div>
-                        <Switch
-                          checked={(storeSettings?.workerPermissions as any)?.canViewUsers || false}
-                          onCheckedChange={(checked) => 
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => 
                             updateStoreSettingsMutation.mutate({
                               workerPermissions: {
                                 ...(storeSettings?.workerPermissions || {}),
-                                canViewUsers: checked
+                                canViewUsers: !((storeSettings?.workerPermissions as any)?.canViewUsers || false)
                               }
                             })
                           }
-                        />
+                          className={`p-2 h-8 w-8 ${(storeSettings?.workerPermissions as any)?.canViewUsers ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                        >
+                          {(storeSettings?.workerPermissions as any)?.canViewUsers ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                        </Button>
                       </div>
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Управление пользователями</label>
-                          <p className="text-xs text-gray-500">Редактирование и удаление пользователей</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageUsers')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageUsersDescription')}</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageUsers || false}
@@ -4938,8 +4932,8 @@ export default function AdminDashboard() {
                       
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium">Просмотр настроек</label>
-                          <p className="text-xs text-gray-500">Доступ к настройкам магазина (только чтение)</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canViewSettings')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canViewSettingsDescription')}</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canViewSettings || false}
@@ -4955,10 +4949,10 @@ export default function AdminDashboard() {
                         />
                       </div>
                       
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <label className="text-sm font-medium">Управление настройками</label>
-                          <p className="text-xs text-gray-500">Полный доступ к настройкам магазина</p>
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageSettings', 'Управление настройками')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageSettingsDescription', 'Доступ к настройкам магазина и системы')}</p>
                         </div>
                         <CustomSwitch
                           checked={(storeSettings?.workerPermissions as any)?.canManageSettings || false}
@@ -5079,6 +5073,7 @@ export default function AdminDashboard() {
           }
         }}
         cancellationReasons={(storeSettings?.cancellationReasons as string[]) || ["Клиент отменил", "Товар отсутствует", "Технические проблемы", "Другое"]}
+        adminT={adminT}
       />
 
       {/* Availability Confirmation Dialog */}
@@ -5283,7 +5278,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   <FormControl>
                     <div className="border rounded-md p-3 max-h-32 overflow-y-auto">
                       {categories?.map((category: any) => (
-                        <div key={category.id} className="flex items-center space-x-2 py-1">
+                        <div key={category.id}
+                                          title={category.name} className="flex items-center space-x-2 py-1">
                           <input
                             type="checkbox"
                             id={`category-${category.id}`}
@@ -5417,7 +5413,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     <CustomSwitch
                       checked={Boolean(field.value)}
                       onChange={field.onChange}
-                      bgColor="bg-orange-500"
+                      bgColor="bg-primary"
                     />
                   </FormControl>
                 </FormItem>
@@ -5531,7 +5527,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 </Button>
                 <Button 
                   type="submit" 
-                  className="text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2"
+                  className="text-sm bg-primary text-white border-primary hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2"
                 >
                   <Save className="h-4 w-4" />
                   {product ? adminT('products.dialog.saveButton') : adminT('products.dialog.createButton')}
@@ -5546,8 +5542,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
 }
 
 function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
-  const { t: adminT, i18n } = useTranslation("admin");
-  
+  const { t: adminT } = useAdminTranslation();
+  const { i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he';
   
   const form = useForm({
@@ -5665,7 +5661,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                               variant={field.value === icon ? "default" : "outline"}
                               className={`h-10 w-10 p-0 text-lg ${
                                 field.value === icon 
-                                  ? "bg-orange-500 border-orange-500 hover:bg-orange-600" 
+                                  ? "bg-primary border-primary hover:bg-primary" 
                                   : "hover:bg-orange-50 hover:border-orange-300"
                               }`}
                               onClick={() => field.onChange(icon)}
@@ -5714,7 +5710,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               }}
             />
 
-            <div className={`flex flex-col sm:flex-row justify-end gap-3 ${isRTL ? 'sm:flex-row-reverse rtl:space-x-reverse' : 'space-x-4'}`}>
+            <div className={`flex flex-col sm:flex-row justify-center gap-3 ${isRTL ? 'sm:flex-row-reverse rtl:space-x-reverse' : 'space-x-4'}`}>
               <Button 
                 type="button" 
                 variant="outline" 
@@ -5725,7 +5721,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               </Button>
               <Button 
                 type="submit" 
-                className={`text-sm bg-orange-500 text-white border-orange-500 hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+                className={`text-sm bg-primary text-white border-primary hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
               >
                 <Save className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                 {category ? adminT('actions.update', 'Обновить') : adminT('actions.create', 'Создать')}  
@@ -5744,8 +5740,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   onSubmit: (data: any) => void;
   isLoading: boolean;
 }) {
-  const { t: adminT, i18n } = useTranslation("admin");
-  
+  const { t: adminT } = useAdminTranslation();
+  const { i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he';
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
@@ -5753,7 +5749,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
   const [isWorkingHoursOpen, setIsWorkingHoursOpen] = useState(false);
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
-  const [isDisplaySettingsOpen, setIsDisplaySettingsOpen] = useState(false);
+
   const [isTrackingCodeOpen, setIsTrackingCodeOpen] = useState(false);
   const [isAuthPageOpen, setIsAuthPageOpen] = useState(false);
   
@@ -5807,6 +5803,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
       whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || "Здравствуйте! Я хотел бы узнать больше о ваших товарах.",
       showCartBanner: storeSettings?.showCartBanner || false,
+      bannerButtonText: storeSettings?.bannerButtonText || "Смотреть каталог",
+      bannerButtonLink: storeSettings?.bannerButtonLink || "#categories",
       cartBannerType: storeSettings?.cartBannerType || "text",
       cartBannerImage: storeSettings?.cartBannerImage || "",
       cartBannerText: storeSettings?.cartBannerText || "",
@@ -5841,14 +5839,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         deliveryInfo: storeSettings?.deliveryInfo || "",
         paymentInfo: storeSettings?.paymentInfo || "",
         paymentMethods: storeSettings?.paymentMethods || [
-          { name: "Наличными при получении", id: 1 },
-          { name: "Банковской картой", id: 2 },
-          { name: "Банковский перевод", id: 3 }
+          { name: adminT('storeSettings.cashOnDelivery'), id: 1 },
+          { name: adminT('storeSettings.bankCard'), id: 2 },
+          { name: adminT('storeSettings.bankTransfer'), id: 3 }
         ],
         aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
         deliveryFee: storeSettings?.deliveryFee || "15.00",
         freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
-        discountBadgeText: storeSettings?.discountBadgeText || "Скидка",
+        discountBadgeText: storeSettings?.discountBadgeText || adminT('storeSettings.discountBadgeText'),
         showBannerImage: storeSettings?.showBannerImage !== false,
         showTitleDescription: storeSettings?.showTitleDescription !== false,
         showInfoBlocks: storeSettings?.showInfoBlocks !== false,
@@ -5866,7 +5864,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         footerHtml: storeSettings?.footerHtml || "",
         showWhatsAppChat: storeSettings?.showWhatsAppChat !== false,
         whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
-        whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || "Здравствуйте! Я хотел бы узнать больше о ваших товарах.",
+        whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || adminT('storeSettings.defaultWhatsappMessage'),
         showCartBanner: storeSettings?.showCartBanner || false,
         cartBannerType: storeSettings?.cartBannerType || "text",
         cartBannerImage: storeSettings?.cartBannerImage || "",
@@ -5880,6 +5878,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         authPageFeature3: storeSettings?.authPageFeature3 || "",
         defaultLanguage: storeSettings?.defaultLanguage || "ru",
         enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
+        bannerButtonText: storeSettings?.bannerButtonText || "",
+        bannerButtonLink: storeSettings?.bannerButtonLink || "",
+        modernBlock1Icon: storeSettings?.modernBlock1Icon || "",
+        modernBlock1Text: storeSettings?.modernBlock1Text || "",
+        modernBlock2Icon: storeSettings?.modernBlock2Icon || "",
+        modernBlock2Text: storeSettings?.modernBlock2Text || "",
+        modernBlock3Icon: storeSettings?.modernBlock3Icon || "",
+        modernBlock3Text: storeSettings?.modernBlock3Text || "",
       } as any);
     }
   }, [storeSettings, form]);
@@ -5887,20 +5893,34 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-8 ${isRTL ? 'rtl' : 'ltr'}`}>
-        {/* Основная информация */}
+        {/* {adminT('storeSettings.basicInfo', 'Основная информация')} */}
         <Collapsible open={isBasicInfoOpen} onOpenChange={setIsBasicInfoOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <Store className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.basicSettings')}</h3>
-                {isBasicInfoOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {isRTL ? (
+                  <>
+                    {isBasicInfoOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.basicInfo')}</h3>
+                    <Store className="h-5 w-5 text-primary" />
+                  </>
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                  <>
+                    <Store className="h-5 w-5 text-primary" />
+                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.basicInfo')}</h3>
+                    {isBasicInfoOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </>
                 )}
               </div>
             </Button>
@@ -5913,9 +5933,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="storeName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.storeName')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.storeName')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="eDAHouse" {...field} className="text-sm" />
+                  <Input placeholder={adminT('storeSettings.storeNamePlaceholder')} {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -5927,9 +5947,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="welcomeTitle"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.welcomeTitle')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.welcomeTitle')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Добро пожаловать в наш магазин" {...field} className="text-sm" />
+                  <Input placeholder={adminT('storeSettings.welcomeTitlePlaceholder')} {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -5941,9 +5961,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="contactPhone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.storePhone')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.contactPhone')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="+972-XX-XXX-XXXX" {...field} className="text-sm" />
+                  <Input placeholder={adminT('storeSettings.contactPhonePlaceholder')} {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -5955,9 +5975,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="contactEmail"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.contactEmail')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.contactEmail')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="info@edahouse.com" type="email" {...field} className="text-sm" />
+                  <Input placeholder={adminT('storeSettings.contactEmailPlaceholder')} type="email" {...field} className="text-sm" />
                 </FormControl>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -5969,7 +5989,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="deliveryFee"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.deliveryFee')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.deliveryFee')}</FormLabel>
                 <FormControl>
                   <Input {...field} className="text-sm" />
                 </FormControl>
@@ -5983,7 +6003,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="freeDeliveryFrom"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">{adminT('settings.freeDeliveryFrom')}</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.freeDeliveryFrom')}</FormLabel>
                 <FormControl>
                   <Input {...field} className="text-sm" />
                 </FormControl>
@@ -5997,27 +6017,48 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             name="defaultItemsPerPage"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">Элементов на странице по умолчанию</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.defaultItemsPerPage')}</FormLabel>
                 <Select 
                   onValueChange={(value) => field.onChange(parseInt(value))} 
                   value={field.value?.toString() || "10"}
                 >
                   <FormControl>
                     <SelectTrigger className="text-sm">
-                      <SelectValue placeholder="Выберите количество" />
+                      <SelectValue placeholder={adminT('storeSettings.selectQuantity')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="10">10 элементов</SelectItem>
-                    <SelectItem value="15">15 элементов</SelectItem>
-                    <SelectItem value="25">25 элементов</SelectItem>
-                    <SelectItem value="50">50 элементов</SelectItem>
-                    <SelectItem value="100">100 элементов</SelectItem>
-                    <SelectItem value="1000">Все элементы</SelectItem>
+                    <SelectItem value="10">{adminT('storeSettings.items10')}</SelectItem>
+                    <SelectItem value="15">{adminT('storeSettings.items15')}</SelectItem>
+                    <SelectItem value="25">{adminT('storeSettings.items25')}</SelectItem>
+                    <SelectItem value="50">{adminT('storeSettings.items50')}</SelectItem>
+                    <SelectItem value="100">{adminT('storeSettings.items100')}</SelectItem>
+                    <SelectItem value="1000">{adminT('storeSettings.allItems')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription className="text-xs text-gray-500">
-                  Количество товаров, заказов и пользователей отображаемых на одной странице в админ панели
+                  {adminT('storeSettings.itemsPerPageDescription')}
+                </FormDescription>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="discountBadgeText"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">{adminT('storeSettings.discountBadgeTextLabel')}</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder={adminT('storeSettings.discountBadgeText')}
+                    className="text-sm"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription className="text-xs">
+                  {adminT('storeSettings.discountBadgeDescription')}
                 </FormDescription>
                 <FormMessage className="text-xs" />
               </FormItem>
@@ -6034,13 +6075,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <MapPin className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.basicSettingsDescription')}</h3>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                <MapPin className="h-5 w-5 text-primary" />
+                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.contacts')}</h3>
                 {isContactsOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+                  <ChevronUp className="h-5 w-5 text-gray-500" />
                 ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+                  <ChevronDown className="h-5 w-5 text-gray-500" />
                 )}
               </div>
             </Button>
@@ -6053,10 +6094,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="storeDescription"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm">Описание магазина</FormLabel>
+              <FormLabel className="text-sm">{adminT('storeSettings.storeDescription')}</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Расскажите о вашем магазине готовой еды..."
+                  placeholder={adminT('storeSettings.storeDescriptionPlaceholder')}
                   className="resize-none text-sm min-h-[100px]"
                   {...field}
                 />
@@ -6071,10 +6112,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm">Адрес</FormLabel>
+              <FormLabel className="text-sm">{adminT('storeSettings.address')}</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Введите полный адрес магазина"
+                  placeholder={adminT('storeSettings.addressPlaceholder')}
                   className="resize-none text-sm"
                   {...field}
                 />
@@ -6086,74 +6127,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Визуальное оформление */}
-        <Collapsible open={isVisualsOpen} onOpenChange={setIsVisualsOpen} className="space-y-6">
-          <CollapsibleTrigger asChild>
-            <Button 
-              variant="ghost" 
-              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
-            >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <Upload className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.visualSettings')}</h3>
-                {isVisualsOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
-                ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
-                )}
-              </div>
-            </Button>
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent className="space-y-6">
 
-        <FormField
-          control={form.control}
-          name="logoUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-sm flex items-center gap-2">
-                <Upload className="h-4 w-4" />
-                Логотип магазина
-              </FormLabel>
-              <FormControl>
-                <ImageUpload
-                  value={field.value || ""}
-                  onChange={field.onChange}
-                />
-              </FormControl>
-              <FormDescription className="text-xs text-gray-500">
-                Рекомендуемый размер: 200×60 пикселей (PNG с прозрачным фоном)
-              </FormDescription>
-              <FormMessage className="text-xs" />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="bannerImage"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-sm flex items-center gap-2">
-                <Upload className="h-4 w-4" />
-                Баннер на главной странице
-              </FormLabel>
-              <FormControl>
-                <ImageUpload
-                  value={field.value || ""}
-                  onChange={field.onChange}
-                />
-              </FormControl>
-              <FormDescription className="text-xs text-gray-500">
-                Рекомендуемый размер: 1200×400 пикселей. Изображение будет отображаться под шапкой на всю ширину страницы
-              </FormDescription>
-              <FormMessage className="text-xs" />
-            </FormItem>
-          )}
-        />
-          </CollapsibleContent>
-        </Collapsible>
 
         {/* Language Settings */}
         <Collapsible open={isLanguageSettingsOpen} onOpenChange={setIsLanguageSettingsOpen} className="space-y-6">
@@ -6162,13 +6136,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <Languages className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.languageSettings')}</h3>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                <Languages className="h-5 w-5 text-primary" />
+                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.languageSettings')}</h3>
                 {isLanguageSettingsOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+                  <ChevronUp className="h-5 w-5 text-gray-500" />
                 ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+                  <ChevronDown className="h-5 w-5 text-gray-500" />
                 )}
               </div>
             </Button>
@@ -6177,7 +6151,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           <CollapsibleContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h4 className="text-sm font-medium">Язык по умолчанию</h4>
+                <h4 className="text-sm font-medium">{adminT('storeSettings.defaultLanguage')}</h4>
                 <div className="p-3 border rounded-lg bg-gray-50">
                   <Select 
                     value={form.watch("defaultLanguage") || "ru"}
@@ -6202,12 +6176,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   </Select>
                 </div>
                 <p className="text-xs text-gray-500">
-                  Выберите язык интерфейса по умолчанию для новых посетителей
+                  {adminT('storeSettings.defaultLanguageDescription')}
                 </p>
               </div>
               
               <div className="space-y-4">
-                <h4 className="text-sm font-medium">Доступные языки</h4>
+                <h4 className="text-sm font-medium">{adminT('storeSettings.availableLanguages')}</h4>
                 <div className="space-y-3">
                   {Object.entries(LANGUAGES).map(([code, info]) => {
                     const enabledLanguages = form.watch("enabledLanguages") || ["ru", "en", "he"];
@@ -6224,7 +6198,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         </div>
                         <div className="flex items-center gap-3">
                           <span className={`text-xs font-medium ${isEnabled ? 'text-green-600' : 'text-gray-400'}`}>
-                            {isEnabled ? 'Активен' : 'Отключен'}
+                            {isEnabled ? adminT('storeSettings.languageActive') : adminT('storeSettings.languageDisabled')}
                           </span>
                           <CustomSwitch 
                             checked={isEnabled}
@@ -6265,8 +6239,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <div className="flex items-start gap-2">
                 <div className="w-5 h-5 text-blue-600 mt-0.5">ℹ️</div>
                 <div className="text-sm text-blue-800">
-                  <strong>Примечание:</strong> Изменения в настройках языков применяются после сохранения настроек. 
-                  Отключение языка скроет его из селектора на сайте.
+                  <strong>{adminT('storeSettings.noteTitle')}:</strong> {adminT('storeSettings.languageNote')}
                 </div>
               </div>
             </div>
@@ -6280,85 +6253,108 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <Clock className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.operatingHours')}</h3>
-                {isWorkingHoursOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {isRTL ? (
+                  <>
+                    {isWorkingHoursOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.operatingHours')}</h3>
+                    <Clock className="h-5 w-5 text-primary" />
+                  </>
                 ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+                  <>
+                    <Clock className="h-5 w-5 text-primary" />
+                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.operatingHours')}</h3>
+                    {isWorkingHoursOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </>
                 )}
               </div>
             </Button>
           </CollapsibleTrigger>
           
-          <CollapsibleContent className="space-y-6">
+          <CollapsibleContent className="space-y-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
           
           <FormField
             control={form.control}
             name="weekStartDay"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm">Первый день недели</FormLabel>
+                <FormLabel className="text-sm">{adminT('storeSettings.weekStartDay')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="text-sm">
-                      <SelectValue placeholder="Выберите первый день недели" />
+                      <SelectValue placeholder={adminT('storeSettings.weekStartDayPlaceholder')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="monday">Понедельник</SelectItem>
-                    <SelectItem value="sunday">Воскресенье</SelectItem>
+                    <SelectItem value="monday">{adminT('storeSettings.monday')}</SelectItem>
+                    <SelectItem value="sunday">{adminT('storeSettings.sunday')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription className="text-xs">
-                  Выберите с какого дня недели начинается неделя в вашем регионе
+                  {adminT('storeSettings.weekStartDayDescription')}
                 </FormDescription>
                 <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
           
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { key: "monday", label: "Понедельник" },
-              { key: "tuesday", label: "Вторник" },
-              { key: "wednesday", label: "Среда" },
-              { key: "thursday", label: "Четверг" },
-              { key: "friday", label: "Пятница" },
-              { key: "saturday", label: "Суббота" },
-              { key: "sunday", label: "Воскресенье" },
+              { key: "monday", label: adminT(`storeSettings.monday`) },
+              { key: "tuesday", label: adminT(`storeSettings.tuesday`) },
+              { key: "wednesday", label: adminT(`storeSettings.wednesday`) },
+              { key: "thursday", label: adminT(`storeSettings.thursday`) },
+              { key: "friday", label: adminT(`storeSettings.friday`) },
+              { key: "saturday", label: adminT(`storeSettings.saturday`) },
+              { key: "sunday", label: adminT(`storeSettings.sunday`) },
             ].map(({ key, label }) => {
               const currentHours = form.watch(`workingHours.${key}` as any) || "";
-              const isWorking = currentHours && currentHours !== "Выходной";
+              const isWorking = currentHours && currentHours !== adminT('storeSettings.closedDay');
               const [openTime, closeTime] = isWorking ? currentHours.split("-") : ["09:00", "18:00"];
 
               return (
-                <div key={key} className="border rounded-lg p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <FormLabel className="text-sm font-medium">{label}</FormLabel>
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={isWorking}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            form.setValue(`workingHours.${key}` as any, "09:00-18:00");
-                          } else {
+                <div key={key} className={`border rounded-lg p-3 space-y-2 ${isWorking ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                  <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <FormLabel className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{label}</FormLabel>
+                    <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (isWorking) {
                             form.setValue(`workingHours.${key}` as any, "");
+                          } else {
+                            form.setValue(`workingHours.${key}` as any, "09:00-18:00");
                           }
                         }}
-                        className="switch-green"
-                      />
-                      <span className="text-xs text-gray-600">
-                        {isWorking ? "Рабочий день" : "Выходной"}
-                      </span>
+                        className={`p-1 h-7 w-7 ${isWorking ? 'text-green-600 hover:text-green-700' : 'text-gray-400 hover:text-gray-500'}`}
+                      >
+                        {isWorking ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                      </Button>
                     </div>
                   </div>
                   
+                  <div className="text-xs text-center font-medium">
+                    {isWorking ? (
+                      <span className="text-green-700">{adminT('storeSettings.workingDay')}</span>
+                    ) : (
+                      <span className="text-gray-500">{adminT('storeSettings.closedDay')}</span>
+                    )}
+                  </div>
+                  
                   {isWorking && (
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
                       <div>
-                        <FormLabel className="text-xs text-gray-600">Открытие</FormLabel>
+                        <FormLabel className="text-xs text-gray-600 block mb-1">{adminT('storeSettings.openTime')}</FormLabel>
                         <Select
                           value={openTime}
                           onValueChange={(value) => {
@@ -6366,7 +6362,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             form.setValue(`workingHours.${key}` as any, `${value}-${currentClose}`);
                           }}
                         >
-                          <SelectTrigger className="text-xs">
+                          <SelectTrigger className="text-xs h-8">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -6385,7 +6381,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       </div>
                       
                       <div>
-                        <FormLabel className="text-xs text-gray-600">Закрытие</FormLabel>
+                        <FormLabel className="text-xs text-gray-600 block mb-1">{adminT('storeSettings.closeTime')}</FormLabel>
                         <Select
                           value={closeTime}
                           onValueChange={(value) => {
@@ -6393,7 +6389,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             form.setValue(`workingHours.${key}` as any, `${currentOpen}-${value}`);
                           }}
                         >
-                          <SelectTrigger className="text-xs">
+                          <SelectTrigger className="text-xs h-8">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -6419,20 +6415,34 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Доставка и оплата */}
+        {/* {adminT('storeSettings.deliveryPayment', 'Доставка и оплата')} */}
         <Collapsible open={isDeliveryPaymentOpen} onOpenChange={setIsDeliveryPaymentOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
-                <Truck className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.deliverySettings')}</h3>
-                {isDeliveryPaymentOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {isRTL ? (
+                  <>
+                    {isDeliveryPaymentOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.deliveryPayment')}</h3>
+                    <Truck className="h-5 w-5 text-primary" />
+                  </>
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
+                  <>
+                    <Truck className="h-5 w-5 text-primary" />
+                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.deliveryPayment')}</h3>
+                    {isDeliveryPaymentOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </>
                 )}
               </div>
             </Button>
@@ -6445,13 +6455,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="deliveryInfo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm flex items-center gap-2">
+              <FormLabel className={`text-sm flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                 <Truck className="h-4 w-4" />
-                Информация о доставке
+                {adminT('storeSettings.deliveryInfo')}
               </FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Условия доставки, время доставки, зоны обслуживания..."
+                  placeholder={adminT('storeSettings.deliveryInfoPlaceholder')}
                   className="resize-none text-sm min-h-[100px]"
                   {...field}
                 />
@@ -6466,13 +6476,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="paymentInfo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm flex items-center gap-2">
+              <FormLabel className={`text-sm flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                 <CreditCard className="h-4 w-4" />
-                Информация об оплате
+                {adminT('storeSettings.paymentInfo')}
               </FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Принимаемые способы оплаты, условия оплаты..."
+                  placeholder={adminT('storeSettings.paymentInfoPlaceholder')}
                   className="resize-none text-sm min-h-[100px]"
                   {...field}
                 />
@@ -6487,15 +6497,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           name="paymentMethods"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm flex items-center gap-2">
+              <FormLabel className={`text-sm flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                 <CreditCard className="h-4 w-4" />
-                Способы оплаты
+                {adminT('storeSettings.paymentMethods')}
               </FormLabel>
               <div className="space-y-3">
                 {(field.value || []).map((method: any, index: number) => (
                   <div key={method.id || index} className="flex items-center gap-2 p-3 border rounded-lg">
                     <Input
-                      placeholder="Название способа оплаты"
+                      placeholder={adminT('storeSettings.paymentMethodPlaceholder')}
                       value={method.name || ""}
                       onChange={(e) => {
                         const updatedMethods = [...(field.value || [])];
@@ -6514,7 +6524,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       }}
                       className="text-red-600 hover:text-red-700"
                     >
-                      Удалить
+{adminT('actions.delete')}
                     </Button>
                   </div>
                 ))}
@@ -6528,7 +6538,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   }}
                   className="w-full"
                 >
-                  + Добавить способ оплаты
++ {adminT('storeSettings.addPaymentMethod')}
                 </Button>
               </div>
               <FormMessage className="text-xs" />
@@ -6539,592 +6549,35 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Настройки отображения */}
-        <Collapsible open={isDisplaySettingsOpen} onOpenChange={setIsDisplaySettingsOpen} className="space-y-6">
-          <CollapsibleTrigger asChild>
-            <Button 
-              variant="ghost" 
-              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
-            >
-              <div className="flex items-center gap-2 pb-2 border-b border-gray-200 w-full">
-                <Eye className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.displaySettings')}</h3>
-                {isDisplaySettingsOpen ? (
-                  <ChevronUp className="h-5 w-5 text-gray-500 ml-auto" />
-                ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-500 ml-auto" />
-                )}
-              </div>
-            </Button>
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent className="space-y-6">
 
-        <FormField
-          control={form.control}
-          name="discountBadgeText"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-sm">Текст на значке скидки</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="Скидка"
-                  className="text-sm"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription className="text-xs">
-                Этот текст будет отображаться на оранжевом значке товаров со скидкой
-              </FormDescription>
-              <FormMessage className="text-xs" />
-            </FormItem>
-          )}
-        />
-
-        {/* Переключатели отображения */}
-        <div className="space-y-4">
-          <h4 className="text-sm font-medium text-gray-700">Настройки отображения главной страницы</h4>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="showBannerImage"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">Показывать баннер</FormLabel>
-                    <FormDescription className="text-xs">
-                      Картинка под шапкой сайта
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="switch-green"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="showTitleDescription"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">Показывать заголовок</FormLabel>
-                    <FormDescription className="text-xs">
-                      Заголовок и описание магазина
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="switch-green"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="showInfoBlocks"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">Показывать блоки информации</FormLabel>
-                    <FormDescription className="text-xs">
-                      Часы работы, контакты, оплата и доставка
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="switch-green"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="infoBlocksPosition"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium">Позиция информационных блоков</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Выберите позицию" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="top">Вверху (перед специальными предложениями)</SelectItem>
-                      <SelectItem value="bottom">Внизу (после баннеров)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription className="text-xs">
-                    Выберите где отображать блоки с информацией о магазине
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="showSpecialOffers"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('settings.showSpecialOffers')}</FormLabel>
-                    <FormDescription className="text-xs">
-                      {adminT('settings.specialOffersDescription')}
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="switch-green"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="showCategoryMenu"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">{adminT('settings.showCategoryMenu')}</FormLabel>
-                    <FormDescription className="text-xs">
-                      {adminT('settings.categoryMenuDescription')}
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="switch-green"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="showWhatsAppChat"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-sm font-medium">Показывать чат WhatsApp</FormLabel>
-                    <FormDescription className="text-xs">
-                      Плавающая кнопка WhatsApp в правом нижнем углу сайта
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="switch-green"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            {form.watch("showWhatsAppChat") && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="whatsappPhoneNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm flex items-center gap-2">
-                        <Phone className="h-4 w-4" />
-                        Номер телефона WhatsApp
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="+972501234567"
-                          {...field} 
-                          className="text-sm" 
-                        />
-                      </FormControl>
-                      <FormDescription className="text-xs">
-                        Номер телефона в международном формате (включая код страны)
-                      </FormDescription>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="whatsappDefaultMessage"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm flex items-center gap-2">
-                        <MessageCircle className="h-4 w-4" />
-                        Сообщение по умолчанию
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Здравствуйте! Я хотел бы узнать больше о ваших товарах."
-                          {...field} 
-                          className="text-sm min-h-[80px]" 
-                        />
-                      </FormControl>
-                      <FormDescription className="text-xs">
-                        Текст сообщения, который автоматически появится в WhatsApp при нажатии на кнопку
-                      </FormDescription>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Баннер корзины */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <ShoppingCart className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Баннер корзины</h3>
-          </div>
-
-          <FormField
-            control={form.control}
-            name="showCartBanner"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-sm font-medium">Показывать баннер в корзине</FormLabel>
-                  <FormDescription className="text-xs">
-                    Баннер отображается в корзине под итоговой суммой
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    className="switch-green"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          {form.watch("showCartBanner") && (
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="cartBannerType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm flex items-center gap-2">
-                      <Layers className="h-4 w-4" />
-                      Тип баннера
-                    </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="text-sm">
-                          <SelectValue placeholder="Выберите тип баннера" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="text">Текстовый баннер</SelectItem>
-                        <SelectItem value="image">Изображение</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription className="text-xs">
-                      Выберите между текстовым баннером с фоном или загрузкой изображения
-                    </FormDescription>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-
-              {form.watch("cartBannerType") === "text" && (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="cartBannerText"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm flex items-center gap-2">
-                          <Type className="h-4 w-4" />
-                          Текст баннера
-                        </FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Бесплатная доставка от 100₪!"
-                            {...field} 
-                            className="text-sm min-h-[60px]" 
-                          />
-                        </FormControl>
-                        <FormDescription className="text-xs">
-                          Текст для отображения в баннере корзины
-                        </FormDescription>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="cartBannerBgColor"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm flex items-center gap-2">
-                          <Palette className="h-4 w-4" />
-                          Цвет фона
-                        </FormLabel>
-                        <FormControl>
-                          <div className="flex items-center gap-2">
-                            <Input 
-                              type="color"
-                              {...field} 
-                              className="w-12 h-8 p-0 border rounded" 
-                            />
-                            <Input 
-                              type="text"
-                              {...field} 
-                              placeholder="#f97316"
-                              className="text-sm flex-1" 
-                            />
-                          </div>
-                        </FormControl>
-                        <FormDescription className="text-xs">
-                          Цвет фона для текстового баннера
-                        </FormDescription>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="cartBannerTextColor"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm flex items-center gap-2">
-                          <Type className="h-4 w-4" />
-                          Цвет текста
-                        </FormLabel>
-                        <FormControl>
-                          <div className="flex items-center gap-2">
-                            <Input 
-                              type="color"
-                              {...field} 
-                              className="w-12 h-8 p-0 border rounded" 
-                            />
-                            <Input 
-                              type="text"
-                              {...field} 
-                              placeholder="#ffffff"
-                              className="text-sm flex-1" 
-                            />
-                          </div>
-                        </FormControl>
-                        <FormDescription className="text-xs">
-                          Цвет текста для текстового баннера
-                        </FormDescription>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </>
-              )}
-
-              {form.watch("cartBannerType") === "image" && (
-                <FormField
-                  control={form.control}
-                  name="cartBannerImage"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm flex items-center gap-2">
-                        <Upload className="h-4 w-4" />
-                        Изображение баннера
-                      </FormLabel>
-                      <FormControl>
-                        <ImageUpload
-                          value={field.value || ""}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormDescription className="text-xs text-gray-500">
-                        Максимальная высота: 120px. Рекомендуемый размер: 400×120 пикселей
-                      </FormDescription>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Нижние баннеры */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <Layers className="h-5 w-5 text-orange-500" />
-            <h3 className="text-lg font-semibold">Нижние баннеры</h3>
-          </div>
-
-          
-          <FormField
-            control={form.control}
-            name="showBottomBanners"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-sm font-medium">Показывать нижние баннеры</FormLabel>
-                  <FormDescription className="text-xs">
-                    Два баннера в самом низу главной страницы
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    className="switch-green"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          {form.watch("showBottomBanners") && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Banner 1 */}
-              <div className="space-y-4 border rounded-lg p-4">
-                <h4 className="text-md font-medium">Баннер 1 (левый)</h4>
-                
-                <FormField
-                  control={form.control}
-                  name="bottomBanner1Url"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm flex items-center gap-2">
-                        <Upload className="h-4 w-4" />
-                        Изображение баннера 1
-                      </FormLabel>
-                      <FormControl>
-                        <ImageUpload
-                          value={field.value || ""}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormDescription className="text-xs text-gray-500">
-                        Рекомендуемый размер: 660×260 пикселей (соотношение 2.5:1)
-                      </FormDescription>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="bottomBanner1Link"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">Ссылка при клике на баннер 1</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="https://example.com"
-                          {...field} 
-                          className="text-sm" 
-                        />
-                      </FormControl>
-                      <FormDescription className="text-xs">
-                        Необязательно. Оставьте пустым, если переход не нужен
-                      </FormDescription>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* Banner 2 */}
-              <div className="space-y-4 border rounded-lg p-4">
-                <h4 className="text-md font-medium">Баннер 2 (правый)</h4>
-                
-                <FormField
-                  control={form.control}
-                  name="bottomBanner2Url"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm flex items-center gap-2">
-                        <Upload className="h-4 w-4" />
-                        Изображение баннера 2
-                      </FormLabel>
-                      <FormControl>
-                        <ImageUpload
-                          value={field.value || ""}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormDescription className="text-xs text-gray-500">
-                        Рекомендуемый размер: 660×260 пикселей (соотношение 2.5:1)
-                      </FormDescription>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="bottomBanner2Link"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">Ссылка при клике на баннер 2</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="https://example.com"
-                          {...field} 
-                          className="text-sm" 
-                        />
-                      </FormControl>
-                      <FormDescription className="text-xs">
-                        Необязательно. Оставьте пустым, если переход не нужен
-                      </FormDescription>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-          </CollapsibleContent>
-        </Collapsible>
-
-        {/* Код отслеживания */}
+        {/* {adminT('storeSettings.trackingCode', 'Код отслеживания')} */}
         <Collapsible open={isTrackingCodeOpen} onOpenChange={setIsTrackingCodeOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <Code className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.trackingCode')}</h3>
-                {isTrackingCodeOpen ? (
-                  <ChevronUp className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {isRTL ? (
+                  <>
+                    {isTrackingCodeOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.trackingCode')}</h3>
+                    <Code className="h-5 w-5 text-primary" />
+                  </>
                 ) : (
-                  <ChevronDown className={`h-5 w-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+                  <>
+                    <Code className="h-5 w-5 text-primary" />
+                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.trackingCode')}</h3>
+                    {isTrackingCodeOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </>
                 )}
               </div>
             </Button>
@@ -7138,17 +6591,17 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Code className="h-4 w-4" />
-                    HTML код для секции head
+                    {adminT('storeSettings.htmlHeadCode')}
                   </FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="<!-- Добавьте сюда код Google Analytics, Facebook Pixel, или другие трекинговые скрипты -->" 
+                      placeholder={adminT('storeSettings.htmlHeadExample')} 
                       className="text-sm font-mono min-h-[100px]"
                       {...field}
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
-                    Этот код будет добавлен в секцию &lt;head&gt; всех страниц сайта. Используйте для Google Analytics, Facebook Pixel и других систем аналитики.
+                    {adminT('storeSettings.htmlHeadDescription')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7162,7 +6615,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Code className="h-4 w-4" />
-                    HTML код для подвала сайта
+                    {adminT('storeSettings.htmlFooterCode')}
                   </FormLabel>
                   <FormControl>
                     <Textarea 
@@ -7172,7 +6625,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
-                    Этот код будет добавлен в конец страницы перед закрывающим тегом &lt;/body&gt;. Используйте для онлайн-чатов, кнопок соц. сетей и других виджетов.
+                    {adminT('storeSettings.htmlFooterDescription')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7188,11 +6641,29 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <Users className="h-5 w-5 text-orange-500" />
-                <h3 className="text-lg font-semibold">{adminT('settings.authPage')}</h3>
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {isRTL ? (
+                  <>
+                    {isAuthPageOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.authPage')}</h3>
+                    <Users className="h-5 w-5 text-primary" />
+                  </>
+                ) : (
+                  <>
+                    <Users className="h-5 w-5 text-primary" />
+                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.authPage')}</h3>
+                    {isAuthPageOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </>
+                )}
               </div>
-              {isAuthPageOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-6">
@@ -7203,7 +6674,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    Заголовок страницы входа
+{adminT('storeSettings.authPageTitle')}
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -7213,7 +6684,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    Основной заголовок на странице входа/регистрации
+                    {adminT('storeSettings.authPageMainTitle')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7227,7 +6698,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    Подзаголовок страницы входа
+{adminT('storeSettings.authPageSubtitle')}
                   </FormLabel>
                   <FormControl>
                     <Textarea 
@@ -7237,7 +6708,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    Описание под основным заголовком
+                    {adminT('storeSettings.authPageDescription')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7251,7 +6722,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    Первое преимущество
+                    {adminT('storeSettings.authPageFeature1Label')}
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -7261,7 +6732,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    Первое преимущество в списке на странице авторизации
+                    {adminT('storeSettings.authPageFeature1')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7275,7 +6746,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    Второе преимущество
+                    {adminT('storeSettings.authPageFeature2Label')}
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -7285,7 +6756,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    Второе преимущество в списке на странице авторизации
+                    {adminT('storeSettings.authPageFeature2')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7299,7 +6770,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormItem>
                   <FormLabel className="text-sm flex items-center gap-2">
                     <Type className="h-4 w-4" />
-                    Третье преимущество
+                    {adminT('storeSettings.authPageFeature3Label')}
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -7309,7 +6780,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    Третье преимущество в списке на странице авторизации
+                    {adminT('storeSettings.authPageFeature3')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -7318,14 +6789,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        <div className="flex justify-end">
+        <div className="flex justify-center">
           <Button 
             type="submit" 
             disabled={isLoading}
-            className="bg-orange-500 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200"
+            className="bg-primary text-white hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200"
           >
             <Save className="mr-2 h-4 w-4" />
-            {isLoading ? adminT('common.loading') : adminT('settings.saveSettings')}
+            {isLoading ? adminT('common.loading', 'Загрузка...') : adminT('settings.saveSettings', 'Сохранить настройки')}
           </Button>
         </div>
       </form>
@@ -7339,13 +6810,15 @@ function CancellationReasonDialog({
   orderId, 
   onClose, 
   onConfirm, 
-  cancellationReasons 
+  cancellationReasons,
+  adminT 
 }: {
   open: boolean;
   orderId: number | null;
   onClose: () => void;
   onConfirm: (reason: string) => void;
   cancellationReasons: string[];
+  adminT: (key: string) => string;
 }) {
   const [selectedReason, setSelectedReason] = useState<string>("");
 
@@ -7366,9 +6839,9 @@ function CancellationReasonDialog({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md mx-4">
         <DialogHeader>
-          <DialogTitle className="text-lg">Причина отмены заказа</DialogTitle>
+          <DialogTitle className="text-lg">{adminT('orders.cancelReason')}</DialogTitle>
           <DialogDescription className="text-sm">
-            Выберите причину отмены заказа #{orderId}
+            {adminT('orders.selectCancelReason')} #{orderId}
           </DialogDescription>
         </DialogHeader>
         
@@ -7382,7 +6855,7 @@ function CancellationReasonDialog({
                 value={reason}
                 checked={selectedReason === reason}
                 onChange={(e) => setSelectedReason(e.target.value)}
-                className="text-orange-500 focus:ring-orange-500"
+                className="text-primary focus:ring-orange-500"
               />
               <label htmlFor={`reason-${index}`} className="text-sm cursor-pointer">
                 {reason}
@@ -7391,16 +6864,16 @@ function CancellationReasonDialog({
           ))}
         </div>
 
-        <div className="flex justify-end space-x-2 pt-4">
+        <div className="flex justify-center space-x-2 pt-4">
           <Button variant="outline" onClick={onClose} className="text-sm">
-            Отмена
+            {adminT('common.cancel')}
           </Button>
           <Button 
             onClick={handleConfirm} 
             disabled={!selectedReason}
             className="text-sm bg-red-600 text-white hover:bg-red-700"
           >
-            Отменить заказ
+            {adminT('orders.cancelOrder')}
           </Button>
         </div>
       </DialogContent>
@@ -7410,10 +6883,14 @@ function CancellationReasonDialog({
 
 // User Form Dialog Component
 function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
+  const { t: adminT } = useAdminTranslation();
+  const { i18n } = useCommonTranslation();
+  const isRTL = i18n.language === 'he';
+
   const userSchema = z.object({
-    email: z.string().email("Неверный формат email"),
-    firstName: z.string().min(1, "Имя обязательно"),
-    lastName: z.string().min(1, "Фамилия обязательна"),
+    email: z.string().email(adminT('users.dialog.emailError', 'Неверный формат email')),
+    firstName: z.string().min(1, adminT('users.dialog.firstNameRequired', 'Имя обязательно')),
+    lastName: z.string().min(1, adminT('users.dialog.lastNameRequired', 'Фамилия обязательна')),
     phone: z.string().optional(),
     role: z.enum(["admin", "worker", "customer"]),
     password: z.string().optional(),
@@ -7465,50 +6942,52 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-lg">
-            {user ? "Редактировать пользователя" : "Добавить пользователя"}
+          <DialogTitle className={`text-lg ${isRTL ? 'text-right' : 'text-left'}`}>
+            {user ? adminT('users.editUser', 'Редактировать пользователя') : adminT('users.addUser', 'Добавить пользователя')}
           </DialogTitle>
-          <DialogDescription className="text-sm">
-            {user ? "Изменить информацию о пользователе" : "Создать нового пользователя"}
+          <DialogDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+            {user ? adminT('users.dialog.editDescription', 'Изменить информацию о пользователе') : adminT('users.dialog.addDescription', 'Создать нового пользователя')}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className={`space-y-4 ${isRTL ? 'rtl' : 'ltr'}`}>
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Email *</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.emailLabel', 'Email')} *</FormLabel>
                   <FormControl>
                     <Input 
                       type="email"
-                      placeholder="user@example.com"
+                      placeholder={adminT('users.dialog.emailPlaceholder', 'user@example.com')}
                       {...field}
-                      className="text-sm"
+                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                      dir={isRTL ? 'rtl' : 'ltr'}
                     />
                   </FormControl>
-                  <FormMessage className="text-xs" />
+                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                 </FormItem>
               )}
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className={`grid grid-cols-2 gap-4 ${isRTL ? 'rtl' : 'ltr'}`}>
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">Имя *</FormLabel>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.firstNameLabel', 'Имя')} *</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="Иван"
+                        placeholder={adminT('users.dialog.firstNamePlaceholder', 'Иван')}
                         {...field}
-                        className="text-sm"
+                        className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                        dir={isRTL ? 'rtl' : 'ltr'}
                       />
                     </FormControl>
-                    <FormMessage className="text-xs" />
+                    <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                   </FormItem>
                 )}
               />
@@ -7518,15 +6997,16 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">Фамилия *</FormLabel>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.lastNameLabel', 'Фамилия')} *</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="Иванов"
+                        placeholder={adminT('users.dialog.lastNamePlaceholder', 'Иванов')}
                         {...field}
-                        className="text-sm"
+                        className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                        dir={isRTL ? 'rtl' : 'ltr'}
                       />
                     </FormControl>
-                    <FormMessage className="text-xs" />
+                    <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                   </FormItem>
                 )}
               />
@@ -7537,16 +7017,17 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Телефон</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.phoneLabel', 'Телефон')}</FormLabel>
                   <FormControl>
                     <Input 
                       type="tel"
-                      placeholder="+972-50-123-4567"
+                      placeholder={adminT('users.dialog.phonePlaceholder', '+972-50-123-4567')}
                       {...field}
-                      className="text-sm"
+                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                      dir="ltr"
                     />
                   </FormControl>
-                  <FormMessage className="text-xs" />
+                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                 </FormItem>
               )}
             />
@@ -7556,17 +7037,17 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Роль *</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.roleLabel', 'Роль')} *</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger className="text-sm">
-                        <SelectValue placeholder="Выберите роль" />
+                      <SelectTrigger className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                        <SelectValue placeholder={adminT('users.dialog.rolePlaceholder', 'Выберите роль')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="customer">Клиент</SelectItem>
-                      <SelectItem value="worker">Сотрудник</SelectItem>
-                      <SelectItem value="admin">Администратор</SelectItem>
+                      <SelectItem value="customer">{adminT('users.roles.customer', 'Клиент')}</SelectItem>
+                      <SelectItem value="worker">{adminT('users.roles.worker', 'Сотрудник')}</SelectItem>
+                      <SelectItem value="admin">{adminT('users.roles.admin', 'Администратор')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage className="text-xs" />
@@ -7579,26 +7060,27 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">
-                    {user ? "Новый пароль (оставьте пустым если не меняете)" : "Пароль"}
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                    {user ? adminT('users.dialog.newPasswordLabel', 'Новый пароль (оставьте пустым если не меняете)') : adminT('users.dialog.passwordLabel', 'Пароль')}
                   </FormLabel>
                   <FormControl>
                     <Input 
                       type="password"
-                      placeholder="Минимум 6 символов"
+                      placeholder={adminT('users.dialog.passwordMinLength', 'Минимум 6 символов')}
                       {...field}
-                      className="text-sm"
+                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                      dir={isRTL ? 'rtl' : 'ltr'}
                     />
                   </FormControl>
-                  <FormMessage className="text-xs" />
+                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                 </FormItem>
               )}
             />
 
-            <div className="flex justify-between items-center pt-4">
-              <div className="flex gap-2">
+            <div className={`flex justify-between items-center pt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Button type="button" variant="outline" onClick={onClose} className="text-sm">
-                  Отмена
+                  {adminT('actions.cancel', 'Отмена')}
                 </Button>
                 {user && user.id !== "43948959" && ( // Don't allow deleting yourself
                   <AlertDialog>
@@ -7609,19 +7091,20 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                         className="text-sm text-red-600 border-red-200 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4 mr-1" />
-                        Удалить
+                        {adminT('actions.delete', 'Удалить')}
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Удалить пользователя</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Вы уверены, что хотите удалить пользователя {user.email}? 
-                          Это действие нельзя отменить.
+                        <AlertDialogTitle className={isRTL ? 'text-right' : 'text-left'}>
+                          {adminT('users.deleteUser', 'Удалить пользователя')}?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className={isRTL ? 'text-right' : 'text-left'}>
+                          {adminT('users.dialog.deleteWarning', 'Это действие нельзя отменить. Пользователь будет безвозвратно удален.')}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Отмена</AlertDialogCancel>
+                      <AlertDialogFooter className={isRTL ? 'flex-row-reverse' : ''}>
+                        <AlertDialogCancel>{adminT('actions.cancel', 'Отмена')}</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => {
                             onDelete(user.id);
@@ -7629,7 +7112,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                           }}
                           className="bg-red-600 hover:bg-red-700"
                         >
-                          Удалить
+                          {adminT('actions.delete', 'Удалить')}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -7638,10 +7121,9 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               </div>
               <Button 
                 type="submit" 
-                variant="default"
-                size="sm"
+                className="text-sm bg-primary hover:bg-primary text-white"
               >
-                {user ? "Сохранить изменения" : "Создать пользователя"}
+                {user ? adminT('actions.update', 'Обновить') : adminT('users.addUser', 'Создать пользователя')}
               </Button>
             </div>
           </form>
