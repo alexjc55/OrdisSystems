@@ -143,7 +143,12 @@
     "recommendedSize": "גודל מומלץ: 800x200 פיקסלים",
     "bottomBanners": "באנרים תחתונים",
     "showBottomBanners": "הצג באנרים תחתונים",
-    "showBottomBannersDescription": "באנרים פרסומיים בתחתית העמוד"
+    "showBottomBannersDescription": "באנרים פרסומיים בתחתית העמוד",
+    "bottomBannerSettings": "הגדרות באנרים תחתונים",
+    "firstBanner": "באנר ראשון",
+    "secondBanner": "באנר שני",
+    "link": "קישור",
+    "linkPlaceholder": "https://example.com"
   },
   "tabLabels": {
     "basic": "בסיסי",

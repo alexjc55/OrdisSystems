@@ -131,6 +131,22 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Completed comprehensive theme management internationalization
+  - COMPLETE ELIMINATION: Systematically replaced all hardcoded Russian texts in ThemeManager component
+  - FULL TRANSLATION COVERAGE: Added 50+ new translation keys across all 4 languages (RU/EN/HE/AR)
+    - Visual display settings (banner controls, interface elements, category menu, info blocks)
+    - WhatsApp integration settings (phone format, default messages, setup instructions)
+    - Cart banner configuration (text/image types, colors, sizing recommendations)
+    - Bottom banner management (dual banner setup, link configuration, image uploads)
+    - Additional features (special offers, position controls, visual toggles)
+  - MULTILINGUAL CONSISTENCY: All theme management interfaces now support complete language switching
+    - Russian: Complete native interface with proper terminology
+    - English: Professional business terminology and clear descriptions
+    - Hebrew: Right-to-left optimized with proper Hebrew translations
+    - Arabic: RTL layout with authentic Arabic business terms
+  - SYSTEMATIC APPROACH: Used translation functions (adminT) for all user-facing text elements
+  - TECHNICAL IMPLEMENTATION: Maintained existing functionality while adding full i18n support
+  - TOTAL KEYS ADDED: 50+ new translation keys synchronized across all language files
 - June 28, 2025: Completed comprehensive translation system audit and RTL admin panel unification
   - CRITICAL FIXES: Resolved translation key conflicts (categories string vs object) causing runtime errors
   - FULL SYNCHRONIZATION: All 4 languages (RU/EN/HE/AR) now have complete translation coverage

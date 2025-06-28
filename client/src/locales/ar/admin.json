@@ -1206,7 +1206,12 @@
     "recommendedSize": "الحجم المُوصى به: 800x200 بكسل",
     "bottomBanners": "البانرات السفلية",
     "showBottomBanners": "إظهار البانرات السفلية",
-    "showBottomBannersDescription": "بانرات إعلانية في أسفل الصفحة"
+    "showBottomBannersDescription": "بانرات إعلانية في أسفل الصفحة",
+    "bottomBannerSettings": "إعدادات البانرات السفلية",
+    "firstBanner": "البانر الأول",
+    "secondBanner": "البانر الثاني",
+    "link": "الرابط",
+    "linkPlaceholder": "https://example.com"
   },
   "tabLabels": {
     "basic": "أساسي",
