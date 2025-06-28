@@ -500,7 +500,7 @@ export default function Home() {
                     </div>
                     <div className="flex justify-start md:justify-end mt-6 md:mt-0">
                       <Button
-                        onClick={() => setSelectedCategoryId(0)}
+                        onClick={() => handleCategorySelect(0)}
                         className="w-full md:w-auto bg-primary hover:bg-primary-hover !text-white hover:!text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                       >
                         <Package className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
@@ -646,11 +646,10 @@ export default function Home() {
           {/* Category/Product List View */}
           {(selectedCategory || selectedCategoryId === 0 || searchQuery.length > 2) && (
             <div>
-              {/* Category Header */}
+              {/* Category Header - Back Button Only */}
               {selectedCategory && (
                 <div className="mb-6">
-                  <div className="flex items-center justify-between gap-4 mb-2">
-                    <h2 className="text-2xl font-bold text-gray-900">{selectedCategory.name}</h2>
+                  <div className="flex justify-end">
                     <Button
                       onClick={handleResetView}
                       variant="ghost"
@@ -661,9 +660,6 @@ export default function Home() {
                       <span className="hidden sm:inline">{t('buttons.back', 'Назад')}</span>
                     </Button>
                   </div>
-                  {selectedCategory.description && (
-                    <p className="text-gray-600">{selectedCategory.description}</p>
-                  )}
                 </div>
               )}
 
