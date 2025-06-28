@@ -1146,7 +1146,25 @@
     "infoColor": "معلومات",
     "tomorrowColor": "زر 'غداً'",
     "tomorrowDarkColor": "زر 'غداً' (عند التمرير)",
-    "outOfStockColor": "زر 'نفد المخزون'"
+    "outOfStockColor": "زر 'نفد المخزون'",
+    "workingHoursIconColor": "ساعات العمل",
+    "contactsIconColor": "جهات الاتصال",
+    "paymentDeliveryIconColor": "الدفع والتوصيل"
+  },
+  "statusLabels": {
+    "mainStatusColors": "ألوان الحالة الرئيسية",
+    "specialButtonsDescription": "\"غداً\" - للعناصر غير المتاحة اليوم، \"نفد المخزون\" - للشارات",
+    "iconColors": "أيقونات كتل المعلومات",
+    "iconColorsDescription": "ألوان الأيقونات الدائرية في كتل \"ساعات العمل\" و\"جهات الاتصال\" و\"الدفع والتوصيل\" في الصفحة الرئيسية"
+  },
+  "tabLabels": {
+    "basic": "أساسي",
+    "colors": "ألوان",
+    "visuals": "مرئيات"
+  },
+  "imageLabels": {
+    "storeLogo": "شعار المتجر",
+    "bannerImage": "صورة البانر"
   },
   "imageUpload": {
     "selectFile": "ترجمة مفقودة",

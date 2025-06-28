@@ -94,6 +94,15 @@
     "iconColors": "אייקוני בלוקי מידע",
     "iconColorsDescription": "צבעים לאייקונים עגולים בבלוקים \"שעות פעילות\", \"צור קשר\" ו\"תשלום ומשלוח\" בעמוד הבית"
   },
+  "tabLabels": {
+    "basic": "בסיסי",
+    "colors": "צבעים",
+    "visuals": "ויזואלים"
+  },
+  "imageLabels": {
+    "storeLogo": "לוגו החנות",
+    "bannerImage": "תמונת באנר"
+  },
   "storeSettings": {
     "title": "הגדרות חנות",
     "description": "תיאור הגדרות פרמטרים בסיסיים של החנות",

@@ -94,6 +94,15 @@
     "iconColors": "Info Block Icons",
     "iconColorsDescription": "Colors for round icons in \"Working Hours\", \"Contacts\" and \"Payment and Delivery\" blocks on homepage"
   },
+  "tabLabels": {
+    "basic": "Basic",
+    "colors": "Colors",
+    "visuals": "Visuals"
+  },
+  "imageLabels": {
+    "storeLogo": "Store Logo",
+    "bannerImage": "Banner Image"
+  },
   "storeSettings": {
     "title": "Store Settings",
     "description": "Configuration of basic store parameters",

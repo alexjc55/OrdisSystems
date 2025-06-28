@@ -1106,14 +1106,14 @@ export default function ThemeManager() {
                       </div>
                       
                       <div>
-                        <h5 className="text-sm font-medium mb-2">Иконки информационных блоков</h5>
+                        <h5 className="text-sm font-medium mb-2">{adminT("statusLabels.iconColors")}</h5>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <ColorInput label="Часы работы" name="workingHoursIconColor" defaultValue="#3b82f6" />
-                          <ColorInput label="Контакты" name="contactsIconColor" defaultValue="#22c55e" />
-                          <ColorInput label="Оплата и доставка" name="paymentDeliveryIconColor" defaultValue="#a855f7" />
+                          <ColorInput label={adminT("colorLabels.workingHoursIconColor")} name="workingHoursIconColor" defaultValue="#3b82f6" />
+                          <ColorInput label={adminT("colorLabels.contactsIconColor")} name="contactsIconColor" defaultValue="#22c55e" />
+                          <ColorInput label={adminT("colorLabels.paymentDeliveryIconColor")} name="paymentDeliveryIconColor" defaultValue="#a855f7" />
                         </div>
                         <div className="text-sm text-gray-500 mt-2">
-                          ℹ️ Цвета круглых иконок в блоках "Часы работы", "Контакты" и "Оплата и доставка" на главной странице
+                          ℹ️ {adminT("statusLabels.iconColorsDescription")}
                         </div>
                       </div>
                     </div>
@@ -1599,9 +1599,9 @@ export default function ThemeManager() {
         <Dialog open={!!editingTheme} onOpenChange={() => setEditingTheme(null)}>
           <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Редактирование темы: {editingTheme.name}</DialogTitle>
+              <DialogTitle>{adminT("themes.editTheme")}: {editingTheme.name}</DialogTitle>
               <DialogDescription>
-                Настройте цвета и параметры темы оформления
+                {adminT("themes.createDescription")}
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={(e) => {
