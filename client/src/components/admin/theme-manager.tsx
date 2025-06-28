@@ -1228,6 +1228,167 @@ export default function ThemeManager() {
                       </div>
                     )}
                   </div>
+
+                  {/* Баннеры корзины */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Баннер в корзине</h4>
+                    <div className="space-y-4">
+                      <VisualToggleButton 
+                        isEnabled={visualSettings.showCartBanner}
+                        onToggle={() => setVisualSettings(prev => ({ ...prev, showCartBanner: !prev.showCartBanner }))}
+                        label="Показывать баннер в корзине"
+                        description="Рекламный баннер для привлечения внимания"
+                        fieldName="showCartBanner"
+                      />
+
+                      {visualSettings.showCartBanner && (
+                        <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
+                          <h5 className="text-sm font-medium text-gray-800">Настройки баннера корзины</h5>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="cartBannerTypeCreate" className="text-sm">Тип баннера</Label>
+                              <select
+                                name="cartBannerType"
+                                id="cartBannerTypeCreate"
+                                defaultValue="text"
+                                className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                              >
+                                <option value="text">Текстовый</option>
+                                <option value="image">Изображение</option>
+                              </select>
+                            </div>
+                            <div>
+                              <Label htmlFor="cartBannerTextCreate" className="text-sm">Текст баннера</Label>
+                              <input
+                                type="text"
+                                name="cartBannerText"
+                                id="cartBannerTextCreate"
+                                defaultValue=""
+                                placeholder="Специальное предложение!"
+                                className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="cartBannerBgColorCreate" className="text-sm">Цвет фона</Label>
+                              <Input
+                                type="color"
+                                name="cartBannerBgColor"
+                                id="cartBannerBgColorCreate"
+                                defaultValue="#f97316"
+                                className="w-full h-10"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="cartBannerTextColorCreate" className="text-sm">Цвет текста</Label>
+                              <Input
+                                type="color"
+                                name="cartBannerTextColor"
+                                id="cartBannerTextColorCreate"
+                                defaultValue="#ffffff"
+                                className="w-full h-10"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <Label htmlFor="cartBannerImageCreate" className="text-sm font-medium">Изображение баннера</Label>
+                            <ImageUpload
+                              value=""
+                              onChange={(url: string) => {
+                                // Update form data will be handled by the form submission
+                              }}
+                            />
+                            <input type="hidden" name="cartBannerImage" value="" />
+                            <div className="text-xs text-gray-500 mt-1">
+                              Рекомендуемый размер: 800x200 пикселей
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Нижние баннеры */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Нижние баннеры</h4>
+                    <div className="space-y-4">
+                      <VisualToggleButton 
+                        isEnabled={visualSettings.showBottomBanners}
+                        onToggle={() => setVisualSettings(prev => ({ ...prev, showBottomBanners: !prev.showBottomBanners }))}
+                        label="Показывать нижние баннеры"
+                        description="Рекламные баннеры внизу страницы"
+                        fieldName="showBottomBanners"
+                      />
+
+                      {visualSettings.showBottomBanners && (
+                        <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
+                          <h5 className="text-sm font-medium text-gray-800">Настройки нижних баннеров</h5>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Первый баннер */}
+                            <div className="space-y-3">
+                              <h6 className="text-sm font-medium text-gray-700">Первый баннер</h6>
+                              <div>
+                                <Label htmlFor="bottomBanner1UrlCreate" className="text-sm">Изображение</Label>
+                                <ImageUpload
+                                  value=""
+                                  onChange={(url: string) => {
+                                    // Update form data will be handled by the form submission
+                                  }}
+                                />
+                                <input type="hidden" name="bottomBanner1Url" value="" />
+                              </div>
+                              <div>
+                                <Label htmlFor="bottomBanner1LinkCreate" className="text-sm">Ссылка</Label>
+                                <input
+                                  type="url"
+                                  name="bottomBanner1Link"
+                                  id="bottomBanner1LinkCreate"
+                                  defaultValue=""
+                                  placeholder="https://example.com"
+                                  className="w-full px-3 py-2 border rounded-md bg-white text-sm mt-1"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Второй баннер */}
+                            <div className="space-y-3">
+                              <h6 className="text-sm font-medium text-gray-700">Второй баннер</h6>
+                              <div>
+                                <Label htmlFor="bottomBanner2UrlCreate" className="text-sm">Изображение</Label>
+                                <ImageUpload
+                                  value=""
+                                  onChange={(url: string) => {
+                                    // Update form data will be handled by the form submission
+                                  }}
+                                />
+                                <input type="hidden" name="bottomBanner2Url" value="" />
+                              </div>
+                              <div>
+                                <Label htmlFor="bottomBanner2LinkCreate" className="text-sm">Ссылка</Label>
+                                <input
+                                  type="url"
+                                  name="bottomBanner2Link"
+                                  id="bottomBanner2LinkCreate"
+                                  defaultValue=""
+                                  placeholder="https://example.com"
+                                  className="w-full px-3 py-2 border rounded-md bg-white text-sm mt-1"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="text-xs text-gray-500">
+                            Рекомендуемый размер изображений: 600x300 пикселей
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </TabsContent>
 
 
@@ -1756,6 +1917,168 @@ export default function ThemeManager() {
                         </div>
                       </div>
                     )}
+                  </div>
+
+                  {/* Баннеры корзины */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Баннер в корзине</h4>
+                    <div className="space-y-4">
+                      <VisualToggleButton 
+                        isEnabled={editVisualSettings.showCartBanner}
+                        onToggle={() => setEditVisualSettings(prev => ({ ...prev, showCartBanner: !prev.showCartBanner }))}
+                        label="Показывать баннер в корзине"
+                        description="Рекламный баннер для привлечения внимания"
+                        fieldName="showCartBanner"
+                      />
+
+                      {editVisualSettings.showCartBanner && (
+                        <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
+                          <h5 className="text-sm font-medium text-gray-800">Настройки баннера корзины</h5>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="cartBannerType" className="text-sm">Тип баннера</Label>
+                              <select
+                                name="cartBannerType"
+                                id="cartBannerType"
+                                defaultValue={editingTheme?.cartBannerType || "text"}
+                                className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                              >
+                                <option value="text">Текстовый</option>
+                                <option value="image">Изображение</option>
+                              </select>
+                            </div>
+                            <div>
+                              <Label htmlFor="cartBannerText" className="text-sm">Текст баннера</Label>
+                              <input
+                                type="text"
+                                name="cartBannerText"
+                                id="cartBannerText"
+                                defaultValue={editingTheme?.cartBannerText || ""}
+                                placeholder="Специальное предложение!"
+                                className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="cartBannerBgColor" className="text-sm">Цвет фона</Label>
+                              <Input
+                                type="color"
+                                name="cartBannerBgColor"
+                                id="cartBannerBgColor"
+                                defaultValue={editingTheme?.cartBannerBgColor || "#f97316"}
+                                className="w-full h-10"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="cartBannerTextColor" className="text-sm">Цвет текста</Label>
+                              <Input
+                                type="color"
+                                name="cartBannerTextColor"
+                                id="cartBannerTextColor"
+                                defaultValue={editingTheme?.cartBannerTextColor || "#ffffff"}
+                                className="w-full h-10"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <Label htmlFor="cartBannerImage" className="text-sm font-medium">Изображение баннера</Label>
+                            <ImageUpload
+                              value={editingTheme?.cartBannerImage || ""}
+                              onChange={(url: string) => {
+                                // Update form data will be handled by the form submission
+                              }}
+                            />
+                            <input type="hidden" name="cartBannerImage" value={editingTheme?.cartBannerImage || ""} />
+                            <div className="text-xs text-gray-500 mt-1">
+                              Рекомендуемый размер: 800x200 пикселей
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Нижние баннеры */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Нижние баннеры</h4>
+                    <div className="space-y-4">
+                      <VisualToggleButton 
+                        isEnabled={editVisualSettings.showBottomBanners}
+                        onToggle={() => setEditVisualSettings(prev => ({ ...prev, showBottomBanners: !prev.showBottomBanners }))}
+                        label="Показывать нижние баннеры"
+                        description="Рекламные баннеры внизу страницы"
+                        fieldName="showBottomBanners"
+                      />
+
+                      {editVisualSettings.showBottomBanners && (
+                        <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
+                          <h5 className="text-sm font-medium text-gray-800">Настройки нижних баннеров</h5>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Первый баннер */}
+                            <div className="space-y-3">
+                              <h6 className="text-sm font-medium text-gray-700">Первый баннер</h6>
+                              <div>
+                                <Label htmlFor="bottomBanner1Url" className="text-sm">Изображение</Label>
+                                <ImageUpload
+                                  value={editingTheme?.bottomBanner1Url || ""}
+                                  onChange={(url: string) => {
+                                    // Update form data will be handled by the form submission
+                                  }}
+                                />
+                                <input type="hidden" name="bottomBanner1Url" value={editingTheme?.bottomBanner1Url || ""} />
+                              </div>
+                              <div>
+                                <Label htmlFor="bottomBanner1Link" className="text-sm">Ссылка</Label>
+                                <input
+                                  type="url"
+                                  name="bottomBanner1Link"
+                                  id="bottomBanner1Link"
+                                  defaultValue={editingTheme?.bottomBanner1Link || ""}
+                                  placeholder="https://example.com"
+                                  className="w-full px-3 py-2 border rounded-md bg-white text-sm mt-1"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Второй баннер */}
+                            <div className="space-y-3">
+                              <h6 className="text-sm font-medium text-gray-700">Второй баннер</h6>
+                              <div>
+                                <Label htmlFor="bottomBanner2Url" className="text-sm">Изображение</Label>
+                                <ImageUpload
+                                  name="bottomBanner2Url"
+                                  currentImageUrl={editingTheme?.bottomBanner2Url || ""}
+                                  onImageChange={(url) => {
+                                    // Update form data will be handled by the form submission
+                                  }}
+                                  className="mt-1"
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="bottomBanner2Link" className="text-sm">Ссылка</Label>
+                                <input
+                                  type="url"
+                                  name="bottomBanner2Link"
+                                  id="bottomBanner2Link"
+                                  defaultValue={editingTheme?.bottomBanner2Link || ""}
+                                  placeholder="https://example.com"
+                                  className="w-full px-3 py-2 border rounded-md bg-white text-sm mt-1"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="text-xs text-gray-500">
+                            Рекомендуемый размер изображений: 600x300 пикселей
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </TabsContent>
 
