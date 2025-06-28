@@ -771,7 +771,10 @@
     "visualSettings": "Visual settings",
     "whatsappEnabled": "WhatsApp enabled",
     "whatsappNumber": "WhatsApp number",
-    "whatsappSettings": "WhatsApp settings"
+    "whatsappSettings": "WhatsApp settings",
+    "saved": "Settings saved",
+    "saveSuccess": "Settings successfully updated",
+    "saveError": "Failed to save settings"
   },
   "permissions": {
     "title": "Permissions",

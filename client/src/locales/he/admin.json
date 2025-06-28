@@ -339,7 +339,10 @@
     "whatsappNumber": "מספר WhatsApp",
     "whatsappSettings": "הגדרות WhatsApp",
     "workingHours": "שעות עבודה",
-    "paymentMethods": "אמצעי תשלום"
+    "paymentMethods": "אמצעי תשלום",
+    "saved": "ההגדרות נשמרו",
+    "saveSuccess": "ההגדרות עודכנו בהצלחה",
+    "saveError": "שמירת ההגדרות נכשלה"
   },
   "dashboard": {
     "title": "פאנל ניהול",

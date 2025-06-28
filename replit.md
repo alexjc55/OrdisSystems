@@ -131,6 +131,10 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 28, 2025: Fixed missing translation keys for settings notifications
+  - Added missing translation keys for settings save notifications in all languages (RU/EN/HE)
+  - Fixed issue where settings update notifications appeared in English despite Russian interface
+  - Added translations: settings.saved, settings.saveSuccess, settings.saveError
 - June 28, 2025: Enhanced admin system settings with theme access management and eye icon controls
   - Added "Управление темами" (Theme Management) permission option in system settings
   - Replaced all switch toggles with eye/eye-off icon buttons for more compact interface design

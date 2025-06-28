@@ -769,7 +769,10 @@
     "securitySettings": "Настройки безопасности",
     "shippingOptions": "Варианты доставки",
     "systemMaintenance": "Обслуживание системы",
-    "taxSettings": "Налоговые настройки"
+    "taxSettings": "Налоговые настройки",
+    "saved": "Настройки сохранены",
+    "saveSuccess": "Настройки успешно обновлены",
+    "saveError": "Не удалось сохранить настройки"
   },
   "permissions": {
     "title": "Права доступа",
