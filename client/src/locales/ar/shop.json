@@ -157,6 +157,7 @@
     "deliveryAddress": "عنوان التوصيل",
     "deliveryAddressPlaceholder": "أدخل عنوان التوصيل",
     "savedAddresses": "العناوين المحفوظة",
+    "paymentMethod": "طريقة الدفع",
     "selectPaymentMethod": "اختر طريقة الدفع",
     "placeOrderAsGuest": "تقديم الطلب كضيف",
     "guest": "ضيف",
