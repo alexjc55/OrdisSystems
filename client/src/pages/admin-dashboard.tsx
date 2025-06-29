@@ -2278,12 +2278,12 @@ export default function AdminDashboard() {
   const [editingUser, setEditingUser] = useState<any>(null);
   
   const handleDeleteUser = async (userId: string) => {
-    if (window.confirm(adminT('users.deleteConfirm', 'Вы уверены, что хотите удалить этого пользователя?'))) {
+    if (window.confirm(adminT('users.deleteConfirm'))) {
       try {
         await apiRequest('DELETE', `/api/admin/users/${userId}`);
         toast({
           title: adminT('users.deleted'),
-          description: adminT('users.deleteSuccess', 'Пользователь успешно удален'),
+          description: adminT('users.deleteSuccess'),
         });
         queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
       } catch (error: any) {
@@ -3277,7 +3277,7 @@ export default function AdminDashboard() {
                       {adminT('products.title')}
                     </CardTitle>
                     <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                      {adminT('products.description', 'Полное управление товарами с поиском и фильтрацией')}
+                      {adminT('products.description')}
                     </CardDescription>
                   </div>
                   <Button 
@@ -3330,14 +3330,14 @@ export default function AdminDashboard() {
                       <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                       <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
                         <SelectTrigger className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
-                          <SelectValue placeholder={adminT('products.productStatus', 'Статус товара')} />
+                          <SelectValue placeholder={adminT('products.productStatus')} />
                         </SelectTrigger>
                         <SelectContent className="bg-white border border-gray-200 shadow-lg">
                           <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{adminT('products.allProducts')}</SelectItem>
-                          <SelectItem value="available" className="text-gray-900 hover:bg-gray-100">{adminT('products.availableProducts', 'Доступные товары')}</SelectItem>
-                          <SelectItem value="unavailable" className="text-gray-900 hover:bg-gray-100">{adminT('products.unavailableProducts', 'Недоступные товары')}</SelectItem>
-                          <SelectItem value="out_of_stock_today" className="text-gray-900 hover:bg-gray-100">{adminT('products.preorderProducts', 'Заказ на другой день')}</SelectItem>
-                          <SelectItem value="with_discount" className="text-gray-900 hover:bg-gray-100">{adminT('products.productsWithDiscount', 'Товары со скидкой')}</SelectItem>
+                          <SelectItem value="available" className="text-gray-900 hover:bg-gray-100">{adminT('products.availableProducts')}</SelectItem>
+                          <SelectItem value="unavailable" className="text-gray-900 hover:bg-gray-100">{adminT('products.unavailableProducts')}</SelectItem>
+                          <SelectItem value="out_of_stock_today" className="text-gray-900 hover:bg-gray-100">{adminT('products.preorderProducts')}</SelectItem>
+                          <SelectItem value="with_discount" className="text-gray-900 hover:bg-gray-100">{adminT('products.productsWithDiscount')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -3642,12 +3642,12 @@ export default function AdminDashboard() {
                   <div className="text-center py-8">
                     <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      {searchQuery || selectedCategoryFilter !== "all" ? adminT('common.noResults', 'Товары не найдены') : adminT('products.noProducts', 'Нет товаров')}
+                      {searchQuery || selectedCategoryFilter !== "all" ? adminT('common.noResults') : adminT('products.noProducts')}
                     </h3>
                     <p className="text-gray-500 text-sm">
                       {searchQuery || selectedCategoryFilter !== "all" 
-                        ? adminT('common.tryDifferentSearch', 'Попробуйте изменить критерии поиска или фильтрации')
-                        : adminT('products.addFirstProduct', 'Начните с добавления первого товара')
+                        ? adminT('common.tryDifferentSearch')
+                        : adminT('products.addFirstProduct')
                       }
                     </p>
                   </div>
@@ -3659,7 +3659,7 @@ export default function AdminDashboard() {
                     {/* Mobile: Stack info and controls */}
                     <div className="sm:hidden space-y-2">
                       <div className="text-center text-xs text-gray-600">
-                        {adminT('common.showing', 'Показано')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {adminT('common.of', 'из')} {productsTotal}
+                        {adminT('common.showing')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {adminT('common.of')} {productsTotal}
                       </div>
                       <div className="flex items-center justify-center gap-2">
                         <Button
@@ -3711,7 +3711,7 @@ export default function AdminDashboard() {
                     {/* Desktop: Original layout */}
                     <div className="hidden sm:flex items-center justify-between">
                       <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <span>{adminT('common.showing', 'Показано')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {adminT('common.of', 'из')} {productsTotal}</span>
+                        <span>{adminT('common.showing')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {adminT('common.of')} {productsTotal}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Button
@@ -3778,7 +3778,7 @@ export default function AdminDashboard() {
                       {adminT('categories.title')}
                     </CardTitle>
                     <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                      {adminT('categories.description', 'Простое управление категориями')}
+                      {adminT('categories.description')}
                     </CardDescription>
                   </div>
                   <Button 
@@ -3798,7 +3798,7 @@ export default function AdminDashboard() {
                 {(categories as any[] || []).length > 0 ? (
                   <div className="space-y-4" style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
                     <div className="text-sm text-gray-600 mb-4">
-                      {adminT('categories.dragToReorder', 'Перетащите категории для изменения порядка отображения')}
+                      {adminT('categories.dragToReorder')}
                     </div>
                     <DndContext 
                       sensors={sensors}
@@ -3832,8 +3832,8 @@ export default function AdminDashboard() {
                 ) : (
                   <div className={`text-center py-8 ${isRTL ? 'text-right' : 'text-left'}`}>
                     <Utensils className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className={`text-lg font-medium text-gray-900 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.noCategories', 'Нет категорий')}</h3>
-                    <p className={`text-gray-500 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.addFirstCategory', 'Начните с добавления первой категории')}</p>
+                    <h3 className={`text-lg font-medium text-gray-900 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.noCategories')}</h3>
+                    <p className={`text-gray-500 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.addFirstCategory')}</p>
                   </div>
                 )}
               </CardContent>
@@ -3851,7 +3851,7 @@ export default function AdminDashboard() {
                     <ShoppingCart className="h-6 w-6" />
                     {adminT('orders.title')}
                   </h1>
-                  <p className={`text-gray-600 mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.description', 'Управление заказами клиентов')}</p>
+                  <p className={`text-gray-600 mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.description')}</p>
                 </div>
               
               {/* Controls Row */}
@@ -3865,7 +3865,7 @@ export default function AdminDashboard() {
                     className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "table" ? 'bg-primary text-white hover:bg-primary' : 'hover:bg-gray-200'}`}
                   >
                     <Grid3X3 className={`h-3 w-3 mr-1 ${ordersViewMode === "table" ? 'text-white' : ''}`} />
-                    {adminT('common.table', 'Таблица')}
+                    {adminT('common.table')}
                   </Button>
                   <Button
                     variant={ordersViewMode === "kanban" ? "default" : "ghost"}
@@ -3874,7 +3874,7 @@ export default function AdminDashboard() {
                     className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "kanban" ? 'bg-primary text-white hover:bg-primary' : 'hover:bg-gray-200'}`}
                   >
                     <Columns className={`h-3 w-3 mr-1 ${ordersViewMode === "kanban" ? 'text-white' : ''}`} />
-                    {adminT('common.kanban', 'Канбан')}
+                    {adminT('common.kanban')}
                   </Button>
                 </div>
 
@@ -3882,20 +3882,20 @@ export default function AdminDashboard() {
                 <div className={`flex gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
                     <SelectTrigger className="w-40 text-xs h-8">
-                      <SelectValue placeholder={adminT('orders.filterOrders', 'Фильтр заказов')} />
+                      <SelectValue placeholder={adminT('orders.filterOrders')} />
                     </SelectTrigger>
                     <SelectContent className="min-w-[160px] max-w-[200px] bg-white border border-gray-200 shadow-lg z-50">
-                      <SelectItem value="active">{adminT('orders.activeOrders', 'Активные заказы')}</SelectItem>
-                      <SelectItem value="delivered">{adminT('orders.deliveredOrders', 'Доставленные заказы')}</SelectItem>
-                      <SelectItem value="cancelled">{adminT('orders.cancelledOrders', 'Отмененные заказы')}</SelectItem>
-                      <SelectItem value="all">{adminT('orders.allOrders', 'Все заказы')}</SelectItem>
+                      <SelectItem value="active">{adminT('orders.activeOrders')}</SelectItem>
+                      <SelectItem value="delivered">{adminT('orders.deliveredOrders')}</SelectItem>
+                      <SelectItem value="cancelled">{adminT('orders.cancelledOrders')}</SelectItem>
+                      <SelectItem value="all">{adminT('orders.allOrders')}</SelectItem>
                     </SelectContent>
                   </Select>
 
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
                     <Input
-                      placeholder={adminT('orders.searchOrders', 'Поиск заказов...')}
+                      placeholder={adminT('orders.searchOrders')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-9 text-xs h-8 w-48"
@@ -3927,7 +3927,7 @@ export default function AdminDashboard() {
                                 <TableHead 
                                   className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '180px'} : {textAlign: 'center', width: '180px'}}
-                                >{adminT('orders.customer', 'Клиент')}</TableHead>
+                                >{adminT('orders.customer')}</TableHead>
                                 <TableHead 
                                   className={`text-xs sm:text-sm hidden sm:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '120px'} : {textAlign: 'center', width: '120px'}}
@@ -3989,7 +3989,7 @@ export default function AdminDashboard() {
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <Phone className="h-4 w-4 mr-2" />
-                                              {adminT('orders.call', 'Позвонить')}
+                                              {adminT('orders.call')}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem 
                                               onClick={() => {
@@ -3999,7 +3999,7 @@ export default function AdminDashboard() {
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <MessageCircle className="h-4 w-4 mr-2" />
-                                              {adminT('orders.whatsapp', 'WhatsApp')}
+                                              {adminT('orders.whatsapp')}
                                             </DropdownMenuItem>
                                           </DropdownMenuContent>
                                         </DropdownMenu>
@@ -4255,7 +4255,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-yellow-800 flex items-center gap-2">
                               <Clock className="h-4 w-4" />
-                              {adminT('orders.status.pending', 'Ожидает')} ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
+                              {adminT('orders.status.pending')} ({ordersResponse.data.filter((o: any) => o.status === 'pending').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'pending').map((order: any) => (
@@ -4290,7 +4290,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-blue-800 flex items-center gap-2">
                               <ShoppingCart className="h-4 w-4" />
-                              {adminT('orders.status.confirmed', 'Подтвержден')} ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
+                              {adminT('orders.status.confirmed')} ({ordersResponse.data.filter((o: any) => o.status === 'confirmed').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'confirmed').map((order: any) => (
@@ -4325,7 +4325,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-orange-800 flex items-center gap-2">
                               <Utensils className="h-4 w-4" />
-                              {adminT('orders.status.preparing', 'Готовится')} ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
+                              {adminT('orders.status.preparing')} ({ordersResponse.data.filter((o: any) => o.status === 'preparing').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'preparing').map((order: any) => (
@@ -4360,7 +4360,7 @@ export default function AdminDashboard() {
                           >
                             <h3 className="font-semibold text-sm mb-3 text-green-800 flex items-center gap-2">
                               <Package className="h-4 w-4" />
-                              {adminT('orders.status.ready', 'Готов')} ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
+                              {adminT('orders.status.ready')} ({ordersResponse.data.filter((o: any) => o.status === 'ready').length})
                             </h3>
                             <div className="space-y-3 min-h-24">
                               {ordersResponse.data.filter((order: any) => order.status === 'ready').map((order: any) => (
@@ -4396,7 +4396,7 @@ export default function AdminDashboard() {
                             >
                               <h3 className="font-semibold text-sm mb-3 text-gray-800 flex items-center gap-2">
                                 <Truck className="h-4 w-4" />
-                                {adminT('orders.status.delivered', 'Доставлен')} ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
+                                {adminT('orders.status.delivered')} ({ordersResponse.data.filter((o: any) => o.status === 'delivered').length})
                               </h3>
                               <div className="space-y-3 min-h-24">
                                 {ordersResponse.data.filter((order: any) => order.status === 'delivered').map((order: any) => (
@@ -4430,7 +4430,7 @@ export default function AdminDashboard() {
                             >
                               <h3 className="font-semibold text-sm mb-3 text-red-800 flex items-center gap-2">
                                 <X className="h-4 w-4" />
-                                {adminT('orders.status.cancelled', 'Отменен')} ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
+                                {adminT('orders.status.cancelled')} ({ordersResponse.data.filter((o: any) => o.status === 'cancelled').length})
                               </h3>
                               <div className="space-y-3 min-h-24">
                                 {ordersResponse.data.filter((order: any) => order.status === 'cancelled').map((order: any) => (
@@ -4619,10 +4619,10 @@ export default function AdminDashboard() {
                     <div className={isRTL ? 'text-right' : 'text-left'}>
                       <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                         <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                        {adminT('users.title', 'Пользователи')}
+                        {adminT('users.title')}
                       </CardTitle>
                       <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        {adminT('users.description', 'Управление пользователями системы')}
+                        {adminT('users.description')}
                       </CardDescription>
                     </div>
                   </div>
@@ -4637,24 +4637,24 @@ export default function AdminDashboard() {
                       className={`bg-primary hover:bg-primary text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
                     >
                       <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                      {adminT('users.addUser', 'Добавить пользователя')}
+                      {adminT('users.addUser')}
                     </Button>
                     <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
                       <SelectTrigger className="w-40">
-                        <SelectValue placeholder={adminT('users.allRoles', 'Все роли')} />
+                        <SelectValue placeholder={adminT('users.allRoles')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">{adminT('users.allRoles', 'Все роли')}</SelectItem>
-                        <SelectItem value="admin">{adminT('users.roles.admin', 'Администратор')}</SelectItem>
-                        <SelectItem value="worker">{adminT('users.roles.worker', 'Сотрудник')}</SelectItem>
-                        <SelectItem value="customer">{adminT('users.roles.customer', 'Клиент')}</SelectItem>
+                        <SelectItem value="all">{adminT('users.allRoles')}</SelectItem>
+                        <SelectItem value="admin">{adminT('users.roles.admin')}</SelectItem>
+                        <SelectItem value="worker">{adminT('users.roles.worker')}</SelectItem>
+                        <SelectItem value="customer">{adminT('users.roles.customer')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   {/* Search field */}
                   <div className={`flex-1 ${isRTL ? 'order-last' : 'order-first'}`}>
                     <Input
-                      placeholder={adminT('users.searchPlaceholder', 'Поиск пользователей...')}
+                      placeholder={adminT('users.searchPlaceholder')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className={`max-w-sm ${isRTL ? 'text-right ml-auto' : ''}`}
@@ -4675,11 +4675,11 @@ export default function AdminDashboard() {
                       <Table className={`w-full users-table ${isRTL ? 'rtl' : 'ltr'}`}>
                         <TableHeader className="bg-gray-50/80">
                           <TableRow className="border-b border-gray-100" dir={isRTL ? 'rtl' : 'ltr'}>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.name', 'Имя')}</TableHead>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.role', 'Роль')}</TableHead>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.phone', 'Телефон')}</TableHead>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.orders', 'Заказов')}</TableHead>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.totalAmount', 'Сумма заказов')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.name')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.role')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.phone')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.orders')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.totalAmount')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -4695,7 +4695,7 @@ export default function AdminDashboard() {
                                 >
                                   {user.firstName && user.lastName 
                                     ? `${user.firstName} ${user.lastName}`
-                                    : user.email || adminT('users.unnamed', 'Безымянный пользователь')
+                                    : user.email || adminT('users.unnamed')
                                   }
                                 </span>
                               </TableCell>
@@ -4705,8 +4705,8 @@ export default function AdminDashboard() {
                                   user.role === "worker" ? "border-orange-200 text-orange-700 bg-orange-50 text-xs" :
                                   "border-gray-200 text-gray-700 bg-gray-50 text-xs"
                                 }>
-                                  {user.role === "admin" ? adminT('users.roles.admin', 'Администратор') : 
-                                   user.role === "worker" ? adminT('users.roles.worker', 'Сотрудник') : adminT('users.roles.customer', 'Клиент')}
+                                  {user.role === "admin" ? adminT('users.roles.admin') : 
+                                   user.role === "worker" ? adminT('users.roles.worker') : adminT('users.roles.customer')}
                                 </Badge>
                               </TableCell>
                               <TableCell className="px-3 py-3 text-sm">
@@ -4720,11 +4720,11 @@ export default function AdminDashboard() {
                                     <DropdownMenuContent className="bg-white border border-gray-200 shadow-lg" align={isRTL ? "start" : "end"}>
                                       <DropdownMenuItem onClick={() => window.open(`tel:${user.phone}`, '_self')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
                                         <Phone className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                                        {adminT('users.callUser', 'Позвонить')}
+                                        {adminT('users.callUser')}
                                       </DropdownMenuItem>
                                       <DropdownMenuItem onClick={() => window.open(`https://wa.me/${user.phone.replace(/[^\d]/g, '')}`, '_blank')} className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100">
                                         <MessageCircle className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                                        {adminT('users.whatsapp', 'WhatsApp')}
+                                        {adminT('users.whatsapp')}
                                       </DropdownMenuItem>
                                     </DropdownMenuContent>
                                   </DropdownMenu>
@@ -4752,11 +4752,11 @@ export default function AdminDashboard() {
                     <div className={`flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-3 border-t border-gray-100 bg-gray-50/30 ${isRTL ? 'sm:flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
                       <div className={`text-xs text-gray-600 text-center ${isRTL ? 'sm:text-right' : 'sm:text-left'}`}>
                         <div className="sm:hidden">
-                          <div>{adminT('common.showing', 'Показано')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)}</div>
-                          <div>{adminT('common.of', 'из')} {usersTotal}</div>
+                          <div>{adminT('common.showing')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)}</div>
+                          <div>{adminT('common.of')} {usersTotal}</div>
                         </div>
                         <div className="hidden sm:block">
-                          {adminT('common.showing', 'Показано')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('common.of', 'из')} {usersTotal}
+                          {adminT('common.showing')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('common.of')} {usersTotal}
                         </div>
                       </div>
                       
@@ -4766,7 +4766,7 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setUsersPage(1)}
                           disabled={usersPage === 1}
-                          title={adminT('common.firstPage', 'Первая страница')}
+                          title={adminT('common.firstPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟩⟩' : '⟨⟨'}
@@ -4776,21 +4776,21 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
                           disabled={usersPage === 1}
-                          title={adminT('common.prevPage', 'Предыдущая страница')}
+                          title={adminT('common.prevPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟩' : '⟨'}
                         </Button>
                         <span className="text-xs text-gray-600 px-2 min-w-[60px] text-center">
                           <span className="sm:hidden">{usersPage}/{usersTotalPages}</span>
-                          <span className="hidden sm:inline">{usersPage} {adminT('common.of', 'из')} {usersTotalPages}</span>
+                          <span className="hidden sm:inline">{usersPage} {adminT('common.of')} {usersTotalPages}</span>
                         </span>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
                           disabled={usersPage >= usersTotalPages}
-                          title={adminT('common.nextPage', 'Следующая страница')}
+                          title={adminT('common.nextPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟨' : '⟩'}
@@ -4800,7 +4800,7 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setUsersPage(usersTotalPages)}
                           disabled={usersPage >= usersTotalPages}
-                          title={adminT('common.lastPage', 'Последняя страница')}
+                          title={adminT('common.lastPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isRTL ? '⟨⟨' : '⟩⟩'}
@@ -4811,8 +4811,8 @@ export default function AdminDashboard() {
                 ) : (
                   <div className="text-center py-8">
                     <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">{adminT('users.noUsers', 'Нет пользователей')}</h3>
-                    <p className="text-gray-500 text-sm">{adminT('users.addFirstUser', 'Добавьте первого пользователя для начала работы')}</p>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">{adminT('users.noUsers')}</h3>
+                    <p className="text-gray-500 text-sm">{adminT('users.addFirstUser')}</p>
                   </div>
                   );
                 })()}
@@ -4858,27 +4858,27 @@ export default function AdminDashboard() {
                   <div className={isRTL ? 'text-right' : 'text-left'}>
                     <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                       <Settings className="h-5 w-5" />
-                      {adminT('systemSettings.title', 'Настройки системы')}
+                      {adminT('systemSettings.title')}
                     </CardTitle>
                     <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                      {adminT('systemSettings.description', 'Управление правами доступа для сотрудников')}
+                      {adminT('systemSettings.description')}
                     </CardDescription>
                   </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Worker Permissions Section */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">{adminT('systemSettings.workerPermissions', 'Права доступа сотрудников')}</h3>
+                  <h3 className="text-lg font-medium">{adminT('systemSettings.workerPermissions')}</h3>
                   <p className="text-sm text-gray-600">
-                    {adminT('systemSettings.workerPermissionsDescription', 'Настройте, к каким разделам админ-панели имеют доступ пользователи с ролью "Работник"')}
+                    {adminT('systemSettings.workerPermissionsDescription')}
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
                       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canManageProducts', 'Управление товарами')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageProductsDescription', 'Добавление, редактирование и удаление товаров')}</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageProducts')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageProductsDescription')}</p>
                         </div>
                         <Button
                           variant="ghost"
@@ -4903,8 +4903,8 @@ export default function AdminDashboard() {
                       
                       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canManageCategories', 'Управление категориями')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageCategoriesDescription', 'Создание и редактирование категорий товаров')}</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageCategories')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageCategoriesDescription')}</p>
                         </div>
                         <Button
                           variant="ghost"
@@ -4957,8 +4957,8 @@ export default function AdminDashboard() {
                     <div className="space-y-3">
                       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canViewUsers', 'Просмотр пользователей')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canViewUsersDescription', 'Доступ к списку пользователей системы')}</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canViewUsers')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canViewUsersDescription')}</p>
                         </div>
                         <Button
                           type="button"
@@ -5032,8 +5032,8 @@ export default function AdminDashboard() {
                       
                       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canManageSettings', 'Управление настройками')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageSettingsDescription', 'Доступ к настройкам магазина и системы')}</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageSettings')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageSettingsDescription')}</p>
                         </div>
                         <Button
                           variant="ghost"
@@ -5058,8 +5058,8 @@ export default function AdminDashboard() {
                       
                       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canManageThemes', 'Управление темами')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageThemesDescription', 'Доступ к созданию и редактированию тем оформления')}</p>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageThemes')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageThemesDescription')}</p>
                         </div>
                         <Button
                           variant="ghost"
@@ -5694,10 +5694,10 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
       <DialogContent className="sm:max-w-[500px] mx-4 max-h-[90vh] overflow-y-auto">
         <DialogHeader className={isRTL ? 'text-right' : 'text-left'}>
           <DialogTitle className={`text-lg sm:text-xl ${isRTL ? 'text-right' : 'text-left'}`}>
-            {category ? adminT('categories.editTitle', 'Редактировать категорию') : adminT('categories.addTitle', 'Добавить категорию')}
+            {category ? adminT('categories.editTitle') : adminT('categories.addTitle')}
           </DialogTitle>
           <DialogDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-            {category ? adminT('categories.editDescription', 'Обновите информацию о категории') : adminT('categories.addDescription', 'Добавьте новую категорию товаров')}
+            {category ? adminT('categories.editDescription') : adminT('categories.addDescription')}
           </DialogDescription>
         </DialogHeader>
         
@@ -5708,10 +5708,10 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name', 'Название категории')}</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')}</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder={adminT('categories.fields.namePlaceholder', 'Введите название категории')} 
+                      placeholder={adminT('categories.fields.namePlaceholder')} 
                       {...field} 
                       className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                       dir={isRTL ? 'rtl' : 'ltr'}
@@ -5727,10 +5727,10 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description', 'Описание')}</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description')}</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder={adminT('categories.fields.descriptionPlaceholder', 'Введите описание категории')}
+                      placeholder={adminT('categories.fields.descriptionPlaceholder')}
                       className={`resize-none text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                       dir={isRTL ? 'rtl' : 'ltr'}
                       {...field}
@@ -5753,20 +5753,20 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                 
                 return (
                   <FormItem>
-                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.icon', 'Иконка категории')}</FormLabel>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.icon')}</FormLabel>
                     <div className="space-y-3">
                       {/* Current selected icon display */}
                       <div className={`flex items-center gap-3 p-3 border rounded-lg bg-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <span className="text-2xl">{field.value}</span>
                         <div className="flex-1">
-                          <div className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.selectedIcon', 'Выбранная иконка')}</div>
-                          <div className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.clickToSelect', 'Нажмите на иконку ниже для выбора')}</div>
+                          <div className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.selectedIcon')}</div>
+                          <div className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.clickToSelect')}</div>
                         </div>
                       </div>
                       
                       {/* Icon grid selector */}
                       <div>
-                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.popularIcons', 'Популярные иконки')}:</div>
+                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.popularIcons')}:</div>
                         <div className="grid grid-cols-8 gap-2">
                           {commonIcons.map((icon) => (
                             <Button
@@ -5788,10 +5788,10 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                       
                       {/* Custom icon input */}
                       <div>
-                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.customIcon', 'Или введите свою иконку')}:</div>
+                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.customIcon')}:</div>
                         <FormControl>
                           <Input 
-                            placeholder={adminT('categories.iconPlaceholder', '🍽️ Введите эмодзи')}
+                            placeholder={adminT('categories.iconPlaceholder')}
                             value={field.value}
                             onChange={(e) => field.onChange(e.target.value)}
                             className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
@@ -5802,7 +5802,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                       
                       {/* Image upload option */}
                       <div>
-                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.uploadImage', 'Или загрузите изображение')}:</div>
+                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.uploadImage')}:</div>
                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-orange-300 transition-colors">
                           <ImageUpload
                             value=""
@@ -5813,7 +5813,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                             }}
                           />
                           <div className={`text-xs text-gray-400 mt-2 text-center ${isRTL ? 'text-right' : 'text-left'}`}>
-                            {adminT('categories.recommendedSize', 'Рекомендуемый размер: 64×64 пикселей')}
+                            {adminT('categories.recommendedSize')}
                           </div>
                         </div>
                       </div>
@@ -5831,14 +5831,14 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                 onClick={onClose} 
                 className={`text-sm border-gray-300 text-gray-700 bg-white hover:bg-white hover:shadow-md hover:shadow-black/20 transition-shadow duration-200 ${isRTL ? 'ml-4' : ''}`}
               >
-                {adminT('actions.cancel', 'Отмена')}
+                {adminT('actions.cancel')}
               </Button>
               <Button 
                 type="submit" 
                 className={`text-sm bg-primary text-white border-primary hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
               >
                 <Save className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                {category ? adminT('actions.update', 'Обновить') : adminT('actions.create', 'Создать')}  
+                {category ? adminT('actions.update') : adminT('actions.create')}  
               </Button>
             </div>
           </form>
@@ -6003,7 +6003,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-8 ${isRTL ? 'rtl' : 'ltr'}`}>
-        {/* {adminT('storeSettings.basicInfo', 'Основная информация')} */}
+        {/* {adminT('storeSettings.basicInfo')} */}
         <Collapsible open={isBasicInfoOpen} onOpenChange={setIsBasicInfoOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
@@ -6525,7 +6525,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* {adminT('storeSettings.deliveryPayment', 'Доставка и оплата')} */}
+        {/* {adminT('storeSettings.deliveryPayment')} */}
         <Collapsible open={isDeliveryPaymentOpen} onOpenChange={setIsDeliveryPaymentOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
@@ -6660,7 +6660,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         </Collapsible>
 
 
-        {/* {adminT('storeSettings.trackingCode', 'Код отслеживания')} */}
+        {/* {adminT('storeSettings.trackingCode')} */}
         <Collapsible open={isTrackingCodeOpen} onOpenChange={setIsTrackingCodeOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
             <Button 
@@ -6753,7 +6753,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             className="bg-primary text-white hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200"
           >
             <Save className="mr-2 h-4 w-4" />
-            {isLoading ? adminT('common.loading', 'Загрузка...') : adminT('settings.saveSettings', 'Сохранить настройки')}
+            {isLoading ? adminT('common.loading') : adminT('settings.saveSettings')}
           </Button>
         </div>
       </form>
@@ -6845,9 +6845,9 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
   const isRTL = i18n.language === 'he';
 
   const userSchema = z.object({
-    email: z.string().email(adminT('users.dialog.emailError', 'Неверный формат email')),
-    firstName: z.string().min(1, adminT('users.dialog.firstNameRequired', 'Имя обязательно')),
-    lastName: z.string().min(1, adminT('users.dialog.lastNameRequired', 'Фамилия обязательна')),
+    email: z.string().email(adminT('users.dialog.emailError')),
+    firstName: z.string().min(1, adminT('users.dialog.firstNameRequired')),
+    lastName: z.string().min(1, adminT('users.dialog.lastNameRequired')),
     phone: z.string().optional(),
     role: z.enum(["admin", "worker", "customer"]),
     password: z.string().optional(),
@@ -6900,10 +6900,10 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className={`text-lg ${isRTL ? 'text-right' : 'text-left'}`}>
-            {user ? adminT('users.editUser', 'Редактировать пользователя') : adminT('users.addUser', 'Добавить пользователя')}
+            {user ? adminT('users.editUser') : adminT('users.addUser')}
           </DialogTitle>
           <DialogDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-            {user ? adminT('users.dialog.editDescription', 'Изменить информацию о пользователе') : adminT('users.dialog.addDescription', 'Создать нового пользователя')}
+            {user ? adminT('users.dialog.editDescription') : adminT('users.dialog.addDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -6914,11 +6914,11 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.emailLabel', 'Email')} *</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.emailLabel')} *</FormLabel>
                   <FormControl>
                     <Input 
                       type="email"
-                      placeholder={adminT('users.dialog.emailPlaceholder', 'user@example.com')}
+                      placeholder={adminT('users.dialog.emailPlaceholder')}
                       {...field}
                       className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                       dir={isRTL ? 'rtl' : 'ltr'}
@@ -6935,10 +6935,10 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.firstNameLabel', 'Имя')} *</FormLabel>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.firstNameLabel')} *</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder={adminT('users.dialog.firstNamePlaceholder', 'Иван')}
+                        placeholder={adminT('users.dialog.firstNamePlaceholder')}
                         {...field}
                         className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                         dir={isRTL ? 'rtl' : 'ltr'}
@@ -6954,10 +6954,10 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.lastNameLabel', 'Фамилия')} *</FormLabel>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.lastNameLabel')} *</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder={adminT('users.dialog.lastNamePlaceholder', 'Иванов')}
+                        placeholder={adminT('users.dialog.lastNamePlaceholder')}
                         {...field}
                         className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                         dir={isRTL ? 'rtl' : 'ltr'}
@@ -6974,11 +6974,11 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.phoneLabel', 'Телефон')}</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.phoneLabel')}</FormLabel>
                   <FormControl>
                     <Input 
                       type="tel"
-                      placeholder={adminT('users.dialog.phonePlaceholder', '+972-50-123-4567')}
+                      placeholder={adminT('users.dialog.phonePlaceholder')}
                       {...field}
                       className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                       dir="ltr"
@@ -6994,17 +6994,17 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.roleLabel', 'Роль')} *</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.roleLabel')} *</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        <SelectValue placeholder={adminT('users.dialog.rolePlaceholder', 'Выберите роль')} />
+                        <SelectValue placeholder={adminT('users.dialog.rolePlaceholder')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="customer">{adminT('users.roles.customer', 'Клиент')}</SelectItem>
-                      <SelectItem value="worker">{adminT('users.roles.worker', 'Сотрудник')}</SelectItem>
-                      <SelectItem value="admin">{adminT('users.roles.admin', 'Администратор')}</SelectItem>
+                      <SelectItem value="customer">{adminT('users.roles.customer')}</SelectItem>
+                      <SelectItem value="worker">{adminT('users.roles.worker')}</SelectItem>
+                      <SelectItem value="admin">{adminT('users.roles.admin')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage className="text-xs" />
@@ -7018,12 +7018,12 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                    {user ? adminT('users.dialog.newPasswordLabel', 'Новый пароль (оставьте пустым если не меняете)') : adminT('users.dialog.passwordLabel', 'Пароль')}
+                    {user ? adminT('users.dialog.newPasswordLabel') : adminT('users.dialog.passwordLabel')}
                   </FormLabel>
                   <FormControl>
                     <Input 
                       type="password"
-                      placeholder={adminT('users.dialog.passwordMinLength', 'Минимум 6 символов')}
+                      placeholder={adminT('users.dialog.passwordMinLength')}
                       {...field}
                       className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                       dir={isRTL ? 'rtl' : 'ltr'}
@@ -7037,7 +7037,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
             <div className={`flex justify-between items-center pt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Button type="button" variant="outline" onClick={onClose} className="text-sm">
-                  {adminT('actions.cancel', 'Отмена')}
+                  {adminT('actions.cancel')}
                 </Button>
                 {user && user.id !== "43948959" && ( // Don't allow deleting yourself
                   <AlertDialog>
@@ -7048,20 +7048,20 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                         className="text-sm text-red-600 border-red-200 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4 mr-1" />
-                        {adminT('actions.delete', 'Удалить')}
+                        {adminT('actions.delete')}
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle className={isRTL ? 'text-right' : 'text-left'}>
-                          {adminT('users.deleteUser', 'Удалить пользователя')}?
+                          {adminT('users.deleteUser')}?
                         </AlertDialogTitle>
                         <AlertDialogDescription className={isRTL ? 'text-right' : 'text-left'}>
-                          {adminT('users.dialog.deleteWarning', 'Это действие нельзя отменить. Пользователь будет безвозвратно удален.')}
+                          {adminT('users.dialog.deleteWarning')}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter className={isRTL ? 'flex-row-reverse' : ''}>
-                        <AlertDialogCancel>{adminT('actions.cancel', 'Отмена')}</AlertDialogCancel>
+                        <AlertDialogCancel>{adminT('actions.cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => {
                             onDelete(user.id);
@@ -7069,7 +7069,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                           }}
                           className="bg-red-600 hover:bg-red-700"
                         >
-                          {adminT('actions.delete', 'Удалить')}
+                          {adminT('actions.delete')}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -7080,7 +7080,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                 type="submit" 
                 className="text-sm bg-primary hover:bg-primary text-white"
               >
-                {user ? adminT('actions.update', 'Обновить') : adminT('users.addUser', 'Создать пользователя')}
+                {user ? adminT('actions.update') : adminT('users.addUser')}
               </Button>
             </div>
           </form>
