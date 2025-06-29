@@ -312,7 +312,23 @@
     "noCategories": "لا توجد فئات",
     "addFirstCategory": "ابدأ بإضافة فئتك الأولى",
     "dragToReorder": "اسحب الفئات لإعادة ترتيب العرض",
-    "allCategories": "جميع الفئات"
+    "allCategories": "جميع الفئات",
+    "products": "منتجات",
+    "hideCategory": "إخفاء الفئة",
+    "showCategory": "إظهار الفئة",
+    "deleteConfirmTitle": "حذف الفئة",
+    "deleteConfirmDesc": "هل أنت متأكد من حذف الفئة {{categoryName}}؟",
+    "deleteWithProductsWarning": "الفئة {{categoryName}} تحتوي على {{productCount}} منتجات. حذف الفئة سيؤثر على هذه المنتجات.",
+    "dialog": {
+      "createTitle": "إضافة فئة جديدة",
+      "editTitle": "تعديل الفئة",
+      "nameLabel": "اسم الفئة",
+      "namePlaceholder": "أدخل اسم الفئة",
+      "descriptionLabel": "الوصف",
+      "descriptionPlaceholder": "أدخل وصف الفئة",
+      "iconLabel": "أيقونة الفئة",
+      "iconPlaceholder": "اختر أيقونة"
+    }
   },
   "orders": {
     "title": "الطلبات",
