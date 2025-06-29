@@ -948,7 +948,7 @@ export default function ThemeManager() {
                       <div>
                         <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          Логотип магазина
+                          {adminT('themes.storeLogo')}
                         </Label>
                         <ImageUpload
                           value={createLogoUrl}
@@ -958,7 +958,7 @@ export default function ThemeManager() {
                         />
                         <input type="hidden" name="logoUrl" value={createLogoUrl} />
                         <div className="text-xs text-gray-500 mt-2">
-                          Логотип для отображения в шапке сайта
+                          {adminT('themes.storeLogoDescription')}
                         </div>
                       </div>
                       
@@ -1022,7 +1022,7 @@ export default function ThemeManager() {
                         <h4 className="text-sm font-medium mb-3">{adminT("themes.minimalButtonSettings")}</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="bannerButtonTextCreate">{adminT("themes.buttonText")}</Label>
+                            <Label htmlFor="bannerButtonTextCreate">{adminT("themes.buttonTextLabel")}</Label>
                             <input
                               type="text"
                               name="bannerButtonText"
@@ -1984,15 +1984,15 @@ export default function ThemeManager() {
                               onChange={(e) => setEditCartBannerType(e.target.value)}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             >
-                              <option value="text">Текстовый</option>
-                              <option value="image">Изображение</option>
+                              <option value="text">{adminT("themes.textBanner")}</option>
+                              <option value="image">{adminT("themes.imageBanner")}</option>
                             </select>
                           </div>
 
                           {editCartBannerType === 'text' && (
                             <>
                               <div>
-                                <Label htmlFor="cartBannerText" className="text-sm">Текст баннера</Label>
+                                <Label htmlFor="cartBannerText" className="text-sm">{adminT("visualLabels.bannerText")}</Label>
                                 <input
                                   type="text"
                                   name="cartBannerText"
