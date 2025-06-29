@@ -981,17 +981,17 @@ export default function ThemeManager() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="fontFamilyPrimary">Основной шрифт</Label>
+                        <Label htmlFor="fontFamilyPrimary">{adminT('themes.primaryFont')}</Label>
                         <Input id="fontFamilyPrimary" name="fontFamilyPrimary" defaultValue="Poppins, sans-serif" />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="fontFamilySecondary">Вторичный шрифт</Label>
+                        <Label htmlFor="fontFamilySecondary">{adminT('themes.secondaryFont')}</Label>
                         <Input id="fontFamilySecondary" name="fontFamilySecondary" defaultValue="Inter, sans-serif" />
                       </div>
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="headerStyleCreate">Стиль шапки сайта</Label>
+                      <Label htmlFor="headerStyleCreate">{adminT('themes.headerStyle')}</Label>
                       <select
                         name="headerStyle"
                         id="headerStyleCreate"
