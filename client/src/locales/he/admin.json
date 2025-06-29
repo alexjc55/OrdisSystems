@@ -697,7 +697,8 @@
       "roleUpdateError": "שגיאה בעדכון התפקיד",
       "deleteError": "שגיאה במחיקת המשתמש",
       "passwordSetError": "שגיאה בהגדרת הסיסמה"
-    }
+    },
+    "deleteUser": "מחק משתמש"
   },
   "orders": {
     "title": "הזמנות",
@@ -925,7 +926,11 @@
     "editDescription": "עריכת מידע משתמש",
     "addDescription": "הוספת משתמש חדש למערכת",
     "firstName": "שם פרטי",
-    "lastName": "שם משפחה"
+    "lastName": "שם משפחה",
+    "newPasswordLabel": "סיסמה חדשה",
+    "passwordLabel": "סיסמה",
+    "passwordMinLength": "מינימום 6 תווים",
+    "deleteWarning": "פעולה זו לא ניתנת לביטול. המשתמש יימחק לצמיתות."
   },
   "table": {
     "name": "שם",

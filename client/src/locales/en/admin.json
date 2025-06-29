@@ -344,7 +344,8 @@
       "roleUpdateError": "Error updating role",
       "deleteError": "Error deleting user",
       "passwordSetError": "Error setting password"
-    }
+    },
+    "deleteUser": "Delete User"
   },
   "storeSettings": {
     "basicInfo": "Basic Information",
@@ -670,7 +671,11 @@
     "editDescription": "Edit user information",
     "addDescription": "Add new user to the system",
     "firstName": "First Name",
-    "lastName": "Last Name"
+    "lastName": "Last Name",
+    "newPasswordLabel": "New Password",
+    "passwordLabel": "Password",
+    "passwordMinLength": "Minimum 6 characters",
+    "deleteWarning": "This action cannot be undone. The user will be permanently deleted."
   },
   "table": {
     "name": "Name",
