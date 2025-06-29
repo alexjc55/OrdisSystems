@@ -405,5 +405,24 @@
     "fri": "Friday",
     "sat": "Saturday"
   },
-  "paymentAndDelivery": "Payment and Delivery"
+  "paymentAndDelivery": "Payment and Delivery",
+  "imageUpload": {
+    "clickToUpload": "Click to upload",
+    "dragAndDrop": "or drag and drop", 
+    "fileTypes": "PNG, JPG, GIF up to 10MB",
+    "chooseFile": "Choose file",
+    "remove": "Remove",
+    "uploading": "Uploading...",
+    "uploadError": "Upload error",
+    "noImage": "No image",
+    "selectFile": "Select file",
+    "supportedFormats": "PNG, JPG, GIF up to 5MB",
+    "invalidFormat": "Invalid format",
+    "pleaseSelectImage": "Please select a valid image",
+    "fileTooLarge": "File too large",
+    "maxSize5MB": "Maximum 5MB",
+    "uploaded": "Uploaded",
+    "uploadSuccess": "Image uploaded successfully",
+    "uploadFailed": "Failed to upload image"
+  }
 }

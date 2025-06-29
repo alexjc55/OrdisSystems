@@ -131,6 +131,13 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 29, 2025: IMAGEUPLOAD COMPONENT TRANSLATION FIXES - Fixed translation display issues in product management
+  - CRITICAL NAMESPACE FIX: Moved imageUpload translations from admin.json to common.json across all languages
+  - COMPONENT UPDATE: Changed ImageUpload to use useCommonTranslation instead of useAdminTranslation
+  - UI ENHANCEMENT: Replaced CustomSwitch with Eye/EyeOff icon button for "Special Offer" toggle in product cards
+  - TRANSLATION SYNCHRONIZATION: Added complete imageUpload translation sets for all 4 languages (RU/EN/HE/AR)
+  - TECHNICAL SOLUTION: Fixed translation key resolution that was showing "imageUpload.clickToUpload" instead of Arabic text
+  - RESULT: Product management interface now displays proper translations in all languages for image upload functionality
 - June 29, 2025: RADICAL TRANSLATION SYSTEM RESTRUCTURE - Complete overhaul of translation management
   - PROBLEM SOLVED: Implemented unified translation system to prevent future translation debugging marathons
   - CENTRALIZED STRUCTURE: Created single source of truth for all translation keys across all languages

@@ -413,5 +413,24 @@
     "fri": "תורגם",
     "sat": "תורגם"
   },
-  "paymentAndDelivery": "תשלום ומשלוח"
+  "paymentAndDelivery": "תשלום ומשלוח",
+  "imageUpload": {
+    "clickToUpload": "לחץ להעלאה",
+    "dragAndDrop": "או גרור ושחרר", 
+    "fileTypes": "PNG, JPG, GIF עד 10MB",
+    "chooseFile": "בחר קובץ",
+    "remove": "הסר",
+    "uploading": "מעלה...",
+    "uploadError": "שגיאת העלאה",
+    "noImage": "אין תמונה",
+    "selectFile": "בחר קובץ",
+    "supportedFormats": "PNG, JPG, GIF עד 5MB",
+    "invalidFormat": "פורמט לא תקין",
+    "pleaseSelectImage": "אנא בחר תמונה תקינה",
+    "fileTooLarge": "הקובץ גדול מדי",
+    "maxSize5MB": "מקסימום 5MB",
+    "uploaded": "הועלה",
+    "uploadSuccess": "התמונה הועלתה בהצלחה",
+    "uploadFailed": "העלאת התמונה נכשלה"
+  }
 }

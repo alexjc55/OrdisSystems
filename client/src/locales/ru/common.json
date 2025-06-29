@@ -413,5 +413,24 @@
     "fri": "Пятница",
     "sat": "Суббота"
   },
-  "paymentAndDelivery": "Оплата и доставка"
+  "paymentAndDelivery": "Оплата и доставка",
+  "imageUpload": {
+    "clickToUpload": "Нажмите для загрузки",
+    "dragAndDrop": "или перетащите файл", 
+    "fileTypes": "PNG, JPG, GIF до 10МБ",
+    "chooseFile": "Выбрать файл",
+    "remove": "Удалить",
+    "uploading": "Загрузка...",
+    "uploadError": "Ошибка загрузки",
+    "noImage": "Нет изображения",
+    "selectFile": "Выбрать файл",
+    "supportedFormats": "PNG, JPG, GIF до 5МБ",
+    "invalidFormat": "Неверный формат",
+    "pleaseSelectImage": "Пожалуйста, выберите изображение",
+    "fileTooLarge": "Файл слишком большой",
+    "maxSize5MB": "Максимум 5 МБ",
+    "uploaded": "Загружено",
+    "uploadSuccess": "Изображение успешно загружено",
+    "uploadFailed": "Не удалось загрузить изображение"
+  }
 }
