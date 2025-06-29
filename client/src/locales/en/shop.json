@@ -121,7 +121,7 @@
     "ml": "ml"
   },
   "product": {
-    "grams": "Weight (g):",
+    "grams": "Weight (g)",
     "quantity": "Quantity",
     "weight": "Weight"
   }
