@@ -206,7 +206,9 @@
     "iconVerified": "Проверено",
     "iconGifts": "Подарки",
     "iconPleasure": "Удовольствие",
-    "advantageDescription": "Описание преимущества"
+    "advantageDescription": "Описание преимущества",
+    "textBanner": "Текст",
+    "imageBanner": "Изображение"
   },
   "colorLabels": {
     "primaryColor": "Основной цвет",
