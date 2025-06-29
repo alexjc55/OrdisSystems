@@ -100,7 +100,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
 
   return (
     <div className="space-y-4">
-      <Label>{t('imageUpload.image')}</Label>
+
       
       {preview ? (
         <div className="relative">
