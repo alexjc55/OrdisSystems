@@ -3310,10 +3310,10 @@ export default function AdminDashboard() {
                       <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                       <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
                         <SelectTrigger className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
-                          <SelectValue placeholder={adminT('products.allCategories', 'Все категории')} />
+                          <SelectValue placeholder={adminT('products.allCategories')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">{adminT('products.allCategories', 'Все категории')}</SelectItem>
+                          <SelectItem value="all">{adminT('products.allCategories')}</SelectItem>
                           {(categories as any[] || []).map((category: any) => (
                             <SelectItem 
                               key={category.id}
@@ -3333,7 +3333,7 @@ export default function AdminDashboard() {
                           <SelectValue placeholder={adminT('products.productStatus', 'Статус товара')} />
                         </SelectTrigger>
                         <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                          <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{adminT('products.allProducts', 'Все товары')}</SelectItem>
+                          <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{adminT('products.allProducts')}</SelectItem>
                           <SelectItem value="available" className="text-gray-900 hover:bg-gray-100">{adminT('products.availableProducts', 'Доступные товары')}</SelectItem>
                           <SelectItem value="unavailable" className="text-gray-900 hover:bg-gray-100">{adminT('products.unavailableProducts', 'Недоступные товары')}</SelectItem>
                           <SelectItem value="out_of_stock_today" className="text-gray-900 hover:bg-gray-100">{adminT('products.preorderProducts', 'Заказ на другой день')}</SelectItem>
