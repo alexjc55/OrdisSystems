@@ -1701,7 +1701,7 @@ export default function ThemeManager() {
                     
                     <div id="headerControlsEdit" className="space-y-4" style={{ display: editingTheme.headerStyle === 'minimal' ? 'block' : 'none' }}>
                       <div className="p-4 bg-gray-50 rounded-lg border">
-                        <h4 className="text-sm font-medium mb-3">Настройки кнопки для минималистичного стиля</h4>
+                        <h4 className="text-sm font-medium mb-3">{adminT("themes.minimalButtonSettings")}</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="bannerButtonTextEdit">Текст кнопки</Label>
@@ -1850,7 +1850,7 @@ export default function ThemeManager() {
                 <TabsContent value="visuals" className="space-y-6">
                   {/* Основные элементы отображения */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Основные элементы интерфейса</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themes.mainInterfaceElements")}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <VisualToggleButton 
                         isEnabled={editVisualSettings.showBannerImage}
@@ -2030,7 +2030,7 @@ export default function ThemeManager() {
 
                           {editCartBannerType === 'image' && (
                             <div>
-                              <Label htmlFor="cartBannerImage" className="text-sm font-medium">Изображение баннера</Label>
+                              <Label htmlFor="cartBannerImage" className="text-sm font-medium">{adminT("themes.bannerImageField")}</Label>
                               <ImageUpload
                                 value={editCartBannerImage}
                                 onChange={(url: string) => {
