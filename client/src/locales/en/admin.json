@@ -672,5 +672,10 @@
     "infoBlocksPosition": "Info Blocks Position",
     "infoBlocksTop": "Above Products",
     "infoBlocksBottom": "Below Products"
+  },
+  "dashboard": {
+    "title": "Admin Panel",
+    "description": "Manage products, categories and orders",
+    "overview": "Manage products, categories and orders"
   }
 }

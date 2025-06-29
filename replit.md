@@ -463,6 +463,7 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Translation management: Always ensure all changes are applied to all 4 languages (Russian, English, Hebrew, Arabic) when working with translations. User expects consistent coverage across all supported languages.
 - June 29, 2025: COMPLETED comprehensive translation validation and synchronization across all languages
   - MASSIVE PLACEHOLDER ELIMINATION: Systematic replacement of all translation placeholders across all 4 languages
     - Russian files: Replaced 370+ "Перевод отсутствует" with proper Russian translations
