@@ -201,5 +201,51 @@
     "infoBlocksPosition": "موضع الكتل الإعلامية",
     "infoBlocksTop": "أعلى المنتجات",
     "infoBlocksBottom": "أسفل المنتجات"
+  },
+  "products": {
+    "title": "المنتجات",
+    "description": "إدارة منتجات متجرك",
+    "noProducts": "لا توجد منتجات",
+    "addFirstProduct": "ابدأ بإضافة منتجك الأول",
+    "hideProduct": "إخفاء المنتج",
+    "showProduct": "إظهار المنتج",
+    "preorder": "طلب مسبق",
+    "productStatus": "حالة المنتج",
+    "productPrice": "سعر المنتج",
+    "productCategory": "فئة المنتج",
+    "productName": "اسم المنتج",
+    "searchProducts": "البحث في المنتجات...",
+    "allProducts": "جميع المنتجات",
+    "allCategories": "جميع الفئات"
+  },
+  "categories": {
+    "title": "الفئات",
+    "description": "إدارة الفئات البسيطة",
+    "noCategories": "لا توجد فئات",
+    "addFirstCategory": "ابدأ بإضافة فئتك الأولى",
+    "dragToReorder": "اسحب الفئات لإعادة ترتيب العرض",
+    "allCategories": "جميع الفئات"
+  },
+  "orders": {
+    "title": "الطلبات",
+    "description": "إدارة طلبات العملاء",
+    "filterOrders": "تصفية الطلبات",
+    "activeOrders": "الطلبات النشطة",
+    "deliveredOrders": "الطلبات المسلمة",
+    "cancelledOrders": "الطلبات الملغية",
+    "allOrders": "جميع الطلبات",
+    "searchOrders": "البحث في الطلبات..."
+  },
+  "users": {
+    "title": "المستخدمون",
+    "description": "إدارة مستخدمي النظام"
+  },
+  "settings": {
+    "title": "إعدادات المتجر",
+    "description": "الإعدادات الأساسية للمتجر"
+  },
+  "permissions": {
+    "title": "الصلاحيات",
+    "description": "إدارة صلاحيات المستخدمين"
   }
 }
