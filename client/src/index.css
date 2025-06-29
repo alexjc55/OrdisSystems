@@ -172,7 +172,7 @@ button:focus,
   /* Force RTL for Arabic admin interface */
   html[lang="ar"],
   html[lang="ar"] body,
-  html[lang="ar"] *,
+  html[lang="ar"] *:not(footer):not(footer *),
   html[lang="ar"] .admin-dashboard,
   html[lang="ar"] .admin-content,
   html[lang="ar"] main,
@@ -193,8 +193,23 @@ button:focus,
     text-align: right !important;
   }
   
-  /* Footer should always remain LTR */
-  html[lang="ar"] footer {
+  /* Footer should always remain LTR - Override all RTL rules */
+  html[lang="ar"] footer,
+  html[lang="ar"] footer *,
+  html[lang="ar"] footer div,
+  html[lang="ar"] footer span,
+  html[lang="ar"] footer img,
+  html[lang="ar"] footer .flex {
+    direction: ltr !important;
+    text-align: left !important;
+    justify-content: center !important;
+  }
+  
+  /* Additional footer LTR enforcement for all languages */
+  footer[dir="ltr"],
+  footer[dir="ltr"] *,
+  footer[dir="ltr"] div,
+  footer[dir="ltr"] span {
     direction: ltr !important;
     text-align: left !important;
   }
