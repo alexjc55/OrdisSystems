@@ -5307,7 +5307,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   const { toast } = useToast();
   const translationManager = useTranslationManager({
     defaultLanguage: 'ru',
-    baseFields: ['name', 'description']
+    baseFields: ['name', 'description', 'imageUrl']
   });
   
   const [formData, setFormData] = useState<any>({});
@@ -5391,17 +5391,20 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     if (open && formData && Object.keys(formData).length > 0) {
       const nameValue = translationManager.getFieldValue(formData, 'name');
       const descriptionValue = translationManager.getFieldValue(formData, 'description');
+      const imageValue = translationManager.getFieldValue(formData, 'imageUrl');
       
       console.log('Language changed, updating form:', { 
         language: translationManager.currentLanguage, 
         nameValue, 
         descriptionValue,
+        imageValue,
         formData: formData
       });
       
       // Force update the form values
       form.setValue('name', nameValue || '');
       form.setValue('description', descriptionValue || '');
+      form.setValue('imageUrl', imageValue || '');
     }
   }, [translationManager.currentLanguage, open]);
 
@@ -5410,15 +5413,18 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     if (open && formData && Object.keys(formData).length > 0) {
       const nameValue = translationManager.getFieldValue(formData, 'name');
       const descriptionValue = translationManager.getFieldValue(formData, 'description');
+      const imageValue = translationManager.getFieldValue(formData, 'imageUrl');
       
       console.log('FormData changed, updating form:', { 
         language: translationManager.currentLanguage, 
         nameValue, 
-        descriptionValue 
+        descriptionValue,
+        imageValue 
       });
       
       form.setValue('name', nameValue || '');
       form.setValue('description', descriptionValue || '');
+      form.setValue('imageUrl', imageValue || '');
     }
   }, [formData, translationManager, form, open]);
   
@@ -5433,11 +5439,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       // Update form values immediately with the updated data
       const nameValue = translationManager.getFieldValue(updatedFormData, 'name');
       const descriptionValue = translationManager.getFieldValue(updatedFormData, 'description');
+      const imageValue = translationManager.getFieldValue(updatedFormData, 'imageUrl');
       
-      console.log('Setting form values with updated data:', { nameValue, descriptionValue });
+      console.log('Setting form values with updated data:', { nameValue, descriptionValue, imageValue });
       
       form.setValue('name', nameValue);
       form.setValue('description', descriptionValue);
+      form.setValue('imageUrl', imageValue);
     });
     
     console.log('Copied count:', copiedCount);
@@ -5494,7 +5502,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           currentLanguage={translationManager.currentLanguage}
           defaultLanguage={translationManager.defaultLanguage}
           formData={formData}
-          baseFields={['name', 'description']}
+          baseFields={['name', 'description', 'imageUrl']}
           onCopyAllFields={handleCopyAllFields}
           onClearAllFields={handleClearAllFields}
         />
@@ -5637,11 +5645,16 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               name="imageUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">{adminT('products.dialog.imageLabel')}</FormLabel>
+                  <FormLabel className="text-sm">
+                    {translationManager.getFieldLabel('imageUrl', adminT('products.dialog.imageLabel'))}
+                  </FormLabel>
                   <FormControl>
                     <ImageUpload
                       value={field.value || ""}
-                      onChange={field.onChange}
+                      onChange={(value) => {
+                        field.onChange(value);
+                        translationManager.setFieldValue('imageUrl', value, setFormData);
+                      }}
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">

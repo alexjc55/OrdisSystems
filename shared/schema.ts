@@ -88,6 +88,9 @@ export const products = pgTable("products", {
   unit: varchar("unit", { length: 20 }).default("100g").notNull(), // "100g", "100ml", "piece", "kg"
   pricePerKg: decimal("price_per_kg", { precision: 10, scale: 2 }).notNull(), // For backward compatibility
   imageUrl: varchar("image_url", { length: 500 }),
+  imageUrl_en: varchar("image_url_en", { length: 500 }),
+  imageUrl_he: varchar("image_url_he", { length: 500 }),
+  imageUrl_ar: varchar("image_url_ar", { length: 500 }),
   isActive: boolean("is_active").default(true).notNull(),
   isAvailable: boolean("is_available").default(true).notNull(),
   stockStatus: varchar("stock_status", { enum: ["in_stock", "low_stock", "out_of_stock"] }).default("in_stock").notNull(),

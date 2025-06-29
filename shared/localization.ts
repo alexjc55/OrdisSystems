@@ -143,8 +143,8 @@ export function copyFromDefaultLanguage(
     const sourceField = defaultLanguage === 'ru' ? field : `${field}_${defaultLanguage}`;
     const targetField = `${field}_${targetLanguage}`;
     
-    // Only copy if source has value and target is empty
-    if (item[sourceField] && !item[targetField]) {
+    // Always copy if source has value (overwrite existing translation)
+    if (item[sourceField]) {
       updates[targetField] = item[sourceField];
     }
   });
