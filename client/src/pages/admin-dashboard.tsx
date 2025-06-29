@@ -5386,30 +5386,26 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     }
   }, [open, product, form, translationManager]);
 
-  // Save multilingual fields (name, description, imageUrl)
-  const handleMultilingualFieldChange = (fieldName: string, value: string) => {
-    const currentLang = translationManager.currentLanguage;
-    const defaultLang = translationManager.defaultLanguage;
-    console.log('handleMultilingualFieldChange called:', fieldName, value, 'lang:', currentLang);
-    
-    if (currentLang === defaultLang) {
-      // For default language, save to base fields
-      setFormData((prev: any) => ({ ...prev, [fieldName]: value }));
+  // Handle input changes and save to formData
+  const handleFieldChange = (fieldName: string, value: any, isMultilingual = false) => {
+    if (isMultilingual) {
+      const currentLang = translationManager.currentLanguage;
+      const defaultLang = translationManager.defaultLanguage;
+      
+      if (currentLang === defaultLang) {
+        setFormData((prev: any) => ({ ...prev, [fieldName]: value }));
+      } else {
+        const localizedField = `${fieldName}_${currentLang}`;
+        setFormData((prev: any) => ({ ...prev, [localizedField]: value }));
+      }
     } else {
-      // For other languages, save to localized fields
-      const localizedField = `${fieldName}_${currentLang}`;
-      setFormData((prev: any) => ({ ...prev, [localizedField]: value }));
+      // Common fields - same for all languages
+      setFormData((prev: any) => ({ ...prev, [fieldName]: value }));
     }
   };
 
-  // Save common fields (price, unit, categories, etc.) - same for all languages
-  const handleCommonFieldChange = (fieldName: string, value: any) => {
-    console.log('handleCommonFieldChange called:', fieldName, value);
-    setFormData((prev: any) => ({ ...prev, [fieldName]: value }));
-  };
-
-  // Update form values when language changes - TEMPORARILY DISABLED FOR DEBUGGING
-  /*useEffect(() => {
+  // Update form values when language changes
+  useEffect(() => {
     if (open && formData && Object.keys(formData).length > 0) {
       const currentLang = translationManager.currentLanguage;
       const defaultLang = translationManager.defaultLanguage;
@@ -5429,16 +5425,18 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
         descriptionValue = formData[descField] || '';
       }
       
-      console.log('Language changed, updating form:', { 
-        language: currentLang, 
-        nameValue, 
-        descriptionValue
-      });
+      // Only update form if values are different to prevent infinite loops
+      const currentName = form.getValues('name');
+      const currentDesc = form.getValues('description');
       
-      form.setValue('name', nameValue);
-      form.setValue('description', descriptionValue);
+      if (currentName !== nameValue) {
+        form.setValue('name', nameValue);
+      }
+      if (currentDesc !== descriptionValue) {
+        form.setValue('description', descriptionValue);
+      }
     }
-  }, [translationManager.currentLanguage, open]);*/
+  }, [translationManager.currentLanguage, open]);
   
   // Handle translation copy/clear
   const handleCopyAllFields = () => {
