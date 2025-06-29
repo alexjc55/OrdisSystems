@@ -526,7 +526,18 @@
     "permissionsDescription": "הגדר הרשאות עובדים",
     "saved": "הגדרות נשמרו",
     "saveSuccess": "הגדרות נשמרו בהצלחה",
-    "saveError": "שגיאה בשמירת הגדרות"
+    "saveError": "שגיאה בשמירת הגדרות",
+    "monday": "יום שני",
+    "tuesday": "יום שלישי",
+    "wednesday": "יום רביעי",
+    "thursday": "יום חמישי",
+    "friday": "יום שישי",
+    "saturday": "שבת",
+    "sunday": "יום ראשון",
+    "openTime": "שעת פתיחה",
+    "closeTime": "שעת סגירה",
+    "closed": "סגור",
+    "saveSettings": "שמור הגדרות"
   },
   "dashboard": {
     "title": "פאנל ניהול",

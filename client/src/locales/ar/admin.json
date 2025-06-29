@@ -546,7 +546,18 @@
     "permissionsDescription": "تكوين صلاحيات الموظفين",
     "saved": "تم حفظ الإعدادات",
     "saveSuccess": "تم حفظ الإعدادات بنجاح",
-    "saveError": "خطأ في حفظ الإعدادات"
+    "saveError": "خطأ في حفظ الإعدادات",
+    "monday": "الاثنين",
+    "tuesday": "الثلاثاء",
+    "wednesday": "الأربعاء",
+    "thursday": "الخميس",
+    "friday": "الجمعة",
+    "saturday": "السبت",
+    "sunday": "الأحد",
+    "openTime": "وقت الفتح",
+    "closeTime": "وقت الإغلاق",
+    "closed": "مغلق",
+    "saveSettings": "حفظ الإعدادات"
   },
   "permissions": {
     "title": "الصلاحيات",

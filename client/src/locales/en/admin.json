@@ -635,6 +635,17 @@
     "permissionsDescription": "Configure employee permissions",
     "saved": "Settings Saved",
     "saveSuccess": "Settings saved successfully",
-    "saveError": "Error saving settings"
+    "saveError": "Error saving settings",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "openTime": "Open Time",
+    "closeTime": "Close Time",
+    "closed": "Closed",
+    "saveSettings": "Save Settings"
   }
 }
