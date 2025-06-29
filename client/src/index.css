@@ -739,19 +739,22 @@ button:focus,
     text-align: right !important;
   }
   
-  /* RTL for products table content within RTL container */
+  /* Products table containers should be RTL */
   html[lang="he"] .products-container table,
   html[lang="ar"] .products-container table,
   html[lang="he"] [data-tab="products"] table,
   html[lang="ar"] [data-tab="products"] table,
   html[lang="he"] .products-tab-content table,
-  html[lang="ar"] .products-tab-content table,
+  html[lang="ar"] .products-tab-content table {
+    direction: rtl !important;
+  }
+  
+  /* Table containers remain RTL for both languages */
   html[lang="he"] .products-container .table-container table,
   html[lang="ar"] .products-container .table-container table,
   html[lang="he"] [data-tab="products"] .table-container table,
   html[lang="ar"] [data-tab="products"] .table-container table {
     direction: rtl !important;
-    text-align: right !important;
   }
   
   html[lang="he"] .products-container table th,
