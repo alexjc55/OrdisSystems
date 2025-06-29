@@ -3450,10 +3450,10 @@ export default function AdminDashboard() {
                               {isRTL ? (
                                 // RTL order: Status, Price, Category, Name (reversed)
                                 <>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-center">
-                                    <div className="flex justify-center">
+                                  <TableCell className="px-2 sm:px-4 py-2 text-right">
+                                    <div className="flex flex-col gap-1 items-end">
                                       <Button
-                                        size="lg"
+                                        size="sm"
                                         variant="ghost"
                                         onClick={() => {
                                           const isActive = product.isAvailable && (product.availabilityStatus === "available");
@@ -3467,7 +3467,7 @@ export default function AdminDashboard() {
                                             });
                                           }
                                         }}
-                                        className={`h-12 w-12 p-0 rounded-lg transition-all duration-200 ${
+                                        className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
                                           product.isAvailable && (product.availabilityStatus === "available")
                                             ? 'text-green-600 hover:text-green-700 hover:bg-green-50'
                                             : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
@@ -3478,8 +3478,8 @@ export default function AdminDashboard() {
                                         }
                                       >
                                         {product.isAvailable && (product.availabilityStatus === "available") 
-                                          ? <Eye className="h-8 w-8" /> 
-                                          : <EyeOff className="h-8 w-8" />
+                                          ? <Eye className="h-6 w-6" /> 
+                                          : <EyeOff className="h-6 w-6" />
                                         }
                                       </Button>
                                       {product.availabilityStatus === "out_of_stock_today" && (
@@ -3587,10 +3587,10 @@ export default function AdminDashboard() {
                                       <div className="text-gray-500 text-xs mt-1">{getUnitDisplay(product.unit || "100g")}</div>
                                     </div>
                                   </TableCell>
-                                  <TableCell className="px-2 sm:px-4 py-2 text-center">
-                                    <div className="flex justify-center">
+                                  <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
+                                    <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
                                       <Button
-                                        size="lg"
+                                        size="sm"
                                         variant="ghost"
                                         onClick={() => {
                                           const isActive = product.isAvailable && (product.availabilityStatus === "available");
@@ -3604,7 +3604,7 @@ export default function AdminDashboard() {
                                             });
                                           }
                                         }}
-                                        className={`h-12 w-12 p-0 rounded-lg transition-all duration-200 ${
+                                        className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
                                           product.isAvailable && (product.availabilityStatus === "available")
                                             ? 'text-green-600 hover:text-green-700 hover:bg-green-50'
                                             : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
@@ -3615,8 +3615,8 @@ export default function AdminDashboard() {
                                         }
                                       >
                                         {product.isAvailable && (product.availabilityStatus === "available") 
-                                          ? <Eye className="h-8 w-8" /> 
-                                          : <EyeOff className="h-8 w-8" />
+                                          ? <Eye className="h-6 w-6" /> 
+                                          : <EyeOff className="h-6 w-6" />
                                         }
                                       </Button>
                                       {product.availabilityStatus === "out_of_stock_today" && (
