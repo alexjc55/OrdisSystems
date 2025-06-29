@@ -131,7 +131,7 @@
     "piece": "יח'",
     "weight": "משקל (ק\"ג)",
     "quantity": "כמות",
-    "grams": "גרמים",
+    "grams": "משקל (גר׳):",
     "total": "סה\"כ"
   },
   "checkout": {

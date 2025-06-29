@@ -112,6 +112,17 @@
     "free": "Free"
   },
   "units": {
-    "per100g": "per 100g"
+    "per100g": "per 100g",
+    "per": "per",
+    "per100ml": "per 100ml",
+    "piece": "piece",
+    "kg": "kg",
+    "g": "g",
+    "ml": "ml"
+  },
+  "product": {
+    "grams": "Weight (g):",
+    "quantity": "Quantity",
+    "weight": "Weight"
   }
 }
