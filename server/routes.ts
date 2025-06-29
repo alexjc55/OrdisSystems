@@ -454,6 +454,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const productData = insertProductSchema.parse(rawData);
       const product = await storage.createProduct(productData);
+      
+      // Clear products cache when new product is created
+      clearCachePattern('admin-products');
+      
       res.json(product);
     } catch (error) {
       console.error("Error creating product:", error);
@@ -476,6 +480,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const id = parseInt(req.params.id);
       const productData = insertProductSchema.partial().parse(req.body);
       const product = await storage.updateProduct(id, productData);
+      
+      // Clear products cache when product is updated
+      clearCachePattern('admin-products');
+      
       res.json(product);
     } catch (error) {
       console.error("Error updating product:", error);
@@ -866,14 +874,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sortField = req.query.sortField as string || 'createdAt';
       const sortDirection = req.query.sortDirection as string || 'desc';
 
-      const result = await storage.getUsersPaginated({
-        page,
-        limit,
-        search,
-        status,
-        sortField,
-        sortDirection
-      });
+      // Create cache key for this specific query
+      const cacheKey = `admin-users-${page}-${limit}-${search}-${status}-${sortField}-${sortDirection}`;
+      
+      // Try to get from cache first
+      let result = getCache(cacheKey);
+      if (!result) {
+        result = await storage.getUsersPaginated({
+          page,
+          limit,
+          search,
+          status,
+          sortField,
+          sortDirection
+        });
+        
+        // Cache for 3 minutes
+        setCache(cacheKey, result, 180);
+      }
 
       res.json(result);
     } catch (error) {
@@ -893,6 +911,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const userData = req.body;
       const newUser = await storage.createUser(userData);
+      
+      // Clear users cache when new user is created
+      clearCachePattern('admin-users');
+      
       res.status(201).json(newUser);
     } catch (error) {
       console.error("Error creating user:", error);
