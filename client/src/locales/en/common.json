@@ -337,6 +337,8 @@
   },
   "status": {
     "loading": "Loading...",
+    "saving": "Saving...",
+    "sending": "Sending...",
     "signIn": "Sign In",
     "success": "Success",
     "error": "Error",

@@ -270,7 +270,7 @@
     "logout": "Выйти",
     "login": "Войти",
     "cart": "Корзина",
-    "menu": "القائمة"
+    "menu": "Меню"
   },
   "actions": {
     "save": "Сохранить",
@@ -306,10 +306,10 @@
     "view": "Просмотр",
     "remove": "Удалить",
     "search": "Поиск",
-    "previous": "السابق",
-    "continue": "متابعة",
-    "loading": "جاري التحميل...",
-    "retry": "إعادة المحاولة"
+    "previous": "Предыдущий",
+    "continue": "Продолжить",
+    "loading": "Загрузка...",
+    "retry": "Повторить"
   },
   "forms": {
     "required": "Обязательное поле",
@@ -367,14 +367,14 @@
     "operationCompleted": "Операция выполнена",
     "confirmDelete": "Вы уверены, что хотите удалить?",
     "unsavedChanges": "У вас есть несохранённые изменения",
-    "success": "نجح",
-    "error": "خطأ",
-    "warning": "تحذير",
-    "info": "معلومات",
-    "loading": "جاري التحميل...",
-    "tryAgain": "حاول مرة أخرى",
-    "somethingWentWrong": "حدث خطأ ما",
-    "pleaseWait": "يرجى الانتظار"
+    "success": "Успешно",
+    "error": "Ошибка",
+    "warning": "Предупреждение",
+    "info": "Информация",
+    "loading": "Загрузка...",
+    "tryAgain": "Попробуйте снова",
+    "somethingWentWrong": "Что-то пошло не так",
+    "pleaseWait": "Пожалуйста, подождите"
   },
   "validation": {
     "firstNameMinLength": "Имя должно содержать минимум 2 символа",
@@ -388,10 +388,10 @@
     "deliveryDateRequired": "Выберите дату доставки",
     "deliveryTimeRequired": "Выберите время доставки",
     "paymentMethodRequired": "Выберите способ оплаты",
-    "required": "هذا الحقل مطلوب",
-    "email": "يرجى إدخال بريد إلكتروني صحيح",
-    "minLength": "يجب أن يكون {{min}} أحرف على الأقل",
-    "maxLength": "لا يجب أن يتجاوز {{max}} حرف"
+    "required": "Это поле обязательно",
+    "email": "Введите корректный email",
+    "minLength": "Должно быть минимум {{min}} символов",
+    "maxLength": "Не должно превышать {{max}} символов"
   },
   "errors": {
     "general": "Произошла ошибка",

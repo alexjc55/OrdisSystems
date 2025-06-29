@@ -337,6 +337,8 @@
   },
   "status": {
     "loading": "טוען...",
+    "saving": "שומר...",
+    "sending": "שולח...",
     "signIn": "כניסה",
     "success": "הצלחה",
     "error": "שגיאה",
