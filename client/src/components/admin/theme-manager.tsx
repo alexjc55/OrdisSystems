@@ -1757,13 +1757,13 @@ export default function ThemeManager() {
                   <div>
                     <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Бренд</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <ColorInput label="Основной цвет" name="primaryColor" defaultValue={editingTheme.primaryColor} />
-                      <ColorInput label="Цвет текста кнопок" name="primaryTextColor" defaultValue={editingTheme.primaryTextColor} />
-                      <ColorInput label="Основной темный" name="primaryDarkColor" defaultValue={editingTheme.primaryDarkColor} />
-                      <ColorInput label="Основной светлый" name="primaryLightColor" defaultValue={editingTheme.primaryLightColor} />
+                      <ColorInput label={adminT('themes.primaryColorLabel')} name="primaryColor" defaultValue={editingTheme.primaryColor} />
+                      <ColorInput label={adminT('themes.buttonTextColor')} name="primaryTextColor" defaultValue={editingTheme.primaryTextColor} />
+                      <ColorInput label={adminT('themes.primaryDark')} name="primaryDarkColor" defaultValue={editingTheme.primaryDarkColor} />
+                      <ColorInput label={adminT('themes.primaryLight')} name="primaryLightColor" defaultValue={editingTheme.primaryLightColor} />
                     </div>
                     <div className="text-sm text-gray-500 mt-2">
-                      ℹ️ Основные цвета влияют на кнопки "В корзину", ссылки и главные элементы интерфейса
+                      ℹ️ {adminT('themes.brandColorsInfo')}
                     </div>
                     {/* Keep secondary/accent for API compatibility but hide from UI */}
                     <input type="hidden" name="secondaryColor" defaultValue={editingTheme.secondaryColor} />
@@ -1777,10 +1777,10 @@ export default function ThemeManager() {
                       <div>
                         <h5 className="text-sm font-medium mb-2">Основные статусные цвета</h5>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <ColorInput label="Успех" name="successColor" defaultValue={editingTheme.successColor} />
-                          <ColorInput label="Предупреждение" name="warningColor" defaultValue={editingTheme.warningColor} />
-                          <ColorInput label="Ошибка" name="errorColor" defaultValue={editingTheme.errorColor} />
-                          <ColorInput label="Информация" name="infoColor" defaultValue={editingTheme.infoColor} />
+                          <ColorInput label={adminT('themes.success')} name="successColor" defaultValue={editingTheme.successColor} />
+                          <ColorInput label={adminT('themes.warning')} name="warningColor" defaultValue={editingTheme.warningColor} />
+                          <ColorInput label={adminT('themes.error')} name="errorColor" defaultValue={editingTheme.errorColor} />
+                          <ColorInput label={adminT('themes.info')} name="infoColor" defaultValue={editingTheme.infoColor} />
                         </div>
                         <div className="text-sm text-gray-500 mt-2">
                           ℹ️ Используются в уведомлениях и статусных кнопках
@@ -1790,12 +1790,12 @@ export default function ThemeManager() {
                       <div>
                         <h5 className="text-sm font-medium mb-2">Специальные кнопки</h5>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <ColorInput label="Кнопка 'Завтра'" name="tomorrowColor" defaultValue={editingTheme.tomorrowColor} />
-                          <ColorInput label="Кнопка 'Завтра' (при наведении)" name="tomorrowDarkColor" defaultValue={editingTheme.tomorrowDarkColor} />
-                          <ColorInput label="Цвет 'Закончился'" name="outOfStockColor" defaultValue={editingTheme.outOfStockColor} />
+                          <ColorInput label={adminT('themes.tomorrowBtn')} name="tomorrowColor" defaultValue={editingTheme.tomorrowColor} />
+                          <ColorInput label={adminT('themes.tomorrowBtnHover')} name="tomorrowDarkColor" defaultValue={editingTheme.tomorrowDarkColor} />
+                          <ColorInput label={adminT('themes.outOfStockBtn')} name="outOfStockColor" defaultValue={editingTheme.outOfStockColor} />
                         </div>
                         <div className="text-sm text-gray-500 mt-2">
-                          ℹ️ "Завтра" - для недоступных сегодня товаров, "Закончился" - для бейджей
+                          ℹ️ {adminT('themes.specialButtonsInfo')}
                         </div>
                       </div>
                       
