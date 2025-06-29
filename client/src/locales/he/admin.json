@@ -374,7 +374,9 @@
     "title": "הרשאות גישה",
     "description": "ניהול הרשאות גישה לעובדים",
     "workerPermissions": "הרשאות עובדים",
-    "workerPermissionsDescription": "הגדרת הרשאות גישה לעובדים"
+    "workerPermissionsDescription": "הגדרת הרשאות גישה לעובדים",
+    "canManageThemes": "ניהול ערכות עיצוב",
+    "canManageThemesDescription": "אפשר לעובד לנהל ערכות עיצוב"
   },
   "settings": {
     "title": "הגדרות חנות",

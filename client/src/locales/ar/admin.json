@@ -557,6 +557,8 @@
     "title": "صلاحيات الوصول",
     "description": "إدارة صلاحيات الوصول للموظفين",
     "workerPermissions": "صلاحيات الموظفين",
-    "workerPermissionsDescription": "تكوين صلاحيات الوصول للموظفين"
+    "workerPermissionsDescription": "تكوين صلاحيات الوصول للموظفين",
+    "canManageThemes": "إدارة المواضيع",
+    "canManageThemesDescription": "السماح للموظف بإدارة مواضيع التصميم"
   }
 }

@@ -728,6 +728,8 @@
     "title": "Права доступа",
     "description": "Управление правами доступа сотрудников",
     "workerPermissions": "Права сотрудников",
-    "workerPermissionsDescription": "Настройка прав доступа для сотрудников"
+    "workerPermissionsDescription": "Настройка прав доступа для сотрудников",
+    "canManageThemes": "Управление темами",
+    "canManageThemesDescription": "Разрешить сотруднику управлять темами оформления"
   }
 }

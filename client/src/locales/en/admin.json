@@ -740,6 +740,8 @@
     "title": "Access Permissions",
     "description": "Manage employee access permissions",
     "workerPermissions": "Employee Permissions",
-    "workerPermissionsDescription": "Configure access permissions for employees"
+    "workerPermissionsDescription": "Configure access permissions for employees",
+    "canManageThemes": "Manage Themes",
+    "canManageThemesDescription": "Allow employee to manage design themes"
   }
 }
