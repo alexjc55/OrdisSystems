@@ -269,6 +269,14 @@
     "estimatedDelivery": "Estimated Delivery",
     "shippingAddress": "Shipping Address",
     "billingAddress": "Billing Address",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed", 
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
     "sameAsShipping": "Same as shipping address",
     "differentBilling": "Use different billing address",
     "orderSummary": "Order Summary",
