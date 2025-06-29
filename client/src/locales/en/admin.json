@@ -536,13 +536,7 @@
     "cancel": "Cancel"
   },
   "tabs": {
-    "products": "Products",
-    "categories": "Categories",
-    "orders": "Orders",
-    "users": "Users",
-    "settings": "Settings",
-    "permissions": "Permissions",
-    "themes": "Themes"
+    "settings": "Settings"
   },
   "themeFormLabels": {
     "name": "Theme Name",
@@ -622,5 +616,25 @@
     "phone": "Phone",
     "orders": "Orders",
     "totalAmount": "Total Amount"
+  },
+  "settings": {
+    "title": "Store Settings",
+    "basicInfo": "Basic Information",
+    "storeName": "Store Name",
+    "storeNamePlaceholder": "Enter store name",
+    "welcomeTitle": "Welcome Title",
+    "welcomeTitlePlaceholder": "Enter welcome title",
+    "welcomeSubtitle": "Welcome Subtitle",
+    "welcomeSubtitlePlaceholder": "Enter welcome subtitle",
+    "workingHours": "Working Hours",
+    "workingHoursDescription": "Configure store working hours",
+    "delivery": "Delivery",
+    "deliveryFee": "Delivery Fee",
+    "freeDeliveryThreshold": "Free Delivery Threshold",
+    "permissions": "Permissions",
+    "permissionsDescription": "Configure employee permissions",
+    "saved": "Settings Saved",
+    "saveSuccess": "Settings saved successfully",
+    "saveError": "Error saving settings"
   }
 }

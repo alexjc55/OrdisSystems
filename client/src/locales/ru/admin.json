@@ -2,13 +2,7 @@
   "title": "Настройки",
   "description": "Управление магазином",
   "tabs": {
-    "products": "Товары",
-    "categories": "Категории",
-    "orders": "Заказы",
-    "users": "Пользователи",
-    "settings": "Настройки",
-    "permissions": "Права",
-    "themes": "Темы"
+    "settings": "Настройки"
   },
   "actions": {
     "add": "Добавить",
@@ -606,5 +600,25 @@
     "phone": "Телефон",
     "orders": "Заказы",
     "totalAmount": "Общая сумма"
+  },
+  "settings": {
+    "title": "Настройки магазина",
+    "basicInfo": "Основная информация",
+    "storeName": "Название магазина",
+    "storeNamePlaceholder": "Введите название магазина",
+    "welcomeTitle": "Заголовок приветствия",
+    "welcomeTitlePlaceholder": "Введите заголовок приветствия",
+    "welcomeSubtitle": "Подзаголовок приветствия",
+    "welcomeSubtitlePlaceholder": "Введите подзаголовок приветствия",
+    "workingHours": "Часы работы",
+    "workingHoursDescription": "Настройте часы работы магазина",
+    "delivery": "Доставка",
+    "deliveryFee": "Стоимость доставки",
+    "freeDeliveryThreshold": "Минимальная сумма для бесплатной доставки",
+    "permissions": "Разрешения",
+    "permissionsDescription": "Настройте разрешения для сотрудников",
+    "saved": "Настройки сохранены",
+    "saveSuccess": "Настройки успешно сохранены",
+    "saveError": "Ошибка при сохранении настроек"
   }
 }

@@ -2,13 +2,7 @@
   "title": "الإعدادات",
   "description": "الوصف",
   "tabs": {
-    "products": "منتجات",
-    "categories": "فئات",
-    "orders": "طلبات",
-    "users": "مستخدمون",
-    "settings": "إعدادات",
-    "permissions": "أذونات",
-    "themes": "مظاهر"
+    "settings": "الإعدادات"
   },
   "actions": {
     "add": "إضافة",
@@ -536,7 +530,23 @@
   },
   "settings": {
     "title": "إعدادات المتجر",
-    "description": "الإعدادات الأساسية للمتجر"
+    "basicInfo": "المعلومات الأساسية",
+    "storeName": "اسم المتجر",
+    "storeNamePlaceholder": "أدخل اسم المتجر",
+    "welcomeTitle": "عنوان الترحيب",
+    "welcomeTitlePlaceholder": "أدخل عنوان الترحيب",
+    "welcomeSubtitle": "عنوان فرعي للترحيب",
+    "welcomeSubtitlePlaceholder": "أدخل عنوان فرعي للترحيب",
+    "workingHours": "ساعات العمل",
+    "workingHoursDescription": "تكوين ساعات عمل المتجر",
+    "delivery": "التوصيل",
+    "deliveryFee": "رسوم التوصيل",
+    "freeDeliveryThreshold": "الحد الأدنى للتوصيل المجاني",
+    "permissions": "الصلاحيات",
+    "permissionsDescription": "تكوين صلاحيات الموظفين",
+    "saved": "تم حفظ الإعدادات",
+    "saveSuccess": "تم حفظ الإعدادات بنجاح",
+    "saveError": "خطأ في حفظ الإعدادات"
   },
   "permissions": {
     "title": "الصلاحيات",
