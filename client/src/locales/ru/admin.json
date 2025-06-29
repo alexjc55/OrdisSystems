@@ -142,7 +142,10 @@
     "outOfStockButton": "Кнопка 'Закончилось'",
     "neutralColorsDescription": "Цвета для фонов, границ и второстепенных элементов",
     "noThemes": "Нет тем",
-    "createFirstTheme": "Создайте свою первую тему оформления для сайта"
+    "createFirstTheme": "Создайте свою первую тему оформления для сайта",
+    "basic": "Основной",
+    "colors": "Цвета",
+    "visuals": "Визуалы"
   },
   "colorLabels": {
     "primaryColor": "Основной цвет",
