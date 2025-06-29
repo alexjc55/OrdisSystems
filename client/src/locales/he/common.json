@@ -1,6 +1,11 @@
 {
   "menu": "תפריט",
   "admin": "ניהול",
+  "saving": "שומר...",
+  "saveChanges": "שמור שינויים",
+  "loading": "טוען...",
+  "error": "שגיאה",
+  "success": "הצליח",
   "profile": {
     "title": "פרופיל",
     "personalInfo": "מידע אישי",

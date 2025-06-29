@@ -1,6 +1,11 @@
 {
   "menu": "Menu",
   "admin": "Admin",
+  "saving": "Saving...",
+  "saveChanges": "Save Changes",
+  "loading": "Loading...",
+  "error": "Error",
+  "success": "Success",
   "profile": {
     "title": "Profile",
     "personalInfo": "Personal Information",
