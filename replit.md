@@ -131,6 +131,13 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 29, 2025: FIXED TRANSLATION KEY DISPLAY IN PASSWORD CHANGE DIALOG - Resolved "actions.cancel" key showing instead of translated text
+  - CRITICAL FIX: Added missing "actions" translation section to all 4 language files (RU/EN/HE/AR)
+  - TRANSLATION COVERAGE: Added 16 common action translations (save, cancel, edit, delete, add, create, update, close, submit, confirm, back, next, login, logout, view, search)
+  - UI IMPROVEMENT: Fixed profile page header overlap issue by adding proper padding (pt-20)
+  - COMPREHENSIVE CLEANUP: Completed systematic removal of hardcoded Russian text from forgot-password.tsx
+  - TRANSLATION CONSISTENCY: Password change dialog now properly displays translated button text in all supported languages
+  - RESULT: No more translation key display issues in authentication and password management workflows
 - June 29, 2025: CRITICAL TRANSLATION FIXES COMPLETED - Fixed all remaining translation key display issues
   - ADMIN PANEL: Added 200+ missing themes translation keys across all 4 languages (RU/EN/HE/AR)
   - MODERNSTYLE COMPONENT: Replaced all hardcoded Russian text with proper translations

@@ -272,6 +272,24 @@
     "cart": "Cart",
     "menu": "Menu"
   },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "create": "Create",
+    "update": "Update",
+    "close": "Close",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "login": "Login",
+    "logout": "Logout",
+    "view": "View",
+    "search": "Search"
+  },
   "buttons": {
     "add": "Add",
     "edit": "Edit",

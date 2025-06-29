@@ -378,6 +378,24 @@
     "continueAsGuest": "المتابعة كضيف",
     "newCustomer": "عميل جديد"
   },
+  "actions": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "add": "إضافة",
+    "create": "إنشاء",
+    "update": "تحديث",
+    "close": "إغلاق",
+    "submit": "إرسال",
+    "confirm": "تأكيد",
+    "back": "رجوع",
+    "next": "التالي",
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "view": "عرض",
+    "search": "بحث"
+  },
   "buttons": {
     "add": "إضافة",
     "edit": "تعديل",

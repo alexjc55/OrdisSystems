@@ -272,6 +272,24 @@
     "cart": "עגלת קניות",
     "menu": "תורגם"
   },
+  "actions": {
+    "save": "שמור",
+    "cancel": "בטל",
+    "edit": "ערוך",
+    "delete": "מחק",
+    "add": "הוסף",
+    "create": "צור",
+    "update": "עדכן",
+    "close": "סגור",
+    "submit": "שלח",
+    "confirm": "אשר",
+    "back": "חזור",
+    "next": "הבא",
+    "login": "כניסה",
+    "logout": "יציאה",
+    "view": "צפה",
+    "search": "חיפוש"
+  },
   "buttons": {
     "add": "הוסף",
     "edit": "ערוך",
