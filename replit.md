@@ -131,6 +131,21 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 29, 2025: Fixed carousel arrow directions for Arabic language and added gray background for inactive products
+  - CAROUSEL FIX: Fixed carousel arrows in special offers section for Arabic language (RTL support)
+    - Added Arabic language (ar) to RTL condition alongside Hebrew (he)
+    - Left arrow now shows ChevronRight, right arrow shows ChevronLeft for RTL languages
+    - Carousel navigation now works correctly in Arabic interface
+  - ADMIN PANEL ENHANCEMENT: Added visual distinction for inactive products in admin table
+    - Inactive products (with EyeOff icon) now have gray background (bg-gray-50)
+    - Added hover effects (hover:bg-gray-100) for better UX
+    - Eye icons increased to h-7 w-7 for better visibility
+    - Added hover:scale-110 effect for interactive feedback
+  - MOBILE MENU FIX: Enhanced mobile navigation for all user types
+    - Added profile button for all users including admins
+    - Reorganized layout: Menu + Profile in first row, Admin button in second row
+    - Used distinct colors: blue for menu, green for profile, orange for admin
+  - Created backups: home-page-backup-20250629_091849.tsx and admin-dashboard-backup-20250629_091849.tsx
 - June 29, 2025: COMPLETED 100% Arabic translation coverage across all application files
   - MILESTONE ACHIEVED: Full Arabic language support for entire application
   - FINAL STATISTICS: 
