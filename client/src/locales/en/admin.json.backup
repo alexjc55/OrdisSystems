@@ -1,0 +1,37 @@
+{
+  "title": "Settings",
+  "description": "Store Management",
+  "tabs": {
+    "products": "Products",
+    "categories": "Categories",
+    "orders": "Orders",
+    "users": "Users",
+    "settings": "Settings",
+    "permissions": "Permissions",
+    "themes": "Themes",
+    "categoriesTab": "Translation missing"
+  },
+  "actions": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "update": "Update",
+    "create": "Create",
+    "view": "View",
+    "close": "Close",
+    "search": "Search",
+    "searchProducts": "Search products...",
+    "filter": "Filter",
+    "reset": "Reset",
+    "confirm": "Confirm",
+    "apply": "Apply",
+    "error": "Error"
+  },
+  }
+}
+  }
+}
