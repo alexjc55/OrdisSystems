@@ -223,10 +223,7 @@ interface ThemeData {
 export default function ThemeManager() {
   const { t: adminT, i18n } = useTranslation('admin');
   
-  // Debug: проверка загрузки переводов
-  console.log('ThemeManager Debug - Language:', i18n.language);
-  console.log('ThemeManager Debug - storeLogo:', adminT('themes.storeLogo'));
-  console.log('ThemeManager Debug - bannerImage:', adminT('themes.bannerImage'));
+
   
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingTheme, setEditingTheme] = useState<ThemeData | null>(null);
