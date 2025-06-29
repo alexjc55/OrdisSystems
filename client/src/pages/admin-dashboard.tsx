@@ -1469,7 +1469,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                         min="0.1"
                         value={item.quantity}
                         onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
-                        className="w-16 h-7 text-xs"
+                        className="w-20 h-7 text-xs"
                       />
                       <span className="text-xs text-gray-500">
                         {getUnitDisplay(item.product?.unit, item.quantity)}
@@ -1589,7 +1589,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       min="0.1"
                       value={item.quantity}
                       onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
-                      className="h-7 text-sm w-16 text-center"
+                      className="h-7 text-sm w-20 text-center"
                     />
                     <span className="text-sm text-gray-600 min-w-[40px] flex-shrink-0">
                       {getUnitDisplay(item.product?.unit, item.quantity)}
