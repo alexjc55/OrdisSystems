@@ -445,7 +445,8 @@
     "title": "Store Settings",
     "description": "Manage basic settings of your online store",
     "htmlFooterExample": "<!-- Add chat widgets, social media buttons or other widgets here -->",
-    "workingHoursNote": "Leave empty for day off"
+    "workingHoursNote": "Leave empty for day off",
+    "workingDay": "Working Day"
   },
   "themes": {
     "title": "Theme Management",
