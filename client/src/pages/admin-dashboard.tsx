@@ -1840,7 +1840,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
           disabled={updateOrderMutation.isPending}
           variant="success"
         >
-          {updateOrderMutation.isPending ? adminT('common.saving') : adminT('common.saveChanges')}
+          {updateOrderMutation.isPending ? commonT('saving') : commonT('saveChanges')}
         </Button>
       </div>
     </div>
