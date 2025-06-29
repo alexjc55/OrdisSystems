@@ -5136,9 +5136,13 @@ export default function AdminDashboard() {
         product={editingProduct}
         adminT={adminT}
         onSubmit={(data: any) => {
+          // Merge form data with multilingual fields from formData
+          const multilingualData = translationManager.getAllLanguageFields(formData);
+          
           // Set isAvailable based on availability status
           const productData = {
             ...data,
+            ...multilingualData,
             isAvailable: data.availabilityStatus !== 'completely_unavailable'
           };
           

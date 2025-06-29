@@ -19,6 +19,10 @@ export function useTranslationManager({
   const { i18n } = useTranslation();
   const currentLanguage = i18n.language as SupportedLanguage;
 
+  const getFieldKey = useCallback((field: string, language: SupportedLanguage) => {
+    return getFieldName(field, language, defaultLanguage);
+  }, [defaultLanguage]);
+
   const getFieldValue = useCallback((formData: any, field: string) => {
     const fieldName = getFieldName(field, currentLanguage, defaultLanguage);
     return formData[fieldName] || '';
@@ -81,16 +85,34 @@ export function useTranslationManager({
     return `${baseLabel} (${languageNames[currentLanguage] || currentLanguage})`;
   }, [currentLanguage]);
 
+  const getAllLanguageFields = useCallback((formData: any): any => {
+    const result: any = {};
+    
+    // Get all multilingual fields for all languages
+    baseFields.forEach(field => {
+      ['ru', 'en', 'he', 'ar'].forEach(lang => {
+        const fieldKey = getFieldKey(field, lang);
+        if (formData[fieldKey] !== undefined) {
+          result[fieldKey] = formData[fieldKey];
+        }
+      });
+    });
+    
+    return result;
+  }, [baseFields, getFieldKey]);
+
   const isTranslationMode = currentLanguage !== defaultLanguage;
 
   return {
     currentLanguage,
     defaultLanguage,
     isTranslationMode,
+    getFieldKey,
     getFieldValue,
     setFieldValue,
     copyAllFields,
     clearAllFields,
-    getFieldLabel
+    getFieldLabel,
+    getAllLanguageFields
   };
 }
