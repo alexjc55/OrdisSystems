@@ -5395,13 +5395,32 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       console.log('Language changed, updating form:', { 
         language: translationManager.currentLanguage, 
         nameValue, 
+        descriptionValue,
+        formData: formData
+      });
+      
+      // Force update the form values
+      form.setValue('name', nameValue || '');
+      form.setValue('description', descriptionValue || '');
+    }
+  }, [translationManager.currentLanguage, open]);
+
+  // Also update when formData changes  
+  useEffect(() => {
+    if (open && formData && Object.keys(formData).length > 0) {
+      const nameValue = translationManager.getFieldValue(formData, 'name');
+      const descriptionValue = translationManager.getFieldValue(formData, 'description');
+      
+      console.log('FormData changed, updating form:', { 
+        language: translationManager.currentLanguage, 
+        nameValue, 
         descriptionValue 
       });
       
-      form.setValue('name', nameValue);
-      form.setValue('description', descriptionValue);
+      form.setValue('name', nameValue || '');
+      form.setValue('description', descriptionValue || '');
     }
-  }, [translationManager.currentLanguage, formData, form, translationManager, open]);
+  }, [formData, translationManager, form, open]);
   
   // Handle translation copy/clear
   const handleCopyAllFields = () => {
