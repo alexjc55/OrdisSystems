@@ -25,6 +25,7 @@
     "wallet": "Перевод отсутствует"
   },
   "searchPlaceholder": "Поиск блюд...",
+  "paymentMethod": "Способ оплаты",
   "defaultStoreDescription": "Свежая домашняя еда на развес - выбирайте по вкусу",
   "selectCategoryDescription": "Выберите категорию блюд",
   "defaultCategoryDescription": "Вкусные блюда для вашего стола",
@@ -192,7 +193,6 @@
     "selectDate": "Выберите дату",
     "deliveryTime": "Время доставки",
     "selectTime": "Выберите время",
-    "paymentMethod": "Способ оплаты",
     "selectPaymentMethod": "Выберите способ оплаты",
     "placeOrder": "Оформить заказ",
     "placeOrderAsGuest": "Заказать как гость",

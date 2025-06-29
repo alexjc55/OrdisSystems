@@ -2216,4 +2216,26 @@ html[dir="rtl"] button.whatsapp-button.whatsapp-button.whatsapp-button {
   text-align: inherit;
 }
 
+/* RTL Carousel navigation for Hebrew and Arabic */
+html[lang="he"] .swiper-button-prev,
+html[lang="ar"] .swiper-button-prev {
+  left: auto !important;
+  right: 10px !important;
+}
+
+html[lang="he"] .swiper-button-next,
+html[lang="ar"] .swiper-button-next {
+  right: auto !important;
+  left: 10px !important;
+}
+
+/* Ensure Arabic has identical RTL styling to Hebrew */
+html[lang="ar"] {
+  direction: rtl !important;
+}
+
+html[lang="ar"] * {
+  direction: inherit;
+}
+
 
