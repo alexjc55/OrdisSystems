@@ -112,7 +112,12 @@
     "fillDeliveryAddress": "يرجى ملء عنوان التوصيل",
     "deliveryAddressRequired": "عنوان التوصيل مطلوب",
     "fillPhoneNumber": "يرجى ملء رقم الهاتف",
-    "phoneNumberRequired": "رقم الهاتف مطلوب"
+    "phoneNumberRequired": "رقم الهاتف مطلوب",
+    "checkout": "الدفع",
+    "delivery": "التوصيل",
+    "items": "العناصر",
+    "total": "المجموع",
+    "freeDeliveryFrom": "توصيل مجاني من"
   },
   "checkout": {
     "title": "إتمام الطلب",
