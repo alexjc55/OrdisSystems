@@ -938,11 +938,11 @@ export default function ThemeManager() {
                 <TabsContent value="basic" className="space-y-4">
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">{adminT('themeFormLabels.name')}</Label>
+                      <Label htmlFor="name">{adminT('name')}</Label>
                       <Input id="name" name="name" placeholder={adminT('themes.namePlaceholder')} required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="description">{adminT('themeFormLabels.description')}</Label>
+                      <Label htmlFor="description">{adminT('description')}</Label>
                       <Textarea id="description" name="description" placeholder={adminT('themes.descriptionPlaceholder')} />
                     </div>
                     
@@ -984,17 +984,17 @@ export default function ThemeManager() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="fontFamilyPrimary">{adminT('themeFormLabels.primaryFont')}</Label>
+                        <Label htmlFor="fontFamilyPrimary">Основной шрифт</Label>
                         <Input id="fontFamilyPrimary" name="fontFamilyPrimary" defaultValue="Poppins, sans-serif" />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="fontFamilySecondary">{adminT('themeFormLabels.secondaryFont')}</Label>
+                        <Label htmlFor="fontFamilySecondary">Дополнительный шрифт</Label>
                         <Input id="fontFamilySecondary" name="fontFamilySecondary" defaultValue="Inter, sans-serif" />
                       </div>
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="headerStyleCreate">{adminT('themeFormLabels.headerStyle')}</Label>
+                      <Label htmlFor="headerStyleCreate">Стиль заголовка</Label>
                       <select
                         name="headerStyle"
                         id="headerStyleCreate"
@@ -1064,7 +1064,7 @@ export default function ThemeManager() {
                 <TabsContent value="colors" className="space-y-6">
                   {/* Brand */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themeFormLabels.brandColors")}</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Цвета бренда</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <ColorInput label={adminT("colorLabels.primaryColor")} name="primaryColor" defaultValue="#ff6600" />
                       <ColorInput label={adminT("colorLabels.primaryTextColor")} name="primaryTextColor" defaultValue="#ffffff" />
@@ -1072,7 +1072,7 @@ export default function ThemeManager() {
                       <ColorInput label={adminT("colorLabels.primaryLightColor")} name="primaryLightColor" defaultValue="#fff3f0" />
                     </div>
                     <div className="text-sm text-gray-500 mt-2">
-                      ℹ️ {adminT("themeFormLabels.brandColorsDescription")}
+                      ℹ️ Основные цвета магазина для кнопок и акцентов
                     </div>
                     {/* Keep secondary/accent for API compatibility but hide from UI */}
                     <input type="hidden" name="secondaryColor" defaultValue="#f8fafc" />
@@ -1081,7 +1081,7 @@ export default function ThemeManager() {
 
                   {/* Status */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themeFormLabels.statusColors")}</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Цвета статусов</h4>
                     <div className="space-y-4">
                       <div>
                         <h5 className="text-sm font-medium mb-2">{adminT("statusLabels.mainStatusColors")}</h5>
