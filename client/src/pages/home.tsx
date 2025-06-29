@@ -525,10 +525,10 @@ export default function Home() {
                                 {category.name}
                               </h3>
                               
-                              <p className="text-gray-600 text-sm leading-relaxed flex-1">
+                              <p className="text-gray-600 text-sm leading-relaxed flex-1 truncate">
                                 {(() => {
                                   const text = category.description || t('defaultCategoryDescription');
-                                  return text.length > 60 ? text.substring(0, 60) + '...' : text;
+                                  return text.length > 50 ? text.substring(0, 50) + '...' : text;
                                 })()}
                               </p>
                               
