@@ -234,7 +234,44 @@
     "description": "الوصف",
     "image": "الصورة",
     "unit": "الوحدة",
-    "availability": "التوفر"
+    "availability": "التوفر",
+    "availableProducts": "المنتجات المتوفرة",
+    "unavailableProducts": "المنتجات غير المتوفرة", 
+    "preorderProducts": "طلب مسبق لليوم التالي",
+    "productsWithDiscount": "المنتجات المخفضة",
+    "units": {
+      "100g": "لكل 100غ",
+      "kg": "لكل كيلو",
+      "piece": "للقطعة",
+      "per100g": "لكل 100غ"
+    },
+    "dialog": {
+      "addProduct": "إضافة منتج جديد",
+      "editProduct": "تعديل المنتج",
+      "nameLabel": "اسم المنتج",
+      "namePlaceholder": "أدخل اسم المنتج",
+      "descriptionLabel": "الوصف",
+      "descriptionPlaceholder": "أدخل وصف المنتج",
+      "categoryLabel": "الفئة",
+      "priceLabel": "السعر",
+      "pricePlaceholder": "0.00",
+      "unitLabel": "وحدة القياس",
+      "imageLabel": "صورة المنتج",
+      "availabilityLabel": "حالة التوفر",
+      "specialOfferLabel": "عرض خاص",
+      "specialOfferDescription": "تفعيل العروض الخاصة للمنتج",
+      "discountTypeLabel": "نوع الخصم",
+      "discountValueLabel": "قيمة الخصم",
+      "selectDiscountType": "اختر نوع الخصم",
+      "percentage": "نسبة مئوية",
+      "fixed": "مبلغ ثابت"
+    },
+    "statusDialog": {
+      "title": "تغيير حالة المنتج",
+      "description": "اختر الإجراء المطلوب للمنتج",
+      "disable": "إخفاء المنتج",
+      "keep": "إبقاء كطلب مسبق"
+    }
   },
   "categories": {
     "title": "الفئات",
