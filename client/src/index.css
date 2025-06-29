@@ -320,31 +320,13 @@ button:focus,
     direction: rtl !important;
   }
   
-  /* Force RTL for table components - orders and users tables only */
-  html[lang="he"] .orders table,
-  html[lang="ar"] .orders table,
-  html[lang="he"] .orders thead,
-  html[lang="ar"] .orders thead,
-  html[lang="he"] .orders tbody,
-  html[lang="ar"] .orders tbody,
-  html[lang="he"] .orders tr,
-  html[lang="ar"] .orders tr,
-  html[lang="he"] .orders th,
-  html[lang="ar"] .orders th,
-  html[lang="he"] .orders td,
-  html[lang="ar"] .orders td,
-  html[lang="he"] .users table,
-  html[lang="ar"] .users table,
-  html[lang="he"] .users thead,
-  html[lang="ar"] .users thead,
-  html[lang="he"] .users tbody,
-  html[lang="ar"] .users tbody,
-  html[lang="he"] .users tr,
-  html[lang="ar"] .users tr,
-  html[lang="he"] .users th,
-  html[lang="ar"] .users th,
-  html[lang="he"] .users td,
-  html[lang="ar"] .users td {
+  /* Force RTL for table components */
+  html[lang="ar"] table,
+  html[lang="ar"] thead,
+  html[lang="ar"] tbody,
+  html[lang="ar"] tr,
+  html[lang="ar"] th,
+  html[lang="ar"] td {
     direction: rtl !important;
     text-align: right !important;
   }
@@ -760,7 +742,6 @@ button:focus,
     text-align: left !important;
   }
   
-  /* Force LTR for products table cells with maximum specificity */
   html[lang="he"] .products-container table th,
   html[lang="ar"] .products-container table th,
   html[lang="he"] .products-container table td,
@@ -768,89 +749,19 @@ button:focus,
   html[lang="he"] [data-tab="products"] table th,
   html[lang="ar"] [data-tab="products"] table th,
   html[lang="he"] [data-tab="products"] table td,
-  html[lang="ar"] [data-tab="products"] table td,
-  html[lang="he"] .products .table-container table th,
-  html[lang="ar"] .products .table-container table th,
-  html[lang="he"] .products .table-container table td,
-  html[lang="ar"] .products .table-container table td,
-  html[lang="he"] .products table th,
-  html[lang="ar"] .products table th,
-  html[lang="he"] .products table td,
-  html[lang="ar"] .products table td,
-  html[lang="he"] .products th,
-  html[lang="ar"] .products th,
-  html[lang="he"] .products td,
-  html[lang="ar"] .products td {
+  html[lang="ar"] [data-tab="products"] table td {
     direction: ltr !important;
     text-align: left !important;
   }
   
   /* Products table specific RTL fix - force LTR for products table only */
-  [dir="rtl"] .products .table-container table,
-  html[lang="he"] .products .table-container table,
-  html[lang="ar"] .products .table-container table,
-  html[lang="he"] .products-container table,
-  html[lang="ar"] .products-container table,
-  html[lang="he"] [data-tab="products"] table,
-  html[lang="ar"] [data-tab="products"] table,
-  html[lang="he"] .products table,
-  html[lang="ar"] .products table,
-  html[lang="he"] .products thead,
-  html[lang="ar"] .products thead,
-  html[lang="he"] .products tbody,
-  html[lang="ar"] .products tbody,
-  html[lang="he"] .products tr,
-  html[lang="ar"] .products tr {
+  [dir="rtl"] .products .table-container table {
     direction: ltr !important;
-    text-align: left !important;
   }
   
-  /* Keep orders and users tables RTL for both Hebrew and Arabic */
-  [dir="rtl"] .orders .table-container table,
-  html[lang="he"] .orders .table-container table,
-  html[lang="ar"] .orders .table-container table,
-  html[lang="he"] .orders-container table,
-  html[lang="ar"] .orders-container table,
-  html[lang="he"] [data-tab="orders"] table,
-  html[lang="ar"] [data-tab="orders"] table,
-  [dir="rtl"] .users .table-container table,
-  html[lang="he"] .users .table-container table,
-  html[lang="ar"] .users .table-container table,
-  html[lang="he"] .users-container table,
-  html[lang="ar"] .users-container table,
-  html[lang="he"] [data-tab="users"] table,
-  html[lang="ar"] [data-tab="users"] table {
+  /* Keep orders table RTL */
+  [dir="rtl"] .orders .table-container table {
     direction: rtl !important;
-    text-align: right !important;
-  }
-  
-  /* Force RTL for orders and users table cells with high specificity */
-  html[lang="he"] .orders .table-container table th,
-  html[lang="ar"] .orders .table-container table th,
-  html[lang="he"] .orders .table-container table td,
-  html[lang="ar"] .orders .table-container table td,
-  html[lang="he"] .orders-container table th,
-  html[lang="ar"] .orders-container table th,
-  html[lang="he"] .orders-container table td,
-  html[lang="ar"] .orders-container table td,
-  html[lang="he"] [data-tab="orders"] table th,
-  html[lang="ar"] [data-tab="orders"] table th,
-  html[lang="he"] [data-tab="orders"] table td,
-  html[lang="ar"] [data-tab="orders"] table td,
-  html[lang="he"] .users .table-container table th,
-  html[lang="ar"] .users .table-container table th,
-  html[lang="he"] .users .table-container table td,
-  html[lang="ar"] .users .table-container table td,
-  html[lang="he"] .users-container table th,
-  html[lang="ar"] .users-container table th,
-  html[lang="he"] .users-container table td,
-  html[lang="ar"] .users-container table td,
-  html[lang="he"] [data-tab="users"] table th,
-  html[lang="ar"] [data-tab="users"] table th,
-  html[lang="he"] [data-tab="users"] table td,
-  html[lang="ar"] [data-tab="users"] table td {
-    direction: rtl !important;
-    text-align: right !important;
   }
   
   /* Specific RTL flex layouts for orders UI */
