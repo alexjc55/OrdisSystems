@@ -2407,7 +2407,9 @@ export default function AdminDashboard() {
       const response = await fetch('/api/categories?includeInactive=true');
       if (!response.ok) throw new Error('Failed to fetch categories');
       return await response.json();
-    }
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
   const { data: productsResponse, isLoading: productsLoading } = useQuery({
@@ -2428,6 +2430,8 @@ export default function AdminDashboard() {
       return response.json();
     },
     enabled: !!storeSettings,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const { data: ordersResponse, isLoading: ordersLoading } = useQuery({
@@ -2972,12 +2976,13 @@ export default function AdminDashboard() {
     }
   }, [isRTL, productsData, usersData, ordersResponse, activeTab]);
 
-  if (isLoading || !user) {
+  if (isLoading || !user || storeSettingsLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-gray-600">Загрузка...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-6"></div>
+          <p className="text-gray-600 text-lg mb-2">Загрузка админ панели...</p>
+          <p className="text-gray-500 text-sm">Подождите, идет загрузка данных</p>
         </div>
       </div>
     );
