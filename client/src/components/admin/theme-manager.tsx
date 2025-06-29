@@ -227,6 +227,7 @@ export default function ThemeManager() {
   console.log('ThemeManager Debug - Language:', i18n.language);
   console.log('ThemeManager Debug - storeLogo:', adminT('themes.storeLogo'));
   console.log('ThemeManager Debug - bannerImage:', adminT('themes.bannerImage'));
+  console.log('ThemeManager Debug - themes object:', adminT('themes', { returnObjects: true }));
   
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingTheme, setEditingTheme] = useState<ThemeData | null>(null);
