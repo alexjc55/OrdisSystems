@@ -108,6 +108,7 @@
     "resetColors": "Reset Colors",
     "name": "Name",
     "colorPalette": "Color Palette",
-    "active": "Active"
+    "active": "Active",
+    "phoneFormat": "Format: +country_code number (e.g., +972501234567)"
   }
 }

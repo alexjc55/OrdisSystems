@@ -1470,7 +1470,7 @@ export default function ThemeManager() {
                 <CardTitle className="text-lg">{theme.name}</CardTitle>
                 {theme.isActive && (
                   <Badge variant="default" className="bg-primary text-white">
-                    Активная
+                    {adminT('themes.active')}
                   </Badge>
                 )}
               </div>
@@ -1479,7 +1479,7 @@ export default function ThemeManager() {
             <CardContent>
               {/* Color Preview */}
               <div className="space-y-3">
-                <div className="text-sm font-medium">Цветовая палитра:</div>
+                <div className="text-sm font-medium">{adminT('themes.colorPalette')}:</div>
                 <div className="grid grid-cols-6 gap-2">
                   <div
                     className="h-8 w-8 rounded border"
@@ -1964,7 +1964,7 @@ export default function ThemeManager() {
 
                   {/* Баннеры корзины */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Баннер в корзине</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT('themes.cartBanner')}</h4>
                     <div className="space-y-4">
                       <VisualToggleButton 
                         isEnabled={editVisualSettings.showCartBanner}
@@ -1976,10 +1976,10 @@ export default function ThemeManager() {
 
                       {editVisualSettings.showCartBanner && (
                         <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
-                          <h5 className="text-sm font-medium text-gray-800">Настройки баннера корзины</h5>
+                          <h5 className="text-sm font-medium text-gray-800">{adminT('themes.cartBannerSettings')}</h5>
                           
                           <div>
-                            <Label htmlFor="cartBannerType" className="text-sm">Тип баннера</Label>
+                            <Label htmlFor="cartBannerType" className="text-sm">{adminT('themes.bannerType')}</Label>
                             <select
                               name="cartBannerType"
                               id="cartBannerType"
@@ -2053,7 +2053,7 @@ export default function ThemeManager() {
 
                   {/* Нижние баннеры */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Нижние баннеры</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT('themes.bottomBanners')}</h4>
                     <div className="space-y-4">
                       <VisualToggleButton 
                         isEnabled={editVisualSettings.showBottomBanners}
@@ -2065,14 +2065,14 @@ export default function ThemeManager() {
 
                       {editVisualSettings.showBottomBanners && (
                         <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
-                          <h5 className="text-sm font-medium text-gray-800">Настройки нижних баннеров</h5>
+                          <h5 className="text-sm font-medium text-gray-800">{adminT('themes.bottomBannersSettings')}</h5>
                           
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Первый баннер */}
                             <div className="space-y-3">
-                              <h6 className="text-sm font-medium text-gray-700">Первый баннер</h6>
+                              <h6 className="text-sm font-medium text-gray-700">{adminT('themes.firstBanner')}</h6>
                               <div>
-                                <Label htmlFor="bottomBanner1Url" className="text-sm">Изображение</Label>
+                                <Label htmlFor="bottomBanner1Url" className="text-sm">{adminT('themes.imageField')}</Label>
                                 <ImageUpload
                                   value={editBottomBanner1Url}
                                   onChange={(url: string) => {
@@ -2082,7 +2082,7 @@ export default function ThemeManager() {
                                 <input type="hidden" name="bottomBanner1Url" value={editBottomBanner1Url} />
                               </div>
                               <div>
-                                <Label htmlFor="bottomBanner1Link" className="text-sm">Ссылка</Label>
+                                <Label htmlFor="bottomBanner1Link" className="text-sm">{adminT('themes.linkField')}</Label>
                                 <input
                                   type="url"
                                   name="bottomBanner1Link"
@@ -2096,9 +2096,9 @@ export default function ThemeManager() {
 
                             {/* Второй баннер */}
                             <div className="space-y-3">
-                              <h6 className="text-sm font-medium text-gray-700">Второй баннер</h6>
+                              <h6 className="text-sm font-medium text-gray-700">{adminT('themes.secondBanner')}</h6>
                               <div>
-                                <Label htmlFor="bottomBanner2Url" className="text-sm">Изображение</Label>
+                                <Label htmlFor="bottomBanner2Url" className="text-sm">{adminT('themes.imageField')}</Label>
                                 <ImageUpload
                                   value={editBottomBanner2Url}
                                   onChange={(url: string) => {
@@ -2108,7 +2108,7 @@ export default function ThemeManager() {
                                 <input type="hidden" name="bottomBanner2Url" value={editBottomBanner2Url} />
                               </div>
                               <div>
-                                <Label htmlFor="bottomBanner2Link" className="text-sm">Ссылка</Label>
+                                <Label htmlFor="bottomBanner2Link" className="text-sm">{adminT('themes.linkField')}</Label>
                                 <input
                                   type="url"
                                   name="bottomBanner2Link"

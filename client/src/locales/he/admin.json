@@ -122,6 +122,7 @@
     "infoBlocksBottom": "מתחת למוצרים",
     "additionalFeatures": "תכונות נוספות",
     "phoneNumber": "מספר טלפון",
+    "phoneFormat": "פורמט: +קוד_מדינה מספר (לדוגמה, +972501234567)",
     "defaultMessage": "הודעה ברירת מחדל",
     "cartBanner": "באנר עגלה",
     "cartBannerSettings": "הגדרות באנר עגלה",
