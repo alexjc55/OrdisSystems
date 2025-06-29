@@ -5386,6 +5386,21 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     }
   }, [open, product, form, translationManager]);
 
+  // Save current form values when they change
+  const handleFieldChange = (fieldName: string, value: string) => {
+    const currentLang = translationManager.currentLanguage;
+    const defaultLang = translationManager.defaultLanguage;
+    
+    if (currentLang === defaultLang) {
+      // For default language, save to base fields
+      setFormData((prev: any) => ({ ...prev, [fieldName]: value }));
+    } else {
+      // For other languages, save to localized fields
+      const localizedField = `${fieldName}_${currentLang}`;
+      setFormData((prev: any) => ({ ...prev, [localizedField]: value }));
+    }
+  };
+
   // Update form values when language changes
   useEffect(() => {
     if (open && formData && Object.keys(formData).length > 0) {
@@ -5416,7 +5431,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       form.setValue('name', nameValue);
       form.setValue('description', descriptionValue);
     }
-  }, [translationManager.currentLanguage, formData, form, open]);
+  }, [translationManager.currentLanguage, open]);
   
   // Handle translation copy/clear
   const handleCopyAllFields = () => {
@@ -5442,23 +5457,25 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       return;
     }
 
-    // Directly set values to form
+    // Update formData with copied values FIRST
+    const targetNameField = `name_${translationManager.currentLanguage}`;
+    const targetDescField = `description_${translationManager.currentLanguage}`;
+    
+    const updatedFormData = {
+      ...formData,
+      [targetNameField]: defaultName,
+      [targetDescField]: defaultDescription
+    };
+    
+    setFormData(updatedFormData);
+
+    // Then set form values
     if (defaultName) {
       form.setValue('name', defaultName);
     }
     if (defaultDescription) {
       form.setValue('description', defaultDescription);
     }
-
-    // Update formData with copied values
-    const targetNameField = `name_${translationManager.currentLanguage}`;
-    const targetDescField = `description_${translationManager.currentLanguage}`;
-    
-    setFormData((prev: any) => ({
-      ...prev,
-      [targetNameField]: defaultName,
-      [targetDescField]: defaultDescription
-    }));
 
     let copiedCount = 0;
     if (defaultName) copiedCount++;
@@ -5529,7 +5546,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       className="text-sm"
                       onChange={(e) => {
                         field.onChange(e);
-                        translationManager.setFieldValue('name', e.target.value, setFormData);
+                        handleFieldChange('name', e.target.value);
                       }}
                     />
                   </FormControl>
@@ -5553,7 +5570,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
-                        translationManager.setFieldValue('description', e.target.value, setFormData);
+                        handleFieldChange('description', e.target.value);
                       }}
                     />
                   </FormControl>
