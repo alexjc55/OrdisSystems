@@ -243,7 +243,7 @@ export default function Header({ onResetView }: HeaderProps) {
                   <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
                     <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer">
                       <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                      <span className="font-semibold text-sm">{t('navigation.profile')}</span>
+                      <span className="font-semibold text-sm">{t('profile.title')}</span>
                     </div>
                   </Link>
                 </div>
