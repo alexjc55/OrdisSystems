@@ -643,7 +643,7 @@ export default function ThemeManager() {
       contactsIconColor: formData.get("contactsIconColor") as string,
       paymentDeliveryIconColor: formData.get("paymentDeliveryIconColor") as string,
       headerStyle: formData.get("headerStyle") as string,
-      bannerButtonText: formData.get("bannerButtonText") as string || adminT('themes.buttonTextDefault'),
+      bannerButtonText: formData.get("bannerButtonText") as string || adminT('themeFormLabels.buttonTextDefault'),
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
       logoUrl: createLogoUrl,
       bannerImageUrl: createBannerImageUrl,
@@ -730,7 +730,7 @@ export default function ThemeManager() {
       contactsIconColor: convertColorToHsl(formData.get("contactsIconColor") as string),
       paymentDeliveryIconColor: convertColorToHsl(formData.get("paymentDeliveryIconColor") as string),
       headerStyle: formData.get("headerStyle") as string,
-      bannerButtonText: formData.get("bannerButtonText") as string || adminT('themes.buttonTextDefault'),
+      bannerButtonText: formData.get("bannerButtonText") as string || adminT('themeFormLabels.buttonTextDefault'),
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
       logoUrl: editLogoUrl,
       bannerImageUrl: editBannerImageUrl,
@@ -762,7 +762,7 @@ export default function ThemeManager() {
       showCategoryMenu: editVisualSettings.showCategoryMenu,
       showWhatsAppChat: editVisualSettings.showWhatsAppChat,
       whatsappPhone: formData.get("whatsappPhone") as string || "",
-      whatsappMessage: formData.get("whatsappMessage") as string || adminT('themes.whatsappMessageDefault'),
+      whatsappMessage: formData.get("whatsappMessage") as string || adminT('themeFormLabels.whatsappMessageDefault'),
       whiteColor: convertColorToHsl(formData.get("whiteColor") as string),
       gray50Color: convertColorToHsl(formData.get("gray50Color") as string),
       gray100Color: convertColorToHsl(formData.get("gray100Color") as string),
@@ -951,7 +951,7 @@ export default function ThemeManager() {
                       <div>
                         <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          {adminT('themes.storeLogo')}
+                          {adminT('themeFormLabels.storeLogo')}
                         </Label>
                         <ImageUpload
                           value={createLogoUrl}
@@ -961,7 +961,7 @@ export default function ThemeManager() {
                         />
                         <input type="hidden" name="logoUrl" value={createLogoUrl} />
                         <div className="text-xs text-gray-500 mt-2">
-                          {adminT('themes.storeLogoDescription')}
+                          {adminT('themeFormLabels.storeLogoDescription')}
                         </div>
                       </div>
                       
@@ -1016,7 +1016,7 @@ export default function ThemeManager() {
                         <option value="minimal">{adminT("themes.minimal")}</option>
                       </select>
                       <div className="text-sm text-gray-500">
-                        {adminT("themes.headerStyleDescription")}
+                        {adminT("themeFormLabels.headerStyleDescription")}
                       </div>
                     </div>
                     
@@ -1030,8 +1030,8 @@ export default function ThemeManager() {
                               type="text"
                               name="bannerButtonText"
                               id="bannerButtonTextCreate"
-                              defaultValue={adminT('themes.buttonTextDefault')}
-                              placeholder={adminT('themes.buttonTextDefault')}
+                              defaultValue={adminT('themeFormLabels.buttonTextDefault')}
+                              placeholder={adminT('themeFormLabels.buttonTextDefault')}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500">
@@ -1644,7 +1644,7 @@ export default function ThemeManager() {
                       <div>
                         <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          {adminT('themes.storeLogo')}
+                          {adminT('themeFormLabels.storeLogo')}
                         </Label>
                         <ImageUpload
                           value={editLogoUrl}
@@ -1654,7 +1654,7 @@ export default function ThemeManager() {
                         />
                         <input type="hidden" name="logoUrl" value={editLogoUrl} />
                         <div className="text-xs text-gray-500 mt-2">
-                          {adminT('themes.storeLogoDescription')}
+                          {adminT('themeFormLabels.storeLogoDescription')}
                         </div>
                       </div>
                       
@@ -1676,7 +1676,7 @@ export default function ThemeManager() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="headerStyleEdit">{adminT('themes.headerStyleLabel')}</Label>
+                      <Label htmlFor="headerStyleEdit">{adminT('themeFormLabels.headerStyle')}</Label>
                       <select
                         name="headerStyle"
                         id="headerStyleEdit"
@@ -1698,7 +1698,7 @@ export default function ThemeManager() {
                         <option value="minimal">{adminT("themes.minimal")}</option>
                       </select>
                       <div className="text-sm text-gray-500">
-                        {adminT("themes.headerStyleImpact")}
+                        {adminT("themeFormLabels.headerStyleImpact")}
                       </div>
                     </div>
                     
@@ -1712,8 +1712,8 @@ export default function ThemeManager() {
                               type="text"
                               name="bannerButtonText"
                               id="bannerButtonTextEdit"
-                              defaultValue={editingTheme.bannerButtonText || adminT('themes.buttonTextDefault')}
-                              placeholder={adminT('themes.buttonTextDefault')}
+                              defaultValue={editingTheme.bannerButtonText || adminT('themeFormLabels.buttonTextDefault')}
+                              placeholder={adminT('themeFormLabels.buttonTextDefault')}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500">
@@ -1951,8 +1951,8 @@ export default function ThemeManager() {
                             <textarea
                               name="whatsappMessage"
                               id="whatsappMessage"
-                              defaultValue={editingTheme?.whatsappMessage || adminT('themes.whatsappMessageDefault')}
-                              placeholder={adminT('themes.whatsappMessageDefault')}
+                              defaultValue={editingTheme?.whatsappMessage || adminT('themeFormLabels.whatsappMessageDefault')}
+                              placeholder={adminT('themeFormLabels.whatsappMessageDefault')}
                               rows={2}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none"
                             />
