@@ -431,7 +431,10 @@
     "workerPermissions": "הרשאות עובדים",
     "workerPermissionsDescription": "הגדרת הרשאות גישה לעובדים",
     "canManageThemes": "ניהול ערכות עיצוב",
-    "canManageThemesDescription": "אפשר לעובד לנהל ערכות עיצוב"
+    "canManageThemesDescription": "אפשר לעובד לנהל ערכות עיצוב",
+    "coreWorkSections": "חלקי עבודה מרכזיים",
+    "coreWorkSectionsDescription": "חלקים אלה זמינים תמיד לעובדים למשימות חיוניות",
+    "alwaysEnabled": "תמיד מופעל"
   },
   "settings": {
     "title": "הגדרות חנות",

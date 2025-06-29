@@ -840,6 +840,9 @@
     "workerPermissions": "Employee Permissions",
     "workerPermissionsDescription": "Configure access permissions for employees",
     "canManageThemes": "Manage Themes",
-    "canManageThemesDescription": "Allow employee to manage design themes"
+    "canManageThemesDescription": "Allow employee to manage design themes",
+    "coreWorkSections": "Core Work Sections",
+    "coreWorkSectionsDescription": "These sections are always available to workers for essential tasks",
+    "alwaysEnabled": "always enabled"
   }
 }

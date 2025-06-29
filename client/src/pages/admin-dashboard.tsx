@@ -2176,7 +2176,14 @@ export default function AdminDashboard() {
     if (user?.role === "admin") return true;
     if (user?.role !== "worker") return false;
     
-    // Use stable permissions to prevent tab switching during settings updates
+    // Core work sections - always available for workers (no permission check)
+    if (permission === 'canManageProducts' || 
+        permission === 'canManageCategories' || 
+        permission === 'canManageOrders') {
+      return true;
+    }
+    
+    // Administrative sections - require permission check
     const workerPermissions = stablePermissions.current || {};
     return workerPermissions[permission] === true;
   };
@@ -4950,82 +4957,24 @@ export default function AdminDashboard() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canManageProducts')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageProductsDescription')}</p>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => 
-                            updateStoreSettingsMutation.mutate({
-                              workerPermissions: {
-                                ...(storeSettings?.workerPermissions || {}),
-                                canManageProducts: !((storeSettings?.workerPermissions as any)?.canManageProducts || false)
-                              }
-                            })
-                          }
-                          className="h-8 w-8 p-0"
-                        >
-                          {(storeSettings?.workerPermissions as any)?.canManageProducts ? (
+                      {/* Core work sections - always available for workers */}
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                        <h4 className="text-sm font-medium text-blue-800 mb-2">{adminT('systemSettings.coreWorkSections')}</h4>
+                        <p className="text-xs text-blue-600 mb-3">{adminT('systemSettings.coreWorkSectionsDescription')}</p>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-sm">
                             <Eye className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <EyeOff className="h-4 w-4 text-gray-400" />
-                          )}
-                        </Button>
-                      </div>
-                      
-                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canManageCategories')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageCategoriesDescription')}</p>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => 
-                            updateStoreSettingsMutation.mutate({
-                              workerPermissions: {
-                                ...(storeSettings?.workerPermissions || {}),
-                                canManageCategories: !((storeSettings?.workerPermissions as any)?.canManageCategories || false)
-                              }
-                            })
-                          }
-                          className="h-8 w-8 p-0"
-                        >
-                          {(storeSettings?.workerPermissions as any)?.canManageCategories ? (
+                            <span>{adminT('systemSettings.canManageProducts')} - {adminT('systemSettings.alwaysEnabled')}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
                             <Eye className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <EyeOff className="h-4 w-4 text-gray-400" />
-                          )}
-                        </Button>
-                      </div>
-                      
-                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className={isRTL ? 'text-right' : 'text-left'}>
-                          <label className="text-sm font-medium">{adminT('systemSettings.canEditOrders')}</label>
-                          <p className="text-xs text-gray-500">{adminT('systemSettings.canEditOrdersDescription')}</p>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => 
-                            updateStoreSettingsMutation.mutate({
-                              workerPermissions: {
-                                ...(storeSettings?.workerPermissions || {}),
-                                canManageOrders: !((storeSettings?.workerPermissions as any)?.canManageOrders || false)
-                              }
-                            })
-                          }
-                          className="h-8 w-8 p-0"
-                        >
-                          {(storeSettings?.workerPermissions as any)?.canManageOrders ? (
+                            <span>{adminT('systemSettings.canManageCategories')} - {adminT('systemSettings.alwaysEnabled')}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
                             <Eye className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <EyeOff className="h-4 w-4 text-gray-400" />
-                          )}
-                        </Button>
+                            <span>{adminT('systemSettings.canEditOrders')} - {adminT('systemSettings.alwaysEnabled')}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     
