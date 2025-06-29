@@ -1891,7 +1891,7 @@ export default function ThemeManager() {
                     {/* Позиция информационных блоков - показывается только если включены инфо блоки */}
                     {editVisualSettings.showInfoBlocks && (
                       <div className="mt-4 space-y-2">
-                        <Label htmlFor="infoBlocksPositionEdit" className="text-sm font-medium">Позиция информационных блоков</Label>
+                        <Label htmlFor="infoBlocksPositionEdit" className="text-sm font-medium">{adminT('themes.infoBlocksPosition')}</Label>
                         <select
                           name="infoBlocksPosition"
                           id="infoBlocksPositionEdit"
@@ -1899,8 +1899,8 @@ export default function ThemeManager() {
                           onChange={(e) => setEditVisualSettings(prev => ({ ...prev, infoBlocksPosition: e.target.value }))}
                           className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                         >
-                          <option value="top">Сверху от товаров</option>
-                          <option value="bottom">Снизу от товаров</option>
+                          <option value="top">{adminT('themes.infoBlocksTop')}</option>
+                          <option value="bottom">{adminT('themes.infoBlocksBottom')}</option>
                         </select>
                       </div>
                     )}
@@ -1908,7 +1908,7 @@ export default function ThemeManager() {
 
                   {/* Дополнительные функции */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Дополнительные функции</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT('themes.additionalFeatures')}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <VisualToggleButton 
                         isEnabled={editVisualSettings.showSpecialOffers}
@@ -1930,10 +1930,10 @@ export default function ThemeManager() {
                     {/* WhatsApp настройки */}
                     {editVisualSettings.showWhatsAppChat && (
                       <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-3">
-                        <h5 className="text-sm font-medium text-gray-800">Настройки WhatsApp</h5>
+                        <h5 className="text-sm font-medium text-gray-800">{adminT('themes.whatsappSettings')}</h5>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           <div>
-                            <Label htmlFor="whatsappPhone" className="text-sm">Номер телефона</Label>
+                            <Label htmlFor="whatsappPhone" className="text-sm">{adminT('themes.phoneNumber')}</Label>
                             <input
                               type="text"
                               name="whatsappPhone"
@@ -1943,11 +1943,11 @@ export default function ThemeManager() {
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500 mt-1">
-                              Формат: +код_страны номер (например, +972501234567)
+                              {adminT('themes.phoneFormat')}
                             </div>
                           </div>
                           <div>
-                            <Label htmlFor="whatsappMessage" className="text-sm">Сообщение по умолчанию</Label>
+                            <Label htmlFor="whatsappMessage" className="text-sm">{adminT('themes.defaultMessage')}</Label>
                             <textarea
                               name="whatsappMessage"
                               id="whatsappMessage"
