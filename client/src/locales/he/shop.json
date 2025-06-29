@@ -1,4 +1,5 @@
 {
+  "paymentMethod": "אמצעי תשלום",
   "searchResults": "תוצאות חיפוש",
   "defaultWelcomeTitle": "eDAHouse - אוכל ביתי במשקל",
   "foundItems": "נמצאו {{count}} פריטים",

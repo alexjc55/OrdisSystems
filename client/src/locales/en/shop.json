@@ -1,4 +1,5 @@
 {
+  "paymentMethod": "Payment Method",
   "searchResults": "Search Results",
   "defaultWelcomeTitle": "eDAHouse - Home-cooked Food by Weight",
   "foundItems": "Found {{count}} items",

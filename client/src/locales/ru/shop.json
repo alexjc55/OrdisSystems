@@ -1,4 +1,5 @@
 {
+  "paymentMethod": "Способ оплаты",
   "searchResults": "Результаты поиска",
   "defaultWelcomeTitle": "eDAHouse - Домашняя еда на развес",
   "foundItems": "Найдено {{count}} товаров",
@@ -25,7 +26,6 @@
     "wallet": "Перевод отсутствует"
   },
   "searchPlaceholder": "Поиск блюд...",
-  "paymentMethod": "Способ оплаты",
   "defaultStoreDescription": "Свежая домашняя еда на развес - выбирайте по вкусу",
   "selectCategoryDescription": "Выберите категорию блюд",
   "defaultCategoryDescription": "Вкусные блюда для вашего стола",
