@@ -496,46 +496,46 @@
     "loggedOut": "تم تسجيل الخروج"
   },
   "profile": {
-    "title": "ترجمة مفقودة",
-    "personalInfo": "ترجمة مفقودة",
-    "addresses": "ترجمة مفقودة",
-    "orderHistory": "ترجمة مفقودة",
-    "settings": "ترجمة مفقودة",
-    "changePassword": "ترجمة مفقودة",
-    "addAddress": "ترجمة مفقودة",
-    "defaultAddress": "ترجمة مفقودة",
-    "editProfile": "ترجمة مفقودة",
-    "saveChanges": "ترجمة مفقودة"
+    "title": "الملف الشخصي",
+    "personalInfo": "المعلومات الشخصية",
+    "addresses": "العناوين",
+    "orderHistory": "تاريخ الطلبات",
+    "settings": "الإعدادات",
+    "changePassword": "تغيير كلمة المرور",
+    "addAddress": "إضافة عنوان",
+    "defaultAddress": "العنوان الافتراضي",
+    "editProfile": "تحرير الملف الشخصي",
+    "saveChanges": "حفظ التغييرات"
   },
   "whatsapp": {
-    "defaultMessage": "ترجمة مفقودة",
-    "writeMessage": "ترجمة مفقودة"
+    "defaultMessage": "الرسالة الافتراضية",
+    "writeMessage": "كتابة رسالة"
   },
-  "backToShopping": "ترجمة مفقودة",
-  "onlyWithDiscount": "ترجمة مفقودة",
-  "preOrder": "ترجمة مفقودة",
-  "preOrderTooltip": "ترجمة مفقودة",
-  "addedToCart": "ترجمة مفقودة",
-  "viewCart": "ترجمة مفقودة",
-  "discount": "ترجمة مفقودة",
-  "outOfStockToday": "ترجمة مفقودة",
-  "orderForTomorrow": "ترجمة مفقودة",
+  "backToShopping": "العودة للتسوق",
+  "onlyWithDiscount": "فقط مع خصم",
+  "preOrder": "طلب مسبق",
+  "preOrderTooltip": "نصيحة الطلب المسبق",
+  "addedToCart": "تم إضافته للسلة",
+  "viewCart": "عرض السلة",
+  "discount": "خصم",
+  "outOfStockToday": "غير متوفر اليوم",
+  "orderForTomorrow": "طلب للغد",
   "buttons": {
-    "back": "ترجمة مفقودة"
+    "back": "العودة"
   },
-  "selectTime": "ترجمة مفقودة",
-  "specialRequests": "ترجمة مفقودة",
-  "selectAddress": "ترجمة مفقودة",
-  "enterDeliveryAddress": "ترجمة مفقودة",
-  "enterPhoneNumber": "ترجمة مفقودة",
+  "selectTime": "اختر الوقت",
+  "specialRequests": "طلبات خاصة",
+  "selectAddress": "اختر العنوان",
+  "enterDeliveryAddress": "أدخل عنوان التوصيل",
+  "enterPhoneNumber": "أدخل رقم الهاتف",
   "orders": {
-    "myOrders": "ترجمة مفقودة",
-    "noOrders": "ترجمة مفقودة",
-    "orderDate": "ترجمة مفقودة",
-    "orderNumber": "ترجمة مفقودة",
-    "orderStatus": "ترجمة مفقودة",
-    "orderTotal": "ترجمة مفقودة",
-    "trackOrder": "ترجمة مفقودة",
-    "viewDetails": "ترجمة مفقودة"
+    "myOrders": "طلباتي",
+    "noOrders": "لا توجد طلبات",
+    "orderDate": "تاريخ الطلب",
+    "orderNumber": "رقم الطلب",
+    "orderStatus": "حالة الطلب",
+    "orderTotal": "إجمالي الطلب",
+    "trackOrder": "تتبع الطلب",
+    "viewDetails": "عرض التفاصيل"
   }
 }
