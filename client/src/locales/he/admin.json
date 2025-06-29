@@ -310,7 +310,9 @@
     "bankTransfer": "העברה בנקאית",
     "defaultWhatsappMessage": "שלום! הייתי רוצה לדעת עוד על המוצרים שלכם.",
     "noteTitle": "הערה",
-    "languageNote": "שינויים בהגדרות השפה דורשים רענון עמוד ליישום מלא."
+    "languageNote": "שינויים בהגדרות השפה דורשים רענון עמוד ליישום מלא.",
+    "title": "הגדרות חנות",
+    "description": "נהל הגדרות בסיסיות של החנות המקוונת שלך"
   },
   "systemSettings": {
     "title": "הגדרות מערכת",
@@ -381,9 +383,14 @@
     "totalCustomers": "סה\"כ לקוחות"
   },
   "common": {
+    "loading": "טוען...",
+    "free": "חינם",
     "saving": "שומר...",
     "saveChanges": "שמור שינויים",
-    "loading": "טוען..."
+    "noResults": "אין תוצאות",
+    "tryDifferentSearch": "נסה חיפוש אחר",
+    "showing": "מציג",
+    "of": "מתוך"
   },
   "imageUpload": {
     "selectFile": "בחר קובץ",
@@ -409,7 +416,7 @@
     "salePrice": "מחיר מבצע",
     "weight": "משקל",
     "unit": "יחידה",
-    "searchProducts": "חפש מוצרים...",
+    "searchProducts": "חיפוש מוצרים...",
     "allCategories": "כל הקטגוריות",
     "allProducts": "כל המוצרים",
     "availableProducts": "מוצרים זמינים",

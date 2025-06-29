@@ -33,14 +33,19 @@
     "cancelCategory": "Cancel"
   },
   "common": {
+    "loading": "Loading...",
+    "free": "Free",
     "saving": "Saving...",
     "saveChanges": "Save Changes",
-    "loading": "Loading..."
+    "noResults": "No Results",
+    "tryDifferentSearch": "Try different search",
+    "showing": "Showing",
+    "of": "of"
   },
   "products": {
     "title": "Products",
     "description": "Manage your store's product catalog",
-    "noProducts": "No products found",
+    "noProducts": "No Products",
     "addFirstProduct": "Add your first product to get started",
     "searchProducts": "Search products...",
     "filterByCategory": "Filter by category",
@@ -427,7 +432,9 @@
     "bankTransfer": "Bank Transfer",
     "defaultWhatsappMessage": "Hello! I would like to know more about your products.",
     "noteTitle": "Note",
-    "languageNote": "Changes in language settings require page reload for full application."
+    "languageNote": "Changes in language settings require page reload for full application.",
+    "title": "Store Settings",
+    "description": "Manage basic settings of your online store"
   },
   "themes": {
     "title": "Theme Management",
