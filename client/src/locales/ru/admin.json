@@ -477,6 +477,18 @@
     "orderItems": "Товары заказа",
     "percentage": "Процент",
     "itemDiscount": "Скидка на товар",
+    "enterNewOrderAmount": "Введите новую сумму заказа",
+    "manualPriceNote": "Эта сумма заменит расчетную стоимость товаров",
+    "finalTotal": "Итого",
+    "notes": "Заметки",
+    "notesPlaceholder": "Дополнительные заметки к заказу...",
+    "removeItemConfirm": "Удалить товар",
+    "order": "Заказ",
+    "newOrder": "Новый заказ",
+    "editOrderDescription": "Редактирование деталей заказа",
+    "createOrderDescription": "Создание нового заказа",
+    "orderInformation": "Информация о заказе",
+    "save": "Сохранить",
     "notifications": {
       "statusUpdated": "Статус обновлен",
       "statusUpdatedDesc": "Статус заказа успешно обновлен"

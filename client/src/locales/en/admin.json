@@ -757,6 +757,18 @@
     "orderItems": "Order items",
     "percentage": "Percentage",
     "itemDiscount": "Item discount",
+    "enterNewOrderAmount": "Enter new order amount",
+    "manualPriceNote": "This amount will replace the calculated cost of items",
+    "finalTotal": "Final total",
+    "notes": "Notes",
+    "notesPlaceholder": "Additional notes for the order...",
+    "removeItemConfirm": "Remove item",
+    "order": "Order",
+    "newOrder": "New order",
+    "editOrderDescription": "Edit order details",
+    "createOrderDescription": "Create new order",
+    "orderInformation": "Order information",
+    "save": "Save",
     "notifications": {
       "statusUpdated": "Status updated",
       "statusUpdatedDesc": "Order status updated successfully"

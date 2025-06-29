@@ -1160,7 +1160,19 @@
     "discountReasonPlaceholder": "הכנס סיבת הנחה",
     "manualPriceOverride": "תיקון ידני של מחיר",
     "percentage": "אחוז",
-    "itemDiscount": "הנחה על פריט"
+    "itemDiscount": "הנחה על פריט",
+    "enterNewOrderAmount": "הכנס סכום הזמנה חדש",
+    "manualPriceNote": "סכום זה יחליף את העלות המחושבת של הפריטים",
+    "finalTotal": "סך הכל סופי",
+    "notes": "הערות",
+    "notesPlaceholder": "הערות נוספות להזמנה...",
+    "removeItemConfirm": "הסר פריט",
+    "order": "הזמנה",
+    "newOrder": "הזמנה חדשה",
+    "editOrderDescription": "עריכת פרטי הזמנה",
+    "createOrderDescription": "יצירת הזמנה חדשה",
+    "orderInformation": "מידע על ההזמנה",
+    "save": "שמור"
   },
   "orderDiscount": {
     "title": "הנחה על הזמנה",
