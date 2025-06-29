@@ -918,17 +918,17 @@ export default function ThemeManager() {
             }}>
               <Tabs defaultValue="basic" className="w-full">
                 <TabsList className="flex w-full">
-                  <TabsTrigger value="basic" className="flex items-center gap-1 flex-1" title="Основное">
+                  <TabsTrigger value="basic" className="flex items-center gap-1 flex-1" title={adminT('themes.basic')}>
                     <Info className="h-4 w-4" />
-                    <span className="hidden sm:inline">Основное</span>
+                    <span className="hidden sm:inline">{adminT('themes.basic')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="colors" className="flex items-center gap-1 flex-1" title="Цвета">
+                  <TabsTrigger value="colors" className="flex items-center gap-1 flex-1" title={adminT('themes.colors')}>
                     <Palette className="h-4 w-4" />
-                    <span className="hidden sm:inline">Цвета</span>
+                    <span className="hidden sm:inline">{adminT('themes.colors')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="visuals" className="flex items-center gap-1 flex-1" title="Визуалы">
+                  <TabsTrigger value="visuals" className="flex items-center gap-1 flex-1" title={adminT('themes.visuals')}>
                     <Upload className="h-4 w-4" />
-                    <span className="hidden sm:inline">Визуалы</span>
+                    <span className="hidden sm:inline">{adminT('themes.visuals')}</span>
                   </TabsTrigger>
                 </TabsList>
                 
@@ -1611,17 +1611,17 @@ export default function ThemeManager() {
             }}>
               <Tabs defaultValue="basic" className="w-full">
                 <TabsList className="flex w-full">
-                  <TabsTrigger value="basic" className="flex items-center gap-1 flex-1" title="Основное">
+                  <TabsTrigger value="basic" className="flex items-center gap-1 flex-1" title={adminT('themes.basic')}>
                     <Info className="h-4 w-4" />
-                    <span className="hidden sm:inline">Основное</span>
+                    <span className="hidden sm:inline">{adminT('themes.basic')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="colors" className="flex items-center gap-1 flex-1" title="Цвета">
+                  <TabsTrigger value="colors" className="flex items-center gap-1 flex-1" title={adminT('themes.colors')}>
                     <Palette className="h-4 w-4" />
-                    <span className="hidden sm:inline">Цвета</span>
+                    <span className="hidden sm:inline">{adminT('themes.colors')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="visuals" className="flex items-center gap-1 flex-1" title="Визуалы">
+                  <TabsTrigger value="visuals" className="flex items-center gap-1 flex-1" title={adminT('themes.visuals')}>
                     <Upload className="h-4 w-4" />
-                    <span className="hidden sm:inline">Визуалы</span>
+                    <span className="hidden sm:inline">{adminT('themes.visuals')}</span>
                   </TabsTrigger>
                 </TabsList>
                 
