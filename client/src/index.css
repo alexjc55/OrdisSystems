@@ -755,12 +755,16 @@ button:focus,
   }
   
   /* Products table specific RTL fix - force LTR for products table only */
-  [dir="rtl"] .products .table-container table {
+  [dir="rtl"] .products .table-container table,
+  html[lang="he"] .products .table-container table,
+  html[lang="ar"] .products .table-container table {
     direction: ltr !important;
   }
   
-  /* Keep orders table RTL */
-  [dir="rtl"] .orders .table-container table {
+  /* Keep orders table RTL for both Hebrew and Arabic */
+  [dir="rtl"] .orders .table-container table,
+  html[lang="he"] .orders .table-container table,
+  html[lang="ar"] .orders .table-container table {
     direction: rtl !important;
   }
   
