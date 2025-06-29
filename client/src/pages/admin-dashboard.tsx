@@ -3445,7 +3445,11 @@ export default function AdminDashboard() {
                         </TableHeader>
                         <TableBody>
                           {filteredProducts.map((product: any) => (
-                            <TableRow key={product.id}>
+                            <TableRow key={product.id} className={
+                              !(product.isAvailable && (product.availabilityStatus === "available"))
+                                ? 'bg-gray-50 hover:bg-gray-100' 
+                                : 'hover:bg-gray-50'
+                            }>
                               {/* Dynamically order columns for RTL */}
                               {isRTL ? (
                                 // RTL order: Status, Price, Category, Name (reversed)
