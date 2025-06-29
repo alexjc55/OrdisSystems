@@ -494,15 +494,15 @@
     "mainNeutralColors": "Main Neutral Colors",
     "neutralColorsInfo": "Colors for backgrounds and element borders",
     "showBanner": "Show Banner",
-    "showBannerDescription": "Display banner on homepage",
+    "showBannerDescription": "Display banner image on homepage",
     "titleDescription": "Title and Description",
-    "titleDescriptionDesc": "Show store title and description",
+    "titleDescriptionDesc": "Show title and description text on banner",
     "categoryMenu": "Category Menu",
-    "categoryMenuDescription": "Display product category menu",
+    "categoryMenuDescription": "Show category navigation menu",
     "infoBlocks": "Info Blocks",
-    "infoBlocksDescription": "Show store information blocks",
+    "infoBlocksDescription": "Show information blocks about the store",
     "specialOffers": "Special Offers",
-    "specialOffersDescription": "Display special offers carousel",
+    "specialOffersDescription": "Show special offers section",
     "whatsappChatDescription": "Show WhatsApp chat button",
     "showCartBanner": "Show Cart Banner",
     "showCartBannerDescription": "Display banner in shopping cart",
@@ -510,7 +510,7 @@
     "showBottomBannersDescription": "Display banners at page bottom",
     "phoneNumber": "Phone Number",
     "defaultMessage": "Default Message",
-    "phoneFormat": "Format: +country_code number (e.g., +972501234567)",
+    "phoneFormat": "Format: +7XXXXXXXXXX",
     "cartBanner": "Cart Banner",
     "cartBannerSettings": "Cart Banner Settings",
     "bannerType": "Banner Type",
@@ -547,7 +547,10 @@
     "primaryDarkColor": "Dark Primary",
     "primaryLightColor": "Light Primary",
     "secondaryColor": "Secondary Color",
-    "accentColor": "Accent Color"
+    "accentColor": "Accent Color",
+    "buttonTextDefault": "Order Now",
+    "whatsappMessageDefault": "Hello! I am interested in your products.",
+    "whatsappChat": "WhatsApp Chat"
   },
   "colorLabels": {
     "primaryColor": "Primary Color",
@@ -622,7 +625,10 @@
   },
   "tabs": {
     "settings": "Settings",
-    "permissions": "Permissions"
+    "permissions": "Permissions",
+    "basic": "Basic",
+    "colors": "Colors",
+    "visuals": "Visuals"
   },
   "themeFormLabels": {
     "name": "Theme Name",
