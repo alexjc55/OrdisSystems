@@ -72,7 +72,15 @@
     "outOfStockButton": "Out of Stock Button",
     "neutralColorsDescription": "Colors for backgrounds, borders and secondary elements",
     "noThemes": "No Themes",
-    "createFirstTheme": "Create your first site design theme"
+    "createFirstTheme": "Create your first site design theme",
+    "basic": "Basic",
+    "colors": "Colors",
+    "visuals": "Visuals", 
+    "namePlaceholder": "My Theme",
+    "descriptionPlaceholder": "Theme description...",
+    "buttonTextDefault": "View Catalog",
+    "whatsappMessageDefault": "Hello! I have a question about my order.",
+    "whatsappChat": "WhatsApp Chat"
   },
   "colorLabels": {
     "primaryColor": "Primary Color",

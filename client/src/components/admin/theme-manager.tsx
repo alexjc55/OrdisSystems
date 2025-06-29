@@ -263,7 +263,6 @@ export default function ThemeManager() {
   const [createBottomBanner2Url, setCreateBottomBanner2Url] = useState('');
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { t: adminT } = useTranslation('admin');
 
   // Initialize edit visual settings when editing theme changes
   useEffect(() => {
@@ -641,7 +640,7 @@ export default function ThemeManager() {
       contactsIconColor: formData.get("contactsIconColor") as string,
       paymentDeliveryIconColor: formData.get("paymentDeliveryIconColor") as string,
       headerStyle: formData.get("headerStyle") as string,
-      bannerButtonText: formData.get("bannerButtonText") as string || "Смотреть каталог",
+      bannerButtonText: formData.get("bannerButtonText") as string || adminT('themes.buttonTextDefault'),
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
       logoUrl: createLogoUrl,
       bannerImageUrl: createBannerImageUrl,
@@ -728,7 +727,7 @@ export default function ThemeManager() {
       contactsIconColor: convertColorToHsl(formData.get("contactsIconColor") as string),
       paymentDeliveryIconColor: convertColorToHsl(formData.get("paymentDeliveryIconColor") as string),
       headerStyle: formData.get("headerStyle") as string,
-      bannerButtonText: formData.get("bannerButtonText") as string || "Смотреть каталог",
+      bannerButtonText: formData.get("bannerButtonText") as string || adminT('themes.buttonTextDefault'),
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
       logoUrl: editLogoUrl,
       bannerImageUrl: editBannerImageUrl,

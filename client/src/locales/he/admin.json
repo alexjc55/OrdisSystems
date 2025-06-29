@@ -72,7 +72,15 @@
     "outOfStockButton": "כפתור 'אזל המלאי'",
     "neutralColorsDescription": "צבעים לרקעים, גבולות ואלמנטים משניים",
     "noThemes": "אין עיצובים",
-    "createFirstTheme": "צור את עיצוב האתר הראשון שלך"
+    "createFirstTheme": "צור את עיצוב האתר הראשון שלך",
+    "basic": "בסיסי",
+    "colors": "צבעים",
+    "visuals": "ויזואלים",
+    "namePlaceholder": "העיצוב שלי",
+    "descriptionPlaceholder": "תיאור העיצוב...",
+    "buttonTextDefault": "צפה בקטלוג",
+    "whatsappMessageDefault": "שלום! יש לי שאלה לגבי ההזמנה.",
+    "whatsappChat": "צ׳אט WhatsApp"
   },
   "colorLabels": {
     "primaryColor": "צבע עיקרי",
