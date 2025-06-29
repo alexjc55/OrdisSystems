@@ -110,5 +110,8 @@
     "futureOrderError": "Cannot order for future",
     "canNowPlaceOrder": "You can now place order",
     "free": "Free"
+  },
+  "units": {
+    "per100g": "per 100g"
   }
 }
