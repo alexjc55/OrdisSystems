@@ -686,7 +686,7 @@
     "displaySettingsDescription": "إعدادات عرض الصفحة الرئيسية",
     "showBanner": "إظهار اللافتة",
     "showBannerDescription": "إظهار لافتة في الصفحة الرئيسية",
-    "languageActive": "ترجمة مفقودة",
+    "languageActive": "نشط",
     "languageDisabled": "ترجمة مفقودة",
     "weekStartDay": "ترجمة مفقودة",
     "weekStartDayPlaceholder": "ترجمة مفقودة",
@@ -796,7 +796,7 @@
     "cancelReason": "ترجمة مفقودة",
     "selectCancelReason": "ترجمة مفقودة",
     "number": "ترجمة مفقودة",
-    "active": "ترجمة مفقودة",
+    "active": "نشط",
     "completed": "ترجمة مفقودة",
     "cancelled": "ترجمة مفقودة",
     "all": "ترجمة مفقودة",
@@ -1305,7 +1305,7 @@
   "deleteConfirmation": "لا يمكن التراجع عن هذا الإجراء. القالب",
   "deleteForever": "سيتم حذفه نهائياً",
   "imageUpload": {
-    "selectFile": "ترجمة مفقودة",
-    "uploading": "ترجمة مفقودة"
+    "selectFile": "اختر ملف",
+    "uploading": "جاري الرفع"
   }
 }
