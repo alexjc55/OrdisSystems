@@ -1481,32 +1481,32 @@ export default function ThemeManager() {
                   <div
                     className="h-8 w-8 rounded border"
                     style={{ backgroundColor: theme.primaryColor }}
-                    title="Основной"
+                    title={adminT('themes.brandSection')}
                   />
                   <div
                     className="h-8 w-8 rounded border"
                     style={{ backgroundColor: theme.successColor }}
-                    title="Успех"
+                    title={adminT('themes.success')}
                   />
                   <div
                     className="h-8 w-8 rounded border"
                     style={{ backgroundColor: theme.warningColor }}
-                    title="Предупреждение"
+                    title={adminT('themes.warning')}
                   />
                   <div
                     className="h-8 w-8 rounded border"
                     style={{ backgroundColor: theme.errorColor }}
-                    title="Ошибка"
+                    title={adminT('themes.error')}
                   />
                   <div
                     className="h-8 w-8 rounded border"
                     style={{ backgroundColor: theme.infoColor }}
-                    title="Информация"
+                    title={adminT('themes.info')}
                   />
                   <div
                     className="h-8 w-8 rounded border"
                     style={{ backgroundColor: theme.gray500Color }}
-                    title="Нейтральный"
+                    title={adminT('themes.neutralSection')}
                   />
                 </div>
               </div>
@@ -1521,7 +1521,7 @@ export default function ThemeManager() {
                     className="btn-primary"
                     onClick={() => activateThemeMutation.mutate(theme.id)}
                     disabled={activateThemeMutation.isPending}
-                    title="Активировать тему"
+                    title={adminT('themes.activateTheme')}
                   >
                     <Paintbrush className="h-4 w-4" />
                   </Button>
@@ -1531,7 +1531,7 @@ export default function ThemeManager() {
                   size="sm"
                   variant="outline"
                   onClick={() => setEditingTheme(theme)}
-                  title="Настроить тему"
+                  title={adminT('themes.editTheme')}
                 >
                   <Settings className="h-4 w-4" />
                 </Button>
@@ -1541,7 +1541,7 @@ export default function ThemeManager() {
                   variant="outline"
                   onClick={() => handleResetToDefault(theme.id)}
                   disabled={updateThemeMutation.isPending}
-                  title="Сбросить все цвета к значениям по умолчанию"
+                  title={adminT('themes.resetColors')}
                 >
                   <RotateCcw className="h-4 w-4" />
                 </Button>
@@ -1966,8 +1966,8 @@ export default function ThemeManager() {
                       <VisualToggleButton 
                         isEnabled={editVisualSettings.showCartBanner}
                         onToggle={() => setEditVisualSettings(prev => ({ ...prev, showCartBanner: !prev.showCartBanner }))}
-                        label="Показывать баннер в корзине"
-                        description="Рекламный баннер для привлечения внимания"
+                        label={adminT('themes.showCartBanner')}
+                        description={adminT('themes.showCartBannerDescription')}
                         fieldName="showCartBanner"
                       />
 
@@ -2055,8 +2055,8 @@ export default function ThemeManager() {
                       <VisualToggleButton 
                         isEnabled={editVisualSettings.showBottomBanners}
                         onToggle={() => setEditVisualSettings(prev => ({ ...prev, showBottomBanners: !prev.showBottomBanners }))}
-                        label="Показывать нижние баннеры"
-                        description="Рекламные баннеры внизу страницы"
+                        label={adminT('themes.showBottomBanners')}
+                        description={adminT('themes.showBottomBannersDescription')}
                         fieldName="showBottomBanners"
                       />
 
