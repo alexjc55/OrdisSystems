@@ -299,14 +299,23 @@
       "recommendedSize": "الحجم المُوصى به للصورة 400×400 بكسل",
       "unit100gml": "لكل 100غ/مل",
       "imageUpload": {
-        "clickToUpload": "انقر للرفع",
+        "clickToUpload": "انقر للرفع", 
         "dragAndDrop": "أو اسحب وأفلت",
         "fileTypes": "PNG, JPG, GIF حتى 10MB",
         "chooseFile": "اختيار ملف",
         "remove": "إزالة",
         "uploading": "جاري الرفع...",
         "uploadError": "خطأ في الرفع",
-        "noImage": "لا توجد صورة"
+        "noImage": "لا توجد صورة",
+        "selectFile": "اختر ملف",
+        "supportedFormats": "PNG, JPG, GIF حتى 5MB",
+        "invalidFormat": "تنسيق غير صالح",
+        "pleaseSelectImage": "يرجى اختيار صورة صالحة",
+        "fileTooLarge": "الملف كبير جداً",
+        "maxSize5MB": "الحد الأقصى 5 ميجابايت",
+        "uploaded": "تم الرفع",
+        "uploadSuccess": "تم رفع الصورة بنجاح",
+        "uploadFailed": "فشل في رفع الصورة"
       }
     },
     "statusDialog": {

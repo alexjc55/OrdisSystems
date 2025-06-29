@@ -5524,11 +5524,19 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     </div>
                   </div>
                   <FormControl>
-                    <CustomSwitch
-                      checked={Boolean(field.value)}
-                      onChange={field.onChange}
-                      bgColor="bg-primary"
-                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => field.onChange(!field.value)}
+                      className={`h-8 w-8 p-0 rounded-lg transition-all duration-200 ${
+                        field.value 
+                          ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50' 
+                          : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                    </Button>
                   </FormControl>
                 </FormItem>
               )}
