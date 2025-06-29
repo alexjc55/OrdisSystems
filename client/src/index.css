@@ -749,10 +749,14 @@ button:focus,
     direction: rtl !important;
   }
   
-  /* Table containers remain RTL for both languages */
+  /* Hebrew table containers - LTR direction */
   html[lang="he"] .products-container .table-container table,
+  html[lang="he"] [data-tab="products"] .table-container table {
+    direction: ltr !important;
+  }
+  
+  /* Arabic table containers - RTL direction */
   html[lang="ar"] .products-container .table-container table,
-  html[lang="he"] [data-tab="products"] .table-container table,
   html[lang="ar"] [data-tab="products"] .table-container table {
     direction: rtl !important;
   }
