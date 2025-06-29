@@ -373,10 +373,10 @@ export default function Profile() {
 
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground w-fit">
-            <TabsTrigger value="profile" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">Профиль</TabsTrigger>
-            <TabsTrigger value="security" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">Безопасность</TabsTrigger>
-            <TabsTrigger value="addresses" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">Адреса</TabsTrigger>
-            <TabsTrigger value="orders" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">История Заказов</TabsTrigger>
+            <TabsTrigger value="profile" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">{t('profile.profileTab')}</TabsTrigger>
+            <TabsTrigger value="security" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">{t('profile.securityTab')}</TabsTrigger>
+            <TabsTrigger value="addresses" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">{t('profile.addressesTab')}</TabsTrigger>
+            <TabsTrigger value="orders" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">{t('profile.ordersTab')}</TabsTrigger>
           </TabsList>
 
           {/* Profile Information */}
@@ -385,10 +385,10 @@ export default function Profile() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
-                  Информация о профиле
+                  {t('profile.profileInfo')}
                 </CardTitle>
                 <CardDescription>
-                  Ваши личные данные и контактная информация
+                  {t('profile.profileInfoDescription')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
