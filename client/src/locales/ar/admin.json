@@ -1199,6 +1199,10 @@
   },
   "neutralLabels": {
     "mainNeutralColors": "الألوان المحايدة الرئيسية",
+    "statusColorsInfo": "تُستخدم في الإشعارات وأزرار الحالة",
+    "neutralColorsInfo": "ألوان محايدة للخلفيات والنصوص والعناصر الأساسية",
+    "buttonLink": "رابط الزر",
+    "buttonLinkDescription": "رابط أو مرساة (#categories لكتلة الفئات)",
     "white": "أبيض",
     "gray100": "رمادي 100 (خلفية)",
     "gray700": "رمادي 700 (نص)",

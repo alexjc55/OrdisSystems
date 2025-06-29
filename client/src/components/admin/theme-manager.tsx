@@ -1719,7 +1719,7 @@ export default function ThemeManager() {
                           </div>
                           
                           <div className="space-y-2">
-                            <Label htmlFor="bannerButtonLinkEdit">Ссылка кнопки</Label>
+                            <Label htmlFor="bannerButtonLinkEdit">{adminT('themes.buttonLink')}</Label>
                             <input
                               type="text"
                               name="bannerButtonLink"
@@ -1729,7 +1729,7 @@ export default function ThemeManager() {
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500">
-                              Ссылка или якорь (#categories для блока категорий)
+                              {adminT('themes.buttonLinkDescription')}
                             </div>
                           </div>
                         </div>
@@ -1775,7 +1775,7 @@ export default function ThemeManager() {
                     <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT('themes.statusSection')}</h4>
                     <div className="space-y-4">
                       <div>
-                        <h5 className="text-sm font-medium mb-2">Основные статусные цвета</h5>
+                        <h5 className="text-sm font-medium mb-2">{adminT('themes.mainStatusColors')}</h5>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <ColorInput label={adminT('themes.success')} name="successColor" defaultValue={editingTheme.successColor} />
                           <ColorInput label={adminT('themes.warning')} name="warningColor" defaultValue={editingTheme.warningColor} />
@@ -1783,12 +1783,12 @@ export default function ThemeManager() {
                           <ColorInput label={adminT('themes.info')} name="infoColor" defaultValue={editingTheme.infoColor} />
                         </div>
                         <div className="text-sm text-gray-500 mt-2">
-                          ℹ️ Используются в уведомлениях и статусных кнопках
+                          ℹ️ {adminT('themes.statusColorsInfo')}
                         </div>
                       </div>
                       
                       <div>
-                        <h5 className="text-sm font-medium mb-2">Специальные кнопки</h5>
+                        <h5 className="text-sm font-medium mb-2">{adminT('themes.specialButtons')}</h5>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <ColorInput label={adminT('themes.tomorrowBtn')} name="tomorrowColor" defaultValue={editingTheme.tomorrowColor} />
                           <ColorInput label={adminT('themes.tomorrowBtnHover')} name="tomorrowDarkColor" defaultValue={editingTheme.tomorrowDarkColor} />
@@ -1800,7 +1800,7 @@ export default function ThemeManager() {
                       </div>
                       
                       <div>
-                        <h5 className="text-sm font-medium mb-2">Иконки информационных блоков</h5>
+                        <h5 className="text-sm font-medium mb-2">{adminT('themes.iconBlocks')}</h5>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <ColorInput label={adminT('themes.workingHours')} name="workingHoursIconColor" defaultValue={editingTheme.workingHoursIconColor} />
                           <ColorInput label={adminT('themes.contacts')} name="contactsIconColor" defaultValue={editingTheme.contactsIconColor} />
@@ -1824,7 +1824,7 @@ export default function ThemeManager() {
                   <div>
                     <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT('themes.neutralSection')}</h4>
                     <div>
-                      <h5 className="text-sm font-medium mb-2">Основные нейтральные цвета</h5>
+                      <h5 className="text-sm font-medium mb-2">{adminT('themes.mainNeutralColors')}</h5>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <ColorInput label={adminT('themes.white')} name="whiteColor" defaultValue={editingTheme.whiteColor} />
                         <ColorInput label={adminT('themes.gray100')} name="gray100Color" defaultValue={editingTheme.gray100Color} />
@@ -1832,7 +1832,7 @@ export default function ThemeManager() {
                         <ColorInput label={adminT('themes.gray900')} name="gray900Color" defaultValue={editingTheme.gray900Color} />
                       </div>
                       <div className="text-sm text-gray-500 mt-2">
-                        ℹ️ Нейтральные цвета для фонов, текста и базовых элементов интерфейса
+                        ℹ️ {adminT('themes.neutralColorsInfo')}
                       </div>
                     </div>
                     
