@@ -194,5 +194,9 @@
     "infoBlocksPosition": "Позиция информационных блоков",
     "infoBlocksTop": "Над товарами",
     "infoBlocksBottom": "Под товарами"
+  },
+  "dashboard": {
+    "title": "Админ-панель",
+    "description": "Управление товарами, категориями и заказами"
   }
 }
