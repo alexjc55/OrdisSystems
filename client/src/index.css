@@ -169,49 +169,63 @@ button:focus,
     direction: ltr !important;
   }
   
-  /* Force RTL for Arabic admin interface */
+  /* Force RTL for Hebrew and Arabic admin interface */
+  html[lang="he"],
   html[lang="ar"],
+  html[lang="he"] body,
   html[lang="ar"] body,
+  html[lang="he"] *:not(footer):not(footer *),
   html[lang="ar"] *:not(footer):not(footer *),
+  html[lang="he"] .admin-dashboard,
   html[lang="ar"] .admin-dashboard,
+  html[lang="he"] .admin-content,
   html[lang="ar"] .admin-content,
+  html[lang="he"] main,
   html[lang="ar"] main,
+  html[lang="he"] .container,
   html[lang="ar"] .container,
+  html[lang="he"] .max-w-7xl,
   html[lang="ar"] .max-w-7xl {
     direction: rtl !important;
     text-align: right !important;
   }
   
-  /* Global RTL styles for all Arabic content */
+  /* Global RTL styles for Hebrew and Arabic content */
+  html[lang="he"] div,
   html[lang="ar"] div,
+  html[lang="he"] section,
   html[lang="ar"] section,
+  html[lang="he"] article,
   html[lang="ar"] article,
+  html[lang="he"] aside,
   html[lang="ar"] aside,
+  html[lang="he"] nav,
   html[lang="ar"] nav,
+  html[lang="he"] header,
   html[lang="ar"] header {
     direction: rtl !important;
     text-align: right !important;
   }
   
   /* Header banner elements should remain centered on RTL languages */
-  html[lang="ar"] .header-banner,
-  html[lang="ar"] .header-banner *,
-  html[lang="ar"] .header-banner h1,
-  html[lang="ar"] .header-banner h2,
-  html[lang="ar"] .header-banner h3,
-  html[lang="ar"] .header-banner p,
-  html[lang="ar"] .header-banner button,
-  html[lang="ar"] .header-banner .flex,
-  html[lang="ar"] .header-banner .text-center,
   html[lang="he"] .header-banner,
+  html[lang="ar"] .header-banner,
   html[lang="he"] .header-banner *,
+  html[lang="ar"] .header-banner *,
   html[lang="he"] .header-banner h1,
+  html[lang="ar"] .header-banner h1,
   html[lang="he"] .header-banner h2,
+  html[lang="ar"] .header-banner h2,
   html[lang="he"] .header-banner h3,
+  html[lang="ar"] .header-banner h3,
   html[lang="he"] .header-banner p,
+  html[lang="ar"] .header-banner p,
   html[lang="he"] .header-banner button,
+  html[lang="ar"] .header-banner button,
   html[lang="he"] .header-banner .flex,
-  html[lang="he"] .header-banner .text-center {
+  html[lang="ar"] .header-banner .flex,
+  html[lang="he"] .header-banner .text-center,
+  html[lang="ar"] .header-banner .text-center {
     text-align: center !important;
     justify-content: center !important;
     align-items: center !important;
@@ -219,12 +233,12 @@ button:focus,
   }
 
   /* Specific header banner container centering */
-  html[lang="ar"] .banner-content,
-  html[lang="ar"] .banner-wrapper,
-  html[lang="ar"] .header-content,
   html[lang="he"] .banner-content,
+  html[lang="ar"] .banner-content,
   html[lang="he"] .banner-wrapper,
-  html[lang="he"] .header-content {
+  html[lang="ar"] .banner-wrapper,
+  html[lang="he"] .header-content,
+  html[lang="ar"] .header-content {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -234,11 +248,17 @@ button:focus,
   }
 
   /* Footer should always remain LTR - Override all RTL rules */
+  html[lang="he"] footer,
   html[lang="ar"] footer,
+  html[lang="he"] footer *,
   html[lang="ar"] footer *,
+  html[lang="he"] footer div,
   html[lang="ar"] footer div,
+  html[lang="he"] footer span,
   html[lang="ar"] footer span,
+  html[lang="he"] footer img,
   html[lang="ar"] footer img,
+  html[lang="he"] footer .flex,
   html[lang="ar"] footer .flex {
     direction: ltr !important;
     text-align: left !important;
@@ -255,30 +275,46 @@ button:focus,
   }
   
   /* Specific admin components RTL */
+  html[lang="he"] .admin-sidebar,
   html[lang="ar"] .admin-sidebar,
+  html[lang="he"] .admin-main,
   html[lang="ar"] .admin-main,
+  html[lang="he"] .admin-tabs,
   html[lang="ar"] .admin-tabs,
+  html[lang="he"] .admin-table,
   html[lang="ar"] .admin-table,
+  html[lang="he"] .admin-form,
   html[lang="ar"] .admin-form {
     direction: rtl !important;
     text-align: right !important;
   }
   
-  /* Force RTL for flex containers in Arabic */
+  /* Force RTL for flex containers in Hebrew and Arabic */
+  html[lang="he"] .flex,
   html[lang="ar"] .flex {
     direction: rtl !important;
   }
   
-  /* Arabic text alignment overrides */
+  /* Hebrew and Arabic text alignment overrides */
+  html[lang="he"] p,
   html[lang="ar"] p,
+  html[lang="he"] h1,
   html[lang="ar"] h1,
+  html[lang="he"] h2,
   html[lang="ar"] h2,
+  html[lang="he"] h3,
   html[lang="ar"] h3,
+  html[lang="he"] h4,
   html[lang="ar"] h4,
+  html[lang="he"] h5,
   html[lang="ar"] h5,
+  html[lang="he"] h6,
   html[lang="ar"] h6,
+  html[lang="he"] span,
   html[lang="ar"] span,
+  html[lang="he"] label,
   html[lang="ar"] label,
+  html[lang="he"] button,
   html[lang="ar"] button {
     text-align: right !important;
     direction: rtl !important;
@@ -680,27 +716,39 @@ button:focus,
     text-align: right !important;
   }
   
-  /* Arabic products page: RTL container with LTR table */
+  /* Hebrew and Arabic products page: RTL container with LTR table */
+  html[lang="he"] .products-container,
   html[lang="ar"] .products-container,
+  html[lang="he"] [data-tab="products"],
   html[lang="ar"] [data-tab="products"],
+  html[lang="he"] .products-tab-content,
   html[lang="ar"] .products-tab-content {
     direction: rtl !important;
     text-align: right !important;
   }
   
   /* Force LTR for products table content within RTL container */
+  html[lang="he"] .products-container table,
   html[lang="ar"] .products-container table,
+  html[lang="he"] [data-tab="products"] table,
   html[lang="ar"] [data-tab="products"] table,
+  html[lang="he"] .products-tab-content table,
   html[lang="ar"] .products-tab-content table,
+  html[lang="he"] .products-container .table-container table,
   html[lang="ar"] .products-container .table-container table,
+  html[lang="he"] [data-tab="products"] .table-container table,
   html[lang="ar"] [data-tab="products"] .table-container table {
     direction: ltr !important;
     text-align: left !important;
   }
   
+  html[lang="he"] .products-container table th,
   html[lang="ar"] .products-container table th,
+  html[lang="he"] .products-container table td,
   html[lang="ar"] .products-container table td,
+  html[lang="he"] [data-tab="products"] table th,
   html[lang="ar"] [data-tab="products"] table th,
+  html[lang="he"] [data-tab="products"] table td,
   html[lang="ar"] [data-tab="products"] table td {
     direction: ltr !important;
     text-align: left !important;
@@ -2229,11 +2277,13 @@ html[lang="ar"] .swiper-button-next {
   left: 10px !important;
 }
 
-/* Ensure Arabic has identical RTL styling to Hebrew */
+/* Unified RTL base direction for Hebrew and Arabic */
+html[lang="he"],
 html[lang="ar"] {
   direction: rtl !important;
 }
 
+html[lang="he"] *,
 html[lang="ar"] * {
   direction: inherit;
 }
