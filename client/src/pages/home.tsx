@@ -520,15 +520,15 @@ export default function Home() {
                       >
                         <CardContent className="p-4 h-32 relative">
                           <div className="flex items-start gap-3 h-full">
-                            <div className="flex-1 min-w-0 flex flex-col h-full">
-                              <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300 truncate">
+                            <div className="flex-1 flex flex-col h-full overflow-hidden">
+                              <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300">
                                 {category.name}
                               </h3>
                               
-                              <p className="text-gray-600 text-sm leading-relaxed flex-1">
+                              <p className="text-gray-600 text-sm leading-tight truncate">
                                 {(() => {
                                   const text = category.description || t('defaultCategoryDescription');
-                                  return text.length > 25 ? text.substring(0, 25) + '...' : text;
+                                  return text.length > 40 ? text.substring(0, 40) + '...' : text;
                                 })()}
                               </p>
                               
