@@ -965,7 +965,7 @@ export default function ThemeManager() {
                       <div>
                         <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          Картинка баннера
+                          {adminT('themes.bannerImage')}
                         </Label>
                         <ImageUpload
                           value={createBannerImageUrl}
@@ -975,7 +975,7 @@ export default function ThemeManager() {
                         />
                         <input type="hidden" name="bannerImageUrl" value={createBannerImageUrl} />
                         <div className="text-xs text-gray-500 mt-2">
-                          Фоновое изображение для баннера на главной странице
+                          {adminT('themes.bannerImageDescription')}
                         </div>
                       </div>
                     </div>
@@ -1658,7 +1658,7 @@ export default function ThemeManager() {
                       <div>
                         <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          Картинка баннера
+                          {adminT('themes.bannerImage')}
                         </Label>
                         <ImageUpload
                           value={editBannerImageUrl}
@@ -1668,7 +1668,7 @@ export default function ThemeManager() {
                         />
                         <input type="hidden" name="bannerImageUrl" value={editBannerImageUrl} />
                         <div className="text-xs text-gray-500 mt-2">
-                          Фоновое изображение для баннера на главной странице
+                          {adminT('themes.bannerImageDescription')}
                         </div>
                       </div>
                     </div>
@@ -1690,9 +1690,9 @@ export default function ThemeManager() {
                           }
                         }}
                       >
-                        <option value="classic">Классический (текущий дизайн)</option>
-                        <option value="modern">Современный</option>
-                        <option value="minimal">Минималистичный</option>
+                        <option value="classic">{adminT("themes.classic")}</option>
+                        <option value="modern">{adminT("themes.modern")}</option>
+                        <option value="minimal">{adminT("themes.minimal")}</option>
                       </select>
                       <div className="text-sm text-gray-500">
                         {adminT("themes.headerStyleImpact")}
