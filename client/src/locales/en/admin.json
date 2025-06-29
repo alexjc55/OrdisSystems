@@ -109,7 +109,8 @@
     "white": "White",
     "gray100": "Gray 100 (background)",
     "gray700": "Gray 700 (text)",
-    "gray900": "Gray 900 (headings)"
+    "gray900": "Gray 900 (headings)",
+    "images": "Images"
   },
   "visualLabels": {
     "mainInterfaceElements": "Main Interface Elements",
