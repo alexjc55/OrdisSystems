@@ -449,6 +449,57 @@
       "statusUpdatedDesc": "تم تحديث حالة الطلب بنجاح"
     }
   },
+  "orderDiscount": {
+    "title": "خصم على الطلب",
+    "description": "إضافة خصم على الطلب بالكامل",
+    "type": "نوع الخصم",
+    "value": "مقدار الخصم",
+    "reason": "سبب الخصم",
+    "reasonPlaceholder": "حدد سبب منح الخصم",
+    "percentage": "نسبة مئوية",
+    "fixed": "مبلغ ثابت",
+    "apply": "تطبيق الخصم",
+    "remove": "إزالة الخصم",
+    "currentDiscount": "الخصم الحالي",
+    "noDiscount": "لم يتم تطبيق خصم",
+    "discountApplied": "تم تطبيق الخصم",
+    "enterValue": "أدخل مقدار الخصم",
+    "enterReason": "أدخل سبب الخصم"
+  },
+  "itemDiscount": {
+    "title": "خصم على العنصر",
+    "description": "إضافة خصم على عنصر منفرد",
+    "type": "نوع الخصم",
+    "value": "مقدار الخصم",
+    "reason": "سبب الخصم",
+    "reasonPlaceholder": "حدد سبب منح الخصم",
+    "percentage": "نسبة مئوية",
+    "fixed": "مبلغ ثابت",
+    "apply": "تطبيق الخصم",
+    "remove": "إزالة الخصم",
+    "currentDiscount": "الخصم الحالي",
+    "noDiscount": "لم يتم تطبيق خصم",
+    "discountApplied": "تم تطبيق الخصم",
+    "enterValue": "أدخل مقدار الخصم",
+    "enterReason": "أدخل سبب الخصم",
+    "originalPrice": "السعر الأصلي",
+    "discountedPrice": "السعر بعد الخصم",
+    "savings": "الوفورات"
+  },
+  "manualPriceOverride": {
+    "title": "تعديل السعر اليدوي",
+    "description": "تغيير المبلغ الإجمالي للطلب يدوياً",
+    "enable": "تفعيل التعديل اليدوي",
+    "disable": "إلغاء التعديل اليدوي",
+    "newAmount": "مبلغ الطلب الجديد",
+    "originalAmount": "المبلغ الأصلي",
+    "difference": "الفرق",
+    "note": "هذا المبلغ سيحل محل التكلفة المحسوبة تلقائياً للعناصر",
+    "warning": "تحذير: التعديل اليدوي سيلغي جميع الخصومات",
+    "enterAmount": "أدخل مبلغ الطلب الجديد",
+    "apply": "تطبيق التعديل",
+    "cancel": "إلغاء"
+  },
   "users": {
     "title": "المستخدمون",
     "description": "إدارة مستخدمي النظام"
