@@ -215,37 +215,34 @@ export default function Header({ onResetView }: HeaderProps) {
                     <span className="font-semibold">{t('menu')}</span>
                   </div>
                 </Link>
-              ) : (user?.role === 'admin' || user?.role === 'worker') ? (
-                /* Admin/Worker - Menu and Management buttons side by side */
-                <div className="flex space-x-4 rtl:space-x-reverse px-4">
-                  <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }} className="flex-1">
-                    <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
-                      <Utensils className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                      <span className="font-semibold text-sm">{t('menu')}</span>
-                    </div>
-                  </Link>
-                  <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
-                    <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer">
-                      <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                      <span className="font-semibold text-sm">{t('admin')}</span>
-                    </div>
-                  </Link>
-                </div>
               ) : (
-                /* Regular user - Menu and Profile buttons side by side */
-                <div className="flex space-x-4 rtl:space-x-reverse px-4">
-                  <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }} className="flex-1">
-                    <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
-                      <Utensils className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                      <span className="font-semibold text-sm">{t('menu')}</span>
-                    </div>
-                  </Link>
-                  <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
-                    <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer">
-                      <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                      <span className="font-semibold text-sm">{t('profile.title')}</span>
-                    </div>
-                  </Link>
+                /* All users - Menu and Profile buttons, plus Admin for admin/worker */
+                <div className="flex flex-col space-y-3 px-4">
+                  {/* First row - Menu and Profile for everyone */}
+                  <div className="flex space-x-4 rtl:space-x-reverse">
+                    <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }} className="flex-1">
+                      <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
+                        <Utensils className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                        <span className="font-semibold text-sm">{t('menu')}</span>
+                      </div>
+                    </Link>
+                    <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
+                      <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer">
+                        <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                        <span className="font-semibold text-sm">{t('profile.title')}</span>
+                      </div>
+                    </Link>
+                  </div>
+                  
+                  {/* Second row - Admin button only for admin/worker */}
+                  {(user?.role === 'admin' || user?.role === 'worker') && (
+                    <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
+                      <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-orange-600 hover:bg-orange-700 text-white transition-colors cursor-pointer">
+                        <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                        <span className="font-semibold text-sm">{t('admin')}</span>
+                      </div>
+                    </Link>
+                  )}
                 </div>
               )}
               
