@@ -16,6 +16,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminTranslation, useCommonTranslation } from "@/hooks/use-language";
+import { useTranslation } from "react-i18next";
 import { LANGUAGES } from "@/lib/i18n";
 import { useTranslationManager } from "@/hooks/useTranslationManager";
 import { TranslationToolbar } from "@/components/ui/translation-toolbar";
@@ -5405,59 +5406,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     }
   };
 
-  // Handle language change manually without useEffect
-  const handleLanguageChange = (newLanguage: string) => {
-    // Save current form values to formData first
-    const currentValues = form.getValues();
-    const currentLang = translationManager.currentLanguage;
-    const defaultLang = translationManager.defaultLanguage;
-    
-    // Save current name and description to formData
-    if (currentLang === defaultLang) {
-      setFormData((prev: any) => ({ 
-        ...prev, 
-        name: currentValues.name,
-        description: currentValues.description 
-      }));
-    } else {
-      setFormData((prev: any) => ({ 
-        ...prev, 
-        [`name_${currentLang}`]: currentValues.name,
-        [`description_${currentLang}`]: currentValues.description 
-      }));
-    }
-    
-    // Change language using i18n
-    i18n.changeLanguage(newLanguage);
-    
-    // Load values for new language after a short delay
-    setTimeout(() => {
-      const updatedFormData = {
-        ...formData,
-        ...(currentLang === defaultLang ? {
-          name: currentValues.name,
-          description: currentValues.description
-        } : {
-          [`name_${currentLang}`]: currentValues.name,
-          [`description_${currentLang}`]: currentValues.description
-        })
-      };
-      
-      let nameValue = '';
-      let descriptionValue = '';
-      
-      if (newLanguage === defaultLang) {
-        nameValue = updatedFormData.name || '';
-        descriptionValue = updatedFormData.description || '';
-      } else {
-        nameValue = updatedFormData[`name_${newLanguage}`] || '';
-        descriptionValue = updatedFormData[`description_${newLanguage}`] || '';
-      }
-      
-      form.setValue('name', nameValue);
-      form.setValue('description', descriptionValue);
-    }, 100);
-  };
+
 
   // Update form values when language changes - TEMPORARILY DISABLED
   /*useEffect(() => {
@@ -5580,33 +5529,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           </DialogDescription>
         </DialogHeader>
         
-        {/* Simple Language Switcher */}
-        <div className="flex gap-2 mb-4 p-3 bg-gray-50 rounded-lg">
-          <span className="text-sm font-medium">Язык:</span>
-          <button 
-            onClick={() => handleLanguageChange('ru')}
-            className={`px-3 py-1 text-sm rounded ${translationManager.currentLanguage === 'ru' ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}
-          >
-            Русский
-          </button>
-          <button 
-            onClick={() => handleLanguageChange('en')}
-            className={`px-3 py-1 text-sm rounded ${translationManager.currentLanguage === 'en' ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}
-          >
-            English
-          </button>
-          <button 
-            onClick={() => handleLanguageChange('he')}
-            className={`px-3 py-1 text-sm rounded ${translationManager.currentLanguage === 'he' ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}
-          >
-            עברית
-          </button>
-          <button 
-            onClick={() => handleLanguageChange('ar')}
-            className={`px-3 py-1 text-sm rounded ${translationManager.currentLanguage === 'ar' ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`}
-          >
-            العربية
-          </button>
+        {/* Current Language Info */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+          <span className="text-sm text-blue-800">
+            Текущий язык: {translationManager.currentLanguage === 'ru' ? 'Русский' : 
+                         translationManager.currentLanguage === 'en' ? 'English' :
+                         translationManager.currentLanguage === 'he' ? 'עברית' : 'العربية'}
+          </span>
         </div>
         
         <Form {...form}>
