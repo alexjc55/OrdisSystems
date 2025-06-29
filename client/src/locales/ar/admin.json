@@ -297,7 +297,17 @@
       "discountTypePlaceholder": "اختر نوع الخصم",
       "fixedDiscountInfo": "خصم بمبلغ ثابت بالشيكل",
       "recommendedSize": "الحجم المُوصى به للصورة 400×400 بكسل",
-      "unit100gml": "لكل 100غ/مل"
+      "unit100gml": "لكل 100غ/مل",
+      "imageUpload": {
+        "clickToUpload": "انقر للرفع",
+        "dragAndDrop": "أو اسحب وأفلت",
+        "fileTypes": "PNG, JPG, GIF حتى 10MB",
+        "chooseFile": "اختيار ملف",
+        "remove": "إزالة",
+        "uploading": "جاري الرفع...",
+        "uploadError": "خطأ في الرفع",
+        "noImage": "لا توجد صورة"
+      }
     },
     "statusDialog": {
       "title": "تغيير حالة المنتج",
