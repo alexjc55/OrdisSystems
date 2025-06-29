@@ -171,12 +171,12 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter className={isRTL ? "flex-row-reverse" : ""}>
-                <AlertDialogCancel>{adminT('common.cancel')}</AlertDialogCancel>
+                <AlertDialogCancel>{adminT('actions.cancel')}</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => onDelete(category.id)}
                   className="bg-red-600 hover:bg-red-700"
                 >
-                  {adminT('common.delete')}
+                  {adminT('actions.delete')}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -737,7 +737,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     },
     onError: (error: any) => {
       toast({
-        title: adminT('common.error'),
+        title: adminT('actions.error'),
         description: error.message || adminT('orders.updateError'),
         variant: "destructive",
       });
@@ -1515,18 +1515,18 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       </AlertDialogTrigger>
                       <AlertDialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999]">
                         <AlertDialogHeader>
-                          <AlertDialogTitle>{adminT('common.confirm')}</AlertDialogTitle>
+                          <AlertDialogTitle>{adminT('actions.confirm')}</AlertDialogTitle>
                           <AlertDialogDescription>
                             {adminT('orders.removeItemConfirm')} "{item.product?.name}"?
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>{adminT('common.cancel')}</AlertDialogCancel>
+                          <AlertDialogCancel>{adminT('actions.cancel')}</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => removeItem(index)}
                             className="bg-red-600 hover:bg-red-700"
                           >
-                            {adminT('common.delete')}
+                            {adminT('actions.delete')}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -1560,18 +1560,18 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   </AlertDialogTrigger>
                   <AlertDialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999]">
                     <AlertDialogHeader>
-                      <AlertDialogTitle>{adminT('common.confirm')}</AlertDialogTitle>
+                      <AlertDialogTitle>{adminT('actions.confirm')}</AlertDialogTitle>
                       <AlertDialogDescription>
                         {adminT('orders.removeItemConfirm')} "{item.product?.name}"?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className={`${isRTL ? 'flex-row-reverse space-x-reverse space-x-4' : ''}`}>
-                      <AlertDialogCancel>{adminT('common.cancel')}</AlertDialogCancel>
+                      <AlertDialogCancel>{adminT('actions.cancel')}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() => removeItem(index)}
                         className="bg-red-600 hover:bg-red-700"
                       >
-                        {adminT('common.delete')}
+                        {adminT('actions.delete')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -1832,7 +1832,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
       {/* Actions */}
       <div className="flex justify-center gap-3 pt-4 border-t">
         <Button variant="outline" onClick={onClose}>
-          {adminT('common.cancel')}
+          {adminT('actions.cancel')}
         </Button>
         <Button 
           onClick={handleSave}
@@ -1962,7 +1962,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
 
         <DialogFooter className={`${isRTL ? 'gap-4' : 'gap-3'}`}>
           <Button variant="outline" onClick={onClose}>
-            {adminT('common.cancel')}
+            {adminT('actions.cancel')}
           </Button>
           <Button 
             onClick={handleAdd}
@@ -2288,7 +2288,7 @@ export default function AdminDashboard() {
         queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
       } catch (error: any) {
         toast({
-          title: adminT('common.error'),
+          title: adminT('actions.error'),
           description: error.message || adminT('users.deleteError'),
           variant: "destructive",
         });
@@ -2511,7 +2511,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Category update error:", error);
-      toast({ title: adminT('common.error'), description: adminT('categories.notifications.updateError'), variant: "destructive" });
+      toast({ title: adminT('actions.error'), description: adminT('categories.notifications.updateError'), variant: "destructive" });
     }
   });
 
@@ -2553,7 +2553,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Product creation error:", error);
-      toast({ title: adminT('common.error'), description: adminT('products.notifications.createError'), variant: "destructive" });
+      toast({ title: adminT('actions.error'), description: adminT('products.notifications.createError'), variant: "destructive" });
     }
   });
 
@@ -2600,7 +2600,7 @@ export default function AdminDashboard() {
     onError: (error: any) => {
       console.error("Product update error:", error);
       toast({ 
-        title: adminT('common.error'), 
+        title: adminT('actions.error'), 
         description: error.message || adminT('products.notifications.updateError'), 
         variant: "destructive" 
       });
@@ -2620,7 +2620,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Product deletion error:", error);
-      toast({ title: adminT('common.error'), description: adminT('products.notifications.deleteError'), variant: "destructive" });
+      toast({ title: adminT('actions.error'), description: adminT('products.notifications.deleteError'), variant: "destructive" });
     }
   });
 
@@ -2643,7 +2643,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Update availability status error:", error);
-      toast({ title: adminT('common.error'), description: adminT('products.notifications.statusError'), variant: "destructive" });
+      toast({ title: adminT('actions.error'), description: adminT('products.notifications.statusError'), variant: "destructive" });
     }
   });
 
@@ -2663,7 +2663,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Toggle availability error:", error);
-      toast({ title: adminT('common.error'), description: adminT('products.notifications.availabilityError'), variant: "destructive" });
+      toast({ title: adminT('actions.error'), description: adminT('products.notifications.availabilityError'), variant: "destructive" });
     }
   });
 
@@ -2686,7 +2686,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Category creation error:", error);
-      toast({ title: adminT('common.error'), description: adminT('categories.notifications.createError'), variant: "destructive" });
+      toast({ title: adminT('actions.error'), description: adminT('categories.notifications.createError'), variant: "destructive" });
     }
   });
 
@@ -2715,7 +2715,7 @@ export default function AdminDashboard() {
         });
       } else {
         toast({ 
-          title: adminT('common.error'), 
+          title: adminT('actions.error'), 
           description: adminT('categories.notifications.deleteError'), 
           variant: "destructive" 
         });
@@ -2744,7 +2744,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Category reordering error:", error);
-      toast({ title: adminT('common.error'), description: error.message || 'Не удалось изменить порядок категорий', variant: "destructive" });
+      toast({ title: adminT('actions.error'), description: error.message || 'Не удалось изменить порядок категорий', variant: "destructive" });
     }
   });
 
@@ -2779,7 +2779,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Store settings update error:", error);
-      toast({ title: adminT('common.error'), description: adminT('settings.saveError'), variant: "destructive" });
+      toast({ title: adminT('actions.error'), description: adminT('settings.saveError'), variant: "destructive" });
     }
   });
 
@@ -2868,7 +2868,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("User role update error:", error);
-      toast({ title: adminT('common.error'), description: adminT('users.notifications.roleUpdateError'), variant: "destructive" });
+      toast({ title: adminT('actions.error'), description: adminT('users.notifications.roleUpdateError'), variant: "destructive" });
     }
   });
 
@@ -2885,7 +2885,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("User deletion error:", error);
-      toast({ title: adminT('common.error'), description: adminT('users.notifications.deleteError'), variant: "destructive" });
+      toast({ title: adminT('actions.error'), description: adminT('users.notifications.deleteError'), variant: "destructive" });
     }
   });
 
@@ -2908,7 +2908,7 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Set password error:", error);
-      toast({ title: adminT('common.error'), description: error.message || adminT('users.notifications.passwordSetError'), variant: "destructive" });
+      toast({ title: adminT('actions.error'), description: error.message || adminT('users.notifications.passwordSetError'), variant: "destructive" });
     }
   });
 
@@ -6823,7 +6823,7 @@ function CancellationReasonDialog({
 
         <div className="flex justify-center space-x-2 pt-4">
           <Button variant="outline" onClick={onClose} className="text-sm">
-            {adminT('common.cancel')}
+            {adminT('actions.cancel')}
           </Button>
           <Button 
             onClick={handleConfirm} 

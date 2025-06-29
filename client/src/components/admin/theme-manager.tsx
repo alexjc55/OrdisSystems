@@ -921,17 +921,17 @@ export default function ThemeManager() {
             }}>
               <Tabs defaultValue="basic" className="w-full">
                 <TabsList className="flex w-full">
-                  <TabsTrigger value="basic" className="flex items-center gap-1 flex-1" title={adminT('themes.basic')}>
+                  <TabsTrigger value="basic" className="flex items-center gap-1 flex-1" title={adminT('tabs.basic')}>
                     <Info className="h-4 w-4" />
-                    <span className="hidden sm:inline">{adminT('themes.basic')}</span>
+                    <span className="hidden sm:inline">{adminT('tabs.basic')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="colors" className="flex items-center gap-1 flex-1" title={adminT('themes.colors')}>
+                  <TabsTrigger value="colors" className="flex items-center gap-1 flex-1" title={adminT('tabs.colors')}>
                     <Palette className="h-4 w-4" />
-                    <span className="hidden sm:inline">{adminT('themes.colors')}</span>
+                    <span className="hidden sm:inline">{adminT('tabs.colors')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="visuals" className="flex items-center gap-1 flex-1" title={adminT('themes.visuals')}>
+                  <TabsTrigger value="visuals" className="flex items-center gap-1 flex-1" title={adminT('tabs.visuals')}>
                     <Upload className="h-4 w-4" />
-                    <span className="hidden sm:inline">{adminT('themes.visuals')}</span>
+                    <span className="hidden sm:inline">{adminT('tabs.visuals')}</span>
                   </TabsTrigger>
                 </TabsList>
                 
@@ -1614,24 +1614,24 @@ export default function ThemeManager() {
             }}>
               <Tabs defaultValue="basic" className="w-full">
                 <TabsList className="flex w-full">
-                  <TabsTrigger value="basic" className="flex items-center gap-1 flex-1" title={adminT('themes.basic')}>
+                  <TabsTrigger value="basic" className="flex items-center gap-1 flex-1" title={adminT('tabs.basic')}>
                     <Info className="h-4 w-4" />
-                    <span className="hidden sm:inline">{adminT('themes.basic')}</span>
+                    <span className="hidden sm:inline">{adminT('tabs.basic')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="colors" className="flex items-center gap-1 flex-1" title={adminT('themes.colors')}>
+                  <TabsTrigger value="colors" className="flex items-center gap-1 flex-1" title={adminT('tabs.colors')}>
                     <Palette className="h-4 w-4" />
-                    <span className="hidden sm:inline">{adminT('themes.colors')}</span>
+                    <span className="hidden sm:inline">{adminT('tabs.colors')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="visuals" className="flex items-center gap-1 flex-1" title={adminT('themes.visuals')}>
+                  <TabsTrigger value="visuals" className="flex items-center gap-1 flex-1" title={adminT('tabs.visuals')}>
                     <Upload className="h-4 w-4" />
-                    <span className="hidden sm:inline">{adminT('themes.visuals')}</span>
+                    <span className="hidden sm:inline">{adminT('tabs.visuals')}</span>
                   </TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="basic" className="space-y-4">
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="edit-name">{adminT("name")}</Label>
+                      <Label htmlFor="edit-name">{adminT('themes.name')}</Label>
                       <Input id="edit-name" name="name" defaultValue={editingTheme.name} required />
                     </div>
                     <div className="space-y-2">
