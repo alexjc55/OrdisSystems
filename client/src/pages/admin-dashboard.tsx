@@ -5307,7 +5307,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   const { toast } = useToast();
   const translationManager = useTranslationManager({
     defaultLanguage: 'ru',
-    baseFields: ['name', 'description', 'imageUrl']
+    baseFields: ['name', 'description']
   });
   
   const [formData, setFormData] = useState<any>({});
@@ -5389,80 +5389,85 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   // Update form values when language changes
   useEffect(() => {
     if (open && formData && Object.keys(formData).length > 0) {
-      const nameValue = translationManager.getFieldValue(formData, 'name');
-      const descriptionValue = translationManager.getFieldValue(formData, 'description');
-      const imageValue = translationManager.getFieldValue(formData, 'imageUrl');
+      const currentLang = translationManager.currentLanguage;
+      const defaultLang = translationManager.defaultLanguage;
+      
+      let nameValue = '';
+      let descriptionValue = '';
+      
+      if (currentLang === defaultLang) {
+        // For default language, use base fields
+        nameValue = formData.name || '';
+        descriptionValue = formData.description || '';
+      } else {
+        // For other languages, use localized fields with fallback
+        const nameField = `name_${currentLang}`;
+        const descField = `description_${currentLang}`;
+        nameValue = formData[nameField] || '';
+        descriptionValue = formData[descField] || '';
+      }
       
       console.log('Language changed, updating form:', { 
-        language: translationManager.currentLanguage, 
+        language: currentLang, 
         nameValue, 
-        descriptionValue,
-        imageValue,
-        formData: formData
+        descriptionValue
       });
-      
-      // Force update the form values
-      form.setValue('name', nameValue || '');
-      form.setValue('description', descriptionValue || '');
-      form.setValue('imageUrl', imageValue || '');
-    }
-  }, [translationManager.currentLanguage, open]);
-
-  // Also update when formData changes  
-  useEffect(() => {
-    if (open && formData && Object.keys(formData).length > 0) {
-      const nameValue = translationManager.getFieldValue(formData, 'name');
-      const descriptionValue = translationManager.getFieldValue(formData, 'description');
-      const imageValue = translationManager.getFieldValue(formData, 'imageUrl');
-      
-      console.log('FormData changed, updating form:', { 
-        language: translationManager.currentLanguage, 
-        nameValue, 
-        descriptionValue,
-        imageValue 
-      });
-      
-      form.setValue('name', nameValue || '');
-      form.setValue('description', descriptionValue || '');
-      form.setValue('imageUrl', imageValue || '');
-    }
-  }, [formData, translationManager, form, open]);
-  
-  // Handle translation copy/clear
-  const handleCopyAllFields = () => {
-    console.log('Copying fields from', translationManager.defaultLanguage, 'to', translationManager.currentLanguage);
-    console.log('Current formData:', formData);
-    
-    const copiedCount = translationManager.copyAllFields(formData, (updatedFormData) => {
-      setFormData(updatedFormData);
-      
-      // Update form values immediately with the updated data
-      const nameValue = translationManager.getFieldValue(updatedFormData, 'name');
-      const descriptionValue = translationManager.getFieldValue(updatedFormData, 'description');
-      const imageValue = translationManager.getFieldValue(updatedFormData, 'imageUrl');
-      
-      console.log('Setting form values with updated data:', { nameValue, descriptionValue, imageValue });
       
       form.setValue('name', nameValue);
       form.setValue('description', descriptionValue);
-      form.setValue('imageUrl', imageValue);
-    });
-    
-    console.log('Copied count:', copiedCount);
-    
-    if (copiedCount > 0) {
+    }
+  }, [translationManager.currentLanguage, formData, form, open]);
+  
+  // Handle translation copy/clear
+  const handleCopyAllFields = () => {
+    if (translationManager.currentLanguage === translationManager.defaultLanguage) {
       toast({
-        title: adminT('translation.copySuccess'),
-        description: adminT('translation.fieldsCopied', { count: copiedCount }),
-      });
-    } else {
-      console.log('No fields to copy');
-      toast({
-        title: adminT('translation.noFieldsToCopy') || 'Нет полей для копирования',
-        description: adminT('translation.ensureDefaultLanguageContent') || 'Убедитесь, что содержимое введено на основном языке',
+        title: 'Уже на основном языке',
+        description: 'Копирование не требуется для основного языка',
         variant: 'destructive'
       });
+      return;
     }
+
+    // Get values from default language fields
+    const defaultName = formData.name || '';
+    const defaultDescription = formData.description || '';
+    
+    if (!defaultName && !defaultDescription) {
+      toast({
+        title: 'Нет данных для копирования',
+        description: 'Заполните поля на русском языке сначала',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    // Directly set values to form
+    if (defaultName) {
+      form.setValue('name', defaultName);
+    }
+    if (defaultDescription) {
+      form.setValue('description', defaultDescription);
+    }
+
+    // Update formData with copied values
+    const targetNameField = `name_${translationManager.currentLanguage}`;
+    const targetDescField = `description_${translationManager.currentLanguage}`;
+    
+    setFormData((prev: any) => ({
+      ...prev,
+      [targetNameField]: defaultName,
+      [targetDescField]: defaultDescription
+    }));
+
+    let copiedCount = 0;
+    if (defaultName) copiedCount++;
+    if (defaultDescription) copiedCount++;
+
+    toast({
+      title: adminT('translation.copySuccess'),
+      description: adminT('translation.fieldsCopied', { count: copiedCount }),
+    });
   };
   
   const handleClearAllFields = () => {
@@ -5502,7 +5507,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           currentLanguage={translationManager.currentLanguage}
           defaultLanguage={translationManager.defaultLanguage}
           formData={formData}
-          baseFields={['name', 'description', 'imageUrl']}
+          baseFields={['name', 'description']}
           onCopyAllFields={handleCopyAllFields}
           onClearAllFields={handleClearAllFields}
         />
