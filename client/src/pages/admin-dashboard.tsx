@@ -6744,7 +6744,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   </FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="<!-- Добавьте сюда код чатов, кнопок соц. сетей или другие виджеты -->" 
+                      placeholder={adminT('storeSettings.htmlFooterExample')} 
                       className="text-sm font-mono min-h-[100px]"
                       {...field}
                     />

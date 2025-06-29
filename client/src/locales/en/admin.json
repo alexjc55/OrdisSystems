@@ -443,7 +443,9 @@
     "noteTitle": "Note",
     "languageNote": "Changes in language settings require page reload for full application.",
     "title": "Store Settings",
-    "description": "Manage basic settings of your online store"
+    "description": "Manage basic settings of your online store",
+    "htmlFooterExample": "<!-- Add chat widgets, social media buttons or other widgets here -->",
+    "workingHoursNote": "Leave empty for day off"
   },
   "themes": {
     "title": "Theme Management",
