@@ -86,15 +86,7 @@ export function useShopTranslation() {
   const enhancedT = (key: string, fallback?: string) => {
     const translation = t(key);
     
-    // Debug logging for translation keys
-    if (key === 'paymentMethod' || key === 'email') {
-      console.log('SHOP TRANSLATION DEBUG:', {
-        key,
-        translation,
-        language: i18n.language,
-        isKeyEqualsTranslation: translation === key
-      });
-    }
+
     
     // If translation returns the key itself, it means translation is missing
     if (translation === key) {
