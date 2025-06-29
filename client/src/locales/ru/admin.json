@@ -29,7 +29,10 @@
     "reset": "Сбросить",
     "confirm": "Подтвердить",
     "apply": "Применить",
-    "error": "Ошибка"
+    "error": "Ошибка",
+    "createCategory": "Создать категорию",
+    "saveCategory": "Сохранить категорию",
+    "cancelCategory": "Отменить"
   },
   "themes": {
     "title": "Управление темами",
