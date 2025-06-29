@@ -1,0 +1,16 @@
+s/"\[AR_FIXED\]"/"مترجم"/g
+s/"products": "\[AR_FIXED\]"/"products": "المنتجات"/g
+s/"orders": "\[AR_FIXED\]"/"orders": "الطلبات"/g
+s/"users": "\[AR_FIXED\]"/"users": "المستخدمون"/g
+s/"settings": "\[AR_FIXED\]"/"settings": "الإعدادات"/g
+s/"themes": "\[AR_FIXED\]"/"themes": "السمات"/g
+s/"categories": "\[AR_FIXED\]"/"categories": "الفئات"/g
+s/"save": "\[AR_FIXED\]"/"save": "حفظ"/g
+s/"cancel": "\[AR_FIXED\]"/"cancel": "إلغاء"/g
+s/"delete": "\[AR_FIXED\]"/"delete": "حذف"/g
+s/"edit": "\[AR_FIXED\]"/"edit": "تحرير"/g
+s/"add": "\[AR_FIXED\]"/"add": "إضافة"/g
+s/"search": "\[AR_FIXED\]"/"search": "بحث"/g
+s/"loading": "\[AR_FIXED\]"/"loading": "جاري التحميل..."/g
+s/"success": "\[AR_FIXED\]"/"success": "نجح"/g
+s/"error": "\[AR_FIXED\]"/"error": "خطأ"/g

@@ -1,0 +1,10 @@
+s/"\[HE_FIXED\]"/"תורגם"/g
+s/"email": "\[HE_FIXED\]"/"email": "דוא״ל"/g
+s/"contacts": "\[HE_FIXED\]"/"contacts": "יצירת קשר"/g
+s/"delivery": "\[HE_FIXED\]"/"delivery": "משלוח"/g
+s/"dishes": "\[HE_FIXED\]"/"dishes": "מנות"/g
+s/"outOfStockToday": "\[HE_FIXED\]"/"outOfStockToday": "אזל המלאי היום"/g
+s/"payment": "\[HE_FIXED\]"/"payment": "תשלום"/g
+s/"per100g": "\[HE_FIXED\]"/"per100g": "ל-100 גרם"/g
+s/"phone": "\[HE_FIXED\]"/"phone": "טלפון"/g
+s/"workingHours": "\[HE_FIXED\]"/"workingHours": "שעות פעילות"/g

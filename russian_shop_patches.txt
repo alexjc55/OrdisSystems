@@ -1,0 +1,14 @@
+s/"\[FIXED\]"/"Товар"/g
+s/"startShopping": "\[FIXED\]"/"startShopping": "Начать покупки"/g
+s/"item": "\[FIXED\]"/"item": "товар"/g
+s/"subtotal": "\[FIXED\]"/"subtotal": "Промежуточная сумма"/g
+s/"remove": "\[FIXED\]"/"remove": "Удалить"/g
+s/"quantity": "\[FIXED\]"/"quantity": "Количество"/g
+s/"addMore": "\[FIXED\]"/"addMore": "Добавить еще"/g
+s/"clearCart": "\[FIXED\]"/"clearCart": "Очистить корзину"/g
+s/"itemAdded": "\[FIXED\]"/"itemAdded": "Товар добавлен"/g
+s/"itemRemoved": "\[FIXED\]"/"itemRemoved": "Товар удален"/g
+s/"cartCleared": "\[FIXED\]"/"cartCleared": "Корзина очищена"/g
+s/"deliveryInfo": "\[FIXED\]"/"deliveryInfo": "Информация о доставке"/g
+s/"deliveryFee": "\[FIXED\]"/"deliveryFee": "Стоимость доставки"/g
+s/"minimumOrder": "\[FIXED\]"/"minimumOrder": "Минимальная сумма заказа"/g

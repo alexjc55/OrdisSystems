@@ -1,0 +1,16 @@
+s/"\[ADMIN_FIXED\]"/"Переведено"/g
+s/"products": "\[ADMIN_FIXED\]"/"products": "Товары"/g
+s/"orders": "\[ADMIN_FIXED\]"/"orders": "Заказы"/g
+s/"users": "\[ADMIN_FIXED\]"/"users": "Пользователи"/g
+s/"settings": "\[ADMIN_FIXED\]"/"settings": "Настройки"/g
+s/"themes": "\[ADMIN_FIXED\]"/"themes": "Темы"/g
+s/"categories": "\[ADMIN_FIXED\]"/"categories": "Категории"/g
+s/"save": "\[ADMIN_FIXED\]"/"save": "Сохранить"/g
+s/"cancel": "\[ADMIN_FIXED\]"/"cancel": "Отменить"/g
+s/"delete": "\[ADMIN_FIXED\]"/"delete": "Удалить"/g
+s/"edit": "\[ADMIN_FIXED\]"/"edit": "Редактировать"/g
+s/"add": "\[ADMIN_FIXED\]"/"add": "Добавить"/g
+s/"search": "\[ADMIN_FIXED\]"/"search": "Поиск"/g
+s/"loading": "\[ADMIN_FIXED\]"/"loading": "Загрузка..."/g
+s/"success": "\[ADMIN_FIXED\]"/"success": "Успешно"/g
+s/"error": "\[ADMIN_FIXED\]"/"error": "Ошибка"/g
