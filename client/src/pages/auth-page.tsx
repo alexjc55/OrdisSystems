@@ -67,6 +67,20 @@ export default function AuthPage() {
         phoneRequired: "הכנס מספר טלפון",
         confirmPasswordRequired: "אשר סיסמה",
         passwordMismatch: "הסיסמאות לא תואמות"
+      },
+      ar: {
+        usernameRequired: "أدخل اسم المستخدم",
+        passwordRequired: "أدخل كلمة المرور",
+        usernameMinLength: "اسم المستخدم يجب أن يحتوي على 3 أحرف على الأقل",
+        usernameMaxLength: "اسم المستخدم يجب ألا يتجاوز 50 حرفًا",
+        usernameFormat: "اسم المستخدم يمكن أن يحتوي على أحرف وأرقام و _ فقط",
+        passwordMinLength: "كلمة المرور يجب أن تحتوي على 6 أحرف على الأقل",
+        emailInvalid: "أدخل بريد إلكتروني صحيح",
+        firstNameRequired: "أدخل الاسم الأول",
+        lastNameRequired: "أدخل اسم العائلة",
+        phoneRequired: "أدخل رقم الهاتف",
+        confirmPasswordRequired: "أكد كلمة المرور",
+        passwordMismatch: "كلمتا المرور غير متطابقتين"
       }
     };
     return messages[currentLanguage]?.[key as MessageKey] || messages.ru[key as MessageKey];
@@ -155,6 +169,33 @@ export default function AuthPage() {
         loggingIn: "מתחבר...",
         registering: "נרשם...",
         backToHome: "חזרה לבית"
+      },
+      ar: {
+        title: "تسجيل الدخول للنظام",
+        description: "سجل الدخول لحسابك أو أنشئ حساب جديد",
+        login: "تسجيل الدخول",
+        register: "التسجيل",
+        username: "اسم المستخدم",
+        usernamePlaceholder: "أدخل اسم المستخدم",
+        usernameRegPlaceholder: "اختر اسم المستخدم",
+        password: "كلمة المرور",
+        passwordPlaceholder: "أدخل كلمة المرور",
+        createPasswordPlaceholder: "أنشئ كلمة المرور",
+        confirmPassword: "تأكيد كلمة المرور",
+        confirmPasswordPlaceholder: "كرر كلمة المرور",
+        email: "البريد الإلكتروني",
+        emailPlaceholder: "أدخل البريد الإلكتروني (اختياري)",
+        firstName: "الاسم الأول",
+        firstNamePlaceholder: "اسمك الأول",
+        lastName: "اسم العائلة",
+        lastNamePlaceholder: "اسم عائلتك",
+        phone: "الهاتف",
+        phonePlaceholder: "رقم الهاتف",
+        loginButton: "تسجيل الدخول",
+        registerButton: "إنشاء حساب",
+        loggingIn: "جاري تسجيل الدخول...",
+        registering: "جاري التسجيل...",
+        backToHome: "العودة للصفحة الرئيسية"
       }
     };
     return authTexts[currentLanguage]?.[key] || authTexts.ru[key] || key;
