@@ -3299,7 +3299,7 @@ export default function AdminDashboard() {
                   <div className="relative flex-1">
                     <Search className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                     <Input
-                      placeholder={adminT('products.searchProducts', 'Поиск товаров...')}
+                      placeholder={adminT('products.searchProducts')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}
