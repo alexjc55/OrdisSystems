@@ -320,13 +320,19 @@ button:focus,
     direction: rtl !important;
   }
   
-  /* Force RTL for table components */
-  html[lang="ar"] table,
-  html[lang="ar"] thead,
-  html[lang="ar"] tbody,
-  html[lang="ar"] tr,
-  html[lang="ar"] th,
-  html[lang="ar"] td {
+  /* Force RTL for table components (except products tables) */
+  html[lang="he"] table:not(.products-container table):not([data-tab="products"] table):not(.products .table-container table),
+  html[lang="ar"] table:not(.products-container table):not([data-tab="products"] table):not(.products .table-container table),
+  html[lang="he"] thead:not(.products-container thead):not([data-tab="products"] thead),
+  html[lang="ar"] thead:not(.products-container thead):not([data-tab="products"] thead),
+  html[lang="he"] tbody:not(.products-container tbody):not([data-tab="products"] tbody),
+  html[lang="ar"] tbody:not(.products-container tbody):not([data-tab="products"] tbody),
+  html[lang="he"] tr:not(.products-container tr):not([data-tab="products"] tr),
+  html[lang="ar"] tr:not(.products-container tr):not([data-tab="products"] tr),
+  html[lang="he"] th:not(.products-container th):not([data-tab="products"] th),
+  html[lang="ar"] th:not(.products-container th):not([data-tab="products"] th),
+  html[lang="he"] td:not(.products-container td):not([data-tab="products"] td),
+  html[lang="ar"] td:not(.products-container td):not([data-tab="products"] td) {
     direction: rtl !important;
     text-align: right !important;
   }
@@ -742,6 +748,7 @@ button:focus,
     text-align: left !important;
   }
   
+  /* Force LTR for products table cells with high specificity */
   html[lang="he"] .products-container table th,
   html[lang="ar"] .products-container table th,
   html[lang="he"] .products-container table td,
@@ -749,7 +756,11 @@ button:focus,
   html[lang="he"] [data-tab="products"] table th,
   html[lang="ar"] [data-tab="products"] table th,
   html[lang="he"] [data-tab="products"] table td,
-  html[lang="ar"] [data-tab="products"] table td {
+  html[lang="ar"] [data-tab="products"] table td,
+  html[lang="he"] .products .table-container table th,
+  html[lang="ar"] .products .table-container table th,
+  html[lang="he"] .products .table-container table td,
+  html[lang="ar"] .products .table-container table td {
     direction: ltr !important;
     text-align: left !important;
   }
@@ -757,15 +768,42 @@ button:focus,
   /* Products table specific RTL fix - force LTR for products table only */
   [dir="rtl"] .products .table-container table,
   html[lang="he"] .products .table-container table,
-  html[lang="ar"] .products .table-container table {
+  html[lang="ar"] .products .table-container table,
+  html[lang="he"] .products-container table,
+  html[lang="ar"] .products-container table,
+  html[lang="he"] [data-tab="products"] table,
+  html[lang="ar"] [data-tab="products"] table {
     direction: ltr !important;
+    text-align: left !important;
   }
   
   /* Keep orders table RTL for both Hebrew and Arabic */
   [dir="rtl"] .orders .table-container table,
   html[lang="he"] .orders .table-container table,
-  html[lang="ar"] .orders .table-container table {
+  html[lang="ar"] .orders .table-container table,
+  html[lang="he"] .orders-container table,
+  html[lang="ar"] .orders-container table,
+  html[lang="he"] [data-tab="orders"] table,
+  html[lang="ar"] [data-tab="orders"] table {
     direction: rtl !important;
+    text-align: right !important;
+  }
+  
+  /* Force RTL for orders table cells with high specificity */
+  html[lang="he"] .orders .table-container table th,
+  html[lang="ar"] .orders .table-container table th,
+  html[lang="he"] .orders .table-container table td,
+  html[lang="ar"] .orders .table-container table td,
+  html[lang="he"] .orders-container table th,
+  html[lang="ar"] .orders-container table th,
+  html[lang="he"] .orders-container table td,
+  html[lang="ar"] .orders-container table td,
+  html[lang="he"] [data-tab="orders"] table th,
+  html[lang="ar"] [data-tab="orders"] table th,
+  html[lang="he"] [data-tab="orders"] table td,
+  html[lang="ar"] [data-tab="orders"] table td {
+    direction: rtl !important;
+    text-align: right !important;
   }
   
   /* Specific RTL flex layouts for orders UI */
