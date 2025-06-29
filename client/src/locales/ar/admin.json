@@ -204,9 +204,8 @@
     }
   },
   "dashboard": {
-    "title": "لوحة الإدارة",
-    "description": "إدارة المنتجات والفئات والطلبات",
-    "overview": "إدارة المنتجات والفئات والطلبات"
+    "title": "لوحة تحكم المدير",
+    "description": "إدارة متجرك الإلكتروني"
   },
   "orders": {
     "deliveryFee": "رسوم التوصيل",
@@ -406,7 +405,14 @@
     "username": "اسم المستخدم",
     "password": "كلمة المرور",
     "confirmPassword": "تأكيد كلمة المرور",
-    "selectRole": "اختر الدور"
+    "selectRole": "اختر الدور",
+    "emailError": "أدخل بريد إلكتروني صحيح",
+    "firstNameRequired": "الاسم الأول مطلوب",
+    "lastNameRequired": "اسم العائلة مطلوب",
+    "editDescription": "تعديل معلومات المستخدم",
+    "addDescription": "إضافة مستخدم جديد للنظام",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة"
   },
   "table": {
     "name": "الاسم",
@@ -418,7 +424,9 @@
     "category": "الفئة",
     "description": "الوصف",
     "image": "الصورة",
-    "unit": "الوحدة"
+    "unit": "الوحدة",
+    "phone": "الهاتف",
+    "totalAmount": "المبلغ الإجمالي"
   },
   "storeSettings": {
     "basicInfo": "المعلومات الأساسية",

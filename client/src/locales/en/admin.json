@@ -90,12 +90,10 @@
     "units": {
       "piece": "pcs",
       "kg": "kg",
-      "100g": "per 100g",
-      "100ml": "per 100ml",
       "g": "g",
       "ml": "ml",
-      "per100g": "per 100g",
-      "per100ml": "per 100ml"
+      "100g": "per 100g",
+      "100ml": "per 100ml"
     },
     "dialog": {
       "addTitle": "Add Product",
@@ -627,9 +625,8 @@
     "infoBlocksBottom": "Below Products"
   },
   "dashboard": {
-    "title": "Admin Panel",
-    "description": "Manage products, categories and orders",
-    "overview": "Manage products, categories and orders"
+    "title": "Admin Dashboard",
+    "description": "Manage your online store"
   },
   "roles": {
     "admin": "Administrator",
@@ -657,7 +654,14 @@
     "username": "Username",
     "password": "Password",
     "confirmPassword": "Confirm Password",
-    "selectRole": "Select Role"
+    "selectRole": "Select Role",
+    "emailError": "Enter a valid email",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "editDescription": "Edit user information",
+    "addDescription": "Add new user to the system",
+    "firstName": "First Name",
+    "lastName": "Last Name"
   },
   "table": {
     "name": "Name",
@@ -669,7 +673,9 @@
     "category": "Category",
     "description": "Description",
     "image": "Image",
-    "unit": "Unit"
+    "unit": "Unit",
+    "phone": "Phone",
+    "totalAmount": "Total Amount"
   },
   "settings": {
     "title": "Store Settings",

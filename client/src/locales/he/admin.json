@@ -383,15 +383,8 @@
     "saveSettings": "שמור הגדרות"
   },
   "dashboard": {
-    "title": "פאנל ניהול",
-    "description": "ניהול מוצרים, קטגוריות והזמנות",
-    "overview": "ניהול מוצרים, קטגוריות והזמנות",
-    "statistics": "סטטיסטיקות",
-    "recentOrders": "הזמנות אחרונות",
-    "totalOrders": "סה\"כ הזמנות",
-    "totalRevenue": "סה\"כ הכנסות",
-    "totalProducts": "סה\"כ מוצרים",
-    "totalCustomers": "סה\"כ לקוחות"
+    "title": "לוח בקרה של מנהל",
+    "description": "נהל את החנות המקוונת שלך"
   },
   "common": {
     "loading": "טוען...",
@@ -444,12 +437,12 @@
     "preorder": "הזמנה מראש",
     "per100g": "ל-100 גרם",
     "units": {
-      "piece": "יח'",
+      "piece": "יח",
       "kg": "ק\"ג",
-      "g": "גרם",
+      "g": "גר",
       "ml": "מ\"ל",
-      "per100g": "ל-100 גרם",
-      "per100ml": "ל-100 מ\"ל"
+      "100g": "ל-100 גר",
+      "100ml": "ל-100 מ\"ל"
     },
     "per": "עבור",
     "items": "מוצרים",
@@ -900,7 +893,14 @@
     "username": "שם משתמש",
     "password": "סיסמה",
     "confirmPassword": "אישור סיסמה",
-    "selectRole": "בחר תפקיד"
+    "selectRole": "בחר תפקיד",
+    "emailError": "הכנס אימייל תקין",
+    "firstNameRequired": "שם פרטי נדרש",
+    "lastNameRequired": "שם משפחה נדרש",
+    "editDescription": "עריכת מידע משתמש",
+    "addDescription": "הוספת משתמש חדש למערכת",
+    "firstName": "שם פרטי",
+    "lastName": "שם משפחה"
   },
   "table": {
     "name": "שם",
@@ -912,6 +912,8 @@
     "category": "קטגוריה",
     "description": "תיאור",
     "image": "תמונה",
-    "unit": "יחידה"
+    "unit": "יחידה",
+    "phone": "טלפון",
+    "totalAmount": "סכום כולל"
   }
 }
