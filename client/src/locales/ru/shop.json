@@ -284,8 +284,8 @@
   "addedToCart": "Добавлено в корзину",
   "viewCart": "Посмотреть корзину",
   "discount": "Скидка",
-  "outOfStockToday": "Закончился сегодня",
-  "orderForTomorrow": "Заказ на завтра",
+  "outOfStockToday": "Нет в наличии сегодня",
+  "orderForTomorrow": "Заказать на завтра",
   "buttons": {
     "back": "Назад"
   },

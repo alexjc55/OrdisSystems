@@ -290,8 +290,8 @@
   "addedToCart": "נוסף לעגלה",
   "viewCart": "צפה בעגלה",
   "discount": "הנחה",
-  "outOfStockToday": "אזל מהמלאי היום",
-  "orderForTomorrow": "הזמנה למחר",
+  "outOfStockToday": "אזל המלאי היום",
+  "orderForTomorrow": "הזמן למחר",
   "buttons": {
     "back": "חזרה"
   },

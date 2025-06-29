@@ -124,5 +124,7 @@
     "grams": "Weight (g)",
     "quantity": "Quantity",
     "weight": "Weight"
-  }
+  },
+  "outOfStockToday": "Out of stock today",
+  "orderForTomorrow": "Order for tomorrow"
 }

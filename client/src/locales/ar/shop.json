@@ -519,8 +519,8 @@
   "addedToCart": "تم إضافته للسلة",
   "viewCart": "عرض السلة",
   "discount": "خصم",
-  "outOfStockToday": "غير متوفر اليوم",
-  "orderForTomorrow": "طلب للغد",
+  "outOfStockToday": "نفد المخزون اليوم",
+  "orderForTomorrow": "اطلب للغد",
   "buttons": {
     "back": "العودة"
   },
