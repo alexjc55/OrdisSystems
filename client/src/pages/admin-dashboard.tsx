@@ -2983,8 +2983,15 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!user || (user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
-    return null;
+  if (!user || (user.role !== "admin" && user.role !== "worker")) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-xl mb-4">Доступ запрещен</div>
+          <p className="text-gray-600">У вас нет прав доступа к административной панели</p>
+        </div>
+      </div>
+    );
   }
 
   function getUnitDisplay(unit: string) {
