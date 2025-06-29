@@ -1,6 +1,6 @@
 {
-  "title": "Настройки",
-  "description": "Управление магазином",
+  "title": "Панель администратора",
+  "description": "Управление настройками и содержимым вашего магазина",
   "tabs": {
     "settings": "Настройки",
     "permissions": "Права доступа"
@@ -694,7 +694,16 @@
     "canManageCategories": "Управление категориями",
     "canViewSettings": "Просмотр настроек",
     "canManageSettings": "Управление настройками",
-    "canManageThemes": "Управление темами"
+    "canManageThemes": "Управление темами",
+    "workerPermissionsDescription": "Настройка прав доступа для сотрудников",
+    "canViewUsersDescription": "Разрешить просмотр списка пользователей",
+    "canManageUsersDescription": "Разрешить создание, редактирование и удаление пользователей",
+    "canManageProductsDescription": "Разрешить управление товарами и их параметрами",
+    "canManageCategoriesDescription": "Разрешить управление категориями товаров",
+    "canEditOrdersDescription": "Разрешить редактирование заказов клиентов",
+    "canViewSettingsDescription": "Разрешить просмотр настроек магазина",
+    "canManageSettingsDescription": "Разрешить изменение настроек магазина",
+    "canEditOrders": "Редактирование заказов"
   },
   "systemSettings": {
     "canManageThemes": "Управление темами",

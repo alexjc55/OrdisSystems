@@ -1,6 +1,6 @@
 {
-  "title": "הגדרות",
-  "description": "ניהול חנות",
+  "title": "לוח בקרה של מנהל",
+  "description": "נהל את הגדרות החנות והתוכן שלך",
   "tabs": {
     "settings": "הגדרות",
     "permissions": "הרשאות"
@@ -345,7 +345,16 @@
     "canManageCategories": "ניהול קטגוריות",
     "canViewSettings": "צפייה בהגדרות",
     "canManageSettings": "ניהול הגדרות",
-    "canManageThemes": "ניהול ערכות עיצוב"
+    "canManageThemes": "ניהול ערכות עיצוב",
+    "workerPermissionsDescription": "הגדרת הרשאות גישה לעובדים",
+    "canViewUsersDescription": "אפשר צפייה ברשימת המשתמשים",
+    "canManageUsersDescription": "אפשר יצירה, עריכה ומחיקה של משתמשים",
+    "canManageProductsDescription": "אפשר ניהול מוצרים והפרמטרים שלהם",
+    "canManageCategoriesDescription": "אפשר ניהול קטגוריות מוצרים",
+    "canEditOrdersDescription": "אפשר עריכת הזמנות לקוחות",
+    "canViewSettingsDescription": "אפשר צפייה בהגדרות החנות",
+    "canManageSettingsDescription": "אפשר שינוי הגדרות החנות",
+    "canEditOrders": "עריכת הזמנות"
   },
   "systemSettings": {
     "canManageThemes": "ניהול ערכות עיצוב",

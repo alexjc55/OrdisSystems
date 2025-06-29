@@ -1,6 +1,6 @@
 {
   "title": "Admin Dashboard",
-  "description": "Store management interface",
+  "description": "Manage your store settings and content",
   "navigation": {
     "products": "Products",
     "orders": "Orders",
@@ -432,7 +432,16 @@
     "canManageCategories": "Manage Categories",
     "canViewSettings": "View Settings",
     "canManageSettings": "Manage Settings",
-    "canManageThemes": "Manage Themes"
+    "canManageThemes": "Manage Themes",
+    "workerPermissionsDescription": "Configure access permissions for employees",
+    "canViewUsersDescription": "Allow viewing the list of users",
+    "canManageUsersDescription": "Allow creating, editing and deleting users",
+    "canManageProductsDescription": "Allow managing products and their parameters",
+    "canManageCategoriesDescription": "Allow managing product categories",
+    "canEditOrdersDescription": "Allow editing customer orders",
+    "canViewSettingsDescription": "Allow viewing store settings",
+    "canManageSettingsDescription": "Allow changing store settings",
+    "canEditOrders": "Edit Orders"
   },
   "themes": {
     "title": "Theme Management",

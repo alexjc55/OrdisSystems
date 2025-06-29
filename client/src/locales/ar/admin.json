@@ -1,6 +1,6 @@
 {
-  "title": "الإعدادات",
-  "description": "الوصف",
+  "title": "لوحة تحكم المدير",
+  "description": "إدارة إعدادات المتجر والمحتوى الخاص بك",
   "tabs": {
     "products": "المنتجات",
     "orders": "الطلبات",
@@ -517,7 +517,16 @@
     "canManageCategories": "إدارة الفئات",
     "canViewSettings": "عرض الإعدادات",
     "canManageSettings": "إدارة الإعدادات",
-    "canManageThemes": "إدارة المواضيع"
+    "canManageThemes": "إدارة المواضيع",
+    "workerPermissionsDescription": "تكوين صلاحيات الوصول للموظفين",
+    "canViewUsersDescription": "السماح بعرض قائمة المستخدمين",
+    "canManageUsersDescription": "السماح بإنشاء وتعديل وحذف المستخدمين",
+    "canManageProductsDescription": "السماح بإدارة المنتجات ومعاملاتها",
+    "canManageCategoriesDescription": "السماح بإدارة فئات المنتجات",
+    "canEditOrdersDescription": "السماح بتعديل طلبات العملاء",
+    "canViewSettingsDescription": "السماح بعرض إعدادات المتجر",
+    "canManageSettingsDescription": "السماح بتغيير إعدادات المتجر",
+    "canEditOrders": "تعديل الطلبات"
   },
   "systemSettings": {
     "canManageThemes": "إدارة المواضيع",
