@@ -867,10 +867,10 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
   const getUnitPrice = (product: any) => {
     switch (product.unit) {
-      case 'piece': return `${formatCurrency(product.price)} ${adminT('products.dialog.unitPiece')}`;
-      case 'kg': return `${formatCurrency(product.price)} ${adminT('products.dialog.unitKg')}`;
-      case '100g': return `${formatCurrency(product.price)} ${adminT('products.dialog.unit100g')}`;
-      case '100ml': return `${formatCurrency(product.price)} ${adminT('products.dialog.unit100ml')}`;
+      case 'piece': return `${formatCurrency(product.price)} ${adminT('products.units.piece')}`;
+      case 'kg': return `${formatCurrency(product.price)} ${adminT('products.units.kg')}`;
+      case '100g': return `${formatCurrency(product.price)} ${adminT('products.units.100g')}`;
+      case '100ml': return `${formatCurrency(product.price)} ${adminT('products.units.100ml')}`;
       default: return formatCurrency(product.price);
     }
   };
@@ -5454,10 +5454,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="100g" className="text-sm">{adminT('products.dialog.unit100g')}</SelectItem>
-                        <SelectItem value="100ml" className="text-sm">{adminT('products.dialog.unit100ml')}</SelectItem>
-                        <SelectItem value="piece" className="text-sm">{adminT('products.dialog.unitPiece')}</SelectItem>
-                        <SelectItem value="kg" className="text-sm">{adminT('products.dialog.unitKg')}</SelectItem>
+                        <SelectItem value="100g" className="text-sm">{adminT('products.units.100g')}</SelectItem>
+                        <SelectItem value="100ml" className="text-sm">{adminT('products.units.100ml')}</SelectItem>
+                        <SelectItem value="piece" className="text-sm">{adminT('products.units.piece')}</SelectItem>
+                        <SelectItem value="kg" className="text-sm">{adminT('products.units.kg')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage className="text-xs" />
@@ -5589,7 +5589,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
 
                 {discountType === "fixed" && (
                   <div className="text-xs text-orange-700 bg-orange-100 p-2 rounded">
-                    {adminT('products.dialog.fixedDiscountInfo')} {unit === "piece" ? adminT('products.dialog.unitPiece') : unit === "kg" ? adminT('products.dialog.unitKg') : adminT('products.dialog.unit100gml')}
+                    {adminT('products.dialog.fixedDiscountInfo')} {unit === "piece" ? adminT('products.units.piece') : unit === "kg" ? adminT('products.units.kg') : adminT('products.dialog.unit100gml')}
                   </div>
                 )}
               </div>

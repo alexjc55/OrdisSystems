@@ -240,10 +240,12 @@
     "preorderProducts": "طلب مسبق لليوم التالي",
     "productsWithDiscount": "المنتجات المخفضة",
     "units": {
-      "100g": "لكل 100غ",
-      "kg": "لكل كيلو",
+      "100g": "لكل 100 غرام",
+      "100ml": "لكل 100 مل", 
+      "kg": "لكل كيلوغرام",
       "piece": "للقطعة",
-      "per100g": "لكل 100غ"
+      "g": "لكل 100غ",
+      "ml": "لكل 100مل"
     },
     "dialog": {
       "addProduct": "إضافة منتج جديد",
@@ -264,7 +266,24 @@
       "discountValueLabel": "قيمة الخصم",
       "selectDiscountType": "اختر نوع الخصم",
       "percentage": "نسبة مئوية",
-      "fixed": "مبلغ ثابت"
+      "fixed": "مبلغ ثابت",
+      "addTitle": "إضافة منتج جديد",
+      "editTitle": "تعديل المنتج",
+      "addDescription": "أضف منتج جديد إلى المتجر",
+      "editDescription": "تعديل تفاصيل المنتج",
+      "unit100g": "لكل 100 غرام",
+      "unit100ml": "لكل 100 مل",
+      "unitKg": "لكل كيلوغرام",
+      "unitPiece": "للقطعة",
+      "selectUnit": "اختر الوحدة",
+      "deleteProduct": "حذف المنتج",
+      "confirmDelete": "تأكيد الحذف",
+      "deleteDescription": "هل أنت متأكد من حذف هذا المنتج؟",
+      "deleteButton": "حذف",
+      "cancelButton": "إلغاء",
+      "saveButton": "حفظ",
+      "createButton": "إنشاء",
+      "updateButton": "تحديث"
     },
     "statusDialog": {
       "title": "تغيير حالة المنتج",
