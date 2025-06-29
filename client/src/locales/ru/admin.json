@@ -576,5 +576,27 @@
     "cancel": "Отмена",
     "create": "Создать",
     "edit": "Редактировать"
+  },
+  "dialog": {
+    "firstNameLabel": "Имя",
+    "lastNameLabel": "Фамилия",
+    "emailLabel": "Email",
+    "passwordLabel": "Пароль",
+    "newPasswordLabel": "Новый пароль",
+    "roleLabel": "Роль",
+    "firstNamePlaceholder": "Введите имя",
+    "lastNamePlaceholder": "Введите фамилию",
+    "emailPlaceholder": "Введите email",
+    "passwordPlaceholder": "Введите пароль",
+    "passwordMinLength": "Минимум 6 символов",
+    "rolePlaceholder": "Выберите роль",
+    "firstNameRequired": "Имя обязательно",
+    "lastNameRequired": "Фамилия обязательна",
+    "emailError": "Некорректный email",
+    "editDescription": "Редактировать информацию пользователя",
+    "addDescription": "Добавить нового пользователя в систему"
+  },
+  "table": {
+    "role": "Роль"
   }
 }

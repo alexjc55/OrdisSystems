@@ -556,5 +556,27 @@
     "cancel": "إلغاء",
     "create": "إنشاء",
     "edit": "تعديل"
+  },
+  "dialog": {
+    "firstNameLabel": "الاسم الأول",
+    "lastNameLabel": "الاسم الأخير",
+    "emailLabel": "البريد الإلكتروني",
+    "passwordLabel": "كلمة المرور",
+    "newPasswordLabel": "كلمة مرور جديدة",
+    "roleLabel": "الدور",
+    "firstNamePlaceholder": "أدخل الاسم الأول",
+    "lastNamePlaceholder": "أدخل الاسم الأخير",
+    "emailPlaceholder": "أدخل البريد الإلكتروني",
+    "passwordPlaceholder": "أدخل كلمة المرور",
+    "passwordMinLength": "6 أحرف كحد أدنى",
+    "rolePlaceholder": "اختر الدور",
+    "firstNameRequired": "الاسم الأول مطلوب",
+    "lastNameRequired": "الاسم الأخير مطلوب",
+    "emailError": "بريد إلكتروني غير صحيح",
+    "editDescription": "تعديل معلومات المستخدم",
+    "addDescription": "إضافة مستخدم جديد للنظام"
+  },
+  "table": {
+    "role": "الدور"
   }
 }

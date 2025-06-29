@@ -1220,5 +1220,27 @@
     "cancel": "ביטול",
     "create": "צור",
     "edit": "ערוך"
+  },
+  "dialog": {
+    "firstNameLabel": "שם פרטי",
+    "lastNameLabel": "שם משפחה",
+    "emailLabel": "אימייל",
+    "passwordLabel": "סיסמה",
+    "newPasswordLabel": "סיסמה חדשה",
+    "roleLabel": "תפקיד",
+    "firstNamePlaceholder": "הכנס שם פרטי",
+    "lastNamePlaceholder": "הכנס שם משפחה",
+    "emailPlaceholder": "הכנס אימייל",
+    "passwordPlaceholder": "הכנס סיסמה",
+    "passwordMinLength": "מינימום 6 תווים",
+    "rolePlaceholder": "בחר תפקיד",
+    "firstNameRequired": "שם פרטי נדרש",
+    "lastNameRequired": "שם משפחה נדרש",
+    "emailError": "אימייל לא תקין",
+    "editDescription": "ערוך פרטי משתמש",
+    "addDescription": "הוסף משתמש חדש למערכת"
+  },
+  "table": {
+    "role": "תפקיד"
   }
 }

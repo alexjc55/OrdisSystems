@@ -592,5 +592,27 @@
     "cancel": "Cancel",
     "create": "Create",
     "edit": "Edit"
+  },
+  "dialog": {
+    "firstNameLabel": "First Name",
+    "lastNameLabel": "Last Name",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "newPasswordLabel": "New Password",
+    "roleLabel": "Role",
+    "firstNamePlaceholder": "Enter first name",
+    "lastNamePlaceholder": "Enter last name",
+    "emailPlaceholder": "Enter email",
+    "passwordPlaceholder": "Enter password",
+    "passwordMinLength": "Minimum 6 characters",
+    "rolePlaceholder": "Select role",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "emailError": "Invalid email",
+    "editDescription": "Edit user information",
+    "addDescription": "Add new user to the system"
+  },
+  "table": {
+    "role": "Role"
   }
 }

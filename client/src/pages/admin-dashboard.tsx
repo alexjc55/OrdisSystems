@@ -4646,9 +4646,9 @@ export default function AdminDashboard() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">{adminT('users.allRoles')}</SelectItem>
-                        <SelectItem value="admin">{adminT('users.roles.admin')}</SelectItem>
-                        <SelectItem value="worker">{adminT('users.roles.worker')}</SelectItem>
-                        <SelectItem value="customer">{adminT('users.roles.customer')}</SelectItem>
+                        <SelectItem value="admin">{adminT('roles.admin')}</SelectItem>
+                        <SelectItem value="worker">{adminT('roles.worker')}</SelectItem>
+                        <SelectItem value="customer">{adminT('roles.customer')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -4677,7 +4677,7 @@ export default function AdminDashboard() {
                         <TableHeader className="bg-gray-50/80">
                           <TableRow className="border-b border-gray-100" dir={isRTL ? 'rtl' : 'ltr'}>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.name')}</TableHead>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.role')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.role')}</TableHead>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.phone')}</TableHead>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.orders')}</TableHead>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.totalAmount')}</TableHead>
@@ -4706,8 +4706,8 @@ export default function AdminDashboard() {
                                   user.role === "worker" ? "border-orange-200 text-orange-700 bg-orange-50 text-xs" :
                                   "border-gray-200 text-gray-700 bg-gray-50 text-xs"
                                 }>
-                                  {user.role === "admin" ? adminT('users.roles.admin') : 
-                                   user.role === "worker" ? adminT('users.roles.worker') : adminT('users.roles.customer')}
+                                  {user.role === "admin" ? adminT('roles.admin') : 
+                                   user.role === "worker" ? adminT('roles.worker') : adminT('roles.customer')}
                                 </Badge>
                               </TableCell>
                               <TableCell className="px-3 py-3 text-sm">
@@ -6854,9 +6854,9 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
 
   const userSchema = z.object({
-    email: z.string().email(adminT('users.dialog.emailError')),
-    firstName: z.string().min(1, adminT('users.dialog.firstNameRequired')),
-    lastName: z.string().min(1, adminT('users.dialog.lastNameRequired')),
+    email: z.string().email(adminT('dialog.emailError')),
+    firstName: z.string().min(1, adminT('dialog.firstNameRequired')),
+    lastName: z.string().min(1, adminT('dialog.lastNameRequired')),
     phone: z.string().optional(),
     role: z.enum(["admin", "worker", "customer"]),
     password: z.string().optional(),
@@ -6912,7 +6912,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
             {user ? adminT('users.editUser') : adminT('users.addUser')}
           </DialogTitle>
           <DialogDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-            {user ? adminT('users.dialog.editDescription') : adminT('users.dialog.addDescription')}
+            {user ? adminT('dialog.editDescription') : adminT('dialog.addDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -6944,10 +6944,10 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.firstNameLabel')} *</FormLabel>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('dialog.firstNameLabel')} *</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder={adminT('users.dialog.firstNamePlaceholder')}
+                        placeholder={adminT('dialog.firstNamePlaceholder')}
                         {...field}
                         className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                         dir={isRTL ? 'rtl' : 'ltr'}
@@ -6963,10 +6963,10 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.lastNameLabel')} *</FormLabel>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('dialog.lastNameLabel')} *</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder={adminT('users.dialog.lastNamePlaceholder')}
+                        placeholder={adminT('dialog.lastNamePlaceholder')}
                         {...field}
                         className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                         dir={isRTL ? 'rtl' : 'ltr'}
@@ -7003,17 +7003,17 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.roleLabel')} *</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('dialog.roleLabel')} *</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        <SelectValue placeholder={adminT('users.dialog.rolePlaceholder')} />
+                        <SelectValue placeholder={adminT('dialog.rolePlaceholder')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="customer">{adminT('users.roles.customer')}</SelectItem>
-                      <SelectItem value="worker">{adminT('users.roles.worker')}</SelectItem>
-                      <SelectItem value="admin">{adminT('users.roles.admin')}</SelectItem>
+                      <SelectItem value="customer">{adminT('roles.customer')}</SelectItem>
+                      <SelectItem value="worker">{adminT('roles.worker')}</SelectItem>
+                      <SelectItem value="admin">{adminT('roles.admin')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage className="text-xs" />
@@ -7027,12 +7027,12 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                    {user ? adminT('users.dialog.newPasswordLabel') : adminT('users.dialog.passwordLabel')}
+                    {user ? adminT('dialog.newPasswordLabel') : adminT('dialog.passwordLabel')}
                   </FormLabel>
                   <FormControl>
                     <Input 
                       type="password"
-                      placeholder={adminT('users.dialog.passwordMinLength')}
+                      placeholder={adminT('dialog.passwordMinLength')}
                       {...field}
                       className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                       dir={isRTL ? 'rtl' : 'ltr'}
