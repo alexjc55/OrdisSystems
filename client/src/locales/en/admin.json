@@ -856,6 +856,10 @@
     "defaultLanguage": "Default Language",
     "defaultLanguageDescription": "Select the default language for store content",
     "enabledLanguages": "Active Languages",
-    "enabledLanguagesDescription": "Select languages that will be available to users"
+    "enabledLanguagesDescription": "Select languages that will be available to users",
+    "copySuccess": "Fields copied",
+    "fieldsCopied": "Copied {{count}} fields",
+    "clearSuccess": "Fields cleared",
+    "fieldsCleared": "Cleared {{count}} fields"
   }
 }

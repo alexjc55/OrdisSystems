@@ -447,7 +447,11 @@
     "defaultLanguage": "שפת ברירת מחדל",
     "defaultLanguageDescription": "בחר את שפת ברירת המחדל לתוכן החנות",
     "enabledLanguages": "שפות פעילות",
-    "enabledLanguagesDescription": "בחר שפות שיהיו זמינות למשתמשים"
+    "enabledLanguagesDescription": "בחר שפות שיהיו זמינות למשתמשים",
+    "copySuccess": "שדות הועתקו",
+    "fieldsCopied": "הועתקו {{count}} שדות",
+    "clearSuccess": "שדות נוקו",
+    "fieldsCleared": "נוקו {{count}} שדות"
   },
   "settings": {
     "title": "הגדרות חנות",

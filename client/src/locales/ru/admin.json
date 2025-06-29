@@ -846,6 +846,10 @@
     "defaultLanguage": "Основной язык",
     "defaultLanguageDescription": "Выберите основной язык для контента магазина",
     "enabledLanguages": "Активные языки",
-    "enabledLanguagesDescription": "Выберите языки, которые будут доступны пользователям"
+    "enabledLanguagesDescription": "Выберите языки, которые будут доступны пользователям",
+    "copySuccess": "Поля скопированы",
+    "fieldsCopied": "Скопировано полей: {{count}}",
+    "clearSuccess": "Поля очищены",
+    "fieldsCleared": "Очищено полей: {{count}}"
   }
 }

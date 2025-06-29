@@ -673,6 +673,10 @@
     "defaultLanguage": "اللغة الافتراضية",
     "defaultLanguageDescription": "اختر اللغة الافتراضية لمحتوى المتجر",
     "enabledLanguages": "اللغات النشطة",
-    "enabledLanguagesDescription": "اختر اللغات التي ستكون متاحة للمستخدمين"
+    "enabledLanguagesDescription": "اختر اللغات التي ستكون متاحة للمستخدمين",
+    "copySuccess": "تم نسخ الحقول",
+    "fieldsCopied": "تم نسخ {{count}} حقول",
+    "clearSuccess": "تم مسح الحقول",
+    "fieldsCleared": "تم مسح {{count}} حقول"
   }
 }

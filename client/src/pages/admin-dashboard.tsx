@@ -5303,6 +5303,14 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
 function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDelete, adminT }: any) {
   type ProductFormData = z.infer<typeof productSchema>;
   
+  const { toast } = useToast();
+  const translationManager = useTranslationManager({
+    defaultLanguage: 'ru',
+    baseFields: ['name', 'description']
+  });
+  
+  const [formData, setFormData] = useState<any>({});
+  
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -5325,26 +5333,41 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   const discountType = useWatch({ control: form.control, name: "discountType" });
   const unit = useWatch({ control: form.control, name: "unit" });
 
-  // Reset form when product or dialog state changes
+  // Initialize form data with multilingual support
   useEffect(() => {
     if (open) {
       if (product) {
-        // Extract category IDs from product categories array
-        const categoryIds = product.categories ? product.categories.map((cat: any) => cat.id) : [];
-        form.reset({
-          name: product.name || "",
-          description: product.description || "",
-          categoryIds: categoryIds,
+        // Set up form data with all language fields
+        const initialData = {
+          ...product,
+          categoryIds: product.categories ? product.categories.map((cat: any) => cat.id) : [],
           price: (product.price || product.pricePerKg)?.toString() || "",
           unit: (product.unit || "100g") as ProductUnit,
-          imageUrl: product.imageUrl || "",
-          isAvailable: product.isAvailable ?? true,
-          availabilityStatus: product.availabilityStatus || "available",
-          isSpecialOffer: product.isSpecialOffer ?? false,
-          discountType: product.discountType || "",
           discountValue: product.discountValue?.toString() || "",
+        };
+        setFormData(initialData);
+        
+        // Set form values based on current language
+        const nameValue = translationManager.getFieldValue(initialData, 'name');
+        const descriptionValue = translationManager.getFieldValue(initialData, 'description');
+        
+        form.reset({
+          name: nameValue,
+          description: descriptionValue,
+          categoryIds: initialData.categoryIds,
+          price: initialData.price,
+          unit: initialData.unit,
+          imageUrl: initialData.imageUrl || "",
+          isAvailable: initialData.isAvailable ?? true,
+          availabilityStatus: initialData.availabilityStatus || "available",
+          isSpecialOffer: initialData.isSpecialOffer ?? false,
+          discountType: initialData.discountType || "",
+          discountValue: initialData.discountValue,
         });
       } else {
+        // New product - reset everything
+        const emptyData = {};
+        setFormData(emptyData);
         form.reset({
           name: "",
           description: "",
@@ -5360,7 +5383,38 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
         });
       }
     }
-  }, [open, product, form]);
+  }, [open, product, form, translationManager]);
+  
+  // Handle translation copy/clear
+  const handleCopyAllFields = () => {
+    const copiedCount = translationManager.copyAllFields(formData, setFormData);
+    if (copiedCount > 0) {
+      // Update form with new values
+      const nameValue = translationManager.getFieldValue(formData, 'name');
+      const descriptionValue = translationManager.getFieldValue(formData, 'description');
+      
+      form.setValue('name', nameValue);
+      form.setValue('description', descriptionValue);
+      
+      toast({
+        title: adminT('translation.copySuccess'),
+        description: adminT('translation.fieldsCopied', { count: copiedCount }),
+      });
+    }
+  };
+  
+  const handleClearAllFields = () => {
+    const clearedCount = translationManager.clearAllFields(setFormData);
+    if (clearedCount > 0) {
+      form.setValue('name', '');
+      form.setValue('description', '');
+      
+      toast({
+        title: adminT('translation.clearSuccess'),
+        description: adminT('translation.fieldsCleared', { count: clearedCount }),
+      });
+    }
+  };
 
   if (!open) return null;
 
@@ -5376,6 +5430,15 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           </DialogDescription>
         </DialogHeader>
         
+        <TranslationToolbar
+          currentLanguage={translationManager.currentLanguage}
+          defaultLanguage={translationManager.defaultLanguage}
+          formData={formData}
+          baseFields={['name', 'description']}
+          onCopyAllFields={handleCopyAllFields}
+          onClearAllFields={handleClearAllFields}
+        />
+        
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -5383,9 +5446,19 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">{adminT('products.dialog.nameLabel')}</FormLabel>
+                  <FormLabel className="text-sm">
+                    {translationManager.getFieldLabel('name', adminT('products.dialog.nameLabel'))}
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder={adminT('products.dialog.namePlaceholder')} {...field} className="text-sm" />
+                    <Input 
+                      placeholder={adminT('products.dialog.namePlaceholder')} 
+                      {...field} 
+                      className="text-sm"
+                      onChange={(e) => {
+                        field.onChange(e);
+                        translationManager.setFieldValue('name', e.target.value, setFormData);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -5397,12 +5470,18 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">{adminT('products.dialog.descriptionLabel')}</FormLabel>
+                  <FormLabel className="text-sm">
+                    {translationManager.getFieldLabel('description', adminT('products.dialog.descriptionLabel'))}
+                  </FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder={adminT('products.dialog.descriptionPlaceholder')}
                       className="resize-none text-sm"
                       {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        translationManager.setFieldValue('description', e.target.value, setFormData);
+                      }}
                     />
                   </FormControl>
                   <FormMessage className="text-xs" />
