@@ -702,6 +702,18 @@ button:focus,
     text-align: right !important;
   }
   
+  /* Override for RTL products table - Hebrew and Arabic should be right-aligned */
+  html[lang="he"] .products-container table th,
+  html[lang="ar"] .products-container table th,
+  html[lang="he"] .products-container table td,
+  html[lang="ar"] .products-container table td,
+  html[lang="he"] [data-tab="products"] table th,
+  html[lang="ar"] [data-tab="products"] table th,
+  html[lang="he"] [data-tab="products"] table td,
+  html[lang="ar"] [data-tab="products"] table td {
+    text-align: right !important;
+  }
+  
   /* Force RTL for orders table */
   .rtl table[class*="Table"] th,
   .rtl table[class*="Table"] td,
