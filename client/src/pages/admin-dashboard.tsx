@@ -5404,8 +5404,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     }
   };
 
-  // Update form values when language changes
-  useEffect(() => {
+  // Update form values when language changes - TEMPORARILY DISABLED
+  /*useEffect(() => {
     if (open && formData && Object.keys(formData).length > 0) {
       const currentLang = translationManager.currentLanguage;
       const defaultLang = translationManager.defaultLanguage;
@@ -5436,7 +5436,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
         form.setValue('description', descriptionValue);
       }
     }
-  }, [translationManager.currentLanguage, open]);
+  }, [translationManager.currentLanguage, open]);*/
   
   // Handle translation copy/clear
   const handleCopyAllFields = () => {
@@ -5549,6 +5549,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       placeholder={adminT('products.dialog.namePlaceholder')} 
                       {...field}
                       onChange={(e) => {
+                        console.log('Name field changed:', e.target.value);
                         field.onChange(e.target.value);
                         handleFieldChange('name', e.target.value, true);
                       }}
@@ -5638,6 +5639,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                         placeholder={adminT('products.dialog.pricePlaceholder')}
                         {...field}
                         onChange={(e) => {
+                          console.log('Price field changed:', e.target.value);
                           field.onChange(e.target.value);
                           handleFieldChange('price', e.target.value, false);
                         }}
