@@ -194,7 +194,9 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                 <div className="p-3 rounded-full group-hover:scale-110 transition-transform duration-300" style={{ background: `linear-gradient(to bottom right, var(--color-payment-delivery-icon, hsl(262, 83%, 58%)), var(--color-payment-delivery-icon, hsl(262, 83%, 58%)))` }}>
                   <CreditCard className="h-5 w-5 text-white" />
                 </div>
-                <span className="font-semibold text-lg text-gray-800">{t('paymentMethod')} & {t('cart.delivery')}</span>
+                <span className="font-semibold text-lg text-gray-800">
+                  {console.log('DEBUG paymentMethod:', t('paymentMethod'), 'language:', currentLanguage) || t('paymentMethod')} & {t('cart.delivery')}
+                </span>
               </div>
               <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
                 {storeSettings.deliveryInfo && (
@@ -205,7 +207,9 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                 )}
                 {storeSettings.paymentInfo && (
                   <div>
-                    <span className="text-gray-700 text-base font-bold block mb-2">{t('paymentMethod')}:</span>
+                    <span className="text-gray-700 text-base font-bold block mb-2">
+                      {console.log('DEBUG paymentMethod 2:', t('paymentMethod'), 'language:', currentLanguage) || t('paymentMethod')}:
+                    </span>
                     <span className="text-gray-800 text-base leading-relaxed">{storeSettings.paymentInfo}</span>
                   </div>
                 )}
