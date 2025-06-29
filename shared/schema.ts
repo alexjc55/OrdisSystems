@@ -58,8 +58,14 @@ export const userAddresses = pgTable("user_addresses", {
 // Categories table
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  description: text("description"),
+  name: varchar("name", { length: 255 }).notNull(), // Default language (Russian)
+  name_en: varchar("name_en", { length: 255 }),
+  name_he: varchar("name_he", { length: 255 }),
+  name_ar: varchar("name_ar", { length: 255 }),
+  description: text("description"), // Default language (Russian)
+  description_en: text("description_en"),
+  description_he: text("description_he"),
+  description_ar: text("description_ar"),
   icon: varchar("icon", { length: 100 }),
   isActive: boolean("is_active").default(true).notNull(),
   sortOrder: integer("sort_order").default(0),
@@ -70,8 +76,14 @@ export const categories = pgTable("categories", {
 // Products table (removed categoryId - now using many-to-many relation)
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  description: text("description"),
+  name: varchar("name", { length: 255 }).notNull(), // Default language (Russian)
+  name_en: varchar("name_en", { length: 255 }),
+  name_he: varchar("name_he", { length: 255 }),
+  name_ar: varchar("name_ar", { length: 255 }),
+  description: text("description"), // Default language (Russian)
+  description_en: text("description_en"),
+  description_he: text("description_he"),
+  description_ar: text("description_ar"),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   unit: varchar("unit", { length: 20 }).default("100g").notNull(), // "100g", "100ml", "piece", "kg"
   pricePerKg: decimal("price_per_kg", { precision: 10, scale: 2 }).notNull(), // For backward compatibility
