@@ -1428,7 +1428,7 @@ export default function ThemeManager() {
                           </div>
                           
                           <div className="text-xs text-gray-500">
-                            Рекомендуемый размер изображений: 600x300 пикселей
+                            {adminT('themes.imageSize')}
                           </div>
                         </div>
                       )}
@@ -2122,7 +2122,7 @@ export default function ThemeManager() {
                           </div>
                           
                           <div className="text-xs text-gray-500">
-                            Рекомендуемый размер изображений: 600x300 пикселей
+                            {adminT('themes.imageSize')}
                           </div>
                         </div>
                       )}
