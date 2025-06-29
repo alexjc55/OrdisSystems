@@ -525,8 +525,11 @@ export default function Home() {
                                 {category.name}
                               </h3>
                               
-                              <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed flex-1">
-                                {category.description || t('defaultCategoryDescription')}
+                              <p className="text-gray-600 text-sm leading-relaxed flex-1">
+                                {(() => {
+                                  const text = category.description || t('defaultCategoryDescription');
+                                  return text.length > 60 ? text.substring(0, 60) + '...' : text;
+                                })()}
                               </p>
                               
                               <div className="mt-auto">
