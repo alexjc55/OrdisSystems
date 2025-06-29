@@ -333,11 +333,15 @@
     "cancel": "إلغاء"
   },
   "users": {
+    "title": "المستخدمون",
+    "description": "إدارة مستخدمي النظام",
     "createUser": "إنشاء مستخدم",
+    "role": "الدور",
+    "permissions": "الصلاحيات",
     "notifications": {
-      "roleUpdateError": "فشل في تحديث الدور",
-      "deleteError": "فشل في حذف المستخدم",
-      "passwordSetError": "فشل في تعيين كلمة المرور"
+      "roleUpdateError": "خطأ في تحديث الدور",
+      "deleteError": "خطأ في حذف المستخدم",
+      "passwordSetError": "خطأ في تعيين كلمة المرور"
     }
   },
   "settings": {
@@ -495,6 +499,20 @@
     "htmlFooterExample": "<!-- أضف هنا ودجات الدردشة، أزرار وسائل التواصل الاجتماعي أو ودجات أخرى -->",
     "workingHoursNote": "اتركه فارغاً ليوم العطلة",
     "workingDay": "يوم العمل",
-    "closedDay": "يوم مغلق"
+    "closedDay": "يوم مغلق",
+    "permissions": "الصلاحيات",
+    "permissionsDescription": "إدارة صلاحيات الوصول للموظفين",
+    "workerPermissions": "صلاحيات الموظفين",
+    "canViewUsers": "عرض المستخدمين",
+    "canManageUsers": "إدارة المستخدمين",
+    "canViewOrders": "عرض الطلبات",
+    "canManageOrders": "إدارة الطلبات",
+    "canViewProducts": "عرض المنتجات",
+    "canManageProducts": "إدارة المنتجات",
+    "canViewCategories": "عرض الفئات",
+    "canManageCategories": "إدارة الفئات",
+    "canViewSettings": "عرض الإعدادات",
+    "canManageSettings": "إدارة الإعدادات",
+    "canManageThemes": "إدارة المواضيع"
   }
 }
