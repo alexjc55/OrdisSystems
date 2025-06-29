@@ -1673,7 +1673,7 @@ export default function ThemeManager() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="headerStyleEdit">Стиль шапки сайта</Label>
+                      <Label htmlFor="headerStyleEdit">{adminT('themes.headerStyleLabel')}</Label>
                       <select
                         name="headerStyle"
                         id="headerStyleEdit"
@@ -1695,7 +1695,7 @@ export default function ThemeManager() {
                         <option value="minimal">Минималистичный</option>
                       </select>
                       <div className="text-sm text-gray-500">
-                        Влияет на отображение баннера и информационных блоков
+                        {adminT("themes.headerStyleImpact")}
                       </div>
                     </div>
                     
@@ -1704,7 +1704,7 @@ export default function ThemeManager() {
                         <h4 className="text-sm font-medium mb-3">{adminT("themes.minimalButtonSettings")}</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="bannerButtonTextEdit">Текст кнопки</Label>
+                            <Label htmlFor="bannerButtonTextEdit">{adminT("themes.buttonTextLabel")}</Label>
                             <input
                               type="text"
                               name="bannerButtonText"
@@ -2039,7 +2039,7 @@ export default function ThemeManager() {
                               />
                               <input type="hidden" name="cartBannerImage" value={editCartBannerImage} />
                               <div className="text-xs text-gray-500 mt-1">
-                                Рекомендуемый размер: 800x200 пикселей
+                                {adminT("themes.bannerImageSize")}
                               </div>
                             </div>
                           )}
@@ -2143,10 +2143,10 @@ export default function ThemeManager() {
               
               <div className="flex justify-end gap-2 mt-6">
                 <Button type="button" variant="outline" onClick={() => setEditingTheme(null)}>
-                  Отмена
+                  {adminT('themes.cancelButton')}
                 </Button>
                 <Button type="submit" className="btn-primary">
-                  Сохранить изменения
+                  {adminT('themes.saveChangesButton')}
                 </Button>
               </div>
             </form>
