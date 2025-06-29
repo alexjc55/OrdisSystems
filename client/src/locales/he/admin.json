@@ -436,6 +436,19 @@
     "coreWorkSectionsDescription": "חלקים אלה זמינים תמיד לעובדים למשימות חיוניות",
     "alwaysEnabled": "תמיד מופעל"
   },
+  "translation": {
+    "defaultLanguageMode": "מצב שפת ברירת מחדל: {{language}}",
+    "defaultLanguageDescription": "אתה עורך תוכן בשפת ברירת המחדל של המערכת",
+    "translationMode": "מצב תרגום:",
+    "progress": "התקדמות",
+    "copyFromDefault": "מלא מ{{language}} ({{count}})",
+    "clearAll": "נקה הכל",
+    "allFieldsTranslated": "כל השדות תורגמו",
+    "defaultLanguage": "שפת ברירת מחדל",
+    "defaultLanguageDescription": "בחר את שפת ברירת המחדל לתוכן החנות",
+    "enabledLanguages": "שפות פעילות",
+    "enabledLanguagesDescription": "בחר שפות שיהיו זמינות למשתמשים"
+  },
   "settings": {
     "title": "הגדרות חנות",
     "basicInfo": "מידע בסיסי",

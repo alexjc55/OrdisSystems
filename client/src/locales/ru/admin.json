@@ -834,5 +834,18 @@
     "coreWorkSections": "Основные рабочие разделы",
     "coreWorkSectionsDescription": "Эти разделы всегда доступны работникам для выполнения основных задач",
     "alwaysEnabled": "всегда включено"
+  },
+  "translation": {
+    "defaultLanguageMode": "Режим основного языка: {{language}}",
+    "defaultLanguageDescription": "Вы редактируете контент на основном языке системы",
+    "translationMode": "Режим перевода:",
+    "progress": "Прогресс",
+    "copyFromDefault": "Заполнить из {{language}} ({{count}})",
+    "clearAll": "Очистить все",
+    "allFieldsTranslated": "Все поля переведены",
+    "defaultLanguage": "Основной язык",
+    "defaultLanguageDescription": "Выберите основной язык для контента магазина",
+    "enabledLanguages": "Активные языки",
+    "enabledLanguagesDescription": "Выберите языки, которые будут доступны пользователям"
   }
 }

@@ -844,5 +844,18 @@
     "coreWorkSections": "Core Work Sections",
     "coreWorkSectionsDescription": "These sections are always available to workers for essential tasks",
     "alwaysEnabled": "always enabled"
+  },
+  "translation": {
+    "defaultLanguageMode": "Default language mode: {{language}}",
+    "defaultLanguageDescription": "You are editing content in the system's default language",
+    "translationMode": "Translation mode:",
+    "progress": "Progress",
+    "copyFromDefault": "Fill from {{language}} ({{count}})",
+    "clearAll": "Clear all",
+    "allFieldsTranslated": "All fields translated",
+    "defaultLanguage": "Default Language",
+    "defaultLanguageDescription": "Select the default language for store content",
+    "enabledLanguages": "Active Languages",
+    "enabledLanguagesDescription": "Select languages that will be available to users"
   }
 }
