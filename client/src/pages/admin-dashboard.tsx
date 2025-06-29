@@ -2123,7 +2123,7 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const { t: adminT } = useAdminTranslation();
   const { t: commonT, i18n } = useCommonTranslation();
-  const isRTL = i18n.language === 'he';
+  const isRTL = i18n.language === 'he' || i18n.language === 'ar';
   const queryClient = useQueryClient();
 
   // Data queries with pagination  
@@ -5666,7 +5666,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
 function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
-  const isRTL = i18n.language === 'he';
+  const isRTL = i18n.language === 'he' || i18n.language === 'ar';
   
   const form = useForm({
     resolver: zodResolver(categorySchema),
@@ -5864,7 +5864,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 }) {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
-  const isRTL = i18n.language === 'he';
+  const isRTL = i18n.language === 'he' || i18n.language === 'ar';
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
   const [isVisualsOpen, setIsVisualsOpen] = useState(false);
@@ -6850,7 +6850,7 @@ function CancellationReasonDialog({
 function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
-  const isRTL = i18n.language === 'he';
+  const isRTL = i18n.language === 'he' || i18n.language === 'ar';
 
   const userSchema = z.object({
     email: z.string().email(adminT('users.dialog.emailError')),
