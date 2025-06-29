@@ -44,12 +44,21 @@ export function useTranslationManager({
     formData: any,
     setFormData: (updater: (prev: any) => any) => void
   ) => {
+    console.log('TranslationManager copyAllFields called with:', {
+      formData,
+      baseFields,
+      currentLanguage,
+      defaultLanguage
+    });
+    
     const updates = copyFromDefaultLanguage(
       formData,
       baseFields,
       currentLanguage,
       defaultLanguage
     );
+    
+    console.log('Generated updates:', updates);
     
     if (Object.keys(updates).length > 0) {
       setFormData((prev: any) => ({ ...prev, ...updates }));

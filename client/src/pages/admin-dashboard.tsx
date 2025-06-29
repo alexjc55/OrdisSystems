@@ -5388,11 +5388,18 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   
   // Handle translation copy/clear
   const handleCopyAllFields = () => {
+    console.log('Copying fields from', translationManager.defaultLanguage, 'to', translationManager.currentLanguage);
+    console.log('Current formData:', formData);
+    
     const copiedCount = translationManager.copyAllFields(formData, setFormData);
+    console.log('Copied count:', copiedCount);
+    
     if (copiedCount > 0) {
       // Update form with new values
       const nameValue = translationManager.getFieldValue(formData, 'name');
       const descriptionValue = translationManager.getFieldValue(formData, 'description');
+      
+      console.log('Setting form values:', { nameValue, descriptionValue });
       
       form.setValue('name', nameValue);
       form.setValue('description', descriptionValue);
@@ -5400,6 +5407,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       toast({
         title: adminT('translation.copySuccess'),
         description: adminT('translation.fieldsCopied', { count: copiedCount }),
+      });
+    } else {
+      console.log('No fields to copy');
+      toast({
+        title: adminT('translation.noFieldsToCopy') || 'Нет полей для копирования',
+        description: adminT('translation.ensureDefaultLanguageContent') || 'Убедитесь, что содержимое введено на основном языке',
+        variant: 'destructive'
       });
     }
   };
