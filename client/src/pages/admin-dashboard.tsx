@@ -5547,7 +5547,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   <FormControl>
                     <Input 
                       placeholder={adminT('products.dialog.namePlaceholder')} 
-                      {...field} 
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        handleFieldChange('name', e.target.value, true);
+                      }}
                       className="text-sm"
                     />
                   </FormControl>
@@ -5569,6 +5573,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       placeholder={adminT('products.dialog.descriptionPlaceholder')}
                       className="resize-none text-sm"
                       {...field}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        handleFieldChange('description', e.target.value, true);
+                      }}
                     />
                   </FormControl>
                   <FormMessage className="text-xs" />
@@ -5593,11 +5601,14 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                             checked={field.value?.includes(category.id) || false}
                             onChange={(e) => {
                               const currentIds = field.value || [];
+                              let newIds;
                               if (e.target.checked) {
-                                field.onChange([...currentIds, category.id]);
+                                newIds = [...currentIds, category.id];
                               } else {
-                                field.onChange(currentIds.filter((id: number) => id !== category.id));
+                                newIds = currentIds.filter((id: number) => id !== category.id);
                               }
+                              field.onChange(newIds);
+                              handleFieldChange('categoryIds', newIds, false);
                             }}
                             className="rounded border-gray-300"
                           />
@@ -5626,6 +5637,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                         step="0.01"
                         placeholder={adminT('products.dialog.pricePlaceholder')}
                         {...field}
+                        onChange={(e) => {
+                          field.onChange(e.target.value);
+                          handleFieldChange('price', e.target.value, false);
+                        }}
                         className="text-sm"
                       />
                     </FormControl>
@@ -5640,7 +5655,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">{adminT('products.dialog.unitLabel')}</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={(value) => {
+                      field.onChange(value);
+                      handleFieldChange('unit', value, false);
+                    }} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="text-sm">
                           <SelectValue placeholder={adminT('products.dialog.unitLabel')} />
@@ -5670,7 +5688,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   <FormControl>
                     <ImageUpload
                       value={field.value || ""}
-                      onChange={field.onChange}
+                      onChange={(value) => {
+                        field.onChange(value);
+                        handleFieldChange('imageUrl', value, true);
+                      }}
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
