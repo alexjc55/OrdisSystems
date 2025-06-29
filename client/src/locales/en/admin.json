@@ -110,7 +110,18 @@
     "gray100": "Gray 100 (background)",
     "gray700": "Gray 700 (text)",
     "gray900": "Gray 900 (headings)",
-    "images": "Images"
+    "images": "Images",
+    "showBanner": "Show Banner",
+    "showBannerDescription": "Main image in site header",
+    "titleDescription": "Title and Description",
+    "titleDescriptionDesc": "Text information about the store",
+    "categoryMenu": "Category Menu",
+    "categoryMenuDescription": "Navigation category menu",
+    "infoBlocks": "Info Blocks",
+    "infoBlocksDescription": "Working hours, contacts, delivery",
+    "specialOffers": "Special Offers",
+    "specialOffersDescription": "Special offers block",
+    "whatsappChatDescription": "WhatsApp contact button"
   },
   "visualLabels": {
     "mainInterfaceElements": "Main Interface Elements",

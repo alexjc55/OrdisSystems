@@ -1802,12 +1802,12 @@ export default function ThemeManager() {
                       <div>
                         <h5 className="text-sm font-medium mb-2">Иконки информационных блоков</h5>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <ColorInput label="Часы работы" name="workingHoursIconColor" defaultValue={editingTheme.workingHoursIconColor} />
-                          <ColorInput label="Контакты" name="contactsIconColor" defaultValue={editingTheme.contactsIconColor} />
-                          <ColorInput label="Оплата и доставка" name="paymentDeliveryIconColor" defaultValue={editingTheme.paymentDeliveryIconColor} />
+                          <ColorInput label={adminT('themes.workingHours')} name="workingHoursIconColor" defaultValue={editingTheme.workingHoursIconColor} />
+                          <ColorInput label={adminT('themes.contacts')} name="contactsIconColor" defaultValue={editingTheme.contactsIconColor} />
+                          <ColorInput label={adminT('themes.paymentDelivery')} name="paymentDeliveryIconColor" defaultValue={editingTheme.paymentDeliveryIconColor} />
                         </div>
                         <div className="text-sm text-gray-500 mt-2">
-                          ℹ️ Цвета круглых иконок в блоках "Часы работы", "Контакты" и "Оплата и доставка" на главной странице
+                          ℹ️ {adminT('themes.iconsInfo')}
                         </div>
                       </div>
                     </div>
@@ -1826,10 +1826,10 @@ export default function ThemeManager() {
                     <div>
                       <h5 className="text-sm font-medium mb-2">Основные нейтральные цвета</h5>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <ColorInput label="Белый" name="whiteColor" defaultValue={editingTheme.whiteColor} />
-                        <ColorInput label="Серый 100 (фон)" name="gray100Color" defaultValue={editingTheme.gray100Color} />
-                        <ColorInput label="Серый 700 (текст)" name="gray700Color" defaultValue={editingTheme.gray700Color} />
-                        <ColorInput label="Серый 900 (заголовки)" name="gray900Color" defaultValue={editingTheme.gray900Color} />
+                        <ColorInput label={adminT('themes.white')} name="whiteColor" defaultValue={editingTheme.whiteColor} />
+                        <ColorInput label={adminT('themes.gray100')} name="gray100Color" defaultValue={editingTheme.gray100Color} />
+                        <ColorInput label={adminT('themes.gray700')} name="gray700Color" defaultValue={editingTheme.gray700Color} />
+                        <ColorInput label={adminT('themes.gray900')} name="gray900Color" defaultValue={editingTheme.gray900Color} />
                       </div>
                       <div className="text-sm text-gray-500 mt-2">
                         ℹ️ Нейтральные цвета для фонов, текста и базовых элементов интерфейса
