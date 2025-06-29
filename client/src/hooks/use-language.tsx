@@ -92,7 +92,8 @@ export function useShopTranslation() {
         key,
         translation,
         language: i18n.language,
-        isKeyEqualsTranslation: translation === key
+        isKeyEqualsTranslation: translation === key,
+        resources: i18n.getResourceBundle(i18n.language, 'shop')
       });
     }
     
