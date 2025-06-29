@@ -283,7 +283,21 @@
       "cancelButton": "إلغاء",
       "saveButton": "حفظ",
       "createButton": "إنشاء",
-      "updateButton": "تحديث"
+      "updateButton": "تحديث",
+      "availabilityPlaceholder": "اختر حالة التوفر",
+      "statusAvailable": "متوفر",
+      "statusOutOfStock": "نفد اليوم",
+      "statusUnavailable": "غير متوفر تماماً",
+      "statusDescription": "حدد حالة توفر المنتج",
+      "deleteTitle": "حذف المنتج",
+      "deleteConfirm": "هل أنت متأكد من حذف هذا المنتج؟ لا يمكن التراجع عن هذا الإجراء.",
+      "discountSettings": "إعدادات الخصم",
+      "discountTypePercent": "نسبة مئوية (%)",
+      "discountTypeFixed": "مبلغ ثابت (₪)",
+      "discountTypePlaceholder": "اختر نوع الخصم",
+      "fixedDiscountInfo": "خصم بمبلغ ثابت بالشيكل",
+      "recommendedSize": "الحجم المُوصى به للصورة 400×400 بكسل",
+      "unit100gml": "لكل 100غ/مل"
     },
     "statusDialog": {
       "title": "تغيير حالة المنتج",
