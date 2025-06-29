@@ -390,7 +390,16 @@
     "noResults": "אין תוצאות",
     "tryDifferentSearch": "נסה חיפוש אחר",
     "showing": "מציג",
-    "of": "מתוך"
+    "of": "מתוך",
+    "table": "טבלה",
+    "kanban": "קנבן",
+    "created": "נוצר",
+    "firstPage": "עמוד ראשון",
+    "previousPage": "עמוד קודם",
+    "searchProducts": "חיפוש מוצרים...",
+    "prevPage": "קודם",
+    "nextPage": "הבא",
+    "lastPage": "אחרון"
   },
   "imageUpload": {
     "selectFile": "בחר קובץ",
@@ -843,7 +852,7 @@
     "price": "מחיר",
     "subtotal": "סכום ביניים",
     "discount": "הנחה",
-    "deliveryFee": "דמי משלוח",
+    "deliveryFee": "עלות משלוח",
     "updateStatus": "עדכון סטטוס",
     "cancelOrder": "ביטול הזמנה",
     "editOrder": "עריכת הזמנה",

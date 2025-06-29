@@ -40,7 +40,16 @@
     "noResults": "No Results",
     "tryDifferentSearch": "Try different search",
     "showing": "Showing",
-    "of": "of"
+    "of": "of",
+    "table": "Table",
+    "kanban": "Kanban",
+    "created": "Created",
+    "firstPage": "First Page",
+    "previousPage": "Previous Page",
+    "searchProducts": "Search products...",
+    "prevPage": "Prev",
+    "nextPage": "Next",
+    "lastPage": "Last"
   },
   "products": {
     "title": "Products",
@@ -183,7 +192,7 @@
     "price": "Price",
     "subtotal": "Subtotal",
     "discount": "Discount",
-    "deliveryFee": "Delivery fee",
+    "deliveryFee": "Delivery Fee",
     "updateStatus": "Update status",
     "cancelOrder": "Cancel order",
     "editOrder": "Edit order",

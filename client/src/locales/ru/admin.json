@@ -137,7 +137,16 @@
     "noResults": "Нет результатов",
     "tryDifferentSearch": "Попробуйте изменить поиск",
     "showing": "Показано",
-    "of": "из"
+    "of": "из",
+    "table": "Таблица",
+    "kanban": "Канбан",
+    "created": "Создан",
+    "firstPage": "Первая страница",
+    "previousPage": "Предыдущая страница",
+    "searchProducts": "Поиск товаров...",
+    "prevPage": "Пред.",
+    "nextPage": "След.",
+    "lastPage": "Последняя"
   },
   "themeFormLabels": {
     "name": "Название темы",

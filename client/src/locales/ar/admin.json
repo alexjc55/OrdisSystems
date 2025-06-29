@@ -138,7 +138,16 @@
     "noResults": "لا توجد نتائج",
     "tryDifferentSearch": "جرب بحثاً مختلفاً",
     "showing": "عرض",
-    "of": "من"
+    "of": "من",
+    "table": "جدول",
+    "kanban": "كانبان",
+    "created": "تم الإنشاء",
+    "firstPage": "الصفحة الأولى",
+    "previousPage": "الصفحة السابقة",
+    "searchProducts": "البحث في المنتجات...",
+    "prevPage": "السابق",
+    "nextPage": "التالي",
+    "lastPage": "الأخير"
   },
   "themeFormLabels": {
     "name": "اسم القالب",
