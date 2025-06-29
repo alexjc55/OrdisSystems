@@ -1709,8 +1709,8 @@ export default function ThemeManager() {
                               type="text"
                               name="bannerButtonText"
                               id="bannerButtonTextEdit"
-                              defaultValue={editingTheme.bannerButtonText || "Смотреть каталог"}
-                              placeholder="Смотреть каталог"
+                              defaultValue={editingTheme.bannerButtonText || adminT('themes.buttonTextDefault')}
+                              placeholder={adminT('themes.buttonTextDefault')}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500">
@@ -1855,32 +1855,32 @@ export default function ThemeManager() {
                       <VisualToggleButton 
                         isEnabled={editVisualSettings.showBannerImage}
                         onToggle={() => setEditVisualSettings(prev => ({ ...prev, showBannerImage: !prev.showBannerImage }))}
-                        label="Показывать баннер"
-                        description="Главное изображение в шапке сайта"
+                        label={adminT('themes.showBanner')}
+                        description={adminT('themes.showBannerDescription')}
                         fieldName="showBannerImage"
                       />
 
                       <VisualToggleButton 
                         isEnabled={editVisualSettings.showTitleDescription}
                         onToggle={() => setEditVisualSettings(prev => ({ ...prev, showTitleDescription: !prev.showTitleDescription }))}
-                        label="Заголовок и описание"
-                        description="Текстовая информация о магазине"
+                        label={adminT('themes.titleDescription')}
+                        description={adminT('themes.titleDescriptionDesc')}
                         fieldName="showTitleDescription"
                       />
 
                       <VisualToggleButton 
                         isEnabled={editVisualSettings.showCategoryMenu}
                         onToggle={() => setEditVisualSettings(prev => ({ ...prev, showCategoryMenu: !prev.showCategoryMenu }))}
-                        label="Меню категорий"
-                        description="Навигационное меню категорий"
+                        label={adminT('themes.categoryMenu')}
+                        description={adminT('themes.categoryMenuDescription')}
                         fieldName="showCategoryMenu"
                       />
 
                       <VisualToggleButton 
                         isEnabled={editVisualSettings.showInfoBlocks}
                         onToggle={() => setEditVisualSettings(prev => ({ ...prev, showInfoBlocks: !prev.showInfoBlocks }))}
-                        label="Информационные блоки"
-                        description="Часы работы, контакты, доставка"
+                        label={adminT('themes.infoBlocks')}
+                        description={adminT('themes.infoBlocksDescription')}
                         fieldName="showInfoBlocks"
                       />
                     </div>
@@ -1910,8 +1910,8 @@ export default function ThemeManager() {
                       <VisualToggleButton 
                         isEnabled={editVisualSettings.showSpecialOffers}
                         onToggle={() => setEditVisualSettings(prev => ({ ...prev, showSpecialOffers: !prev.showSpecialOffers }))}
-                        label="Особые предложения"
-                        description="Блок с особыми предложениями"
+                        label={adminT('themes.specialOffers')}
+                        description={adminT('themes.specialOffersDescription')}
                         fieldName="showSpecialOffers"
                       />
 
@@ -1919,7 +1919,7 @@ export default function ThemeManager() {
                         isEnabled={editVisualSettings.showWhatsAppChat}
                         onToggle={() => setEditVisualSettings(prev => ({ ...prev, showWhatsAppChat: !prev.showWhatsAppChat }))}
                         label={adminT('themes.whatsappChat')}
-                        description="Кнопка связи через WhatsApp"
+                        description={adminT('themes.whatsappChatDescription')}
                         fieldName="showWhatsAppChat"
                       />
                     </div>
@@ -1948,8 +1948,8 @@ export default function ThemeManager() {
                             <textarea
                               name="whatsappMessage"
                               id="whatsappMessage"
-                              defaultValue={editingTheme?.whatsappMessage || "Здравствуйте! У меня есть вопрос по заказу."}
-                              placeholder="Здравствуйте! У меня есть вопрос по заказу."
+                              defaultValue={editingTheme?.whatsappMessage || adminT('themes.whatsappMessageDefault')}
+                              placeholder={adminT('themes.whatsappMessageDefault')}
                               rows={2}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none"
                             />
@@ -1998,7 +1998,7 @@ export default function ThemeManager() {
                                   name="cartBannerText"
                                   id="cartBannerText"
                                   defaultValue={editingTheme?.cartBannerText || ""}
-                                  placeholder="Специальное предложение!"
+                                  placeholder={adminT('themes.cartBannerTextPlaceholder')}
                                   className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                                 />
                               </div>
