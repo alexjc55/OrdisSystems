@@ -6319,17 +6319,17 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                           <span className={`text-xs font-medium ${isEnabled ? 'text-green-600' : 'text-gray-400'}`}>
                             {isEnabled ? adminT('storeSettings.languageActive') : adminT('storeSettings.languageDisabled')}
                           </span>
-                          <CustomSwitch 
-                            checked={isEnabled}
-                            onChange={(checked) => {
+                          <button
+                            type="button"
+                            onClick={() => {
                               const currentEnabled = form.getValues("enabledLanguages") || ["ru", "en", "he"];
                               const currentDefault = form.getValues("defaultLanguage") || "ru";
                               let newEnabled;
                               
-                              if (checked) {
-                                newEnabled = [...currentEnabled, code];
-                              } else {
+                              if (isEnabled) {
                                 newEnabled = currentEnabled.filter((lang: string) => lang !== code);
+                              } else {
+                                newEnabled = [...currentEnabled, code];
                               }
                               
                               // Ensure at least one language is always enabled
@@ -6344,8 +6344,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                                 form.setValue("defaultLanguage", newEnabled[0]);
                               }
                             }}
-                            bgColor={isEnabled ? "bg-green-500" : "bg-gray-300"}
-                          />
+                            className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+                          >
+                            {isEnabled ? (
+                              <Eye className="h-5 w-5 text-green-600 hover:scale-110 transition-transform" />
+                            ) : (
+                              <EyeOff className="h-5 w-5 text-gray-400 hover:scale-110 transition-transform" />
+                            )}
+                          </button>
                         </div>
                       </div>
                     );

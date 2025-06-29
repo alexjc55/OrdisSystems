@@ -474,6 +474,19 @@
     "noteTitle": "ملاحظة",
     "languageNote": "التغييرات في إعدادات اللغة تتطلب إعادة تحميل الصفحة للتطبيق الكامل.",
     "title": "إعدادات المتجر",
-    "description": "إدارة الإعدادات الأساسية لمتجرك الإلكتروني"
+    "description": "إدارة الإعدادات الأساسية لمتجرك الإلكتروني",
+    "languageActive": "نشط",
+    "languageDisabled": "غير نشط",
+    "availableLanguages": "اللغات المتاحة",
+    "paymentMethods": "طرق الدفع",
+    "paymentInfoPlaceholder": "أدخل معلومات الدفع",
+    "paymentMethodPlaceholder": "أدخل طريقة الدفع",
+    "addPaymentMethod": "إضافة طريقة دفع",
+    "trackingCode": "كود التتبع",
+    "htmlHeadCode": "كود HTML للرأس",
+    "htmlHeadExample": "<!-- أدخل كود Google Analytics أو Facebook Pixel هنا -->",
+    "htmlHeadDescription": "سيتم إدراج هذا الكود في قسم <head> من كل صفحة",
+    "htmlFooterCode": "كود HTML للتذييل",
+    "htmlFooterDescription": "سيتم إدراج هذا الكود قبل إغلاق وسم </body>"
   }
 }
