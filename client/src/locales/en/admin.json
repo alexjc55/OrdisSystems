@@ -584,7 +584,22 @@
     "tomorrowBtnHover": "Tomorrow Button Hover",
     "outOfStockBtn": "Out of Stock Button",
     "specialButtons": "Special Buttons",
-    "specialButtonsInfo": "Special Buttons Information"
+    "specialButtonsInfo": "Special Buttons Information",
+    "buttonTextDescription": "Text that will be displayed on the button",
+    "primaryColorLabel": "Primary Color",
+    "brandColorsInfo": "These colors are used for main interface elements",
+    "bottomBannerSettings": "Bottom Banner Settings",
+    "createFirstTheme": "Create First Theme",
+    "defaultMessagePlaceholder": "Enter default message",
+    "defaultMessageValue": "Hello! I am interested in your products.",
+    "headerStyle": "Header Style",
+    "headerStyleDescription": "Choose page header display style",
+    "link": "Link",
+    "linkPlaceholder": "https://example.com",
+    "noThemes": "No available themes",
+    "phoneNumberPlaceholder": "+7XXXXXXXXXX",
+    "recommendedSize": "Recommended Size",
+    "textColor": "Text Color"
   },
   "colorLabels": {
     "primaryColor": "Primary Color",

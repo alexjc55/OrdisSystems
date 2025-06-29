@@ -164,7 +164,22 @@
     "tomorrowBtnHover": "زر الغد عند التمرير",
     "outOfStockBtn": "زر نفدت الكمية",
     "specialButtons": "الأزرار الخاصة",
-    "specialButtonsInfo": "معلومات الأزرار الخاصة"
+    "specialButtonsInfo": "معلومات الأزرار الخاصة",
+    "buttonTextDescription": "النص الذي سيتم عرضه على الزر",
+    "primaryColorLabel": "اللون الأساسي",
+    "brandColorsInfo": "تستخدم هذه الألوان لعناصر الواجهة الرئيسية",
+    "bottomBannerSettings": "إعدادات الشعارات السفلية",
+    "createFirstTheme": "إنشاء القالب الأول",
+    "defaultMessagePlaceholder": "أدخل الرسالة الافتراضية",
+    "defaultMessageValue": "مرحباً! أنا مهتم بمنتجاتكم.",
+    "headerStyle": "نمط الرأس",
+    "headerStyleDescription": "اختر نمط عرض رأس الصفحة",
+    "link": "الرابط",
+    "linkPlaceholder": "https://example.com",
+    "noThemes": "لا توجد قوالب متاحة",
+    "phoneNumberPlaceholder": "+7XXXXXXXXXX",
+    "recommendedSize": "الحجم الموصى به",
+    "textColor": "لون النص"
   },
   "colorLabels": {
     "primaryColor": "اللون الأساسي",
