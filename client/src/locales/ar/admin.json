@@ -184,12 +184,12 @@
       "specialOfferDescription": "وصف العرض الخاص",
       "discountSettings": "إعدادات الخصم",
       "discountTypeLabel": "نوع الخصم",
-      "discountTypePlaceholder": "ترجمة مفقودة",
-      "discountTypePercent": "ترجمة مفقودة",
-      "discountTypeFixed": "ترجمة مفقودة",
-      "fixedDiscountInfo": "ترجمة مفقودة",
-      "unit100gml": "ترجمة مفقودة",
-      "recommendedSize": "ترجمة مفقودة"
+      "discountTypePlaceholder": "اختر نوع الخصم",
+      "discountTypePercent": "خصم بالنسبة المئوية",
+      "discountTypeFixed": "خصم ثابت",
+      "fixedDiscountInfo": "معلومات الخصم الثابت",
+      "unit100gml": "لكل 100 جرام/مل",
+      "recommendedSize": "الحجم المقترح"
     },
     "statusDialog": {
       "title": "ترجمة مفقودة",
