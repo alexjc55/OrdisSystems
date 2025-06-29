@@ -1641,7 +1641,7 @@ export default function ThemeManager() {
                       <div>
                         <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          Логотип магазина
+                          {adminT('themes.storeLogo')}
                         </Label>
                         <ImageUpload
                           value={editLogoUrl}
@@ -1651,7 +1651,7 @@ export default function ThemeManager() {
                         />
                         <input type="hidden" name="logoUrl" value={editLogoUrl} />
                         <div className="text-xs text-gray-500 mt-2">
-                          Логотип для отображения в шапке сайта
+                          {adminT('themes.storeLogoDescription')}
                         </div>
                       </div>
                       
