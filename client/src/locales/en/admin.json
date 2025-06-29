@@ -748,6 +748,15 @@
     "allOrdersMessage": "No orders",
     "cancelReason": "Cancel reason",
     "selectCancelReason": "Select order cancellation reason",
+    "baseCost": "Base cost",
+    "discountType": "Discount type",
+    "discountSize": "Discount size",
+    "discountReason": "Discount reason",
+    "discountReasonPlaceholder": "Enter discount reason",
+    "manualPriceOverride": "Manual price override",
+    "orderItems": "Order items",
+    "percentage": "Percentage",
+    "itemDiscount": "Item discount",
     "notifications": {
       "statusUpdated": "Status updated",
       "statusUpdatedDesc": "Order status updated successfully"

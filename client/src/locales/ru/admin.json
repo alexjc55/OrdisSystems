@@ -468,6 +468,15 @@
     "allOrdersMessage": "Нет заказов",
     "cancelReason": "Причина отмены",
     "selectCancelReason": "Выберите причину отмены заказа",
+    "baseCost": "Базовая стоимость",
+    "discountType": "Тип скидки",
+    "discountSize": "Размер скидки",
+    "discountReason": "Причина скидки",
+    "discountReasonPlaceholder": "Укажите причину скидки",
+    "manualPriceOverride": "Ручная корректировка цены",
+    "orderItems": "Товары заказа",
+    "percentage": "Процент",
+    "itemDiscount": "Скидка на товар",
     "notifications": {
       "statusUpdated": "Статус обновлен",
       "statusUpdatedDesc": "Статус заказа успешно обновлен"

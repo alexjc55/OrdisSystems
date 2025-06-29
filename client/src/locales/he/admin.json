@@ -1152,7 +1152,15 @@
     "customerInfo": "פרטי לקוח",
     "deliveryInfo": "פרטי משלוח",
     "paymentMethod": "אמצעי תשלום",
-    "orderItems": "פריטי ההזמנה"
+    "orderItems": "פריטי ההזמנה",
+    "baseCost": "עלות בסיס",
+    "discountType": "סוג הנחה",
+    "discountSize": "גודל הנחה",
+    "discountReason": "סיבת הנחה",
+    "discountReasonPlaceholder": "הכנס סיבת הנחה",
+    "manualPriceOverride": "תיקון ידני של מחיר",
+    "percentage": "אחוז",
+    "itemDiscount": "הנחה על פריט"
   },
   "orderDiscount": {
     "title": "הנחה על הזמנה",
