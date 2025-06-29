@@ -315,7 +315,22 @@
     "description": "נהל הגדרות בסיסיות של החנות המקוונת שלך",
     "htmlFooterExample": "<!-- הוסף כאן וידג'טים של צ'אט, כפתורי רשתות חברתיות או וידג'טים אחרים -->",
     "workingHoursNote": "השאר ריק ליום חופש",
-    "workingDay": "יום עבודה"
+    "workingDay": "יום עבודה",
+    "availableLanguages": "שפות זמינות",
+    "languageActive": "פעיל",
+    "languageDisabled": "מושבת",
+    "openTime": "שעת פתיחה",
+    "closeTime": "שעת סגירה",
+    "closedDay": "יום סגור",
+    "paymentMethods": "אמצעי תשלום",
+    "addPaymentMethod": "הוסף אמצעי תשלום",
+    "trackingCode": "קוד מעקב",
+    "htmlHeadCode": "קוד HTML ב-head",
+    "htmlHeadExample": "<!-- הכנס כאן קוד Google Analytics או Facebook Pixel -->",
+    "htmlHeadDescription": "קוד זה יוכנס לקטע ה-<head> של כל עמוד",
+    "htmlFooterCode": "קוד HTML ב-footer",
+    "htmlFooterDescription": "קוד זה יוכנס לפני תג הסגירה </body>",
+    "paymentMethodPlaceholder": "הכנס אמצעי תשלום"
   },
   "systemSettings": {
     "title": "הגדרות מערכת",

@@ -704,6 +704,21 @@
     "description": "Управление основными настройками вашего онлайн-магазина",
     "htmlFooterExample": "<!-- Добавьте сюда код чатов, кнопок соц. сетей или другие виджеты -->",
     "workingHoursNote": "Оставьте пустым для выходного дня",
-    "workingDay": "Рабочий день"
+    "workingDay": "Рабочий день",
+    "availableLanguages": "Доступные языки",
+    "languageActive": "Активен",
+    "languageDisabled": "Отключен",
+    "openTime": "Время открытия",
+    "closeTime": "Время закрытия",
+    "closedDay": "Выходной день",
+    "paymentMethods": "Способы оплаты",
+    "addPaymentMethod": "Добавить способ оплаты",
+    "trackingCode": "Код отслеживания",
+    "htmlHeadCode": "HTML код в head",
+    "htmlHeadExample": "<!-- Введите код Google Analytics или Facebook Pixel здесь -->",
+    "htmlHeadDescription": "Этот код будет вставлен в секцию <head> каждой страницы",
+    "htmlFooterCode": "HTML код в footer",
+    "htmlFooterDescription": "Этот код будет вставлен перед закрывающим тегом </body>",
+    "paymentMethodPlaceholder": "Введите способ оплаты"
   }
 }

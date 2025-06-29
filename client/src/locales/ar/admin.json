@@ -476,17 +476,17 @@
     "title": "إعدادات المتجر",
     "description": "إدارة الإعدادات الأساسية لمتجرك الإلكتروني",
     "languageActive": "نشط",
-    "languageDisabled": "غير نشط",
+    "languageDisabled": "معطل",
     "availableLanguages": "اللغات المتاحة",
     "paymentMethods": "طرق الدفع",
     "paymentInfoPlaceholder": "أدخل معلومات الدفع",
     "paymentMethodPlaceholder": "أدخل طريقة الدفع",
     "addPaymentMethod": "إضافة طريقة دفع",
     "trackingCode": "كود التتبع",
-    "htmlHeadCode": "كود HTML للرأس",
+    "htmlHeadCode": "كود HTML في الرأس",
     "htmlHeadExample": "<!-- أدخل كود Google Analytics أو Facebook Pixel هنا -->",
     "htmlHeadDescription": "سيتم إدراج هذا الكود في قسم <head> من كل صفحة",
-    "htmlFooterCode": "كود HTML للتذييل",
+    "htmlFooterCode": "كود HTML في التذييل",
     "htmlFooterDescription": "سيتم إدراج هذا الكود قبل إغلاق وسم </body>",
     "workingHoursDescription": "تحديد أوقات عمل المتجر",
     "openTime": "وقت الافتتاح",
@@ -494,6 +494,7 @@
     "closed": "مغلق",
     "htmlFooterExample": "<!-- أضف هنا ودجات الدردشة، أزرار وسائل التواصل الاجتماعي أو ودجات أخرى -->",
     "workingHoursNote": "اتركه فارغاً ليوم العطلة",
-    "workingDay": "يوم العمل"
+    "workingDay": "يوم العمل",
+    "closedDay": "يوم مغلق"
   }
 }

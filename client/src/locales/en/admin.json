@@ -446,7 +446,22 @@
     "description": "Manage basic settings of your online store",
     "htmlFooterExample": "<!-- Add chat widgets, social media buttons or other widgets here -->",
     "workingHoursNote": "Leave empty for day off",
-    "workingDay": "Working Day"
+    "workingDay": "Working Day",
+    "availableLanguages": "Available Languages",
+    "languageActive": "Active",
+    "languageDisabled": "Disabled",
+    "openTime": "Opening Time",
+    "closeTime": "Closing Time",
+    "closedDay": "Closed Day",
+    "paymentMethods": "Payment Methods",
+    "addPaymentMethod": "Add Payment Method",
+    "trackingCode": "Tracking Code",
+    "htmlHeadCode": "HTML Head Code",
+    "htmlHeadExample": "<!-- Enter Google Analytics or Facebook Pixel code here -->",
+    "htmlHeadDescription": "This code will be inserted into the <head> section of every page",
+    "htmlFooterCode": "HTML Footer Code",
+    "htmlFooterDescription": "This code will be inserted before the closing </body> tag",
+    "paymentMethodPlaceholder": "Enter payment method"
   },
   "themes": {
     "title": "Theme Management",
