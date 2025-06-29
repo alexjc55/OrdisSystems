@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { useAdminTranslation } from "@/hooks/use-language";
+import { useCommonTranslation } from "@/hooks/use-language";
 import { Upload, X, Image as ImageIcon } from "lucide-react";
 
 interface ImageUploadProps {
@@ -17,7 +17,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
   const [preview, setPreview] = useState<string | null>(value || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const { t } = useAdminTranslation();
+  const { t } = useCommonTranslation();
 
   // Sync preview with value prop
   useEffect(() => {
