@@ -323,10 +323,55 @@
   },
   "users": {
     "title": "Users",
-    "description": "Manage user accounts",
-    "addUser": "Add User",
+    "description": "User management and permissions",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "permissions": "Permissions",
+    "lastLogin": "Last Login",
+    "actions": "Actions",
+    "createUser": "Create User",
     "editUser": "Edit User",
-    "deleteUser": "Delete User"
+    "deleteUser": "Delete User",
+    "createError": "Failed to create user",
+    "deleteError": "Failed to delete user",
+    "updateError": "Failed to update user",
+    "createSuccess": "User created successfully",
+    "deleteSuccess": "User deleted successfully",
+    "updateSuccess": "User updated successfully",
+    "noUsers": "No users",
+    "searchUsers": "Search users...",
+    "filterByRole": "Filter by role",
+    "allRoles": "All roles",
+    "admin": "Administrator",
+    "worker": "Worker",
+    "customer": "Customer",
+    "created": "Created",
+    "updated": "Updated",
+    "deleted": "Deleted",
+    "deleteConfirm": "Are you sure you want to delete this user?",
+    "userForm": {
+      "title": "User Information",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "role": "Role",
+      "permissions": "Permissions",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "notifications": {
+      "roleUpdated": "Role Updated",
+      "roleUpdatedDesc": "User role updated successfully",
+      "roleUpdateError": "Failed to update role",
+      "userDeleted": "User Deleted",
+      "userDeletedDesc": "User deleted successfully",
+      "deleteError": "Failed to delete user",
+      "passwordSet": "Password Set",
+      "passwordSetDesc": "User password set successfully",
+      "passwordSetError": "Failed to set password"
+    }
   },
   "storeSettings": {
     "title": "Store Settings",
@@ -490,9 +535,13 @@
     "cancel": "Cancel"
   },
   "tabs": {
-    "basic": "Basic",
-    "colors": "Colors",
-    "visuals": "Visuals"
+    "products": "Products",
+    "categories": "Categories",
+    "orders": "Orders",
+    "users": "Users",
+    "settings": "Settings",
+    "permissions": "Permissions",
+    "themes": "Themes"
   },
   "themeFormLabels": {
     "name": "Theme Name",

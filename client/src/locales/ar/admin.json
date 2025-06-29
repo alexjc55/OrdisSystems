@@ -2,9 +2,13 @@
   "title": "الإعدادات",
   "description": "الوصف",
   "tabs": {
-    "basic": "أساسي",
-    "colors": "الألوان",
-    "visuals": "المرئيات"
+    "products": "منتجات",
+    "categories": "فئات",
+    "orders": "طلبات",
+    "users": "مستخدمون",
+    "settings": "إعدادات",
+    "permissions": "أذونات",
+    "themes": "مظاهر"
   },
   "actions": {
     "add": "إضافة",
@@ -479,7 +483,55 @@
   },
   "users": {
     "title": "المستخدمون",
-    "description": "إدارة مستخدمي النظام"
+    "description": "إدارة حسابات المستخدمين والأذونات",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "role": "الدور",
+    "permissions": "الأذونات",
+    "lastLogin": "آخر تسجيل دخول",
+    "actions": "الإجراءات",
+    "createUser": "إنشاء مستخدم",
+    "editUser": "تعديل المستخدم",
+    "deleteUser": "حذف المستخدم",
+    "createError": "فشل في إنشاء المستخدم",
+    "deleteError": "فشل في حذف المستخدم",
+    "updateError": "فشل في تحديث المستخدم",
+    "createSuccess": "تم إنشاء المستخدم بنجاح",
+    "deleteSuccess": "تم حذف المستخدم بنجاح",
+    "updateSuccess": "تم تحديث المستخدم بنجاح",
+    "noUsers": "لا يوجد مستخدمون",
+    "searchUsers": "البحث في المستخدمين...",
+    "filterByRole": "تصفية حسب الدور",
+    "allRoles": "جميع الأدوار",
+    "admin": "مدير",
+    "worker": "موظف",
+    "customer": "عميل",
+    "created": "تم الإنشاء",
+    "updated": "تم التحديث",
+    "deleted": "تم الحذف",
+    "deleteConfirm": "هل أنت متأكد من حذف هذا المستخدم؟",
+    "userForm": {
+      "title": "معلومات المستخدم",
+      "firstName": "الاسم الأول",
+      "lastName": "الاسم الأخير",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "role": "الدور",
+      "permissions": "الأذونات",
+      "save": "حفظ",
+      "cancel": "إلغاء"
+    },
+    "notifications": {
+      "roleUpdated": "تم تحديث الدور",
+      "roleUpdatedDesc": "تم تحديث دور المستخدم بنجاح",
+      "roleUpdateError": "فشل في تحديث الدور",
+      "userDeleted": "تم حذف المستخدم",
+      "userDeletedDesc": "تم حذف المستخدم بنجاح",
+      "deleteError": "فشل في حذف المستخدم",
+      "passwordSet": "تم تعيين كلمة المرور",
+      "passwordSetDesc": "تم تعيين كلمة مرور المستخدم بنجاح",
+      "passwordSetError": "فشل في تعيين كلمة المرور"
+    }
   },
   "settings": {
     "title": "إعدادات المتجر",

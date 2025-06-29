@@ -2,9 +2,13 @@
   "title": "Настройки",
   "description": "Управление магазином",
   "tabs": {
-    "basic": "Основное",
-    "colors": "Цвета",
-    "visuals": "Визуалы"
+    "products": "Товары",
+    "categories": "Категории",
+    "orders": "Заказы",
+    "users": "Пользователи",
+    "settings": "Настройки",
+    "permissions": "Права",
+    "themes": "Темы"
   },
   "actions": {
     "add": "Добавить",
@@ -504,5 +508,57 @@
     "enterAmount": "Введите новую сумму заказа",
     "apply": "Применить корректировку",
     "cancel": "Отменить"
+  },
+  "users": {
+    "title": "Пользователи",
+    "description": "Управление пользователями и их правами",
+    "name": "Имя",
+    "email": "Email",
+    "role": "Роль",
+    "permissions": "Права",
+    "lastLogin": "Последний вход",
+    "actions": "Действия",
+    "createUser": "Создать пользователя",
+    "editUser": "Редактировать пользователя",
+    "deleteUser": "Удалить пользователя",
+    "createError": "Ошибка создания пользователя",
+    "deleteError": "Ошибка удаления пользователя",
+    "updateError": "Ошибка обновления пользователя",
+    "createSuccess": "Пользователь создан успешно",
+    "deleteSuccess": "Пользователь удален успешно",
+    "updateSuccess": "Пользователь обновлен успешно",
+    "noUsers": "Нет пользователей",
+    "searchUsers": "Поиск пользователей...",
+    "filterByRole": "Фильтр по роли",
+    "allRoles": "Все роли",
+    "admin": "Администратор",
+    "worker": "Сотрудник",
+    "customer": "Клиент",
+    "created": "Создан",
+    "updated": "Обновлен",
+    "deleted": "Удален",
+    "deleteConfirm": "Вы уверены, что хотите удалить этого пользователя?",
+    "userForm": {
+      "title": "Информация о пользователе",
+      "firstName": "Имя",
+      "lastName": "Фамилия",
+      "email": "Email",
+      "password": "Пароль",
+      "role": "Роль",
+      "permissions": "Права",
+      "save": "Сохранить",
+      "cancel": "Отмена"
+    },
+    "notifications": {
+      "roleUpdated": "Роль обновлена",
+      "roleUpdatedDesc": "Роль пользователя успешно обновлена",
+      "roleUpdateError": "Ошибка обновления роли",
+      "userDeleted": "Пользователь удален",
+      "userDeletedDesc": "Пользователь успешно удален",
+      "deleteError": "Ошибка удаления пользователя",
+      "passwordSet": "Пароль установлен",
+      "passwordSetDesc": "Пароль пользователя успешно установлен",
+      "passwordSetError": "Ошибка установки пароля"
+    }
   }
 }
