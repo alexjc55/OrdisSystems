@@ -1204,5 +1204,21 @@
     "themeCreated": "הנושא נוצר",
     "themeUpdated": "הנושא עודכן",
     "themeDeleted": "הנושא נמחק"
+  },
+  "roles": {
+    "admin": "מנהל",
+    "worker": "עובד",
+    "customer": "לקוח"
+  },
+  "form": {
+    "firstName": "שם פרטי",
+    "lastName": "שם משפחה",
+    "email": "אימייל",
+    "password": "סיסמה",
+    "role": "תפקיד",
+    "save": "שמור",
+    "cancel": "ביטול",
+    "create": "צור",
+    "edit": "ערוך"
   }
 }

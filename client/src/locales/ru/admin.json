@@ -560,5 +560,21 @@
       "passwordSetDesc": "Пароль пользователя успешно установлен",
       "passwordSetError": "Ошибка установки пароля"
     }
+  },
+  "roles": {
+    "admin": "Администратор",
+    "worker": "Сотрудник",
+    "customer": "Клиент"
+  },
+  "form": {
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "email": "Email",
+    "password": "Пароль",
+    "role": "Роль",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "create": "Создать",
+    "edit": "Редактировать"
   }
 }

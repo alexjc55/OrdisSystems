@@ -576,5 +576,21 @@
     "title": "Admin Panel",
     "description": "Manage products, categories and orders",
     "overview": "Manage products, categories and orders"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "worker": "Worker",
+    "customer": "Customer"
+  },
+  "form": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "password": "Password",
+    "role": "Role",
+    "save": "Save",
+    "cancel": "Cancel",
+    "create": "Create",
+    "edit": "Edit"
   }
 }
