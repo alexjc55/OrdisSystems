@@ -14,6 +14,34 @@ import express from "express";
 import { scrypt, randomBytes } from "crypto";
 import { promisify } from "util";
 
+// Simple in-memory cache for admin data
+const adminCache = new Map<string, { data: any; expiry: number }>();
+
+function setCache(key: string, data: any, ttlSeconds: number = 300) {
+  adminCache.set(key, {
+    data,
+    expiry: Date.now() + (ttlSeconds * 1000)
+  });
+}
+
+function getCache(key: string) {
+  const item = adminCache.get(key);
+  if (!item || Date.now() > item.expiry) {
+    adminCache.delete(key);
+    return null;
+  }
+  return item.data;
+}
+
+function clearCachePattern(pattern: string) {
+  const keys = Array.from(adminCache.keys());
+  for (const key of keys) {
+    if (key.includes(pattern)) {
+      adminCache.delete(key);
+    }
+  }
+}
+
 const scryptAsync = promisify(scrypt);
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -364,15 +392,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sortField = req.query.sortField as string || 'name';
       const sortDirection = req.query.sortDirection as string || 'asc';
 
-      const result = await storage.getProductsPaginated({
-        page,
-        limit,
-        search,
-        categoryId: category !== 'all' ? parseInt(category) : undefined,
-        status,
-        sortField,
-        sortDirection
-      });
+      // Create cache key for this specific query
+      const cacheKey = `admin-products-${page}-${limit}-${search}-${category}-${status}-${sortField}-${sortDirection}`;
+      
+      // Try to get from cache first
+      let result = getCache(cacheKey);
+      if (!result) {
+        result = await storage.getProductsPaginated({
+          page,
+          limit,
+          search,
+          categoryId: category !== 'all' ? parseInt(category) : undefined,
+          status,
+          sortField,
+          sortDirection
+        });
+        
+        // Cache for 2 minutes
+        setCache(cacheKey, result, 120);
+      }
 
       res.json(result);
     } catch (error) {
@@ -786,14 +824,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sortField = req.query.sortField as string || 'createdAt';
       const sortDirection = req.query.sortDirection as string || 'desc';
 
-      const result = await storage.getOrdersPaginated({
-        page,
-        limit,
-        search,
-        status,
-        sortField,
-        sortDirection
-      });
+      // Create cache key for this specific query
+      const cacheKey = `admin-orders-${page}-${limit}-${search}-${status}-${sortField}-${sortDirection}`;
+      
+      // Try to get from cache first
+      let result = getCache(cacheKey);
+      if (!result) {
+        result = await storage.getOrdersPaginated({
+          page,
+          limit,
+          search,
+          status,
+          sortField,
+          sortDirection
+        });
+        
+        // Cache for 1 minute (orders change frequently)
+        setCache(cacheKey, result, 60);
+      }
 
       res.json(result);
     } catch (error) {
@@ -874,10 +922,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin-only route to update user role
   app.patch('/api/admin/users/:id/role', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
+      const user = req.user; // Use user from session instead of additional DB query
       
-      if (!user || (user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
+      if (!user || (user.role !== "admin" && user.role !== "worker")) {
         return res.status(403).json({ message: "Admin access required" });
       }
 
@@ -899,17 +946,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin-only route to delete a user
   app.delete('/api/admin/users/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
+      const user = req.user; // Use user from session instead of additional DB query
       
-      if (!user || (user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
+      if (!user || (user.role !== "admin" && user.role !== "worker")) {
         return res.status(403).json({ message: "Admin access required" });
       }
 
       const { id } = req.params;
       
       // Prevent deleting yourself
-      if (id === userId) {
+      if (id === user.id) {
         return res.status(400).json({ message: "Cannot delete your own account" });
       }
 
