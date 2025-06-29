@@ -5386,8 +5386,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     }
   }, [open, product, form, translationManager]);
 
-  // Save current form values when they change
-  const handleFieldChange = (fieldName: string, value: string) => {
+  // Save multilingual fields (name, description, imageUrl)
+  const handleMultilingualFieldChange = (fieldName: string, value: string) => {
     const currentLang = translationManager.currentLanguage;
     const defaultLang = translationManager.defaultLanguage;
     
@@ -5399,6 +5399,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       const localizedField = `${fieldName}_${currentLang}`;
       setFormData((prev: any) => ({ ...prev, [localizedField]: value }));
     }
+  };
+
+  // Save common fields (price, unit, categories, etc.) - same for all languages
+  const handleCommonFieldChange = (fieldName: string, value: any) => {
+    setFormData((prev: any) => ({ ...prev, [fieldName]: value }));
   };
 
   // Update form values when language changes
@@ -5546,7 +5551,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       className="text-sm"
                       onChange={(e) => {
                         field.onChange(e);
-                        handleFieldChange('name', e.target.value);
+                        handleMultilingualFieldChange('name', e.target.value);
                       }}
                     />
                   </FormControl>
@@ -5570,7 +5575,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
-                        handleFieldChange('description', e.target.value);
+                        handleMultilingualFieldChange('description', e.target.value);
                       }}
                     />
                   </FormControl>
@@ -5596,11 +5601,14 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                             checked={field.value?.includes(category.id) || false}
                             onChange={(e) => {
                               const currentIds = field.value || [];
+                              let newIds;
                               if (e.target.checked) {
-                                field.onChange([...currentIds, category.id]);
+                                newIds = [...currentIds, category.id];
                               } else {
-                                field.onChange(currentIds.filter((id: number) => id !== category.id));
+                                newIds = currentIds.filter((id: number) => id !== category.id);
                               }
+                              field.onChange(newIds);
+                              handleCommonFieldChange('categoryIds', newIds);
                             }}
                             className="rounded border-gray-300"
                           />
@@ -5630,6 +5638,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                         placeholder={adminT('products.dialog.pricePlaceholder')}
                         {...field}
                         className="text-sm"
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleCommonFieldChange('price', e.target.value);
+                        }}
                       />
                     </FormControl>
                     <FormMessage className="text-xs" />
@@ -5643,7 +5655,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">{adminT('products.dialog.unitLabel')}</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={(value) => {
+                      field.onChange(value);
+                      handleCommonFieldChange('unit', value);
+                    }} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="text-sm">
                           <SelectValue placeholder={adminT('products.dialog.unitLabel')} />
@@ -5675,7 +5690,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       value={field.value || ""}
                       onChange={(value) => {
                         field.onChange(value);
-                        translationManager.setFieldValue('imageUrl', value, setFormData);
+                        handleMultilingualFieldChange('imageUrl', value);
                       }}
                     />
                   </FormControl>
