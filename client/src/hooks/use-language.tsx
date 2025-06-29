@@ -86,14 +86,13 @@ export function useShopTranslation() {
   const enhancedT = (key: string, fallback?: string) => {
     const translation = t(key);
     
-    // Debug logging for paymentMethod key
-    if (key === 'paymentMethod') {
+    // Debug logging for translation keys
+    if (key === 'paymentMethod' || key === 'email') {
       console.log('SHOP TRANSLATION DEBUG:', {
         key,
         translation,
         language: i18n.language,
-        isKeyEqualsTranslation: translation === key,
-        resources: i18n.getResourceBundle(i18n.language, 'shop')
+        isKeyEqualsTranslation: translation === key
       });
     }
     

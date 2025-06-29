@@ -33,6 +33,7 @@
   "loadingError": "خطأ في التحميل",
   "contacts": "جهات الاتصال",
   "phone": "الهاتف",
+  "email": "البريد الإلكتروني", 
   "delivery": {
     "estimatedTime": "الوقت المتوقع",
     "deliveryFee": "رسوم التوصيل",

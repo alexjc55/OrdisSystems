@@ -7,6 +7,7 @@
   "loadingError": "Loading error",
   "contacts": "Contacts",
   "phone": "Phone",
+  "email": "Email",
   "delivery": {
     "estimatedTime": "Translation missing",
     "deliveryFee": "Translation missing",

@@ -6,7 +6,8 @@
   "notSpecified": "לא צוין",
   "loadingError": "שגיאת טעינה",
   "contacts": "פרטי התקשרות",
-  "phone": "טלפון",
+  "phone": "טלפון", 
+  "email": "דוא״ל",
   "delivery": {
     "estimatedTime": "תרגום חסר",
     "deliveryFee": "תרגום חסר",
