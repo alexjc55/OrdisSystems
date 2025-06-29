@@ -519,16 +519,16 @@ export default function Home() {
                         onClick={() => handleCategorySelect(category.id)}
                       >
                         <CardContent className="p-4 h-32 relative">
-                          <div className="flex items-start justify-between gap-4 h-full">
-                            <div className="flex-1 flex flex-col h-full">
-                              <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300">
+                          <div className="flex items-start gap-3 h-full">
+                            <div className="flex-1 min-w-0 flex flex-col h-full">
+                              <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300 truncate">
                                 {category.name}
                               </h3>
                               
-                              <p className="text-gray-600 text-sm leading-relaxed flex-1 truncate">
+                              <p className="text-gray-600 text-sm leading-relaxed flex-1">
                                 {(() => {
                                   const text = category.description || t('defaultCategoryDescription');
-                                  return text.length > 35 ? text.substring(0, 35) + '...' : text;
+                                  return text.length > 25 ? text.substring(0, 25) + '...' : text;
                                 })()}
                               </p>
                               
@@ -539,12 +539,9 @@ export default function Home() {
                               </div>
                             </div>
                             
-                            <div className="flex-shrink-0 relative">
-                              <div className="text-5xl transform group-hover:scale-110 transition-transform duration-300">
+                            <div className="flex-shrink-0 w-16 flex justify-center">
+                              <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
                                 {category.icon || '📦'}
-                              </div>
-                              <div className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div className="w-3 h-3 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full animate-pulse"></div>
                               </div>
                             </div>
                           </div>
