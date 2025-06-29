@@ -2462,6 +2462,8 @@ export default function AdminDashboard() {
       return response.json();
     },
     enabled: !!storeSettings,
+    staleTime: 1 * 60 * 1000, // 1 minute for orders (more frequent updates)
+    gcTime: 3 * 60 * 1000, // 3 minutes
   });
 
   const { data: usersResponse, isLoading: usersLoading } = useQuery({
@@ -2479,6 +2481,8 @@ export default function AdminDashboard() {
       return response.json();
     },
     enabled: !!storeSettings,
+    staleTime: 3 * 60 * 1000, // 3 minutes for users (less frequent changes)
+    gcTime: 7 * 60 * 1000, // 7 minutes
   });
 
   // Pagination configuration
