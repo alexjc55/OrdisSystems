@@ -3451,7 +3451,7 @@ export default function AdminDashboard() {
                                 // RTL order: Status, Price, Category, Name (reversed)
                                 <>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
-                                    <div className="flex flex-col gap-1 items-end">
+                                    <div className="flex flex-col gap-1 items-center justify-center">
                                       <Button
                                         size="sm"
                                         variant="ghost"
@@ -3588,7 +3588,7 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
-                                    <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
+                                    <div className="flex flex-col gap-1 items-center justify-center">
                                       <Button
                                         size="sm"
                                         variant="ghost"
