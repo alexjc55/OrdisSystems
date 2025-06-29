@@ -392,25 +392,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sortField = req.query.sortField as string || 'name';
       const sortDirection = req.query.sortDirection as string || 'asc';
 
-      // Create cache key for this specific query
-      const cacheKey = `admin-products-${page}-${limit}-${search}-${category}-${status}-${sortField}-${sortDirection}`;
-      
-      // Try to get from cache first
-      let result = getCache(cacheKey);
-      if (!result) {
-        result = await storage.getProductsPaginated({
-          page,
-          limit,
-          search,
-          categoryId: category !== 'all' ? parseInt(category) : undefined,
-          status,
-          sortField,
-          sortDirection
-        });
-        
-        // Cache for 2 minutes
-        setCache(cacheKey, result, 120);
-      }
+      // Skip cache after update - always get fresh data
+      const result = await storage.getProductsPaginated({
+        page,
+        limit,
+        search,
+        categoryId: category !== 'all' ? parseInt(category) : undefined,
+        status,
+        sortField,
+        sortDirection
+      });
 
       res.json(result);
     } catch (error) {

@@ -2640,12 +2640,23 @@ export default function AdminDashboard() {
       }
       return await response.json();
     },
-    onSuccess: () => {
-      // Force refresh by removing and invalidating queries
+    onSuccess: (updatedProduct) => {
+      // Add timestamp to force fresh data
+      const timestamp = Date.now();
+      
+      // Clear all cached queries
       queryClient.removeQueries({ queryKey: ['/api/admin/products'] });
       queryClient.removeQueries({ queryKey: ['/api/products'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      
+      // Force refetch with fresh data
+      queryClient.invalidateQueries({ 
+        queryKey: ['/api/admin/products'],
+        refetchType: 'all'
+      });
+      queryClient.invalidateQueries({ 
+        queryKey: ['/api/products'],
+        refetchType: 'all'
+      });
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
       
       setEditingProduct(null);

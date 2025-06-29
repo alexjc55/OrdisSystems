@@ -527,7 +527,7 @@ export class DatabaseStorage implements IStorage {
     
     const total = totalResult?.count || 0;
 
-    // Get paginated data with categories using direct joins
+    // Get paginated data
     const productsData = await db
       .select()
       .from(products)
@@ -536,29 +536,45 @@ export class DatabaseStorage implements IStorage {
       .limit(limit)
       .offset(offset);
 
-    // Get categories for each product
-    const data: ProductWithCategories[] = [];
-    for (const product of productsData) {
-      const productCats = await db
-        .select({
-          id: categories.id,
-          name: categories.name,
-          description: categories.description,
-          icon: categories.icon,
-          isActive: categories.isActive,
-          sortOrder: categories.sortOrder,
-          createdAt: categories.createdAt,
-          updatedAt: categories.updatedAt,
-        })
-        .from(categories)
-        .innerJoin(productCategories, eq(categories.id, productCategories.categoryId))
-        .where(eq(productCategories.productId, product.id));
-      
-      data.push({
-        ...product,
-        categories: productCats
-      });
-    }
+    // Get all categories for all products in one query
+    const productIds = productsData.map(p => p.id);
+    const productCategoriesData = productIds.length > 0 ? await db
+      .select({
+        productId: productCategories.productId,
+        id: categories.id,
+        name: categories.name,
+        name_en: categories.name_en,
+        name_he: categories.name_he,
+        name_ar: categories.name_ar,
+        description: categories.description,
+        description_en: categories.description_en,
+        description_he: categories.description_he,
+        description_ar: categories.description_ar,
+        icon: categories.icon,
+        isActive: categories.isActive,
+        sortOrder: categories.sortOrder,
+        createdAt: categories.createdAt,
+        updatedAt: categories.updatedAt,
+      })
+      .from(categories)
+      .innerJoin(productCategories, eq(categories.id, productCategories.categoryId))
+      .where(inArray(productCategories.productId, productIds)) : [];
+
+    // Group categories by product ID
+    const categoriesByProduct = new Map();
+    productCategoriesData.forEach(cat => {
+      if (!categoriesByProduct.has(cat.productId)) {
+        categoriesByProduct.set(cat.productId, []);
+      }
+      const { productId, ...categoryData } = cat;
+      categoriesByProduct.get(cat.productId).push(categoryData);
+    });
+
+    // Combine products with their categories
+    const data: ProductWithCategories[] = productsData.map(product => ({
+      ...product,
+      categories: categoriesByProduct.get(product.id) || []
+    }));
 
     return {
       data,
