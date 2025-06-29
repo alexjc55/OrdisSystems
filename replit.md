@@ -131,6 +131,13 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 29, 2025: CRITICAL FIX - Resolved translation key display issue in theme management interface
+  - ROOT CAUSE IDENTIFIED: In Hebrew admin.json, full themes section was positioned at start (lines 34+), while other languages had incomplete themes section at start and complete section at end (lines 1100+)
+  - SOLUTION IMPLEMENTED: Moved complete themes section to beginning of all language files (Russian, English, Arabic) matching Hebrew structure
+  - TECHNICAL DETAILS: i18n system was finding incomplete themes section first and ignoring complete section later in file
+  - RESULT: Theme management interface now displays proper translations instead of translation keys for all supported languages
+  - FILES FIXED: client/src/locales/ru/admin.json, client/src/locales/en/admin.json, client/src/locales/ar/admin.json
+  - JSON VALIDATION: Corrected syntax errors and ensured all translation files are valid JSON
 - June 29, 2025: Completed comprehensive theme management translation system and fixed duplicate themes sections
   - TRANSLATION SYSTEM FIXED: Resolved duplicate "themes" sections in all language files causing translation key conflicts
   - CRITICAL BUG RESOLUTION: Removed duplicate themes sections with "תרגום חסר"/"Перевод отсутствует"/"Translation missing" placeholders
