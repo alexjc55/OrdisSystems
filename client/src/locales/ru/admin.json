@@ -112,5 +112,30 @@
     "name": "Название",
     "colorPalette": "Цветовая палитра",
     "active": "Активная"
+  },
+  "colorLabels": {
+    "primaryColor": "Основной цвет",
+    "primaryTextColor": "Цвет текста кнопок",
+    "primaryDarkColor": "Основной (темный)",
+    "primaryLightColor": "Основной (светлый)",
+    "successColor": "Успех",
+    "warningColor": "Предупреждение",
+    "errorColor": "Ошибка",
+    "infoColor": "Информация",
+    "tomorrowColor": "Кнопка 'Завтра'",
+    "tomorrowDarkColor": "Кнопка 'Завтра' (при наведении)",
+    "outOfStockColor": "Кнопка 'Закончилось'",
+    "workingHoursColor": "Рабочие часы",
+    "contactsColor": "Контакты",
+    "paymentDeliveryColor": "Оплата и доставка",
+    "whiteColor": "Белый",
+    "gray100Color": "Серый 100 (фон)",
+    "gray700Color": "Серый 700 (текст)",
+    "gray900Color": "Серый 900 (заголовки)"
+  },
+  "tabs": {
+    "basic": "Основное",
+    "colors": "Цвета",
+    "visuals": "Визуалы"
   }
 }

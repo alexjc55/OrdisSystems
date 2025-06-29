@@ -585,6 +585,35 @@
     "resetColors": "Reset Colors",
     "name": "Name",
     "colorPalette": "Color Palette",
-    "active": "Active"
+    "active": "Active",
+    "textBanner": "Text",
+    "imageBanner": "Image",
+    "bannerImageField": "Banner Image",
+    "bottomBannerImageSize": "Recommended image size: 600x300 pixels"
+  },
+  "colorLabels": {
+    "primaryColor": "Primary Color",
+    "primaryTextColor": "Button Text Color",
+    "primaryDarkColor": "Primary (Dark)",
+    "primaryLightColor": "Primary (Light)",
+    "successColor": "Success",
+    "warningColor": "Warning",
+    "errorColor": "Error",
+    "infoColor": "Info",
+    "tomorrowColor": "Tomorrow Button",
+    "tomorrowDarkColor": "Tomorrow Button (Hover)",
+    "outOfStockColor": "Out of Stock Button",
+    "workingHoursColor": "Working Hours",
+    "contactsColor": "Contacts",
+    "paymentDeliveryColor": "Payment & Delivery",
+    "whiteColor": "White",
+    "gray100Color": "Gray 100 (Background)",
+    "gray700Color": "Gray 700 (Text)",
+    "gray900Color": "Gray 900 (Headings)"
+  },
+  "tabs": {
+    "basic": "Basic",
+    "colors": "Colors",
+    "visuals": "Visuals"
   }
 }

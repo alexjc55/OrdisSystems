@@ -111,6 +111,35 @@
     "resetColors": "إعادة تعيين الألوان",
     "name": "الاسم",
     "colorPalette": "لوحة الألوان",
-    "active": "نشط"
+    "active": "نشط",
+    "textBanner": "نص",
+    "imageBanner": "صورة",
+    "bannerImageField": "صورة البانر",
+    "bottomBannerImageSize": "حجم الصورة المُوصى به: 600×300 بكسل"
+  },
+  "colorLabels": {
+    "primaryColor": "اللون الأساسي",
+    "primaryTextColor": "لون نص الأزرار",
+    "primaryDarkColor": "أساسي (داكن)",
+    "primaryLightColor": "أساسي (فاتح)",
+    "successColor": "نجاح",
+    "warningColor": "تحذير",
+    "errorColor": "خطأ",
+    "infoColor": "معلومات",
+    "tomorrowColor": "زر 'غداً'",
+    "tomorrowDarkColor": "زر 'غداً' (عند التمرير)",
+    "outOfStockColor": "زر 'نفد المخزون'",
+    "workingHoursColor": "ساعات العمل",
+    "contactsColor": "جهات الاتصال",
+    "paymentDeliveryColor": "الدفع والتوصيل",
+    "whiteColor": "أبيض",
+    "gray100Color": "رمادي 100 (خلفية)",
+    "gray700Color": "رمادي 700 (نص)",
+    "gray900Color": "رمادي 900 (عناوين)"
+  },
+  "tabs": {
+    "basic": "أساسي",
+    "colors": "الألوان",
+    "visuals": "المرئيات"
   }
 }
