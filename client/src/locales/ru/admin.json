@@ -182,7 +182,14 @@
     "noThemes": "Нет доступных тем",
     "phoneNumberPlaceholder": "+7XXXXXXXXXX",
     "recommendedSize": "Рекомендуемый размер",
-    "textColor": "Цвет текста"
+    "textColor": "Цвет текста",
+    "modernStyleInfoBlocks": "Информационные блоки (Современный стиль)",
+    "block1": "Блок 1",
+    "block2": "Блок 2",
+    "block3": "Блок 3",
+    "ownProductionPlaceholder": "Собственное производство",
+    "freeDeliveryPlaceholder": "Бесплатная доставка от 300₪",
+    "phoneExamplePlaceholder": "050-123-4567"
   },
   "colorLabels": {
     "primaryColor": "Основной цвет",

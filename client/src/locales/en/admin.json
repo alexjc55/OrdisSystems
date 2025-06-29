@@ -599,7 +599,14 @@
     "noThemes": "No available themes",
     "phoneNumberPlaceholder": "+7XXXXXXXXXX",
     "recommendedSize": "Recommended Size",
-    "textColor": "Text Color"
+    "textColor": "Text Color",
+    "modernStyleInfoBlocks": "Info Blocks (Modern Style)",
+    "block1": "Block 1",
+    "block2": "Block 2",
+    "block3": "Block 3",
+    "ownProductionPlaceholder": "Own Production",
+    "freeDeliveryPlaceholder": "Free delivery from 300₪",
+    "phoneExamplePlaceholder": "050-123-4567"
   },
   "colorLabels": {
     "primaryColor": "Primary Color",

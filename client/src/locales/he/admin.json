@@ -190,7 +190,14 @@
     "linkPlaceholder": "https://example.com",
     "phoneNumberPlaceholder": "+7XXXXXXXXXX",
     "recommendedSize": "גודל מומלץ",
-    "textColor": "צבע טקסט"
+    "textColor": "צבע טקסט",
+    "modernStyleInfoBlocks": "בלוקי מידע (סגנון מודרני)",
+    "block1": "בלוק 1",
+    "block2": "בלוק 2",
+    "block3": "בלוק 3",
+    "ownProductionPlaceholder": "ייצור עצמי",
+    "freeDeliveryPlaceholder": "משלוח חינם מ-300₪",
+    "phoneExamplePlaceholder": "050-123-4567"
   },
   "colorLabels": {
     "primaryColor": "צבע עיקרי",

@@ -179,7 +179,14 @@
     "noThemes": "لا توجد قوالب متاحة",
     "phoneNumberPlaceholder": "+7XXXXXXXXXX",
     "recommendedSize": "الحجم الموصى به",
-    "textColor": "لون النص"
+    "textColor": "لون النص",
+    "modernStyleInfoBlocks": "كتل المعلومات (النمط العصري)",
+    "block1": "الكتلة 1",
+    "block2": "الكتلة 2",
+    "block3": "الكتلة 3",
+    "ownProductionPlaceholder": "إنتاج خاص",
+    "freeDeliveryPlaceholder": "توصيل مجاني من 300₪",
+    "phoneExamplePlaceholder": "050-123-4567"
   },
   "colorLabels": {
     "primaryColor": "اللون الأساسي",
