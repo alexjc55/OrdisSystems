@@ -192,10 +192,10 @@
       "recommendedSize": "الحجم المقترح"
     },
     "statusDialog": {
-      "title": "ترجمة مفقودة",
-      "description": "ترجمة مفقودة",
-      "disable": "ترجمة مفقودة",
-      "keep": "ترجمة مفقودة"
+      "title": "تغيير الحالة",
+      "description": "اختر حالة المنتج",
+      "disable": "تعطيل",
+      "keep": "الاحتفاظ"
     },
     "notifications": {
       "productCreated": "ترجمة مفقودة",
