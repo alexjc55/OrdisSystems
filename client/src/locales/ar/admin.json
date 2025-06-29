@@ -531,7 +531,8 @@
       "passwordSet": "تم تعيين كلمة المرور",
       "passwordSetDesc": "تم تعيين كلمة مرور المستخدم بنجاح",
       "passwordSetError": "فشل في تعيين كلمة المرور"
-    }
+    },
+    "searchPlaceholder": "البحث في المستخدمين..."
   },
   "settings": {
     "title": "إعدادات المتجر",
