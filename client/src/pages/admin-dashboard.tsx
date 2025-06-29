@@ -2641,9 +2641,13 @@ export default function AdminDashboard() {
       return await response.json();
     },
     onSuccess: () => {
+      // Force refresh by removing and invalidating queries
+      queryClient.removeQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.removeQueries({ queryKey: ['/api/products'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      
       setEditingProduct(null);
       setIsProductFormOpen(false);
       toast({ title: adminT('products.notifications.productUpdated'), description: adminT('products.notifications.productUpdatedDesc') });

@@ -544,6 +544,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log('Product update - Result from storage:', JSON.stringify(product, null, 2));
       
+      // Clear cache after update
+      clearCachePattern('admin-products');
+      clearCachePattern('products');
+      
+      // Add cache-busting headers
+      res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.set('Pragma', 'no-cache');
+      res.set('Expires', '0');
+      
       res.json(product);
     } catch (error) {
       console.error("Error updating product:", error);
