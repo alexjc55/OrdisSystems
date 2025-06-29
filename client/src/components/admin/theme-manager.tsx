@@ -935,11 +935,11 @@ export default function ThemeManager() {
                 <TabsContent value="basic" className="space-y-4">
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Название темы</Label>
+                      <Label htmlFor="name">{adminT('themes.name')}</Label>
                       <Input id="name" name="name" placeholder={adminT('themes.namePlaceholder')} required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="description">Описание</Label>
+                      <Label htmlFor="description">{adminT('themes.description')}</Label>
                       <Textarea id="description" name="description" placeholder={adminT('themes.descriptionPlaceholder')} />
                     </div>
                     

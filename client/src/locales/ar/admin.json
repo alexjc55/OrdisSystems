@@ -1135,7 +1135,17 @@
     "outOfStockButton": "زر 'نفد المخزون'",
     "neutralColorsDescription": "ألوان للخلفيات والحدود والعناصر الثانوية",
     "noThemes": "لا توجد قوالب",
-    "createFirstTheme": "إنشاء قالب التصميم الأول للموقع"
+    "createFirstTheme": "إنشاء قالب التصميم الأول للموقع",
+    "basic": "أساسي",
+    "colors": "الألوان",
+    "visuals": "المرئيات",
+    "namePlaceholder": "القالب الخاص بي",
+    "descriptionPlaceholder": "وصف القالب...",
+    "buttonTextDefault": "عرض الكتالوج",
+    "whatsappMessageDefault": "مرحباً! لدي سؤال حول طلبي.",
+    "whatsappChat": "دردشة واتساب",
+    "name": "اسم القالب",
+    "description": "الوصف"
   },
   "colorLabels": {
     "primaryColor": "اللون الأساسي",

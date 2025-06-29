@@ -80,7 +80,9 @@
     "descriptionPlaceholder": "תיאור העיצוב...",
     "buttonTextDefault": "צפה בקטלוג",
     "whatsappMessageDefault": "שלום! יש לי שאלה לגבי ההזמנה.",
-    "whatsappChat": "צ׳אט WhatsApp"
+    "whatsappChat": "צ׳אט WhatsApp",
+    "name": "שם העיצוב",
+    "description": "תיאור"
   },
   "colorLabels": {
     "primaryColor": "צבע עיקרי",

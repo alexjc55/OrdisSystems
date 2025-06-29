@@ -120,6 +120,8 @@
     "specialOffers": "Особые предложения",
     "specialOffersDescription": "Блок с особыми предложениями",
     "whatsappChat": "WhatsApp чат",
+    "name": "Название темы",
+    "description": "Описание",
     "whatsappChatDescription": "Кнопка связи через WhatsApp",
     "whatsappSettings": "Настройки WhatsApp",
     "phoneNumber": "Номер телефона",
