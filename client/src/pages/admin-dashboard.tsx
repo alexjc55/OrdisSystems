@@ -3438,7 +3438,7 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                 </TableHead>
-                                <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('products.productStatus')}</TableHead>
+                                <TableHead className="min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-center">{adminT('products.productStatus')}</TableHead>
                               </>
                             )}
                           </TableRow>
