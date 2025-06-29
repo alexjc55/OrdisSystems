@@ -643,7 +643,7 @@ export default function ThemeManager() {
       contactsIconColor: formData.get("contactsIconColor") as string,
       paymentDeliveryIconColor: formData.get("paymentDeliveryIconColor") as string,
       headerStyle: formData.get("headerStyle") as string,
-      bannerButtonText: formData.get("bannerButtonText") as string || adminT('themeFormLabels.buttonTextDefault'),
+      bannerButtonText: formData.get("bannerButtonText") as string || adminT('themes.buttonTextDefault'),
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
       logoUrl: createLogoUrl,
       bannerImageUrl: createBannerImageUrl,
@@ -730,7 +730,7 @@ export default function ThemeManager() {
       contactsIconColor: convertColorToHsl(formData.get("contactsIconColor") as string),
       paymentDeliveryIconColor: convertColorToHsl(formData.get("paymentDeliveryIconColor") as string),
       headerStyle: formData.get("headerStyle") as string,
-      bannerButtonText: formData.get("bannerButtonText") as string || adminT('themeFormLabels.buttonTextDefault'),
+      bannerButtonText: formData.get("bannerButtonText") as string || adminT('themes.buttonTextDefault'),
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
       logoUrl: editLogoUrl,
       bannerImageUrl: editBannerImageUrl,
@@ -762,7 +762,7 @@ export default function ThemeManager() {
       showCategoryMenu: editVisualSettings.showCategoryMenu,
       showWhatsAppChat: editVisualSettings.showWhatsAppChat,
       whatsappPhone: formData.get("whatsappPhone") as string || "",
-      whatsappMessage: formData.get("whatsappMessage") as string || adminT('themeFormLabels.whatsappMessageDefault'),
+      whatsappMessage: formData.get("whatsappMessage") as string || adminT('themes.whatsappMessageDefault'),
       whiteColor: convertColorToHsl(formData.get("whiteColor") as string),
       gray50Color: convertColorToHsl(formData.get("gray50Color") as string),
       gray100Color: convertColorToHsl(formData.get("gray100Color") as string),
@@ -938,11 +938,11 @@ export default function ThemeManager() {
                 <TabsContent value="basic" className="space-y-4">
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">{adminT('name')}</Label>
+                      <Label htmlFor="name">{adminT('themes.name')}</Label>
                       <Input id="name" name="name" placeholder={adminT('themes.namePlaceholder')} required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="description">{adminT('description')}</Label>
+                      <Label htmlFor="description">{adminT('themes.description')}</Label>
                       <Textarea id="description" name="description" placeholder={adminT('themes.descriptionPlaceholder')} />
                     </div>
                     
@@ -951,7 +951,7 @@ export default function ThemeManager() {
                       <div>
                         <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          {adminT('themeFormLabels.storeLogo')}
+                          {adminT('themes.storeLogo')}
                         </Label>
                         <ImageUpload
                           value={createLogoUrl}
@@ -961,7 +961,7 @@ export default function ThemeManager() {
                         />
                         <input type="hidden" name="logoUrl" value={createLogoUrl} />
                         <div className="text-xs text-gray-500 mt-2">
-                          {adminT('themeFormLabels.storeLogoDescription')}
+                          {adminT('themes.storeLogoDescription')}
                         </div>
                       </div>
                       
@@ -984,17 +984,17 @@ export default function ThemeManager() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="fontFamilyPrimary">Основной шрифт</Label>
+                        <Label htmlFor="fontFamilyPrimary">{adminT('themes.primaryFont')}</Label>
                         <Input id="fontFamilyPrimary" name="fontFamilyPrimary" defaultValue="Poppins, sans-serif" />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="fontFamilySecondary">Дополнительный шрифт</Label>
+                        <Label htmlFor="fontFamilySecondary">{adminT('themes.secondaryFont')}</Label>
                         <Input id="fontFamilySecondary" name="fontFamilySecondary" defaultValue="Inter, sans-serif" />
                       </div>
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="headerStyleCreate">Стиль заголовка</Label>
+                      <Label htmlFor="headerStyleCreate">{adminT('themes.headerStyle')}</Label>
                       <select
                         name="headerStyle"
                         id="headerStyleCreate"
@@ -1016,7 +1016,7 @@ export default function ThemeManager() {
                         <option value="minimal">{adminT("themes.minimal")}</option>
                       </select>
                       <div className="text-sm text-gray-500">
-                        {adminT("themeFormLabels.headerStyleDescription")}
+                        {adminT("themes.headerStyleDescription")}
                       </div>
                     </div>
                     
@@ -1030,8 +1030,8 @@ export default function ThemeManager() {
                               type="text"
                               name="bannerButtonText"
                               id="bannerButtonTextCreate"
-                              defaultValue={adminT('themeFormLabels.buttonTextDefault')}
-                              placeholder={adminT('themeFormLabels.buttonTextDefault')}
+                              defaultValue={adminT('themes.buttonTextDefault')}
+                              placeholder={adminT('themes.buttonTextDefault')}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500">
@@ -1064,7 +1064,7 @@ export default function ThemeManager() {
                 <TabsContent value="colors" className="space-y-6">
                   {/* Brand */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Цвета бренда</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themes.brandColors")}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <ColorInput label={adminT("colorLabels.primaryColor")} name="primaryColor" defaultValue="#ff6600" />
                       <ColorInput label={adminT("colorLabels.primaryTextColor")} name="primaryTextColor" defaultValue="#ffffff" />
@@ -1072,7 +1072,7 @@ export default function ThemeManager() {
                       <ColorInput label={adminT("colorLabels.primaryLightColor")} name="primaryLightColor" defaultValue="#fff3f0" />
                     </div>
                     <div className="text-sm text-gray-500 mt-2">
-                      ℹ️ Основные цвета магазина для кнопок и акцентов
+                      ℹ️ {adminT("themes.brandColorsDescription")}
                     </div>
                     {/* Keep secondary/accent for API compatibility but hide from UI */}
                     <input type="hidden" name="secondaryColor" defaultValue="#f8fafc" />
@@ -1081,7 +1081,7 @@ export default function ThemeManager() {
 
                   {/* Status */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Цвета статусов</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themes.statusColors")}</h4>
                     <div className="space-y-4">
                       <div>
                         <h5 className="text-sm font-medium mb-2">{adminT("statusLabels.mainStatusColors")}</h5>
@@ -1644,7 +1644,7 @@ export default function ThemeManager() {
                       <div>
                         <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          {adminT('themeFormLabels.storeLogo')}
+                          {adminT('themes.storeLogo')}
                         </Label>
                         <ImageUpload
                           value={editLogoUrl}
@@ -1654,7 +1654,7 @@ export default function ThemeManager() {
                         />
                         <input type="hidden" name="logoUrl" value={editLogoUrl} />
                         <div className="text-xs text-gray-500 mt-2">
-                          {adminT('themeFormLabels.storeLogoDescription')}
+                          {adminT('themes.storeLogoDescription')}
                         </div>
                       </div>
                       
@@ -1676,7 +1676,7 @@ export default function ThemeManager() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="headerStyleEdit">{adminT('themeFormLabels.headerStyle')}</Label>
+                      <Label htmlFor="headerStyleEdit">{adminT('themes.headerStyleLabel')}</Label>
                       <select
                         name="headerStyle"
                         id="headerStyleEdit"
@@ -1698,7 +1698,7 @@ export default function ThemeManager() {
                         <option value="minimal">{adminT("themes.minimal")}</option>
                       </select>
                       <div className="text-sm text-gray-500">
-                        {adminT("themeFormLabels.headerStyleImpact")}
+                        {adminT("themes.headerStyleImpact")}
                       </div>
                     </div>
                     
@@ -1712,8 +1712,8 @@ export default function ThemeManager() {
                               type="text"
                               name="bannerButtonText"
                               id="bannerButtonTextEdit"
-                              defaultValue={editingTheme.bannerButtonText || adminT('themeFormLabels.buttonTextDefault')}
-                              placeholder={adminT('themeFormLabels.buttonTextDefault')}
+                              defaultValue={editingTheme.bannerButtonText || adminT('themes.buttonTextDefault')}
+                              placeholder={adminT('themes.buttonTextDefault')}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500">
@@ -1951,8 +1951,8 @@ export default function ThemeManager() {
                             <textarea
                               name="whatsappMessage"
                               id="whatsappMessage"
-                              defaultValue={editingTheme?.whatsappMessage || adminT('themeFormLabels.whatsappMessageDefault')}
-                              placeholder={adminT('themeFormLabels.whatsappMessageDefault')}
+                              defaultValue={editingTheme?.whatsappMessage || adminT('themes.whatsappMessageDefault')}
+                              placeholder={adminT('themes.whatsappMessageDefault')}
                               rows={2}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none"
                             />
