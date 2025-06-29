@@ -120,13 +120,13 @@ export default function Profile() {
       setAddressForm({ label: "", address: "", isDefault: false });
       toast({
         title: t("status.success"),
-        description: "Адрес обновлен",
+        description: t("profile.addressUpdated"),
       });
     },
     onError: (error) => {
       toast({
         title: t("status.error"),
-        description: "Не удалось обновить адрес",
+        description: t("profile.addressUpdateError"),
         variant: "destructive",
       });
     },
@@ -140,13 +140,13 @@ export default function Profile() {
       queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
       toast({
         title: t("status.success"),
-        description: "Адрес удален",
+        description: t("profile.addressDeleted"),
       });
     },
     onError: (error) => {
       toast({
         title: t("status.error"),
-        description: "Не удалось удалить адрес",
+        description: t("profile.addressDeleteError"),
         variant: "destructive",
       });
     },
@@ -160,7 +160,7 @@ export default function Profile() {
       queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
       toast({
         title: t("status.success"),
-        description: "Адрес по умолчанию изменен",
+        description: t("profile.defaultAddressChanged"),
       });
     },
   });
@@ -174,13 +174,13 @@ export default function Profile() {
       setIsPhoneEditing(false);
       toast({
         title: t("status.success"),
-        description: "Телефон обновлен",
+        description: t("profile.phoneUpdated"),
       });
     },
     onError: (error) => {
       toast({
         title: t("status.error"),
-        description: "Не удалось обновить телефон",
+        description: t("profile.phoneUpdateError"),
         variant: "destructive",
       });
     },
@@ -195,13 +195,13 @@ export default function Profile() {
       setIsAvatarDialogOpen(false);
       toast({
         title: t("status.success"),
-        description: "Фото профиля обновлено",
+        description: t("profile.avatarUpdated"),
       });
     },
     onError: (error) => {
       toast({
         title: t("status.error"),
-        description: "Не удалось обновить фото профиля",
+        description: t("profile.avatarUpdateError"),
         variant: "destructive",
       });
     },
