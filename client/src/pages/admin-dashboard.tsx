@@ -4638,7 +4638,7 @@ export default function AdminDashboard() {
                       className={`bg-primary hover:bg-primary text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
                     >
                       <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                      {adminT('users.addUser')}
+                      {adminT('users.createUser')}
                     </Button>
                     <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
                       <SelectTrigger className="w-40">
@@ -6909,7 +6909,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className={`text-lg ${isRTL ? 'text-right' : 'text-left'}`}>
-            {user ? adminT('users.editUser') : adminT('users.addUser')}
+            {user ? adminT('users.editUser') : adminT('users.createUser')}
           </DialogTitle>
           <DialogDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
             {user ? adminT('dialog.editDescription') : adminT('dialog.addDescription')}
@@ -7089,7 +7089,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                 type="submit" 
                 className="text-sm bg-primary hover:bg-primary text-white"
               >
-                {user ? adminT('actions.update') : adminT('users.addUser')}
+                {user ? adminT('actions.update') : adminT('users.createUser')}
               </Button>
             </div>
           </form>
