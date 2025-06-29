@@ -574,9 +574,16 @@
     "lastNameRequired": "الاسم الأخير مطلوب",
     "emailError": "بريد إلكتروني غير صحيح",
     "editDescription": "تعديل معلومات المستخدم",
-    "addDescription": "إضافة مستخدم جديد للنظام"
+    "addDescription": "إضافة مستخدم جديد للنظام",
+    "phoneLabel": "الهاتف",
+    "phonePlaceholder": "أدخل رقم الهاتف",
+    "deleteWarning": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف المستخدم نهائياً."
   },
   "table": {
-    "role": "الدور"
+    "role": "الدور",
+    "name": "الاسم",
+    "phone": "الهاتف",
+    "orders": "الطلبات",
+    "totalAmount": "المبلغ الإجمالي"
   }
 }

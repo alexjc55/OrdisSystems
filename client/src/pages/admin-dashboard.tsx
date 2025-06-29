@@ -4676,11 +4676,11 @@ export default function AdminDashboard() {
                       <Table className={`w-full users-table ${isRTL ? 'rtl' : 'ltr'}`}>
                         <TableHeader className="bg-gray-50/80">
                           <TableRow className="border-b border-gray-100" dir={isRTL ? 'rtl' : 'ltr'}>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.name')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.name')}</TableHead>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.role')}</TableHead>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.phone')}</TableHead>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.orders')}</TableHead>
-                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.table.totalAmount')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.phone')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.orders')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.totalAmount')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -6923,11 +6923,11 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.emailLabel')} *</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('dialog.emailLabel')} *</FormLabel>
                   <FormControl>
                     <Input 
                       type="email"
-                      placeholder={adminT('users.dialog.emailPlaceholder')}
+                      placeholder={adminT('dialog.emailPlaceholder')}
                       {...field}
                       className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                       dir={isRTL ? 'rtl' : 'ltr'}
@@ -6983,11 +6983,11 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('users.dialog.phoneLabel')}</FormLabel>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('dialog.phoneLabel')}</FormLabel>
                   <FormControl>
                     <Input 
                       type="tel"
-                      placeholder={adminT('users.dialog.phonePlaceholder')}
+                      placeholder={adminT('dialog.phonePlaceholder')}
                       {...field}
                       className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                       dir="ltr"
@@ -7066,7 +7066,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                           {adminT('users.deleteUser')}?
                         </AlertDialogTitle>
                         <AlertDialogDescription className={isRTL ? 'text-right' : 'text-left'}>
-                          {adminT('users.dialog.deleteWarning')}
+                          {adminT('dialog.deleteWarning')}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter className={isRTL ? 'flex-row-reverse' : ''}>

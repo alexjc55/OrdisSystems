@@ -1238,9 +1238,16 @@
     "lastNameRequired": "שם משפחה נדרש",
     "emailError": "אימייל לא תקין",
     "editDescription": "ערוך פרטי משתמש",
-    "addDescription": "הוסף משתמש חדש למערכת"
+    "addDescription": "הוסף משתמש חדש למערכת",
+    "phoneLabel": "טלפון",
+    "phonePlaceholder": "הכנס מספר טלפון",
+    "deleteWarning": "פעולה זו לא ניתנת לביטול. המשתמש יימחק לצמיתות."
   },
   "table": {
-    "role": "תפקיד"
+    "role": "תפקיד",
+    "name": "שם",
+    "phone": "טלפון",
+    "orders": "הזמנות",
+    "totalAmount": "סכום כולל"
   }
 }

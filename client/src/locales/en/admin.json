@@ -610,9 +610,16 @@
     "lastNameRequired": "Last name is required",
     "emailError": "Invalid email",
     "editDescription": "Edit user information",
-    "addDescription": "Add new user to the system"
+    "addDescription": "Add new user to the system",
+    "phoneLabel": "Phone",
+    "phonePlaceholder": "Enter phone number",
+    "deleteWarning": "This action cannot be undone. The user will be permanently deleted."
   },
   "table": {
-    "role": "Role"
+    "role": "Role",
+    "name": "Name",
+    "phone": "Phone",
+    "orders": "Orders",
+    "totalAmount": "Total Amount"
   }
 }
