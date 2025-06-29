@@ -149,6 +149,10 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
     - Form field labels: name, resetColors for theme management forms
     - Theme card labels: colorPalette, active status indicator
     - Complete elimination of hardcoded Russian text in theme management interface
+  - UI CLEANUP: Fixed remaining visual issues in theme management
+    - Replaced "Рекомендуемый размер изображений" with proper translation key
+    - Removed "Image" placeholder text from all ImageUpload components
+    - All image upload fields now display without redundant labels
 - June 29, 2025: Completed comprehensive theme management translation system
   - THEME MANAGEMENT INTERNATIONALIZATION: Replaced all hardcoded Russian texts with translation keys
   - COMPREHENSIVE TRANSLATION COVERAGE: Added 60+ new translation keys across all 4 languages (RU/EN/HE/AR)
