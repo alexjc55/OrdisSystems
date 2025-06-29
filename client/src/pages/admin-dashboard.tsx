@@ -3771,9 +3771,9 @@ export default function AdminDashboard() {
             <TabsContent value="categories" className="space-y-4 sm:space-y-6">
               <Card>
                 <CardHeader>
-                  <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
-                    <div className={`${isRTL ? 'text-right sm:order-2' : 'text-left sm:order-1'}`}>
-                      <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                  <div className={`flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+                    <div className={`${isRTL ? 'text-right sm:ml-auto' : 'text-left sm:mr-auto'} flex-1`}>
+                      <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right justify-end' : 'justify-start'}`}>
                       <Utensils className="h-4 w-4 sm:h-5 sm:w-5" />
                       {adminT('categories.title')}
                     </CardTitle>
@@ -3786,7 +3786,7 @@ export default function AdminDashboard() {
                       setEditingCategory(null);
                       setIsCategoryFormOpen(true);
                     }}
-                    className={`bg-primary text-white hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:order-1' : 'sm:order-2'}`}
+                    className={`bg-primary text-white hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 w-full sm:w-auto ${isRTL ? 'sm:mr-auto' : 'sm:ml-auto'}`}
                     size="sm"
                   >
                     <Plus className={`${isRTL ? 'mr-4' : 'mr-4'} h-4 w-4`} />
