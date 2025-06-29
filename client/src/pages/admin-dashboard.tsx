@@ -3772,8 +3772,8 @@ export default function AdminDashboard() {
               <Card>
                 <CardHeader>
                   <div className={`flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
-                    <div className={`${isRTL ? 'text-right sm:ml-auto' : 'text-left sm:mr-auto'} flex-1`}>
-                      <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right justify-end' : 'justify-start'}`}>
+                    <div className={`${isRTL ? 'text-right' : 'text-left'} flex-1`}>
+                      <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : 'justify-start'}`}>
                       <Utensils className="h-4 w-4 sm:h-5 sm:w-5" />
                       {adminT('categories.title')}
                     </CardTitle>
