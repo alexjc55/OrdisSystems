@@ -2127,6 +2127,20 @@ export default function AdminDashboard() {
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
   const queryClient = useQueryClient();
 
+  // Force component remount key to prevent stale state issues
+  const [componentKey, setComponentKey] = useState(Date.now());
+  
+  // Add timeout to prevent infinite loading for repeated visits
+  const [loadingTimeout, setLoadingTimeout] = useState(false);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoadingTimeout(true);
+    }, 10000); // 10 second timeout
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   // Data queries with pagination  
   const { data: storeSettings, isLoading: storeSettingsLoading } = useQuery<StoreSettings>({
     queryKey: ["/api/settings"]
@@ -2166,9 +2180,9 @@ export default function AdminDashboard() {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [activeTab, setActiveTab] = useState("products");
 
-  // Set default tab based on worker permissions
+  // Set default tab based on worker permissions - only once on mount
   useEffect(() => {
-    if (user?.role === "worker" && storeSettings) {
+    if (user?.role === "worker" && storeSettings && activeTab === "products") {
       const workerPermissions = (storeSettings?.workerPermissions as any) || {};
       let defaultTab = "products";
       
@@ -2186,9 +2200,11 @@ export default function AdminDashboard() {
         defaultTab = "settings";
       }
       
-      setActiveTab(defaultTab);
+      if (defaultTab !== "products") {
+        setActiveTab(defaultTab);
+      }
     }
-  }, [user, storeSettings]);
+  }, [user, storeSettings]); // Removed activeTab from dependencies to prevent loops
 
   // Orders management state
   const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
@@ -2980,13 +2996,40 @@ export default function AdminDashboard() {
     }
   }, [isRTL, productsData, usersData, ordersResponse, activeTab]);
 
-  if (isLoading || !user || storeSettingsLoading) {
+  // Enhanced loading state checks to prevent hanging
+  const isStillLoading = (isLoading || !user || storeSettingsLoading || !storeSettings) && !loadingTimeout;
+  
+  // Additional check for first data load for workers
+  const isWorkerWithoutPermissions = user?.role === "worker" && storeSettings && !storeSettings.workerPermissions;
+
+  if ((isStillLoading || isWorkerWithoutPermissions) && !loadingTimeout) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div key={componentKey} className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-6"></div>
           <p className="text-gray-600 text-lg mb-2">Загрузка админ панели...</p>
-          <p className="text-gray-500 text-sm">Подождите, идет загрузка данных</p>
+          <p className="text-gray-500 text-sm">Подготовка данных для работы</p>
+          {isWorkerWithoutPermissions && (
+            <p className="text-orange-500 text-xs mt-2">Настройка прав доступа...</p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Force render if timeout reached, even with incomplete data
+  if (loadingTimeout && (!user || (user.role !== "admin" && user.role !== "worker"))) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-xl mb-4">Ошибка загрузки</div>
+          <p className="text-gray-600 mb-4">Не удалось загрузить данные админ панели</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+          >
+            Обновить страницу
+          </button>
         </div>
       </div>
     );
