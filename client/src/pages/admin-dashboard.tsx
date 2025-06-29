@@ -5136,13 +5136,16 @@ export default function AdminDashboard() {
         categories={categories}
         product={editingProduct}
         adminT={adminT}
-        onSubmit={(data: any, multilingualData: any) => {
+        onSubmit={(combinedData: any) => {
+          console.log('Received combined data from form:', combinedData);
+          
           // Set isAvailable based on availability status
           const productData = {
-            ...data,
-            ...multilingualData,
-            isAvailable: data.availabilityStatus !== 'completely_unavailable'
+            ...combinedData,
+            isAvailable: combinedData.availabilityStatus !== 'completely_unavailable'
           };
+          
+          console.log('Final product data for mutation:', productData);
           
           if (editingProduct) {
             updateProductMutation.mutate({ id: editingProduct.id, ...productData });
@@ -5511,8 +5514,38 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
 
   // Local onSubmit handler that merges multilingual data
   const handleFormSubmit = (data: any) => {
-    const multilingualData = translationManager.getAllLanguageFields(formData);
-    onSubmit(data, multilingualData);
+    // Save current form values to formData before submitting
+    const currentLang = translationManager.currentLanguage;
+    const defaultLang = translationManager.defaultLanguage;
+    
+    const updatedFormData = { ...formData };
+    
+    // Save current name and description to formData
+    if (currentLang === defaultLang) {
+      updatedFormData.name = data.name;
+      updatedFormData.description = data.description;
+    } else {
+      updatedFormData[`name_${currentLang}`] = data.name;
+      updatedFormData[`description_${currentLang}`] = data.description;
+    }
+    
+    // Save imageUrl if it's a multilingual field
+    if (currentLang === defaultLang) {
+      updatedFormData.imageUrl = data.imageUrl;
+    } else {
+      updatedFormData[`imageUrl_${currentLang}`] = data.imageUrl;
+    }
+    
+    // Merge all data - form data + multilingual data from formData
+    const finalData = {
+      ...data,
+      ...updatedFormData
+    };
+    
+    console.log('Submitting product data:', finalData);
+    
+    // Send to parent component
+    onSubmit(finalData);
   };
 
   if (!open) return null;
