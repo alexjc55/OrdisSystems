@@ -1154,8 +1154,7 @@
     "paymentMethod": "אמצעי תשלום",
     "orderItems": "פריטי ההזמנה"
   },
-  "paymentMethod": "אמצעי תשלום",
-    "orderItems": "פריטי הזמנה",
+  "orderDiscount": {
     "orderSummary": "סיכום הזמנה",
     "subtotal": "סכום ביניים",
     "deliveryFee": "עלות משלוח",
