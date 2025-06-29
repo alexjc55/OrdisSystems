@@ -5135,10 +5135,7 @@ export default function AdminDashboard() {
         categories={categories}
         product={editingProduct}
         adminT={adminT}
-        onSubmit={(data: any) => {
-          // Merge form data with multilingual fields from formData
-          const multilingualData = translationManager.getAllLanguageFields(formData);
-          
+        onSubmit={(data: any, multilingualData: any) => {
           // Set isAvailable based on availability status
           const productData = {
             ...data,
@@ -5420,6 +5417,12 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     }
   };
 
+  // Local onSubmit handler that merges multilingual data
+  const handleFormSubmit = (data: any) => {
+    const multilingualData = translationManager.getAllLanguageFields(formData);
+    onSubmit(data, multilingualData);
+  };
+
   if (!open) return null;
 
   return (
@@ -5444,7 +5447,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
         />
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="name"

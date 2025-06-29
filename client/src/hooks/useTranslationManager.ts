@@ -90,7 +90,7 @@ export function useTranslationManager({
     
     // Get all multilingual fields for all languages
     baseFields.forEach(field => {
-      ['ru', 'en', 'he', 'ar'].forEach(lang => {
+      (['ru', 'en', 'he', 'ar'] as SupportedLanguage[]).forEach(lang => {
         const fieldKey = getFieldKey(field, lang);
         if (formData[fieldKey] !== undefined) {
           result[fieldKey] = formData[fieldKey];
