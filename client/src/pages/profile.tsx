@@ -216,13 +216,13 @@ export default function Profile() {
       setIsNameEditing(false);
       toast({
         title: t("status.success"),
-        description: "Имя обновлено",
+        description: t("profile.nameUpdated"),
       });
     },
     onError: (error) => {
       toast({
         title: t("status.error"),
-        description: "Не удалось обновить имя",
+        description: t("profile.nameUpdateError"),
         variant: "destructive",
       });
     },
@@ -290,12 +290,12 @@ export default function Profile() {
 
     const getStatusLabel = (status: string) => {
       switch (status) {
-        case 'pending': return 'Ожидает';
-        case 'confirmed': return 'Подтвержден';
-        case 'preparing': return 'Готовится';
-        case 'ready': return 'Готов';
-        case 'delivered': return 'Выдан';
-        case 'cancelled': return 'Отменен';
+        case 'pending': return tShop('orderStatus.pending');
+        case 'confirmed': return tShop('orderStatus.confirmed');
+        case 'preparing': return tShop('orderStatus.preparing');
+        case 'ready': return tShop('orderStatus.ready');
+        case 'delivered': return tShop('orderStatus.delivered');
+        case 'cancelled': return tShop('orderStatus.cancelled');
         default: return status;
       }
     };
@@ -322,10 +322,10 @@ export default function Profile() {
       <div className="max-w-6xl mx-auto p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-poppins font-bold text-gray-900 mb-2">
-            Мой Профиль
+            {t('profile.title')}
           </h1>
           <p className="text-gray-600">
-            Управление профилем и история заказов
+            {t('profile.subtitle')}
           </p>
         </div>
 
@@ -333,39 +333,39 @@ export default function Profile() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Всего Заказов</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('profile.totalOrders')}</CardTitle>
               <ShoppingCart className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalOrders}</div>
               <p className="text-xs text-muted-foreground">
-                {activeOrders} активных
+                {activeOrders} {t('profile.active')}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Потрачено</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('profile.totalSpent')}</CardTitle>
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{formatCurrency(totalSpent)}</div>
               <p className="text-xs text-muted-foreground">
-                За все время
+                {t('profile.allTime')}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Статус</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('profile.status')}</CardTitle>
               <User className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold">Постоянный клиент</div>
+              <div className="text-xl font-bold">{t('profile.regularCustomer')}</div>
               <p className="text-xs text-muted-foreground">
-                Член с {new Date(user.createdAt || '').toLocaleDateString('ru-RU')}
+                {t('profile.memberSince')} {new Date(user.createdAt || '').toLocaleDateString()}
               </p>
             </CardContent>
           </Card>
