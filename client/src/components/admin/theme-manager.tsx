@@ -1714,7 +1714,7 @@ export default function ThemeManager() {
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500">
-                              Текст, который будет отображаться на кнопке
+                              {adminT('themes.buttonTextDescription')}
                             </div>
                           </div>
                           
@@ -1755,7 +1755,7 @@ export default function ThemeManager() {
                 <TabsContent value="colors" className="space-y-6">
                   {/* Бренд */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Бренд</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT('themes.brandSection')}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <ColorInput label={adminT('themes.primaryColorLabel')} name="primaryColor" defaultValue={editingTheme.primaryColor} />
                       <ColorInput label={adminT('themes.buttonTextColor')} name="primaryTextColor" defaultValue={editingTheme.primaryTextColor} />
@@ -1772,7 +1772,7 @@ export default function ThemeManager() {
 
                   {/* Статусы */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Статусы</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT('themes.statusSection')}</h4>
                     <div className="space-y-4">
                       <div>
                         <h5 className="text-sm font-medium mb-2">Основные статусные цвета</h5>
@@ -1822,7 +1822,7 @@ export default function ThemeManager() {
 
                   {/* Нейтральные */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">Нейтральные</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT('themes.neutralSection')}</h4>
                     <div>
                       <h5 className="text-sm font-medium mb-2">Основные нейтральные цвета</h5>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
