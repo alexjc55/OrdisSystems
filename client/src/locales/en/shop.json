@@ -1,17 +1,17 @@
 {
   "paymentMethod": "Payment Method",
-  "searchResults": "Search Results", 
+  "searchResults": "Search Results",
   "defaultWelcomeTitle": "eDAHouse - Home-cooked Food by Weight",
   "foundItems": "Found {{count}} items",
   "workingHours": "Working Hours",
   "notSpecified": "Not specified",
-  "loadingError": "Loading Error",
+  "loadingError": "Loading error",
   "contacts": "Contacts",
   "phone": "Phone",
   "email": "Email",
   "delivery": {
     "estimatedTime": "Estimated Time",
-    "deliveryFee": "Delivery Fee", 
+    "deliveryFee": "Delivery Fee",
     "freeDelivery": "Free Delivery",
     "express": "Express",
     "standard": "Standard",
@@ -21,7 +21,7 @@
   "payment": {
     "methods": "Payment Methods",
     "cash": "Cash",
-    "card": "Card", 
+    "card": "Card",
     "online": "Online",
     "wallet": "E-wallet"
   },
@@ -42,7 +42,7 @@
   "categoriesText": "Categories",
   "categoriesCount": "{{count}} categories",
   "allProducts": "All Products",
-  "allCategories": "All Categories", 
+  "allCategories": "All Categories",
   "filterByCategory": "Filter by Category",
   "filterByDiscount": "Filter by Discount",
   "onlyDiscounted": "Only Discounted",
@@ -50,11 +50,18 @@
   "days": {
     "monday": "Monday",
     "tuesday": "Tuesday",
-    "wednesday": "Wednesday", 
+    "wednesday": "Wednesday",
     "thursday": "Thursday",
     "friday": "Friday",
     "saturday": "Saturday",
-    "sunday": "Sunday"
+    "sunday": "Sunday",
+    "sun": "Sunday",
+    "mon": "Monday",
+    "tue": "Tuesday",
+    "wed": "Wednesday",
+    "thu": "Thursday",
+    "fri": "Friday",
+    "sat": "Saturday"
   },
   "cart": {
     "title": "Cart",
@@ -75,7 +82,7 @@
   "checkout": {
     "title": "Checkout",
     "customerInfo": "Customer Information",
-    "deliveryInfo": "Delivery Information", 
+    "deliveryInfo": "Delivery Information",
     "orderSummary": "Order Summary",
     "customerPhone": "Phone Number",
     "customerPhonePlaceholder": "05xxxxxxxx",

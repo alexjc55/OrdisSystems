@@ -33,7 +33,7 @@
   "loadingError": "خطأ في التحميل",
   "contacts": "جهات الاتصال",
   "phone": "الهاتف",
-  "email": "البريد الإلكتروني", 
+  "email": "البريد الإلكتروني",
   "delivery": {
     "estimatedTime": "الوقت المتوقع",
     "deliveryFee": "رسوم التوصيل",
@@ -63,7 +63,7 @@
     "item": "عنصر",
     "subtotal": "المجموع الفرعي",
     "discount": "الخصم",
-    "total": "الإجمالي",
+    "total": "المجموع",
     "checkout": "الدفع",
     "remove": "إزالة",
     "quantity": "الكمية",
@@ -112,12 +112,7 @@
     "fillDeliveryAddress": "يرجى ملء عنوان التوصيل",
     "deliveryAddressRequired": "عنوان التوصيل مطلوب",
     "fillPhoneNumber": "يرجى ملء رقم الهاتف",
-    "phoneNumberRequired": "رقم الهاتف مطلوب",
-    "checkout": "الدفع",
-    "delivery": "التوصيل",
-    "items": "العناصر",
-    "total": "المجموع",
-    "freeDeliveryFrom": "توصيل مجاني من"
+    "phoneNumberRequired": "رقم الهاتف مطلوب"
   },
   "checkout": {
     "title": "إتمام الطلب",
