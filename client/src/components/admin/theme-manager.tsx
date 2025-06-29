@@ -1159,37 +1159,37 @@ export default function ThemeManager() {
                 <TabsContent value="visuals" className="space-y-6">
                   {/* Main Display Elements */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("visualLabels.mainInterfaceElements")}</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themes.mainInterfaceElements")}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <VisualToggleButton 
                         isEnabled={visualSettings.showBannerImage}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showBannerImage: !prev.showBannerImage }))}
-                        label={adminT("visualLabels.showBanner")}
-                        description={adminT("visualLabels.showBannerDescription")}
+                        label={adminT("themes.showBanner")}
+                        description={adminT("themes.showBannerDescription")}
                         fieldName="showBannerImage"
                       />
 
                       <VisualToggleButton 
                         isEnabled={visualSettings.showTitleDescription}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showTitleDescription: !prev.showTitleDescription }))}
-                        label={adminT("visualLabels.titleDescription")}
-                        description={adminT("visualLabels.titleDescriptionDesc")}
+                        label={adminT("themes.titleDescription")}
+                        description={adminT("themes.titleDescriptionDesc")}
                         fieldName="showTitleDescription"
                       />
 
                       <VisualToggleButton 
                         isEnabled={visualSettings.showInfoBlocks}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showInfoBlocks: !prev.showInfoBlocks }))}
-                        label={adminT("visualLabels.infoBlocks")}
-                        description={adminT("visualLabels.infoBlocksDescription")}
+                        label={adminT("themes.infoBlocks")}
+                        description={adminT("themes.infoBlocksDescription")}
                         fieldName="showInfoBlocks"
                       />
 
                       <VisualToggleButton 
                         isEnabled={visualSettings.showCategoryMenu}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showCategoryMenu: !prev.showCategoryMenu }))}
-                        label={adminT("visualLabels.categoryMenu")}
-                        description={adminT("visualLabels.categoryMenuDescription")}
+                        label={adminT("themes.categoryMenu")}
+                        description={adminT("themes.categoryMenuDescription")}
                         fieldName="showCategoryMenu"
                       />
                     </div>
@@ -1197,7 +1197,7 @@ export default function ThemeManager() {
                     {/* Info Blocks Position - shows only if info blocks are enabled */}
                     {visualSettings.showInfoBlocks && (
                       <div className="mt-4 space-y-2">
-                        <Label htmlFor="infoBlocksPositionCreate" className="text-sm font-medium">{adminT("visualLabels.infoBlocksPosition")}</Label>
+                        <Label htmlFor="infoBlocksPositionCreate" className="text-sm font-medium">{adminT("themes.infoBlocksPosition")}</Label>
                         <select
                           name="infoBlocksPosition"
                           id="infoBlocksPositionCreate"
@@ -1205,8 +1205,8 @@ export default function ThemeManager() {
                           onChange={(e) => setVisualSettings(prev => ({ ...prev, infoBlocksPosition: e.target.value }))}
                           className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                         >
-                          <option value="top">{adminT("visualLabels.beforeCategories")}</option>
-                          <option value="bottom">{adminT("visualLabels.afterCategories")}</option>
+                          <option value="top">{adminT("themes.beforeCategories")}</option>
+                          <option value="bottom">{adminT("themes.afterCategories")}</option>
                         </select>
                       </div>
                     )}
@@ -1214,21 +1214,21 @@ export default function ThemeManager() {
 
                   {/* Additional Features */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("visualLabels.additionalFeatures")}</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themes.additionalFeatures")}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <VisualToggleButton 
                         isEnabled={visualSettings.showSpecialOffers}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showSpecialOffers: !prev.showSpecialOffers }))}
-                        label={adminT("visualLabels.specialOffers")}
-                        description={adminT("visualLabels.specialOffersDescription")}
+                        label={adminT("themes.specialOffers")}
+                        description={adminT("themes.specialOffersDescription")}
                         fieldName="showSpecialOffers"
                       />
 
                       <VisualToggleButton 
                         isEnabled={visualSettings.showWhatsAppChat}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showWhatsAppChat: !prev.showWhatsAppChat }))}
-                        label={adminT("visualLabels.whatsappChat")}
-                        description={adminT("visualLabels.whatsappChatDescription")}
+                        label={adminT("themes.whatsappChat")}
+                        description={adminT("themes.whatsappChatDescription")}
                         fieldName="showWhatsAppChat"
                       />
                     </div>
@@ -1236,29 +1236,29 @@ export default function ThemeManager() {
                     {/* WhatsApp Settings */}
                     {visualSettings.showWhatsAppChat && (
                       <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-3">
-                        <h5 className="text-sm font-medium text-gray-800">{adminT("visualLabels.whatsappSettings")}</h5>
+                        <h5 className="text-sm font-medium text-gray-800">{adminT("themes.whatsappSettings")}</h5>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           <div>
-                            <Label htmlFor="whatsappPhoneCreate" className="text-sm">{adminT("visualLabels.phoneNumber")}</Label>
+                            <Label htmlFor="whatsappPhoneCreate" className="text-sm">{adminT("themes.phoneNumber")}</Label>
                             <input
                               type="text"
                               name="whatsappPhone"
                               id="whatsappPhoneCreate"
                               defaultValue=""
-                              placeholder={adminT("visualLabels.phoneNumberPlaceholder")}
+                              placeholder={adminT("themes.phoneNumberPlaceholder")}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500 mt-1">
-                              {adminT("visualLabels.phoneFormat")}
+                              {adminT("themes.phoneFormat")}
                             </div>
                           </div>
                           <div>
-                            <Label htmlFor="whatsappMessageCreate" className="text-sm">{adminT("visualLabels.defaultMessage")}</Label>
+                            <Label htmlFor="whatsappMessageCreate" className="text-sm">{adminT("themes.defaultMessage")}</Label>
                             <textarea
                               name="whatsappMessage"
                               id="whatsappMessageCreate"
-                              defaultValue={adminT("visualLabels.defaultMessageValue")}
-                              placeholder={adminT("visualLabels.defaultMessagePlaceholder")}
+                              defaultValue={adminT("themes.defaultMessageValue")}
+                              placeholder={adminT("themes.defaultMessagePlaceholder")}
                               rows={2}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none"
                             />
@@ -1270,22 +1270,22 @@ export default function ThemeManager() {
 
                   {/* Cart Banners */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("visualLabels.cartBanner")}</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themes.cartBanner")}</h4>
                     <div className="space-y-4">
                       <VisualToggleButton 
                         isEnabled={visualSettings.showCartBanner}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showCartBanner: !prev.showCartBanner }))}
-                        label={adminT("visualLabels.showCartBanner")}
-                        description={adminT("visualLabels.showCartBannerDescription")}
+                        label={adminT("themes.showCartBanner")}
+                        description={adminT("themes.showCartBannerDescription")}
                         fieldName="showCartBanner"
                       />
 
                       {visualSettings.showCartBanner && (
                         <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
-                          <h5 className="text-sm font-medium text-gray-800">{adminT("visualLabels.cartBannerSettings")}</h5>
+                          <h5 className="text-sm font-medium text-gray-800">{adminT("themes.cartBannerSettings")}</h5>
                           
                           <div>
-                            <Label htmlFor="cartBannerTypeCreate" className="text-sm">{adminT("visualLabels.bannerType")}</Label>
+                            <Label htmlFor="cartBannerTypeCreate" className="text-sm">{adminT("themes.bannerType")}</Label>
                             <select
                               name="cartBannerType"
                               id="cartBannerTypeCreate"
@@ -1293,28 +1293,28 @@ export default function ThemeManager() {
                               onChange={(e) => setCreateCartBannerType(e.target.value)}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             >
-                              <option value="text">{adminT("visualLabels.textBanner")}</option>
-                              <option value="image">{adminT("visualLabels.imageBanner")}</option>
+                              <option value="text">{adminT("themes.textBanner")}</option>
+                              <option value="image">{adminT("themes.imageBanner")}</option>
                             </select>
                           </div>
 
                           {createCartBannerType === 'text' && (
                             <>
                               <div>
-                                <Label htmlFor="cartBannerTextCreate" className="text-sm">{adminT("visualLabels.bannerText")}</Label>
+                                <Label htmlFor="cartBannerTextCreate" className="text-sm">{adminT("themes.bannerText")}</Label>
                                 <input
                                   type="text"
                                   name="cartBannerText"
                                   id="cartBannerTextCreate"
                                   defaultValue=""
-                                  placeholder={adminT("visualLabels.bannerTextPlaceholder")}
+                                  placeholder={adminT("themes.bannerTextPlaceholder")}
                                   className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                                 />
                               </div>
 
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                  <Label htmlFor="cartBannerBgColorCreate" className="text-sm">{adminT("visualLabels.backgroundColor")}</Label>
+                                  <Label htmlFor="cartBannerBgColorCreate" className="text-sm">{adminT("themes.backgroundColor")}</Label>
                                   <Input
                                     type="color"
                                     name="cartBannerBgColor"
@@ -1324,7 +1324,7 @@ export default function ThemeManager() {
                                   />
                                 </div>
                                 <div>
-                                  <Label htmlFor="cartBannerTextColorCreate" className="text-sm">{adminT("visualLabels.textColor")}</Label>
+                                  <Label htmlFor="cartBannerTextColorCreate" className="text-sm">{adminT("themes.textColor")}</Label>
                                   <Input
                                     type="color"
                                     name="cartBannerTextColor"
@@ -1339,7 +1339,7 @@ export default function ThemeManager() {
 
                           {createCartBannerType === 'image' && (
                             <div>
-                              <Label htmlFor="cartBannerImageCreate" className="text-sm font-medium">{adminT("visualLabels.bannerImage")}</Label>
+                              <Label htmlFor="cartBannerImageCreate" className="text-sm font-medium">{adminT("themes.bannerImage")}</Label>
                               <ImageUpload
                                 value={createCartBannerImage}
                                 onChange={(url: string) => {
@@ -1348,7 +1348,7 @@ export default function ThemeManager() {
                               />
                               <input type="hidden" name="cartBannerImage" value={createCartBannerImage} />
                               <div className="text-xs text-gray-500 mt-1">
-                                {adminT("visualLabels.recommendedSize")}
+                                {adminT("themes.recommendedSize")}
                               </div>
                             </div>
                           )}
@@ -1359,26 +1359,26 @@ export default function ThemeManager() {
 
                   {/* Bottom Banners */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("visualLabels.bottomBanners")}</h4>
+                    <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themes.bottomBanners")}</h4>
                     <div className="space-y-4">
                       <VisualToggleButton 
                         isEnabled={visualSettings.showBottomBanners}
                         onToggle={() => setVisualSettings(prev => ({ ...prev, showBottomBanners: !prev.showBottomBanners }))}
-                        label={adminT("visualLabels.showBottomBanners")}
-                        description={adminT("visualLabels.showBottomBannersDescription")}
+                        label={adminT("themes.showBottomBanners")}
+                        description={adminT("themes.showBottomBannersDescription")}
                         fieldName="showBottomBanners"
                       />
 
                       {visualSettings.showBottomBanners && (
                         <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
-                          <h5 className="text-sm font-medium text-gray-800">{adminT("visualLabels.bottomBannerSettings")}</h5>
+                          <h5 className="text-sm font-medium text-gray-800">{adminT("themes.bottomBannerSettings")}</h5>
                           
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* First Banner */}
                             <div className="space-y-3">
-                              <h6 className="text-sm font-medium text-gray-700">{adminT("visualLabels.firstBanner")}</h6>
+                              <h6 className="text-sm font-medium text-gray-700">{adminT("themes.firstBanner")}</h6>
                               <div>
-                                <Label htmlFor="bottomBanner1UrlCreate" className="text-sm">{adminT("visualLabels.bannerImage")}</Label>
+                                <Label htmlFor="bottomBanner1UrlCreate" className="text-sm">{adminT("themes.bannerImage")}</Label>
                                 <ImageUpload
                                   value={createBottomBanner1Url}
                                   onChange={(url: string) => {
@@ -1388,13 +1388,13 @@ export default function ThemeManager() {
                                 <input type="hidden" name="bottomBanner1Url" value={createBottomBanner1Url} />
                               </div>
                               <div>
-                                <Label htmlFor="bottomBanner1LinkCreate" className="text-sm">{adminT("visualLabels.link")}</Label>
+                                <Label htmlFor="bottomBanner1LinkCreate" className="text-sm">{adminT("themes.link")}</Label>
                                 <input
                                   type="url"
                                   name="bottomBanner1Link"
                                   id="bottomBanner1LinkCreate"
                                   defaultValue=""
-                                  placeholder={adminT("visualLabels.linkPlaceholder")}
+                                  placeholder={adminT("themes.linkPlaceholder")}
                                   className="w-full px-3 py-2 border rounded-md bg-white text-sm mt-1"
                                 />
                               </div>
@@ -1402,9 +1402,9 @@ export default function ThemeManager() {
 
                             {/* Second Banner */}
                             <div className="space-y-3">
-                              <h6 className="text-sm font-medium text-gray-700">{adminT("visualLabels.secondBanner")}</h6>
+                              <h6 className="text-sm font-medium text-gray-700">{adminT("themes.secondBanner")}</h6>
                               <div>
-                                <Label htmlFor="bottomBanner2UrlCreate" className="text-sm">{adminT("visualLabels.bannerImage")}</Label>
+                                <Label htmlFor="bottomBanner2UrlCreate" className="text-sm">{adminT("themes.bannerImage")}</Label>
                                 <ImageUpload
                                   value={createBottomBanner2Url}
                                   onChange={(url: string) => {
@@ -1414,13 +1414,13 @@ export default function ThemeManager() {
                                 <input type="hidden" name="bottomBanner2Url" value={createBottomBanner2Url} />
                               </div>
                               <div>
-                                <Label htmlFor="bottomBanner2LinkCreate" className="text-sm">{adminT("visualLabels.link")}</Label>
+                                <Label htmlFor="bottomBanner2LinkCreate" className="text-sm">{adminT("themes.link")}</Label>
                                 <input
                                   type="url"
                                   name="bottomBanner2Link"
                                   id="bottomBanner2LinkCreate"
                                   defaultValue=""
-                                  placeholder={adminT("visualLabels.linkPlaceholder")}
+                                  placeholder={adminT("themes.linkPlaceholder")}
                                   className="w-full px-3 py-2 border rounded-md bg-white text-sm mt-1"
                                 />
                               </div>
@@ -1995,7 +1995,7 @@ export default function ThemeManager() {
                           {editCartBannerType === 'text' && (
                             <>
                               <div>
-                                <Label htmlFor="cartBannerText" className="text-sm">{adminT("visualLabels.bannerText")}</Label>
+                                <Label htmlFor="cartBannerText" className="text-sm">{adminT("themes.bannerText")}</Label>
                                 <input
                                   type="text"
                                   name="cartBannerText"
