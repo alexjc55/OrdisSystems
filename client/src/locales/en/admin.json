@@ -104,6 +104,10 @@
     "secondBanner": "Second Banner",
     "imageField": "Image",
     "linkField": "Link",
-    "imageSize": "Recommended image size: 600x300 pixels"
+    "imageSize": "Recommended image size: 600x300 pixels",
+    "resetColors": "Reset Colors",
+    "name": "Name",
+    "colorPalette": "Color Palette",
+    "active": "Active"
   }
 }
