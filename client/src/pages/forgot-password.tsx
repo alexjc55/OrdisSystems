@@ -82,7 +82,7 @@ export default function ForgotPasswordPage() {
                 variant="outline"
                 className="flex-1"
               >
-                Отправить еще раз
+                {t('auth.sendAgain')}
               </Button>
             </div>
           </CardContent>
@@ -96,16 +96,16 @@ export default function ForgotPasswordPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Mail className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-          <CardTitle>Забыли пароль?</CardTitle>
+          <CardTitle>{t('auth.forgotPassword')}</CardTitle>
           <CardDescription>
-            Введите ваш email адрес и мы отправим инструкции по восстановлению пароля
+            {t('auth.forgotPasswordDescription')}
           </CardDescription>
         </CardHeader>
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="email">Email адрес</Label>
+              <Label htmlFor="email">{t('auth.email')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -126,9 +126,9 @@ export default function ForgotPasswordPage() {
               className="w-full"
             >
               {forgotPasswordMutation.isPending ? (
-                "Отправка..."
+                t('status.sending')
               ) : (
-                "Отправить инструкции"
+                t('auth.sendInstructions')
               )}
             </Button>
 
@@ -136,7 +136,7 @@ export default function ForgotPasswordPage() {
               <Link href="/auth">
                 <Button variant="ghost" className="text-sm">
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Назад к входу
+                  {t('auth.backToLogin')}
                 </Button>
               </Link>
             </div>
