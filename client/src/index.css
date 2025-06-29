@@ -739,7 +739,7 @@ button:focus,
     text-align: right !important;
   }
   
-  /* Force LTR for products table content within RTL container */
+  /* RTL for products table content within RTL container */
   html[lang="he"] .products-container table,
   html[lang="ar"] .products-container table,
   html[lang="he"] [data-tab="products"] table,
@@ -750,8 +750,8 @@ button:focus,
   html[lang="ar"] .products-container .table-container table,
   html[lang="he"] [data-tab="products"] .table-container table,
   html[lang="ar"] [data-tab="products"] .table-container table {
-    direction: ltr !important;
-    text-align: left !important;
+    direction: rtl !important;
+    text-align: right !important;
   }
   
   html[lang="he"] .products-container table th,
@@ -762,8 +762,8 @@ button:focus,
   html[lang="ar"] [data-tab="products"] table th,
   html[lang="he"] [data-tab="products"] table td,
   html[lang="ar"] [data-tab="products"] table td {
-    direction: ltr !important;
-    text-align: left !important;
+    direction: rtl !important;
+    text-align: right !important;
   }
   
   /* Products table specific RTL fix - force LTR for products table only */
