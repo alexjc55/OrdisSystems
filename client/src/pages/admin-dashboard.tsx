@@ -3452,10 +3452,12 @@ export default function AdminDashboard() {
                                 <>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
                                     <div className="flex flex-col gap-1 items-end">
-                                      <CustomSwitch
-                                        checked={product.isAvailable && (product.availabilityStatus === "available")}
-                                        onChange={(checked) => {
-                                          if (!checked) {
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => {
+                                          const isActive = product.isAvailable && (product.availabilityStatus === "available");
+                                          if (isActive) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
                                           } else {
@@ -3465,8 +3467,21 @@ export default function AdminDashboard() {
                                             });
                                           }
                                         }}
-                                        bgColor="bg-green-500"
-                                      />
+                                        className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
+                                          product.isAvailable && (product.availabilityStatus === "available")
+                                            ? 'text-green-600 hover:text-green-700 hover:bg-green-50'
+                                            : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                                        }`}
+                                        title={product.isAvailable && (product.availabilityStatus === "available") 
+                                          ? adminT('products.hideProduct') 
+                                          : adminT('products.showProduct')
+                                        }
+                                      >
+                                        {product.isAvailable && (product.availabilityStatus === "available") 
+                                          ? <Eye className="h-6 w-6" /> 
+                                          : <EyeOff className="h-6 w-6" />
+                                        }
+                                      </Button>
                                       {product.availabilityStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
                                           {adminT('products.preorder')}
@@ -3574,10 +3589,12 @@ export default function AdminDashboard() {
                                   </TableCell>
                                   <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                                     <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
-                                      <CustomSwitch
-                                        checked={product.isAvailable && (product.availabilityStatus === "available")}
-                                        onChange={(checked) => {
-                                          if (!checked) {
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => {
+                                          const isActive = product.isAvailable && (product.availabilityStatus === "available");
+                                          if (isActive) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
                                           } else {
@@ -3587,8 +3604,21 @@ export default function AdminDashboard() {
                                             });
                                           }
                                         }}
-                                        bgColor="bg-green-500"
-                                      />
+                                        className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
+                                          product.isAvailable && (product.availabilityStatus === "available")
+                                            ? 'text-green-600 hover:text-green-700 hover:bg-green-50'
+                                            : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                                        }`}
+                                        title={product.isAvailable && (product.availabilityStatus === "available") 
+                                          ? adminT('products.hideProduct') 
+                                          : adminT('products.showProduct')
+                                        }
+                                      >
+                                        {product.isAvailable && (product.availabilityStatus === "available") 
+                                          ? <Eye className="h-6 w-6" /> 
+                                          : <EyeOff className="h-6 w-6" />
+                                        }
+                                      </Button>
                                       {product.availabilityStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
                                           {adminT('products.preorder')}
