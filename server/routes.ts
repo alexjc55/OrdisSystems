@@ -350,10 +350,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin-only route to get all products including unavailable ones with pagination
   app.get('/api/admin/products', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
+      const user = req.user; // Use user from session instead of additional DB query
       
-      if (!user || (user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
+      if (!user || (user.role !== "admin" && user.role !== "worker")) {
         return res.status(403).json({ message: "Admin access required" });
       }
 
@@ -774,10 +773,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin-only route to get orders with pagination
   app.get('/api/admin/orders', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
+      const user = req.user; // Use user from session instead of additional DB query
       
-      if (!user || (user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
+      if (!user || (user.role !== "admin" && user.role !== "worker")) {
         return res.status(403).json({ message: "Admin access required" });
       }
 
@@ -807,10 +805,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin-only route to get users with pagination
   app.get('/api/admin/users', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
+      const user = req.user; // Use user from session instead of additional DB query
       
-      if (!user || (user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
+      if (!user || (user.role !== "admin" && user.role !== "worker")) {
         return res.status(403).json({ message: "Admin access required" });
       }
 
@@ -840,10 +837,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin-only route to create a new user
   app.post('/api/admin/users', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
+      const user = req.user; // Use user from session instead of additional DB query
       
-      if (!user || (user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
+      if (!user || (user.role !== "admin" && user.role !== "worker")) {
         return res.status(403).json({ message: "Admin access required" });
       }
 
@@ -859,10 +855,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin-only route to update a user
   app.put('/api/admin/users/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
+      const user = req.user; // Use user from session instead of additional DB query
       
-      if (!user || (user.role !== "admin" && user.role !== "worker" && user.email !== "alexjc55@gmail.com" && user.username !== "admin")) {
+      if (!user || (user.role !== "admin" && user.role !== "worker")) {
         return res.status(403).json({ message: "Admin access required" });
       }
 
