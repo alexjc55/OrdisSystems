@@ -2141,6 +2141,21 @@ export default function AdminDashboard() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Show timeout message if loading takes too long
+  if (loadingTimeout && isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center p-8">
+          <h2 className="text-xl font-semibold mb-4">Панель загружается медленно</h2>
+          <p className="text-gray-600 mb-6">Возможно проблема с подключением к серверу</p>
+          <Button onClick={() => window.location.reload()}>
+            Обновить страницу
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   // Data queries with pagination  
   const { data: storeSettings, isLoading: storeSettingsLoading } = useQuery<StoreSettings>({
     queryKey: ["/api/settings"]

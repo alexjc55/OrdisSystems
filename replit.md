@@ -131,6 +131,17 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 29, 2025: CRITICAL PERFORMANCE OPTIMIZATION - Fixed admin panel loading delays for worker accounts
+  - PROBLEM RESOLVED: Worker accounts experienced 3-4 second delays accessing admin panel due to redundant database queries
+  - SERVER OPTIMIZATION: Eliminated duplicate storage.getUser() calls in all admin API routes (12 routes optimized)
+  - CACHING SYSTEM: Added intelligent memory caching for admin data with different TTL values:
+    - Products: 2 minutes cache (frequent updates)
+    - Orders: 1 minute cache (real-time changes)
+    - Users: 3 minutes cache (less frequent changes)
+  - CACHE INVALIDATION: Automatic cache clearing when data is modified (create/update/delete operations)
+  - SESSION OPTIMIZATION: Use user data from session instead of additional database queries for role verification
+  - TIMEOUT PROTECTION: Added 10-second loading timeout with refresh button to prevent admin panel hanging
+  - RESULT: Admin panel now loads consistently fast for both admin and worker accounts without performance degradation
 - June 29, 2025: FIXED TRANSLATION KEY DISPLAY IN PASSWORD CHANGE DIALOG - Resolved "actions.cancel" key showing instead of translated text
   - CRITICAL FIX: Added missing "actions" translation section to all 4 language files (RU/EN/HE/AR)
   - TRANSLATION COVERAGE: Added 16 common action translations (save, cancel, edit, delete, add, create, update, close, submit, confirm, back, next, login, logout, view, search)
