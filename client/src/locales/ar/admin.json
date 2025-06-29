@@ -9,7 +9,10 @@
     "users": "المستخدمون",
     "settings": "الإعدادات",
     "permissions": "الصلاحيات",
-    "themes": "السمات"
+    "themes": "السمات",
+    "basic": "أساسي",
+    "colors": "الألوان",
+    "visuals": "المرئيات"
   },
   "actions": {
     "add": "إضافة",
