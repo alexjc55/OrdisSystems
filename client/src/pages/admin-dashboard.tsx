@@ -44,7 +44,7 @@ import { z } from "zod";
 import { formatCurrency, getUnitLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
 import { applyTheme } from "@/lib/theme-system";
 import { format } from "date-fns";
-import { ru, enUS, he } from "date-fns/locale";
+import { ru, enUS, he, ar } from "date-fns/locale";
 import { insertStoreSettingsSchema, type StoreSettings, type CategoryWithCount } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
@@ -719,6 +719,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     switch (currentLanguage) {
       case 'en': return enUS;
       case 'he': return he;
+      case 'ar': return ar;
       default: return ru;
     }
   };
