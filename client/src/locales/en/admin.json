@@ -718,7 +718,19 @@
     "saveSettings": "Save Settings"
   },
   "systemSettings": {
-    "canManageThemes": "Manage Themes",
-    "canManageThemesDescription": "Allow employee to manage design themes"
+    "canManageProducts": "Manage Products",
+    "canManageProductsDescription": "Allow employee to manage products",
+    "canManageCategories": "Manage Categories",
+    "canManageCategoriesDescription": "Allow employee to manage categories",
+    "canEditOrders": "Edit Orders",
+    "canEditOrdersDescription": "Allow employee to edit orders",
+    "canViewUsers": "View Users",
+    "canViewUsersDescription": "Allow employee to view users",
+    "canManageUsers": "Manage Users",
+    "canManageUsersDescription": "Allow employee to manage users",
+    "canViewSettings": "View Settings",
+    "canViewSettingsDescription": "Allow employee to view settings",
+    "canManageSettings": "Manage Settings",
+    "canManageSettingsDescription": "Allow employee to manage settings"
   }
 }

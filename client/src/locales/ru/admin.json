@@ -706,7 +706,19 @@
     "canEditOrders": "Редактирование заказов"
   },
   "systemSettings": {
-    "canManageThemes": "Управление темами",
-    "canManageThemesDescription": "Разрешить сотруднику управлять темами оформления"
+    "canManageProducts": "Управление товарами",
+    "canManageProductsDescription": "Разрешить сотруднику управлять товарами",
+    "canManageCategories": "Управление категориями",
+    "canManageCategoriesDescription": "Разрешить сотруднику управлять категориями",
+    "canEditOrders": "Редактирование заказов",
+    "canEditOrdersDescription": "Разрешить сотруднику редактировать заказы",
+    "canViewUsers": "Просмотр пользователей",
+    "canViewUsersDescription": "Разрешить сотруднику просматривать пользователей",
+    "canManageUsers": "Управление пользователями",
+    "canManageUsersDescription": "Разрешить сотруднику управлять пользователями",
+    "canViewSettings": "Просмотр настроек",
+    "canViewSettingsDescription": "Разрешить сотруднику просматривать настройки",
+    "canManageSettings": "Управление настройками",
+    "canManageSettingsDescription": "Разрешить сотруднику управлять настройками"
   }
 }

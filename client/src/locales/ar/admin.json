@@ -529,7 +529,19 @@
     "canEditOrders": "تعديل الطلبات"
   },
   "systemSettings": {
-    "canManageThemes": "إدارة المواضيع",
-    "canManageThemesDescription": "السماح للموظف بإدارة مواضيع التصميم"
+    "canManageProducts": "إدارة المنتجات",
+    "canManageProductsDescription": "السماح للموظف بإدارة المنتجات",
+    "canManageCategories": "إدارة الفئات",
+    "canManageCategoriesDescription": "السماح للموظف بإدارة الفئات",
+    "canEditOrders": "تعديل الطلبات",
+    "canEditOrdersDescription": "السماح للموظف بتعديل الطلبات",
+    "canViewUsers": "عرض المستخدمين",
+    "canViewUsersDescription": "السماح للموظف بعرض المستخدمين",
+    "canManageUsers": "إدارة المستخدمين",
+    "canManageUsersDescription": "السماح للموظف بإدارة المستخدمين",
+    "canViewSettings": "عرض الإعدادات",
+    "canViewSettingsDescription": "السماح للموظف بعرض الإعدادات",
+    "canManageSettings": "إدارة الإعدادات",
+    "canManageSettingsDescription": "السماح للموظف بإدارة الإعدادات"
   }
 }

@@ -357,8 +357,20 @@
     "canEditOrders": "עריכת הזמנות"
   },
   "systemSettings": {
-    "canManageThemes": "ניהול ערכות עיצוב",
-    "canManageThemesDescription": "אפשר לעובד לנהל ערכות עיצוב"
+    "canManageProducts": "ניהול מוצרים",
+    "canManageProductsDescription": "אפשר לעובד לנהל מוצרים",
+    "canManageCategories": "ניהול קטגוריות",
+    "canManageCategoriesDescription": "אפשר לעובד לנהל קטגוריות",
+    "canEditOrders": "עריכת הזמנות",
+    "canEditOrdersDescription": "אפשר לעובד לערוך הזמנות",
+    "canViewUsers": "צפייה במשתמשים",
+    "canViewUsersDescription": "אפשר לעובד לצפות במשתמשים",
+    "canManageUsers": "ניהול משתמשים",
+    "canManageUsersDescription": "אפשר לעובד לנהל משתמשים",
+    "canViewSettings": "צפייה בהגדרות",
+    "canViewSettingsDescription": "אפשר לעובד לצפות בהגדרות",
+    "canManageSettings": "ניהול הגדרות",
+    "canManageSettingsDescription": "אפשר לעובד לנהל הגדרות"
   },
   "settings": {
     "title": "הגדרות חנות",
