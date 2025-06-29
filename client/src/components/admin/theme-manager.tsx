@@ -221,6 +221,7 @@ interface ThemeData {
 }
 
 export default function ThemeManager() {
+  const { t: adminT } = useTranslation('admin');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingTheme, setEditingTheme] = useState<ThemeData | null>(null);
   const [previewTheme, setPreviewTheme] = useState<ThemeData | null>(null);
@@ -759,7 +760,7 @@ export default function ThemeManager() {
       showCategoryMenu: editVisualSettings.showCategoryMenu,
       showWhatsAppChat: editVisualSettings.showWhatsAppChat,
       whatsappPhone: formData.get("whatsappPhone") as string || "",
-      whatsappMessage: formData.get("whatsappMessage") as string || "Здравствуйте! У меня есть вопрос по заказу.",
+      whatsappMessage: formData.get("whatsappMessage") as string || adminT('themes.whatsappMessageDefault'),
       whiteColor: convertColorToHsl(formData.get("whiteColor") as string),
       gray50Color: convertColorToHsl(formData.get("gray50Color") as string),
       gray100Color: convertColorToHsl(formData.get("gray100Color") as string),
@@ -936,11 +937,11 @@ export default function ThemeManager() {
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="name">Название темы</Label>
-                      <Input id="name" name="name" placeholder="Моя тема" required />
+                      <Input id="name" name="name" placeholder={adminT('themes.namePlaceholder')} required />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="description">Описание</Label>
-                      <Textarea id="description" name="description" placeholder="Описание темы..." />
+                      <Textarea id="description" name="description" placeholder={adminT('themes.descriptionPlaceholder')} />
                     </div>
                     
                     {/* Изображения */}
@@ -1027,8 +1028,8 @@ export default function ThemeManager() {
                               type="text"
                               name="bannerButtonText"
                               id="bannerButtonTextCreate"
-                              defaultValue="Смотреть каталог"
-                              placeholder="Смотреть каталог"
+                              defaultValue={adminT('themes.buttonTextDefault')}
+                              placeholder={adminT('themes.buttonTextDefault')}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500">
@@ -1918,7 +1919,7 @@ export default function ThemeManager() {
                       <VisualToggleButton 
                         isEnabled={editVisualSettings.showWhatsAppChat}
                         onToggle={() => setEditVisualSettings(prev => ({ ...prev, showWhatsAppChat: !prev.showWhatsAppChat }))}
-                        label="WhatsApp чат"
+                        label={adminT('themes.whatsappChat')}
                         description="Кнопка связи через WhatsApp"
                         fieldName="showWhatsAppChat"
                       />
