@@ -5708,7 +5708,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm">{adminT('products.dialog.availabilityLabel')}</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={(value) => {
+                    field.onChange(value);
+                    handleFieldChange('availabilityStatus', value, false);
+                  }} value={field.value}>
                     <FormControl>
                       <SelectTrigger className="text-sm">
                         <SelectValue placeholder={adminT('products.dialog.availabilityPlaceholder')} />
@@ -5744,7 +5747,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => field.onChange(!field.value)}
+                      onClick={() => {
+                        const newValue = !field.value;
+                        field.onChange(newValue);
+                        handleFieldChange('isSpecialOffer', newValue, false);
+                      }}
                       className={`h-8 w-8 p-0 rounded-lg transition-all duration-200 ${
                         field.value 
                           ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50' 
@@ -5770,7 +5777,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       <FormItem>
                         <FormLabel className="text-sm">{adminT('products.dialog.discountTypeLabel')}</FormLabel>
                         <Select 
-                          onValueChange={field.onChange}
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            handleFieldChange('discountType', value, false);
+                          }}
                           value={field.value}
                         >
                           <FormControl>
@@ -5802,6 +5812,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                             step="0.01"
                             placeholder={discountType === "percentage" ? "10" : "5.00"}
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e.target.value);
+                              handleFieldChange('discountValue', e.target.value, false);
+                            }}
                             className="text-sm"
                           />
                         </FormControl>
