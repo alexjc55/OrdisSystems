@@ -42,7 +42,7 @@ export function useTranslationManager({
 
   const copyAllFields = useCallback((
     formData: any,
-    setFormData: (updater: (prev: any) => any) => void
+    setFormData: (updater: any) => void
   ) => {
     console.log('TranslationManager copyAllFields called with:', {
       formData,
@@ -61,7 +61,8 @@ export function useTranslationManager({
     console.log('Generated updates:', updates);
     
     if (Object.keys(updates).length > 0) {
-      setFormData((prev: any) => ({ ...prev, ...updates }));
+      const newFormData = { ...formData, ...updates };
+      setFormData(newFormData);
       return Object.keys(updates).length;
     }
     return 0;

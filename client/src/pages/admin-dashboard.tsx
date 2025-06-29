@@ -5391,19 +5391,22 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     console.log('Copying fields from', translationManager.defaultLanguage, 'to', translationManager.currentLanguage);
     console.log('Current formData:', formData);
     
-    const copiedCount = translationManager.copyAllFields(formData, setFormData);
-    console.log('Copied count:', copiedCount);
-    
-    if (copiedCount > 0) {
-      // Update form with new values
-      const nameValue = translationManager.getFieldValue(formData, 'name');
-      const descriptionValue = translationManager.getFieldValue(formData, 'description');
+    const copiedCount = translationManager.copyAllFields(formData, (updatedFormData) => {
+      setFormData(updatedFormData);
       
-      console.log('Setting form values:', { nameValue, descriptionValue });
+      // Update form values immediately with the updated data
+      const nameValue = translationManager.getFieldValue(updatedFormData, 'name');
+      const descriptionValue = translationManager.getFieldValue(updatedFormData, 'description');
+      
+      console.log('Setting form values with updated data:', { nameValue, descriptionValue });
       
       form.setValue('name', nameValue);
       form.setValue('description', descriptionValue);
-      
+    });
+    
+    console.log('Copied count:', copiedCount);
+    
+    if (copiedCount > 0) {
       toast({
         title: adminT('translation.copySuccess'),
         description: adminT('translation.fieldsCopied', { count: copiedCount }),
