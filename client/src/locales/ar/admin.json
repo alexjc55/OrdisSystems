@@ -328,6 +328,39 @@
       "descriptionPlaceholder": "أدخل وصف الفئة",
       "iconLabel": "أيقونة الفئة",
       "iconPlaceholder": "اختر أيقونة"
+    },
+    "addTitle": "إضافة فئة جديدة",
+    "editTitle": "تعديل الفئة", 
+    "addDescription": "إنشاء فئة جديدة لتنظيم المنتجات",
+    "editDescription": "تعديل معلومات الفئة",
+    "hidden": "مخفية",
+    "fields": {
+      "name": "اسم الفئة",
+      "namePlaceholder": "أدخل اسم الفئة",
+      "description": "الوصف",
+      "descriptionPlaceholder": "أدخل وصف الفئة",
+      "icon": "أيقونة الفئة",
+      "iconPlaceholder": "أدخل رمز أو رابط صورة"
+    },
+    "selectedIcon": "الأيقونة المختارة",
+    "clickToSelect": "انقر لاختيار أيقونة أخرى",
+    "popularIcons": "أيقونات شائعة",
+    "customIcon": "أيقونة مخصصة",
+    "uploadImage": "رفع صورة",
+    "recommendedSize": "الحجم المُوصى به: 64×64 بكسل",
+    "orderUpdated": "تم تحديث ترتيب الفئات بنجاح",
+    "notifications": {
+      "categoryCreated": "تم إنشاء الفئة",
+      "categoryCreatedDesc": "تم إنشاء الفئة الجديدة بنجاح",
+      "categoryUpdated": "تم تحديث الفئة",
+      "categoryUpdatedDesc": "تم تحديث الفئة بنجاح",
+      "categoryDeleted": "تم حذف الفئة",
+      "categoryDeletedDesc": "تم حذف الفئة بنجاح",
+      "createError": "خطأ في إنشاء الفئة",
+      "updateError": "خطأ في تحديث الفئة",
+      "deleteError": "خطأ في حذف الفئة",
+      "deleteErrorWithProducts": "لا يمكن حذف الفئة",
+      "deleteErrorWithProductsDesc": "الفئة تحتوي على منتجات. احذف المنتجات أولاً أو انقلها لفئة أخرى"
     }
   },
   "orders": {
