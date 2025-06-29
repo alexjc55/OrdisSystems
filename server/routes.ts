@@ -506,6 +506,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const id = parseInt(req.params.id);
       const rawData = req.body;
       
+      console.log('Product update - Raw data received:', JSON.stringify(rawData, null, 2));
+      
       // Handle empty discount values - convert empty strings to null
       if (rawData.discountValue === "") {
         rawData.discountValue = null;
@@ -514,8 +516,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         rawData.discountType = null;
       }
       
-      const productData = insertProductSchema.partial().parse(rawData);
+      // Parse only the fields that are in the schema, but keep multilingual fields
+      const schemaData = insertProductSchema.partial().parse(rawData);
+      
+      // Add multilingual fields that aren't in the schema but should be saved
+      const multilingualFields = {};
+      const supportedLanguages = ['en', 'he', 'ar'];
+      
+      // Add multilingual name, description, and imageUrl fields
+      supportedLanguages.forEach(lang => {
+        if (rawData[`name_${lang}`] !== undefined) {
+          multilingualFields[`name_${lang}`] = rawData[`name_${lang}`];
+        }
+        if (rawData[`description_${lang}`] !== undefined) {
+          multilingualFields[`description_${lang}`] = rawData[`description_${lang}`];
+        }
+        if (rawData[`imageUrl_${lang}`] !== undefined) {
+          multilingualFields[`imageUrl_${lang}`] = rawData[`imageUrl_${lang}`];
+        }
+      });
+      
+      const productData = { ...schemaData, ...multilingualFields };
+      
+      console.log('Product update - Final data for storage:', JSON.stringify(productData, null, 2));
+      
       const product = await storage.updateProduct(id, productData);
+      
+      console.log('Product update - Result from storage:', JSON.stringify(product, null, 2));
+      
       res.json(product);
     } catch (error) {
       console.error("Error updating product:", error);
