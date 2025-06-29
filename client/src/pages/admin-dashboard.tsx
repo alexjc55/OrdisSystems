@@ -5551,11 +5551,6 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       placeholder={adminT('products.dialog.namePlaceholder')} 
                       {...field} 
                       className="text-sm"
-                      onChange={(e) => {
-                        console.log('Name field onChange triggered:', e.target.value);
-                        field.onChange(e);
-                        handleMultilingualFieldChange('name', e.target.value);
-                      }}
                     />
                   </FormControl>
                   <FormMessage className="text-xs" />
@@ -5576,10 +5571,6 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       placeholder={adminT('products.dialog.descriptionPlaceholder')}
                       className="resize-none text-sm"
                       {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        handleMultilingualFieldChange('description', e.target.value);
-                      }}
                     />
                   </FormControl>
                   <FormMessage className="text-xs" />
@@ -5604,14 +5595,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                             checked={field.value?.includes(category.id) || false}
                             onChange={(e) => {
                               const currentIds = field.value || [];
-                              let newIds;
                               if (e.target.checked) {
-                                newIds = [...currentIds, category.id];
+                                field.onChange([...currentIds, category.id]);
                               } else {
-                                newIds = currentIds.filter((id: number) => id !== category.id);
+                                field.onChange(currentIds.filter((id: number) => id !== category.id));
                               }
-                              field.onChange(newIds);
-                              handleCommonFieldChange('categoryIds', newIds);
                             }}
                             className="rounded border-gray-300"
                           />
@@ -5641,10 +5629,6 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                         placeholder={adminT('products.dialog.pricePlaceholder')}
                         {...field}
                         className="text-sm"
-                        onChange={(e) => {
-                          field.onChange(e);
-                          handleCommonFieldChange('price', e.target.value);
-                        }}
                       />
                     </FormControl>
                     <FormMessage className="text-xs" />
@@ -5658,10 +5642,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">{adminT('products.dialog.unitLabel')}</FormLabel>
-                    <Select onValueChange={(value) => {
-                      field.onChange(value);
-                      handleCommonFieldChange('unit', value);
-                    }} value={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="text-sm">
                           <SelectValue placeholder={adminT('products.dialog.unitLabel')} />
@@ -5691,10 +5672,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   <FormControl>
                     <ImageUpload
                       value={field.value || ""}
-                      onChange={(value) => {
-                        field.onChange(value);
-                        handleMultilingualFieldChange('imageUrl', value);
-                      }}
+                      onChange={field.onChange}
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
