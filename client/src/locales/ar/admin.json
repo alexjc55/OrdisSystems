@@ -657,6 +657,9 @@
     "workerPermissions": "صلاحيات الموظفين",
     "workerPermissionsDescription": "تكوين صلاحيات الوصول للموظفين",
     "canManageThemes": "إدارة المواضيع",
-    "canManageThemesDescription": "السماح للموظف بإدارة مواضيع التصميم"
+    "canManageThemesDescription": "السماح للموظف بإدارة مواضيع التصميم",
+    "coreWorkSections": "أقسام العمل الأساسية",
+    "coreWorkSectionsDescription": "هذه الأقسام متاحة دائماً للعمال للمهام الأساسية",
+    "alwaysEnabled": "مفعل دائماً"
   }
 }
