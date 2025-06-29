@@ -131,11 +131,15 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
-- June 29, 2025: RTL LAYOUT FIXES - Fixed Hebrew and Arabic RTL alignment in admin dashboard
+- June 29, 2025: COMPLETE ADMIN TRANSLATIONS OVERHAUL - Comprehensive translation system fixes
+  - PRODUCTS SECTION COMPLETE: Added full products translation sections to Russian and English (89 keys each)
+  - CATEGORIES SECTION COMPLETE: Added full categories translation sections to Russian and English (40+ keys each)  
+  - RTL LAYOUT FIXES: Fixed Hebrew and Arabic RTL alignment in admin dashboard
   - ADMIN DASHBOARD RTL: Fixed all isRTL definitions to include both Hebrew (he) and Arabic (ar) languages
   - PRODUCTS SECTION ALIGNMENT: Fixed Hebrew interface - title/description aligned right, add button aligned left
   - COMPREHENSIVE RTL COVERAGE: Updated all 4 isRTL definitions in admin-dashboard.tsx for proper RTL support
   - TRANSLATION CONSISTENCY: Ensured dashboard translations work properly in all 4 languages (RU/EN/HE/AR)
+  - MISSING KEYS RESOLVED: Added all translation keys used by admin panel (dialog forms, notifications, units, etc.)
 - June 29, 2025: IMAGEUPLOAD COMPONENT TRANSLATION FIXES - Fixed translation display issues in product management
   - CRITICAL NAMESPACE FIX: Moved imageUpload translations from admin.json to common.json across all languages
   - COMPONENT UPDATE: Changed ImageUpload to use useCommonTranslation instead of useAdminTranslation
