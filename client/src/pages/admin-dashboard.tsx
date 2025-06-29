@@ -5390,6 +5390,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   const handleMultilingualFieldChange = (fieldName: string, value: string) => {
     const currentLang = translationManager.currentLanguage;
     const defaultLang = translationManager.defaultLanguage;
+    console.log('handleMultilingualFieldChange called:', fieldName, value, 'lang:', currentLang);
     
     if (currentLang === defaultLang) {
       // For default language, save to base fields
@@ -5403,11 +5404,12 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
 
   // Save common fields (price, unit, categories, etc.) - same for all languages
   const handleCommonFieldChange = (fieldName: string, value: any) => {
+    console.log('handleCommonFieldChange called:', fieldName, value);
     setFormData((prev: any) => ({ ...prev, [fieldName]: value }));
   };
 
-  // Update form values when language changes
-  useEffect(() => {
+  // Update form values when language changes - TEMPORARILY DISABLED FOR DEBUGGING
+  /*useEffect(() => {
     if (open && formData && Object.keys(formData).length > 0) {
       const currentLang = translationManager.currentLanguage;
       const defaultLang = translationManager.defaultLanguage;
@@ -5436,7 +5438,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       form.setValue('name', nameValue);
       form.setValue('description', descriptionValue);
     }
-  }, [translationManager.currentLanguage, open]);
+  }, [translationManager.currentLanguage, open]);*/
   
   // Handle translation copy/clear
   const handleCopyAllFields = () => {
@@ -5550,6 +5552,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       {...field} 
                       className="text-sm"
                       onChange={(e) => {
+                        console.log('Name field onChange triggered:', e.target.value);
                         field.onChange(e);
                         handleMultilingualFieldChange('name', e.target.value);
                       }}
