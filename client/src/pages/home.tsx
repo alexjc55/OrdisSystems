@@ -567,7 +567,7 @@ export default function Home() {
                         <button
                           className="swiper-button-prev-custom w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary transition-colors shadow-sm"
                         >
-                          {currentLanguage === 'he' ? 
+                          {(currentLanguage === 'he' || currentLanguage === 'ar') ? 
                             <ChevronRight className="h-4 w-4" /> : 
                             <ChevronLeft className="h-4 w-4" />
                           }
@@ -575,7 +575,7 @@ export default function Home() {
                         <button
                           className="swiper-button-next-custom w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary transition-colors shadow-sm"
                         >
-                          {currentLanguage === 'he' ? 
+                          {(currentLanguage === 'he' || currentLanguage === 'ar') ? 
                             <ChevronLeft className="h-4 w-4" /> : 
                             <ChevronRight className="h-4 w-4" />
                           }
