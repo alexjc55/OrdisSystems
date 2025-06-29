@@ -1919,7 +1919,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
         {/* Search */}
         <div className="mb-4">
           <Input
-            placeholder={adminT('common.search')}
+            placeholder={adminT('actions.searchProducts')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="mb-3"
@@ -1969,7 +1969,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
             disabled={!selectedProduct || quantity <= 0}
             className="bg-green-600 hover:bg-green-700"
           >
-            {adminT('common.add')}
+            {adminT('actions.add')}
           </Button>
         </DialogFooter>
       </DialogContent>
