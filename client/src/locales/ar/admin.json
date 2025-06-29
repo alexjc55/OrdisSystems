@@ -7,7 +7,8 @@
     "categories": "الفئات",
     "users": "المستخدمون",
     "settings": "الإعدادات",
-    "themes": "المواضيع"
+    "themes": "المواضيع",
+    "permissions": "الصلاحيات"
   },
   "actions": {
     "searchProducts": "البحث في المنتجات...",
@@ -396,33 +397,28 @@
     "edit": "تعديل"
   },
   "dialog": {
-    "firstNameLabel": "الاسم الأول",
-    "lastNameLabel": "الاسم الأخير",
-    "emailLabel": "البريد الإلكتروني",
-    "passwordLabel": "كلمة المرور",
-    "newPasswordLabel": "كلمة مرور جديدة",
-    "roleLabel": "الدور",
-    "firstNamePlaceholder": "أدخل الاسم الأول",
-    "lastNamePlaceholder": "أدخل الاسم الأخير",
-    "emailPlaceholder": "أدخل البريد الإلكتروني",
-    "passwordPlaceholder": "أدخل كلمة المرور",
-    "passwordMinLength": "6 أحرف كحد أدنى",
-    "rolePlaceholder": "اختر الدور",
-    "firstNameRequired": "الاسم الأول مطلوب",
-    "lastNameRequired": "الاسم الأخير مطلوب",
-    "emailError": "بريد إلكتروني غير صحيح",
-    "editDescription": "تعديل معلومات المستخدم",
-    "addDescription": "إضافة مستخدم جديد للنظام",
-    "phoneLabel": "الهاتف",
-    "phonePlaceholder": "أدخل رقم الهاتف",
-    "deleteWarning": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف المستخدم نهائياً."
+    "editUser": "تعديل المستخدم",
+    "createUser": "إنشاء مستخدم",
+    "editProduct": "تعديل المنتج",
+    "createProduct": "إنشاء منتج",
+    "editCategory": "تعديل الفئة",
+    "createCategory": "إنشاء فئة",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "selectRole": "اختر الدور"
   },
   "table": {
-    "role": "الدور",
     "name": "الاسم",
-    "phone": "الهاتف",
-    "orders": "الطلبات",
-    "totalAmount": "المبلغ الإجمالي"
+    "email": "البريد الإلكتروني",
+    "role": "الدور",
+    "actions": "الإجراءات",
+    "status": "الحالة",
+    "price": "السعر",
+    "category": "الفئة",
+    "description": "الوصف",
+    "image": "الصورة",
+    "unit": "الوحدة"
   },
   "storeSettings": {
     "basicInfo": "المعلومات الأساسية",
@@ -514,5 +510,9 @@
     "canViewSettings": "عرض الإعدادات",
     "canManageSettings": "إدارة الإعدادات",
     "canManageThemes": "إدارة المواضيع"
+  },
+  "systemSettings": {
+    "canManageThemes": "إدارة المواضيع",
+    "canManageThemesDescription": "السماح للموظف بإدارة مواضيع التصميم"
   }
 }

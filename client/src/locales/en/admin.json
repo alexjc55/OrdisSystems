@@ -594,7 +594,8 @@
     "cancel": "Cancel"
   },
   "tabs": {
-    "settings": "Settings"
+    "settings": "Settings",
+    "permissions": "Permissions"
   },
   "themeFormLabels": {
     "name": "Theme Name",
@@ -647,33 +648,28 @@
     "edit": "Edit"
   },
   "dialog": {
-    "firstNameLabel": "First Name",
-    "lastNameLabel": "Last Name",
-    "emailLabel": "Email",
-    "passwordLabel": "Password",
-    "newPasswordLabel": "New Password",
-    "roleLabel": "Role",
-    "firstNamePlaceholder": "Enter first name",
-    "lastNamePlaceholder": "Enter last name",
-    "emailPlaceholder": "Enter email",
-    "passwordPlaceholder": "Enter password",
-    "passwordMinLength": "Minimum 6 characters",
-    "rolePlaceholder": "Select role",
-    "firstNameRequired": "First name is required",
-    "lastNameRequired": "Last name is required",
-    "emailError": "Invalid email",
-    "editDescription": "Edit user information",
-    "addDescription": "Add new user to the system",
-    "phoneLabel": "Phone",
-    "phonePlaceholder": "Enter phone number",
-    "deleteWarning": "This action cannot be undone. The user will be permanently deleted."
+    "editUser": "Edit User",
+    "createUser": "Create User",
+    "editProduct": "Edit Product",
+    "createProduct": "Create Product",
+    "editCategory": "Edit Category",
+    "createCategory": "Create Category",
+    "username": "Username",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "selectRole": "Select Role"
   },
   "table": {
-    "role": "Role",
     "name": "Name",
-    "phone": "Phone",
-    "orders": "Orders",
-    "totalAmount": "Total Amount"
+    "email": "Email",
+    "role": "Role",
+    "actions": "Actions",
+    "status": "Status",
+    "price": "Price",
+    "category": "Category",
+    "description": "Description",
+    "image": "Image",
+    "unit": "Unit"
   },
   "settings": {
     "title": "Store Settings",
@@ -705,5 +701,9 @@
     "closeTime": "Close Time",
     "closed": "Closed",
     "saveSettings": "Save Settings"
+  },
+  "systemSettings": {
+    "canManageThemes": "Manage Themes",
+    "canManageThemesDescription": "Allow employee to manage design themes"
   }
 }

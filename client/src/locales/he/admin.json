@@ -2,7 +2,8 @@
   "title": "הגדרות",
   "description": "ניהול חנות",
   "tabs": {
-    "settings": "הגדרות"
+    "settings": "הגדרות",
+    "permissions": "הרשאות"
   },
   "actions": {
     "add": "הוסף",
@@ -347,30 +348,8 @@
     "canManageThemes": "ניהול ערכות עיצוב"
   },
   "systemSettings": {
-    "title": "הגדרות מערכת",
-    "description": "ניהול הרשאות גישה לעובדים",
-    "workerPermissions": "הרשאות גישה לעובדים",
-    "workerPermissionsDescription": "הגדר לאילו חלקים בלוח הבקרה יש גישה למשתמשים עם תפקיד \"עובד\"",
-    "canManageProducts": "ניהול מוצרים",
-    "canManageProductsDescription": "הוספה, עריכה ומחיקה של מוצרים",
-    "canManageCategories": "ניהול קטגוריות",
-    "canManageCategoriesDescription": "יצירה ועריכה של קטגוריות מוצרים",
-    "canViewOrders": "צפייה בהזמנות",
-    "canViewOrdersDescription": "גישה לרשימת הזמנות ופרטים",
-    "canEditOrders": "ניהול הזמנות",
-    "canEditOrdersDescription": "צפייה ושינוי סטטוס הזמנות",
-    "canViewUsers": "צפייה במשתמשים",
-    "canViewUsersDescription": "גישה לרשימת משתמשי המערכת",
-    "canManageSettings": "ניהול הגדרות",
-    "canManageSettingsDescription": "גישה להגדרות חנות ומערכת",
-    "canManageUsers": "ניהול משתמשים",
-    "canManageUsersDescription": "עריכה ומחיקה של משתמשים",
-    "canViewSettings": "צפייה בהגדרות",
-    "canViewSettingsDescription": "גישה להגדרות חנות (קריאה בלבד)",
-    "canViewAnalytics": "צפייה באנליטיקה",
-    "canViewAnalyticsDescription": "גישה לדוחות וסטטיסטיקות",
-    "canManageThemes": "ניהול ערכות נושא",
-    "canManageThemesDescription": "הגדרת מראה וערכות נושא"
+    "canManageThemes": "ניהול ערכות עיצוב",
+    "canManageThemesDescription": "אפשר לעובד לנהל ערכות עיצוב"
   },
   "settings": {
     "title": "הגדרות חנות",
@@ -912,32 +891,27 @@
     "edit": "ערוך"
   },
   "dialog": {
-    "firstNameLabel": "שם פרטי",
-    "lastNameLabel": "שם משפחה",
-    "emailLabel": "אימייל",
-    "passwordLabel": "סיסמה",
-    "newPasswordLabel": "סיסמה חדשה",
-    "roleLabel": "תפקיד",
-    "firstNamePlaceholder": "הכנס שם פרטי",
-    "lastNamePlaceholder": "הכנס שם משפחה",
-    "emailPlaceholder": "הכנס אימייל",
-    "passwordPlaceholder": "הכנס סיסמה",
-    "passwordMinLength": "מינימום 6 תווים",
-    "rolePlaceholder": "בחר תפקיד",
-    "firstNameRequired": "שם פרטי נדרש",
-    "lastNameRequired": "שם משפחה נדרש",
-    "emailError": "אימייל לא תקין",
-    "editDescription": "ערוך פרטי משתמש",
-    "addDescription": "הוסף משתמש חדש למערכת",
-    "phoneLabel": "טלפון",
-    "phonePlaceholder": "הכנס מספר טלפון",
-    "deleteWarning": "פעולה זו לא ניתנת לביטול. המשתמש יימחק לצמיתות."
+    "editUser": "עריכת משתמש",
+    "createUser": "יצירת משתמש",
+    "editProduct": "עריכת מוצר",
+    "createProduct": "יצירת מוצר",
+    "editCategory": "עריכת קטגוריה",
+    "createCategory": "יצירת קטגוריה",
+    "username": "שם משתמש",
+    "password": "סיסמה",
+    "confirmPassword": "אישור סיסמה",
+    "selectRole": "בחר תפקיד"
   },
   "table": {
-    "role": "תפקיד",
     "name": "שם",
-    "phone": "טלפון",
-    "orders": "הזמנות",
-    "totalAmount": "סכום כולל"
+    "email": "אימייל",
+    "role": "תפקיד",
+    "actions": "פעולות",
+    "status": "מצב",
+    "price": "מחיר",
+    "category": "קטגוריה",
+    "description": "תיאור",
+    "image": "תמונה",
+    "unit": "יחידה"
   }
 }

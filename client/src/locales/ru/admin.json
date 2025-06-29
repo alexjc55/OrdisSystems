@@ -2,7 +2,8 @@
   "title": "Настройки",
   "description": "Управление магазином",
   "tabs": {
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "permissions": "Права доступа"
   },
   "actions": {
     "add": "Добавить",
@@ -547,33 +548,28 @@
     "edit": "Редактировать"
   },
   "dialog": {
-    "firstNameLabel": "Имя",
-    "lastNameLabel": "Фамилия",
-    "emailLabel": "Email",
-    "passwordLabel": "Пароль",
-    "newPasswordLabel": "Новый пароль",
-    "roleLabel": "Роль",
-    "firstNamePlaceholder": "Введите имя",
-    "lastNamePlaceholder": "Введите фамилию",
-    "emailPlaceholder": "Введите email",
-    "passwordPlaceholder": "Введите пароль",
-    "passwordMinLength": "Минимум 6 символов",
-    "rolePlaceholder": "Выберите роль",
-    "firstNameRequired": "Имя обязательно",
-    "lastNameRequired": "Фамилия обязательна",
-    "emailError": "Некорректный email",
-    "editDescription": "Редактировать информацию пользователя",
-    "addDescription": "Добавить нового пользователя в систему",
-    "phoneLabel": "Телефон",
-    "phonePlaceholder": "Введите номер телефона",
-    "deleteWarning": "Это действие нельзя отменить. Пользователь будет удален навсегда."
+    "editUser": "Редактировать пользователя",
+    "createUser": "Создать пользователя",
+    "editProduct": "Редактировать товар",
+    "createProduct": "Создать товар",
+    "editCategory": "Редактировать категорию",
+    "createCategory": "Создать категорию",
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "confirmPassword": "Подтвердить пароль",
+    "selectRole": "Выберите роль"
   },
   "table": {
+    "name": "Название",
+    "email": "Email",
     "role": "Роль",
-    "name": "Имя",
-    "phone": "Телефон",
-    "orders": "Заказы",
-    "totalAmount": "Общая сумма"
+    "actions": "Действия",
+    "status": "Статус",
+    "price": "Цена",
+    "category": "Категория",
+    "description": "Описание",
+    "image": "Изображение",
+    "unit": "Единица"
   },
   "settings": {
     "title": "Настройки магазина",
@@ -693,5 +689,9 @@
     "canViewSettings": "Просмотр настроек",
     "canManageSettings": "Управление настройками",
     "canManageThemes": "Управление темами"
+  },
+  "systemSettings": {
+    "canManageThemes": "Управление темами",
+    "canManageThemesDescription": "Разрешить сотруднику управлять темами оформления"
   }
 }
