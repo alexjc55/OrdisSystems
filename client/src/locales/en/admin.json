@@ -139,16 +139,16 @@
       "disable": "Disable product"
     },
     "notifications": {
-      "productCreated": "Product created",
-      "productCreatedDesc": "New product has been added to catalog",
-      "productUpdated": "Product updated",
-      "productUpdatedDesc": "Product information has been updated",
+      "productCreated": "Product Created",
+      "productCreatedDesc": "New product added successfully",
+      "productUpdated": "Product Updated",
+      "productUpdatedDesc": "Product changes saved successfully",
       "productDeleted": "Product deleted",
       "productDeletedDesc": "Product has been removed from catalog",
       "statusUpdated": "Status updated",
       "statusUpdatedDesc": "Product status has been changed",
       "availabilityUpdated": "Availability updated",
-      "createError": "Failed to create product",
+      "createError": "Error creating product",
       "updateError": "Failed to update product",
       "deleteError": "Failed to delete product",
       "statusError": "Failed to change status",
@@ -319,14 +319,14 @@
     "notifications": {
       "categoryCreated": "Category created",
       "categoryCreatedDesc": "New category has been added to the system",
-      "categoryUpdated": "Category updated",
-      "categoryUpdatedDesc": "Category information has been updated",
+      "categoryUpdated": "Category Updated",
+      "categoryUpdatedDesc": "Category changes saved successfully",
       "categoryDeleted": "Category deleted",
       "categoryDeletedDesc": "Category has been removed from the system",
       "orderUpdated": "Order updated",
       "orderUpdatedDesc": "Category order has been changed",
       "createError": "Failed to create category",
-      "updateError": "Failed to update category",
+      "updateError": "Error updating category",
       "deleteError": "Failed to delete category",
       "deleteErrorWithProducts": "Failed to delete category with products",
       "deleteErrorWithProductsDesc": "Cannot delete category that contains products",
@@ -731,6 +731,10 @@
     "canViewSettings": "View Settings",
     "canViewSettingsDescription": "Allow employee to view settings",
     "canManageSettings": "Manage Settings",
-    "canManageSettingsDescription": "Allow employee to manage settings"
+    "canManageSettingsDescription": "Allow employee to manage settings",
+    "title": "Access Permissions",
+    "description": "Manage employee access permissions",
+    "workerPermissions": "Employee Permissions",
+    "workerPermissionsDescription": "Configure access permissions for employees"
   }
 }

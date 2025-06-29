@@ -189,18 +189,24 @@
       "100ml": "لكل 100 مل"
     },
     "notifications": {
-      "createError": "فشل في إنشاء المنتج",
+      "createError": "خطأ في إنشاء المنتج",
       "deleteError": "فشل في حذف المنتج",
       "statusError": "فشل في تغيير حالة المنتج",
-      "availabilityError": "فشل في تغيير التوفر"
+      "availabilityError": "فشل في تغيير التوفر",
+      "productCreated": "تم إنشاء المنتج",
+      "productCreatedDesc": "تم إضافة منتج جديد بنجاح",
+      "productUpdated": "تم تحديث المنتج",
+      "productUpdatedDesc": "تم حفظ تغييرات المنتج بنجاح"
     }
   },
   "categories": {
     "title": "الفئات",
     "description": "إدارة فئات المنتجات",
     "notifications": {
-      "updateError": "فشل في تحديث الفئة",
-      "createError": "فشل في إنشاء الفئة"
+      "updateError": "خطأ في تحديث الفئة",
+      "createError": "فشل في إنشاء الفئة",
+      "categoryUpdated": "تم تحديث الفئة",
+      "categoryUpdatedDesc": "تم حفظ تغييرات الفئة بنجاح"
     }
   },
   "dashboard": {
@@ -542,6 +548,10 @@
     "canViewSettings": "عرض الإعدادات",
     "canViewSettingsDescription": "السماح للموظف بعرض الإعدادات",
     "canManageSettings": "إدارة الإعدادات",
-    "canManageSettingsDescription": "السماح للموظف بإدارة الإعدادات"
+    "canManageSettingsDescription": "السماح للموظف بإدارة الإعدادات",
+    "title": "صلاحيات الوصول",
+    "description": "إدارة صلاحيات الوصول للموظفين",
+    "workerPermissions": "صلاحيات الموظفين",
+    "workerPermissionsDescription": "تكوين صلاحيات الوصول للموظفين"
   }
 }
