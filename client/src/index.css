@@ -193,6 +193,46 @@ button:focus,
     text-align: right !important;
   }
   
+  /* Header banner elements should remain centered on RTL languages */
+  html[lang="ar"] .header-banner,
+  html[lang="ar"] .header-banner *,
+  html[lang="ar"] .header-banner h1,
+  html[lang="ar"] .header-banner h2,
+  html[lang="ar"] .header-banner h3,
+  html[lang="ar"] .header-banner p,
+  html[lang="ar"] .header-banner button,
+  html[lang="ar"] .header-banner .flex,
+  html[lang="ar"] .header-banner .text-center,
+  html[lang="he"] .header-banner,
+  html[lang="he"] .header-banner *,
+  html[lang="he"] .header-banner h1,
+  html[lang="he"] .header-banner h2,
+  html[lang="he"] .header-banner h3,
+  html[lang="he"] .header-banner p,
+  html[lang="he"] .header-banner button,
+  html[lang="he"] .header-banner .flex,
+  html[lang="he"] .header-banner .text-center {
+    text-align: center !important;
+    justify-content: center !important;
+    align-items: center !important;
+    direction: ltr !important;
+  }
+
+  /* Specific header banner container centering */
+  html[lang="ar"] .banner-content,
+  html[lang="ar"] .banner-wrapper,
+  html[lang="ar"] .header-content,
+  html[lang="he"] .banner-content,
+  html[lang="he"] .banner-wrapper,
+  html[lang="he"] .header-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    direction: ltr !important;
+  }
+
   /* Footer should always remain LTR - Override all RTL rules */
   html[lang="ar"] footer,
   html[lang="ar"] footer *,

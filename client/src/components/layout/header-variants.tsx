@@ -63,8 +63,8 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
       
       {/* Text Content Section Below Banner - Only show if enabled */}
       {storeSettings?.showTitleDescription !== false && (
-        <div className="bg-gray-50 py-12 text-center">
-          <div className="container mx-auto px-6">
+        <div className="header-banner bg-gray-50 py-12 text-center">
+          <div className="banner-content container mx-auto px-6">
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
               {storeSettings.welcomeTitle || "О нашей еде"}
             </h1>
@@ -192,8 +192,8 @@ function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any,
         
         {/* Content with internal padding - Only show title/description if enabled */}
         {storeSettings?.showTitleDescription !== false && (
-          <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
-            <div className="max-w-sm sm:max-w-2xl md:max-w-4xl mx-auto">
+          <div className="header-banner relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
+            <div className="banner-content max-w-sm sm:max-w-2xl md:max-w-4xl mx-auto">
               <h1 
                 className="font-bold text-white mb-4 sm:mb-4 leading-none modern-header-title"
                 style={{ 
@@ -255,8 +255,8 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
         
         {/* Content - Only show title/description if enabled */}
         {storeSettings?.showTitleDescription !== false && (
-          <div className="relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
-            <div className="max-w-3xl mx-auto">
+          <div className="header-banner relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
+            <div className="banner-content max-w-3xl mx-auto">
               <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold sm:font-light text-gray-900 mb-2 sm:mb-4 tracking-wide">
                 {storeSettings.welcomeTitle || "eDAHouse"}
               </h1>
