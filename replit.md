@@ -153,6 +153,7 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
     - Added CSS override to force footer LTR direction on Arabic language (html[lang="ar"] footer)
   - USER EXPERIENCE: All language interfaces now display proper text labels instead of error messages
   - LANGUAGE SUPPORT: Complete translation coverage for all languages (RU/EN/HE/AR)
+  - UNIT DUPLICATION FIX: Removed duplicate "لكل" from Arabic unit translations (per100g, per100ml) to fix "لكل لكل 100 جرام" issue
 - June 28, 2025: Fixed Arabic RTL layout for admin products page
   - CRITICAL RTL FIX: Resolved Arabic language layout issues in admin dashboard products section
   - HYBRID LAYOUT IMPLEMENTATION: RTL container with LTR table for optimal Arabic UX
