@@ -172,15 +172,35 @@
   },
   "profile": {
     "title": "Профиль",
-    "personalInfo": "Личная информация",
-    "addresses": "Адреса доставки",
-    "orderHistory": "История заказов",
+    "myOrders": "Мои заказы",
+    "myAddresses": "Мои адреса",
     "settings": "Настройки",
-    "changePassword": "Изменить пароль",
+    "orderHistory": "История заказов",
+    "noOrders": "Заказы не найдены",
+    "orderNumber": "Заказ №",
+    "orderDate": "Дата заказа",
+    "orderStatus": "Статус",
+    "orderTotal": "Итого",
+    "viewDetails": "Подробности",
     "addAddress": "Добавить адрес",
-    "defaultAddress": "Адрес по умолчанию",
-    "editProfile": "Редактировать профиль",
-    "saveChanges": "Сохранить изменения"
+    "editAddress": "Редактировать адрес",
+    "deleteAddress": "Удалить адрес",
+    "addressLabel": "Название адреса",
+    "fullAddress": "Полный адрес",
+    "phone": "Телефон",
+    "defaultAddress": "Основной адрес",
+    "makeDefault": "Сделать основным",
+    "personalInfo": "Личная информация",
+    "changePassword": "Изменить пароль",
+    "logout": "Выйти",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "edit": "Изменить",
+    "delete": "Удалить",
+    "confirm": "Подтвердить",
+    "close": "Закрыть",
+    "manageAccount": "Управляйте своими заказами и настройками",
+    "noOrdersDescription": "Вы еще не сделали ни одного заказа"
   },
   "checkout": {
     "title": "Страница оформления",
@@ -580,5 +600,12 @@
     "description": "Товар",
     "keywords": "Товар",
     "title": "Товар"
+  },
+  "orderStatus": {
+    "pending": "Ожидает подтверждения",
+    "confirmed": "Подтвержден",
+    "ready": "Готов к выдаче",
+    "delivered": "Доставлен",
+    "cancelled": "Отменен"
   }
 }

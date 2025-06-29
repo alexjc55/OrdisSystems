@@ -126,5 +126,44 @@
     "weight": "Weight"
   },
   "outOfStockToday": "Out of stock today",
-  "orderForTomorrow": "Order for tomorrow"
+  "orderForTomorrow": "Order for tomorrow",
+  "profile": {
+    "title": "Profile",
+    "myOrders": "My Orders",
+    "myAddresses": "My Addresses",
+    "settings": "Settings",
+    "orderHistory": "Order History",
+    "noOrders": "No orders found",
+    "orderNumber": "Order #",
+    "orderDate": "Order Date",
+    "orderStatus": "Status",
+    "orderTotal": "Total",
+    "viewDetails": "View Details",
+    "addAddress": "Add Address",
+    "editAddress": "Edit Address",
+    "deleteAddress": "Delete Address",
+    "addressLabel": "Address Label",
+    "fullAddress": "Full Address",
+    "phone": "Phone",
+    "defaultAddress": "Default Address",
+    "makeDefault": "Make Default",
+    "personalInfo": "Personal Information",
+    "changePassword": "Change Password",
+    "logout": "Logout",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "close": "Close",
+    "manageAccount": "Manage your orders and settings",
+    "noOrdersDescription": "You have not made any orders yet"
+  },
+  "orderStatus": {
+    "pending": "Pending confirmation",
+    "confirmed": "Confirmed",
+    "ready": "Ready for pickup",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled"
+  }
 }

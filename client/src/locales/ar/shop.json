@@ -498,15 +498,35 @@
   },
   "profile": {
     "title": "الملف الشخصي",
-    "personalInfo": "المعلومات الشخصية",
-    "addresses": "العناوين",
-    "orderHistory": "تاريخ الطلبات",
+    "myOrders": "طلباتي",
+    "myAddresses": "عناويني",
     "settings": "الإعدادات",
-    "changePassword": "تغيير كلمة المرور",
+    "orderHistory": "تاريخ الطلبات",
+    "noOrders": "لم يتم العثور على طلبات",
+    "orderNumber": "طلب رقم",
+    "orderDate": "تاريخ الطلب",
+    "orderStatus": "الحالة",
+    "orderTotal": "المجموع",
+    "viewDetails": "عرض التفاصيل",
     "addAddress": "إضافة عنوان",
+    "editAddress": "تحرير العنوان",
+    "deleteAddress": "حذف العنوان",
+    "addressLabel": "تسمية العنوان",
+    "fullAddress": "العنوان الكامل",
+    "phone": "الهاتف",
     "defaultAddress": "العنوان الافتراضي",
-    "editProfile": "تحرير الملف الشخصي",
-    "saveChanges": "حفظ التغييرات"
+    "makeDefault": "جعل افتراضي",
+    "personalInfo": "المعلومات الشخصية",
+    "changePassword": "تغيير كلمة المرور",
+    "logout": "تسجيل الخروج",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "edit": "تحرير",
+    "delete": "حذف",
+    "confirm": "تأكيد",
+    "close": "إغلاق",
+    "manageAccount": "إدارة طلباتك وإعداداتك",
+    "noOrdersDescription": "لم تقم بعمل أي طلبات بعد"
   },
   "whatsapp": {
     "defaultMessage": "الرسالة الافتراضية",
@@ -538,5 +558,12 @@
     "orderTotal": "إجمالي الطلب",
     "trackOrder": "تتبع الطلب",
     "viewDetails": "عرض التفاصيل"
+  },
+  "orderStatus": {
+    "pending": "في انتظار التأكيد",
+    "confirmed": "مؤكد",
+    "ready": "جاهز للاستلام",
+    "delivered": "تم التسليم",
+    "cancelled": "ملغي"
   }
 }
