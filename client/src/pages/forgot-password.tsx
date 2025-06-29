@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, ArrowLeft, Check } from "lucide-react";
 import { Link } from "wouter";
+import { useCommonTranslation } from "@/hooks/use-language";
 
 export default function ForgotPasswordPage() {
+  const { t } = useCommonTranslation();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -25,10 +27,10 @@ export default function ForgotPasswordPage() {
       setError("");
     },
     onError: (error: any) => {
-      setError(error.message || "Произошла ошибка при отправке запроса");
+      setError(error.message || t('auth.passwordResetError'));
       toast({
-        title: "Ошибка",
-        description: error.message || "Не удалось отправить запрос на сброс пароля",
+        title: t('status.error'),
+        description: error.message || t('auth.passwordResetError'),
         variant: "destructive",
       });
     },
@@ -38,12 +40,12 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     
     if (!email) {
-      setError("Введите email адрес");
+      setError(t('validation.emailRequired'));
       return;
     }
     
     if (!/\S+@\S+\.\S+/.test(email)) {
-      setError("Введите корректный email адрес");
+      setError(t('validation.emailInvalid'));
       return;
     }
     
@@ -57,19 +59,19 @@ export default function ForgotPasswordPage() {
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <Check className="h-12 w-12 text-green-500 mx-auto mb-4" />
-            <CardTitle>Запрос отправлен</CardTitle>
+            <CardTitle>{t('auth.passwordResetSent')}</CardTitle>
             <CardDescription>
-              Если пользователь с таким email существует, инструкции по сбросу пароля отправлены на указанный адрес
+              {t('auth.passwordResetInstructions')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-gray-600 text-center">
-              Проверьте папку "Спам", если письмо не пришло в течение нескольких минут
+              {t('auth.checkSpamFolder')}
             </p>
             <div className="flex gap-2">
               <Link href="/auth" className="flex-1">
                 <Button variant="outline" className="w-full">
-                  Назад к входу
+                  {t('auth.backToLogin')}
                 </Button>
               </Link>
               <Button 

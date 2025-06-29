@@ -218,7 +218,7 @@ export default function ChangePasswordPage() {
                 
                 <Link href="/">
                   <Button type="button" variant="outline">
-                    Отмена
+                    {t('actions.cancel')}
                   </Button>
                 </Link>
               </div>
