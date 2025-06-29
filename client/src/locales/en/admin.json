@@ -550,7 +550,8 @@
     "accentColor": "Accent Color",
     "buttonTextDefault": "Order Now",
     "whatsappMessageDefault": "Hello! I am interested in your products.",
-    "whatsappChat": "WhatsApp Chat"
+    "whatsappChat": "WhatsApp Chat",
+    "cartBannerTextPlaceholder": "Enter cart banner text"
   },
   "colorLabels": {
     "primaryColor": "Primary Color",

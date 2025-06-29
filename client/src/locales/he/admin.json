@@ -44,7 +44,7 @@
     "activateError": "נכשל בהפעלת עיצוב",
     "deleteSuccess": "עיצוב נמחק בהצלחה",
     "deleteError": "נכשל במחיקת עיצוב",
-    "editTheme": "ערוך עיצוב",
+    "editTheme": "ערוך ערכה",
     "deleteTheme": "מחק עיצוב",
     "activateTheme": "הפעל",
     "activeTheme": "עיצוב פעיל",
@@ -176,7 +176,8 @@
     "primaryDarkColor": "ראשי כהה",
     "primaryLightColor": "ראשי בהיר",
     "secondaryColor": "צבע משני",
-    "accentColor": "צבע הדגשה"
+    "accentColor": "צבע הדגשה",
+    "cartBannerTextPlaceholder": "הכנס טקסט באנר עגלה"
   },
   "colorLabels": {
     "primaryColor": "צבע עיקרי",

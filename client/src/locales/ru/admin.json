@@ -69,8 +69,8 @@
     "mainInterfaceElements": "Основные элементы интерфейса",
     "infoBlocksPosition": "Позиция информационных блоков",
     "bannerImageSize": "Рекомендуемый размер: 800x200 пикселей",
-    "infoBlocksTop": "Над товарами",
-    "infoBlocksBottom": "Под товарами",
+    "infoBlocksTop": "Сверху от товаров",
+    "infoBlocksBottom": "Снизу от товаров",
     "additionalFeatures": "Дополнительные функции",
     "brandSection": "Раздел бренда",
     "statusSection": "Раздел статуса",
@@ -133,7 +133,8 @@
     "accentColor": "Акцентный цвет",
     "buttonTextDefault": "Заказать сейчас",
     "whatsappMessageDefault": "Здравствуйте! Интересует ваша продукция.",
-    "whatsappChat": "WhatsApp чат"
+    "whatsappChat": "WhatsApp чат",
+    "cartBannerTextPlaceholder": "Введите текст баннера корзины"
   },
   "colorLabels": {
     "primaryColor": "Основной цвет",
