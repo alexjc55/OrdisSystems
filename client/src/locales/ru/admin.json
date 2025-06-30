@@ -622,6 +622,8 @@
     "title": "Пользователи",
     "description": "Управление пользователями системы",
     "createUser": "Создать пользователя",
+    "allRoles": "Все роли",
+    "searchPlaceholder": "Поиск пользователей...",
     "role": "Роль",
     "permissions": "Права доступа",
     "notifications": {

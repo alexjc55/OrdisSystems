@@ -769,6 +769,8 @@
     "title": "משתמשים",
     "description": "ניהול משתמשי המערכת",
     "createUser": "צור משתמש",
+    "allRoles": "כל התפקידים",
+    "searchPlaceholder": "חיפוש משתמשים...",
     "role": "תפקיד",
     "permissions": "הרשאות",
     "notifications": {
