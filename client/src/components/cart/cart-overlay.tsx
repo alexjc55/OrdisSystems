@@ -30,12 +30,12 @@ export default function CartOverlay() {
   const { user } = useAuth();
   
   // Fetch current products data to get translations
-  const { data: products = [] } = useQuery({
+  const { data: productsData = [] } = useQuery({
     queryKey: ['/api/products'],
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
   
-  const productsList = products as any[];
+  const productsList = productsData as any[];
   const { storeSettings } = useStoreSettings();
   const { toast } = useToast();
   const { t } = useShopTranslation();
