@@ -101,8 +101,15 @@ export default function CartSidebar() {
 
   // Calculate total price for an item based on product and quantity
   const calculateItemTotal = (product: Product, quantity: number) => {
-    const basePrice = parseFloat(product.pricePerKg || product.price);
-    return (basePrice * quantity).toFixed(2);
+    if (product.unit === 'per100g' && product.pricePerKg) {
+      // For per100g items, price is already per 100g, so calculate based on actual weight
+      const pricePerGram = parseFloat(product.pricePerKg) / 100;
+      return (pricePerGram * quantity).toFixed(2);
+    } else {
+      // For regular items, use standard calculation
+      const basePrice = parseFloat(product.pricePerKg || product.price);
+      return (basePrice * quantity).toFixed(2);
+    }
   };
 
   return (
