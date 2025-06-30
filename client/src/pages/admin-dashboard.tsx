@@ -852,12 +852,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
   // Helper functions for order items editing
   const getUnitDisplay = (unit: string, quantity: number) => {
+    // Format quantity as whole number without decimal places
+    const qty = Math.round(quantity);
     switch (unit) {
-      case 'piece': return adminT('products.units.piece');
-      case 'kg': return adminT('products.units.kg');
-      case '100g': return adminT('products.units.g');
-      case '100ml': return adminT('products.units.ml');
-      default: return '';
+      case 'piece': return `${qty} ${adminT('products.units.piece')}`;
+      case 'kg': return `${qty} ${adminT('products.units.kg')}`;
+      case '100g': return `${qty} ${adminT('products.units.g')}`;
+      case '100ml': return `${qty} ${adminT('products.units.ml')}`;
+      default: return `${qty}`;
     }
   };
 
@@ -1469,16 +1471,17 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     </div>
                   </TableCell>
                   <TableCell className="text-sm">
-                    <div className="flex items-center gap-1">
+                    <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <Input
                         type="number"
                         step="0.1"
                         min="0.1"
                         value={item.quantity}
                         onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
-                        className="w-20 h-7 text-xs"
+                        className={`w-20 h-7 text-xs ${isRTL ? 'text-right' : ''}`}
+                        dir="ltr"
                       />
-                      <span className="text-xs text-gray-500">
+                      <span className={`text-xs text-gray-500 ${isRTL ? 'text-right' : ''}`} dir="ltr">
                         {getUnitDisplay(item.product?.unit, item.quantity)}
                       </span>
                     </div>
@@ -1589,16 +1592,17 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               {/* Compact Controls Row */}
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Input
                       type="number"
                       step="0.1"
                       min="0.1"
                       value={item.quantity}
                       onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
-                      className="h-7 text-sm w-20 text-center"
+                      className={`h-7 text-sm w-20 ${isRTL ? 'text-right' : 'text-center'}`}
+                      dir="ltr"
                     />
-                    <span className="text-sm text-gray-600 min-w-[40px] flex-shrink-0">
+                    <span className={`text-sm text-gray-600 min-w-[40px] flex-shrink-0 ${isRTL ? 'text-right' : ''}`} dir="ltr">
                       {getUnitDisplay(item.product?.unit, item.quantity)}
                     </span>
                   </div>

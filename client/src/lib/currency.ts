@@ -101,23 +101,23 @@ export function formatQuantity(quantity: number | string, unit: ProductUnit, t?:
   
   switch (unit) {
     case "100g":
-      // For 100g products, quantity is already in grams
+      // For 100g products, quantity is already in grams - show as whole numbers
       if (quantityNum >= 1000) {
-        return `${(quantityNum / 1000).toFixed(2)} ${t ? t('units.kg') : 'кг'}`;
+        return `${Math.round(quantityNum / 1000)} ${t ? t('units.kg') : 'кг'}`;
       }
-      return `${quantityNum.toFixed(0)}${t ? t('units.g') : 'г'}`;
+      return `${Math.round(quantityNum)} ${t ? t('units.g') : 'г'}`;
     case "100ml":
-      // For 100ml products, quantity is already in ml
+      // For 100ml products, quantity is already in ml - show as whole numbers
       if (quantityNum >= 1000) {
-        return `${(quantityNum / 1000).toFixed(2)} ${t ? t('units.l') : 'л'}`;
+        return `${Math.round(quantityNum / 1000)} ${t ? t('units.l') : 'л'}`;
       }
-      return `${quantityNum.toFixed(0)}${t ? t('units.ml') : 'мл'}`;
+      return `${Math.round(quantityNum)} ${t ? t('units.ml') : 'мл'}`;
     case "piece":
-      return `${quantityNum.toFixed(0)} ${t ? t('units.piece') : 'шт'}`;
+      return `${Math.round(quantityNum)} ${t ? t('units.piece') : 'шт'}`;
     case "kg":
-      return `${quantityNum.toFixed(2)} ${t ? t('units.kg') : 'кг'}`;
+      return `${Math.round(quantityNum)} ${t ? t('units.kg') : 'кг'}`;
     default:
-      return quantityNum.toString();
+      return Math.round(quantityNum).toString();
   }
 }
 

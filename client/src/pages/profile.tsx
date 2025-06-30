@@ -1008,7 +1008,7 @@ export default function Profile() {
                                   <div className="text-sm text-gray-500">{getLocalizedField(item.product, 'description', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}</div>
                                 </div>
                               </TableCell>
-                              <TableCell>
+                              <TableCell dir="ltr">
                                 {formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit, tShop)}
                               </TableCell>
                               <TableCell>
