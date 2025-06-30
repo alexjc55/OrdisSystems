@@ -3,7 +3,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { useCommonTranslation, useShopTranslation } from "@/hooks/use-language";
+import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -27,6 +28,7 @@ export default function Profile() {
   const { toast } = useToast();
   const { t } = useCommonTranslation();
   const { t: tShop } = useShopTranslation();
+  const { currentLanguage } = useLanguage();
   const queryClient = useQueryClient();
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
@@ -829,7 +831,7 @@ export default function Profile() {
                               >
                                 {order.items.slice(0, 2).map((item, index) => (
                                   <div key={index} className="text-sm">
-                                    {item.product.name} ({formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit, tShop)})
+                                    {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)} ({formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit, tShop)})
                                   </div>
                                 ))}
                                 {order.items.length > 2 && (
@@ -1002,8 +1004,8 @@ export default function Profile() {
                             <TableRow key={item.id}>
                               <TableCell>
                                 <div>
-                                  <div className="font-medium">{item.product.name}</div>
-                                  <div className="text-sm text-gray-500">{item.product.description}</div>
+                                  <div className="font-medium">{getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}</div>
+                                  <div className="text-sm text-gray-500">{getLocalizedField(item.product, 'description', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}</div>
                                 </div>
                               </TableCell>
                               <TableCell>
