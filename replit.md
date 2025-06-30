@@ -131,14 +131,15 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
-- June 30, 2025: COMPLETED MULTILINGUAL SYSTEM WITHOUT FALLBACK TRANSLATIONS AND HEADER COMPONENTS UPDATE
-  - CRITICAL SYSTEM EXPLANATION: Unified multilingual system working as designed - no fallback translations
-  - HEADER COMPONENTS FIXED: Updated all header components (ClassicHeader, ModernHeader, MinimalHeader, Navigation) to use getMultilingualValue function
-  - NAVIGATION PANEL FIX: Store name in top navigation now displays correctly based on selected language
-  - BANNER BEHAVIOR: Banner shows only content available for selected language (if no description in Hebrew, only store name appears)
-  - TECHNICAL IMPLEMENTATION: All components now use consistent multilingual approach without fallback to other languages
-  - CACHE INVALIDATION: Added proper cache invalidation after settings save to ensure immediate updates
-  - USER EXPERIENCE: When switching languages, interface shows only content available for that specific language
+- June 30, 2025: IMPLEMENTED CORRECT MULTILINGUAL SYSTEM WITH FALLBACK TO DEFAULT LANGUAGE
+  - FALLBACK LOGIC IMPLEMENTED: Updated all multilingual functions to fallback to Russian (default language) when field is empty for selected language
+  - HEADER COMPONENTS UPDATED: All header components now use proper fallback logic - show Russian content if translation missing
+  - NAVIGATION PANEL FIXED: Store name in navigation displays selected language or falls back to Russian
+  - BANNER BEHAVIOR CORRECTED: Banner shows Russian content as fallback when no translation exists for selected language
+  - PAYMENT METHODS RESTORED: Restored standard payment methods in Russian after testing cleanup
+  - DELIVERY INFO RESTORED: Restored delivery and payment information in Russian language
+  - SYSTEM LOGIC: If Hebrew field empty → show Russian content; if Hebrew field has content → show Hebrew content
+  - USER EXPERIENCE: Seamless language switching with proper fallback to ensure no empty content
 - June 30, 2025: COMPLETED MULTILINGUAL SYSTEM WITHOUT FALLBACK TRANSLATIONS
   - CRITICAL FIX: Eliminated all fallback translations - fields now empty for languages without content
   - STORE NAME FIX: Store name field now empty for languages without translations (no "eDAHouse" fallback)
