@@ -522,11 +522,13 @@ export default function Checkout() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {items.map((item) => (
-                <div key={item.product.id} className="flex justify-between items-center">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-medium">{item.product.name}</h4>
+              {items.map((item) => {
+                const localizedName = getLocalizedField(item.product, 'name', language as SupportedLanguage);
+                return (
+                  <div key={item.product.id} className="flex justify-between items-center">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-medium">{localizedName}</h4>
                       {item.product.availabilityStatus === 'out_of_stock_today' && (
                         <TooltipProvider>
                           <Tooltip>
@@ -570,7 +572,8 @@ export default function Checkout() {
                     {formatCurrency(item.totalPrice)}
                   </div>
                 </div>
-              ))}
+                );
+              })}
               <Separator />
               {(() => {
                 const subtotal = getTotalPrice();
