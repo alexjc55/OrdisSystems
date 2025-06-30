@@ -4,10 +4,9 @@ import type { Product } from '@shared/schema';
 import { calculateTotal, roundUpToNearestTenAgorot, type ProductUnit } from './currency';
 
 export interface CartItem {
-  productId: number;
+  product: Product;
   quantity: number; // quantity based on unit (pieces, kg, grams)
-  price: string; // Store price at time of adding to cart for consistency
-  unit: string; // Store unit for calculations
+  totalPrice: number;
 }
 
 interface CartStore {
@@ -31,7 +30,7 @@ export const useCartStore = create<CartStore>()(
       
       addItem: (product, quantity) => {
         const items = get().items;
-        const existingItemIndex = items.findIndex(item => item.productId === product.id);
+        const existingItemIndex = items.findIndex(item => item.product.id === product.id);
         
         if (existingItemIndex >= 0) {
           // Update existing item
@@ -39,16 +38,16 @@ export const useCartStore = create<CartStore>()(
           const newQuantity = updatedItems[existingItemIndex].quantity + quantity;
           updatedItems[existingItemIndex] = {
             ...updatedItems[existingItemIndex],
-            quantity: newQuantity
+            quantity: newQuantity,
+            totalPrice: calculateTotal(parseFloat(product.price), newQuantity, product.unit as ProductUnit)
           };
           set({ items: updatedItems });
         } else {
           // Add new item
           const newItem: CartItem = {
-            productId: product.id,
+            product,
             quantity,
-            price: product.price,
-            unit: product.unit
+            totalPrice: calculateTotal(parseFloat(product.price), quantity, product.unit as ProductUnit)
           };
           set({ items: [...items, newItem] });
         }
@@ -56,7 +55,7 @@ export const useCartStore = create<CartStore>()(
       
       removeItem: (productId) => {
         const items = get().items;
-        set({ items: items.filter(item => item.productId !== productId) });
+        set({ items: items.filter(item => item.product.id !== productId) });
       },
       
       updateQuantity: (productId, quantity) => {
@@ -67,10 +66,11 @@ export const useCartStore = create<CartStore>()(
         
         const items = get().items;
         const updatedItems = items.map(item => 
-          item.productId === productId
+          item.product.id === productId
             ? {
                 ...item,
-                quantity
+                quantity,
+                totalPrice: calculateTotal(parseFloat(item.product.price), quantity, item.product.unit as ProductUnit)
               }
             : item
         );
@@ -88,10 +88,7 @@ export const useCartStore = create<CartStore>()(
       },
       
       getTotalPrice: () => {
-        const total = get().items.reduce((total, item) => {
-          const itemTotal = calculateTotal(parseFloat(item.price), item.quantity, item.unit as ProductUnit);
-          return total + itemTotal;
-        }, 0);
+        const total = get().items.reduce((total, item) => total + item.totalPrice, 0);
         return roundUpToNearestTenAgorot(total);
       }
     }),

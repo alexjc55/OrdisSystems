@@ -1,101 +1,67 @@
-import { useState, useEffect } from 'react';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Badge } from '@/components/ui/badge';
-import { ShoppingCart, Minus, Plus, Trash2, X, ShoppingBag, Info } from 'lucide-react';
-import { useCartStore } from '@/lib/cart';
-import { useShopTranslation } from '@/hooks/use-language';
-import { formatCurrency } from '@/lib/currency';
-import { useQuery } from '@tanstack/react-query';
-import { getLocalizedField, type SupportedLanguage } from '@shared/localization';
+import { useCartStore } from "@/lib/cart";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { formatCurrency, formatQuantity, type ProductUnit } from "@/lib/currency";
+import { X, Plus, Minus, Trash2, ShoppingCart, Info } from "lucide-react";
+import { useLocation } from "wouter";
+import { useState } from "react";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
+import { useShopTranslation } from "@/hooks/use-language";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-interface Product {
-  id: number;
-  name: string;
-  name_en?: string;
-  name_he?: string;
-  name_ar?: string;
-  description?: string;
-  description_en?: string;
-  description_he?: string;
-  description_ar?: string;
-  price: string;
-  unit: string;
-  pricePerKg?: string;
-  imageUrl?: string;
-  imageUrl_en?: string;
-  imageUrl_he?: string;
-  imageUrl_ar?: string;
-  availabilityStatus?: string;
-}
-
-interface StoreSettings {
-  deliveryFee?: string;
-  freeDeliveryFrom?: string;
-  cartBannerText?: string;
-  cartBannerImageUrl?: string;
-  [key: string]: any;
-}
-
-interface ThemeSettings {
-  primary?: string;
-  [key: string]: any;
-}
+// Calculate delivery fee based on order total and free delivery threshold
+const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number | null) => {
+  // If no free delivery threshold is set, always charge delivery fee
+  if (!freeDeliveryFrom || freeDeliveryFrom <= 0) {
+    return deliveryFee;
+  }
+  return orderTotal >= freeDeliveryFrom ? 0 : deliveryFee;
+};
 
 export default function CartSidebar() {
-  const { items, isOpen, setCartOpen, removeItem, updateQuantity, getTotalPrice, clearCart } = useCartStore();
-  const { t, i18n } = useShopTranslation();
-  const currentLanguage = i18n.language;
-  const [editingQuantity, setEditingQuantity] = useState<Record<number, string>>({});
+  const { items, isOpen, setCartOpen, updateQuantity, removeItem, getTotalPrice } = useCartStore();
+  const [, setLocation] = useLocation();
+  const [editingQuantity, setEditingQuantity] = useState<{[key: number]: string}>({});
+  const { storeSettings } = useStoreSettings();
+  const { t } = useShopTranslation();
   
-  // Check if current language is RTL
-  const isRTL = currentLanguage === 'he' || currentLanguage === 'ar';
 
-  // Fetch all products to get current data with translations
-  const { data: productsList = [] } = useQuery<Product[]>({
-    queryKey: ['/api/products'],
-    enabled: isOpen && items.length > 0
-  });
 
-  // Load store settings for delivery calculations
-  const { data: storeSettings } = useQuery<StoreSettings>({
-    queryKey: ['/api/settings'],
-    enabled: isOpen && items.length > 0
-  });
-
-  // Load theme settings for banner styling
-  const { data: themeSettings } = useQuery<ThemeSettings>({
-    queryKey: ['/api/themes/active'],
-    enabled: isOpen && items.length > 0
-  });
-
-  const handleQuantityChange = (productId: number, newQuantity: number, unit: string) => {
+  const handleQuantityChange = (productId: number, newQuantity: number, unit: ProductUnit) => {
     if (newQuantity <= 0) {
       removeItem(productId);
     } else {
-      updateQuantity(productId, newQuantity);
+      // Adjust increment based on unit type
+      let adjustedQuantity = newQuantity;
+      if (unit === "piece") {
+        adjustedQuantity = Math.round(newQuantity); // Whole numbers for pieces
+      } else if (unit === "kg") {
+        adjustedQuantity = Number(newQuantity.toFixed(1)); // 0.1 kg increments
+      } else {
+        adjustedQuantity = Number(newQuantity.toFixed(1)); // 0.1 increments for 100g/100ml
+      }
+      updateQuantity(productId, adjustedQuantity);
     }
   };
 
-  const getIncrementValue = (unit: string) => {
+  const getIncrementValue = (unit: ProductUnit) => {
     switch (unit) {
-      case 'piece': return 1;
-      case 'kg': return 0.1;
-      case '100g': return 1;
-      case '100ml': return 1;
-      default: return 1;
+      case "piece":
+        return 1;
+      case "kg":
+        return 0.1;
+      default:
+        return 0.1; // For 100g/100ml
     }
   };
 
-  const handleManualQuantityChange = (productId: number, value: string, unit: string) => {
+  const handleManualQuantityChange = (productId: number, value: string, unit: ProductUnit) => {
     setEditingQuantity(prev => ({ ...prev, [productId]: value }));
   };
 
-  const handleQuantityBlur = (productId: number, unit: string) => {
+  const handleQuantityBlur = (productId: number, unit: ProductUnit) => {
     const value = editingQuantity[productId];
     if (value !== undefined) {
       const numValue = parseFloat(value);
@@ -110,52 +76,39 @@ export default function CartSidebar() {
     }
   };
 
-  const handleQuantityKeyPress = (e: React.KeyboardEvent, productId: number, unit: string) => {
+  const handleQuantityKeyPress = (e: React.KeyboardEvent, productId: number, unit: ProductUnit) => {
     if (e.key === 'Enter') {
       handleQuantityBlur(productId, unit);
     }
   };
 
   const getDisplayQuantity = (item: any) => {
-    const productId = item.productId;
+    const productId = item.product.id;
     if (editingQuantity[productId] !== undefined) {
       return editingQuantity[productId];
     }
     return item.quantity.toString();
   };
 
-  // Calculate total price for an item based on product and quantity
-  const calculateItemTotal = (product: Product, quantity: number) => {
-    if (product.unit === 'per100g' && product.pricePerKg) {
-      // For per100g items, price is already per 100g, so calculate based on actual weight
-      const pricePerGram = parseFloat(product.pricePerKg) / 100;
-      return (pricePerGram * quantity).toFixed(2);
-    } else {
-      // For regular items, use standard calculation
-      const basePrice = parseFloat(product.pricePerKg || product.price);
-      return (basePrice * quantity).toFixed(2);
-    }
+  const handleCheckout = () => {
+    setCartOpen(false);
+    setLocation("/checkout");
   };
 
+  if (!isOpen) return null;
+
   return (
-    <Sheet open={isOpen} onOpenChange={setCartOpen}>
-      <SheetContent 
-        side="right" 
-        className={`cart-sidebar w-full sm:max-w-md flex flex-col h-full p-0 ${isRTL ? 'rtl' : ''}`}
-      >
-        <SheetHeader className="border-b p-6 pb-4">
-          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-            <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <ShoppingBag className="h-5 w-5 text-primary" />
-              </div>
-              <div className={isRTL ? 'text-right' : ''}>
-                <SheetTitle className="text-lg">{t('cart.title')}</SheetTitle>
-                <SheetDescription className="text-sm text-gray-500">
-                  {items.length} {t('cart.itemsCount')}
-                </SheetDescription>
-              </div>
-            </div>
+    <div className="fixed inset-0 z-50 overflow-hidden">
+      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setCartOpen(false)} />
+      
+      <div className="absolute top-0 h-full w-full max-w-md bg-white shadow-xl cart-sidebar">
+        <div className="flex h-full flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between border-b p-4">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <ShoppingCart className="h-5 w-5" />
+              {t('cart.title')} ({items.length})
+            </h2>
             <Button
               variant="ghost"
               size="sm"
@@ -165,188 +118,219 @@ export default function CartSidebar() {
               <X className="h-4 w-4" />
             </Button>
           </div>
-        </SheetHeader>
 
-        <div className="flex-1 flex flex-col min-h-0">
+          {/* Content */}
           <div className="flex-1 overflow-hidden">
             {items.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <ShoppingCart className="h-8 w-8 text-gray-400" />
+              <div className="flex h-full items-center justify-center p-6">
+                <div className="text-center">
+                  <ShoppingCart className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">{t('cart.empty')}</h3>
+                  <p className="text-gray-500 mb-4">{t('cart.emptyDescription')}</p>
+                  <Button onClick={() => setCartOpen(false)}>
+                    {t('cart.continueShopping')}
+                  </Button>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('cart.empty')}</h3>
-                <p className="text-sm text-gray-500 mb-6">{t('cart.emptyDescription')}</p>
-                <Button onClick={() => setCartOpen(false)} className="w-full">
-                  {t('cart.continueShopping')}
-                </Button>
               </div>
             ) : (
               <ScrollArea className="h-full p-4">
                 <div className="space-y-3">
-                  {items.map((item) => {
-                    // Get current product data with translations
-                    const currentProduct = productsList.find(p => p.id === item.productId);
-                    if (!currentProduct) return null; // Skip if product not found
-                    
-                    const localizedName = getLocalizedField(currentProduct, 'name', currentLanguage as SupportedLanguage);
-                    const localizedImageUrl = getLocalizedField(currentProduct, 'imageUrl', currentLanguage as SupportedLanguage);
-                    
-                    return (
-                      <div key={item.productId} className={`cart-item bg-white rounded-lg border border-gray-100 p-4 hover:shadow-md transition-shadow ${isRTL ? 'rtl' : ''}`}>
-                        <div className={`flex gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                          {/* Product Image */}
-                          <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 shadow-sm">
-                            <img
-                              src={localizedImageUrl || currentProduct.imageUrl || "/placeholder-product.jpg"}
-                              alt={localizedName || currentProduct.name}
-                              className="w-full h-full object-cover"
-                            />
+                  {items.map((item) => (
+                    <div key={item.product.id} className="bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm">
+                      <div className="flex items-start gap-3">
+                        {/* Product Image Placeholder */}
+                        <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <ShoppingCart className="h-6 w-6 text-primary" />
+                        </div>
+                        
+                        {/* Product Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start mb-2">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-semibold text-gray-900 text-sm leading-tight">{item.product.name}</h4>
+                                {item.product.availabilityStatus === 'out_of_stock_today' && (
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger>
+                                        <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-xs">
+                                          <Info className="h-3 w-3" />
+                                          {t('preOrder')}
+                                        </div>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p className="text-xs">{t('preOrderTooltip')}</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                )}
+                              </div>
+                              <p className="text-xs text-gray-500 mt-1 line-clamp-2">{item.product.description}</p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeItem(item.product.id)}
+                              className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full flex-shrink-0 ml-2"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
                           
-                          {/* Product Info */}
-                          <div className="flex-1 min-w-0">
-                            <div className={`flex justify-between items-start mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                              <h3 className={`font-semibold text-gray-900 text-sm leading-tight ${isRTL ? 'text-right' : ''}`}>
-                                {localizedName || currentProduct.name}
-                              </h3>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => removeItem(item.productId)}
-                                className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 ml-2"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                            <div className={`text-xs text-gray-500 mb-3 ${isRTL ? 'text-right' : ''}`}>
-                              {formatCurrency(parseFloat(currentProduct.pricePerKg || currentProduct.price))} / {currentProduct.unit}
-                            </div>
-                            
-                            {/* Quantity Controls and Price */}
-                            <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                              <div className={`flex items-center gap-2 bg-gray-50 rounded-full p-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          {/* Price and Quantity Controls */}
+                          <div className="flex items-center justify-between mt-3">
+                            <div className="flex flex-col items-center gap-2">
+                              <div className="flex items-center gap-2">
                                 <Button
-                                  variant="ghost"
+                                  variant="outline"
                                   size="sm"
-                                  onClick={() => handleQuantityChange(item.productId, Math.max(0, item.quantity - getIncrementValue(currentProduct.unit)), currentProduct.unit)}
-                                  className="h-7 w-7 p-0 rounded-full hover:bg-white"
+                                  onClick={() => handleQuantityChange(
+                                    item.product.id, 
+                                    item.quantity - getIncrementValue(item.product.unit as ProductUnit),
+                                    item.product.unit as ProductUnit
+                                  )}
+                                  className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary-light"
                                 >
                                   <Minus className="h-3 w-3" />
                                 </Button>
-                                <input
+                                <Input
                                   type="text"
                                   value={getDisplayQuantity(item)}
-                                  onChange={(e) => setEditingQuantity(prev => ({ ...prev, [item.productId]: e.target.value }))}
-                                  onBlur={() => handleQuantityBlur(item.productId, currentProduct.unit)}
-                                  onKeyPress={(e) => handleQuantityKeyPress(e, item.productId, currentProduct.unit)}
-                                  className="w-12 text-center text-sm font-medium bg-transparent border-0 outline-none"
+                                  onChange={(e) => handleManualQuantityChange(item.product.id, e.target.value, item.product.unit as ProductUnit)}
+                                  onBlur={() => handleQuantityBlur(item.product.id, item.product.unit as ProductUnit)}
+                                  onKeyPress={(e) => handleQuantityKeyPress(e, item.product.id, item.product.unit as ProductUnit)}
+                                  className="w-16 h-8 text-center text-sm font-bold border-gray-200 focus:border-primary"
                                 />
                                 <Button
-                                  variant="ghost"
+                                  variant="outline"
                                   size="sm"
-                                  onClick={() => handleQuantityChange(item.productId, item.quantity + getIncrementValue(currentProduct.unit), currentProduct.unit)}
-                                  className="h-7 w-7 p-0 rounded-full hover:bg-white"
+                                  onClick={() => handleQuantityChange(
+                                    item.product.id, 
+                                    item.quantity + getIncrementValue(item.product.unit as ProductUnit),
+                                    item.product.unit as ProductUnit
+                                  )}
+                                  className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary-light"
                                 >
                                   <Plus className="h-3 w-3" />
                                 </Button>
                               </div>
-                              
-                              {/* Price */}
-                              <div className={`font-semibold text-primary ${isRTL ? 'text-left' : 'text-right'}`}>
-                                {formatCurrency(parseFloat(calculateItemTotal(currentProduct, item.quantity)))}
+                              <div className="text-xs text-gray-500">
+                                {item.product.unit === "piece" ? t('units.piece') : 
+                                 item.product.unit === "kg" ? t('units.kg') : 
+                                 item.product.unit === "100g" ? t('units.per100g') : t('units.per100ml')}
+                              </div>
+                            </div>
+                            
+                            <div className="text-right">
+                              <div className="text-xs text-gray-500">
+                                {formatCurrency(item.product.price)} {t('units.per')} {(() => {
+                                  switch (item.product.unit) {
+                                    case 'piece': return t('units.piece');
+                                    case 'kg': return t('units.kg');
+                                    case '100g': return t('units.per100g');
+                                    case '100ml': return t('units.per100ml');
+                                    default: return item.product.unit;
+                                  }
+                                })()}
+                              </div>
+                              <div className="font-bold text-lg text-gray-900">
+                                {formatCurrency(item.totalPrice)}
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </ScrollArea>
             )}
           </div>
 
-          {/* Cart Footer */}
+          {/* Footer */}
           {items.length > 0 && (
-            <div className="cart-footer border-t bg-white p-4 space-y-4">
-              {/* Order Summary */}
-              <div className="space-y-2">
-                <div className={`flex justify-between text-sm ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span>{t('subtotal')}</span>
-                  <span>{formatCurrency(getTotalPrice())}</span>
-                </div>
-                <div className={`flex justify-between text-sm ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span>{t('deliveryFee')}</span>
-                  <span>
-                    {storeSettings && parseFloat(storeSettings.deliveryFee || "0") > 0 ? (
-                      getTotalPrice() >= parseFloat(storeSettings.freeDeliveryFrom || "0") ? (
-                        <span className="text-green-600">{t('free')}</span>
-                      ) : (
-                        formatCurrency(parseFloat(storeSettings.deliveryFee || "0"))
-                      )
-                    ) : (
-                      <span className="text-green-600">{t('free')}</span>
-                    )}
-                  </span>
-                </div>
-                <div className={`flex justify-between font-medium text-lg border-t pt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span>{t('total')}</span>
-                  <span>
-                    {formatCurrency(
-                      getTotalPrice() + 
-                      (storeSettings && parseFloat(storeSettings.deliveryFee || "0") > 0 && 
-                       getTotalPrice() < parseFloat(storeSettings.freeDeliveryFrom || "0") 
-                        ? parseFloat(storeSettings.deliveryFee || "0") 
-                        : 0)
-                    )}
-                  </span>
-                </div>
+            <div className="border-t bg-white p-4 space-y-4">
+              <div className="bg-gradient-to-r from-primary-light to-yellow-50 rounded-xl p-4 border border-primary">
+                {(() => {
+                  const subtotal = getTotalPrice();
+                  const freeDeliveryThreshold = storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null;
+                  const deliveryFeeAmount = calculateDeliveryFee(
+                    subtotal, 
+                    parseFloat(storeSettings?.deliveryFee || "15.00"), 
+                    freeDeliveryThreshold
+                  );
+                  const total = subtotal + deliveryFeeAmount;
+
+                  return (
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>{t('cart.items')}:</span>
+                        <span>{formatCurrency(subtotal)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>{t('cart.delivery')}:</span>
+                        <span>
+                          {deliveryFeeAmount === 0 ? (
+                            <span className="text-green-600 font-medium">{t('cart.free')}</span>
+                          ) : (
+                            formatCurrency(deliveryFeeAmount)
+                          )}
+                        </span>
+                      </div>
+                      {deliveryFeeAmount > 0 && freeDeliveryThreshold && freeDeliveryThreshold > 0 && (
+                        <div className="text-xs text-gray-500 text-center">
+                          {t('cart.freeDeliveryFrom')} {formatCurrency(freeDeliveryThreshold)}
+                        </div>
+                      )}
+                      <Separator />
+                      <div className="flex justify-between items-center">
+                        <span className="text-lg font-semibold text-gray-700">{t('cart.total')}:</span>
+                        <span className="text-2xl font-bold text-primary">{formatCurrency(total)}</span>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
-              {/* Cart Banner with Theme Background */}
-              {(storeSettings?.cartBannerText || storeSettings?.cartBannerImageUrl) && (
-                <div 
-                  className={`relative overflow-hidden rounded-lg ${isRTL ? 'text-right' : 'text-left'}`}
-                  style={{
-                    backgroundColor: themeSettings?.primary || 'var(--primary)',
-                    backgroundImage: storeSettings?.cartBannerImageUrl ? `url(${storeSettings.cartBannerImageUrl})` : 'none',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    minHeight: '80px'
-                  }}
-                >
-                  {/* Overlay for better text readability */}
-                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+              {/* Cart Banner */}
+              {storeSettings?.showCartBanner && (
+                <div className="space-y-3">
+                  {storeSettings.cartBannerType === "text" && storeSettings.cartBannerText && (
+                    <div 
+                      className="rounded-xl p-4 text-center font-semibold shadow-md"
+                      style={{ 
+                        backgroundColor: storeSettings.cartBannerBgColor || "#f97316",
+                        color: storeSettings.cartBannerTextColor || "#ffffff"
+                      }}
+                    >
+                      <p className="text-sm leading-relaxed">{storeSettings.cartBannerText}</p>
+                    </div>
+                  )}
                   
-                  {/* Banner content */}
-                  <div className="relative z-10 p-4 flex items-center justify-center h-full">
-                    {storeSettings?.cartBannerText && (
-                      <p className="text-white font-medium text-center text-sm leading-relaxed drop-shadow-md">
-                        {storeSettings.cartBannerText}
-                      </p>
-                    )}
-                  </div>
+                  {storeSettings.cartBannerType === "image" && storeSettings.cartBannerImage && (
+                    <div className="rounded-xl overflow-hidden shadow-md">
+                      <img 
+                        src={storeSettings.cartBannerImage} 
+                        alt="Cart Banner"
+                        className="w-full h-auto max-h-[120px] object-cover"
+                        style={{ maxHeight: "120px" }}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
-
-              {/* Actions */}
-              <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={clearCart}
-                  className="text-gray-600 hover:text-red-600"
-                >
-                  {t('clear')}
-                </Button>
-                <Button className="flex-1 ml-3" size="lg" onClick={() => window.location.href = '/checkout'}>
-                  {t('checkout')}
-                </Button>
-              </div>
+              
+              <Button 
+                onClick={handleCheckout}
+                className="w-full bg-primary hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/50 text-white font-semibold py-3 rounded-xl shadow-lg transition-shadow duration-200"
+                size="lg"
+              >
+{t('cart.checkout')}
+              </Button>
             </div>
           )}
         </div>
-      </SheetContent>
-    </Sheet>
+      </div>
+    </div>
   );
 }

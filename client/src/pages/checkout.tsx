@@ -24,7 +24,6 @@ import { useLocation } from "wouter";
 import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
-import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { format } from "date-fns";
 import { ru, enUS, he } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -162,14 +161,6 @@ export default function Checkout() {
   const { storeSettings } = useStoreSettings();
   const { currentLanguage } = useLanguage();
   const dateLocale = getDateLocale(currentLanguage);
-  
-  // Fetch current products data to get translations
-  const { data: products = [] } = useQuery({
-    queryKey: ['/api/products'],
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
-  
-  const productsList = products as any[];
   
   // Helper functions for future-order validation
   const getFutureOrderProducts = () => {
@@ -530,15 +521,11 @@ export default function Checkout() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {items.map((item) => {
-                // Get current product data with translations
-                const currentProduct = productsList.find(p => p.id === item.product.id) || item.product;
-                const localizedName = getLocalizedField(currentProduct, 'name', currentLanguage as SupportedLanguage);
-                return (
-                  <div key={item.product.id} className="flex justify-between items-center">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-medium">{localizedName}</h4>
+              {items.map((item) => (
+                <div key={item.product.id} className="flex justify-between items-center">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-medium">{item.product.name}</h4>
                       {item.product.availabilityStatus === 'out_of_stock_today' && (
                         <TooltipProvider>
                           <Tooltip>
@@ -582,8 +569,7 @@ export default function Checkout() {
                     {formatCurrency(item.totalPrice)}
                   </div>
                 </div>
-                );
-              })}
+              ))}
               <Separator />
               {(() => {
                 const subtotal = getTotalPrice();

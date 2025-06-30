@@ -16,8 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency, formatQuantity, formatWeight, type ProductUnit } from "@/lib/currency";
-import { useShopTranslation, useCommonTranslation, useLanguage } from "@/hooks/use-language";
-import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
+import { useShopTranslation, useCommonTranslation } from "@/hooks/use-language";
 import { X, Plus, Minus, Trash2, CreditCard, Clock, MapPin, Phone, User } from "lucide-react";
 
 // Calculate delivery fee based on order total and free delivery threshold
@@ -28,19 +27,10 @@ const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliv
 export default function CartOverlay() {
   const { items, isOpen, setCartOpen, updateQuantity, removeItem, clearCart } = useCartStore();
   const { user } = useAuth();
-  
-  // Fetch current products data to get translations
-  const { data: productsData = [] } = useQuery({
-    queryKey: ['/api/products'],
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
-  
-  const productsList = productsData as any[];
   const { storeSettings } = useStoreSettings();
   const { toast } = useToast();
   const { t } = useShopTranslation();
   const { t: tCommon } = useCommonTranslation();
-  const { currentLanguage } = useLanguage();
   const queryClient = useQueryClient();
   const [customerNotes, setCustomerNotes] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
@@ -75,12 +65,6 @@ export default function CartOverlay() {
     }
   }, [user, userAddresses, isOpen]);
 
-  // Force re-render when language changes to update localized product names
-  useEffect(() => {
-    // This effect triggers a re-render when currentLanguage changes
-    // which will update the localizedName calculations in the render method
-  }, [currentLanguage]);
-
   // Handle address selection
   const handleAddressSelect = (addressId: number) => {
     const addresses = userAddresses as UserAddress[];
@@ -91,90 +75,133 @@ export default function CartOverlay() {
     }
   };
 
-  // Generate time slots
-  const generateTimeSlots = () => {
-    const slots = [];
-    for (let hour = 9; hour < 22; hour++) {
-      slots.push(`${hour.toString().padStart(2, '0')}:00`);
-      slots.push(`${hour.toString().padStart(2, '0')}:30`);
-    }
-    return slots;
-  };
-
-  // Generate next 7 days for delivery
-  const generateDeliveryDates = () => {
-    const dates = [];
-    const today = new Date();
-    
-    for (let i = 1; i <= 7; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      dates.push({
-        value: date.toISOString().split('T')[0],
-        label: date.toLocaleDateString(currentLanguage === 'he' ? 'he-IL' : currentLanguage === 'ar' ? 'ar' : currentLanguage === 'en' ? 'en-US' : 'ru-RU', {
-          weekday: 'long',
-          month: 'long',
-          day: 'numeric'
-        })
-      });
-    }
-    
-    return dates;
-  };
-
-  const orderMutation = useMutation({
-    mutationFn: async (orderData: any) => {
-      const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData)
-      });
-      if (!response.ok) {
-        throw new Error('Failed to place order');
+  // Reset delivery time when date changes to a closed day
+  useEffect(() => {
+    if (deliveryDate && storeSettings?.workingHours) {
+      const selectedDate = new Date(deliveryDate + 'T12:00:00');
+      const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+      const dayName = dayNames[selectedDate.getDay()];
+      
+      const workingHours = storeSettings.workingHours as Record<string, string>;
+      const todayHours = workingHours[dayName];
+      
+      // If the store is closed on this day, reset delivery time
+      if (!todayHours || 
+          todayHours.toLowerCase().includes('выходной') || 
+          todayHours.toLowerCase().includes('закрыто') ||
+          todayHours.trim() === '' ||
+          todayHours.toLowerCase() === 'closed') {
+        setDeliveryTime("");
       }
-      return response.json();
+    }
+  }, [deliveryDate, storeSettings?.workingHours]);
+
+  const subtotal = items.reduce((total, item) => total + item.totalPrice, 0);
+  const deliveryFeeAmount = calculateDeliveryFee(
+    subtotal, 
+    parseFloat(storeSettings?.deliveryFee || "15.00"), 
+    parseFloat(storeSettings?.freeDeliveryFrom || "50.00")
+  );
+  const total = subtotal + deliveryFeeAmount;
+
+  const createOrderMutation = useMutation({
+    mutationFn: async (orderData: any) => {
+      // Save user data if not already saved
+      if (user) {
+        const promises = [];
+        
+        // Save address if user doesn't have any saved addresses
+        if (userAddresses.length === 0 && deliveryAddress.trim()) {
+          promises.push(
+            apiRequest("POST", "/api/addresses", {
+              label: t('cart.deliveryAddress'),
+              address: deliveryAddress.trim(),
+              isDefault: true
+            }).catch(error => console.log("Failed to save address:", error))
+          );
+        }
+        
+        // Save phone if user doesn't have one
+        if (!user.phone && customerPhone.trim()) {
+          promises.push(
+            apiRequest("PATCH", "/api/profile", {
+              phone: customerPhone.trim()
+            }).catch(error => console.log("Failed to save phone:", error))
+          );
+        }
+        
+        // Wait for all saves to complete
+        if (promises.length > 0) {
+          await Promise.all(promises);
+          // Refresh user data and addresses
+          queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
+          queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        }
+      }
+      
+      // Create the order
+      await apiRequest("POST", "/api/orders", orderData);
     },
     onSuccess: () => {
+      const savedData = [];
+      if (user && userAddresses.length === 0 && deliveryAddress.trim()) {
+        savedData.push(t('cart.deliveryAddress'));
+      }
+      if (user && !user.phone && customerPhone.trim()) {
+        savedData.push(t('cart.phone'));
+      }
+      
+      let description = t('cart.orderSuccess');
+      if (savedData.length > 0) {
+        description += `. ${t('cart.dataSaved')} ${savedData.join(` ${t('cart.and')} `)}`;
+      }
+      
       toast({
-        title: t('orderPlaced'),
-        description: t('orderPlacedDescription'),
+        title: t('cart.orderCreated'),
+        description,
       });
       clearCart();
       setCartOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
     },
     onError: (error) => {
       if (isUnauthorizedError(error)) {
         toast({
-          title: t('authRequired'),
-          description: t('pleaseLoginToPlaceOrder'),
+          title: t('auth.unauthorized'),
+          description: t('auth.loggedOut'),
           variant: "destructive",
         });
-      } else {
-        toast({
-          title: t('orderFailed'),
-          description: t('orderFailedDescription'),
-          variant: "destructive",
-        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
       }
-    }
+      toast({
+        title: t('cart.orderError'),
+        description: t('cart.orderErrorDescription'),
+        variant: "destructive",
+      });
+    },
   });
 
-  const handleOrder = () => {
-    if (!user) {
+  const handleCheckout = () => {
+    if (items.length === 0) {
       toast({
-        title: t('authRequired'),
-        description: t('pleaseLoginToPlaceOrder'),
+        title: t('cart.emptyCart'),
+        description: t('cart.emptyCartDescription'),
         variant: "destructive",
       });
       return;
     }
 
+    // Для неавторизованных пользователей создаем заказ как гость
+    // Авторизация не обязательна
+
+    // Проверяем обязательные поля
     if (!deliveryAddress.trim()) {
       toast({
-        title: t('deliveryAddressRequired'),
-        description: t('pleaseEnterDeliveryAddress'),
+        title: t('cart.fillDeliveryAddress'),
+        description: t('cart.deliveryAddressRequired'),
         variant: "destructive",
       });
       return;
@@ -182,300 +209,492 @@ export default function CartOverlay() {
 
     if (!customerPhone.trim()) {
       toast({
-        title: t('phoneRequired'),
-        description: t('pleaseEnterPhoneNumber'),
+        title: t('cart.fillPhoneNumber'),
+        description: t('cart.phoneNumberRequired'),
         variant: "destructive",
       });
       return;
     }
-
-    if (!deliveryDate) {
-      toast({
-        title: t('deliveryDateRequired'),
-        description: t('pleaseSelectDeliveryDate'),
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!deliveryTime) {
-      toast({
-        title: t('deliveryTimeRequired'),
-        description: t('pleaseSelectDeliveryTime'),
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const orderItems = items.map(item => {
-      const currentProduct = productsList.find(p => p.id === item.productId);
-      if (!currentProduct) return null;
-      
-      return {
-        productId: item.productId,
-        quantity: item.quantity.toString(),
-        pricePerKg: currentProduct.pricePerKg || currentProduct.price,
-        totalPrice: (parseFloat(currentProduct.pricePerKg || currentProduct.price) * item.quantity).toFixed(2)
-      };
-    }).filter(Boolean);
 
     const orderData = {
-      customerPhone,
-      deliveryAddress,
-      deliveryDate,
-      deliveryTime,
-      customerNotes,
-      items: orderItems,
-      total: subtotal.toFixed(2),
-      deliveryFee: deliveryFee.toFixed(2),
-      grandTotal: grandTotal.toFixed(2)
+      totalAmount: total.toFixed(2),
+      deliveryFee: deliveryFeeAmount.toFixed(2),
+      customerNotes: customerNotes.trim() || null,
+      deliveryAddress: deliveryAddress.trim(),
+      customerPhone: customerPhone.trim(),
+      deliveryDate: deliveryDate || null,
+      deliveryTime: deliveryTime || null,
+      paymentMethod: "cash",
+      items: items.map(item => ({
+        productId: item.product.id,
+        quantity: item.quantity.toFixed(3),
+        pricePerKg: item.product.pricePerKg,
+        totalPrice: item.totalPrice.toFixed(2),
+      }))
     };
 
-    orderMutation.mutate(orderData);
+    createOrderMutation.mutate(orderData);
+  };
+
+  const handleQuantityChange = (productId: number, newQuantity: number) => {
+    if (newQuantity <= 0) {
+      removeItem(productId);
+    } else {
+      updateQuantity(productId, Number(newQuantity.toFixed(1)));
+    }
   };
 
   if (!isOpen) return null;
 
-  const subtotal = items.reduce((sum, item) => {
-    const currentProduct = productsList.find(p => p.id === item.productId);
-    if (!currentProduct) return sum;
-    
-    const price = parseFloat(currentProduct.pricePerKg || currentProduct.price);
-    return sum + (price * item.quantity);
-  }, 0);
-
-  const deliveryFee = storeSettings ? calculateDeliveryFee(
-    subtotal,
-    parseFloat(storeSettings.deliveryFee || "0"),
-    parseFloat(storeSettings.freeDeliveryFrom || "0")
-  ) : 0;
-
-  const grandTotal = subtotal + deliveryFee;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-end">
-      <div className="w-full max-w-md h-full bg-white shadow-lg overflow-hidden">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">{t('cart')}</h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setCartOpen(false)}
-          >
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
+    <div className="fixed inset-0 z-50 overflow-hidden">
+      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setCartOpen(false)} />
+      
+      <div className="absolute top-0 h-full w-full max-w-md bg-white shadow-xl right-0 rtl:right-auto rtl:left-0">
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b">
+            <h2 className="text-xl font-poppins font-semibold">{t('cart.title')}</h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setCartOpen(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
 
-        <ScrollArea className="flex-1 max-h-[calc(100vh-120px)]">
-          <div className="p-4">
+          {/* Cart Items */}
+          <ScrollArea className="flex-1 p-6">
             {items.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-gray-500 mb-4">{t('cartEmpty')}</p>
-                <Button onClick={() => setCartOpen(false)}>
-                  {t('continueShopping')}
-                </Button>
+              <div className="text-center py-12">
+                <div className="text-gray-400 text-6xl mb-4">🛍️</div>
+                <h3 className="text-lg font-poppins font-semibold text-gray-900 mb-2">
+                  {t('cart.empty')}
+                </h3>
+                <p className="text-gray-600">
+                  {t('cart.emptyDescription')}
+                </p>
               </div>
             ) : (
               <div className="space-y-4">
-                {items.map((item) => {
-                  // Get current product data with translations
-                  const currentProduct = productsList.find(p => p.id === item.productId);
-                  if (!currentProduct) return null; // Skip if product not found
-                  
-                  const localizedName = getLocalizedField(currentProduct, 'name', currentLanguage as SupportedLanguage);
-                  const localizedImageUrl = getLocalizedField(currentProduct, 'imageUrl', currentLanguage as SupportedLanguage);
-                  
-                  return (
-                    <div key={item.productId} className="flex items-center space-x-4 pb-4 border-b border-gray-100">
-                      <img
-                        src={localizedImageUrl || currentProduct.imageUrl || "/placeholder-product.jpg"}
-                        alt={localizedName || currentProduct.name}
-                        className="w-16 h-16 object-cover rounded-lg"
-                      />
-                      <div className="flex-1">
-                        <h3 className="font-medium text-sm">{localizedName || currentProduct.name}</h3>
-                        <p className="text-xs text-gray-500">
-                          {formatCurrency(parseFloat(currentProduct.pricePerKg || currentProduct.price))} / {currentProduct.unit}
-                        </p>
-                        <div className="flex items-center space-x-2 mt-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => updateQuantity(item.productId, Math.max(0, item.quantity - 1))}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Minus className="h-3 w-3" />
-                          </Button>
-                          <span className="text-sm font-medium min-w-[3rem] text-center">
-                            {formatQuantity(item.quantity, currentProduct.unit as ProductUnit)}
-                          </span>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Plus className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeItem(item.productId)}
-                            className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">
-                          {formatCurrency(parseFloat(currentProduct.pricePerKg || currentProduct.price) * item.quantity)}
-                        </p>
+                {items.map((item) => (
+                  <div key={item.product.id} className="flex items-center space-x-4 pb-4 border-b border-gray-100">
+                    <img
+                      src={item.product.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80&h=80&fit=crop'}
+                      alt={item.product.name}
+                      className="w-16 h-16 rounded-lg object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80&h=80&fit=crop';
+                      }}
+                    />
+                    
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-gray-900 truncate">
+                        {item.product.name}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {formatQuantity(item.quantity, item.product.unit as ProductUnit, t)} × {formatCurrency(parseFloat(item.product.price))}
+                      </p>
+                      <div className="flex items-center space-x-2 mt-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-6 w-6 p-0"
+                          onClick={() => handleQuantityChange(item.product.id, item.quantity - 0.1)}
+                        >
+                          <Minus className="h-3 w-3" />
+                        </Button>
+                        <Input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => handleQuantityChange(item.product.id, parseFloat(e.target.value) || 0.1)}
+                          step="0.1"
+                          min="0.1"
+                          className="w-16 text-center text-xs h-6 px-1"
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-6 w-6 p-0"
+                          onClick={() => handleQuantityChange(item.product.id, item.quantity + 0.1)}
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
                       </div>
                     </div>
-                  );
-                })}
-
-                <Separator />
-
-                {/* Order Summary */}
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span>{t('subtotal')}</span>
-                    <span>{formatCurrency(subtotal)}</span>
+                    
+                    <div className="text-right">
+                      <p className="font-bold text-gray-900">
+                        {formatCurrency(item.totalPrice)}
+                      </p>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => removeItem(item.product.id)}
+                        className="text-red-500 hover:text-red-700 p-1 h-auto"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span>{t('deliveryFee')}</span>
-                    <span>
-                      {deliveryFee === 0 ? (
-                        <span className="text-green-600">{t('free')}</span>
-                      ) : (
-                        formatCurrency(deliveryFee)
-                      )}
-                    </span>
-                  </div>
-                  <Separator />
-                  <div className="flex justify-between font-medium">
-                    <span>{t('total')}</span>
-                    <span>{formatCurrency(grandTotal)}</span>
+                ))}
+
+                {/* Store Information */}
+                <div className="space-y-4 pt-4">
+                  <h3 className="font-semibold text-gray-900">{t('checkout.deliveryInfo')}</h3>
+                  <div className="grid grid-cols-1 gap-4">
+                    {/* Delivery Info */}
+                    {storeSettings?.deliveryInfo && (
+                      <Card className="bg-gray-50">
+                        <CardContent className="p-3">
+                          <div className="flex items-start gap-2">
+                            <MapPin className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="text-sm font-medium text-gray-900 mb-1">{t('cart.delivery')}</p>
+                              <p className="text-xs text-gray-600">{storeSettings.deliveryInfo}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Working Hours */}
+                    {storeSettings?.workingHours && (
+                      <Card className="bg-gray-50">
+                        <CardContent className="p-3">
+                          <div className="flex items-start gap-2">
+                            <Clock className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="text-sm font-medium text-gray-900 mb-1">{tCommon('workingHours')}</p>
+                              <div className="text-xs text-gray-600 space-y-0.5">
+                                {(() => {
+                                  const dayTranslations: Record<string, string> = {
+                                    monday: t('days.mon'),
+                                    tuesday: t('days.tue'),
+                                    wednesday: t('days.wed'),
+                                    thursday: t('days.thu'),
+                                    friday: t('days.fri'),
+                                    saturday: t('days.sat'),
+                                    sunday: t('days.sun')
+                                  };
+
+                                  // Define day order (starting with Monday by default, can be changed based on store settings)
+                                  const dayOrder = storeSettings?.weekStartDay === 'sunday' 
+                                    ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+                                    : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+                                  return dayOrder
+                                    .filter(day => storeSettings.workingHours[day])
+                                    .map(day => (
+                                      <div key={day} className="flex justify-between">
+                                        <span>{dayTranslations[day]}:</span>
+                                        <span>{storeSettings.workingHours[day] as string}</span>
+                                      </div>
+                                    ));
+                                })()}
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Payment Info */}
+                    {storeSettings?.paymentInfo && (
+                      <Card className="bg-gray-50">
+                        <CardContent className="p-3">
+                          <div className="flex items-start gap-2">
+                            <CreditCard className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="text-sm font-medium text-gray-900 mb-1">Способы оплаты</p>
+                              <p className="text-xs text-gray-600">{storeSettings.paymentInfo}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
                   </div>
                 </div>
 
-                <Separator />
-
-                {/* Customer Information */}
+                {/* Delivery Time Selection */}
                 <div className="space-y-4">
-                  <h3 className="font-medium">{t('deliveryInformation')}</h3>
-                  
-                  {/* Phone */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium flex items-center">
-                      <Phone className="h-4 w-4 mr-2" />
-                      {t('phoneNumber')}
-                    </label>
-                    <Input
-                      type="tel"
-                      placeholder={t('enterPhoneNumber')}
-                      value={customerPhone}
-                      onChange={(e) => setCustomerPhone(e.target.value)}
-                    />
-                  </div>
-
-                  {/* Address */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium flex items-center">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {t('deliveryAddress')}
-                    </label>
-                    
-                    {user && userAddresses.length > 0 && (
-                      <Select onValueChange={(value) => handleAddressSelect(parseInt(value))}>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('selectSavedAddress')} />
+                  <h3 className="font-semibold text-gray-900">Желаемое время доставки</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700 mb-1 block">
+                        Дата
+                      </label>
+                      <Input
+                        type="date"
+                        value={deliveryDate}
+                        onChange={(e) => setDeliveryDate(e.target.value)}
+                        min={(() => {
+                          const now = new Date();
+                          const minHours = storeSettings?.minDeliveryTimeHours || 2;
+                          const minDate = new Date(now.getTime() + minHours * 60 * 60 * 1000);
+                          return minDate.toISOString().split('T')[0];
+                        })()}
+                        className="text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700 mb-1 block">
+                        Время
+                      </label>
+                      <Select value={deliveryTime} onValueChange={setDeliveryTime}>
+                        <SelectTrigger className="text-sm">
+                          <SelectValue placeholder={t('selectTime')} />
                         </SelectTrigger>
                         <SelectContent>
-                          {(userAddresses as UserAddress[]).map((address) => (
-                            <SelectItem key={address.id} value={address.id.toString()}>
-                              {address.name ? `${address.name}: ${address.address}` : address.address}
-                            </SelectItem>
-                          ))}
+                          {(() => {
+                            if (!deliveryDate) {
+                              return <SelectItem key="select-date" value="select-date" disabled>Сначала выберите дату</SelectItem>;
+                            }
+
+                            if (!storeSettings?.workingHours) {
+                              return [
+                                <SelectItem key="asap" value="asap">Как можно скорее</SelectItem>,
+                                <SelectItem key="10-12" value="10:00-12:00">10:00 - 12:00</SelectItem>,
+                                <SelectItem key="12-14" value="12:00-14:00">12:00 - 14:00</SelectItem>,
+                                <SelectItem key="14-16" value="14:00-16:00">14:00 - 16:00</SelectItem>,
+                                <SelectItem key="16-18" value="16:00-18:00">16:00 - 18:00</SelectItem>,
+                                <SelectItem key="18-20" value="18:00-20:00">18:00 - 20:00</SelectItem>,
+                                <SelectItem key="20-22" value="20:00-22:00">20:00 - 22:00</SelectItem>
+                              ];
+                            }
+
+                            const selectedDate = new Date(deliveryDate + 'T12:00:00');
+                            const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                            const dayName = dayNames[selectedDate.getDay()];
+                            
+                            const workingHours = storeSettings.workingHours as Record<string, string>;
+                            const todayHours = workingHours[dayName];
+                            
+                            // Check if the store is closed on this day
+                            if (!todayHours || 
+                                todayHours.toLowerCase().includes('выходной') || 
+                                todayHours.toLowerCase().includes('закрыто') ||
+                                todayHours.trim() === '' ||
+                                todayHours.toLowerCase() === 'closed') {
+                              return <SelectItem key="closed" value="closed" disabled>Выходной день - магазин закрыт</SelectItem>;
+                            }
+
+                            // Parse working hours (e.g., "10:00-22:00")
+                            const hoursMatch = todayHours.match(/(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})/);
+                            if (!hoursMatch) {
+                              return <SelectItem key="invalid-hours" value="invalid-hours" disabled>Часы работы не указаны</SelectItem>;
+                            }
+
+                            const startHour = parseInt(hoursMatch[1]);
+                            const endHour = parseInt(hoursMatch[3]);
+                            
+                            // Check if it's today and apply minimum delivery time
+                            const now = new Date();
+                            const isToday = selectedDate.toDateString() === now.toDateString();
+                            const minHours = storeSettings?.minDeliveryTimeHours || 2;
+                            const minDeliveryTime = isToday ? now.getHours() + minHours : startHour;
+                            
+                            const timeSlots = [
+                              { value: "asap", label: t('cart.asap'), start: 0, end: 24 },
+                              { value: "10:00-12:00", label: "10:00 - 12:00", start: 10, end: 12 },
+                              { value: "12:00-14:00", label: "12:00 - 14:00", start: 12, end: 14 },
+                              { value: "14:00-16:00", label: "14:00 - 16:00", start: 14, end: 16 },
+                              { value: "16:00-18:00", label: "16:00 - 18:00", start: 16, end: 18 },
+                              { value: "18:00-20:00", label: "18:00 - 20:00", start: 18, end: 20 },
+                              { value: "20:00-22:00", label: "20:00 - 22:00", start: 20, end: 22 }
+                            ];
+
+                            return timeSlots
+                              .filter(slot => {
+                                if (slot.value === "asap") return true;
+                                return slot.start >= Math.max(startHour, minDeliveryTime) && slot.end <= endHour;
+                              })
+                              .map(slot => (
+                                <SelectItem key={slot.value} value={slot.value}>
+                                  {slot.label}
+                                </SelectItem>
+                              ));
+                          })()}
                         </SelectContent>
                       </Select>
-                    )}
-                    
-                    <Textarea
-                      placeholder={t('enterDeliveryAddress')}
-                      value={deliveryAddress}
-                      onChange={(e) => setDeliveryAddress(e.target.value)}
-                      rows={3}
-                    />
-                  </div>
-
-                  {/* Delivery Date */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">{t('deliveryDate')}</label>
-                    <Select onValueChange={setDeliveryDate}>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('selectDeliveryDate')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {generateDeliveryDates().map((date) => (
-                          <SelectItem key={date.value} value={date.value}>
-                            {date.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Delivery Time */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium flex items-center">
-                      <Clock className="h-4 w-4 mr-2" />
-                      {t('deliveryTime')}
-                    </label>
-                    <Select onValueChange={setDeliveryTime}>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('selectDeliveryTime')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {generateTimeSlots().map((time) => (
-                          <SelectItem key={time} value={time}>
-                            {time}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Notes */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">{t('additionalNotes')}</label>
-                    <Textarea
-                      placeholder={t('addNotesOptional')}
-                      value={customerNotes}
-                      onChange={(e) => setCustomerNotes(e.target.value)}
-                      rows={3}
-                    />
+                    </div>
                   </div>
                 </div>
 
-                <Separator />
+                {/* Authentication options for guests */}
+                {!user && (
+                  <Card className="bg-primary-light border-primary">
+                    <CardContent className="p-4">
+                      <div className="text-center space-y-3">
+                        <div className="flex items-center justify-center gap-2 mb-3">
+                          <User className="h-5 w-5 text-primary" />
+                          <h3 className="font-medium text-gray-900">{t('auth.loginOrContinueAsGuest')}</h3>
+                        </div>
+                        
+                        <p className="text-sm text-gray-600">
+                          {t('auth.loginBenefit')}
+                        </p>
+                        
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => window.location.href = '/api/login'}
+                            className="flex-1 bg-primary hover:bg-primary text-white"
+                          >
+                            {t('auth.login')}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="flex-1 border-primary text-primary hover:bg-primary-light"
+                            onClick={() => {
+                              // Просто продолжить как гость - ничего не делаем
+                              // Пользователь может заполнить форму дальше
+                            }}
+                          >
+                            {t('auth.continueAsGuest')}
+                          </Button>
+                        </div>
+                        
+                        <p className="text-xs text-gray-500">
+                          {t('auth.newCustomer')}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
 
-                {/* Order Button */}
-                <Button
-                  onClick={handleOrder}
-                  disabled={orderMutation.isPending}
-                  className="w-full"
-                  size="lg"
-                >
-                  <CreditCard className="h-4 w-4 mr-2" />
-                  {orderMutation.isPending ? t('placingOrder') : `${t('placeOrder')} ${formatCurrency(grandTotal)}`}
-                </Button>
+                {/* Order Notes */}
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-gray-700">
+                    {t('cart.orderNotes')}
+                  </label>
+                  <Textarea
+                    placeholder={t('specialRequests')}
+                    value={customerNotes}
+                    onChange={(e) => setCustomerNotes(e.target.value)}
+                    className="min-h-[60px] text-sm"
+                  />
+                </div>
+
+                {/* Delivery Address */}
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-gray-700">
+                    {t('cart.deliveryAddress')} *
+                  </label>
+                  
+                  {/* Address Selection for logged-in users */}
+                  {user && (userAddresses as UserAddress[]).length > 0 && (
+                    <div className="space-y-2">
+                      <label className="text-xs text-gray-600">{t('cart.selectSavedAddress')}:</label>
+                      <Select
+                        value={selectedAddressId?.toString() || ""}
+                        onValueChange={(value) => {
+                          if (value === "new") {
+                            setDeliveryAddress("");
+                            setSelectedAddressId(null);
+                          } else {
+                            handleAddressSelect(parseInt(value));
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="text-sm">
+                          <SelectValue placeholder={t('selectAddress')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {(userAddresses as UserAddress[]).map((addr) => (
+                            <SelectItem key={addr.id} value={addr.id.toString()}>
+                              {addr.label}{addr.isDefault ? ` (${t('cart.default')})` : ""}: {addr.address.substring(0, 50)}...
+                            </SelectItem>
+                          ))}
+                          <SelectItem value="new">+ {t('cart.newAddress')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  <Textarea
+                    placeholder={t('enterDeliveryAddress')}
+                    value={deliveryAddress}
+                    onChange={(e) => {
+                      setDeliveryAddress(e.target.value);
+                      setSelectedAddressId(null); // Clear selection when manually editing
+                    }}
+                    className={`min-h-[60px] ${!deliveryAddress.trim() ? 'border-red-300 focus:border-red-500' : ''}`}
+                    required
+                  />
+                </div>
+
+                {/* Customer Phone */}
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-gray-700">
+                    {t('cart.phoneNumber')} *
+                  </label>
+                  <Input
+                    type="tel"
+                    placeholder={t('enterPhoneNumber')}
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    className={`${!customerPhone.trim() ? 'border-red-300 focus:border-red-500' : ''}`}
+                    required
+                  />
+                </div>
               </div>
             )}
-          </div>
-        </ScrollArea>
+          </ScrollArea>
+
+          {/* Footer */}
+          {items.length > 0 && (
+            <div className="border-t p-6 space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>{t('cart.items')}:</span>
+                  <span>{formatCurrency(subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>{t('cart.delivery')}:</span>
+                  <span>
+                    {deliveryFeeAmount === 0 ? (
+                      <span className="text-green-600 font-medium">{t('checkout.free')}</span>
+                    ) : (
+                      formatCurrency(deliveryFeeAmount)
+                    )}
+                  </span>
+                </div>
+                {deliveryFeeAmount > 0 && (
+                  <div className="text-xs text-gray-500 text-center">
+                    {t('cart.freeDeliveryFrom')} {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                  </div>
+                )}
+                <Separator />
+                <div className="flex justify-between text-lg font-bold">
+                  <span>{t('cart.total')}:</span>
+                  <span>{formatCurrency(total)}</span>
+                </div>
+              </div>
+              
+              <Button
+                onClick={handleCheckout}
+                disabled={createOrderMutation.isPending || !deliveryAddress.trim() || !customerPhone.trim()}
+                className="w-full bg-primary hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-white font-medium py-3 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:shadow-none"
+                style={{ backgroundColor: 'hsl(16, 100%, 60%)', color: 'white' }}
+              >
+                {createOrderMutation.isPending ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    {t('cart.processing')}
+                  </div>
+                ) : (
+                  <>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    {t('cart.checkout')}
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
