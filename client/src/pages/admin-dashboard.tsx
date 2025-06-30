@@ -3550,7 +3550,7 @@ export default function AdminDashboard() {
                             // Get localized product name for display
                             const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
                             return (
-                            <TableRow key={product.id} className={
+                              <TableRow key={product.id} className={
                               !(product.isAvailable && (product.availabilityStatus === "available"))
                                 ? 'bg-gray-50 hover:bg-gray-100' 
                                 : 'hover:bg-gray-50'
@@ -3642,7 +3642,7 @@ export default function AdminDashboard() {
                                       }}
                                       className={`font-medium text-xs sm:text-sm hover:text-primary transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
                                     >
-                                      {getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}
+                                      {localizedName}
                                     </button>
                                   </TableCell>
                                 </>
@@ -3657,7 +3657,7 @@ export default function AdminDashboard() {
                                       }}
                                       className={`font-medium text-xs sm:text-sm hover:text-primary transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
                                     >
-                                      {getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}
+                                      {localizedName}
                                     </button>
                                   </TableCell>
                                   <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
