@@ -263,6 +263,30 @@ export default function ThemeManager() {
     description_ar: ''
   });
   
+  // State for multilingual images
+  const [themeImages, setThemeImages] = useState({
+    logoUrl: '',
+    logoUrl_en: '',
+    logoUrl_he: '',
+    logoUrl_ar: '',
+    bannerImageUrl: '',
+    bannerImageUrl_en: '',
+    bannerImageUrl_he: '',
+    bannerImageUrl_ar: '',
+    cartBannerImage: '',
+    cartBannerImage_en: '',
+    cartBannerImage_he: '',
+    cartBannerImage_ar: '',
+    bottomBanner1Url: '',
+    bottomBanner1Url_en: '',
+    bottomBanner1Url_he: '',
+    bottomBanner1Url_ar: '',
+    bottomBanner2Url: '',
+    bottomBanner2Url_en: '',
+    bottomBanner2Url_he: '',
+    bottomBanner2Url_ar: ''
+  });
+  
   // Initialize fields when editing theme or opening create dialog
   useEffect(() => {
     if (editingTheme) {
@@ -276,6 +300,28 @@ export default function ThemeManager() {
         description_he: (editingTheme as any).description_he || '',
         description_ar: (editingTheme as any).description_ar || ''
       });
+      setThemeImages({
+        logoUrl: editingTheme.logoUrl || '',
+        logoUrl_en: (editingTheme as any).logoUrl_en || '',
+        logoUrl_he: (editingTheme as any).logoUrl_he || '',
+        logoUrl_ar: (editingTheme as any).logoUrl_ar || '',
+        bannerImageUrl: editingTheme.bannerImageUrl || '',
+        bannerImageUrl_en: (editingTheme as any).bannerImageUrl_en || '',
+        bannerImageUrl_he: (editingTheme as any).bannerImageUrl_he || '',
+        bannerImageUrl_ar: (editingTheme as any).bannerImageUrl_ar || '',
+        cartBannerImage: editingTheme.cartBannerImage || '',
+        cartBannerImage_en: (editingTheme as any).cartBannerImage_en || '',
+        cartBannerImage_he: (editingTheme as any).cartBannerImage_he || '',
+        cartBannerImage_ar: (editingTheme as any).cartBannerImage_ar || '',
+        bottomBanner1Url: editingTheme.bottomBanner1Url || '',
+        bottomBanner1Url_en: (editingTheme as any).bottomBanner1Url_en || '',
+        bottomBanner1Url_he: (editingTheme as any).bottomBanner1Url_he || '',
+        bottomBanner1Url_ar: (editingTheme as any).bottomBanner1Url_ar || '',
+        bottomBanner2Url: editingTheme.bottomBanner2Url || '',
+        bottomBanner2Url_en: (editingTheme as any).bottomBanner2Url_en || '',
+        bottomBanner2Url_he: (editingTheme as any).bottomBanner2Url_he || '',
+        bottomBanner2Url_ar: (editingTheme as any).bottomBanner2Url_ar || ''
+      });
     } else if (isCreateDialogOpen) {
       // Reset fields for new theme
       setThemeFields({
@@ -287,6 +333,28 @@ export default function ThemeManager() {
         description_en: '',
         description_he: '',
         description_ar: ''
+      });
+      setThemeImages({
+        logoUrl: '',
+        logoUrl_en: '',
+        logoUrl_he: '',
+        logoUrl_ar: '',
+        bannerImageUrl: '',
+        bannerImageUrl_en: '',
+        bannerImageUrl_he: '',
+        bannerImageUrl_ar: '',
+        cartBannerImage: '',
+        cartBannerImage_en: '',
+        cartBannerImage_he: '',
+        cartBannerImage_ar: '',
+        bottomBanner1Url: '',
+        bottomBanner1Url_en: '',
+        bottomBanner1Url_he: '',
+        bottomBanner1Url_ar: '',
+        bottomBanner2Url: '',
+        bottomBanner2Url_en: '',
+        bottomBanner2Url_he: '',
+        bottomBanner2Url_ar: ''
       });
     }
   }, [editingTheme, isCreateDialogOpen]);
@@ -1780,20 +1848,31 @@ export default function ThemeManager() {
                       {i18n.language !== 'ar' && <input type="hidden" name="description_ar" value={themeFields.description_ar} />}
                     </div>
                     
-                    {/* Изображения */}
+                    {/* Изображения - многоязычная поддержка */}
                     <div className="space-y-6">
                       <div>
                         <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          {adminT('themes.storeLogo')}
+                          {adminT('themes.storeLogo')} ({i18n.language.toUpperCase()})
                         </Label>
                         <ImageUpload
-                          value={editLogoUrl}
+                          value={i18n.language === 'ru' ? themeImages.logoUrl : 
+                            (themeImages as any)[`logoUrl_${i18n.language}`] || ''}
                           onChange={(url) => {
-                            setEditLogoUrl(url);
+                            const fieldName = i18n.language === 'ru' ? 'logoUrl' : `logoUrl_${i18n.language}`;
+                            setThemeImages(prev => ({ ...prev, [fieldName]: url }));
                           }}
                         />
-                        <input type="hidden" name="logoUrl" value={editLogoUrl} />
+                        <input type="hidden" 
+                          name={i18n.language === 'ru' ? 'logoUrl' : `logoUrl_${i18n.language}`} 
+                          value={i18n.language === 'ru' ? themeImages.logoUrl : 
+                            (themeImages as any)[`logoUrl_${i18n.language}`] || ''} 
+                        />
+                        {/* Скрытые поля для других языков */}
+                        {i18n.language !== 'ru' && <input type="hidden" name="logoUrl" value={themeImages.logoUrl} />}
+                        {i18n.language !== 'en' && <input type="hidden" name="logoUrl_en" value={themeImages.logoUrl_en} />}
+                        {i18n.language !== 'he' && <input type="hidden" name="logoUrl_he" value={themeImages.logoUrl_he} />}
+                        {i18n.language !== 'ar' && <input type="hidden" name="logoUrl_ar" value={themeImages.logoUrl_ar} />}
                         <div className="text-xs text-gray-500 mt-2">
                           {adminT('themes.storeLogoDescription')}
                         </div>
@@ -1802,15 +1881,26 @@ export default function ThemeManager() {
                       <div>
                         <Label className="flex items-center gap-2 mb-2">
                           <Upload className="h-4 w-4" />
-                          {adminT('themes.bannerImage')}
+                          {adminT('themes.bannerImage')} ({i18n.language.toUpperCase()})
                         </Label>
                         <ImageUpload
-                          value={editBannerImageUrl}
+                          value={i18n.language === 'ru' ? themeImages.bannerImageUrl : 
+                            (themeImages as any)[`bannerImageUrl_${i18n.language}`] || ''}
                           onChange={(url) => {
-                            setEditBannerImageUrl(url);
+                            const fieldName = i18n.language === 'ru' ? 'bannerImageUrl' : `bannerImageUrl_${i18n.language}`;
+                            setThemeImages(prev => ({ ...prev, [fieldName]: url }));
                           }}
                         />
-                        <input type="hidden" name="bannerImageUrl" value={editBannerImageUrl} />
+                        <input type="hidden" 
+                          name={i18n.language === 'ru' ? 'bannerImageUrl' : `bannerImageUrl_${i18n.language}`} 
+                          value={i18n.language === 'ru' ? themeImages.bannerImageUrl : 
+                            (themeImages as any)[`bannerImageUrl_${i18n.language}`] || ''} 
+                        />
+                        {/* Скрытые поля для других языков */}
+                        {i18n.language !== 'ru' && <input type="hidden" name="bannerImageUrl" value={themeImages.bannerImageUrl} />}
+                        {i18n.language !== 'en' && <input type="hidden" name="bannerImageUrl_en" value={themeImages.bannerImageUrl_en} />}
+                        {i18n.language !== 'he' && <input type="hidden" name="bannerImageUrl_he" value={themeImages.bannerImageUrl_he} />}
+                        {i18n.language !== 'ar' && <input type="hidden" name="bannerImageUrl_ar" value={themeImages.bannerImageUrl_ar} />}
                         <div className="text-xs text-gray-500 mt-2">
                           {adminT('themes.bannerImageDescription')}
                         </div>
