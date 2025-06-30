@@ -6560,6 +6560,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleTrigger>
           
           <CollapsibleContent className="space-y-6">
+            {/* Language indicator for multilingual fields */}
+            <div className={`flex items-center gap-2 p-3 bg-blue-50 rounded-lg ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <Languages className="h-4 w-4 text-blue-600" />
+              <span className="text-sm text-blue-700">
+                {adminT('storeSettings.editingLanguage')}: <strong>{currentLanguage.toUpperCase()}</strong>
+              </span>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
             control={form.control}

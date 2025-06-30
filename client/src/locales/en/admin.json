@@ -353,6 +353,7 @@
   },
   "storeSettings": {
     "basicInfo": "Basic Information",
+    "editingLanguage": "Editing Language",
     "storeName": "Store Name",
     "storeNamePlaceholder": "Enter store name",
     "welcomeTitle": "Welcome Title",

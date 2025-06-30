@@ -316,6 +316,7 @@
   "deleteForever": "יימחק לצמיתות",
   "storeSettings": {
     "basicInfo": "מידע בסיסי",
+    "editingLanguage": "עריכת שפה",
     "storeName": "שם החנות",
     "storeNamePlaceholder": "הכנס שם החנות",
     "welcomeTitle": "כותרת ברכה",

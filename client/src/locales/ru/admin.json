@@ -719,6 +719,7 @@
   },
   "storeSettings": {
     "basicInfo": "Основная информация",
+    "editingLanguage": "Редактируется язык",
     "storeName": "Название магазина",
     "storeNamePlaceholder": "Введите название магазина",
     "welcomeTitle": "Заголовок приветствия",

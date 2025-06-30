@@ -555,6 +555,7 @@
   },
   "storeSettings": {
     "basicInfo": "المعلومات الأساسية",
+    "editingLanguage": "تحرير اللغة",
     "storeName": "اسم المتجر",
     "storeNamePlaceholder": "أدخل اسم المتجر",
     "welcomeTitle": "عنوان الترحيب",
