@@ -783,11 +783,20 @@ export class DatabaseStorage implements IStorage {
           totalPrice: orderItems.totalPrice,
           createdAt: orderItems.createdAt,
           productName: products.name,
+          productName_en: products.name_en,
+          productName_he: products.name_he,
+          productName_ar: products.name_ar,
           productDescription: products.description,
+          productDescription_en: products.description_en,
+          productDescription_he: products.description_he,
+          productDescription_ar: products.description_ar,
           productPrice: products.price,
           productUnit: products.unit,
           productPricePerKg: products.pricePerKg,
           productImageUrl: products.imageUrl,
+          productImageUrl_en: products.imageUrl_en,
+          productImageUrl_he: products.imageUrl_he,
+          productImageUrl_ar: products.imageUrl_ar,
           productIsActive: products.isActive,
           productIsAvailable: products.isAvailable,
           productStockStatus: products.stockStatus,
@@ -822,11 +831,20 @@ export class DatabaseStorage implements IStorage {
           product: {
             id: item.productId,
             name: item.productName,
+            name_en: item.productName_en,
+            name_he: item.productName_he,
+            name_ar: item.productName_ar,
             description: item.productDescription,
+            description_en: item.productDescription_en,
+            description_he: item.productDescription_he,
+            description_ar: item.productDescription_ar,
             price: item.productPrice,
             unit: item.productUnit,
             pricePerKg: item.productPricePerKg,
             imageUrl: item.productImageUrl,
+            imageUrl_en: item.productImageUrl_en,
+            imageUrl_he: item.productImageUrl_he,
+            imageUrl_ar: item.productImageUrl_ar,
             isActive: item.productIsActive,
             isAvailable: item.productIsAvailable,
             stockStatus: item.productStockStatus,
@@ -877,21 +895,106 @@ export class DatabaseStorage implements IStorage {
       orderBy = desc(orders.createdAt);
     }
 
-    // Get paginated data with user search filtering
-    let ordersData = await db.query.orders.findMany({
-      with: {
-        items: {
-          with: {
-            product: true,
-          },
-        },
-        user: true,
-      },
-      where: whereClause,
-      orderBy,
-      limit: search ? undefined : limit, // Get all if searching by user name
-      offset: search ? undefined : offset,
-    });
+    // Get paginated orders first
+    const ordersQuery = await db
+      .select()
+      .from(orders)
+      .where(whereClause)
+      .orderBy(orderBy)
+      .limit(search ? undefined : limit)
+      .offset(search ? undefined : offset);
+
+    // Build full order data with items and users
+    let ordersData: any[] = [];
+    for (const order of ordersQuery) {
+      // Get order items with multilingual product fields
+      const itemsData = await db
+        .select({
+          id: orderItems.id,
+          orderId: orderItems.orderId,
+          productId: orderItems.productId,
+          quantity: orderItems.quantity,
+          pricePerKg: orderItems.pricePerKg,
+          totalPrice: orderItems.totalPrice,
+          createdAt: orderItems.createdAt,
+          productName: products.name,
+          productName_en: products.name_en,
+          productName_he: products.name_he,
+          productName_ar: products.name_ar,
+          productDescription: products.description,
+          productDescription_en: products.description_en,
+          productDescription_he: products.description_he,
+          productDescription_ar: products.description_ar,
+          productPrice: products.price,
+          productUnit: products.unit,
+          productPricePerKg: products.pricePerKg,
+          productImageUrl: products.imageUrl,
+          productImageUrl_en: products.imageUrl_en,
+          productImageUrl_he: products.imageUrl_he,
+          productImageUrl_ar: products.imageUrl_ar,
+          productIsActive: products.isActive,
+          productIsAvailable: products.isAvailable,
+          productStockStatus: products.stockStatus,
+          productAvailabilityStatus: products.availabilityStatus,
+          productIsSpecialOffer: products.isSpecialOffer,
+          productDiscountType: products.discountType,
+          productDiscountValue: products.discountValue,
+          productSortOrder: products.sortOrder,
+          productCreatedAt: products.createdAt,
+          productUpdatedAt: products.updatedAt,
+        })
+        .from(orderItems)
+        .innerJoin(products, eq(orderItems.productId, products.id))
+        .where(eq(orderItems.orderId, order.id));
+
+      // Get user data
+      const [userData] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, order.userId || ''));
+
+      ordersData.push({
+        ...order,
+        items: itemsData.map(item => ({
+          id: item.id,
+          orderId: item.orderId,
+          productId: item.productId,
+          quantity: item.quantity,
+          pricePerKg: item.pricePerKg,
+          totalPrice: item.totalPrice,
+          createdAt: item.createdAt,
+          product: {
+            id: item.productId,
+            name: item.productName,
+            name_en: item.productName_en,
+            name_he: item.productName_he,
+            name_ar: item.productName_ar,
+            description: item.productDescription,
+            description_en: item.productDescription_en,
+            description_he: item.productDescription_he,
+            description_ar: item.productDescription_ar,
+            price: item.productPrice,
+            unit: item.productUnit,
+            pricePerKg: item.productPricePerKg,
+            imageUrl: item.productImageUrl,
+            imageUrl_en: item.productImageUrl_en,
+            imageUrl_he: item.productImageUrl_he,
+            imageUrl_ar: item.productImageUrl_ar,
+            isActive: item.productIsActive,
+            isAvailable: item.productIsAvailable,
+            stockStatus: item.productStockStatus,
+            availabilityStatus: item.productAvailabilityStatus,
+            isSpecialOffer: item.productIsSpecialOffer,
+            discountType: item.productDiscountType,
+            discountValue: item.productDiscountValue,
+            sortOrder: item.productSortOrder,
+            createdAt: item.productCreatedAt,
+            updatedAt: item.productUpdatedAt,
+          }
+        })),
+        user: userData || null,
+      });
+    }
 
     let totalFiltered = ordersData.length;
 
@@ -936,17 +1039,100 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getOrderById(id: number): Promise<OrderWithItems | undefined> {
-    return await db.query.orders.findFirst({
-      with: {
-        items: {
-          with: {
-            product: true,
-          },
-        },
-        user: true,
-      },
-      where: eq(orders.id, id),
-    }) as OrderWithItems | undefined;
+    const [order] = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.id, id));
+
+    if (!order) return undefined;
+
+    // Get order items with multilingual product fields
+    const itemsData = await db
+      .select({
+        id: orderItems.id,
+        orderId: orderItems.orderId,
+        productId: orderItems.productId,
+        quantity: orderItems.quantity,
+        pricePerKg: orderItems.pricePerKg,
+        totalPrice: orderItems.totalPrice,
+        createdAt: orderItems.createdAt,
+        productName: products.name,
+        productName_en: products.name_en,
+        productName_he: products.name_he,
+        productName_ar: products.name_ar,
+        productDescription: products.description,
+        productDescription_en: products.description_en,
+        productDescription_he: products.description_he,
+        productDescription_ar: products.description_ar,
+        productPrice: products.price,
+        productUnit: products.unit,
+        productPricePerKg: products.pricePerKg,
+        productImageUrl: products.imageUrl,
+        productImageUrl_en: products.imageUrl_en,
+        productImageUrl_he: products.imageUrl_he,
+        productImageUrl_ar: products.imageUrl_ar,
+        productIsActive: products.isActive,
+        productIsAvailable: products.isAvailable,
+        productStockStatus: products.stockStatus,
+        productAvailabilityStatus: products.availabilityStatus,
+        productIsSpecialOffer: products.isSpecialOffer,
+        productDiscountType: products.discountType,
+        productDiscountValue: products.discountValue,
+        productSortOrder: products.sortOrder,
+        productCreatedAt: products.createdAt,
+        productUpdatedAt: products.updatedAt,
+      })
+      .from(orderItems)
+      .innerJoin(products, eq(orderItems.productId, products.id))
+      .where(eq(orderItems.orderId, order.id));
+
+    // Get user data
+    const [userData] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, order.userId || ''));
+
+    return {
+      ...order,
+      items: itemsData.map(item => ({
+        id: item.id,
+        orderId: item.orderId,
+        productId: item.productId,
+        quantity: item.quantity,
+        pricePerKg: item.pricePerKg,
+        totalPrice: item.totalPrice,
+        createdAt: item.createdAt,
+        product: {
+          id: item.productId,
+          name: item.productName,
+          name_en: item.productName_en,
+          name_he: item.productName_he,
+          name_ar: item.productName_ar,
+          description: item.productDescription,
+          description_en: item.productDescription_en,
+          description_he: item.productDescription_he,
+          description_ar: item.productDescription_ar,
+          price: item.productPrice,
+          unit: item.productUnit,
+          pricePerKg: item.productPricePerKg,
+          imageUrl: item.productImageUrl,
+          imageUrl_en: item.productImageUrl_en,
+          imageUrl_he: item.productImageUrl_he,
+          imageUrl_ar: item.productImageUrl_ar,
+          isActive: item.productIsActive,
+          isAvailable: item.productIsAvailable,
+          stockStatus: item.productStockStatus,
+          availabilityStatus: item.productAvailabilityStatus,
+          isSpecialOffer: item.productIsSpecialOffer,
+          discountType: item.productDiscountType,
+          discountValue: item.productDiscountValue,
+          sortOrder: item.productSortOrder,
+          createdAt: item.productCreatedAt,
+          updatedAt: item.productUpdatedAt,
+        }
+      })),
+      user: userData || null,
+    } as OrderWithItems;
   }
 
   async createOrder(order: InsertOrder, items: InsertOrderItem[]): Promise<Order> {
