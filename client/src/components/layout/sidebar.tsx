@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import type { CategoryWithCount } from "@shared/schema";
+import { useQuery } from "@tanstack/react-query";
 
 interface SidebarProps {
   categories: CategoryWithCount[];
@@ -25,6 +26,12 @@ export default function Sidebar({
 }: SidebarProps) {
   const { t } = useShopTranslation();
   const { currentLanguage } = useLanguage();
+  
+  // Load store settings for default language
+  const { data: storeSettings } = useQuery({
+    queryKey: ['/api/settings'],
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
   if (isLoading) {
     return (
       <aside className="hidden lg:block w-64 bg-white shadow-sm border-r border-gray-200">
@@ -69,7 +76,7 @@ export default function Sidebar({
                 )}
               >
                 <span className="mr-3 rtl:mr-0 rtl:ml-3">{category.icon || '📦'}</span>
-                {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}
+                {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettings)}
                 <Badge variant="secondary" className="ml-auto text-xs bg-gray-200 text-gray-700">
                   {category.productCount}
                 </Badge>

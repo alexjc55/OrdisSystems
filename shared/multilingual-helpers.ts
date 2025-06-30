@@ -227,17 +227,19 @@ export function createThemeFieldUpdate(
 }
 
 /**
- * Get localized payment method name with fallback to Russian
+ * Get localized payment method name with fallback to configurable default language
  */
 export function getPaymentMethodName(
   method: any,
   language: SupportedLanguage,
-  defaultLanguage: SupportedLanguage = 'ru'
+  storeSettings?: { defaultLanguage?: string }
 ): string {
   if (!method) return '';
   
-  // For Russian (base language), try base field first
-  if (language === 'ru') {
+  const defaultLanguage = getEffectiveDefaultLanguage(storeSettings);
+  
+  // For default language, try base field first
+  if (language === defaultLanguage) {
     return method.name || '';
   }
   
@@ -249,8 +251,12 @@ export function getPaymentMethodName(
     return localizedValue;
   }
   
-  // Fallback to default language (Russian)
-  return method.name || '';
+  // Fallback to default language
+  if (defaultLanguage === 'ru') {
+    return method.name || '';
+  } else {
+    return method[`name_${defaultLanguage}`] || method.name || '';
+  }
 }
 
 // No default image values - system will show empty fields if no images exist
