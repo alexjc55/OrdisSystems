@@ -292,7 +292,13 @@ const productSchema = z.object({
 
 const categorySchema = z.object({
   name: z.string().min(1),
+  name_en: z.string().optional(),
+  name_he: z.string().optional(),
+  name_ar: z.string().optional(),
   description: z.string().optional(),
+  description_en: z.string().optional(),
+  description_he: z.string().optional(),
+  description_ar: z.string().optional(),
   icon: z.string().default("🍽️"),
 });
 
@@ -5966,12 +5972,19 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
+  const [activeTab, setActiveTab] = useState("basic");
   
   const form = useForm({
     resolver: zodResolver(categorySchema),
     defaultValues: {
       name: "",
+      name_en: "",
+      name_he: "",
+      name_ar: "",
       description: "",
+      description_en: "",
+      description_he: "",
+      description_ar: "",
       icon: "🍽️",
     },
   });
@@ -5980,14 +5993,26 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
     if (open) {
       if (category) {
         form.reset({
-          name: getLocalizedField(category, 'name', i18n.language as SupportedLanguage) || "",
+          name: category.name || "",
+          name_en: category.name_en || "",
+          name_he: category.name_he || "",
+          name_ar: category.name_ar || "",
           description: category.description || "",
+          description_en: category.description_en || "",
+          description_he: category.description_he || "",
+          description_ar: category.description_ar || "",
           icon: category.icon || "🍽️",
         });
       } else {
         form.reset({
           name: "",
+          name_en: "",
+          name_he: "",
+          name_ar: "",
           description: "",
+          description_en: "",
+          description_he: "",
+          description_ar: "",
           icon: "🍽️",
         });
       }
@@ -6008,128 +6033,310 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
           </DialogDescription>
         </DialogHeader>
         
+        {/* Translation Tabs */}
+        <div className="flex border-b border-gray-200 mb-4">
+          <button
+            type="button"
+            onClick={() => setActiveTab("basic")}
+            className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 flex-1 ${
+              activeTab === "basic"
+                ? "border-b-2 border-primary text-primary bg-primary/5"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <Info className="h-4 w-4" />
+            <span className="hidden sm:inline">{adminT('categories.tabs.basic')}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("english")}
+            className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 flex-1 ${
+              activeTab === "english"
+                ? "border-b-2 border-primary text-primary bg-primary/5"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <Globe className="h-4 w-4" />
+            <span className="hidden sm:inline">English</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("hebrew")}
+            className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 flex-1 ${
+              activeTab === "hebrew"
+                ? "border-b-2 border-primary text-primary bg-primary/5"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <Languages className="h-4 w-4" />
+            <span className="hidden sm:inline">עברית</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("arabic")}
+            className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 flex-1 ${
+              activeTab === "arabic"
+                ? "border-b-2 border-primary text-primary bg-primary/5"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <Type className="h-4 w-4" />
+            <span className="hidden sm:inline">العربية</span>
+          </button>
+        </div>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')}</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder={adminT('categories.fields.namePlaceholder')} 
-                      {...field} 
-                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                      dir={isRTL ? 'rtl' : 'ltr'}
-                    />
-                  </FormControl>
-                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
-                </FormItem>
-              )}
-            />
+            {activeTab === "basic" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (Русский)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder={adminT('categories.fields.namePlaceholder')} 
+                          {...field} 
+                          className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                          dir={isRTL ? 'rtl' : 'ltr'}
+                        />
+                      </FormControl>
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description')}</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder={adminT('categories.fields.descriptionPlaceholder')}
-                      className={`resize-none text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                      dir={isRTL ? 'rtl' : 'ltr'}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description')} (Русский)</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder={adminT('categories.fields.descriptionPlaceholder')}
+                          className={`resize-none text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                          dir={isRTL ? 'rtl' : 'ltr'}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="icon"
-              render={({ field }) => {
-                const commonIcons = [
-                  "🥗", "🍖", "🐟", "🥩", "🥕", "🍎", "🍞", "🥛", 
-                  "🍽️", "🥘", "🍱", "🥙", "🧀", "🍯", "🥜", "🍲",
-                  "🍰", "🥧", "🍚", "🌮", "🍕", "🍝", "🥪", "🌯"
-                ];
-                
-                return (
-                  <FormItem>
-                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.icon')}</FormLabel>
-                    <div className="space-y-3">
-                      {/* Current selected icon display */}
-                      <div className={`flex items-center gap-3 p-3 border rounded-lg bg-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <span className="text-2xl">{field.value}</span>
-                        <div className="flex-1">
-                          <div className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.selectedIcon')}</div>
-                          <div className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.clickToSelect')}</div>
-                        </div>
-                      </div>
-                      
-                      {/* Icon grid selector */}
-                      <div>
-                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.popularIcons')}:</div>
-                        <div className="grid grid-cols-8 gap-2">
-                          {commonIcons.map((icon) => (
-                            <Button
-                              key={icon}
-                              type="button"
-                              variant={field.value === icon ? "default" : "outline"}
-                              className={`h-10 w-10 p-0 text-lg ${
-                                field.value === icon 
-                                  ? "bg-primary border-primary hover:bg-primary" 
-                                  : "hover:bg-orange-50 hover:border-orange-300"
-                              }`}
-                              onClick={() => field.onChange(icon)}
-                            >
-                              {icon}
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {/* Custom icon input */}
-                      <div>
-                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.customIcon')}:</div>
-                        <FormControl>
-                          <Input 
-                            placeholder={adminT('categories.iconPlaceholder')}
-                            value={field.value}
-                            onChange={(e) => field.onChange(e.target.value)}
-                            className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                            dir={isRTL ? 'rtl' : 'ltr'}
-                          />
-                        </FormControl>
-                      </div>
-                      
-                      {/* Image upload option */}
-                      <div>
-                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.uploadImage')}:</div>
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-orange-300 transition-colors">
-                          <ImageUpload
-                            value=""
-                            onChange={(url) => {
-                              if (url) {
-                                field.onChange(url);
-                              }
-                            }}
-                          />
-                          <div className={`text-xs text-gray-400 mt-2 text-center ${isRTL ? 'text-right' : 'text-left'}`}>
-                            {adminT('categories.recommendedSize')}
+                <FormField
+                  control={form.control}
+                  name="icon"
+                  render={({ field }) => {
+                    const commonIcons = [
+                      "🥗", "🍖", "🐟", "🥩", "🥕", "🍎", "🍞", "🥛", 
+                      "🍽️", "🥘", "🍱", "🥙", "🧀", "🍯", "🥜", "🍲",
+                      "🍰", "🥧", "🍚", "🌮", "🍕", "🍝", "🥪", "🌯"
+                    ];
+                    
+                    return (
+                      <FormItem>
+                        <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.icon')}</FormLabel>
+                        <div className="space-y-3">
+                          {/* Current selected icon display */}
+                          <div className={`flex items-center gap-3 p-3 border rounded-lg bg-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                            <span className="text-2xl">{field.value}</span>
+                            <div className="flex-1">
+                              <div className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.selectedIcon')}</div>
+                              <div className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.clickToSelect')}</div>
+                            </div>
+                          </div>
+                          
+                          {/* Icon grid selector */}
+                          <div>
+                            <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.popularIcons')}:</div>
+                            <div className="grid grid-cols-8 gap-2">
+                              {commonIcons.map((icon) => (
+                                <Button
+                                  key={icon}
+                                  type="button"
+                                  variant={field.value === icon ? "default" : "outline"}
+                                  className={`h-10 w-10 p-0 text-lg ${
+                                    field.value === icon 
+                                      ? "bg-primary border-primary hover:bg-primary" 
+                                      : "hover:bg-orange-50 hover:border-orange-300"
+                                  }`}
+                                  onClick={() => field.onChange(icon)}
+                                >
+                                  {icon}
+                                </Button>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* Custom icon input */}
+                          <div>
+                            <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.customIcon')}:</div>
+                            <FormControl>
+                              <Input 
+                                placeholder={adminT('categories.iconPlaceholder')}
+                                value={field.value}
+                                onChange={(e) => field.onChange(e.target.value)}
+                                className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                                dir={isRTL ? 'rtl' : 'ltr'}
+                              />
+                            </FormControl>
+                          </div>
+                          
+                          {/* Image upload option */}
+                          <div>
+                            <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.uploadImage')}:</div>
+                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-orange-300 transition-colors">
+                              <ImageUpload
+                                value=""
+                                onChange={(url) => {
+                                  if (url) {
+                                    field.onChange(url);
+                                  }
+                                }}
+                              />
+                              <div className={`text-xs text-gray-400 mt-2 text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+                                {adminT('categories.recommendedSize')}
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                    <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
-                  </FormItem>
-                );
-              }}
-            />
+                        <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                      </FormItem>
+                    );
+                  }}
+                />
+              </>
+            )}
+
+            {activeTab === "english" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="name_en"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (English)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Category name in English" 
+                          {...field} 
+                          className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                          dir="ltr"
+                        />
+                      </FormControl>
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description_en"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description')} (English)</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Category description in English"
+                          className={`resize-none text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                          dir="ltr"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+
+            {activeTab === "hebrew" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="name_he"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (עברית)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="שם הקטגוריה בעברית" 
+                          {...field} 
+                          className="text-sm text-right"
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description_he"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description')} (עברית)</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="תיאור הקטגוריה בעברית"
+                          className="resize-none text-sm text-right"
+                          dir="rtl"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+
+            {activeTab === "arabic" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="name_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (العربية)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="اسم الفئة بالعربية" 
+                          {...field} 
+                          className="text-sm text-right"
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description')} (العربية)</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="وصف الفئة بالعربية"
+                          className="resize-none text-sm text-right"
+                          dir="rtl"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
 
             <div className={`flex flex-col sm:flex-row justify-center gap-3 ${isRTL ? 'sm:flex-row-reverse rtl:space-x-reverse' : 'space-x-4'}`}>
               <Button 
