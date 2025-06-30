@@ -450,6 +450,7 @@
     "allRoles": "جميع الأدوار",
     "role": "الدور",
     "permissions": "الصلاحيات",
+    "searchPlaceholder": "البحث في المستخدمين...",
     "notifications": {
       "roleUpdateError": "خطأ في تحديث الدور",
       "deleteError": "خطأ في حذف المستخدم",
@@ -464,6 +465,10 @@
     "delivery": "التوصيل",
     "deliveryFee": "رسوم التوصيل",
     "freeDeliveryThreshold": "حد التوصيل المجاني",
+    "saved": "تم الحفظ",
+    "saveSuccess": "تم حفظ الإعدادات بنجاح",
+    "saveError": "فشل في حفظ الإعدادات",
+    "saveSettings": "حفظ الإعدادات",
     "friday": "الجمعة",
     "monday": "الاثنين",
     "openTime": "وقت الافتتاح",
@@ -671,7 +676,6 @@
     "canManageThemesDescription": "السماح للموظف بإدارة مواضيع التصميم",
     "coreWorkSections": "أقسام العمل الأساسية",
     "coreWorkSectionsDescription": "المنتجات والفئات والطلبات متاحة دائماً للموظفين",
-    "alwaysEnabled": "مفعل دائماً",
     "alwaysEnabled": "مفعل دائماً"
   },
   "translation": {
