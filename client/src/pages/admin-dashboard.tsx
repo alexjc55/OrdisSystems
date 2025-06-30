@@ -423,6 +423,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
   };
 
   const { t: adminT } = useAdminTranslation();
+  const { i18n } = useTranslation();
   
   const getStatusLabel = (status: string) => {
     console.log('OrderCard getStatusLabel called with status:', status);
@@ -2000,6 +2001,7 @@ function ItemDiscountDialog({
   onApply: (index: number, type: 'percentage' | 'amount', value: number, reason: string) => void;
   adminT: (key: string) => string;
 }) {
+  const { i18n } = useTranslation();
   const [discountType, setDiscountType] = useState<'percentage' | 'amount'>(currentDiscount?.type || 'percentage');
   const [discountValue, setDiscountValue] = useState(currentDiscount?.value || 0);
   const [discountReason, setDiscountReason] = useState(currentDiscount?.reason || '');
