@@ -32,6 +32,7 @@ export default function CartOverlay() {
   const { toast } = useToast();
   const { t } = useShopTranslation();
   const { t: tCommon } = useCommonTranslation();
+  const { currentLanguage } = useLanguage();
   const queryClient = useQueryClient();
   const [customerNotes, setCustomerNotes] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
@@ -284,7 +285,7 @@ export default function CartOverlay() {
                   <div key={item.product.id} className="flex items-center space-x-4 pb-4 border-b border-gray-100">
                     <img
                       src={item.product.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80&h=80&fit=crop'}
-                      alt={item.product.name}
+                      alt={getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}
                       className="w-16 h-16 rounded-lg object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
@@ -294,7 +295,7 @@ export default function CartOverlay() {
                     
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-gray-900 truncate">
-                        {item.product.name}
+                        {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}
                       </h4>
                       <p className="text-sm text-gray-600">
                         {formatQuantity(item.quantity, item.product.unit as ProductUnit, t)} × {formatCurrency(parseFloat(item.product.price))}
