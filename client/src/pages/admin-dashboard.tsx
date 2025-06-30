@@ -1854,6 +1854,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
 // Add Item Dialog Component
 function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { onClose: () => void, onAdd: (product: any, quantity: number) => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
+  const { i18n } = useTranslation();
   
   function getUnitDisplay(unit: string) {
     switch (unit) {
