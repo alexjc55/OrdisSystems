@@ -5976,6 +5976,28 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
   const [activeTab, setActiveTab] = useState("basic");
   
+  // Get enabled languages from settings
+  const { data: settings } = useQuery({
+    queryKey: ['/api/settings'],
+    enabled: open, // Only fetch when dialog is open
+  });
+  
+  // Define available language tabs based on enabled languages
+  const enabledLanguages = (settings as any)?.enabledLanguages || ['ru', 'en', 'he', 'ar'];
+  const availableTabs = [
+    { key: 'basic', label: adminT('categories.tabs.basic'), icon: Info, langCode: 'ru' },
+    { key: 'english', label: 'English', icon: Globe, langCode: 'en' },
+    { key: 'hebrew', label: 'עברית', icon: Languages, langCode: 'he' },
+    { key: 'arabic', label: 'العربية', icon: Type, langCode: 'ar' }
+  ].filter(tab => tab.langCode === 'ru' || enabledLanguages.includes(tab.langCode));
+
+  // Reset activeTab if current tab is not available
+  useEffect(() => {
+    if (availableTabs.length > 0 && !availableTabs.some(tab => tab.key === activeTab)) {
+      setActiveTab(availableTabs[0].key);
+    }
+  }, [availableTabs, activeTab]);
+  
   const form = useForm({
     resolver: zodResolver(categorySchema),
     defaultValues: {
@@ -6035,56 +6057,26 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
           </DialogDescription>
         </DialogHeader>
         
-        {/* Translation Tabs */}
+        {/* Dynamic Translation Tabs based on enabled languages */}
         <div className="flex border-b border-gray-200 mb-4">
-          <button
-            type="button"
-            onClick={() => setActiveTab("basic")}
-            className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 flex-1 ${
-              activeTab === "basic"
-                ? "border-b-2 border-primary text-primary bg-primary/5"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <Info className="h-4 w-4" />
-            <span className="hidden sm:inline">{adminT('categories.tabs.basic')}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("english")}
-            className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 flex-1 ${
-              activeTab === "english"
-                ? "border-b-2 border-primary text-primary bg-primary/5"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <Globe className="h-4 w-4" />
-            <span className="hidden sm:inline">English</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("hebrew")}
-            className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 flex-1 ${
-              activeTab === "hebrew"
-                ? "border-b-2 border-primary text-primary bg-primary/5"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <Languages className="h-4 w-4" />
-            <span className="hidden sm:inline">עברית</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("arabic")}
-            className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 flex-1 ${
-              activeTab === "arabic"
-                ? "border-b-2 border-primary text-primary bg-primary/5"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <Type className="h-4 w-4" />
-            <span className="hidden sm:inline">العربية</span>
-          </button>
+          {availableTabs.map((tab) => {
+            const IconComponent = tab.icon;
+            return (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 flex-1 ${
+                  activeTab === tab.key
+                    ? "border-b-2 border-primary text-primary bg-primary/5"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                <IconComponent className="h-4 w-4" />
+                <span className="hidden sm:inline">{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         <Form {...form}>
