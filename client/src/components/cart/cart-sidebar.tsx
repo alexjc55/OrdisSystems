@@ -137,8 +137,7 @@ export default function CartSidebar() {
             ) : (
               <ScrollArea className="h-full p-4">
                 <div className="space-y-3">
-                  {console.log('Cart items:', items)}
-                  {items.filter(item => item && item.product).map((item) => (
+                  {items.filter(item => item && item.product && item.product.id).map((item) => (
                     <div key={item.product.id} className="bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm">
                       <div className="flex items-start gap-3">
                         {/* Product Image Placeholder */}

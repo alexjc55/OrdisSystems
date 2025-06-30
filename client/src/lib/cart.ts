@@ -30,11 +30,13 @@ export const useCartStore = create<CartStore>()(
       
       addItem: (product, quantity) => {
         const items = get().items;
-        const existingItemIndex = items.findIndex(item => item.product.id === product.id);
+        // Filter out invalid items and find existing item
+        const validItems = items.filter(item => item.product && item.product.id);
+        const existingItemIndex = validItems.findIndex(item => item.product.id === product.id);
         
         if (existingItemIndex >= 0) {
           // Update existing item
-          const updatedItems = [...items];
+          const updatedItems = [...validItems];
           const newQuantity = updatedItems[existingItemIndex].quantity + quantity;
           updatedItems[existingItemIndex] = {
             ...updatedItems[existingItemIndex],
@@ -49,13 +51,14 @@ export const useCartStore = create<CartStore>()(
             quantity,
             totalPrice: calculateTotal(parseFloat(product.price), quantity, product.unit as ProductUnit)
           };
-          set({ items: [...items, newItem] });
+          set({ items: [...validItems, newItem] });
         }
       },
       
       removeItem: (productId) => {
         const items = get().items;
-        set({ items: items.filter(item => item.product.id !== productId) });
+        const validItems = items.filter(item => item.product && item.product.id && item.product.id !== productId);
+        set({ items: validItems });
       },
       
       updateQuantity: (productId, quantity) => {
@@ -65,7 +68,8 @@ export const useCartStore = create<CartStore>()(
         }
         
         const items = get().items;
-        const updatedItems = items.map(item => 
+        const validItems = items.filter(item => item.product && item.product.id);
+        const updatedItems = validItems.map(item => 
           item.product.id === productId
             ? {
                 ...item,
@@ -84,11 +88,13 @@ export const useCartStore = create<CartStore>()(
       setCartOpen: (open) => set({ isOpen: open }),
       
       getTotalItems: () => {
-        return get().items.reduce((total, item) => total + item.quantity, 0);
+        const validItems = get().items.filter(item => item.product && item.product.id);
+        return validItems.reduce((total, item) => total + item.quantity, 0);
       },
       
       getTotalPrice: () => {
-        const total = get().items.reduce((total, item) => total + item.totalPrice, 0);
+        const validItems = get().items.filter(item => item.product && item.product.id);
+        const total = validItems.reduce((total, item) => total + item.totalPrice, 0);
         return roundUpToNearestTenAgorot(total);
       }
     }),
