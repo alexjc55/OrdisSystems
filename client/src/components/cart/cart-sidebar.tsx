@@ -35,7 +35,8 @@ interface Product {
 
 export default function CartSidebar() {
   const { items, isOpen, setCartOpen, removeItem, updateQuantity, getTotalPrice, clearCart } = useCartStore();
-  const { t, currentLanguage } = useShopTranslation();
+  const { t, i18n } = useShopTranslation();
+  const currentLanguage = i18n.language;
   const [editingQuantity, setEditingQuantity] = useState<Record<number, string>>({});
 
   // Fetch all products to get current data with translations
@@ -44,7 +45,7 @@ export default function CartSidebar() {
     enabled: isOpen && items.length > 0
   });
 
-  const handleQuantityChange = (productId: number, newQuantity: number, unit: ProductUnit) => {
+  const handleQuantityChange = (productId: number, newQuantity: number, unit: string) => {
     if (newQuantity <= 0) {
       removeItem(productId);
     } else {
@@ -52,7 +53,7 @@ export default function CartSidebar() {
     }
   };
 
-  const getIncrementValue = (unit: ProductUnit) => {
+  const getIncrementValue = (unit: string) => {
     switch (unit) {
       case 'piece': return 1;
       case 'kg': return 0.1;
@@ -62,11 +63,11 @@ export default function CartSidebar() {
     }
   };
 
-  const handleManualQuantityChange = (productId: number, value: string, unit: ProductUnit) => {
+  const handleManualQuantityChange = (productId: number, value: string, unit: string) => {
     setEditingQuantity(prev => ({ ...prev, [productId]: value }));
   };
 
-  const handleQuantityBlur = (productId: number, unit: ProductUnit) => {
+  const handleQuantityBlur = (productId: number, unit: string) => {
     const value = editingQuantity[productId];
     if (value !== undefined) {
       const numValue = parseFloat(value);
@@ -81,7 +82,7 @@ export default function CartSidebar() {
     }
   };
 
-  const handleQuantityKeyPress = (e: React.KeyboardEvent, productId: number, unit: ProductUnit) => {
+  const handleQuantityKeyPress = (e: React.KeyboardEvent, productId: number, unit: string) => {
     if (e.key === 'Enter') {
       handleQuantityBlur(productId, unit);
     }
@@ -211,8 +212,8 @@ export default function CartSidebar() {
                                 size="sm"
                                 onClick={() => handleQuantityChange(
                                   item.productId, 
-                                  item.quantity - getIncrementValue(currentProduct.unit as ProductUnit),
-                                  currentProduct.unit as ProductUnit
+                                  item.quantity - getIncrementValue(currentProduct.unit),
+                                  currentProduct.unit
                                 )}
                                 className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary-light"
                               >
@@ -221,9 +222,9 @@ export default function CartSidebar() {
                               <Input
                                 type="text"
                                 value={getDisplayQuantity(item)}
-                                onChange={(e) => handleManualQuantityChange(item.productId, e.target.value, currentProduct.unit as ProductUnit)}
-                                onBlur={() => handleQuantityBlur(item.productId, currentProduct.unit as ProductUnit)}
-                                onKeyPress={(e) => handleQuantityKeyPress(e, item.productId, currentProduct.unit as ProductUnit)}
+                                onChange={(e) => handleManualQuantityChange(item.productId, e.target.value, currentProduct.unit)}
+                                onBlur={() => handleQuantityBlur(item.productId, currentProduct.unit)}
+                                onKeyPress={(e) => handleQuantityKeyPress(e, item.productId, currentProduct.unit)}
                                 className="w-16 h-8 text-center text-sm font-bold border-gray-200 focus:border-primary"
                               />
                               <Button
@@ -231,8 +232,8 @@ export default function CartSidebar() {
                                 size="sm"
                                 onClick={() => handleQuantityChange(
                                   item.productId, 
-                                  item.quantity + getIncrementValue(currentProduct.unit as ProductUnit),
-                                  currentProduct.unit as ProductUnit
+                                  item.quantity + getIncrementValue(currentProduct.unit),
+                                  currentProduct.unit
                                 )}
                                 className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary-light"
                               >
