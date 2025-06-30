@@ -276,7 +276,7 @@ import {
 
 // Validation schemas
 const productSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().optional(),  // Allow empty for translation languages
   description: z.string().optional(),
   categoryIds: z.array(z.number()).min(1, "Выберите хотя бы одну категорию"),
   price: z.string().min(1),
@@ -5577,14 +5577,15 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           </DialogDescription>
         </DialogHeader>
         
-        {/* Current Language Info */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-          <span className="text-sm text-blue-800">
-            Текущий язык: {translationManager.currentLanguage === 'ru' ? 'Русский' : 
-                         translationManager.currentLanguage === 'en' ? 'English' :
-                         translationManager.currentLanguage === 'he' ? 'עברית' : 'العربية'}
-          </span>
-        </div>
+        {/* Translation Toolbar */}
+        <TranslationToolbar
+          currentLanguage={translationManager.currentLanguage}
+          defaultLanguage={translationManager.defaultLanguage}
+          formData={formData}
+          baseFields={['name', 'description']}
+          onCopyAllFields={handleCopyAllFields}
+          onClearAllFields={handleClearAllFields}
+        />
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
