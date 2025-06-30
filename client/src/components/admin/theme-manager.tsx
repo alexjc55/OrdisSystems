@@ -17,7 +17,6 @@ import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
 import { ModernStyleSettings } from "./modern-style-settings";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useTranslation } from 'react-i18next';
-import { getMultilingualValue } from '@/shared/multilingual-helpers';
 
 
 // Visual Toggle Button Component
@@ -627,7 +626,13 @@ export default function ThemeManager() {
 
     const themeData = {
       name: formData.get("name") as string,
+      name_en: formData.get("name_en") as string || "",
+      name_he: formData.get("name_he") as string || "",
+      name_ar: formData.get("name_ar") as string || "",
       description: formData.get("description") as string,
+      description_en: formData.get("description_en") as string || "",
+      description_he: formData.get("description_he") as string || "",
+      description_ar: formData.get("description_ar") as string || "",
       primaryColor: convertColorToHsl(formData.get("primaryColor") as string),
       primaryTextColor: convertColorToHsl(formData.get("primaryTextColor") as string),
       primaryDarkColor: convertColorToHsl(formData.get("primaryDarkColor") as string),
@@ -714,7 +719,13 @@ export default function ThemeManager() {
 
     const themeData = {
       name: formData.get("name") as string,
+      name_en: formData.get("name_en") as string || "",
+      name_he: formData.get("name_he") as string || "",
+      name_ar: formData.get("name_ar") as string || "",
       description: formData.get("description") as string,
+      description_en: formData.get("description_en") as string || "",
+      description_he: formData.get("description_he") as string || "",
+      description_ar: formData.get("description_ar") as string || "",
       primaryColor: convertColorToHsl(formData.get("primaryColor") as string),
       primaryTextColor: convertColorToHsl(formData.get("primaryTextColor") as string),
       primaryDarkColor: convertColorToHsl(formData.get("primaryDarkColor") as string),
@@ -1659,13 +1670,37 @@ export default function ThemeManager() {
                 
                 <TabsContent value="basic" className="space-y-4">
                   <div className="grid grid-cols-1 gap-4">
+                    {/* Многоязычное название темы */}
                     <div className="space-y-2">
-                      <Label htmlFor="edit-name">{adminT('themes.name')}</Label>
-                      <Input id="edit-name" name="name" defaultValue={editingTheme.name} required />
+                      <Label htmlFor="edit-name">{adminT('themes.name')} ({i18n.language.toUpperCase()})</Label>
+                      <Input 
+                        id="edit-name" 
+                        name={i18n.language === 'ru' ? 'name' : `name_${i18n.language}`}
+                        defaultValue={i18n.language === 'ru' ? editingTheme.name : 
+                          (editingTheme as any)[`name_${i18n.language}`] || ''}
+                        required={i18n.language === 'ru'}
+                      />
+                      {/* Скрытые поля для других языков */}
+                      {i18n.language !== 'ru' && <input type="hidden" name="name" value={editingTheme.name || ''} />}
+                      {i18n.language !== 'en' && <input type="hidden" name="name_en" value={editingTheme.name_en || ''} />}
+                      {i18n.language !== 'he' && <input type="hidden" name="name_he" value={editingTheme.name_he || ''} />}
+                      {i18n.language !== 'ar' && <input type="hidden" name="name_ar" value={editingTheme.name_ar || ''} />}
                     </div>
+                    
+                    {/* Многоязычное описание темы */}
                     <div className="space-y-2">
-                      <Label htmlFor="edit-description">{adminT("description")}</Label>
-                      <Textarea id="edit-description" name="description" defaultValue={editingTheme.description || ""} />
+                      <Label htmlFor="edit-description">{adminT('themes.description')} ({i18n.language.toUpperCase()})</Label>
+                      <Textarea 
+                        id="edit-description" 
+                        name={i18n.language === 'ru' ? 'description' : `description_${i18n.language}`}
+                        defaultValue={i18n.language === 'ru' ? editingTheme.description : 
+                          (editingTheme as any)[`description_${i18n.language}`] || ''}
+                      />
+                      {/* Скрытые поля для других языков */}
+                      {i18n.language !== 'ru' && <input type="hidden" name="description" value={editingTheme.description || ''} />}
+                      {i18n.language !== 'en' && <input type="hidden" name="description_en" value={editingTheme.description_en || ''} />}
+                      {i18n.language !== 'he' && <input type="hidden" name="description_he" value={editingTheme.description_he || ''} />}
+                      {i18n.language !== 'ar' && <input type="hidden" name="description_ar" value={editingTheme.description_ar || ''} />}
                     </div>
                     
                     {/* Изображения */}
