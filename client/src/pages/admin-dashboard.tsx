@@ -266,13 +266,15 @@ import {
   MessageCircle,
   Code,
   Layers,
-  Type,
   Palette,
   Settings,
   Languages,
   Layers3,
   UserCheck,
-  MoreHorizontal
+  MoreHorizontal,
+  Info,
+  Globe,
+  Type
 } from "lucide-react";
 
 // Validation schemas
