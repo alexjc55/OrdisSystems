@@ -6442,6 +6442,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   // Reset form when storeSettings or language changes
   useEffect(() => {
     if (storeSettings) {
+      console.log('Updating form with paymentMethods:', storeSettings?.paymentMethods);
       form.reset({
         storeName: getMultilingualValue(storeSettings, 'storeName', currentLanguage) || "",
         welcomeTitle: getMultilingualValue(storeSettings, 'welcomeTitle', currentLanguage) || "",
