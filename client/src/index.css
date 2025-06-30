@@ -738,6 +738,40 @@ button:focus,
     direction: rtl !important;
     text-align: right !important;
   }
+
+  /* Hebrew and Arabic users page: RTL container with RTL table */
+  html[lang="he"] .users-container,
+  html[lang="ar"] .users-container,
+  html[lang="he"] [data-tab="users"],
+  html[lang="ar"] [data-tab="users"],
+  html[lang="he"] .users-tab-content,
+  html[lang="ar"] .users-tab-content {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+
+  /* Users table containers should be RTL */
+  html[lang="he"] .users-container table,
+  html[lang="ar"] .users-container table,
+  html[lang="he"] [data-tab="users"] table,
+  html[lang="ar"] [data-tab="users"] table,
+  html[lang="he"] .users-tab-content table,
+  html[lang="ar"] .users-tab-content table {
+    direction: rtl !important;
+  }
+
+  /* Users table headers and cells RTL alignment */
+  html[lang="he"] .users-container table th,
+  html[lang="ar"] .users-container table th,
+  html[lang="he"] .users-container table td,
+  html[lang="ar"] .users-container table td,
+  html[lang="he"] [data-tab="users"] table th,
+  html[lang="ar"] [data-tab="users"] table th,
+  html[lang="he"] [data-tab="users"] table td,
+  html[lang="ar"] [data-tab="users"] table td {
+    direction: rtl !important;
+    text-align: right !important;
+  }
   
   /* Products table containers should be RTL */
   html[lang="he"] .products-container table,

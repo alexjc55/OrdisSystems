@@ -4734,7 +4734,7 @@ export default function AdminDashboard() {
 
           {/* Users Management */}
           {hasPermission("canViewUsers") && (
-            <TabsContent value="users" className="space-y-4 sm:space-y-6">
+            <TabsContent value="users" className="space-y-4 sm:space-y-6 users-container" data-tab="users">
               <Card>
                 <CardHeader>
                   <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
