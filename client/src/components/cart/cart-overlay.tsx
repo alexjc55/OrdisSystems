@@ -271,14 +271,14 @@ export default function CartOverlay() {
               <div className="space-y-4">
                 {items.map((item) => {
                   // Get current product data with translations
-                  const currentProduct = productsList.find(p => p.id === item.product.id) || item.product;
+                  const currentProduct = productsList.find(p => p.id === item.productId);
+                  if (!currentProduct) return null; // Skip if product not found
+                  
                   const localizedName = getLocalizedField(currentProduct, 'name', currentLanguage as SupportedLanguage);
                   const localizedImageUrl = getLocalizedField(currentProduct, 'imageUrl', currentLanguage as SupportedLanguage);
                   
-
-                  
                   return (
-                    <div key={item.product.id} className="flex items-center space-x-4 pb-4 border-b border-gray-100">
+                    <div key={item.productId} className="flex items-center space-x-4 pb-4 border-b border-gray-100">
                       <img
                         src={localizedImageUrl || currentProduct.imageUrl || "/placeholder-product.jpg"}
                         alt={localizedName || currentProduct.name}
@@ -293,7 +293,7 @@ export default function CartOverlay() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => updateQuantity(item.product.id, Math.max(0, item.quantity - 1))}
+                            onClick={() => updateQuantity(item.productId, Math.max(0, item.quantity - 1))}
                             className="h-8 w-8 p-0"
                           >
                             <Minus className="h-3 w-3" />
@@ -304,7 +304,7 @@ export default function CartOverlay() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                             className="h-8 w-8 p-0"
                           >
                             <Plus className="h-3 w-3" />
@@ -312,7 +312,7 @@ export default function CartOverlay() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => removeItem(item.product.id)}
+                            onClick={() => removeItem(item.productId)}
                             className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
                           >
                             <Trash2 className="h-3 w-3" />
