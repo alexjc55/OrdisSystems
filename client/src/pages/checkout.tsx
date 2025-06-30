@@ -793,7 +793,7 @@ export default function Checkout() {
                         <SelectContent>
                           {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
                             storeSettings.paymentMethods.map((method: any) => (
-                              <SelectItem key={method.id} value={getPaymentMethodName(method)}>
+                              <SelectItem key={method.id} value={method.name}>
                                 {getPaymentMethodName(method)}
                               </SelectItem>
                             )) : (
@@ -1026,7 +1026,7 @@ export default function Checkout() {
                           <SelectContent>
                             {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
                               storeSettings.paymentMethods.map((method: any) => (
-                                <SelectItem key={method.id} value={getPaymentMethodName(method)}>
+                                <SelectItem key={method.id} value={method.name}>
                                   {getPaymentMethodName(method)}
                                 </SelectItem>
                               )) : (
@@ -1262,7 +1262,7 @@ export default function Checkout() {
                           <SelectContent>
                             {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
                               storeSettings.paymentMethods.map((method: any) => (
-                                <SelectItem key={method.id} value={getPaymentMethodName(method)}>
+                                <SelectItem key={method.id} value={method.name}>
                                   {getPaymentMethodName(method)}
                                 </SelectItem>
                               )) : (
