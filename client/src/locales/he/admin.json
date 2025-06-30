@@ -799,6 +799,8 @@
     "updateSuccess": "שינויים נשמרו בהצלחה",
     "updateError": "נכשל בעדכון הזמנה",
     "activeOrders": "הזמנות פעילות",
+    "deliveredOrders": "הזמנות שנמסרו",
+    "cancelledOrders": "הזמנות מבוטלות",
     "orderDetails": "פרטי ההזמנה",
     "orderNumber": "מס' הזמנה",
     "orderDate": "תאריך הזמנה",
@@ -1023,5 +1025,10 @@
     "unit": "יחידה",
     "phone": "טלפון",
     "totalAmount": "סכום כולל"
+  },
+  "roles": {
+    "admin": "מנהל",
+    "worker": "עובד",
+    "customer": "לקוח"
   }
 }
