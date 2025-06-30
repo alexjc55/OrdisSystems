@@ -6439,6 +6439,26 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
     } as any,
   });
 
+  // Helper function to get payment method name for current language
+  const getPaymentMethodName = (method: any, language: string) => {
+    switch (language) {
+      case 'en': return method.name_en || method.name || '';
+      case 'he': return method.name_he || method.name || '';
+      case 'ar': return method.name_ar || method.name || '';
+      default: return method.name || '';
+    }
+  };
+
+  // Helper function to update payment method name for current language
+  const updatePaymentMethodName = (method: any, language: string, newName: string) => {
+    switch (language) {
+      case 'en': return { ...method, name_en: newName };
+      case 'he': return { ...method, name_he: newName };
+      case 'ar': return { ...method, name_ar: newName };
+      default: return { ...method, name: newName };
+    }
+  };
+
   // Reset form when storeSettings or language changes
   useEffect(() => {
     if (storeSettings) {
@@ -7226,10 +7246,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <div key={method.id || index} className="flex items-center gap-2 p-3 border rounded-lg">
                     <Input
                       placeholder={adminT('storeSettings.paymentMethodPlaceholder')}
-                      value={method.name || ""}
+                      value={getPaymentMethodName(method, currentLanguage)}
                       onChange={(e) => {
                         const updatedMethods = [...(field.value || [])];
-                        updatedMethods[index] = { ...method, name: e.target.value };
+                        updatedMethods[index] = updatePaymentMethodName(method, currentLanguage, e.target.value);
                         field.onChange(updatedMethods);
                       }}
                       className="flex-1"
@@ -7253,7 +7273,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    const newMethod = { name: "", id: Date.now() };
+                    const newMethod = { 
+                      name: "", 
+                      name_en: "", 
+                      name_he: "", 
+                      name_ar: "", 
+                      fee: 0, 
+                      enabled: true, 
+                      id: Date.now() 
+                    };
                     field.onChange([...(field.value || []), newMethod]);
                   }}
                   className="w-full"
