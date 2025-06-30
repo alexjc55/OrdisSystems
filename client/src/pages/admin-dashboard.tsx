@@ -1474,10 +1474,10 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <Input
                         type="number"
-                        step="0.1"
-                        min="0.1"
-                        value={item.quantity}
-                        onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
+                        step="1"
+                        min="1"
+                        value={Math.round(parseFloat(item.quantity))}
+                        onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 1)}
                         className={`w-20 h-7 text-xs ${isRTL ? 'text-right' : ''}`}
                         dir="ltr"
                       />
@@ -1595,10 +1595,10 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Input
                       type="number"
-                      step="0.1"
-                      min="0.1"
-                      value={item.quantity}
-                      onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
+                      step="1"
+                      min="1"
+                      value={Math.round(parseFloat(item.quantity))}
+                      onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 1)}
                       className={`h-7 text-sm w-20 ${isRTL ? 'text-right' : 'text-center'}`}
                       dir="ltr"
                     />
