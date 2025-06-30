@@ -3,6 +3,25 @@ import { Clock, Phone, MapPin, CreditCard, Truck, Star, Shield, Heart, ChefHat, 
 import { getLocalizedField, type SupportedLanguage } from '@shared/localization';
 import { useLanguage } from '@/hooks/use-language';
 
+// Import multilingual helper function
+function getMultilingualValue(
+  storeSettings: any,
+  baseField: string,
+  currentLanguage: SupportedLanguage,
+  defaultLanguage: SupportedLanguage = 'ru'
+): string {
+  let langField: string;
+  
+  if (currentLanguage === 'ru') {
+    langField = baseField;
+  } else {
+    const capitalizedLang = currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
+    langField = `${baseField}${capitalizedLang}`;
+  }
+  
+  return storeSettings?.[langField] || '';
+}
+
 // Helper function to get icon component
 const getIconComponent = (iconName: string) => {
   const iconProps = "h-6 w-6";
@@ -69,10 +88,10 @@ function ClassicHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSett
         <div className="header-banner bg-gray-50 py-12 text-center">
           <div className="banner-content container mx-auto px-6">
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-              {getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage) || "О нашей еде"}
+              {getMultilingualValue(storeSettings, 'welcomeTitle', currentLanguage as SupportedLanguage) || getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage)}
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-6">
-              {getLocalizedField(storeSettings, 'storeDescription', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage) || "Заказывай свежие блюда на развес — от повседневных обедов до праздничных угощений. Быстро, удобно и по-домашнему вкусно. Попробуй"}
+              {getMultilingualValue(storeSettings, 'storeDescription', currentLanguage as SupportedLanguage)}
             </p>
             
             {/* Orange underline accent */}
