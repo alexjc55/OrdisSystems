@@ -85,6 +85,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
   setActiveTab: (tab: string) => void,
   setSelectedCategory: (category: string) => void
 }) {
+  const { i18n } = useTranslation();
   const {
     attributes,
     listeners,
@@ -200,7 +201,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
         >
           {/* Category name */}
           <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1 hover:text-blue-600">
-            {category.name}
+            {getLocalizedField(category, 'name', i18n.language as SupportedLanguage)}
           </h3>
 
           {/* Description if exists */}
@@ -1907,7 +1908,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
   const { data: productsResponse } = useQuery({
     queryKey: ["/api/products"],
     select: (data: any) => data?.filter((product: any) => 
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      getLocalizedField(product, 'name', i18n.language as SupportedLanguage).toLowerCase().includes(searchQuery.toLowerCase())
     )
   });
 
@@ -3105,7 +3106,7 @@ export default function AdminDashboard() {
   const filteredProducts = (productsData as any[] || [])
     .filter((product: any) => {
       const matchesSearch = !searchQuery || 
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        getLocalizedField(product, 'name', i18n.language as SupportedLanguage).toLowerCase().includes(searchQuery.toLowerCase()) ||
         (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase()));
       
       const matchesCategory = selectedCategoryFilter === "all" || 
@@ -3423,10 +3424,10 @@ export default function AdminDashboard() {
                           {(categories as any[] || []).map((category: any) => (
                             <SelectItem 
                               key={category.id}
-                                          title={category.name} 
+                                          title={getLocalizedField(category, 'name', i18n.language as SupportedLanguage)} 
                               value={category.id.toString()}
                             >
-                              {category.name}
+                              {getLocalizedField(category, 'name', i18n.language as SupportedLanguage)}
                             </SelectItem>
                           ))}
                         </SelectContent>
