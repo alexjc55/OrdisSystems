@@ -637,6 +637,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
 function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRTL }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { i18n } = useTranslation();
   
   // Status color function for consistent styling
   const getStatusColor = (status: string) => {
@@ -1550,7 +1551,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               {/* Product Header */}
               <div className="flex justify-between items-start mb-2">
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-base text-gray-900 truncate">{item.product?.name}</div>
+                  <div className="font-medium text-base text-gray-900 truncate">{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}</div>
                   <div className="text-sm text-gray-500 mt-0.5">{getUnitPrice(item.product)}</div>
                 </div>
                 <AlertDialog>
@@ -1941,7 +1942,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
               }`}
               onClick={() => handleProductSelect(product)}
             >
-              <div className="font-medium">{product.name}</div>
+              <div className="font-medium">{getLocalizedField(product, 'name', i18n.language as SupportedLanguage)}</div>
               <div className="text-sm text-gray-500">
                 {formatCurrency(product.price || product.pricePerKg)} {adminT('products.per')} {getUnitDisplay(product.unit)}
               </div>
