@@ -38,6 +38,9 @@ export default function CartSidebar() {
   const { t, i18n } = useShopTranslation();
   const currentLanguage = i18n.language;
   const [editingQuantity, setEditingQuantity] = useState<Record<number, string>>({});
+  
+  // Check if current language is RTL
+  const isRTL = currentLanguage === 'he' || currentLanguage === 'ar';
 
   // Fetch all products to get current data with translations
   const { data: productsList = [] } = useQuery<Product[]>({
@@ -104,14 +107,17 @@ export default function CartSidebar() {
 
   return (
     <Sheet open={isOpen} onOpenChange={setCartOpen}>
-      <SheetContent side="right" className="w-full sm:max-w-md flex flex-col h-full p-0">
+      <SheetContent 
+        side="right" 
+        className={`w-full sm:max-w-md flex flex-col h-full p-0 ${isRTL ? 'rtl' : ''}`}
+      >
         <SheetHeader className="border-b p-6 pb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <div className="p-2 bg-primary/10 rounded-lg">
                 <ShoppingBag className="h-5 w-5 text-primary" />
               </div>
-              <div>
+              <div className={isRTL ? 'text-right' : ''}>
                 <SheetTitle className="text-lg">{t('cart.title')}</SheetTitle>
                 <SheetDescription className="text-sm text-gray-500">
                   {items.length} {t('cart.itemsCount')}
@@ -154,8 +160,8 @@ export default function CartSidebar() {
                     const localizedImageUrl = getLocalizedField(currentProduct, 'imageUrl', currentLanguage as SupportedLanguage);
                     
                     return (
-                      <div key={item.productId} className="bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm">
-                        <div className="flex items-start gap-3">
+                      <div key={item.productId} className={`bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm ${isRTL ? 'text-right' : ''}`}>
+                        <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                           {/* Product Image */}
                           <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                             <img
@@ -167,10 +173,10 @@ export default function CartSidebar() {
                           
                           {/* Product Info */}
                           <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-start mb-2">
+                            <div className={`flex justify-between items-start mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                               <div className="flex-1">
-                                <div className="flex items-center gap-2">
-                                  <h4 className="font-semibold text-gray-900 text-sm leading-tight">{localizedName || currentProduct.name}</h4>
+                                <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
+                                  <h4 className={`font-semibold text-gray-900 text-sm leading-tight ${isRTL ? 'text-right' : ''}`}>{localizedName || currentProduct.name}</h4>
                                   {currentProduct.availabilityStatus === 'out_of_stock_today' && (
                                     <TooltipProvider>
                                       <Tooltip>
@@ -195,7 +201,7 @@ export default function CartSidebar() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => removeItem(item.productId)}
-                                className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full flex-shrink-0 ml-2"
+                                className={`h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full flex-shrink-0 ${isRTL ? 'mr-2' : 'ml-2'}`}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -204,9 +210,9 @@ export default function CartSidebar() {
                         </div>
                         
                         {/* Price and Quantity Controls */}
-                        <div className="flex items-center justify-between mt-3">
-                          <div className="flex flex-col items-center gap-2">
-                            <div className="flex items-center gap-2">
+                        <div className={`flex items-center justify-between mt-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          <div className={`flex flex-col items-center gap-2 ${isRTL ? 'items-end' : ''}`}>
+                            <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -240,14 +246,14 @@ export default function CartSidebar() {
                                 <Plus className="h-3 w-3" />
                               </Button>
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className={`text-xs text-gray-500 ${isRTL ? 'text-right' : ''}`}>
                               {currentProduct.unit === "piece" ? t('units.piece') : 
                                currentProduct.unit === "kg" ? t('units.kg') : 
                                currentProduct.unit === "100g" ? t('units.per100g') : t('units.per100ml')}
                             </div>
                           </div>
                           
-                          <div className="text-right">
+                          <div className={`${isRTL ? 'text-left' : 'text-right'}`}>
                             <div className="text-xs text-gray-500">
                               {formatCurrency(currentProduct.price)} {t('units.per')} {(() => {
                                 switch (currentProduct.unit) {
@@ -275,7 +281,7 @@ export default function CartSidebar() {
           {/* Cart Footer */}
           {items.length > 0 && (
             <div className="border-t bg-white p-4 space-y-4">
-              <div className="flex items-center justify-between">
+              <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Button
                   variant="outline"
                   size="sm"
@@ -284,7 +290,7 @@ export default function CartSidebar() {
                 >
                   {t('cart.clear')}
                 </Button>
-                <div className="text-right">
+                <div className={`${isRTL ? 'text-left' : 'text-right'}`}>
                   <div className="text-sm text-gray-500">{t('cart.total')}</div>
                   <div className="text-xl font-bold text-gray-900">
                     {formatCurrency(getTotalPrice())}
