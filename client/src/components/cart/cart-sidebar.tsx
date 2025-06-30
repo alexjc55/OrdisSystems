@@ -167,114 +167,67 @@ export default function CartSidebar() {
                     const localizedImageUrl = getLocalizedField(currentProduct, 'imageUrl', currentLanguage as SupportedLanguage);
                     
                     return (
-                      <div key={item.productId} className={`cart-item bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm ${isRTL ? 'text-right' : ''}`}>
-                        <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                          {/* Product Image */}
-                          <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                            <img
-                              src={localizedImageUrl || currentProduct.imageUrl || "/placeholder-product.jpg"}
-                              alt={localizedName || currentProduct.name}
-                              className="w-full h-full object-cover"
-                            />
+                      <div key={item.productId} className={`cart-item flex gap-3 p-3 bg-white border-b ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        {/* Product Image */}
+                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                          <img
+                            src={localizedImageUrl || currentProduct.imageUrl || "/placeholder-product.jpg"}
+                            alt={localizedName || currentProduct.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        
+                        {/* Product Info */}
+                        <div className="flex-1 min-w-0">
+                          <h3 className={`font-medium text-gray-900 text-sm leading-tight ${isRTL ? 'text-right' : ''}`}>
+                            {localizedName || currentProduct.name}
+                          </h3>
+                          <div className={`text-xs text-gray-500 mt-1 ${isRTL ? 'text-right' : ''}`}>
+                            {formatCurrency(parseFloat(currentProduct.pricePerKg || currentProduct.price))} / {currentProduct.unit}
                           </div>
                           
-                          {/* Product Info */}
-                          <div className="flex-1 min-w-0">
-                            <div className={`flex justify-between items-start mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                              <div className="flex-1">
-                                <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
-                                  <h4 className={`font-semibold text-gray-900 text-sm leading-tight ${isRTL ? 'text-right' : ''}`}>{localizedName || currentProduct.name}</h4>
-                                  {currentProduct.availabilityStatus === 'out_of_stock_today' && (
-                                    <TooltipProvider>
-                                      <Tooltip>
-                                        <TooltipTrigger>
-                                          <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-xs">
-                                            <Info className="h-3 w-3" />
-                                            {t('preOrder')}
-                                          </div>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                          <p className="text-xs">{t('preOrderTooltip')}</p>
-                                        </TooltipContent>
-                                      </Tooltip>
-                                    </TooltipProvider>
-                                  )}
-                                </div>
-                                <p className="text-xs text-gray-500 mt-1">
-                                  {formatCurrency(parseFloat(currentProduct.pricePerKg || currentProduct.price))} / {currentProduct.unit}
-                                </p>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => removeItem(item.productId)}
-                                className={`h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full flex-shrink-0 ${isRTL ? 'mr-2' : 'ml-2'}`}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
+                          {/* Quantity Controls */}
+                          <div className={`cart-item-controls flex items-center gap-2 mt-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => updateQuantity(item.productId, Math.max(0, item.quantity - 0.1))}
+                              className="h-7 w-7 p-0"
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                            <Input
+                              type="text"
+                              value={item.quantity.toFixed(1)}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0;
+                                updateQuantity(item.productId, value);
+                              }}
+                              className="w-16 h-7 text-center text-sm"
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => updateQuantity(item.productId, item.quantity + 0.1)}
+                              className="h-7 w-7 p-0"
+                            >
+                              <Plus className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeItem(item.productId)}
+                              className="h-7 w-7 p-0 text-red-500 hover:text-red-700 ml-2"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
                           </div>
                         </div>
                         
-                        {/* Price and Quantity Controls */}
-                        <div className={`cart-item-controls flex items-center justify-between mt-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                          <div className={`flex flex-col items-center gap-2 ${isRTL ? 'items-end' : ''}`}>
-                            <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleQuantityChange(
-                                  item.productId, 
-                                  item.quantity - getIncrementValue(currentProduct.unit),
-                                  currentProduct.unit
-                                )}
-                                className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary-light"
-                              >
-                                <Minus className="h-3 w-3" />
-                              </Button>
-                              <Input
-                                type="text"
-                                value={getDisplayQuantity(item)}
-                                onChange={(e) => handleManualQuantityChange(item.productId, e.target.value, currentProduct.unit)}
-                                onBlur={() => handleQuantityBlur(item.productId, currentProduct.unit)}
-                                onKeyPress={(e) => handleQuantityKeyPress(e, item.productId, currentProduct.unit)}
-                                className="w-16 h-8 text-center text-sm font-bold border-gray-200 focus:border-primary"
-                              />
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleQuantityChange(
-                                  item.productId, 
-                                  item.quantity + getIncrementValue(currentProduct.unit),
-                                  currentProduct.unit
-                                )}
-                                className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary-light"
-                              >
-                                <Plus className="h-3 w-3" />
-                              </Button>
-                            </div>
-                            <div className={`text-xs text-gray-500 ${isRTL ? 'text-right' : ''}`}>
-                              {currentProduct.unit === "piece" ? t('units.piece') : 
-                               currentProduct.unit === "kg" ? t('units.kg') : 
-                               currentProduct.unit === "100g" ? t('units.per100g') : t('units.per100ml')}
-                            </div>
-                          </div>
-                          
-                          <div className={`${isRTL ? 'text-left' : 'text-right'}`}>
-                            <div className="text-xs text-gray-500">
-                              {formatCurrency(currentProduct.price)} {t('units.per')} {(() => {
-                                switch (currentProduct.unit) {
-                                  case 'piece': return t('units.piece');
-                                  case 'kg': return t('units.kg');
-                                  case '100g': return t('units.per100g');
-                                  case '100ml': return t('units.per100ml');
-                                  default: return currentProduct.unit;
-                                }
-                              })()}
-                            </div>
-                            <div className="font-bold text-lg text-gray-900">
-                              {formatCurrency(calculateItemTotal(currentProduct, item.quantity))}
-                            </div>
+                        {/* Price */}
+                        <div className={`text-right flex-shrink-0 ${isRTL ? 'text-left' : ''}`}>
+                          <div className="text-sm font-medium text-gray-900">
+                            {formatCurrency(parseFloat(calculateItemTotal(currentProduct, item.quantity)))}
                           </div>
                         </div>
                       </div>
@@ -288,6 +241,48 @@ export default function CartSidebar() {
           {/* Cart Footer */}
           {items.length > 0 && (
             <div className="cart-footer border-t bg-white p-4 space-y-4">
+              {/* Order Summary */}
+              <div className="space-y-2">
+                <div className={`flex justify-between text-sm ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <span>{t('cart.subtotal')}</span>
+                  <span>{formatCurrency(getTotalPrice())}</span>
+                </div>
+                <div className={`flex justify-between text-sm ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <span>{t('cart.deliveryFee')}</span>
+                  <span>
+                    {storeSettings && parseFloat(storeSettings.deliveryFee || "0") > 0 ? (
+                      getTotalPrice() >= parseFloat(storeSettings.freeDeliveryFrom || "0") ? (
+                        <span className="text-green-600">{t('cart.free')}</span>
+                      ) : (
+                        formatCurrency(parseFloat(storeSettings.deliveryFee || "0"))
+                      )
+                    ) : (
+                      <span className="text-green-600">{t('cart.free')}</span>
+                    )}
+                  </span>
+                </div>
+                <div className={`flex justify-between font-medium text-lg border-t pt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <span>{t('cart.total')}</span>
+                  <span>
+                    {formatCurrency(
+                      getTotalPrice() + 
+                      (storeSettings && parseFloat(storeSettings.deliveryFee || "0") > 0 && 
+                       getTotalPrice() < parseFloat(storeSettings.freeDeliveryFrom || "0") 
+                        ? parseFloat(storeSettings.deliveryFee || "0") 
+                        : 0)
+                    )}
+                  </span>
+                </div>
+              </div>
+
+              {/* Cart Banner */}
+              {storeSettings?.cartBannerText && (
+                <div className={`p-3 bg-orange-50 border border-orange-200 rounded-lg ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <p className="text-sm text-orange-800">{storeSettings.cartBannerText}</p>
+                </div>
+              )}
+
+              {/* Actions */}
               <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Button
                   variant="outline"
@@ -297,16 +292,10 @@ export default function CartSidebar() {
                 >
                   {t('cart.clear')}
                 </Button>
-                <div className={`${isRTL ? 'text-left' : 'text-right'}`}>
-                  <div className="text-sm text-gray-500">{t('cart.total')}</div>
-                  <div className="text-xl font-bold text-gray-900">
-                    {formatCurrency(getTotalPrice())}
-                  </div>
-                </div>
+                <Button className="flex-1 ml-3" size="lg" onClick={() => window.location.href = '/checkout'}>
+                  {t('cart.checkout')}
+                </Button>
               </div>
-              <Button className="w-full" size="lg" onClick={() => window.location.href = '/checkout'}>
-                {t('cart.checkout')}
-              </Button>
             </div>
           )}
         </div>
