@@ -2856,6 +2856,8 @@ export default function AdminDashboard() {
     onSuccess: (newData) => {
       // Update cache with the new data returned from the server
       queryClient.setQueryData(['/api/settings'], newData);
+      // Also invalidate the public settings cache to update header immediately
+      queryClient.invalidateQueries({ queryKey: ['/api/settings'] });
       toast({ title: adminT('settings.saved'), description: adminT('settings.saveSuccess') });
     },
     onError: (error: any) => {
