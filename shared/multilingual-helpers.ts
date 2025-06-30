@@ -1,20 +1,14 @@
 import { type SupportedLanguage } from './localization';
 
-// Global default language setting (can be overridden by store settings)
-let globalDefaultLanguage: SupportedLanguage = 'ru';
-
 /**
- * Set the global default language for the application
+ * Get default language from store settings or fallback to 'ru'
+ * This should be called with actual store settings when available
  */
-export function setGlobalDefaultLanguage(language: SupportedLanguage) {
-  globalDefaultLanguage = language;
-}
-
-/**
- * Get the current global default language
- */
-export function getGlobalDefaultLanguage(): SupportedLanguage {
-  return globalDefaultLanguage;
+export function getEffectiveDefaultLanguage(storeSettings?: { defaultLanguage?: string }): SupportedLanguage {
+  if (storeSettings?.defaultLanguage) {
+    return storeSettings.defaultLanguage as SupportedLanguage;
+  }
+  return 'ru'; // Fallback
 }
 
 // Type definitions for multilingual settings
@@ -80,27 +74,36 @@ export function getLocalizedStoreField(
   obj: MultilingualStoreSettings,
   fieldName: string,
   language: SupportedLanguage,
-  defaultLanguage: SupportedLanguage = globalDefaultLanguage
+  storeSettings?: { defaultLanguage?: string }
 ): string {
+  const defaultLanguage = getEffectiveDefaultLanguage(storeSettings);
   if (!obj) return '';
   
-  // Try current language field first
-  if (language === defaultLanguage) {
-    // For default language, try base field first, then suffixed version
-    const baseValue = obj[fieldName];
-    if (baseValue) return baseValue;
-    
-    const suffixedValue = obj[`${fieldName}_${defaultLanguage}`];
-    if (suffixedValue) return suffixedValue;
-  } else {
-    // For non-default languages, try suffixed field first
-    const suffixedValue = obj[`${fieldName}_${language}`];
-    if (suffixedValue) return suffixedValue;
+  // Internal helper function to avoid type issues with recursion
+  function getValue(lang: SupportedLanguage): string {
+    if (lang === defaultLanguage) {
+      // For default language, try base field first, then suffixed version
+      const baseValue = obj[fieldName];
+      if (baseValue) return baseValue;
+      
+      const suffixedValue = obj[`${fieldName}_${defaultLanguage}`];
+      if (suffixedValue) return suffixedValue;
+    } else {
+      // For non-default languages, try suffixed field first
+      const suffixedValue = obj[`${fieldName}_${lang}`];
+      if (suffixedValue) return suffixedValue;
+    }
+    return '';
   }
   
-  // Fallback to default language
+  // Try current language first
+  const currentValue = getValue(language);
+  if (currentValue) return currentValue;
+  
+  // Fallback to default language if different
   if (language !== defaultLanguage) {
-    return getLocalizedStoreField(obj, fieldName, defaultLanguage, defaultLanguage);
+    const fallbackValue = getValue(defaultLanguage);
+    if (fallbackValue) return fallbackValue;
   }
   
   // Final fallback to base field
@@ -116,31 +119,39 @@ export function getLocalizedThemeField(
   theme: MultilingualTheme,
   fieldName: string,
   language: SupportedLanguage,
-  defaultLanguage: SupportedLanguage = 'ru'
+  storeSettings?: { defaultLanguage?: string }
 ): string {
+  const defaultLanguage = getEffectiveDefaultLanguage(storeSettings);
   if (!theme) return '';
   
-  // Try current language field first
-  if (language === defaultLanguage) {
-    // For default language, try base field first (usually Russian in current setup)
-    const baseValue = theme[fieldName];
-    if (baseValue) return baseValue;
-    // Also try suffixed version for consistency
-    const suffixedValue = theme[`${fieldName}_${language}`];
-    if (suffixedValue) return suffixedValue;
-  } else {
-    // For non-default languages, try suffixed field first
-    const suffixedValue = theme[`${fieldName}_${language}`];
-    if (suffixedValue) return suffixedValue;
+  // Internal helper function to avoid type issues with recursion
+  function getValue(lang: SupportedLanguage): string {
+    if (lang === defaultLanguage) {
+      // For default language, try base field first
+      const baseValue = theme[fieldName];
+      if (baseValue) return baseValue;
+      // Also try suffixed version for consistency
+      const suffixedValue = theme[`${fieldName}_${lang}`];
+      if (suffixedValue) return suffixedValue;
+    } else {
+      // For non-default languages, try suffixed field first
+      const suffixedValue = theme[`${fieldName}_${lang}`];
+      if (suffixedValue) return suffixedValue;
+    }
+    return '';
   }
   
-  // Fallback to default language only if current language is not default
+  // Try current language first
+  const currentValue = getValue(language);
+  if (currentValue) return currentValue;
+  
+  // Fallback to default language if different
   if (language !== defaultLanguage) {
-    const fallbackValue = getLocalizedThemeField(theme, fieldName, defaultLanguage, defaultLanguage);
+    const fallbackValue = getValue(defaultLanguage);
     if (fallbackValue) return fallbackValue;
   }
   
-  // Final fallback to base field, or empty string if nothing found
+  // Final fallback to base field
   return theme[fieldName] || '';
 }
 
