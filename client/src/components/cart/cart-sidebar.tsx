@@ -8,8 +8,10 @@ import { X, Plus, Minus, Trash2, ShoppingCart, Info } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState } from "react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { useShopTranslation } from "@/hooks/use-language";
+import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useQuery } from "@tanstack/react-query";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 
 // Calculate delivery fee based on order total and free delivery threshold
 const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number | null) => {
@@ -26,6 +28,15 @@ export default function CartSidebar() {
   const [editingQuantity, setEditingQuantity] = useState<{[key: number]: string}>({});
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
+  const { currentLanguage } = useLanguage();
+  
+  // Fetch current products data to get translations
+  const { data: productsData = [] } = useQuery({
+    queryKey: ['/api/products'],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+  
+  const productsList = productsData as any[];
   
 
 
@@ -83,7 +94,7 @@ export default function CartSidebar() {
   };
 
   const getDisplayQuantity = (item: any) => {
-    const productId = item.product.id;
+    const productId = item.productId;
     if (editingQuantity[productId] !== undefined) {
       return editingQuantity[productId];
     }
@@ -135,21 +146,33 @@ export default function CartSidebar() {
             ) : (
               <ScrollArea className="h-full p-4">
                 <div className="space-y-3">
-                  {items.map((item) => (
-                    <div key={item.product.id} className="bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm">
-                      <div className="flex items-start gap-3">
-                        {/* Product Image Placeholder */}
-                        <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <ShoppingCart className="h-6 w-6 text-primary" />
-                        </div>
-                        
-                        {/* Product Info */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start mb-2">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <h4 className="font-semibold text-gray-900 text-sm leading-tight">{item.product.name}</h4>
-                                {item.product.availabilityStatus === 'out_of_stock_today' && (
+                  {items.map((item) => {
+                    // Get current product data with translations
+                    const currentProduct = productsList.find(p => p.id === item.productId);
+                    if (!currentProduct) return null; // Skip if product not found
+                    
+                    const localizedName = getLocalizedField(currentProduct, 'name', currentLanguage as SupportedLanguage);
+                    const localizedImageUrl = getLocalizedField(currentProduct, 'imageUrl', currentLanguage as SupportedLanguage);
+                    
+                    return (
+                      <div key={item.productId} className="bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div className="flex items-start gap-3">
+                          {/* Product Image */}
+                          <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                            <img
+                              src={localizedImageUrl || currentProduct.imageUrl || "/placeholder-product.jpg"}
+                              alt={localizedName || currentProduct.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          
+                          {/* Product Info */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start mb-2">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <h4 className="font-semibold text-gray-900 text-sm leading-tight">{localizedName || currentProduct.name}</h4>
+                                  {currentProduct.availabilityStatus === 'out_of_stock_today' && (
                                   <TooltipProvider>
                                     <Tooltip>
                                       <TooltipTrigger>
@@ -163,18 +186,21 @@ export default function CartSidebar() {
                                       </TooltipContent>
                                     </Tooltip>
                                   </TooltipProvider>
-                                )}
+                                  )}
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {formatCurrency(parseFloat(currentProduct.pricePerKg || currentProduct.price))} / {currentProduct.unit}
+                                </p>
                               </div>
-                              <p className="text-xs text-gray-500 mt-1 line-clamp-2">{item.product.description}</p>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeItem(item.productId)}
+                                className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full flex-shrink-0 ml-2"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeItem(item.product.id)}
-                              className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full flex-shrink-0 ml-2"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
                           </div>
                           
                           {/* Price and Quantity Controls */}

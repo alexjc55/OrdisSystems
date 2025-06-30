@@ -207,12 +207,17 @@ export default function CartOverlay() {
       return;
     }
 
-    const orderItems = items.map(item => ({
-      productId: item.product.id,
-      quantity: item.quantity.toString(),
-      pricePerKg: item.product.pricePerKg || item.product.price,
-      totalPrice: (parseFloat(item.product.pricePerKg || item.product.price) * item.quantity).toFixed(2)
-    }));
+    const orderItems = items.map(item => {
+      const currentProduct = productsList.find(p => p.id === item.productId);
+      if (!currentProduct) return null;
+      
+      return {
+        productId: item.productId,
+        quantity: item.quantity.toString(),
+        pricePerKg: currentProduct.pricePerKg || currentProduct.price,
+        totalPrice: (parseFloat(currentProduct.pricePerKg || currentProduct.price) * item.quantity).toFixed(2)
+      };
+    }).filter(Boolean);
 
     const orderData = {
       customerPhone,
@@ -232,7 +237,10 @@ export default function CartOverlay() {
   if (!isOpen) return null;
 
   const subtotal = items.reduce((sum, item) => {
-    const price = parseFloat(item.product.pricePerKg || item.product.price);
+    const currentProduct = productsList.find(p => p.id === item.productId);
+    if (!currentProduct) return sum;
+    
+    const price = parseFloat(currentProduct.pricePerKg || currentProduct.price);
     return sum + (price * item.quantity);
   }, 0);
 
