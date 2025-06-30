@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { memo, useCallback } from "react";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
+import { useQuery } from "@tanstack/react-query";
 import type { CategoryWithCount } from "@shared/schema";
 
 interface CategoryNavProps {
@@ -22,6 +23,11 @@ export default memo(function CategoryNav({
 }: CategoryNavProps) {
   const { t } = useShopTranslation();
   const { currentLanguage } = useLanguage();
+  
+  const { data: storeSettingsData } = useQuery({
+    queryKey: ['/api/settings'],
+    staleTime: 5 * 60 * 1000,
+  });
   
   const handleAllCategoriesClick = useCallback(() => {
     onCategorySelect(null);
@@ -53,7 +59,7 @@ export default memo(function CategoryNav({
             className="flex-shrink-0"
           >
             <span className="mr-2 rtl:mr-0 rtl:ml-2">{category.icon || '📦'}</span>
-            {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}
+            {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any)}
           </Button>
         ))}
       </div>

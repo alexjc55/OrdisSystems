@@ -11,6 +11,7 @@ import type { ProductWithCategories } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
+import { useQuery } from "@tanstack/react-query";
 
 interface ProductCardProps {
   product: ProductWithCategories;
@@ -23,9 +24,15 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   const { t } = useShopTranslation();
   const { currentLanguage } = useLanguage();
   
+  // Load store settings for default language
+  const { data: storeSettingsData } = useQuery({
+    queryKey: ['/api/settings'],
+    staleTime: 5 * 60 * 1000,
+  });
+  
   // Get localized product fields
-  const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
-  const localizedDescription = getLocalizedField(product, 'description', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
+  const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any);
+  const localizedDescription = getLocalizedField(product, 'description', currentLanguage as SupportedLanguage, storeSettingsData as any);
   
 
   
@@ -210,7 +217,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                     className="cursor-pointer bg-gray-100 text-gray-700 hover:bg-primary hover:text-primary-foreground transition-colors text-xs"
                     onClick={() => onCategoryClick?.(category.id)}
                   >
-                    {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}
+                    {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any)}
                   </Badge>
                 ))}
                 {product.categories.length > 2 && (

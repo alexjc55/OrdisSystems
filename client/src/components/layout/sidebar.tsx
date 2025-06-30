@@ -76,7 +76,7 @@ export default function Sidebar({
                 )}
               >
                 <span className="mr-3 rtl:mr-0 rtl:ml-3">{category.icon || '📦'}</span>
-                {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettings)}
+                {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettings as any)}
                 <Badge variant="secondary" className="ml-auto text-xs bg-gray-200 text-gray-700">
                   {category.productCount}
                 </Badge>
