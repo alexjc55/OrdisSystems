@@ -4883,7 +4883,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       
-                      <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div className="flex items-center gap-1">
                         <Button
                           variant="outline"
                           size="sm"
