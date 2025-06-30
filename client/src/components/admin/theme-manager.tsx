@@ -250,6 +250,47 @@ export default function ThemeManager() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingTheme, setEditingTheme] = useState<ThemeData | null>(null);
   const [previewTheme, setPreviewTheme] = useState<ThemeData | null>(null);
+  
+  // State for multilingual fields
+  const [themeFields, setThemeFields] = useState({
+    name: '',
+    name_en: '',
+    name_he: '',
+    name_ar: '',
+    description: '',
+    description_en: '',
+    description_he: '',
+    description_ar: ''
+  });
+  
+  // Initialize fields when editing theme or opening create dialog
+  useEffect(() => {
+    if (editingTheme) {
+      setThemeFields({
+        name: editingTheme.name || '',
+        name_en: (editingTheme as any).name_en || '',
+        name_he: (editingTheme as any).name_he || '',
+        name_ar: (editingTheme as any).name_ar || '',
+        description: editingTheme.description || '',
+        description_en: (editingTheme as any).description_en || '',
+        description_he: (editingTheme as any).description_he || '',
+        description_ar: (editingTheme as any).description_ar || ''
+      });
+    } else if (isCreateDialogOpen) {
+      // Reset fields for new theme
+      setThemeFields({
+        name: '',
+        name_en: '',
+        name_he: '',
+        name_ar: '',
+        description: '',
+        description_en: '',
+        description_he: '',
+        description_ar: ''
+      });
+    }
+  }, [editingTheme, isCreateDialogOpen]);
+  
   const [visualSettings, setVisualSettings] = useState({
     showBannerImage: true,
     showTitleDescription: true,
@@ -1692,15 +1733,19 @@ export default function ThemeManager() {
                       <Input 
                         id="edit-name" 
                         name={i18n.language === 'ru' ? 'name' : `name_${i18n.language}`}
-                        defaultValue={i18n.language === 'ru' ? editingTheme.name : 
-                          (editingTheme as any)[`name_${i18n.language}`] || ''}
+                        value={i18n.language === 'ru' ? themeFields.name : 
+                          (themeFields as any)[`name_${i18n.language}`] || ''}
+                        onChange={(e) => {
+                          const fieldName = i18n.language === 'ru' ? 'name' : `name_${i18n.language}`;
+                          setThemeFields(prev => ({ ...prev, [fieldName]: e.target.value }));
+                        }}
                         required={i18n.language === 'ru'}
                       />
                       {/* Скрытые поля для других языков */}
-                      {i18n.language !== 'ru' && <input type="hidden" name="name" value={editingTheme.name || ''} />}
-                      {i18n.language !== 'en' && <input type="hidden" name="name_en" value={editingTheme.name_en || ''} />}
-                      {i18n.language !== 'he' && <input type="hidden" name="name_he" value={editingTheme.name_he || ''} />}
-                      {i18n.language !== 'ar' && <input type="hidden" name="name_ar" value={editingTheme.name_ar || ''} />}
+                      {i18n.language !== 'ru' && <input type="hidden" name="name" value={themeFields.name} />}
+                      {i18n.language !== 'en' && <input type="hidden" name="name_en" value={themeFields.name_en} />}
+                      {i18n.language !== 'he' && <input type="hidden" name="name_he" value={themeFields.name_he} />}
+                      {i18n.language !== 'ar' && <input type="hidden" name="name_ar" value={themeFields.name_ar} />}
                     </div>
                     
                     {/* Многоязычное описание темы */}
@@ -1709,14 +1754,18 @@ export default function ThemeManager() {
                       <Textarea 
                         id="edit-description" 
                         name={i18n.language === 'ru' ? 'description' : `description_${i18n.language}`}
-                        defaultValue={i18n.language === 'ru' ? editingTheme.description : 
-                          (editingTheme as any)[`description_${i18n.language}`] || ''}
+                        value={i18n.language === 'ru' ? themeFields.description : 
+                          (themeFields as any)[`description_${i18n.language}`] || ''}
+                        onChange={(e) => {
+                          const fieldName = i18n.language === 'ru' ? 'description' : `description_${i18n.language}`;
+                          setThemeFields(prev => ({ ...prev, [fieldName]: e.target.value }));
+                        }}
                       />
                       {/* Скрытые поля для других языков */}
-                      {i18n.language !== 'ru' && <input type="hidden" name="description" value={editingTheme.description || ''} />}
-                      {i18n.language !== 'en' && <input type="hidden" name="description_en" value={editingTheme.description_en || ''} />}
-                      {i18n.language !== 'he' && <input type="hidden" name="description_he" value={editingTheme.description_he || ''} />}
-                      {i18n.language !== 'ar' && <input type="hidden" name="description_ar" value={editingTheme.description_ar || ''} />}
+                      {i18n.language !== 'ru' && <input type="hidden" name="description" value={themeFields.description} />}
+                      {i18n.language !== 'en' && <input type="hidden" name="description_en" value={themeFields.description_en} />}
+                      {i18n.language !== 'he' && <input type="hidden" name="description_he" value={themeFields.description_he} />}
+                      {i18n.language !== 'ar' && <input type="hidden" name="description_ar" value={themeFields.description_ar} />}
                     </div>
                     
                     {/* Изображения */}
