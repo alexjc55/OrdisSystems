@@ -304,7 +304,13 @@ export class DatabaseStorage implements IStorage {
         .select({
           id: products.id,
           name: products.name,
+          name_en: products.name_en,
+          name_he: products.name_he,
+          name_ar: products.name_ar,
           description: products.description,
+          description_en: products.description_en,
+          description_he: products.description_he,
+          description_ar: products.description_ar,
           price: products.price,
           pricePerKg: products.pricePerKg,
           unit: products.unit,

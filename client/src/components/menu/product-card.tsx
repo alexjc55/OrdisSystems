@@ -27,6 +27,16 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
   const localizedDescription = getLocalizedField(product, 'description', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
   
+  // Debug logs
+  console.log('ProductCard Debug:', {
+    currentLanguage,
+    productId: product.id,
+    productName: product.name,
+    productNameHe: product.name_he,
+    localizedName,
+    localizedDescription
+  });
+  
   // Set default quantity based on unit type
   const getDefaultQuantity = () => {
     switch (unit) {
