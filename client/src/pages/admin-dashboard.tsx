@@ -3805,7 +3805,7 @@ export default function AdminDashboard() {
                         >
                           {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                         </Button>
-                        <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]">
+                        <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
                           {productsPage}/{productsTotalPages}
                         </span>
                         <Button
@@ -3857,7 +3857,7 @@ export default function AdminDashboard() {
                         >
                           {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                         </Button>
-                        <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
+                        <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center" dir="ltr">
                           {productsPage} из {productsTotalPages}
                         </span>
                         <Button
@@ -4302,7 +4302,7 @@ export default function AdminDashboard() {
                             >
                               {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                             </Button>
-                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
+                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center" dir="ltr">
                               {ordersResponse.page} {adminT('common.of')} {ordersResponse.totalPages}
                             </span>
                             <Button
@@ -4604,7 +4604,7 @@ export default function AdminDashboard() {
                             >
                               {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                             </Button>
-                            <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]">
+                            <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
                               {ordersResponse.page}/{ordersResponse.totalPages}
                             </span>
                             <Button
@@ -4656,7 +4656,7 @@ export default function AdminDashboard() {
                             >
                               {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                             </Button>
-                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
+                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center" dir="ltr">
                               {ordersResponse.page} из {ordersResponse.totalPages}
                             </span>
                             <Button
@@ -4904,7 +4904,7 @@ export default function AdminDashboard() {
                         >
                           {isRTL ? '⟩' : '⟨'}
                         </Button>
-                        <span className="text-xs text-gray-600 px-2 min-w-[60px] text-center">
+                        <span className="text-xs text-gray-600 px-2 min-w-[60px] text-center" dir="ltr">
                           <span className="sm:hidden">{usersPage}/{usersTotalPages}</span>
                           <span className="hidden sm:inline">{usersPage} {adminT('common.of')} {usersTotalPages}</span>
                         </span>
