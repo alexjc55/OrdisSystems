@@ -6446,9 +6446,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         storeDescription: getMultilingualValue(storeSettings, 'storeDescription', currentLanguage) || "",
         logoUrl: storeSettings?.logoUrl || "",
         bannerImage: storeSettings?.bannerImage || "",
-        contactPhone: storeSettings?.contactPhone || "",
-        contactEmail: storeSettings?.contactEmail || "",
-        address: storeSettings?.address || "",
+        contactPhone: getMultilingualValue(storeSettings, 'contactPhone', currentLanguage) || "",
+        contactEmail: getMultilingualValue(storeSettings, 'contactEmail', currentLanguage) || "",
+        address: getMultilingualValue(storeSettings, 'address', currentLanguage) || "",
         workingHours: {
           monday: storeSettings?.workingHours?.monday || "",
           tuesday: storeSettings?.workingHours?.tuesday || "",
@@ -6462,14 +6462,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         aboutText: getMultilingualValue(storeSettings, 'aboutText', currentLanguage) || "",
         bannerButtonText: getMultilingualValue(storeSettings, 'bannerButtonText', currentLanguage) || "",
         paymentInfo: getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage) || "",
-        discountBadgeText: getMultilingualValue(storeSettings, 'discountBadgeText', currentLanguage) || adminT('storeSettings.discountBadgeText'),
-        whatsappDefaultMessage: getMultilingualValue(storeSettings, 'whatsappDefaultMessage', currentLanguage) || adminT('storeSettings.defaultWhatsappMessage'),
+        discountBadgeText: getMultilingualValue(storeSettings, 'discountBadgeText', currentLanguage) || "",
+        whatsappDefaultMessage: getMultilingualValue(storeSettings, 'whatsappDefaultMessage', currentLanguage) || "",
         cartBannerText: getMultilingualValue(storeSettings, 'cartBannerText', currentLanguage) || "",
-        paymentMethods: storeSettings?.paymentMethods || [
-          { name: adminT('storeSettings.cashOnDelivery'), id: 1 },
-          { name: adminT('storeSettings.bankCard'), id: 2 },
-          { name: adminT('storeSettings.bankTransfer'), id: 3 }
-        ],
+        paymentMethods: storeSettings?.paymentMethods || [],
         aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
         deliveryFee: storeSettings?.deliveryFee || "15.00",
         freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
@@ -6527,6 +6523,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           ...createMultilingualUpdate('discountBadgeText', data.discountBadgeText, currentLanguage),
           ...createMultilingualUpdate('whatsappDefaultMessage', data.whatsappDefaultMessage, currentLanguage),
           ...createMultilingualUpdate('cartBannerText', data.cartBannerText, currentLanguage),
+          ...createMultilingualUpdate('contactPhone', data.contactPhone, currentLanguage),
+          ...createMultilingualUpdate('contactEmail', data.contactEmail, currentLanguage),
+          ...createMultilingualUpdate('address', data.address, currentLanguage),
         };
         
         // Preserve existing data for other languages using correct database field names
@@ -6572,6 +6571,18 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           cartBannerTextEn: storeSettings?.cartBannerTextEn || '',
           cartBannerTextHe: storeSettings?.cartBannerTextHe || '',
           cartBannerTextAr: storeSettings?.cartBannerTextAr || '',
+          contactPhone: storeSettings?.contactPhone || '',
+          contactPhoneEn: storeSettings?.contactPhoneEn || '',
+          contactPhoneHe: storeSettings?.contactPhoneHe || '',
+          contactPhoneAr: storeSettings?.contactPhoneAr || '',
+          contactEmail: storeSettings?.contactEmail || '',
+          contactEmailEn: storeSettings?.contactEmailEn || '',
+          contactEmailHe: storeSettings?.contactEmailHe || '',
+          contactEmailAr: storeSettings?.contactEmailAr || '',
+          address: storeSettings?.address || '',
+          addressEn: storeSettings?.addressEn || '',
+          addressHe: storeSettings?.addressHe || '',
+          addressAr: storeSettings?.addressAr || '',
         };
         
         // Merge preserved data with current language updates and other form data

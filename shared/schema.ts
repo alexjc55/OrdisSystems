@@ -229,6 +229,9 @@ export const storeSettings = pgTable("store_settings", {
   whatsappDefaultMessageAr: text("whatsapp_default_message_ar"),
   cartBannerTextAr: text("cart_banner_text_ar"),
   paymentInfoAr: text("payment_info_ar"),
+  contactPhoneAr: varchar("contact_phone_ar", { length: 50 }),
+  contactEmailAr: varchar("contact_email_ar", { length: 255 }),
+  addressAr: text("address_ar"),
   
   // Hebrew fields (for completeness)
   storeNameHe: varchar("store_name_he", { length: 255 }),
@@ -241,6 +244,9 @@ export const storeSettings = pgTable("store_settings", {
   whatsappDefaultMessageHe: text("whatsapp_default_message_he"),
   cartBannerTextHe: text("cart_banner_text_he"),
   paymentInfoHe: text("payment_info_he"),
+  contactPhoneHe: varchar("contact_phone_he", { length: 50 }),
+  contactEmailHe: varchar("contact_email_he", { length: 255 }),
+  addressHe: text("address_he"),
   
   // English fields (for completeness)
   storeNameEn: varchar("store_name_en", { length: 255 }),
@@ -253,6 +259,9 @@ export const storeSettings = pgTable("store_settings", {
   whatsappDefaultMessageEn: text("whatsapp_default_message_en"),
   cartBannerTextEn: text("cart_banner_text_en"),
   paymentInfoEn: text("payment_info_en"),
+  contactPhoneEn: varchar("contact_phone_en", { length: 50 }),
+  contactEmailEn: varchar("contact_email_en", { length: 255 }),
+  addressEn: text("address_en"),
   modernBlock1Icon: varchar("modern_block1_icon", { length: 50 }), // Icon name for first modern block
   modernBlock1Text: varchar("modern_block1_text", { length: 255 }), // Text for first modern block
   modernBlock2Icon: varchar("modern_block2_icon", { length: 50 }), // Icon name for second modern block
