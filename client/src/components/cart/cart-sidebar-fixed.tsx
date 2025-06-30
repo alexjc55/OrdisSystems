@@ -8,10 +8,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Badge } from '@/components/ui/badge';
 import { ShoppingCart, Minus, Plus, Trash2, X, ShoppingBag, Info } from 'lucide-react';
 import { useCartStore } from '@/lib/cart';
-import { useShopTranslation } from '@/hooks/use-language';
+import { useShopTranslation } from '@/hooks/useTranslation';
 import { formatCurrency } from '@/lib/currency';
 import { useQuery } from '@tanstack/react-query';
 import { getLocalizedField, type SupportedLanguage } from '@shared/localization';
+import { ProductUnit } from '@shared/schema';
 
 interface Product {
   id: number;
