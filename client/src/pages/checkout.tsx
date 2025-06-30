@@ -188,7 +188,7 @@ export default function Checkout() {
     if (deliveryDate === today) {
       return {
         valid: false,
-        message: `Товары для будущих заказов: ${futureProducts.map(item => item.product.name).join(', ')}`
+        message: `Товары для будущих заказов: ${futureProducts.map(item => getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)).join(', ')}`
       };
     }
     

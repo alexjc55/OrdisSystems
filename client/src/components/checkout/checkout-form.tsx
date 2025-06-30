@@ -4,7 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCartStore } from "@/lib/cart";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { useShopTranslation } from "@/hooks/use-language";
+import { useShopTranslation, useLanguage } from "@/hooks/use-language";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,7 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { t } = useShopTranslation();
+  const { currentLanguage } = useLanguage();
 
   const [formData, setFormData] = useState({
     deliveryAddress: "",
@@ -199,7 +201,7 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
               {items.map((item) => (
                 <div key={item.product.id} className="flex justify-between items-center text-sm">
                   <div className="flex-1">
-                    <div className="font-medium">{item.product.name}</div>
+                    <div className="font-medium">{getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}</div>
                     <div className="text-gray-600">
                       {formatWeight(item.quantity)} × {formatCurrency(parseFloat(item.product.pricePerKg))}/kg
                     </div>
