@@ -22,7 +22,7 @@ import { useTranslationManager } from "@/hooks/useTranslationManager";
 import { TranslationToolbar } from "@/components/ui/translation-toolbar";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { useMultilingualStoreSettings } from "@/components/ui/multilingual-store-settings";
+import { getMultilingualValue, createMultilingualUpdate } from "@/components/ui/multilingual-store-settings";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6363,6 +6363,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 }) {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
+  const currentLanguage = i18n.language as SupportedLanguage;
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
@@ -6377,9 +6378,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const form = useForm({
     resolver: zodResolver(storeSettingsSchema),
     defaultValues: {
-      storeName: storeSettings?.storeName || "eDAHouse",
-      welcomeTitle: storeSettings?.welcomeTitle || "",
-      storeDescription: storeSettings?.storeDescription || "",
+      storeName: getMultilingualValue(storeSettings, 'storeName', currentLanguage) || "eDAHouse",
+      welcomeTitle: getMultilingualValue(storeSettings, 'welcomeTitle', currentLanguage) || "",
+      storeDescription: getMultilingualValue(storeSettings, 'storeDescription', currentLanguage) || "",
       logoUrl: storeSettings?.logoUrl || "",
       bannerImage: storeSettings?.bannerImage || "",
       contactPhone: storeSettings?.contactPhone || "",
@@ -6394,8 +6395,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         saturday: storeSettings?.workingHours?.saturday || "",
         sunday: storeSettings?.workingHours?.sunday || "",
       },
-      deliveryInfo: storeSettings?.deliveryInfo || "",
+      deliveryInfo: getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) || "",
       paymentInfo: storeSettings?.paymentInfo || "",
+      aboutText: getMultilingualValue(storeSettings, 'aboutText', currentLanguage) || "",
+      bannerButtonText: getMultilingualValue(storeSettings, 'bannerButtonText', currentLanguage) || "",
       paymentMethods: storeSettings?.paymentMethods || [
         { name: "Наличными при получении", id: 1 },
         { name: "Банковской картой", id: 2 },
@@ -6424,7 +6427,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
       whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || "Здравствуйте! Я хотел бы узнать больше о ваших товарах.",
       showCartBanner: storeSettings?.showCartBanner || false,
-      bannerButtonText: storeSettings?.bannerButtonText || "Смотреть каталог",
       bannerButtonLink: storeSettings?.bannerButtonLink || "#categories",
       cartBannerType: storeSettings?.cartBannerType || "text",
       cartBannerImage: storeSettings?.cartBannerImage || "",

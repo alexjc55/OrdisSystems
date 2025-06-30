@@ -1,52 +1,35 @@
-import React from 'react';
-import { useLanguage } from '@/hooks/use-language';
-import { getLocalizedStoreField, createStoreFieldUpdate, type MultilingualStoreSettings } from '@shared/multilingual-helpers';
 import { type SupportedLanguage } from '@shared/localization';
 
-// Helper functions for multilingual store settings without tabs
-// Fields automatically show content for current language with fallback to default
+// Simple multilingual field helpers for store settings
+// Automatically uses current language or falls back to default
 
-export function getMultilingualFieldValue(
-  storeSettings: MultilingualStoreSettings,
+export function getMultilingualValue(
+  storeSettings: any,
   baseField: string,
   currentLanguage: SupportedLanguage,
   defaultLanguage: SupportedLanguage = 'ru'
 ): string {
-  // Try to get value for current language
-  const currentValue = getLocalizedStoreField(storeSettings, baseField, currentLanguage);
+  // Get field name for current language
+  const langField = currentLanguage === 'ru' ? baseField : `${baseField}_${currentLanguage}`;
   
-  // If no value for current language, fallback to default language
+  // Try current language value
+  const currentValue = storeSettings?.[langField];
+  
+  // If no value and not default language, fallback to default
   if (!currentValue && currentLanguage !== defaultLanguage) {
-    return getLocalizedStoreField(storeSettings, baseField, defaultLanguage) || '';
+    return storeSettings?.[baseField] || '';
   }
   
   return currentValue || '';
 }
 
-export function updateMultilingualField(
+export function createMultilingualUpdate(
   baseField: string,
   value: string,
-  currentLanguage: SupportedLanguage,
-  onUpdate: (updates: Record<string, any>) => void
-) {
-  const updates = createStoreFieldUpdate(baseField, value, currentLanguage);
-  onUpdate(updates);
-}
-
-// Helper hook for multilingual store settings
-export function useMultilingualStoreSettings(
-  storeSettings: MultilingualStoreSettings,
-  onUpdate: (updates: Record<string, any>) => void
-) {
-  const { currentLanguage } = useLanguage();
+  currentLanguage: SupportedLanguage
+): Record<string, any> {
+  // For Russian use base field, for others add language suffix
+  const fieldName = currentLanguage === 'ru' ? baseField : `${baseField}_${currentLanguage}`;
   
-  const getValue = (baseField: string) => {
-    return getMultilingualFieldValue(storeSettings, baseField, currentLanguage);
-  };
-  
-  const updateValue = (baseField: string, value: string) => {
-    updateMultilingualField(baseField, value, currentLanguage, onUpdate);
-  };
-  
-  return { getValue, updateValue, currentLanguage };
+  return { [fieldName]: value };
 }
