@@ -3852,7 +3852,7 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
                           disabled={productsPage === 1}
-                          title="Предыдущая страница"
+                          title={adminT('common.previousPage')}
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -3865,7 +3865,7 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
                           disabled={productsPage === productsTotalPages}
-                          title="Следующая страница"
+                          title={adminT('common.nextPage')}
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
@@ -3875,7 +3875,7 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setProductsPage(productsTotalPages)}
                           disabled={productsPage === productsTotalPages}
-                          title="Последняя страница"
+                          title={adminT('common.lastPage')}
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           ⟩⟩
@@ -4310,7 +4310,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Следующая страница"
+                              title={adminT('common.nextPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
@@ -4320,7 +4320,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Последняя страница"
+                              title={adminT('common.lastPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟩⟩
@@ -4589,7 +4589,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
-                              title="Первая страница"
+                              title={adminT('common.firstPage')}
                               className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               ⟨⟨
@@ -4599,7 +4599,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
-                              title="Предыдущая страница"
+                              title={adminT('common.previousPage')}
                               className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -4612,7 +4612,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Следующая страница"
+                              title={adminT('common.nextPage')}
                               className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
@@ -4622,7 +4622,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Последняя страница"
+                              title={adminT('common.lastPage')}
                               className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               ⟩⟩
@@ -4651,7 +4651,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
-                              title="Предыдущая страница"
+                              title={adminT('common.previousPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -4664,7 +4664,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Следующая страница"
+                              title={adminT('common.nextPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
@@ -4674,7 +4674,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Последняя страница"
+                              title={adminT('common.lastPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟩⟩
