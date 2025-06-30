@@ -90,7 +90,25 @@ export function getLocalizedStoreField(
 }
 
 /**
- * Get localized theme field value
+ * Default theme values for fallback when all fields are empty
+ */
+const DEFAULT_THEME_VALUES: Record<string, Record<SupportedLanguage, string>> = {
+  name: {
+    ru: 'Базовая тема',
+    en: 'Basic Theme',
+    he: 'ערכת נושא בסיסית',
+    ar: 'موضوع أساسي'
+  },
+  description: {
+    ru: 'Стандартная тема оформления',
+    en: 'Standard design theme',
+    he: 'ערכת נושא עיצוב סטנדרטית',
+    ar: 'موضوع تصميم قياسي'
+  }
+};
+
+/**
+ * Get localized theme field value with smart fallback
  */
 export function getLocalizedThemeField(
   theme: MultilingualTheme,
@@ -98,7 +116,7 @@ export function getLocalizedThemeField(
   language: SupportedLanguage,
   defaultLanguage: SupportedLanguage = 'ru'
 ): string {
-  if (!theme) return '';
+  if (!theme) return DEFAULT_THEME_VALUES[fieldName]?.[language] || '';
   
   // For Russian (base language), try base field first
   if (language === 'ru') {
@@ -112,11 +130,19 @@ export function getLocalizedThemeField(
   
   // Fallback to default language
   if (language !== defaultLanguage) {
-    return getLocalizedThemeField(theme, fieldName, defaultLanguage, defaultLanguage);
+    const fallbackValue = getLocalizedThemeField(theme, fieldName, defaultLanguage, defaultLanguage);
+    if (fallbackValue) return fallbackValue;
   }
   
   // Final fallback to base field
-  return theme[fieldName] || '';
+  const finalValue = theme[fieldName] || '';
+  
+  // If everything is empty, use default values
+  if (!finalValue && DEFAULT_THEME_VALUES[fieldName]) {
+    return DEFAULT_THEME_VALUES[fieldName][language] || DEFAULT_THEME_VALUES[fieldName]['ru'] || '';
+  }
+  
+  return finalValue;
 }
 
 /**
@@ -215,4 +241,49 @@ export function getPaymentMethodName(
   
   // Fallback to default language (Russian)
   return method.name || '';
+}
+
+/**
+ * Default image URLs for fallback when all image fields are empty
+ */
+const DEFAULT_IMAGE_VALUES: Record<string, string> = {
+  logoUrl: '', // Пустое значение - без логотипа по умолчанию
+  bannerImageUrl: '', // Пустое значение - без баннера по умолчанию
+  cartBannerImage: '', // Пустое значение - без изображения корзины по умолчанию
+  bottomBanner1Url: '', // Пустое значение - без нижнего баннера по умолчанию
+  bottomBanner2Url: '' // Пустое значение - без нижнего баннера по умолчанию
+};
+
+/**
+ * Get localized image field value with smart fallback to Russian, then empty string
+ */
+export function getLocalizedImageField(
+  obj: Record<string, any>,
+  fieldName: string,
+  language: SupportedLanguage,
+  defaultLanguage: SupportedLanguage = 'ru'
+): string {
+  if (!obj) return DEFAULT_IMAGE_VALUES[fieldName] || '';
+  
+  // For Russian (base language), try base field first
+  if (language === 'ru') {
+    const baseValue = obj[fieldName];
+    if (baseValue) return baseValue;
+  } else {
+    // For other languages, try suffixed field first
+    const suffixedValue = obj[`${fieldName}_${language}`];
+    if (suffixedValue) return suffixedValue;
+  }
+  
+  // Fallback to default language
+  if (language !== defaultLanguage) {
+    const fallbackValue = getLocalizedImageField(obj, fieldName, defaultLanguage, defaultLanguage);
+    if (fallbackValue) return fallbackValue;
+  }
+  
+  // Final fallback to base field
+  const finalValue = obj[fieldName] || '';
+  
+  // If everything is empty, return empty string (no default images)
+  return finalValue;
 }
