@@ -233,6 +233,10 @@ export const storeSettings = pgTable("store_settings", {
   deliveryInfoHe: text("delivery_info_he"),
   aboutTextHe: text("about_text_he"),
   bannerButtonTextHe: varchar("banner_button_text_he", { length: 100 }),
+  discountBadgeTextHe: varchar("discount_badge_text_he", { length: 50 }),
+  whatsappDefaultMessageHe: text("whatsapp_default_message_he"),
+  cartBannerTextHe: text("cart_banner_text_he"),
+  paymentInfoHe: text("payment_info_he"),
   
   // English fields (for completeness)
   storeNameEn: varchar("store_name_en", { length: 255 }),
@@ -241,6 +245,10 @@ export const storeSettings = pgTable("store_settings", {
   deliveryInfoEn: text("delivery_info_en"),
   aboutTextEn: text("about_text_en"),
   bannerButtonTextEn: varchar("banner_button_text_en", { length: 100 }),
+  discountBadgeTextEn: varchar("discount_badge_text_en", { length: 50 }),
+  whatsappDefaultMessageEn: text("whatsapp_default_message_en"),
+  cartBannerTextEn: text("cart_banner_text_en"),
+  paymentInfoEn: text("payment_info_en"),
   modernBlock1Icon: varchar("modern_block1_icon", { length: 50 }), // Icon name for first modern block
   modernBlock1Text: varchar("modern_block1_text", { length: 255 }), // Text for first modern block
   modernBlock2Icon: varchar("modern_block2_icon", { length: 50 }), // Icon name for second modern block
