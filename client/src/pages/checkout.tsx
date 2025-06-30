@@ -163,6 +163,16 @@ export default function Checkout() {
   const { currentLanguage } = useLanguage();
   const dateLocale = getDateLocale(currentLanguage);
   
+  // Helper function to get payment method name for current language with fallback to Russian
+  const getPaymentMethodName = (method: any) => {
+    switch (currentLanguage) {
+      case 'en': return method.name_en || method.name || '';
+      case 'he': return method.name_he || method.name || '';
+      case 'ar': return method.name_ar || method.name || '';
+      default: return method.name || '';
+    }
+  };
+  
   // Helper functions for future-order validation
   const getFutureOrderProducts = () => {
     return items.filter(item => item.product.availabilityStatus === 'out_of_stock_today');
@@ -788,7 +798,7 @@ export default function Checkout() {
                           {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
                             storeSettings.paymentMethods.map((method: any) => (
                               <SelectItem key={method.id} value={method.name}>
-                                {method.name}
+                                {getPaymentMethodName(method)}
                               </SelectItem>
                             )) : (
                               <>
