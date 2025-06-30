@@ -3560,7 +3560,7 @@ export default function AdminDashboard() {
                             const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
                             return (
                               <TableRow key={product.id} className={
-                              !(product.isAvailable && (product.availabilityStatus === "available"))
+                              product.availabilityStatus !== "available"
                                 ? 'bg-gray-50 hover:bg-gray-100' 
                                 : 'hover:bg-gray-50'
                             }>
@@ -3574,7 +3574,7 @@ export default function AdminDashboard() {
                                         size="sm"
                                         variant="ghost"
                                         onClick={() => {
-                                          const isActive = product.isAvailable && (product.availabilityStatus === "available");
+                                          const isActive = product.availabilityStatus === "available";
                                           if (isActive) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
@@ -3586,16 +3586,16 @@ export default function AdminDashboard() {
                                           }
                                         }}
                                         className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
-                                          product.isAvailable && (product.availabilityStatus === "available")
+                                          product.availabilityStatus === "available"
                                             ? 'text-green-600 hover:text-green-700 hover:bg-green-50'
                                             : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                                         }`}
-                                        title={product.isAvailable && (product.availabilityStatus === "available") 
+                                        title={product.availabilityStatus === "available" 
                                           ? adminT('products.hideProduct') 
                                           : adminT('products.showProduct')
                                         }
                                       >
-                                        {product.isAvailable && (product.availabilityStatus === "available") 
+                                        {product.availabilityStatus === "available" 
                                           ? <Eye className="h-6 w-6" /> 
                                           : <EyeOff className="h-6 w-6" />
                                         }
@@ -3711,7 +3711,7 @@ export default function AdminDashboard() {
                                         size="sm"
                                         variant="ghost"
                                         onClick={() => {
-                                          const isActive = product.isAvailable && (product.availabilityStatus === "available");
+                                          const isActive = product.availabilityStatus === "available";
                                           if (isActive) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
@@ -3723,16 +3723,16 @@ export default function AdminDashboard() {
                                           }
                                         }}
                                         className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
-                                          product.isAvailable && (product.availabilityStatus === "available")
+                                          product.availabilityStatus === "available"
                                             ? 'text-green-600 hover:text-green-700 hover:bg-green-50'
                                             : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                                         }`}
-                                        title={product.isAvailable && (product.availabilityStatus === "available") 
+                                        title={product.availabilityStatus === "available" 
                                           ? adminT('products.hideProduct') 
                                           : adminT('products.showProduct')
                                         }
                                       >
-                                        {product.isAvailable && (product.availabilityStatus === "available") 
+                                        {product.availabilityStatus === "available" 
                                           ? <Eye className="h-6 w-6" /> 
                                           : <EyeOff className="h-6 w-6" />
                                         }
