@@ -3784,7 +3784,7 @@ export default function AdminDashboard() {
                       <div className="text-center text-xs text-gray-600">
                         {adminT('common.showing')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {adminT('common.of')} {productsTotal}
                       </div>
-                      <div className={`flex items-center justify-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div className="flex items-center justify-center gap-2">
                         <Button
                           variant="ghost"
                           size="sm"
@@ -3793,7 +3793,7 @@ export default function AdminDashboard() {
                           title="Первая страница"
                           className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
-                          {isRTL ? '⟩⟩' : '⟨⟨'}
+                          ⟨⟨
                         </Button>
                         <Button
                           variant="ghost"
@@ -3826,7 +3826,7 @@ export default function AdminDashboard() {
                           title="Последняя страница"
                           className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
-                          {isRTL ? '⟨⟨' : '⟩⟩'}
+                          ⟩⟩
                         </Button>
                       </div>
                     </div>
@@ -3836,7 +3836,7 @@ export default function AdminDashboard() {
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <span>{adminT('common.showing')} {((productsPage - 1) * itemsPerPage) + 1}-{Math.min(productsPage * itemsPerPage, productsTotal)} {adminT('common.of')} {productsTotal}</span>
                       </div>
-                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
                           size="sm"
@@ -3845,7 +3845,7 @@ export default function AdminDashboard() {
                           title="Первая страница"
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          {isRTL ? '⟩⟩' : '⟨⟨'}
+                          ⟨⟨
                         </Button>
                         <Button
                           variant="outline"
@@ -3878,7 +3878,7 @@ export default function AdminDashboard() {
                           title="Последняя страница"
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          {isRTL ? '⟨⟨' : '⟩⟩'}
+                          ⟩⟩
                         </Button>
                       </div>
                     </div>
@@ -4290,7 +4290,7 @@ export default function AdminDashboard() {
                               title={adminT('common.firstPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              {isRTL ? '⟩⟩' : '⟨⟨'}
+                              ⟨⟨
                             </Button>
                             <Button
                               variant="outline"
@@ -4323,7 +4323,7 @@ export default function AdminDashboard() {
                               title="Последняя страница"
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              {isRTL ? '⟨⟨' : '⟩⟩'}
+                              ⟩⟩
                             </Button>
                           </div>
                         </div>
@@ -4583,7 +4583,7 @@ export default function AdminDashboard() {
                           <div className="text-center text-xs text-gray-600">
                             Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}
                           </div>
-                          <div className={`flex items-center justify-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          <div className="flex items-center justify-center gap-2">
                             <Button
                               variant="ghost"
                               size="sm"
@@ -4592,7 +4592,7 @@ export default function AdminDashboard() {
                               title="Первая страница"
                               className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
-                              {isRTL ? '⟩⟩' : '⟨⟨'}
+                              ⟨⟨
                             </Button>
                             <Button
                               variant="ghost"
@@ -4625,7 +4625,7 @@ export default function AdminDashboard() {
                               title="Последняя страница"
                               className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
-                              {isRTL ? '⟨⟨' : '⟩⟩'}
+                              ⟩⟩
                             </Button>
                           </div>
                         </div>
@@ -4635,7 +4635,7 @@ export default function AdminDashboard() {
                           <div className="flex items-center gap-2 text-sm text-gray-700">
                             <span>{adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of')} {ordersResponse.total}</span>
                           </div>
-                          <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          <div className="flex items-center gap-2">
                             <Button
                               variant="outline"
                               size="sm"
@@ -4644,7 +4644,7 @@ export default function AdminDashboard() {
                               title={adminT('common.firstPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              {isRTL ? '⟩⟩' : '⟨⟨'}
+                              ⟨⟨
                             </Button>
                             <Button
                               variant="outline"
@@ -4677,7 +4677,7 @@ export default function AdminDashboard() {
                               title="Последняя страница"
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              {isRTL ? '⟨⟨' : '⟩⟩'}
+                              ⟩⟩
                             </Button>
                           </div>
                         </div>
