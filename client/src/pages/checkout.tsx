@@ -24,6 +24,7 @@ import { useLocation } from "wouter";
 import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { format } from "date-fns";
 import { ru, enUS, he } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -525,7 +526,7 @@ export default function Checkout() {
                 <div key={item.product.id} className="flex justify-between items-center">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="font-medium">{item.product.name}</h4>
+                      <h4 className="font-medium">{getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}</h4>
                       {item.product.availabilityStatus === 'out_of_stock_today' && (
                         <TooltipProvider>
                           <Tooltip>
