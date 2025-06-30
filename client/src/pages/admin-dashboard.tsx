@@ -2129,6 +2129,7 @@ export default function AdminDashboard() {
   const { t: adminT } = useAdminTranslation();
   const { t: commonT, i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
+  const currentLanguage = i18n.language;
   const queryClient = useQueryClient();
 
   // Force component remount key to prevent stale state issues
@@ -3545,7 +3546,10 @@ export default function AdminDashboard() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {filteredProducts.map((product: any) => (
+                          {filteredProducts.map((product: any) => {
+                            // Get localized product name for display
+                            const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
+                            return (
                             <TableRow key={product.id} className={
                               !(product.isAvailable && (product.availabilityStatus === "available"))
                                 ? 'bg-gray-50 hover:bg-gray-100' 
@@ -3638,7 +3642,7 @@ export default function AdminDashboard() {
                                       }}
                                       className={`font-medium text-xs sm:text-sm hover:text-primary transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
                                     >
-                                      {product.name}
+                                      {getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}
                                     </button>
                                   </TableCell>
                                 </>
@@ -3653,7 +3657,7 @@ export default function AdminDashboard() {
                                       }}
                                       className={`font-medium text-xs sm:text-sm hover:text-primary transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
                                     >
-                                      {product.name}
+                                      {getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}
                                     </button>
                                   </TableCell>
                                   <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
@@ -3734,7 +3738,8 @@ export default function AdminDashboard() {
                                 </>
                               )}
                             </TableRow>
-                          ))}
+                            );
+                          })}
                         </TableBody>
                       </Table>
                     </div>
