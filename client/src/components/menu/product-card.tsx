@@ -210,7 +210,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                     className="cursor-pointer bg-gray-100 text-gray-700 hover:bg-primary hover:text-primary-foreground transition-colors text-xs"
                     onClick={() => onCategoryClick?.(category.id)}
                   >
-                    {category.name}
+                    {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}
                   </Badge>
                 ))}
                 {product.categories.length > 2 && (

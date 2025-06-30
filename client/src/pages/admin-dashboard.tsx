@@ -205,9 +205,9 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
           </h3>
 
           {/* Description if exists */}
-          {category.description && (
+          {getLocalizedField(category, 'description', i18n.language as SupportedLanguage) && (
             <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed hover:text-gray-700">
-              {category.description}
+              {getLocalizedField(category, 'description', i18n.language as SupportedLanguage)}
             </p>
           )}
         </div>
