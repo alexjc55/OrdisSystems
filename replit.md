@@ -131,6 +131,15 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 30, 2025: REDESIGNED MULTILINGUAL SYSTEM FOR CONFIGURABLE DEFAULT LANGUAGE
+  - FLEXIBLE DEFAULT LANGUAGE: System no longer hardcoded to Russian - uses configurable default language from store settings
+  - INTEGRATION WITH EXISTING SETTINGS: Multilingual helpers now integrate with existing language settings system (lib/language-settings.ts)
+  - NO AUTOMATIC DEFAULTS: Removed fallback to predefined default values - empty fields show as empty (user requirement)
+  - SMART FALLBACK LOGIC: If field empty for selected language → fallback to configured default language → if still empty, show empty
+  - THEME FIELD DELETION FIX: Fixed issue where deleting text in multilingual theme fields didn't save properly
+  - MULTILINGUAL IMAGE SUPPORT: Added database schema and state management for language-specific theme images
+  - STORE SETTINGS INTEGRATION: Functions now accept store settings parameter to determine correct default language
+  - USER EXPERIENCE: Seamless language switching respects admin's choice of default language instead of hardcoded Russian
 - June 30, 2025: IMPLEMENTED CORRECT MULTILINGUAL SYSTEM WITH FALLBACK TO DEFAULT LANGUAGE
   - FALLBACK LOGIC IMPLEMENTED: Updated all multilingual functions to fallback to Russian (default language) when field is empty for selected language
   - HEADER COMPONENTS UPDATED: All header components now use proper fallback logic - show Russian content if translation missing
