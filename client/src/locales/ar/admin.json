@@ -302,6 +302,12 @@
       "productCreatedDesc": "تم إضافة منتج جديد بنجاح",
       "productUpdated": "تم تحديث المنتج",
       "productUpdatedDesc": "تم حفظ تغييرات المنتج بنجاح"
+    },
+    "statusDialog": {
+      "title": "تغيير حالة المنتج",
+      "description": "اختر الحالة الجديدة للمنتج",
+      "keep": "متاح غداً",
+      "disable": "تعطيل المنتج"
     }
   },
   "categories": {
