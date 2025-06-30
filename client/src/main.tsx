@@ -9,12 +9,16 @@ initializeTheme();
 // Force apply orange colors to override any black theme colors
 forceApplyOrangeTheme();
 
-// Global error handling for debugging runtime errors
+// Global error suppression for ResizeObserver
+const resizeObserverErrDiv = document.getElementById('webpack-dev-server-client-overlay-div');
+const resizeObserverErrText = 'ResizeObserver loop completed with undelivered notifications';
+
+// Suppress ResizeObserver errors completely
 window.addEventListener('error', (event) => {
-  // Suppress ResizeObserver errors as they are harmless but annoying
-  if (event.message.includes('ResizeObserver loop completed with undelivered notifications')) {
+  if (event.message && event.message.includes(resizeObserverErrText)) {
+    event.stopImmediatePropagation();
     event.preventDefault();
-    return;
+    return false;
   }
   
   console.error('Runtime error:', {
@@ -26,13 +30,40 @@ window.addEventListener('error', (event) => {
   });
 });
 
-// Suppress ResizeObserver errors in console
+// Also handle unhandled promise rejections
+window.addEventListener('unhandledrejection', (event) => {
+  if (event.reason && event.reason.message && event.reason.message.includes(resizeObserverErrText)) {
+    event.preventDefault();
+    return false;
+  }
+});
+
+// Suppress ResizeObserver errors in console completely
 const originalConsoleError = console.error;
 console.error = (...args) => {
-  if (typeof args[0] === 'string' && args[0].includes('ResizeObserver loop completed')) {
+  const message = typeof args[0] === 'string' ? args[0] : (args[0]?.message || '');
+  if (message.includes('ResizeObserver loop completed')) {
     return;
   }
   originalConsoleError.apply(console, args);
+};
+
+// Override ResizeObserver to catch errors at source
+const OriginalResizeObserver = window.ResizeObserver;
+window.ResizeObserver = class extends OriginalResizeObserver {
+  constructor(callback: ResizeObserverCallback) {
+    super((entries, observer) => {
+      try {
+        callback(entries, observer);
+      } catch (error: any) {
+        if (error.message && error.message.includes('ResizeObserver loop completed')) {
+          // Silently ignore ResizeObserver loop errors
+          return;
+        }
+        throw error;
+      }
+    });
+  }
 };
 
 createRoot(document.getElementById("root")!).render(<App />);
