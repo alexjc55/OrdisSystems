@@ -278,6 +278,13 @@
     "noProducts": "لا توجد منتجات",
     "title": "المنتجات",
     "description": "إدارة منتجات المتجر",
+    "allProducts": "جميع المنتجات",
+    "availableProducts": "المنتجات المتاحة",
+    "unavailableProducts": "المنتجات غير المتاحة",
+    "preorderProducts": "منتجات الطلب المسبق",
+    "productsWithDiscount": "منتجات مخفضة",
+    "allCategories": "جميع الفئات",
+    "productStatus": "حالة المنتج",
     "units": {
       "piece": "قطعة",
       "kg": "كيلو",
@@ -440,6 +447,7 @@
     "title": "المستخدمون",
     "description": "إدارة مستخدمي النظام",
     "createUser": "إنشاء مستخدم",
+    "allRoles": "جميع الأدوار",
     "role": "الدور",
     "permissions": "الصلاحيات",
     "notifications": {
@@ -534,6 +542,9 @@
     "description": "الوصف",
     "image": "الصورة",
     "unit": "الوحدة",
+    "phone": "الهاتف",
+    "orders": "الطلبات",
+    "totalAmount": "المبلغ الإجمالي",
     "phone": "الهاتف",
     "totalAmount": "المبلغ الإجمالي"
   },
@@ -658,6 +669,9 @@
     "workerPermissionsDescription": "تكوين صلاحيات الوصول للموظفين",
     "canManageThemes": "إدارة المواضيع",
     "canManageThemesDescription": "السماح للموظف بإدارة مواضيع التصميم",
+    "coreWorkSections": "أقسام العمل الأساسية",
+    "coreWorkSectionsDescription": "المنتجات والفئات والطلبات متاحة دائماً للموظفين",
+    "alwaysEnabled": "مفعل دائماً",
     "coreWorkSections": "أقسام العمل الأساسية",
     "coreWorkSectionsDescription": "هذه الأقسام متاحة دائماً للعمال للمهام الأساسية",
     "alwaysEnabled": "مفعل دائماً"
