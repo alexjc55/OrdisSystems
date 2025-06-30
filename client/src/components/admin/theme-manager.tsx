@@ -17,6 +17,7 @@ import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
 import { ModernStyleSettings } from "./modern-style-settings";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useTranslation } from 'react-i18next';
+import { getMultilingualValue } from '@/shared/multilingual-helpers';
 
 
 // Visual Toggle Button Component
@@ -135,7 +136,13 @@ function hslToHex(hslString: string): string {
 interface ThemeData {
   id: string;
   name: string;
+  name_en?: string;
+  name_he?: string;
+  name_ar?: string;
   description: string;
+  description_en?: string;
+  description_he?: string;
+  description_ar?: string;
   isActive: boolean;
   primaryColor: string;
   primaryTextColor: string;
@@ -937,13 +944,35 @@ export default function ThemeManager() {
                 
                 <TabsContent value="basic" className="space-y-4">
                   <div className="grid grid-cols-1 gap-4">
+                    {/* Многоязычное название темы */}
                     <div className="space-y-2">
-                      <Label htmlFor="name">{adminT('themes.name')}</Label>
-                      <Input id="name" name="name" placeholder={adminT('themes.namePlaceholder')} required />
+                      <Label htmlFor="name">{adminT('themes.name')} ({i18n.language.toUpperCase()})</Label>
+                      <Input 
+                        id="name" 
+                        name={i18n.language === 'ru' ? 'name' : `name_${i18n.language}`}
+                        placeholder={adminT('themes.namePlaceholder')} 
+                        required={i18n.language === 'ru'}
+                      />
+                      {/* Скрытые поля для других языков */}
+                      {i18n.language !== 'ru' && <input type="hidden" name="name" value="" />}
+                      {i18n.language !== 'en' && <input type="hidden" name="name_en" value="" />}
+                      {i18n.language !== 'he' && <input type="hidden" name="name_he" value="" />}
+                      {i18n.language !== 'ar' && <input type="hidden" name="name_ar" value="" />}
                     </div>
+                    
+                    {/* Многоязычное описание темы */}
                     <div className="space-y-2">
-                      <Label htmlFor="description">{adminT('themes.description')}</Label>
-                      <Textarea id="description" name="description" placeholder={adminT('themes.descriptionPlaceholder')} />
+                      <Label htmlFor="description">{adminT('themes.description')} ({i18n.language.toUpperCase()})</Label>
+                      <Textarea 
+                        id="description" 
+                        name={i18n.language === 'ru' ? 'description' : `description_${i18n.language}`}
+                        placeholder={adminT('themes.descriptionPlaceholder')} 
+                      />
+                      {/* Скрытые поля для других языков */}
+                      {i18n.language !== 'ru' && <input type="hidden" name="description" value="" />}
+                      {i18n.language !== 'en' && <input type="hidden" name="description_en" value="" />}
+                      {i18n.language !== 'he' && <input type="hidden" name="description_he" value="" />}
+                      {i18n.language !== 'ar' && <input type="hidden" name="description_ar" value="" />}
                     </div>
                     
                     {/* Изображения */}
