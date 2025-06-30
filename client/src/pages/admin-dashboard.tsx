@@ -6461,7 +6461,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         deliveryInfo: getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) || "",
         aboutText: getMultilingualValue(storeSettings, 'aboutText', currentLanguage) || "",
         bannerButtonText: getMultilingualValue(storeSettings, 'bannerButtonText', currentLanguage) || "",
-        paymentInfo: storeSettings?.paymentInfo || "",
+        paymentInfo: getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage) || "",
+        discountBadgeText: getMultilingualValue(storeSettings, 'discountBadgeText', currentLanguage) || adminT('storeSettings.discountBadgeText'),
+        whatsappDefaultMessage: getMultilingualValue(storeSettings, 'whatsappDefaultMessage', currentLanguage) || adminT('storeSettings.defaultWhatsappMessage'),
+        cartBannerText: getMultilingualValue(storeSettings, 'cartBannerText', currentLanguage) || "",
         paymentMethods: storeSettings?.paymentMethods || [
           { name: adminT('storeSettings.cashOnDelivery'), id: 1 },
           { name: adminT('storeSettings.bankCard'), id: 2 },
@@ -6470,7 +6473,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
         deliveryFee: storeSettings?.deliveryFee || "15.00",
         freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
-        discountBadgeText: storeSettings?.discountBadgeText || adminT('storeSettings.discountBadgeText'),
+
         showBannerImage: storeSettings?.showBannerImage !== false,
         showTitleDescription: storeSettings?.showTitleDescription !== false,
         showInfoBlocks: storeSettings?.showInfoBlocks !== false,
@@ -6488,11 +6491,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         footerHtml: storeSettings?.footerHtml || "",
         showWhatsAppChat: storeSettings?.showWhatsAppChat !== false,
         whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
-        whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || adminT('storeSettings.defaultWhatsappMessage'),
+
         showCartBanner: storeSettings?.showCartBanner || false,
         cartBannerType: storeSettings?.cartBannerType || "text",
         cartBannerImage: storeSettings?.cartBannerImage || "",
-        cartBannerText: storeSettings?.cartBannerText || "",
+
         cartBannerBgColor: storeSettings?.cartBannerBgColor || "#f97316",
         cartBannerTextColor: storeSettings?.cartBannerTextColor || "#ffffff",
 
@@ -6520,6 +6523,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           ...createMultilingualUpdate('deliveryInfo', data.deliveryInfo, currentLanguage),
           ...createMultilingualUpdate('aboutText', data.aboutText, currentLanguage),
           ...createMultilingualUpdate('bannerButtonText', data.bannerButtonText, currentLanguage),
+          ...createMultilingualUpdate('paymentInfo', data.paymentInfo, currentLanguage),
+          ...createMultilingualUpdate('discountBadgeText', data.discountBadgeText, currentLanguage),
+          ...createMultilingualUpdate('whatsappDefaultMessage', data.whatsappDefaultMessage, currentLanguage),
+          ...createMultilingualUpdate('cartBannerText', data.cartBannerText, currentLanguage),
         };
         
         // Preserve existing data for other languages using correct database field names
@@ -6549,6 +6556,22 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           bannerButtonTextEn: storeSettings?.bannerButtonTextEn || '',
           bannerButtonTextHe: storeSettings?.bannerButtonTextHe || '',
           bannerButtonTextAr: storeSettings?.bannerButtonTextAr || '',
+          paymentInfo: storeSettings?.paymentInfo || '',
+          paymentInfoEn: storeSettings?.paymentInfoEn || '',
+          paymentInfoHe: storeSettings?.paymentInfoHe || '',
+          paymentInfoAr: storeSettings?.paymentInfoAr || '',
+          discountBadgeText: storeSettings?.discountBadgeText || '',
+          discountBadgeTextEn: storeSettings?.discountBadgeTextEn || '',
+          discountBadgeTextHe: storeSettings?.discountBadgeTextHe || '',
+          discountBadgeTextAr: storeSettings?.discountBadgeTextAr || '',
+          whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || '',
+          whatsappDefaultMessageEn: storeSettings?.whatsappDefaultMessageEn || '',
+          whatsappDefaultMessageHe: storeSettings?.whatsappDefaultMessageHe || '',
+          whatsappDefaultMessageAr: storeSettings?.whatsappDefaultMessageAr || '',
+          cartBannerText: storeSettings?.cartBannerText || '',
+          cartBannerTextEn: storeSettings?.cartBannerTextEn || '',
+          cartBannerTextHe: storeSettings?.cartBannerTextHe || '',
+          cartBannerTextAr: storeSettings?.cartBannerTextAr || '',
         };
         
         // Merge preserved data with current language updates and other form data

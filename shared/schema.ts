@@ -225,6 +225,10 @@ export const storeSettings = pgTable("store_settings", {
   deliveryInfoAr: text("delivery_info_ar"),
   aboutTextAr: text("about_text_ar"),
   bannerButtonTextAr: varchar("banner_button_text_ar", { length: 100 }),
+  discountBadgeTextAr: varchar("discount_badge_text_ar", { length: 50 }),
+  whatsappDefaultMessageAr: text("whatsapp_default_message_ar"),
+  cartBannerTextAr: text("cart_banner_text_ar"),
+  paymentInfoAr: text("payment_info_ar"),
   
   // Hebrew fields (for completeness)
   storeNameHe: varchar("store_name_he", { length: 255 }),
