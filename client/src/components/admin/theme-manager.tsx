@@ -229,6 +229,22 @@ interface ThemeData {
 export default function ThemeManager() {
   const { t: adminT, i18n } = useTranslation('admin');
   
+  // Helper function to get multilingual theme name with fallback
+  const getThemeName = (theme: ThemeData) => {
+    const currentLang = i18n.language;
+    if (currentLang === 'ru') return theme.name;
+    const translatedName = (theme as any)[`name_${currentLang}`];
+    return translatedName || theme.name; // fallback to Russian
+  };
+  
+  // Helper function to get multilingual theme description with fallback
+  const getThemeDescription = (theme: ThemeData) => {
+    const currentLang = i18n.language;
+    if (currentLang === 'ru') return theme.description;
+    const translatedDesc = (theme as any)[`description_${currentLang}`];
+    return translatedDesc || theme.description; // fallback to Russian
+  };
+  
 
   
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -1507,7 +1523,7 @@ export default function ThemeManager() {
           <Card key={theme.id} className={`relative ${theme.isActive ? 'ring-2 ring-primary' : ''}`}>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{theme.name}</CardTitle>
+                <CardTitle className="text-lg">{getThemeName(theme)}</CardTitle>
                 {theme.isActive && (
                   <Badge variant="default" className="bg-primary text-white">
                     {adminT('themes.active')}
@@ -1600,7 +1616,7 @@ export default function ThemeManager() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>{adminT("themes.deleteTheme")}?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          {adminT("deleteConfirmation")} "{theme.name}" {adminT("deleteForever")}.
+                          {adminT("deleteConfirmation")} "{getThemeName(theme)}" {adminT("deleteForever")}.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -1642,7 +1658,7 @@ export default function ThemeManager() {
         <Dialog open={!!editingTheme} onOpenChange={() => setEditingTheme(null)}>
           <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{adminT("themes.editTheme")}: {editingTheme.name}</DialogTitle>
+              <DialogTitle>{adminT("themes.editTheme")}: {getThemeName(editingTheme)}</DialogTitle>
               <DialogDescription>
                 {adminT("themes.createDescription")}
               </DialogDescription>
