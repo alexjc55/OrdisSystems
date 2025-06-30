@@ -1460,7 +1460,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 <TableRow key={index}>
                   <TableCell className="text-sm">
                     <div>
-                      <div className="font-medium">{item.product?.name}</div>
+                      <div className="font-medium">{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}</div>
                       {item.product?.description && (
                         <div className="text-xs text-gray-500">{item.product.description}</div>
                       )}
@@ -1523,7 +1523,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                         <AlertDialogHeader>
                           <AlertDialogTitle>{adminT('actions.confirm')}</AlertDialogTitle>
                           <AlertDialogDescription>
-                            {adminT('orders.removeItemConfirm')} "{item.product?.name}"?
+                            {adminT('orders.removeItemConfirm')} "{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}"?
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -1568,7 +1568,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     <AlertDialogHeader>
                       <AlertDialogTitle>{adminT('actions.confirm')}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        {adminT('orders.removeItemConfirm')} "{item.product?.name}"?
+                        {adminT('orders.removeItemConfirm')} "{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}"?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className={`${isRTL ? 'flex-row-reverse space-x-reverse space-x-4' : ''}`}>
@@ -2027,7 +2027,7 @@ function ItemDiscountDialog({
         </DialogHeader>
         
         <div className="mb-4">
-          <div className="font-medium">{item.product?.name}</div>
+          <div className="font-medium">{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}</div>
           <div className="text-sm text-gray-500">
             {adminT('orders.baseCost')}: {formatCurrency(basePrice)}
           </div>
