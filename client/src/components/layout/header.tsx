@@ -3,7 +3,27 @@ import { useAuth } from "@/hooks/use-auth";
 import { useCartStore } from "@/lib/cart";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
+import type { SupportedLanguage } from '@shared/localization';
 import { Button } from "@/components/ui/button";
+
+// Import multilingual helper function
+function getMultilingualValue(
+  storeSettings: any,
+  baseField: string,
+  currentLanguage: SupportedLanguage,
+  defaultLanguage: SupportedLanguage = 'ru'
+): string {
+  let langField: string;
+  
+  if (currentLanguage === 'ru') {
+    langField = baseField;
+  } else {
+    const capitalizedLang = currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
+    langField = `${baseField}${capitalizedLang}`;
+  }
+  
+  return storeSettings?.[langField] || '';
+}
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
