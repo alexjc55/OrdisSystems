@@ -1478,12 +1478,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTheme(theme: InsertTheme): Promise<Theme> {
+    const themeWithId = {
+      ...theme,
+      id: theme.id || crypto.randomUUID()
+    };
+    
     const [newTheme] = await db
       .insert(themes)
-      .values({
-        ...theme,
-        updatedAt: new Date(),
-      })
+      .values([themeWithId])
       .returning();
     return newTheme;
   }
