@@ -2,33 +2,33 @@ import { type SupportedLanguage } from './localization';
 
 // Type definitions for multilingual settings
 export interface MultilingualStoreSettings {
-  storeName?: string;
+  storeName?: string | null;
   storeName_en?: string | null;
   storeName_he?: string | null;
   storeName_ar?: string | null;
   
-  welcomeTitle?: string;
+  welcomeTitle?: string | null;
   welcomeTitle_en?: string | null;
   welcomeTitle_he?: string | null;
   welcomeTitle_ar?: string | null;
   
-  storeDescription?: string;
+  storeDescription?: string | null;
   storeDescription_en?: string | null;
   storeDescription_he?: string | null;
   storeDescription_ar?: string | null;
   
-  deliveryInfo?: string;
+  deliveryInfo?: string | null;
   deliveryInfo_en?: string | null;
   deliveryInfo_he?: string | null;
   deliveryInfo_ar?: string | null;
   
-  aboutText?: string;
+  aboutText?: string | null;
   aboutText_ru?: string | null;
   aboutText_en?: string | null;
   aboutText_he?: string | null;
   aboutText_ar?: string | null;
   
-  bannerButtonText?: string;
+  bannerButtonText?: string | null;
   bannerButtonText_ru?: string | null;
   bannerButtonText_en?: string | null;
   bannerButtonText_he?: string | null;

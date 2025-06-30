@@ -4966,6 +4966,13 @@ export default function AdminDashboard() {
                   />
                 </CardContent>
               </Card>
+
+              {/* Multilingual Store Settings */}
+              <MultilingualStoreSettings
+                storeSettings={storeSettings as any || {}}
+                onUpdate={(updates) => updateStoreSettingsMutation.mutate(updates)}
+                isLoading={updateStoreSettingsMutation.isPending}
+              />
             </div>
           </TabsContent>
           )}
