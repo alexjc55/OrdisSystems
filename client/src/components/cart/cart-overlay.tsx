@@ -346,7 +346,7 @@ export default function CartOverlay() {
                       </Button>
                     </div>
                   </div>
-                  );
+                );
                 })}
 
                 {/* Store Information */}

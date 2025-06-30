@@ -24,6 +24,7 @@ import { useLocation } from "wouter";
 import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { format } from "date-fns";
 import { ru, enUS, he } from "date-fns/locale";
 import { cn } from "@/lib/utils";
