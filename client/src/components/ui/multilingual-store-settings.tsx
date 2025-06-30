@@ -9,8 +9,18 @@ export function getMultilingualValue(
   currentLanguage: SupportedLanguage,
   defaultLanguage: SupportedLanguage = 'ru'
 ): string {
-  // Get field name for current language
-  const langField = currentLanguage === 'ru' ? baseField : `${baseField}_${currentLanguage}`;
+  // Convert field name to proper database field format
+  // Database uses camelCase: storeNameEn, welcomeTitleEn, etc.
+  let langField: string;
+  
+  if (currentLanguage === 'ru') {
+    // For Russian, use base field name
+    langField = baseField;
+  } else {
+    // For other languages, capitalize the language code and append
+    const capitalizedLang = currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
+    langField = `${baseField}${capitalizedLang}`;
+  }
   
   // Only return the value for the specific language field
   // No fallback to default language - if no translation exists, field should be empty
@@ -22,8 +32,17 @@ export function createMultilingualUpdate(
   value: string,
   currentLanguage: SupportedLanguage
 ): Record<string, any> {
-  // For Russian use base field, for others add language suffix
-  const fieldName = currentLanguage === 'ru' ? baseField : `${baseField}_${currentLanguage}`;
+  // Convert field name to proper database field format
+  let fieldName: string;
+  
+  if (currentLanguage === 'ru') {
+    // For Russian, use base field name
+    fieldName = baseField;
+  } else {
+    // For other languages, capitalize the language code and append
+    const capitalizedLang = currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
+    fieldName = `${baseField}${capitalizedLang}`;
+  }
   
   return { [fieldName]: value };
 }
