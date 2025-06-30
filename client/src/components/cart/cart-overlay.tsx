@@ -28,6 +28,14 @@ const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliv
 export default function CartOverlay() {
   const { items, isOpen, setCartOpen, updateQuantity, removeItem, clearCart } = useCartStore();
   const { user } = useAuth();
+  
+  // Fetch current products data to get translations
+  const { data: products = [] } = useQuery({
+    queryKey: ['/api/products'],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+  
+  const productsList = products as any[];
   const { storeSettings } = useStoreSettings();
   const { toast } = useToast();
   const { t } = useShopTranslation();
@@ -282,8 +290,20 @@ export default function CartOverlay() {
             ) : (
               <div className="space-y-4">
                 {items.map((item) => {
-                  const localizedName = getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage);
-                  const localizedImageUrl = getLocalizedField(item.product, 'imageUrl', currentLanguage as SupportedLanguage);
+                  // Get current product data with translations
+                  const currentProduct = productsList.find(p => p.id === item.product.id) || item.product;
+                  const localizedName = getLocalizedField(currentProduct, 'name', currentLanguage as SupportedLanguage);
+                  const localizedImageUrl = getLocalizedField(currentProduct, 'imageUrl', currentLanguage as SupportedLanguage);
+                  
+                  // Debug logging
+                  console.log('Cart Debug:', {
+                    currentLanguage,
+                    productId: item.product.id,
+                    productName: item.product.name,
+                    currentProductName: currentProduct.name,
+                    localizedName,
+                    hasCurrentProduct: !!productsList.find(p => p.id === item.product.id)
+                  });
                   
                   return (
                     <div key={item.product.id} className="flex items-center space-x-4 pb-4 border-b border-gray-100">
@@ -302,7 +322,7 @@ export default function CartOverlay() {
                           {localizedName}
                         </h4>
                         <p className="text-sm text-gray-600">
-                          {formatQuantity(item.quantity, item.product.unit as ProductUnit, t)} × {formatCurrency(parseFloat(item.product.price))}
+                          {formatQuantity(item.quantity, currentProduct.unit as ProductUnit, t)} × {formatCurrency(parseFloat(currentProduct.price))}
                         </p>
                       <div className="flex items-center space-x-2 mt-2">
                         <Button
