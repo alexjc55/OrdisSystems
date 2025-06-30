@@ -901,8 +901,8 @@ export class DatabaseStorage implements IStorage {
       .from(orders)
       .where(whereClause)
       .orderBy(orderBy)
-      .limit(search ? undefined : limit)
-      .offset(search ? undefined : offset);
+      .limit(search ? 1000 : limit)
+      .offset(search ? 0 : offset);
 
     // Build full order data with items and users
     let ordersData: any[] = [];
