@@ -1019,13 +1019,19 @@ export default function ThemeManager() {
                         id="name" 
                         name={i18n.language === 'ru' ? 'name' : `name_${i18n.language}`}
                         placeholder={adminT('themes.namePlaceholder')} 
+                        value={i18n.language === 'ru' ? themeFields.name : 
+                          (themeFields as any)[`name_${i18n.language}`] || ''}
+                        onChange={(e) => {
+                          const fieldName = i18n.language === 'ru' ? 'name' : `name_${i18n.language}`;
+                          setThemeFields(prev => ({ ...prev, [fieldName]: e.target.value }));
+                        }}
                         required={i18n.language === 'ru'}
                       />
                       {/* Скрытые поля для других языков */}
-                      {i18n.language !== 'ru' && <input type="hidden" name="name" value="" />}
-                      {i18n.language !== 'en' && <input type="hidden" name="name_en" value="" />}
-                      {i18n.language !== 'he' && <input type="hidden" name="name_he" value="" />}
-                      {i18n.language !== 'ar' && <input type="hidden" name="name_ar" value="" />}
+                      {i18n.language !== 'ru' && <input type="hidden" name="name" value={themeFields.name} />}
+                      {i18n.language !== 'en' && <input type="hidden" name="name_en" value={themeFields.name_en} />}
+                      {i18n.language !== 'he' && <input type="hidden" name="name_he" value={themeFields.name_he} />}
+                      {i18n.language !== 'ar' && <input type="hidden" name="name_ar" value={themeFields.name_ar} />}
                     </div>
                     
                     {/* Многоязычное описание темы */}
@@ -1035,12 +1041,18 @@ export default function ThemeManager() {
                         id="description" 
                         name={i18n.language === 'ru' ? 'description' : `description_${i18n.language}`}
                         placeholder={adminT('themes.descriptionPlaceholder')} 
+                        value={i18n.language === 'ru' ? themeFields.description : 
+                          (themeFields as any)[`description_${i18n.language}`] || ''}
+                        onChange={(e) => {
+                          const fieldName = i18n.language === 'ru' ? 'description' : `description_${i18n.language}`;
+                          setThemeFields(prev => ({ ...prev, [fieldName]: e.target.value }));
+                        }}
                       />
                       {/* Скрытые поля для других языков */}
-                      {i18n.language !== 'ru' && <input type="hidden" name="description" value="" />}
-                      {i18n.language !== 'en' && <input type="hidden" name="description_en" value="" />}
-                      {i18n.language !== 'he' && <input type="hidden" name="description_he" value="" />}
-                      {i18n.language !== 'ar' && <input type="hidden" name="description_ar" value="" />}
+                      {i18n.language !== 'ru' && <input type="hidden" name="description" value={themeFields.description} />}
+                      {i18n.language !== 'en' && <input type="hidden" name="description_en" value={themeFields.description_en} />}
+                      {i18n.language !== 'he' && <input type="hidden" name="description_he" value={themeFields.description_he} />}
+                      {i18n.language !== 'ar' && <input type="hidden" name="description_ar" value={themeFields.description_ar} />}
                     </div>
                     
                     {/* Изображения */}

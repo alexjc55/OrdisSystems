@@ -323,23 +323,39 @@ export const themes = pgTable("themes", {
   bannerButtonText_ar: varchar("banner_button_text_ar", { length: 100 }),
   bannerButtonLink: varchar("banner_button_link", { length: 200 }).default("#categories"),
   
-  // Image URLs
+  // Image URLs - multilingual support
   logoUrl: varchar("logo_url", { length: 500 }).default(""),
-  bannerImageUrl: varchar("banner_image_url", { length: 500 }).default(""),
+  logoUrl_en: varchar("logo_url_en", { length: 500 }).default(""),
+  logoUrl_he: varchar("logo_url_he", { length: 500 }).default(""),
+  logoUrl_ar: varchar("logo_url_ar", { length: 500 }).default(""),
   
-  // Cart banner settings
+  bannerImageUrl: varchar("banner_image_url", { length: 500 }).default(""),
+  bannerImageUrl_en: varchar("banner_image_url_en", { length: 500 }).default(""),
+  bannerImageUrl_he: varchar("banner_image_url_he", { length: 500 }).default(""),
+  bannerImageUrl_ar: varchar("banner_image_url_ar", { length: 500 }).default(""),
+  
+  // Cart banner settings - multilingual support
   showCartBanner: boolean("show_cart_banner").default(false),
   cartBannerType: varchar("cart_banner_type", { length: 10 }).default("text"),
   cartBannerImage: varchar("cart_banner_image", { length: 500 }).default(""),
+  cartBannerImage_en: varchar("cart_banner_image_en", { length: 500 }).default(""),
+  cartBannerImage_he: varchar("cart_banner_image_he", { length: 500 }).default(""),
+  cartBannerImage_ar: varchar("cart_banner_image_ar", { length: 500 }).default(""),
   cartBannerText: text("cart_banner_text").default(""),
   cartBannerBgColor: varchar("cart_banner_bg_color", { length: 7 }).default("#f97316"),
   cartBannerTextColor: varchar("cart_banner_text_color", { length: 7 }).default("#ffffff"),
   
-  // Bottom banners settings
+  // Bottom banners settings - multilingual support
   showBottomBanners: boolean("show_bottom_banners").default(false),
   bottomBanner1Url: varchar("bottom_banner1_url", { length: 500 }).default(""),
+  bottomBanner1Url_en: varchar("bottom_banner1_url_en", { length: 500 }).default(""),
+  bottomBanner1Url_he: varchar("bottom_banner1_url_he", { length: 500 }).default(""),
+  bottomBanner1Url_ar: varchar("bottom_banner1_url_ar", { length: 500 }).default(""),
   bottomBanner1Link: varchar("bottom_banner1_link", { length: 500 }).default(""),
   bottomBanner2Url: varchar("bottom_banner2_url", { length: 500 }).default(""),
+  bottomBanner2Url_en: varchar("bottom_banner2_url_en", { length: 500 }).default(""),
+  bottomBanner2Url_he: varchar("bottom_banner2_url_he", { length: 500 }).default(""),
+  bottomBanner2Url_ar: varchar("bottom_banner2_url_ar", { length: 500 }).default(""),
   bottomBanner2Link: varchar("bottom_banner2_link", { length: 500 }).default(""),
   
   // Modern header style info blocks
