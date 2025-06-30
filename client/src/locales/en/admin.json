@@ -718,13 +718,6 @@
     "apply": "Apply override",
     "cancel": "Cancel"
   },
-  "tabs": {
-    "settings": "Settings",
-    "permissions": "Permissions",
-    "basic": "Basic",
-    "colors": "Colors",
-    "visuals": "Visuals"
-  },
   "themeFormLabels": {
     "name": "Theme Name",
     "description": "Description",
