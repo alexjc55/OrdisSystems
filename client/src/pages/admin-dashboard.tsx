@@ -22,6 +22,7 @@ import { useTranslationManager } from "@/hooks/useTranslationManager";
 import { TranslationToolbar } from "@/components/ui/translation-toolbar";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { MultilingualStoreSettings } from "@/components/ui/multilingual-store-settings";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

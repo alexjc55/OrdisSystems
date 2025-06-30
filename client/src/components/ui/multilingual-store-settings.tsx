@@ -21,7 +21,7 @@ export function MultilingualStoreSettings({
   onUpdate, 
   isLoading = false 
 }: MultilingualStoreSettingsProps) {
-  const { adminT } = useAdminTranslation();
+  const { t: adminT } = useAdminTranslation();
   const [activeLanguageTab, setActiveLanguageTab] = useState<SupportedLanguage>('ru');
 
   // Get enabled languages from store settings
@@ -30,7 +30,7 @@ export function MultilingualStoreSettings({
     staleTime: 5 * 60 * 1000,
   });
 
-  const enabledLanguages = (settingsData?.enabledLanguages as string[]) || ['ru', 'en', 'he', 'ar'];
+  const enabledLanguages = ((settingsData as any)?.enabledLanguages as string[]) || ['ru', 'en', 'he', 'ar'];
   
   // Create available language tabs
   const availableLanguageTabs = enabledLanguages.map(lang => ({
@@ -59,7 +59,7 @@ export function MultilingualStoreSettings({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Languages className="h-5 w-5" />
-          {adminT('storeSettings.multilingualContent')}
+          {adminT('settings.multilingualContent')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -80,12 +80,12 @@ export function MultilingualStoreSettings({
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <Type className="h-4 w-4" />
-                  {adminT('storeSettings.storeName')} ({code.toUpperCase()})
+                  {adminT('settings.storeName')} ({code.toUpperCase()})
                 </label>
                 <Input
                   value={getFieldValue('storeName')}
                   onChange={(e) => handleFieldUpdate('storeName', e.target.value)}
-                  placeholder={adminT('storeSettings.storeNamePlaceholder')}
+                  placeholder={adminT('settings.storeNamePlaceholder')}
                   disabled={isLoading}
                 />
               </div>
@@ -94,12 +94,12 @@ export function MultilingualStoreSettings({
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <Type className="h-4 w-4" />
-                  {adminT('storeSettings.welcomeTitle')} ({code.toUpperCase()})
+                  {adminT('settings.welcomeTitle')} ({code.toUpperCase()})
                 </label>
                 <Input
                   value={getFieldValue('welcomeTitle')}
                   onChange={(e) => handleFieldUpdate('welcomeTitle', e.target.value)}
-                  placeholder={adminT('storeSettings.welcomeTitlePlaceholder')}
+                  placeholder={adminT('settings.welcomeTitlePlaceholder')}
                   disabled={isLoading}
                 />
               </div>
@@ -108,12 +108,12 @@ export function MultilingualStoreSettings({
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <FileText className="h-4 w-4" />
-                  {adminT('storeSettings.storeDescription')} ({code.toUpperCase()})
+                  {adminT('settings.storeDescription')} ({code.toUpperCase()})
                 </label>
                 <Textarea
                   value={getFieldValue('storeDescription')}
                   onChange={(e) => handleFieldUpdate('storeDescription', e.target.value)}
-                  placeholder={adminT('storeSettings.storeDescriptionPlaceholder')}
+                  placeholder={adminT('settings.storeDescriptionPlaceholder')}
                   rows={3}
                   disabled={isLoading}
                 />
@@ -123,12 +123,12 @@ export function MultilingualStoreSettings({
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <FileText className="h-4 w-4" />
-                  {adminT('storeSettings.deliveryInfo')} ({code.toUpperCase()})
+                  {adminT('settings.deliveryInfo')} ({code.toUpperCase()})
                 </label>
                 <Textarea
                   value={getFieldValue('deliveryInfo')}
                   onChange={(e) => handleFieldUpdate('deliveryInfo', e.target.value)}
-                  placeholder={adminT('storeSettings.deliveryInfoPlaceholder')}
+                  placeholder={adminT('settings.deliveryInfoPlaceholder')}
                   rows={3}
                   disabled={isLoading}
                 />
@@ -138,12 +138,12 @@ export function MultilingualStoreSettings({
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <FileText className="h-4 w-4" />
-                  {adminT('storeSettings.aboutText')} ({code.toUpperCase()})
+                  {adminT('settings.aboutText')} ({code.toUpperCase()})
                 </label>
                 <Textarea
                   value={getFieldValue('aboutText')}
                   onChange={(e) => handleFieldUpdate('aboutText', e.target.value)}
-                  placeholder={adminT('storeSettings.aboutTextPlaceholder')}
+                  placeholder={adminT('settings.aboutTextPlaceholder')}
                   rows={4}
                   disabled={isLoading}
                 />
@@ -152,13 +152,13 @@ export function MultilingualStoreSettings({
               {/* Banner Button Text */}
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
-                  <ButtonIcon className="h-4 w-4" />
-                  {adminT('storeSettings.bannerButtonText')} ({code.toUpperCase()})
+                  <MousePointer className="h-4 w-4" />
+                  {adminT('settings.bannerButtonText')} ({code.toUpperCase()})
                 </label>
                 <Input
                   value={getFieldValue('bannerButtonText')}
                   onChange={(e) => handleFieldUpdate('bannerButtonText', e.target.value)}
-                  placeholder={adminT('storeSettings.bannerButtonTextPlaceholder')}
+                  placeholder={adminT('settings.bannerButtonTextPlaceholder')}
                   disabled={isLoading}
                 />
               </div>
