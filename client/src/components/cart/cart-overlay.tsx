@@ -16,7 +16,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency, formatQuantity, formatWeight, type ProductUnit } from "@/lib/currency";
-import { useShopTranslation, useCommonTranslation } from "@/hooks/use-language";
+import { useShopTranslation, useCommonTranslation, useLanguage } from "@/hooks/use-language";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { X, Plus, Minus, Trash2, CreditCard, Clock, MapPin, Phone, User } from "lucide-react";
 
 // Calculate delivery fee based on order total and free delivery threshold
@@ -31,6 +32,7 @@ export default function CartOverlay() {
   const { toast } = useToast();
   const { t } = useShopTranslation();
   const { t: tCommon } = useCommonTranslation();
+  const { currentLanguage } = useLanguage();
   const queryClient = useQueryClient();
   const [customerNotes, setCustomerNotes] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
@@ -279,25 +281,29 @@ export default function CartOverlay() {
               </div>
             ) : (
               <div className="space-y-4">
-                {items.map((item) => (
-                  <div key={item.product.id} className="flex items-center space-x-4 pb-4 border-b border-gray-100">
-                    <img
-                      src={item.product.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80&h=80&fit=crop'}
-                      alt={item.product.name}
-                      className="w-16 h-16 rounded-lg object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80&h=80&fit=crop';
-                      }}
-                    />
-                    
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-gray-900 truncate">
-                        {item.product.name}
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        {formatQuantity(item.quantity, item.product.unit as ProductUnit, t)} × {formatCurrency(parseFloat(item.product.price))}
-                      </p>
+                {items.map((item) => {
+                  const localizedName = getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage);
+                  const localizedImageUrl = getLocalizedField(item.product, 'imageUrl', currentLanguage as SupportedLanguage);
+                  
+                  return (
+                    <div key={item.product.id} className="flex items-center space-x-4 pb-4 border-b border-gray-100">
+                      <img
+                        src={localizedImageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80&h=80&fit=crop'}
+                        alt={localizedName}
+                        className="w-16 h-16 rounded-lg object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80&h=80&fit=crop';
+                        }}
+                      />
+                      
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-gray-900 truncate">
+                          {localizedName}
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          {formatQuantity(item.quantity, item.product.unit as ProductUnit, t)} × {formatCurrency(parseFloat(item.product.price))}
+                        </p>
                       <div className="flex items-center space-x-2 mt-2">
                         <Button
                           size="sm"
@@ -340,7 +346,8 @@ export default function CartOverlay() {
                       </Button>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
 
                 {/* Store Information */}
                 <div className="space-y-4 pt-4">
