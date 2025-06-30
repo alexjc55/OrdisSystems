@@ -6512,7 +6512,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit((data) => {
-        // Create multilingual updates for text fields
+        // Create multilingual updates for text fields - only update current language
         const multilingualUpdates = {
           ...createMultilingualUpdate('storeName', data.storeName, currentLanguage),
           ...createMultilingualUpdate('welcomeTitle', data.welcomeTitle, currentLanguage),
@@ -6522,8 +6522,51 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           ...createMultilingualUpdate('bannerButtonText', data.bannerButtonText, currentLanguage),
         };
         
-        // Merge with other non-multilingual data
-        const finalData = { ...data, ...multilingualUpdates };
+        // Preserve existing data for other languages by including current storeSettings
+        const preservedData = {
+          // Keep all existing multilingual data
+          storeName_ru: storeSettings?.storeName_ru || storeSettings?.storeName || '',
+          storeName_en: storeSettings?.storeName_en || '',
+          storeName_he: storeSettings?.storeName_he || '',
+          storeName_ar: storeSettings?.storeName_ar || '',
+          welcomeTitle_ru: storeSettings?.welcomeTitle_ru || storeSettings?.welcomeTitle || '',
+          welcomeTitle_en: storeSettings?.welcomeTitle_en || '',
+          welcomeTitle_he: storeSettings?.welcomeTitle_he || '',
+          welcomeTitle_ar: storeSettings?.welcomeTitle_ar || '',
+          storeDescription_ru: storeSettings?.storeDescription_ru || storeSettings?.storeDescription || '',
+          storeDescription_en: storeSettings?.storeDescription_en || '',
+          storeDescription_he: storeSettings?.storeDescription_he || '',
+          storeDescription_ar: storeSettings?.storeDescription_ar || '',
+          deliveryInfo_ru: storeSettings?.deliveryInfo_ru || storeSettings?.deliveryInfo || '',
+          deliveryInfo_en: storeSettings?.deliveryInfo_en || '',
+          deliveryInfo_he: storeSettings?.deliveryInfo_he || '',
+          deliveryInfo_ar: storeSettings?.deliveryInfo_ar || '',
+          aboutText_ru: storeSettings?.aboutText_ru || storeSettings?.aboutText || '',
+          aboutText_en: storeSettings?.aboutText_en || '',
+          aboutText_he: storeSettings?.aboutText_he || '',
+          aboutText_ar: storeSettings?.aboutText_ar || '',
+          bannerButtonText_ru: storeSettings?.bannerButtonText_ru || storeSettings?.bannerButtonText || '',
+          bannerButtonText_en: storeSettings?.bannerButtonText_en || '',
+          bannerButtonText_he: storeSettings?.bannerButtonText_he || '',
+          bannerButtonText_ar: storeSettings?.bannerButtonText_ar || '',
+        };
+        
+        // Merge preserved data with current language updates and other form data
+        const finalData = { 
+          ...data, 
+          ...preservedData, 
+          ...multilingualUpdates 
+        };
+        
+        console.log('Saving multilingual data:', {
+          currentLanguage,
+          multilingualUpdates,
+          preservedData: Object.keys(preservedData).reduce((acc, key) => {
+            if (key.includes('_')) acc[key] = preservedData[key];
+            return acc;
+          }, {})
+        });
+        
         onSubmit(finalData);
       })} className={`space-y-8 ${isRTL ? 'rtl' : 'ltr'}`}>
         {/* {adminT('storeSettings.basicInfo')} */}
