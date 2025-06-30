@@ -3106,8 +3106,8 @@ export default function AdminDashboard() {
   const filteredProducts = (productsData as any[] || [])
     .filter((product: any) => {
       const matchesSearch = !searchQuery || 
-        getLocalizedField(product, 'name', i18n.language as SupportedLanguage).toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase()));
+        (getLocalizedField(product, 'name', i18n.language as SupportedLanguage) || product.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (getLocalizedField(product, 'description', i18n.language as SupportedLanguage) || product.description || '').toLowerCase().includes(searchQuery.toLowerCase());
       
       const matchesCategory = selectedCategoryFilter === "all" || 
         product.categories?.some((cat: any) => cat.id === parseInt(selectedCategoryFilter));
@@ -3125,8 +3125,8 @@ export default function AdminDashboard() {
       
       switch (sortField) {
         case "name":
-          aValue = getLocalizedField(a, 'name', i18n.language as SupportedLanguage).toLowerCase();
-          bValue = getLocalizedField(b, 'name', i18n.language as SupportedLanguage).toLowerCase();
+          aValue = (getLocalizedField(a, 'name', i18n.language as SupportedLanguage) || a.name || '').toLowerCase();
+          bValue = (getLocalizedField(b, 'name', i18n.language as SupportedLanguage) || b.name || '').toLowerCase();
           break;
         case "price":
           aValue = parseFloat(a.price || a.pricePerKg || "0");
