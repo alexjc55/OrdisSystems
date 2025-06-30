@@ -85,11 +85,11 @@ export default function CartSidebar() {
   };
 
   const getDisplayQuantity = (item: any) => {
-    const productId = item.product.id;
+    const productId = item.product?.id || 0;
     if (editingQuantity[productId] !== undefined) {
       return editingQuantity[productId];
     }
-    return item.quantity.toString();
+    return item.quantity?.toString() || '0';
   };
 
   const handleCheckout = () => {
@@ -137,7 +137,7 @@ export default function CartSidebar() {
             ) : (
               <ScrollArea className="h-full p-4">
                 <div className="space-y-3">
-                  {items.map((item) => (
+                  {items.filter(item => item.product && item.product.id).map((item) => (
                     <div key={item.product.id} className="bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm">
                       <div className="flex items-start gap-3">
                         {/* Product Image Placeholder */}
@@ -176,7 +176,7 @@ export default function CartSidebar() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => removeItem(item.product.id)}
+                              onClick={() => removeItem(item.product?.id || 0)}
                               className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full flex-shrink-0 ml-2"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -191,9 +191,9 @@ export default function CartSidebar() {
                                   variant="outline"
                                   size="sm"
                                   onClick={() => handleQuantityChange(
-                                    item.product.id, 
-                                    item.quantity - getIncrementValue(item.product.unit as ProductUnit),
-                                    item.product.unit as ProductUnit
+                                    item.product?.id || 0, 
+                                    item.quantity - getIncrementValue((item.product?.unit || "100g") as ProductUnit),
+                                    (item.product?.unit || "100g") as ProductUnit
                                   )}
                                   className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary-light"
                                 >
@@ -202,18 +202,18 @@ export default function CartSidebar() {
                                 <Input
                                   type="text"
                                   value={getDisplayQuantity(item)}
-                                  onChange={(e) => handleManualQuantityChange(item.product.id, e.target.value, item.product.unit as ProductUnit)}
-                                  onBlur={() => handleQuantityBlur(item.product.id, item.product.unit as ProductUnit)}
-                                  onKeyPress={(e) => handleQuantityKeyPress(e, item.product.id, item.product.unit as ProductUnit)}
+                                  onChange={(e) => handleManualQuantityChange(item.product?.id || 0, e.target.value, (item.product?.unit || "100g") as ProductUnit)}
+                                  onBlur={() => handleQuantityBlur(item.product?.id || 0, (item.product?.unit || "100g") as ProductUnit)}
+                                  onKeyPress={(e) => handleQuantityKeyPress(e, item.product?.id || 0, (item.product?.unit || "100g") as ProductUnit)}
                                   className="w-16 h-8 text-center text-sm font-bold border-gray-200 focus:border-primary"
                                 />
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   onClick={() => handleQuantityChange(
-                                    item.product.id, 
-                                    item.quantity + getIncrementValue(item.product.unit as ProductUnit),
-                                    item.product.unit as ProductUnit
+                                    item.product?.id || 0, 
+                                    item.quantity + getIncrementValue((item.product?.unit || "100g") as ProductUnit),
+                                    (item.product?.unit || "100g") as ProductUnit
                                   )}
                                   className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary-light"
                                 >
@@ -221,9 +221,9 @@ export default function CartSidebar() {
                                 </Button>
                               </div>
                               <div className="text-xs text-gray-500">
-                                {item.product.unit === "piece" ? t('units.piece') : 
-                                 item.product.unit === "kg" ? t('units.kg') : 
-                                 item.product.unit === "100g" ? t('units.per100g') : t('units.per100ml')}
+                                {(item.product?.unit || "100g") === "piece" ? t('units.piece') : 
+                                 (item.product?.unit || "100g") === "kg" ? t('units.kg') : 
+                                 (item.product?.unit || "100g") === "100g" ? t('units.per100g') : t('units.per100ml')}
                               </div>
                             </div>
                             
