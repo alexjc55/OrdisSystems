@@ -9,7 +9,8 @@ import { formatCurrency, formatWeight, calculateTotal, getUnitLabel, formatQuant
 import { ShoppingCart, Plus, Minus, Eye, Star, Clock, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import type { ProductWithCategories } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { useShopTranslation } from "@/hooks/use-language";
+import { useShopTranslation, useLanguage } from "@/hooks/use-language";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 
 interface ProductCardProps {
   product: ProductWithCategories;
@@ -20,6 +21,11 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   const unit = (product.unit || "100g") as ProductUnit;
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
+  const { currentLanguage } = useLanguage();
+  
+  // Get localized product fields
+  const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
+  const localizedDescription = getLocalizedField(product, 'description', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
   
   // Set default quantity based on unit type
   const getDefaultQuantity = () => {
@@ -123,7 +129,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
     
     toast({
       title: t('addedToCart'),
-      description: `${product.name} (${getQuantityDisplay(finalQuantity, unit)}) - ${formatCurrency(totalPrice)}`,
+      description: `${localizedName} (${getQuantityDisplay(finalQuantity, unit)}) - ${formatCurrency(totalPrice)}`,
       action: (
         <Button
           size="sm"
@@ -154,7 +160,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
       <div className="relative">
         <img
           src={product.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'}
-          alt={product.name}
+          alt={localizedName}
           className="w-full h-48 object-cover"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
@@ -183,11 +189,11 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
       <CardContent className="p-4 flex-1 flex flex-col">
         <div className="flex-1">
           <h3 className="text-lg font-poppins font-semibold text-gray-900 mb-1">
-            {product.name}
+            {localizedName}
           </h3>
-          {product.description && (
+          {localizedDescription && (
             <p className="text-base text-gray-600 mb-2 line-clamp-2">
-              {product.description}
+              {localizedDescription}
             </p>
           )}
           {product.categories && product.categories.length > 0 && (
