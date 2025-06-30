@@ -35,6 +35,28 @@
   }
 }
 
+/* RTL Cart Sidebar Styles */
+html[lang="he"] .cart-sidebar,
+html[lang="ar"] .cart-sidebar {
+  direction: rtl;
+}
+
+html[lang="he"] .cart-sidebar .cart-item,
+html[lang="ar"] .cart-sidebar .cart-item {
+  direction: rtl;
+  text-align: right;
+}
+
+html[lang="he"] .cart-sidebar .cart-item-controls,
+html[lang="ar"] .cart-sidebar .cart-item-controls {
+  flex-direction: row-reverse;
+}
+
+html[lang="he"] .cart-sidebar .cart-footer,
+html[lang="ar"] .cart-sidebar .cart-footer {
+  direction: rtl;
+}
+
 /* Force yellow status colors */
 @layer utilities {
   .bg-yellow-100 {

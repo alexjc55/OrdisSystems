@@ -109,7 +109,7 @@ export default function CartSidebar() {
     <Sheet open={isOpen} onOpenChange={setCartOpen}>
       <SheetContent 
         side="right" 
-        className={`w-full sm:max-w-md flex flex-col h-full p-0 ${isRTL ? 'rtl' : ''}`}
+        className={`cart-sidebar w-full sm:max-w-md flex flex-col h-full p-0 ${isRTL ? 'rtl' : ''}`}
       >
         <SheetHeader className="border-b p-6 pb-4">
           <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -160,7 +160,7 @@ export default function CartSidebar() {
                     const localizedImageUrl = getLocalizedField(currentProduct, 'imageUrl', currentLanguage as SupportedLanguage);
                     
                     return (
-                      <div key={item.productId} className={`bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm ${isRTL ? 'text-right' : ''}`}>
+                      <div key={item.productId} className={`cart-item bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm ${isRTL ? 'text-right' : ''}`}>
                         <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                           {/* Product Image */}
                           <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
@@ -210,7 +210,7 @@ export default function CartSidebar() {
                         </div>
                         
                         {/* Price and Quantity Controls */}
-                        <div className={`flex items-center justify-between mt-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={`cart-item-controls flex items-center justify-between mt-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                           <div className={`flex flex-col items-center gap-2 ${isRTL ? 'items-end' : ''}`}>
                             <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                               <Button
@@ -280,7 +280,7 @@ export default function CartSidebar() {
 
           {/* Cart Footer */}
           {items.length > 0 && (
-            <div className="border-t bg-white p-4 space-y-4">
+            <div className="cart-footer border-t bg-white p-4 space-y-4">
               <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Button
                   variant="outline"
