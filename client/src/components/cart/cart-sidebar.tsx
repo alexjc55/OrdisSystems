@@ -33,6 +33,19 @@ interface Product {
   availabilityStatus?: string;
 }
 
+interface StoreSettings {
+  deliveryFee?: string;
+  freeDeliveryFrom?: string;
+  cartBannerText?: string;
+  cartBannerImageUrl?: string;
+  [key: string]: any;
+}
+
+interface ThemeSettings {
+  primary?: string;
+  [key: string]: any;
+}
+
 export default function CartSidebar() {
   const { items, isOpen, setCartOpen, removeItem, updateQuantity, getTotalPrice, clearCart } = useCartStore();
   const { t, i18n } = useShopTranslation();
@@ -49,8 +62,14 @@ export default function CartSidebar() {
   });
 
   // Load store settings for delivery calculations
-  const { data: storeSettings } = useQuery({
+  const { data: storeSettings } = useQuery<StoreSettings>({
     queryKey: ['/api/settings'],
+    enabled: isOpen && items.length > 0
+  });
+
+  // Load theme settings for banner styling
+  const { data: themeSettings } = useQuery<ThemeSettings>({
+    queryKey: ['/api/themes/active'],
     enabled: isOpen && items.length > 0
   });
 
@@ -173,67 +192,70 @@ export default function CartSidebar() {
                     const localizedImageUrl = getLocalizedField(currentProduct, 'imageUrl', currentLanguage as SupportedLanguage);
                     
                     return (
-                      <div key={item.productId} className={`cart-item flex gap-3 p-3 bg-white border-b ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        {/* Product Image */}
-                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                          <img
-                            src={localizedImageUrl || currentProduct.imageUrl || "/placeholder-product.jpg"}
-                            alt={localizedName || currentProduct.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        
-                        {/* Product Info */}
-                        <div className="flex-1 min-w-0">
-                          <h3 className={`font-medium text-gray-900 text-sm leading-tight ${isRTL ? 'text-right' : ''}`}>
-                            {localizedName || currentProduct.name}
-                          </h3>
-                          <div className={`text-xs text-gray-500 mt-1 ${isRTL ? 'text-right' : ''}`}>
-                            {formatCurrency(parseFloat(currentProduct.pricePerKg || currentProduct.price))} / {currentProduct.unit}
+                      <div key={item.productId} className={`cart-item bg-white rounded-lg border border-gray-100 p-4 hover:shadow-md transition-shadow ${isRTL ? 'rtl' : ''}`}>
+                        <div className={`flex gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          {/* Product Image */}
+                          <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 shadow-sm">
+                            <img
+                              src={localizedImageUrl || currentProduct.imageUrl || "/placeholder-product.jpg"}
+                              alt={localizedName || currentProduct.name}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                           
-                          {/* Quantity Controls */}
-                          <div className={`cart-item-controls flex items-center gap-2 mt-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => updateQuantity(item.productId, Math.max(0, item.quantity - 0.1))}
-                              className="h-7 w-7 p-0"
-                            >
-                              <Minus className="h-3 w-3" />
-                            </Button>
-                            <Input
-                              type="text"
-                              value={item.quantity.toFixed(1)}
-                              onChange={(e) => {
-                                const value = parseFloat(e.target.value) || 0;
-                                updateQuantity(item.productId, value);
-                              }}
-                              className="w-16 h-7 text-center text-sm"
-                            />
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => updateQuantity(item.productId, item.quantity + 0.1)}
-                              className="h-7 w-7 p-0"
-                            >
-                              <Plus className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeItem(item.productId)}
-                              className="h-7 w-7 p-0 text-red-500 hover:text-red-700 ml-2"
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </div>
-                        
-                        {/* Price */}
-                        <div className={`text-right flex-shrink-0 ${isRTL ? 'text-left' : ''}`}>
-                          <div className="text-sm font-medium text-gray-900">
-                            {formatCurrency(parseFloat(calculateItemTotal(currentProduct, item.quantity)))}
+                          {/* Product Info */}
+                          <div className="flex-1 min-w-0">
+                            <div className={`flex justify-between items-start mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                              <h3 className={`font-semibold text-gray-900 text-sm leading-tight ${isRTL ? 'text-right' : ''}`}>
+                                {localizedName || currentProduct.name}
+                              </h3>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeItem(item.productId)}
+                                className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 ml-2"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            <div className={`text-xs text-gray-500 mb-3 ${isRTL ? 'text-right' : ''}`}>
+                              {formatCurrency(parseFloat(currentProduct.pricePerKg || currentProduct.price))} / {currentProduct.unit}
+                            </div>
+                            
+                            {/* Quantity Controls and Price */}
+                            <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                              <div className={`flex items-center gap-2 bg-gray-50 rounded-full p-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleQuantityChange(item.productId, Math.max(0, item.quantity - getIncrementValue(currentProduct.unit)), currentProduct.unit)}
+                                  className="h-7 w-7 p-0 rounded-full hover:bg-white"
+                                >
+                                  <Minus className="h-3 w-3" />
+                                </Button>
+                                <input
+                                  type="text"
+                                  value={getDisplayQuantity(item)}
+                                  onChange={(e) => setEditingQuantity(prev => ({ ...prev, [item.productId]: e.target.value }))}
+                                  onBlur={() => handleQuantityBlur(item.productId, currentProduct.unit)}
+                                  onKeyPress={(e) => handleQuantityKeyPress(e, item.productId, currentProduct.unit)}
+                                  className="w-12 text-center text-sm font-medium bg-transparent border-0 outline-none"
+                                />
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleQuantityChange(item.productId, item.quantity + getIncrementValue(currentProduct.unit), currentProduct.unit)}
+                                  className="h-7 w-7 p-0 rounded-full hover:bg-white"
+                                >
+                                  <Plus className="h-3 w-3" />
+                                </Button>
+                              </div>
+                              
+                              {/* Price */}
+                              <div className={`font-semibold text-primary ${isRTL ? 'text-left' : 'text-right'}`}>
+                                {formatCurrency(parseFloat(calculateItemTotal(currentProduct, item.quantity)))}
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -281,10 +303,29 @@ export default function CartSidebar() {
                 </div>
               </div>
 
-              {/* Cart Banner */}
-              {storeSettings?.cartBannerText && (
-                <div className={`p-3 bg-orange-50 border border-orange-200 rounded-lg ${isRTL ? 'text-right' : 'text-left'}`}>
-                  <p className="text-sm text-orange-800">{storeSettings.cartBannerText}</p>
+              {/* Cart Banner with Theme Background */}
+              {(storeSettings?.cartBannerText || storeSettings?.cartBannerImageUrl) && (
+                <div 
+                  className={`relative overflow-hidden rounded-lg ${isRTL ? 'text-right' : 'text-left'}`}
+                  style={{
+                    backgroundColor: themeSettings?.primary || 'var(--primary)',
+                    backgroundImage: storeSettings?.cartBannerImageUrl ? `url(${storeSettings.cartBannerImageUrl})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    minHeight: '80px'
+                  }}
+                >
+                  {/* Overlay for better text readability */}
+                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                  
+                  {/* Banner content */}
+                  <div className="relative z-10 p-4 flex items-center justify-center h-full">
+                    {storeSettings?.cartBannerText && (
+                      <p className="text-white font-medium text-center text-sm leading-relaxed drop-shadow-md">
+                        {storeSettings.cartBannerText}
+                      </p>
+                    )}
+                  </div>
                 </div>
               )}
 
