@@ -1,5 +1,22 @@
 import { type SupportedLanguage } from './localization';
 
+// Global default language setting (can be overridden by store settings)
+let globalDefaultLanguage: SupportedLanguage = 'ru';
+
+/**
+ * Set the global default language for the application
+ */
+export function setGlobalDefaultLanguage(language: SupportedLanguage) {
+  globalDefaultLanguage = language;
+}
+
+/**
+ * Get the current global default language
+ */
+export function getGlobalDefaultLanguage(): SupportedLanguage {
+  return globalDefaultLanguage;
+}
+
 // Type definitions for multilingual settings
 export interface MultilingualStoreSettings {
   storeName?: string | null;
@@ -63,19 +80,20 @@ export function getLocalizedStoreField(
   obj: MultilingualStoreSettings,
   fieldName: string,
   language: SupportedLanguage,
-  defaultLanguage: SupportedLanguage = 'ru'
+  defaultLanguage: SupportedLanguage = globalDefaultLanguage
 ): string {
   if (!obj) return '';
   
-  // For Russian (base language), try base field first, then suffixed version
-  if (language === 'ru') {
+  // Try current language field first
+  if (language === defaultLanguage) {
+    // For default language, try base field first, then suffixed version
     const baseValue = obj[fieldName];
     if (baseValue) return baseValue;
     
-    const suffixedValue = obj[`${fieldName}_ru`];
+    const suffixedValue = obj[`${fieldName}_${defaultLanguage}`];
     if (suffixedValue) return suffixedValue;
   } else {
-    // For other languages, try suffixed field first
+    // For non-default languages, try suffixed field first
     const suffixedValue = obj[`${fieldName}_${language}`];
     if (suffixedValue) return suffixedValue;
   }
@@ -102,12 +120,16 @@ export function getLocalizedThemeField(
 ): string {
   if (!theme) return '';
   
-  // For Russian (base language), try base field first
-  if (language === 'ru') {
+  // Try current language field first
+  if (language === defaultLanguage) {
+    // For default language, try base field first (usually Russian in current setup)
     const baseValue = theme[fieldName];
     if (baseValue) return baseValue;
+    // Also try suffixed version for consistency
+    const suffixedValue = theme[`${fieldName}_${language}`];
+    if (suffixedValue) return suffixedValue;
   } else {
-    // For other languages, try suffixed field first
+    // For non-default languages, try suffixed field first
     const suffixedValue = theme[`${fieldName}_${language}`];
     if (suffixedValue) return suffixedValue;
   }
@@ -231,14 +253,15 @@ export function getLocalizedImageField(
   language: SupportedLanguage,
   defaultLanguage: SupportedLanguage = 'ru'
 ): string {
-  if (!obj) return DEFAULT_IMAGE_VALUES[fieldName] || '';
+  if (!obj) return '';
   
-  // For Russian (base language), try base field first
-  if (language === 'ru') {
+  // Try current language field first
+  if (language === defaultLanguage) {
+    // For default language, try base field first
     const baseValue = obj[fieldName];
     if (baseValue) return baseValue;
   } else {
-    // For other languages, try suffixed field first
+    // For non-default languages, try suffixed field first
     const suffixedValue = obj[`${fieldName}_${language}`];
     if (suffixedValue) return suffixedValue;
   }
@@ -250,8 +273,5 @@ export function getLocalizedImageField(
   }
   
   // Final fallback to base field
-  const finalValue = obj[fieldName] || '';
-  
-  // If everything is empty, return empty string (no default images)
-  return finalValue;
+  return obj[fieldName] || '';
 }
