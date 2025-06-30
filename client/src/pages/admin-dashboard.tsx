@@ -6398,7 +6398,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       deliveryInfo: getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) || "",
       paymentInfo: storeSettings?.paymentInfo || "",
       aboutText: getMultilingualValue(storeSettings, 'aboutText', currentLanguage) || "",
-      bannerButtonText: getMultilingualValue(storeSettings, 'bannerButtonText', currentLanguage) || "",
       paymentMethods: storeSettings?.paymentMethods || [
         { name: "Наличными при получении", id: 1 },
         { name: "Банковской картой", id: 2 },
@@ -6438,13 +6437,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
     } as any,
   });
 
-  // Reset form when storeSettings changes
+  // Reset form when storeSettings or language changes
   useEffect(() => {
     if (storeSettings) {
       form.reset({
-        storeName: storeSettings?.storeName || "eDAHouse",
-        welcomeTitle: storeSettings?.welcomeTitle || "",
-        storeDescription: storeSettings?.storeDescription || "",
+        storeName: getMultilingualValue(storeSettings, 'storeName', currentLanguage) || "eDAHouse",
+        welcomeTitle: getMultilingualValue(storeSettings, 'welcomeTitle', currentLanguage) || "",
+        storeDescription: getMultilingualValue(storeSettings, 'storeDescription', currentLanguage) || "",
         logoUrl: storeSettings?.logoUrl || "",
         bannerImage: storeSettings?.bannerImage || "",
         contactPhone: storeSettings?.contactPhone || "",
@@ -6459,7 +6458,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           saturday: storeSettings?.workingHours?.saturday || "",
           sunday: storeSettings?.workingHours?.sunday || "",
         },
-        deliveryInfo: storeSettings?.deliveryInfo || "",
+        deliveryInfo: getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) || "",
+        aboutText: getMultilingualValue(storeSettings, 'aboutText', currentLanguage) || "",
+        bannerButtonText: getMultilingualValue(storeSettings, 'bannerButtonText', currentLanguage) || "",
         paymentInfo: storeSettings?.paymentInfo || "",
         paymentMethods: storeSettings?.paymentMethods || [
           { name: adminT('storeSettings.cashOnDelivery'), id: 1 },
@@ -6497,7 +6498,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
         defaultLanguage: storeSettings?.defaultLanguage || "ru",
         enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
-        bannerButtonText: storeSettings?.bannerButtonText || "",
         bannerButtonLink: storeSettings?.bannerButtonLink || "",
         modernBlock1Icon: storeSettings?.modernBlock1Icon || "",
         modernBlock1Text: storeSettings?.modernBlock1Text || "",
@@ -6507,11 +6507,25 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         modernBlock3Text: storeSettings?.modernBlock3Text || "",
       } as any);
     }
-  }, [storeSettings, form]);
+  }, [storeSettings, currentLanguage, form]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-8 ${isRTL ? 'rtl' : 'ltr'}`}>
+      <form onSubmit={form.handleSubmit((data) => {
+        // Create multilingual updates for text fields
+        const multilingualUpdates = {
+          ...createMultilingualUpdate('storeName', data.storeName, currentLanguage),
+          ...createMultilingualUpdate('welcomeTitle', data.welcomeTitle, currentLanguage),
+          ...createMultilingualUpdate('storeDescription', data.storeDescription, currentLanguage),
+          ...createMultilingualUpdate('deliveryInfo', data.deliveryInfo, currentLanguage),
+          ...createMultilingualUpdate('aboutText', data.aboutText, currentLanguage),
+          ...createMultilingualUpdate('bannerButtonText', data.bannerButtonText, currentLanguage),
+        };
+        
+        // Merge with other non-multilingual data
+        const finalData = { ...data, ...multilingualUpdates };
+        onSubmit(finalData);
+      })} className={`space-y-8 ${isRTL ? 'rtl' : 'ltr'}`}>
         {/* {adminT('storeSettings.basicInfo')} */}
         <Collapsible open={isBasicInfoOpen} onOpenChange={setIsBasicInfoOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
