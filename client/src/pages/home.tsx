@@ -418,7 +418,7 @@ export default function Home() {
                         return `${t('searchResults')}: "${searchQuery}"`;
                       }
                       if (selectedCategory?.name) {
-                        return selectedCategory.name;
+                        return getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
                       }
                       if (storeSettings?.welcomeTitle) {
                         return storeSettings.welcomeTitle;
@@ -440,7 +440,7 @@ export default function Home() {
                         return t('foundItems').replace('{count}', displayProducts.length.toString());
                       }
                       if (selectedCategory?.description) {
-                        return selectedCategory.description;
+                        return getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
                       }
                       if (storeSettings?.storeDescription) {
                         return storeSettings.storeDescription;

@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Clock, Phone, MapPin, CreditCard, Truck, Star, Shield, Heart, ChefHat, Zap, Award, Users, ThumbsUp, CheckCircle, Gift, Smile } from 'lucide-react';
+import { getLocalizedField, type SupportedLanguage } from '@shared/localization';
+import { useLanguage } from '@/hooks/use-language';
 
 // Helper function to get icon component
 const getIconComponent = (iconName: string) => {
@@ -24,6 +26,7 @@ interface HeaderVariantProps {
 
 export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
   const { t, i18n } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const isRTL = i18n.language === 'he';
 
   // Return loading state if storeSettings is not yet loaded
@@ -36,18 +39,18 @@ export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
   }
 
   if (style === 'modern') {
-    return <ModernHeader storeSettings={storeSettings} t={t} isRTL={isRTL} />;
+    return <ModernHeader storeSettings={storeSettings} t={t} isRTL={isRTL} currentLanguage={currentLanguage} />;
   }
 
   if (style === 'minimal') {
-    return <MinimalHeader storeSettings={storeSettings} t={t} isRTL={isRTL} />;
+    return <MinimalHeader storeSettings={storeSettings} t={t} isRTL={isRTL} currentLanguage={currentLanguage} />;
   }
 
   // Default classic style (current implementation)
-  return <ClassicHeader storeSettings={storeSettings} t={t} isRTL={isRTL} />;
+  return <ClassicHeader storeSettings={storeSettings} t={t} isRTL={isRTL} currentLanguage={currentLanguage} />;
 }
 
-function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
+function ClassicHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSettings: any, t: any, isRTL: boolean, currentLanguage: string }) {
   return (
     <>
       {/* Pure Image Banner - Only show if enabled */}
@@ -66,10 +69,10 @@ function ClassicHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
         <div className="header-banner bg-gray-50 py-12 text-center">
           <div className="banner-content container mx-auto px-6">
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-              {storeSettings.welcomeTitle || "О нашей еде"}
+              {getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage) || "О нашей еде"}
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-6">
-              {storeSettings.storeDescription || "Заказывай свежие блюда на развес — от повседневных обедов до праздничных угощений. Быстро, удобно и по-домашнему вкусно. Попробуй"}
+              {getLocalizedField(storeSettings, 'storeDescription', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage) || "Заказывай свежие блюда на развес — от повседневных обедов до праздничных угощений. Быстро, удобно и по-домашнему вкусно. Попробуй"}
             </p>
             
             {/* Orange underline accent */}
@@ -169,7 +172,7 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
   );
 }
 
-function ModernHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
+function ModernHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSettings: any, t: any, isRTL: boolean, currentLanguage: string }) {
   // Only show header if banner is enabled, otherwise return null
   if (storeSettings?.showBannerImage === false) {
     return null;
