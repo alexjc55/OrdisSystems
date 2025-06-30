@@ -1234,7 +1234,11 @@ export class DatabaseStorage implements IStorage {
     } else {
       const [newSettings] = await db
         .insert(storeSettings)
-        .values(settings)
+        .values([{
+          storeName: settings.storeName || 'eDAHouse',
+          defaultItemsPerPage: settings.defaultItemsPerPage || 10,
+          ...settings
+        }])
         .returning();
       return newSettings;
     }
@@ -1478,7 +1482,6 @@ export class DatabaseStorage implements IStorage {
       .insert(themes)
       .values({
         ...theme,
-        createdAt: new Date(),
         updatedAt: new Date(),
       })
       .returning();

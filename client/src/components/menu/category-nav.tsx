@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { memo, useCallback } from "react";
-import { useShopTranslation } from "@/hooks/use-language";
+import { useShopTranslation, useLanguage } from "@/hooks/use-language";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import type { CategoryWithCount } from "@shared/schema";
 
 interface CategoryNavProps {
@@ -20,6 +21,7 @@ export default memo(function CategoryNav({
   onCategorySelect
 }: CategoryNavProps) {
   const { t } = useShopTranslation();
+  const { currentLanguage } = useLanguage();
   
   const handleAllCategoriesClick = useCallback(() => {
     onCategorySelect(null);
@@ -51,7 +53,7 @@ export default memo(function CategoryNav({
             className="flex-shrink-0"
           >
             <span className="mr-2 rtl:mr-0 rtl:ml-2">{category.icon || '📦'}</span>
-            {category.name}
+            {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}
           </Button>
         ))}
       </div>
