@@ -3803,7 +3803,7 @@ export default function AdminDashboard() {
                           title="Предыдущая страница"
                           className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
-                          <ChevronLeft className="h-4 w-4" />
+                          {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                         </Button>
                         <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]">
                           {productsPage}/{productsTotalPages}
@@ -3816,7 +3816,7 @@ export default function AdminDashboard() {
                           title="Следующая страница"
                           className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
-                          <ChevronRight className="h-4 w-4" />
+                          {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                         </Button>
                         <Button
                           variant="ghost"
@@ -3855,7 +3855,7 @@ export default function AdminDashboard() {
                           title="Предыдущая страница"
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          <ChevronLeft className="h-4 w-4" />
+                          {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                         </Button>
                         <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
                           {productsPage} из {productsTotalPages}
@@ -3868,7 +3868,7 @@ export default function AdminDashboard() {
                           title="Следующая страница"
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          <ChevronRight className="h-4 w-4" />
+                          {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                         </Button>
                         <Button
                           variant="outline"
@@ -4300,7 +4300,7 @@ export default function AdminDashboard() {
                               title={adminT('common.previousPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              <ChevronLeft className="h-4 w-4" />
+                              {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                             </Button>
                             <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
                               {ordersResponse.page} {adminT('common.of')} {ordersResponse.totalPages}
@@ -4313,7 +4313,7 @@ export default function AdminDashboard() {
                               title="Следующая страница"
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              <ChevronRight className="h-4 w-4" />
+                              {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                             </Button>
                             <Button
                               variant="outline"
