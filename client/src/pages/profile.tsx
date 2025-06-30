@@ -1015,10 +1015,10 @@ export default function Profile() {
                                 {(() => {
                                   const unit = (item.product.unit || "100g") as ProductUnit;
                                   switch (unit) {
-                                    case 'piece': return `${formatCurrency(item.product.price)} ${t('units.perPiece')}`;
-                                    case 'kg': return `${formatCurrency(item.product.price)} ${t('units.perKg')}`;
-                                    case '100g': return `${formatCurrency(item.product.price)} ${t('units.per100g')}`;
-                                    case '100ml': return `${formatCurrency(item.product.price)} ${t('units.per100ml')}`;
+                                    case 'piece': return `${formatCurrency(item.product.price)} ${tShop('units.perPiece')}`;
+                                    case 'kg': return `${formatCurrency(item.product.price)} ${tShop('units.perKg')}`;
+                                    case '100g': return `${formatCurrency(item.product.price)} ${tShop('units.per100g')}`;
+                                    case '100ml': return `${formatCurrency(item.product.price)} ${tShop('units.per100ml')}`;
                                     default: return formatCurrency(item.product.price);
                                   }
                                 })()}
