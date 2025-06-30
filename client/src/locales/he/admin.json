@@ -2,6 +2,11 @@
   "title": "לוח בקרה של מנהל",
   "description": "נהל את הגדרות החנות והתוכן שלך",
   "tabs": {
+    "products": "מוצרים",
+    "categories": "קטגוריות", 
+    "orders": "הזמנות",
+    "users": "משתמשים",
+    "themes": "עיצובים",
     "settings": "הגדרות",
     "permissions": "הרשאות",
     "basic": "בסיסי",

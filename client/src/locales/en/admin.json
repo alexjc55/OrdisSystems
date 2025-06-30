@@ -9,6 +9,18 @@
     "settings": "Settings",
     "themes": "Themes"
   },
+  "tabs": {
+    "products": "Products",
+    "categories": "Categories", 
+    "orders": "Orders",
+    "users": "Users",
+    "themes": "Themes",
+    "settings": "Settings",
+    "permissions": "Permissions",
+    "basic": "Basic",
+    "colors": "Colors",
+    "visuals": "Visual"
+  },
   "actions": {
     "add": "Add",
     "edit": "Edit",
