@@ -12,15 +12,9 @@ export function getMultilingualValue(
   // Get field name for current language
   const langField = currentLanguage === 'ru' ? baseField : `${baseField}_${currentLanguage}`;
   
-  // Try current language value
-  const currentValue = storeSettings?.[langField];
-  
-  // If no value and not default language, fallback to default
-  if (!currentValue && currentLanguage !== defaultLanguage) {
-    return storeSettings?.[baseField] || '';
-  }
-  
-  return currentValue || '';
+  // Only return the value for the specific language field
+  // No fallback to default language - if no translation exists, field should be empty
+  return storeSettings?.[langField] || '';
 }
 
 export function createMultilingualUpdate(

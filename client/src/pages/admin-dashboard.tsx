@@ -6558,14 +6558,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           ...multilingualUpdates 
         };
         
-        console.log('Saving multilingual data:', {
-          currentLanguage,
-          multilingualUpdates,
-          preservedData: Object.keys(preservedData).reduce((acc, key) => {
-            if (key.includes('_')) acc[key] = preservedData[key];
-            return acc;
-          }, {})
-        });
+
         
         onSubmit(finalData);
       })} className={`space-y-8 ${isRTL ? 'rtl' : 'ltr'}`}>
