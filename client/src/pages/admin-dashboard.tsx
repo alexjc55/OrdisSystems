@@ -1463,8 +1463,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   <TableCell className="text-sm">
                     <div>
                       <div className="font-medium">{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}</div>
-                      {item.product?.description && (
-                        <div className="text-xs text-gray-500">{item.product.description}</div>
+                      {(getLocalizedField(item.product, 'description', i18n.language as SupportedLanguage) || item.product?.description) && (
+                        <div className="text-xs text-gray-500">{getLocalizedField(item.product, 'description', i18n.language as SupportedLanguage) || item.product.description}</div>
                       )}
                     </div>
                   </TableCell>
