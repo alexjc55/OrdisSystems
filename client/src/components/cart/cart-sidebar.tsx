@@ -8,8 +8,9 @@ import { X, Plus, Minus, Trash2, ShoppingCart, Info } from "lucide-react";
 import { useLocation } from "wouter";
 import { useState } from "react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { useShopTranslation } from "@/hooks/use-language";
+import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 
 // Calculate delivery fee based on order total and free delivery threshold
 const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number | null) => {
@@ -26,6 +27,7 @@ export default function CartSidebar() {
   const [editingQuantity, setEditingQuantity] = useState<{[key: number]: string}>({});
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
+  const { currentLanguage } = useLanguage();
   
 
 
@@ -148,7 +150,9 @@ export default function CartSidebar() {
                           <div className="flex justify-between items-start mb-2">
                             <div className="flex-1">
                               <div className="flex items-center gap-2">
-                                <h4 className="font-semibold text-gray-900 text-sm leading-tight">{item.product.name}</h4>
+                                <h4 className="font-semibold text-gray-900 text-sm leading-tight">
+                                  {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage) || item.product.name || 'Product'}
+                                </h4>
                                 {item.product.availabilityStatus === 'out_of_stock_today' && (
                                   <TooltipProvider>
                                     <Tooltip>
@@ -165,7 +169,9 @@ export default function CartSidebar() {
                                   </TooltipProvider>
                                 )}
                               </div>
-                              <p className="text-xs text-gray-500 mt-1 line-clamp-2">{item.product.description}</p>
+                              <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                                {getLocalizedField(item.product, 'description', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage) || item.product.description || ''}
+                              </p>
                             </div>
                             <Button
                               variant="ghost"
