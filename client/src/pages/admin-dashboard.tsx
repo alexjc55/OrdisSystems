@@ -6608,11 +6608,34 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           addressAr: storeSettings?.addressAr || '',
         };
         
+        // Handle payment methods specially - preserve all language data
+        const processedPaymentMethods = data.paymentMethods?.map((method: any) => {
+          // Find corresponding method in existing data
+          const existingMethod = storeSettings?.paymentMethods?.find((existing: any) => 
+            existing.name === method.name || existing.id === method.id
+          );
+          
+          if (existingMethod) {
+            // Merge current language changes with existing multilingual data
+            return {
+              ...existingMethod,
+              ...method,
+              // Preserve other language data that might not be in current form
+              name_en: existingMethod.name_en || method.name_en || '',
+              name_he: existingMethod.name_he || method.name_he || '',
+              name_ar: existingMethod.name_ar || method.name_ar || ''
+            };
+          }
+          
+          return method;
+        }) || [];
+
         // Merge preserved data with current language updates and other form data
         const finalData = { 
           ...data, 
           ...preservedData, 
-          ...multilingualUpdates 
+          ...multilingualUpdates,
+          paymentMethods: processedPaymentMethods
         };
         
 
