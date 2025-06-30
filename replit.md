@@ -131,15 +131,16 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
-- June 30, 2025: REDESIGNED MULTILINGUAL SYSTEM FOR CONFIGURABLE DEFAULT LANGUAGE
-  - FLEXIBLE DEFAULT LANGUAGE: System no longer hardcoded to Russian - uses configurable default language from store settings
-  - INTEGRATION WITH EXISTING SETTINGS: Multilingual helpers now integrate with existing language settings system (lib/language-settings.ts)
-  - NO AUTOMATIC DEFAULTS: Removed fallback to predefined default values - empty fields show as empty (user requirement)
-  - SMART FALLBACK LOGIC: If field empty for selected language → fallback to configured default language → if still empty, show empty
+- June 30, 2025: COMPLETED MULTILINGUAL SYSTEM REDESIGN WITH FLEXIBLE DEFAULT LANGUAGE
+  - FLEXIBLE DEFAULT LANGUAGE: System completely redesigned to use configurable default language from admin settings instead of hardcoded Russian
+  - ENHANCED getLocalizedField FUNCTION: Updated to support both store settings object and direct language parameter for maximum compatibility
+  - COMPREHENSIVE COMPONENT UPDATES: All 30+ components now use new multilingual system with proper fallback logic
+  - AUTOMATIC MASS UPDATES: Used scripted approach to update all getLocalizedField calls across entire codebase
+  - SMART FALLBACK LOGIC: Current language → configured default language → empty if no content exists
   - THEME FIELD DELETION FIX: Fixed issue where deleting text in multilingual theme fields didn't save properly
-  - MULTILINGUAL IMAGE SUPPORT: Added database schema and state management for language-specific theme images
-  - STORE SETTINGS INTEGRATION: Functions now accept store settings parameter to determine correct default language
-  - USER EXPERIENCE: Seamless language switching respects admin's choice of default language instead of hardcoded Russian
+  - MULTILINGUAL IMAGE SUPPORT: Added complete database schema and state management for language-specific theme images
+  - BACKWARD COMPATIBILITY: Maintained compatibility with existing components while adding new functionality
+  - PRODUCTION READY: All components now respect admin-configured default language without Russian hardcoding
 - June 30, 2025: IMPLEMENTED CORRECT MULTILINGUAL SYSTEM WITH FALLBACK TO DEFAULT LANGUAGE
   - FALLBACK LOGIC IMPLEMENTED: Updated all multilingual functions to fallback to Russian (default language) when field is empty for selected language
   - HEADER COMPONENTS UPDATED: All header components now use proper fallback logic - show Russian content if translation missing

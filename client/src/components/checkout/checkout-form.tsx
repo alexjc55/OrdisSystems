@@ -201,7 +201,7 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
               {items.map((item) => (
                 <div key={item.product.id} className="flex justify-between items-center text-sm">
                   <div className="flex-1">
-                    <div className="font-medium">{getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}</div>
+                    <div className="font-medium">{getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}</div>
                     <div className="text-gray-600">
                       {formatWeight(item.quantity)} × {formatCurrency(parseFloat(item.product.pricePerKg))}/kg
                     </div>

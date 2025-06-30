@@ -418,10 +418,10 @@ export default function Home() {
                         return `${t('searchResults')}: "${searchQuery}"`;
                       }
                       if (selectedCategory?.name) {
-                        return getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
+                        return getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru');
                       }
                       if (storeSettings?.welcomeTitle) {
-                        return getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
+                        return getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage as SupportedLanguage, 'ru');
                       }
                       return t('defaultWelcomeTitle');
                     } catch (error) {
@@ -440,10 +440,10 @@ export default function Home() {
                         return t('foundItems').replace('{count}', displayProducts.length.toString());
                       }
                       if (selectedCategory?.description) {
-                        return getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
+                        return getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru');
                       }
                       if (storeSettings?.storeDescription) {
-                        return getLocalizedField(storeSettings, 'storeDescription', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
+                        return getLocalizedField(storeSettings, 'storeDescription', currentLanguage as SupportedLanguage, 'ru');
                       }
                       return t('defaultStoreDescription');
                     } catch (error) {
@@ -523,12 +523,12 @@ export default function Home() {
                           <div className="flex items-start gap-3 h-full">
                             <div className="flex-1 flex flex-col h-full overflow-hidden">
                               <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300">
-                                {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}
+                                {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
                               </h3>
                               
                               <p className="text-gray-600 text-sm leading-tight truncate">
                                 {(() => {
-                                  const text = getLocalizedField(category, 'description', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage) || t('defaultCategoryDescription');
+                                  const text = getLocalizedField(category, 'description', currentLanguage as SupportedLanguage, 'ru') || t('defaultCategoryDescription');
                                   return text.length > 40 ? text.substring(0, 40) + '...' : text;
                                 })()}
                               </p>
@@ -675,7 +675,7 @@ export default function Home() {
                       <SelectItem value="all">{t('allCategories')}</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
-                          {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}
+                          {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
                         </SelectItem>
                       ))}
                     </SelectContent>

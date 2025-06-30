@@ -831,7 +831,7 @@ export default function Profile() {
                               >
                                 {order.items.slice(0, 2).map((item, index) => (
                                   <div key={index} className="text-sm">
-                                    {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)} ({formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit, tShop)})
+                                    {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')} ({formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit, tShop)})
                                   </div>
                                 ))}
                                 {order.items.length > 2 && (
@@ -1004,8 +1004,8 @@ export default function Profile() {
                             <TableRow key={item.id}>
                               <TableCell>
                                 <div>
-                                  <div className="font-medium">{getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}</div>
-                                  <div className="text-sm text-gray-500">{getLocalizedField(item.product, 'description', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}</div>
+                                  <div className="font-medium">{getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}</div>
+                                  <div className="text-sm text-gray-500">{getLocalizedField(item.product, 'description', currentLanguage as SupportedLanguage, 'ru')}</div>
                                 </div>
                               </TableCell>
                               <TableCell dir="ltr">

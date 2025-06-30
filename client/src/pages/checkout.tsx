@@ -194,7 +194,7 @@ export default function Checkout() {
     if (deliveryDate === today) {
       return {
         valid: false,
-        message: `Товары для будущих заказов: ${futureProducts.map(item => getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)).join(', ')}`
+        message: `Товары для будущих заказов: ${futureProducts.map(item => getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')).join(', ')}`
       };
     }
     
@@ -532,7 +532,7 @@ export default function Checkout() {
                 <div key={item.product.id} className="flex justify-between items-center">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="font-medium">{getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage)}</h4>
+                      <h4 className="font-medium">{getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}</h4>
                       {item.product.availabilityStatus === 'out_of_stock_today' && (
                         <TooltipProvider>
                           <Tooltip>

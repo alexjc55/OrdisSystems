@@ -15,16 +15,23 @@ export const LANGUAGE_NAMES = {
 
 /**
  * Get localized field value with fallback to configurable default language
+ * Enhanced to support both storeSettings object and direct defaultLanguage parameter
  */
 export function getLocalizedField(
   item: any,
   field: string,
   currentLanguage: SupportedLanguage,
-  storeSettings?: { defaultLanguage?: string }
+  storeSettingsOrDefault?: { defaultLanguage?: string } | SupportedLanguage
 ): string {
   if (!item) return '';
   
-  const defaultLanguage = (storeSettings?.defaultLanguage as SupportedLanguage) || 'ru';
+  // Handle flexible parameter type
+  let defaultLanguage: SupportedLanguage = 'ru';
+  if (typeof storeSettingsOrDefault === 'string') {
+    defaultLanguage = storeSettingsOrDefault;
+  } else if (storeSettingsOrDefault?.defaultLanguage) {
+    defaultLanguage = storeSettingsOrDefault.defaultLanguage as SupportedLanguage;
+  }
   
   // If current language is default language, use base field
   if (currentLanguage === defaultLanguage) {

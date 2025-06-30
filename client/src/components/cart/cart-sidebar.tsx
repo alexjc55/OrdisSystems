@@ -151,7 +151,7 @@ export default function CartSidebar() {
                             <div className="flex-1">
                               <div className="flex items-center gap-2">
                                 <h4 className="font-semibold text-gray-900 text-sm leading-tight">
-                                  {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage) || item.product.name || 'Product'}
+                                  {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru') || item.product.name || 'Product'}
                                 </h4>
                                 {item.product.availabilityStatus === 'out_of_stock_today' && (
                                   <TooltipProvider>
@@ -170,7 +170,7 @@ export default function CartSidebar() {
                                 )}
                               </div>
                               <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                                {getLocalizedField(item.product, 'description', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage) || item.product.description || ''}
+                                {getLocalizedField(item.product, 'description', currentLanguage as SupportedLanguage, 'ru') || item.product.description || ''}
                               </p>
                             </div>
                             <Button

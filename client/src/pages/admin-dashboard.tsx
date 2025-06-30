@@ -3564,7 +3564,7 @@ export default function AdminDashboard() {
                         <TableBody>
                           {filteredProducts.map((product: any) => {
                             // Get localized product name for display
-                            const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
+                            const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru');
                             return (
                               <TableRow key={product.id} className={
                               product.availabilityStatus !== "available"
