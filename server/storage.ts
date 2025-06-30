@@ -728,7 +728,7 @@ export class DatabaseStorage implements IStorage {
       .from(products)
       .where(and(
         eq(products.isActive, true),
-        ne(products.stockStatus, 'out_of_stock'),
+        eq(products.isAvailable, true),
         or(
           sql`${products.name} ILIKE ${'%' + query + '%'}`,
           sql`${products.name_en} ILIKE ${'%' + query + '%'}`,

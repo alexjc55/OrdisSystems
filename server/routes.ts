@@ -358,16 +358,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!query) {
         return res.status(400).json({ message: "Search query is required" });
       }
-      let products = await storage.searchProducts(query);
-      
-      // Filter out unavailable products for non-admin users
-      const isAdmin = req.user?.claims?.sub && req.isAuthenticated?.() && 
-        (await storage.getUser(req.user.id))?.email === "alexjc55@gmail.com";
-      
-      if (!isAdmin) {
-        products = products.filter(product => product.isAvailable !== false);
-      }
-      
+      const products = await storage.searchProducts(query);
       res.json(products);
     } catch (error) {
       console.error("Error searching products:", error);
