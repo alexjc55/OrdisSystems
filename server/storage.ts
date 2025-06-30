@@ -507,7 +507,16 @@ export class DatabaseStorage implements IStorage {
     const conditions = [];
     
     if (search) {
-      conditions.push(sql`${products.name} ILIKE ${'%' + search + '%'}`);
+      conditions.push(or(
+        sql`${products.name} ILIKE ${'%' + search + '%'}`,
+        sql`${products.name_en} ILIKE ${'%' + search + '%'}`,
+        sql`${products.name_he} ILIKE ${'%' + search + '%'}`,
+        sql`${products.name_ar} ILIKE ${'%' + search + '%'}`,
+        sql`${products.description} ILIKE ${'%' + search + '%'}`,
+        sql`${products.description_en} ILIKE ${'%' + search + '%'}`,
+        sql`${products.description_he} ILIKE ${'%' + search + '%'}`,
+        sql`${products.description_ar} ILIKE ${'%' + search + '%'}`
+      ));
     }
     
     if (status && status !== 'all') {
@@ -720,7 +729,16 @@ export class DatabaseStorage implements IStorage {
       .where(and(
         eq(products.isActive, true),
         ne(products.stockStatus, 'out_of_stock'),
-        sql`${products.name} ILIKE ${'%' + query + '%'}`
+        or(
+          sql`${products.name} ILIKE ${'%' + query + '%'}`,
+          sql`${products.name_en} ILIKE ${'%' + query + '%'}`,
+          sql`${products.name_he} ILIKE ${'%' + query + '%'}`,
+          sql`${products.name_ar} ILIKE ${'%' + query + '%'}`,
+          sql`${products.description} ILIKE ${'%' + query + '%'}`,
+          sql`${products.description_en} ILIKE ${'%' + query + '%'}`,
+          sql`${products.description_he} ILIKE ${'%' + query + '%'}`,
+          sql`${products.description_ar} ILIKE ${'%' + query + '%'}`
+        )
       ))
       .orderBy(products.name);
 
