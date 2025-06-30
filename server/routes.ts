@@ -209,8 +209,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Insufficient permissions" });
       }
 
-      const categoryData = insertCategorySchema.parse(req.body);
+      const rawData = req.body;
+      
+      console.log('Category create - Raw data received:', JSON.stringify(rawData, null, 2));
+      
+      // Parse only the fields that are in the schema, but keep multilingual fields
+      const schemaData = insertCategorySchema.parse(rawData);
+      
+      // Add multilingual fields that aren't in the schema but should be saved
+      const multilingualFields: any = {};
+      const supportedLanguages = ['en', 'he', 'ar'];
+      
+      // Add multilingual name and description fields for categories
+      supportedLanguages.forEach(lang => {
+        if ((rawData as any)[`name_${lang}`] !== undefined) {
+          multilingualFields[`name_${lang}`] = (rawData as any)[`name_${lang}`];
+        }
+        if ((rawData as any)[`description_${lang}`] !== undefined) {
+          multilingualFields[`description_${lang}`] = (rawData as any)[`description_${lang}`];
+        }
+      });
+      
+      const categoryData = { ...schemaData, ...multilingualFields };
+      
+      console.log('Category create - Final data for storage:', JSON.stringify(categoryData, null, 2));
+      
       const category = await storage.createCategory(categoryData);
+      
+      console.log('Category create - Result from storage:', JSON.stringify(category, null, 2));
+      
       res.json(category);
     } catch (error) {
       console.error("Error creating category:", error);
@@ -291,8 +318,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const id = parseInt(req.params.id);
-      const categoryData = insertCategorySchema.partial().parse(req.body);
+      const rawData = req.body;
+      
+      console.log('Category update - Raw data received:', JSON.stringify(rawData, null, 2));
+      
+      // Parse only the fields that are in the schema, but keep multilingual fields
+      const schemaData = insertCategorySchema.partial().parse(rawData);
+      
+      // Add multilingual fields that aren't in the schema but should be saved
+      const multilingualFields: any = {};
+      const supportedLanguages = ['en', 'he', 'ar'];
+      
+      // Add multilingual name and description fields for categories
+      supportedLanguages.forEach(lang => {
+        if ((rawData as any)[`name_${lang}`] !== undefined) {
+          multilingualFields[`name_${lang}`] = (rawData as any)[`name_${lang}`];
+        }
+        if ((rawData as any)[`description_${lang}`] !== undefined) {
+          multilingualFields[`description_${lang}`] = (rawData as any)[`description_${lang}`];
+        }
+      });
+      
+      const categoryData = { ...schemaData, ...multilingualFields };
+      
+      console.log('Category update - Final data for storage:', JSON.stringify(categoryData, null, 2));
+      
       const category = await storage.updateCategory(id, categoryData);
+      
+      console.log('Category update - Result from storage:', JSON.stringify(category, null, 2));
+      
       res.json(category);
     } catch (error) {
       console.error("Error updating category:", error);
@@ -519,19 +573,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const schemaData = insertProductSchema.partial().parse(rawData);
       
       // Add multilingual fields that aren't in the schema but should be saved
-      const multilingualFields = {};
+      const multilingualFields: any = {};
       const supportedLanguages = ['en', 'he', 'ar'];
       
       // Add multilingual name, description, and imageUrl fields
       supportedLanguages.forEach(lang => {
-        if (rawData[`name_${lang}`] !== undefined) {
-          multilingualFields[`name_${lang}`] = rawData[`name_${lang}`];
+        if ((rawData as any)[`name_${lang}`] !== undefined) {
+          multilingualFields[`name_${lang}`] = (rawData as any)[`name_${lang}`];
         }
-        if (rawData[`description_${lang}`] !== undefined) {
-          multilingualFields[`description_${lang}`] = rawData[`description_${lang}`];
+        if ((rawData as any)[`description_${lang}`] !== undefined) {
+          multilingualFields[`description_${lang}`] = (rawData as any)[`description_${lang}`];
         }
-        if (rawData[`imageUrl_${lang}`] !== undefined) {
-          multilingualFields[`imageUrl_${lang}`] = rawData[`imageUrl_${lang}`];
+        if ((rawData as any)[`imageUrl_${lang}`] !== undefined) {
+          multilingualFields[`imageUrl_${lang}`] = (rawData as any)[`imageUrl_${lang}`];
         }
       });
       

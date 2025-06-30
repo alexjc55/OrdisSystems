@@ -22,6 +22,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { getLocalizedField } from "@/shared/localization";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import CategoryNav from "@/components/menu/category-nav";
@@ -522,7 +523,7 @@ export default function Home() {
                           <div className="flex items-start gap-3 h-full">
                             <div className="flex-1 flex flex-col h-full overflow-hidden">
                               <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300">
-                                {category.name}
+                                {getLocalizedField(category, 'name', currentLanguage)}
                               </h3>
                               
                               <p className="text-gray-600 text-sm leading-tight truncate">
@@ -674,7 +675,7 @@ export default function Home() {
                       <SelectItem value="all">{t('allCategories')}</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
-                          {category.name}
+                          {getLocalizedField(category, 'name', currentLanguage)}
                         </SelectItem>
                       ))}
                     </SelectContent>
