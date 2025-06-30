@@ -135,7 +135,7 @@
     "statusDialog": {
       "title": "Change Product Status",
       "description": "Select new status for the product",
-      "keep": "Keep as is",
+      "keep": "Available tomorrow",
       "disable": "Disable product"
     },
     "notifications": {
