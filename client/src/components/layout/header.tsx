@@ -78,7 +78,7 @@ export default function Header({ onResetView }: HeaderProps) {
                 {storeSettings?.logoUrl ? (
                   <img 
                     src={storeSettings.logoUrl} 
-                    alt={storeSettings.storeName || "eDAHouse"} 
+                    alt={getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse"} 
                     className="h-8 md:h-10 w-auto mr-2 md:mr-3 rtl:mr-0 rtl:ml-2 md:rtl:ml-3 flex-shrink-0"
                     onError={(e) => {
                       e.currentTarget.src = "/@assets/Edahouse_sign__source_1750184330403.png";
@@ -92,7 +92,7 @@ export default function Header({ onResetView }: HeaderProps) {
                   />
                 )}
                 <h1 className="text-lg md:text-2xl font-poppins font-bold text-primary truncate">
-                  {storeSettings?.storeName || "eDAHouse"}
+                  {getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse"}
                 </h1>
               </div>
             </Link>
