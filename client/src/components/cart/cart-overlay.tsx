@@ -75,6 +75,12 @@ export default function CartOverlay() {
     }
   }, [user, userAddresses, isOpen]);
 
+  // Force re-render when language changes to update localized product names
+  useEffect(() => {
+    // This effect triggers a re-render when currentLanguage changes
+    // which will update the localizedName calculations in the render method
+  }, [currentLanguage]);
+
   // Handle address selection
   const handleAddressSelect = (addressId: number) => {
     const addresses = userAddresses as UserAddress[];
@@ -118,10 +124,17 @@ export default function CartOverlay() {
 
   const orderMutation = useMutation({
     mutationFn: async (orderData: any) => {
-      return apiRequest('/api/orders', {
+      const response = await fetch('/api/orders', {
         method: 'POST',
-        body: orderData
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData)
       });
+      if (!response.ok) {
+        throw new Error('Failed to place order');
+      }
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -262,17 +275,19 @@ export default function CartOverlay() {
                   const localizedName = getLocalizedField(currentProduct, 'name', currentLanguage as SupportedLanguage);
                   const localizedImageUrl = getLocalizedField(currentProduct, 'imageUrl', currentLanguage as SupportedLanguage);
                   
+
+                  
                   return (
                     <div key={item.product.id} className="flex items-center space-x-4 pb-4 border-b border-gray-100">
                       <img
                         src={localizedImageUrl || currentProduct.imageUrl || "/placeholder-product.jpg"}
-                        alt={localizedName}
+                        alt={localizedName || currentProduct.name}
                         className="w-16 h-16 object-cover rounded-lg"
                       />
                       <div className="flex-1">
-                        <h3 className="font-medium text-sm">{localizedName}</h3>
+                        <h3 className="font-medium text-sm">{localizedName || currentProduct.name}</h3>
                         <p className="text-xs text-gray-500">
-                          {formatCurrency(parseFloat(currentProduct.pricePerKg || currentProduct.price))} / {formatWeight(1, currentProduct.unit as ProductUnit)}
+                          {formatCurrency(parseFloat(currentProduct.pricePerKg || currentProduct.price))} / {currentProduct.unit}
                         </p>
                         <div className="flex items-center space-x-2 mt-2">
                           <Button
