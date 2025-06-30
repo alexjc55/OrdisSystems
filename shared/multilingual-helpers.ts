@@ -89,23 +89,7 @@ export function getLocalizedStoreField(
   return obj[fieldName] || '';
 }
 
-/**
- * Default theme values for fallback when all fields are empty
- */
-const DEFAULT_THEME_VALUES: Record<string, Record<SupportedLanguage, string>> = {
-  name: {
-    ru: 'Базовая тема',
-    en: 'Basic Theme',
-    he: 'ערכת נושא בסיסית',
-    ar: 'موضوع أساسي'
-  },
-  description: {
-    ru: 'Стандартная тема оформления',
-    en: 'Standard design theme',
-    he: 'ערכת נושא עיצוב סטנדרטית',
-    ar: 'موضوع تصميم قياسي'
-  }
-};
+// No default theme values - system will show empty fields if no content exists
 
 /**
  * Get localized theme field value with smart fallback
@@ -116,7 +100,7 @@ export function getLocalizedThemeField(
   language: SupportedLanguage,
   defaultLanguage: SupportedLanguage = 'ru'
 ): string {
-  if (!theme) return DEFAULT_THEME_VALUES[fieldName]?.[language] || '';
+  if (!theme) return '';
   
   // For Russian (base language), try base field first
   if (language === 'ru') {
@@ -128,21 +112,14 @@ export function getLocalizedThemeField(
     if (suffixedValue) return suffixedValue;
   }
   
-  // Fallback to default language
+  // Fallback to default language only if current language is not default
   if (language !== defaultLanguage) {
     const fallbackValue = getLocalizedThemeField(theme, fieldName, defaultLanguage, defaultLanguage);
     if (fallbackValue) return fallbackValue;
   }
   
-  // Final fallback to base field
-  const finalValue = theme[fieldName] || '';
-  
-  // If everything is empty, use default values
-  if (!finalValue && DEFAULT_THEME_VALUES[fieldName]) {
-    return DEFAULT_THEME_VALUES[fieldName][language] || DEFAULT_THEME_VALUES[fieldName]['ru'] || '';
-  }
-  
-  return finalValue;
+  // Final fallback to base field, or empty string if nothing found
+  return theme[fieldName] || '';
 }
 
 /**
@@ -243,16 +220,7 @@ export function getPaymentMethodName(
   return method.name || '';
 }
 
-/**
- * Default image URLs for fallback when all image fields are empty
- */
-const DEFAULT_IMAGE_VALUES: Record<string, string> = {
-  logoUrl: '', // Пустое значение - без логотипа по умолчанию
-  bannerImageUrl: '', // Пустое значение - без баннера по умолчанию
-  cartBannerImage: '', // Пустое значение - без изображения корзины по умолчанию
-  bottomBanner1Url: '', // Пустое значение - без нижнего баннера по умолчанию
-  bottomBanner2Url: '' // Пустое значение - без нижнего баннера по умолчанию
-};
+// No default image values - system will show empty fields if no images exist
 
 /**
  * Get localized image field value with smart fallback to Russian, then empty string
