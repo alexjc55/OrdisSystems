@@ -163,6 +163,14 @@ export default function Checkout() {
   const { currentLanguage } = useLanguage();
   const dateLocale = getDateLocale(currentLanguage);
   
+  // Fetch current products data to get translations
+  const { data: products = [] } = useQuery({
+    queryKey: ['/api/products'],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+  
+  const productsList = products as any[];
+  
   // Helper functions for future-order validation
   const getFutureOrderProducts = () => {
     return items.filter(item => item.product.availabilityStatus === 'out_of_stock_today');
@@ -523,7 +531,9 @@ export default function Checkout() {
           <CardContent>
             <div className="space-y-4">
               {items.map((item) => {
-                const localizedName = getLocalizedField(item.product, 'name', language as SupportedLanguage);
+                // Get current product data with translations
+                const currentProduct = productsList.find(p => p.id === item.product.id) || item.product;
+                const localizedName = getLocalizedField(currentProduct, 'name', currentLanguage as SupportedLanguage);
                 return (
                   <div key={item.product.id} className="flex justify-between items-center">
                     <div>

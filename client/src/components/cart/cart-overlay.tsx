@@ -295,15 +295,7 @@ export default function CartOverlay() {
                   const localizedName = getLocalizedField(currentProduct, 'name', currentLanguage as SupportedLanguage);
                   const localizedImageUrl = getLocalizedField(currentProduct, 'imageUrl', currentLanguage as SupportedLanguage);
                   
-                  // Debug logging
-                  console.log('Cart Debug:', {
-                    currentLanguage,
-                    productId: item.product.id,
-                    productName: item.product.name,
-                    currentProductName: currentProduct.name,
-                    localizedName,
-                    hasCurrentProduct: !!productsList.find(p => p.id === item.product.id)
-                  });
+
                   
                   return (
                     <div key={item.product.id} className="flex items-center space-x-4 pb-4 border-b border-gray-100">
