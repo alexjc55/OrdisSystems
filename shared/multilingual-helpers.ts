@@ -189,3 +189,30 @@ export function createThemeFieldUpdate(
   // For other languages, update suffixed field
   return { [`${baseFieldName}_${language}`]: value };
 }
+
+/**
+ * Get localized payment method name with fallback to Russian
+ */
+export function getPaymentMethodName(
+  method: any,
+  language: SupportedLanguage,
+  defaultLanguage: SupportedLanguage = 'ru'
+): string {
+  if (!method) return '';
+  
+  // For Russian (base language), try base field first
+  if (language === 'ru') {
+    return method.name || '';
+  }
+  
+  // For other languages, try localized field first, then fallback
+  const localizedField = `name_${language}`;
+  const localizedValue = method[localizedField];
+  
+  if (localizedValue) {
+    return localizedValue;
+  }
+  
+  // Fallback to default language (Russian)
+  return method.name || '';
+}

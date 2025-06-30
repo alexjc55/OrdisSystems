@@ -25,6 +25,7 @@ import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, Ar
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
+import { getPaymentMethodName as getLocalizedPaymentMethodName } from "@shared/multilingual-helpers";
 import { format } from "date-fns";
 import { ru, enUS, he } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -165,12 +166,7 @@ export default function Checkout() {
   
   // Helper function to get payment method name for current language with fallback to Russian
   const getPaymentMethodName = (method: any) => {
-    switch (currentLanguage) {
-      case 'en': return method.name_en || method.name || '';
-      case 'he': return method.name_he || method.name || '';
-      case 'ar': return method.name_ar || method.name || '';
-      default: return method.name || '';
-    }
+    return getLocalizedPaymentMethodName(method, currentLanguage);
   };
   
   // Helper functions for future-order validation
@@ -797,7 +793,7 @@ export default function Checkout() {
                         <SelectContent>
                           {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
                             storeSettings.paymentMethods.map((method: any) => (
-                              <SelectItem key={method.id} value={method.name}>
+                              <SelectItem key={method.id} value={getPaymentMethodName(method)}>
                                 {getPaymentMethodName(method)}
                               </SelectItem>
                             )) : (
@@ -1030,8 +1026,8 @@ export default function Checkout() {
                           <SelectContent>
                             {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
                               storeSettings.paymentMethods.map((method: any) => (
-                                <SelectItem key={method.id} value={method.name}>
-                                  {method.name}
+                                <SelectItem key={method.id} value={getPaymentMethodName(method)}>
+                                  {getPaymentMethodName(method)}
                                 </SelectItem>
                               )) : (
                                 <>
@@ -1266,8 +1262,8 @@ export default function Checkout() {
                           <SelectContent>
                             {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
                               storeSettings.paymentMethods.map((method: any) => (
-                                <SelectItem key={method.id} value={method.name}>
-                                  {method.name}
+                                <SelectItem key={method.id} value={getPaymentMethodName(method)}>
+                                  {getPaymentMethodName(method)}
                                 </SelectItem>
                               )) : (
                                 <>
