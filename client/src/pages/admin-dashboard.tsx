@@ -170,8 +170,8 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
                 <AlertDialogTitle>{adminT('categories.deleteConfirmTitle')}</AlertDialogTitle>
                 <AlertDialogDescription>
                   {category.productCount && category.productCount > 0 ? 
-                    adminT('categories.deleteWithProductsWarning').replace('{{categoryName}}', category.name).replace('{{productCount}}', category.productCount.toString()) :
-                    adminT('categories.deleteConfirmDesc').replace('{{categoryName}}', category.name)
+                    adminT('categories.deleteWithProductsWarning').replace('{{categoryName}}', getLocalizedField(category, 'name', i18n.language as SupportedLanguage)).replace('{{productCount}}', category.productCount.toString()) :
+                    adminT('categories.deleteConfirmDesc').replace('{{categoryName}}', getLocalizedField(category, 'name', i18n.language as SupportedLanguage))
                   }
                 </AlertDialogDescription>
               </AlertDialogHeader>
@@ -3630,11 +3630,11 @@ export default function AdminDashboard() {
                                       {product.categories?.map((category: any) => (
                                         <span 
                                           key={category.id}
-                                          title={category.name} 
+                                          title={getLocalizedField(category, "name", i18n.language as SupportedLanguage)} 
                                           className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white hover:bg-primary shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
                                         >
                                           
-                                          {category.name}
+                                          {getLocalizedField(category, "name", i18n.language as SupportedLanguage)}
                                         </span>
                                       ))}
                                     </div>
@@ -3670,11 +3670,11 @@ export default function AdminDashboard() {
                                       {product.categories?.map((category: any) => (
                                         <span 
                                           key={category.id}
-                                          title={category.name} 
+                                          title={getLocalizedField(category, "name", i18n.language as SupportedLanguage)} 
                                           className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white hover:bg-primary shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
                                         >
                                           
-                                          {category.name}
+                                          {getLocalizedField(category, "name", i18n.language as SupportedLanguage)}
                                         </span>
                                       ))}
                                     </div>
@@ -5658,7 +5658,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     <div className="border rounded-md p-3 max-h-32 overflow-y-auto category-selector-block">
                       {categories?.map((category: any) => (
                         <div key={category.id}
-                                          title={category.name} className="flex items-center space-x-2 py-1">
+                                          title={getLocalizedField(category, "name", i18n.language as SupportedLanguage)} className="flex items-center space-x-2 py-1">
                           <input
                             type="checkbox"
                             id={`category-${category.id}`}
@@ -5677,7 +5677,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                             className="rounded border-gray-300"
                           />
                           <label htmlFor={`category-${category.id}`} className="text-sm cursor-pointer flex-1">
-                            {category.icon} {category.name}
+                            {category.icon} {getLocalizedField(category, "name", i18n.language as SupportedLanguage)}
                           </label>
                         </div>
                       ))}
