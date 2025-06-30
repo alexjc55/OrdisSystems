@@ -3125,16 +3125,16 @@ export default function AdminDashboard() {
       
       switch (sortField) {
         case "name":
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
+          aValue = getLocalizedField(a, 'name', i18n.language as SupportedLanguage).toLowerCase();
+          bValue = getLocalizedField(b, 'name', i18n.language as SupportedLanguage).toLowerCase();
           break;
         case "price":
           aValue = parseFloat(a.price || a.pricePerKg || "0");
           bValue = parseFloat(b.price || b.pricePerKg || "0");
           break;
         case "category":
-          aValue = a.category?.name?.toLowerCase() || "";
-          bValue = b.category?.name?.toLowerCase() || "";
+          aValue = getLocalizedField(a.category, 'name', i18n.language as SupportedLanguage).toLowerCase() || "";
+          bValue = getLocalizedField(b.category, 'name', i18n.language as SupportedLanguage).toLowerCase() || "";
           break;
         default:
           return 0;
