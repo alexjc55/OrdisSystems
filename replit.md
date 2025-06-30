@@ -131,6 +131,19 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 30, 2025: COMPLETED MULTILINGUAL SYSTEM WITHOUT FALLBACK TRANSLATIONS
+  - CRITICAL FIX: Eliminated all fallback translations - fields now empty for languages without content
+  - STORE NAME FIX: Store name field now empty for languages without translations (no "eDAHouse" fallback)
+  - CONTACT FIELDS MULTILINGUAL: Added full multilingual support for all contact fields:
+    - Phone number (contactPhone + contactPhoneEn/He/Ar)
+    - Email address (contactEmail + contactEmailEn/He/Ar)  
+    - Physical address (address + addressEn/He/Ar)
+  - PAYMENT METHODS FIX: Payment methods now empty array for languages without translations
+  - DISCOUNT BADGE FIX: Removed automatic translation fallback for discount badge text
+  - WHATSAPP MESSAGE FIX: Removed automatic translation fallback for WhatsApp default message
+  - DATABASE SCHEMA: Added multilingual columns for all contact fields in store_settings table
+  - UNIFIED APPROACH: All text fields use same pattern - display content for current language only, no fallbacks
+  - RESULT: Complete language independence - each language has its own data without cross-language pollution
 - June 30, 2025: FIXED RTL PAGINATION DISPLAY ISSUES FOR HEBREW AND ARABIC LANGUAGES
   - CRITICAL RTL FIX: Corrected pagination arrow directions and number display for Hebrew and Arabic interfaces
   - ARROW DIRECTION FIX: In RTL languages, left arrows now navigate forward, right arrows navigate backward

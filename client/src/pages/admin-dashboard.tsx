@@ -6441,7 +6441,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   useEffect(() => {
     if (storeSettings) {
       form.reset({
-        storeName: getMultilingualValue(storeSettings, 'storeName', currentLanguage) || "eDAHouse",
+        storeName: getMultilingualValue(storeSettings, 'storeName', currentLanguage) || "",
         welcomeTitle: getMultilingualValue(storeSettings, 'welcomeTitle', currentLanguage) || "",
         storeDescription: getMultilingualValue(storeSettings, 'storeDescription', currentLanguage) || "",
         logoUrl: storeSettings?.logoUrl || "",
