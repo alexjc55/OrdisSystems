@@ -354,11 +354,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/products/search', async (req: any, res) => {
     try {
-      const query = req.query.q as string;
+      let query = req.query.q as string;
       if (!query) {
         return res.status(400).json({ message: "Search query is required" });
       }
-      const products = await storage.searchProducts(query);
+      
+      // Fix encoding issues with UTF-8
+      try {
+        query = decodeURIComponent(query);
+      } catch (e) {
+        // If decoding fails, use the original query
+      }
+      
+      let products = await storage.searchProducts(query);
+      
+      // Filter out unavailable products for non-admin users
+      const user = req.user;
+      const isAdmin = user && (user.role === "admin" || user.role === "worker");
+      
+      if (!isAdmin) {
+        products = products.filter(product => product.isAvailable !== false);
+      }
+      
       res.json(products);
     } catch (error) {
       console.error("Error searching products:", error);
