@@ -6,7 +6,7 @@ import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import type { SupportedLanguage } from '@shared/localization';
 import { Button } from "@/components/ui/button";
 
-// Import multilingual helper function
+// Import multilingual helper function with fallback to default language
 function getMultilingualValue(
   storeSettings: any,
   baseField: string,
@@ -22,7 +22,14 @@ function getMultilingualValue(
     langField = `${baseField}${capitalizedLang}`;
   }
   
-  return storeSettings?.[langField] || '';
+  // Try to get value for current language, fallback to default language if empty
+  const currentValue = storeSettings?.[langField];
+  if (currentValue && currentValue.trim() !== '') {
+    return currentValue;
+  }
+  
+  // Fallback to default language (Russian)
+  return storeSettings?.[baseField] || '';
 }
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

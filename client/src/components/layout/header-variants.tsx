@@ -3,7 +3,7 @@ import { Clock, Phone, MapPin, CreditCard, Truck, Star, Shield, Heart, ChefHat, 
 import { getLocalizedField, type SupportedLanguage } from '@shared/localization';
 import { useLanguage } from '@/hooks/use-language';
 
-// Import multilingual helper function
+// Import multilingual helper function with fallback to default language
 function getMultilingualValue(
   storeSettings: any,
   baseField: string,
@@ -19,7 +19,14 @@ function getMultilingualValue(
     langField = `${baseField}${capitalizedLang}`;
   }
   
-  return storeSettings?.[langField] || '';
+  // Try to get value for current language, fallback to default language if empty
+  const currentValue = storeSettings?.[langField];
+  if (currentValue && currentValue.trim() !== '') {
+    return currentValue;
+  }
+  
+  // Fallback to default language (Russian)
+  return storeSettings?.[baseField] || '';
 }
 
 // Helper function to get icon component

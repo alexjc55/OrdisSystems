@@ -22,9 +22,18 @@ export function getMultilingualValue(
     langField = `${baseField}${capitalizedLang}`;
   }
   
-  // Only return the value for the specific language field
-  // No fallback to default language - if no translation exists, field should be empty
-  return storeSettings?.[langField] || '';
+  // Try to get value for current language, fallback to default language if empty
+  const currentValue = storeSettings?.[langField];
+  if (currentValue && currentValue.trim() !== '') {
+    return currentValue;
+  }
+  
+  // Fallback to default language (Russian) if current language field is empty
+  if (currentLanguage !== defaultLanguage) {
+    return storeSettings?.[baseField] || '';
+  }
+  
+  return currentValue || '';
 }
 
 export function createMultilingualUpdate(
