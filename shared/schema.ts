@@ -214,23 +214,33 @@ export const storeSettings = pgTable("store_settings", {
   defaultLanguage: varchar("default_language", { length: 5 }).default("ru"), // Default site language
   enabledLanguages: jsonb("enabled_languages").default(["ru", "en", "he", "ar"]), // Array of enabled language codes
   
+  // Russian fields (base language)
+  aboutTextRu: text("about_text_ru"),
+  bannerButtonTextRu: varchar("banner_button_text_ru", { length: 100 }),
+  
   // Arabic language fields
   storeNameAr: varchar("store_name_ar", { length: 255 }),
   welcomeTitleAr: varchar("welcome_title_ar", { length: 255 }),
   storeDescriptionAr: text("store_description_ar"),
   deliveryInfoAr: text("delivery_info_ar"),
+  aboutTextAr: text("about_text_ar"),
+  bannerButtonTextAr: varchar("banner_button_text_ar", { length: 100 }),
   
   // Hebrew fields (for completeness)
   storeNameHe: varchar("store_name_he", { length: 255 }),
   welcomeTitleHe: varchar("welcome_title_he", { length: 255 }),
   storeDescriptionHe: text("store_description_he"),
   deliveryInfoHe: text("delivery_info_he"),
+  aboutTextHe: text("about_text_he"),
+  bannerButtonTextHe: varchar("banner_button_text_he", { length: 100 }),
   
   // English fields (for completeness)
   storeNameEn: varchar("store_name_en", { length: 255 }),
   welcomeTitleEn: varchar("welcome_title_en", { length: 255 }),
   storeDescriptionEn: text("store_description_en"),
   deliveryInfoEn: text("delivery_info_en"),
+  aboutTextEn: text("about_text_en"),
+  bannerButtonTextEn: varchar("banner_button_text_en", { length: 100 }),
   modernBlock1Icon: varchar("modern_block1_icon", { length: 50 }), // Icon name for first modern block
   modernBlock1Text: varchar("modern_block1_text", { length: 255 }), // Text for first modern block
   modernBlock2Icon: varchar("modern_block2_icon", { length: 50 }), // Icon name for second modern block
@@ -243,8 +253,14 @@ export const storeSettings = pgTable("store_settings", {
 // Themes table for theme management
 export const themes = pgTable("themes", {
   id: varchar("id", { length: 50 }).primaryKey(),
-  name: varchar("name", { length: 100 }).notNull(),
-  description: text("description"),
+  name: varchar("name", { length: 100 }).notNull(), // Russian name (base)
+  name_en: varchar("name_en", { length: 100 }),
+  name_he: varchar("name_he", { length: 100 }),
+  name_ar: varchar("name_ar", { length: 100 }),
+  description: text("description"), // Russian description (base)
+  description_en: text("description_en"),
+  description_he: text("description_he"),
+  description_ar: text("description_ar"),
   isActive: boolean("is_active").default(false),
   
   // Color configuration
@@ -280,7 +296,10 @@ export const themes = pgTable("themes", {
   headerStyle: varchar("header_style", { length: 20 }).default("classic"), // "classic", "modern", "minimal"
   
   // Banner button settings (for minimal header style)
-  bannerButtonText: varchar("banner_button_text", { length: 100 }).default("Смотреть каталог"),
+  bannerButtonText: varchar("banner_button_text", { length: 100 }).default("Смотреть каталог"), // Russian (base)
+  bannerButtonText_en: varchar("banner_button_text_en", { length: 100 }),
+  bannerButtonText_he: varchar("banner_button_text_he", { length: 100 }),
+  bannerButtonText_ar: varchar("banner_button_text_ar", { length: 100 }),
   bannerButtonLink: varchar("banner_button_link", { length: 200 }).default("#categories"),
   
   // Image URLs
