@@ -4892,7 +4892,7 @@ export default function AdminDashboard() {
                           title={adminT('common.firstPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isRTL ? '⟩⟩' : '⟨⟨'}
+                          ⟨⟨
                         </Button>
                         <Button
                           variant="outline"
@@ -4902,7 +4902,7 @@ export default function AdminDashboard() {
                           title={adminT('common.prevPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isRTL ? '⟩' : '⟨'}
+                          {isRTL ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
                         </Button>
                         <span className="text-xs text-gray-600 px-2 min-w-[60px] text-center" dir="ltr">
                           <span className="sm:hidden">{usersPage}/{usersTotalPages}</span>
@@ -4916,7 +4916,7 @@ export default function AdminDashboard() {
                           title={adminT('common.nextPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isRTL ? '⟨' : '⟩'}
+                          {isRTL ? <ChevronLeft className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
                         </Button>
                         <Button
                           variant="outline"
@@ -4926,7 +4926,7 @@ export default function AdminDashboard() {
                           title={adminT('common.lastPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isRTL ? '⟨⟨' : '⟩⟩'}
+                          ⟩⟩
                         </Button>
                       </div>
                     </div>
