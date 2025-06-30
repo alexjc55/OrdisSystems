@@ -5976,7 +5976,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
     if (open) {
       if (category) {
         form.reset({
-          name: category.name || "",
+          name: getLocalizedField(category, 'name', i18n.language as SupportedLanguage) || "",
           description: category.description || "",
           icon: category.icon || "🍽️",
         });
