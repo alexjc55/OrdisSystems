@@ -2,7 +2,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { useShopTranslation } from "@/hooks/use-language";
+import { useShopTranslation, useLanguage } from "@/hooks/use-language";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import type { CategoryWithCount } from "@shared/schema";
 
 interface SidebarProps {
@@ -23,6 +24,7 @@ export default function Sidebar({
   isLoading = false
 }: SidebarProps) {
   const { t } = useShopTranslation();
+  const { currentLanguage } = useLanguage();
   if (isLoading) {
     return (
       <aside className="hidden lg:block w-64 bg-white shadow-sm border-r border-gray-200">
