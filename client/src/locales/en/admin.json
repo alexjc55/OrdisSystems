@@ -177,6 +177,8 @@
     "updateSuccess": "Changes saved successfully",
     "updateError": "Failed to update order",
     "activeOrders": "Active orders",
+    "deliveredOrders": "Delivered orders",
+    "cancelledOrders": "Cancelled orders",
     "orderNumber": "Order #",
     "customer": "Customer",
     "orderTotal": "Order total",

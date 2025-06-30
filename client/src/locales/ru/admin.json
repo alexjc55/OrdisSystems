@@ -488,6 +488,8 @@
     "updateSuccess": "Изменения сохранены успешно",
     "updateError": "Не удалось обновить заказ",
     "activeOrders": "Активные заказы",
+    "deliveredOrders": "Доставленные заказы",
+    "cancelledOrders": "Отмененные заказы",
     "orderNumber": "Заказ №",
     "customer": "Клиент",
     "orderTotal": "Сумма заказа",
