@@ -48,6 +48,12 @@ export default function CartSidebar() {
     enabled: isOpen && items.length > 0
   });
 
+  // Load store settings for delivery calculations
+  const { data: storeSettings } = useQuery({
+    queryKey: ['/api/settings'],
+    enabled: isOpen && items.length > 0
+  });
+
   const handleQuantityChange = (productId: number, newQuantity: number, unit: string) => {
     if (newQuantity <= 0) {
       removeItem(productId);
@@ -244,25 +250,25 @@ export default function CartSidebar() {
               {/* Order Summary */}
               <div className="space-y-2">
                 <div className={`flex justify-between text-sm ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span>{t('cart.subtotal')}</span>
+                  <span>{t('subtotal')}</span>
                   <span>{formatCurrency(getTotalPrice())}</span>
                 </div>
                 <div className={`flex justify-between text-sm ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span>{t('cart.deliveryFee')}</span>
+                  <span>{t('deliveryFee')}</span>
                   <span>
                     {storeSettings && parseFloat(storeSettings.deliveryFee || "0") > 0 ? (
                       getTotalPrice() >= parseFloat(storeSettings.freeDeliveryFrom || "0") ? (
-                        <span className="text-green-600">{t('cart.free')}</span>
+                        <span className="text-green-600">{t('free')}</span>
                       ) : (
                         formatCurrency(parseFloat(storeSettings.deliveryFee || "0"))
                       )
                     ) : (
-                      <span className="text-green-600">{t('cart.free')}</span>
+                      <span className="text-green-600">{t('free')}</span>
                     )}
                   </span>
                 </div>
                 <div className={`flex justify-between font-medium text-lg border-t pt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span>{t('cart.total')}</span>
+                  <span>{t('total')}</span>
                   <span>
                     {formatCurrency(
                       getTotalPrice() + 
@@ -290,10 +296,10 @@ export default function CartSidebar() {
                   onClick={clearCart}
                   className="text-gray-600 hover:text-red-600"
                 >
-                  {t('cart.clear')}
+                  {t('clear')}
                 </Button>
                 <Button className="flex-1 ml-3" size="lg" onClick={() => window.location.href = '/checkout'}>
-                  {t('cart.checkout')}
+                  {t('checkout')}
                 </Button>
               </div>
             </div>
