@@ -421,7 +421,7 @@ export default function Home() {
                         return getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
                       }
                       if (storeSettings?.welcomeTitle) {
-                        return storeSettings.welcomeTitle;
+                        return getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
                       }
                       return t('defaultWelcomeTitle');
                     } catch (error) {
@@ -443,7 +443,7 @@ export default function Home() {
                         return getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
                       }
                       if (storeSettings?.storeDescription) {
-                        return storeSettings.storeDescription;
+                        return getLocalizedField(storeSettings, 'storeDescription', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage);
                       }
                       return t('defaultStoreDescription');
                     } catch (error) {

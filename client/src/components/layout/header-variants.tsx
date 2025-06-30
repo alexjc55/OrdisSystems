@@ -227,7 +227,7 @@ function ModernHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSetti
   );
 }
 
-function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any, isRTL: boolean }) {
+function MinimalHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSettings: any, t: any, isRTL: boolean, currentLanguage: string }) {
   // Only show header if banner is enabled, otherwise return null
   if (storeSettings?.showBannerImage === false) {
     return null;
@@ -261,10 +261,10 @@ function MinimalHeader({ storeSettings, t, isRTL }: { storeSettings: any, t: any
           <div className="header-banner relative z-10 flex flex-col justify-center text-center px-4 sm:px-6 py-12">
             <div className="banner-content max-w-3xl mx-auto">
               <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold sm:font-light text-gray-900 mb-2 sm:mb-4 tracking-wide">
-                {storeSettings.welcomeTitle || "eDAHouse"}
+                {getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage) || "eDAHouse"}
               </h1>
               <p className="text-gray-700 text-sm sm:text-lg md:text-xl font-semibold sm:font-light leading-relaxed max-w-2xl mx-auto mb-4">
-                {storeSettings.storeDescription || "Качественные готовые блюда с доставкой"}
+                {getLocalizedField(storeSettings, 'storeDescription', currentLanguage as SupportedLanguage, 'ru' as SupportedLanguage) || "Качественные готовые блюда с доставкой"}
               </p>
               {/* Call to Action Button - only show if button text is provided */}
               {showButton && (
