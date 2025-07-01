@@ -4231,10 +4231,10 @@ export default function AdminDashboard() {
                                       if (deliveryFee > 0) {
                                         return (
                                           <div className="space-y-1">
-                                            <div className="text-xs text-gray-600">
+                                            <div className="text-sm text-gray-600">
                                               {adminT('orders.subtotal')}: {formatCurrency(subtotal)}
                                             </div>
-                                            <div className="text-xs text-gray-600">
+                                            <div className="text-sm text-gray-600">
                                               {adminT('orders.deliveryFee')}: {formatCurrency(deliveryFee)}
                                             </div>
                                             <div className="font-medium">
@@ -4245,10 +4245,10 @@ export default function AdminDashboard() {
                                       } else if (deliveryFee === 0 && order.deliveryFee !== undefined) {
                                         return (
                                           <div className="space-y-1">
-                                            <div className="text-xs text-gray-600">
+                                            <div className="text-sm text-gray-600">
                                               {adminT('orders.subtotal')}: {formatCurrency(subtotal)}
                                             </div>
-                                            <div className="text-xs text-green-600">
+                                            <div className="text-sm text-green-600">
                                               {adminT('orders.deliveryFee')}: {adminT('common.free')}
                                             </div>
                                             <div className="font-medium">
@@ -4262,7 +4262,7 @@ export default function AdminDashboard() {
                                     })()}
                                   </TableCell>
                                   <TableCell 
-                                    className={`text-xs sm:text-sm hidden md:table-cell ${isRTL ? 'text-right' : 'text-center'}`}
+                                    className={`text-sm sm:text-sm hidden md:table-cell ${isRTL ? 'text-right' : 'text-center'}`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                   >
                                     <div className="space-y-1" dir="ltr">
@@ -4270,7 +4270,7 @@ export default function AdminDashboard() {
                                         <CalendarIcon className="h-3 w-3 text-gray-400" />
                                         <span className="font-medium">{adminT('common.created')}:</span>
                                       </div>
-                                      <div className={`text-xs text-gray-600 ${isRTL ? 'text-right' : 'text-center'}`}>
+                                      <div className={`text-sm text-gray-600 ${isRTL ? 'text-right' : 'text-center'}`}>
                                         {new Date(order.createdAt).toLocaleDateString('ru-RU')} {new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
                                       </div>
                                       {order.deliveryDate && (
@@ -4279,7 +4279,7 @@ export default function AdminDashboard() {
                                             <Clock className="h-3 w-3 text-blue-400" />
                                             <span className="font-medium text-blue-600">{adminT('orders.deliveryDate')}:</span>
                                           </div>
-                                          <div className={`text-xs text-blue-600 ${isRTL ? 'text-right' : 'text-center'}`}>
+                                          <div className={`text-sm text-blue-600 ${isRTL ? 'text-right' : 'text-center'}`}>
                                             {new Date(order.deliveryDate).toLocaleDateString('ru-RU')} {order.deliveryTime || ''}
                                           </div>
                                         </>
