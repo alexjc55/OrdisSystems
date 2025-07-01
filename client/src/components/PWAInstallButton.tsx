@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -17,9 +18,15 @@ interface PWAInstallButtonProps {
 }
 
 export function PWAInstallButton({ variant = 'mobile' }: PWAInstallButtonProps) {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showButton, setShowButton] = useState(false);
+  
+  // Get PWA settings from database
+  const { data: settings } = useQuery({
+    queryKey: ['/api/settings'],
+    select: (data: any) => data
+  });
 
   useEffect(() => {
     // Check if running in PWA mode (standalone mode)
@@ -91,20 +98,29 @@ export function PWAInstallButton({ variant = 'mobile' }: PWAInstallButtonProps) 
     const isAndroid = /Android/.test(navigator.userAgent);
     const isChrome = /Chrome/.test(navigator.userAgent);
     
+    // Get app name from settings or fallback to eDAHouse
+    const currentLang = i18n.language;
+    let appName = 'eDAHouse';
+    
+    if (settings) {
+      const pwaNameField = `pwaName${currentLang === 'ru' ? '' : currentLang.charAt(0).toUpperCase() + currentLang.slice(1)}`;
+      appName = settings[pwaNameField] || settings.pwaName || 'eDAHouse';
+    }
+    
     let message = '';
     
     if (isIOS) {
-      message = 'Нажмите кнопку "Поделиться" ↗️ в Safari, затем "На экран Домой"';
+      message = t('pwa.ios');
     } else if (isAndroid) {
-      message = 'Откройте меню браузера (⋮) и выберите "Добавить на гл. экран"';
+      message = t('pwa.android');
     } else if (isChrome) {
-      message = 'Откройте меню браузера (⋮) и выберите "Установить eDAHouse..."';
+      message = t('pwa.chrome', { appName });
     } else {
-      message = 'Откройте меню браузера и найдите "Добавить на гл. экран" или "Установить приложение"';
+      message = t('pwa.fallback');
     }
     
     // Показываем краткое уведомление с инструкцией
-    alert(`Для установки приложения:\n${message}`);
+    alert(`${t('pwa.installInstructions')}\n${message}`);
   };
 
   // Don't show if in PWA mode
