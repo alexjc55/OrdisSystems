@@ -12,6 +12,7 @@ import { Footer } from "@/components/layout/footer";
 import { LanguageInitializer } from "@/components/language-initializer";
 import { PWAInstaller, usePWA } from "@/components/PWAInstaller";
 import { PWAInstallModal } from "@/components/PWAInstallModal";
+import { PWAInstallProvider } from "@/hooks/usePWAInstall";
 import { OfflineIndicator, OnlineIndicator } from "@/components/OfflineIndicator";
 import { useFavicon } from "@/hooks/useFavicon";
 import { useEffect } from "react";
@@ -111,11 +112,13 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TooltipProvider>
-          <LanguageInitializer />
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <PWAInstallProvider>
+          <TooltipProvider>
+            <LanguageInitializer />
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </PWAInstallProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
