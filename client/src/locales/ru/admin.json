@@ -139,6 +139,8 @@
     "buttonTextDefault": "Заказать сейчас",
     "whatsappMessageDefault": "Здравствуйте! Интересует ваша продукция.",
     "whatsappChat": "WhatsApp чат",
+    "pwaIconUrl": "Иконка PWA приложения",
+    "pwaIconUrlTooltip": "URL изображения иконки для PWA приложения. Формат: PNG, размер: 512x512 пикселей.",
     "cartBannerTextPlaceholder": "Введите текст баннера корзины",
     "brandColorsDescription": "Основные цвета бренда для интерфейса",
     "brandColors": "Цвета бренда",

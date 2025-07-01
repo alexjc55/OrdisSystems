@@ -1128,7 +1128,7 @@ export default function ThemeManager() {
                     <div className="space-y-2">
                       <Label className="flex items-center gap-2" htmlFor="pwaIconUrl">
                         <Upload className="h-4 w-4" />
-                        {adminT('storeSettings.pwaIconUrl')}
+                        {adminT('themes.pwaIconUrl')}
                       </Label>
                       <Input 
                         id="pwaIconUrl" 
@@ -1138,7 +1138,7 @@ export default function ThemeManager() {
                       />
                       <div className="text-xs text-gray-500 flex items-center gap-1">
                         <Info className="h-3 w-3" />
-                        {adminT('storeSettings.pwaIconUrlTooltip')}
+                        {adminT('themes.pwaIconUrlTooltip')}
                       </div>
                     </div>
                     
@@ -1871,7 +1871,7 @@ export default function ThemeManager() {
                     <div className="space-y-2">
                       <Label className="flex items-center gap-2" htmlFor="edit-pwaIconUrl">
                         <Upload className="h-4 w-4" />
-                        {adminT('storeSettings.pwaIconUrl')}
+                        {adminT('themes.pwaIconUrl')}
                       </Label>
                       <Input 
                         id="edit-pwaIconUrl" 
@@ -1882,7 +1882,7 @@ export default function ThemeManager() {
                       />
                       <div className="text-xs text-gray-500 flex items-center gap-1">
                         <Info className="h-3 w-3" />
-                        {adminT('storeSettings.pwaIconUrlTooltip')}
+                        {adminT('themes.pwaIconUrlTooltip')}
                       </div>
                     </div>
                     
