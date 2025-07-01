@@ -1123,6 +1123,24 @@ export default function ThemeManager() {
                       {i18n.language !== 'ar' && <input type="hidden" name="description_ar" value={themeFields.description_ar} />}
                     </div>
                     
+                    {/* PWA Settings */}
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2" htmlFor="pwaIconUrl">
+                        <Upload className="h-4 w-4" />
+                        {adminT('storeSettings.pwaIconUrl')}
+                      </Label>
+                      <Input 
+                        id="pwaIconUrl" 
+                        name="pwaIconUrl"
+                        placeholder="https://example.com/icon-512x512.png" 
+                        className="text-sm"
+                      />
+                      <div className="text-xs text-gray-500 flex items-center gap-1">
+                        <Info className="h-3 w-3" />
+                        {adminT('storeSettings.pwaIconUrlTooltip')}
+                      </div>
+                    </div>
+                    
                     {/* Изображения */}
                     <div className="space-y-6">
                       <div>
@@ -1846,6 +1864,25 @@ export default function ThemeManager() {
                       {i18n.language !== 'en' && <input type="hidden" name="description_en" value={themeFields.description_en} />}
                       {i18n.language !== 'he' && <input type="hidden" name="description_he" value={themeFields.description_he} />}
                       {i18n.language !== 'ar' && <input type="hidden" name="description_ar" value={themeFields.description_ar} />}
+                    </div>
+                    
+                    {/* PWA Settings */}
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2" htmlFor="edit-pwaIconUrl">
+                        <Upload className="h-4 w-4" />
+                        {adminT('storeSettings.pwaIconUrl')}
+                      </Label>
+                      <Input 
+                        id="edit-pwaIconUrl" 
+                        name="pwaIconUrl"
+                        placeholder="https://example.com/icon-512x512.png" 
+                        defaultValue={editingTheme?.pwaIconUrl || ''}
+                        className="text-sm"
+                      />
+                      <div className="text-xs text-gray-500 flex items-center gap-1">
+                        <Info className="h-3 w-3" />
+                        {adminT('storeSettings.pwaIconUrlTooltip')}
+                      </div>
                     </div>
                     
                     {/* Изображения - многоязычная поддержка */}

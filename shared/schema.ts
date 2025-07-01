@@ -283,6 +283,7 @@ export const themes = pgTable("themes", {
   description_en: text("description_en"),
   description_he: text("description_he"),
   description_ar: text("description_ar"),
+  pwaIconUrl: varchar("pwa_icon_url", { length: 500 }), // PWA app icon URL (512x512 PNG format)
   isActive: boolean("is_active").default(false),
   
   // Color configuration
