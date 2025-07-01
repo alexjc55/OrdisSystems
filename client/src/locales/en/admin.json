@@ -464,7 +464,10 @@
     "canEditOrdersDescription": "Allow editing customer orders",
     "canViewSettingsDescription": "Allow viewing store settings",
     "canManageSettingsDescription": "Allow changing store settings",
-    "canEditOrders": "Edit Orders"
+    "canEditOrders": "Edit Orders",
+    "pwaSettings": "PWA App Settings",
+    "pwaIconUrl": "PWA App Icon",
+    "pwaIconTooltip": "Format: PNG, size: 512x512 pixels. This icon will be displayed on the device home screen when the app is installed."
   },
   "themes": {
     "title": "Theme Management",

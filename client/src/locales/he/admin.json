@@ -420,7 +420,10 @@
     "canEditOrdersDescription": "אפשר עריכת הזמנות לקוחות",
     "canViewSettingsDescription": "אפשר צפייה בהגדרות החנות",
     "canManageSettingsDescription": "אפשר שינוי הגדרות החנות",
-    "canEditOrders": "עריכת הזמנות"
+    "canEditOrders": "עריכת הזמנות",
+    "pwaSettings": "הגדרות יישום PWA",
+    "pwaIconUrl": "אייקון יישום PWA",
+    "pwaIconTooltip": "פורמט: PNG, גודל: 512x512 פיקסלים. אייקון זה יוצג במסך הבית של המכשיר כאשר היישום מותקן."
   },
   "systemSettings": {
     "canManageProducts": "ניהול מוצרים",

@@ -6385,6 +6385,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       storeDescription: getMultilingualValue(storeSettings, 'storeDescription', currentLanguage) || "",
       logoUrl: storeSettings?.logoUrl || "",
       bannerImage: storeSettings?.bannerImage || "",
+      pwaIconUrl: storeSettings?.pwaIconUrl || "",
       contactPhone: storeSettings?.contactPhone || "",
       contactEmail: storeSettings?.contactEmail || "",
       address: storeSettings?.address || "",

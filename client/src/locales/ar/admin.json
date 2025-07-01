@@ -663,7 +663,10 @@
     "canEditOrdersDescription": "السماح بتعديل طلبات العملاء",
     "canViewSettingsDescription": "السماح بعرض إعدادات المتجر",
     "canManageSettingsDescription": "السماح بتغيير إعدادات المتجر",
-    "canEditOrders": "تعديل الطلبات"
+    "canEditOrders": "تعديل الطلبات",
+    "pwaSettings": "إعدادات تطبيق PWA",
+    "pwaIconUrl": "أيقونة تطبيق PWA",
+    "pwaIconTooltip": "التنسيق: PNG، الحجم: 512x512 بكسل. ستظهر هذه الأيقونة على الشاشة الرئيسية للجهاز عند تثبيت التطبيق."
   },
   "systemSettings": {
     "canManageProducts": "إدارة المنتجات",
