@@ -4060,23 +4060,23 @@ export default function AdminDashboard() {
                             <TableHeader>
                               <TableRow dir={isRTL ? 'rtl' : 'ltr'}>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  className={`text-sm sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '80px'} : {textAlign: 'center', width: '80px'}}
                                 >№</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  className={`text-sm sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '180px'} : {textAlign: 'center', width: '180px'}}
                                 >{adminT('orders.customer')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm hidden sm:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  className={`text-sm sm:text-sm hidden sm:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '120px'} : {textAlign: 'center', width: '120px'}}
                                 >{adminT('orders.statusHeader')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  className={`text-sm sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '100px'} : {textAlign: 'center', width: '100px'}}
                                 >{adminT('orders.orderTotal')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm hidden md:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
+                                  className={`text-sm sm:text-sm hidden md:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '120px'} : {textAlign: 'center', width: '120px'}}
                                 >{adminT('orders.orderDate')}</TableHead>
 
@@ -4086,7 +4086,7 @@ export default function AdminDashboard() {
                               {ordersResponse.data.map((order: any) => (
                                 <TableRow key={order.id} className="hover:bg-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
                                   <TableCell 
-                                    className={`font-bold text-xs sm:text-sm text-primary ${isRTL ? 'text-right' : 'text-center'}`}
+                                    className={`font-bold text-sm sm:text-sm text-primary ${isRTL ? 'text-right' : 'text-center'}`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                   >
                                     <div className="flex flex-col items-center gap-1">
@@ -4096,15 +4096,15 @@ export default function AdminDashboard() {
                                           setEditingOrder(order);
                                           setIsOrderFormOpen(true);
                                         }}
-                                        className="inline-flex items-center justify-center h-8 w-8 rounded-md bg-primary hover:bg-primary text-white border-2 border-orange-600 shadow-md transition-colors"
+                                        className="inline-flex items-center justify-center h-10 w-10 sm:h-8 sm:w-8 rounded-md bg-primary hover:bg-primary text-white border-2 border-orange-600 shadow-md transition-colors"
                                         title={adminT('orders.viewDetails')}
                                       >
-                                        <Eye className="h-5 w-5" />
+                                        <Eye className="h-6 w-6 sm:h-5 sm:w-5" />
                                       </button>
                                     </div>
                                   </TableCell>
                                   <TableCell 
-                                    className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'} px-3`}
+                                    className={`text-sm sm:text-sm ${isRTL ? 'text-right' : 'text-left'} px-3`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'left'}}
                                   >
                                     <div className="space-y-1">
@@ -4117,8 +4117,8 @@ export default function AdminDashboard() {
                                       {order.customerPhone && (
                                         <DropdownMenu>
                                           <DropdownMenuTrigger asChild>
-                                            <button className="text-blue-600 text-xs hover:text-blue-800 flex items-center gap-1 cursor-pointer">
-                                              <Phone className="h-3 w-3" />
+                                            <button className="text-blue-600 text-sm hover:text-blue-800 flex items-center gap-1 cursor-pointer">
+                                              <Phone className="h-4 w-4" />
                                               {order.customerPhone}
                                             </button>
                                           </DropdownMenuTrigger>
@@ -4173,7 +4173,7 @@ export default function AdminDashboard() {
                                     </Select>
                                   </TableCell>
                                   <TableCell 
-                                    className={`font-medium text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-center'}`}
+                                    className={`font-medium text-sm sm:text-sm ${isRTL ? 'text-right' : 'text-center'}`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                   >
                                     {(() => {
@@ -4210,14 +4210,14 @@ export default function AdminDashboard() {
                                         return (
                                           <div className="space-y-1">
                                             <div className="flex flex-col gap-1">
-                                              <span className="text-xs text-gray-500 line-through">
+                                              <span className="text-sm text-gray-500 line-through">
                                                 {formatCurrency(originalTotal)}
                                               </span>
                                               <span className="font-medium text-green-600">
                                                 {formatCurrency(order.totalAmount)}
                                               </span>
                                             </div>
-                                            <div className="text-xs text-red-600 font-medium">
+                                            <div className="text-sm text-red-600 font-medium">
                                               скидка
                                             </div>
                                           </div>
