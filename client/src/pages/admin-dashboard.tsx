@@ -3819,7 +3819,7 @@ export default function AdminDashboard() {
                           title={adminT('common.previousPage')}
                           className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
-                          {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                          <ChevronLeft className="h-4 w-4" />
                         </Button>
                         <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
                           {productsPage}/{productsTotalPages}
@@ -3832,7 +3832,7 @@ export default function AdminDashboard() {
                           title={adminT('common.nextPage')}
                           className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
-                          {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                          <ChevronRight className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -3871,7 +3871,7 @@ export default function AdminDashboard() {
                           title={adminT('common.previousPage')}
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                          <ChevronLeft className="h-4 w-4" />
                         </Button>
                         <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center" dir="ltr">
                           {productsPage} {adminT('common.of')} {productsTotalPages}
@@ -3884,7 +3884,7 @@ export default function AdminDashboard() {
                           title={adminT('common.nextPage')}
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                          <ChevronRight className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="outline"
@@ -4317,7 +4317,7 @@ export default function AdminDashboard() {
                               title={adminT('common.previousPage')}
                               className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
-                              {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                              <ChevronLeft className="h-4 w-4" />
                             </Button>
                             <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
                               {ordersResponse.page}/{ordersResponse.totalPages}
@@ -4330,7 +4330,7 @@ export default function AdminDashboard() {
                               title={adminT('common.nextPage')}
                               className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
-                              {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                              <ChevronRight className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="ghost"
@@ -4369,7 +4369,7 @@ export default function AdminDashboard() {
                               title={adminT('common.previousPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                              <ChevronLeft className="h-4 w-4" />
                             </Button>
                             <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center" dir="ltr">
                               {ordersResponse.page} {adminT('common.of')} {ordersResponse.totalPages}
@@ -4382,7 +4382,7 @@ export default function AdminDashboard() {
                               title={adminT('common.nextPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                              <ChevronRight className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="outline"
@@ -4671,7 +4671,7 @@ export default function AdminDashboard() {
                               title={adminT('common.previousPage')}
                               className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
-                              {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                              <ChevronLeft className="h-4 w-4" />
                             </Button>
                             <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
                               {ordersResponse.page}/{ordersResponse.totalPages}
@@ -4684,7 +4684,7 @@ export default function AdminDashboard() {
                               title={adminT('common.nextPage')}
                               className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
-                              {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                              <ChevronRight className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="ghost"
@@ -4723,7 +4723,7 @@ export default function AdminDashboard() {
                               title={adminT('common.previousPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                              <ChevronLeft className="h-4 w-4" />
                             </Button>
                             <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center" dir="ltr">
                               {ordersResponse.page} {adminT('common.of')} {ordersResponse.totalPages}
@@ -4736,7 +4736,7 @@ export default function AdminDashboard() {
                               title={adminT('common.nextPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                              <ChevronRight className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="outline"
@@ -4965,7 +4965,7 @@ export default function AdminDashboard() {
                           title={adminT('common.previousPage')}
                           className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
-                          {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                          <ChevronLeft className="h-4 w-4" />
                         </Button>
                         <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
                           {usersPage}/{usersTotalPages}
@@ -4978,7 +4978,7 @@ export default function AdminDashboard() {
                           title={adminT('common.nextPage')}
                           className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
-                          {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                          <ChevronRight className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -5017,7 +5017,7 @@ export default function AdminDashboard() {
                           title={adminT('common.prevPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isRTL ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
+                          <ChevronLeft className="h-3 w-3" />
                         </Button>
                         <span className="text-xs text-gray-600 px-2 min-w-[60px] text-center" dir="ltr">
                           {usersPage} {adminT('common.of')} {usersTotalPages}
@@ -5030,7 +5030,7 @@ export default function AdminDashboard() {
                           title={adminT('common.nextPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isRTL ? <ChevronLeft className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                          <ChevronRight className="h-3 w-3" />
                         </Button>
                         <Button
                           variant="outline"
