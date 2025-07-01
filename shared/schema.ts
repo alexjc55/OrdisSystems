@@ -433,6 +433,35 @@ export const translations = pgTable("translations", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Push notifications subscriptions table
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  endpoint: text("endpoint").notNull(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Marketing notifications history table
+export const marketingNotifications = pgTable("marketing_notifications", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  titleEn: text("title_en"),
+  messageEn: text("message_en"),
+  titleHe: text("title_he"),
+  messageHe: text("message_he"),
+  titleAr: text("title_ar"),
+  messageAr: text("message_ar"),
+  sentCount: integer("sent_count").default(0),
+  createdBy: text("created_by").notNull(),
+  sentAt: timestamp("sent_at"),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
 // Relations - Simplified to avoid Drizzle ORM issues
 export const productsRelations = relations(products, ({ many }) => ({
   orderItems: many(orderItems),
