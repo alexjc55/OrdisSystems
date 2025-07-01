@@ -1040,9 +1040,7 @@ export default function ThemeManager() {
             <Palette className="h-6 w-6" />
             {adminT("themes.title")}
           </h2>
-          <div style={{background: 'red', color: 'white', padding: '10px', margin: '10px 0', border: '3px solid black'}}>
-            DEBUG: ThemeManager component is working! Dialogs should work too.
-          </div>
+
           <p className="text-muted-foreground">
             {adminT("themes.description")}
           </p>
@@ -1060,9 +1058,7 @@ export default function ThemeManager() {
               <DialogDescription>
                 {adminT("themes.createDescription")}
               </DialogDescription>
-              <div style={{background: 'yellow', padding: '10px', border: '3px solid green', margin: '10px 0'}}>
-                DEBUG: Create Theme Dialog is working! PWA field should be in Basic tab below.
-              </div>
+
             </DialogHeader>
             <form onSubmit={(e) => {
               e.preventDefault();
@@ -1131,10 +1127,10 @@ export default function ThemeManager() {
                     </div>
                     
                     {/* PWA Settings */}
-                    <div className="space-y-2" style={{border: '2px solid red', padding: '10px'}}>
-                      <Label className="flex items-center gap-2" htmlFor="pwaIconUrl">
-                        <Upload className="h-4 w-4" />
-                        PWA Icon URL (DEBUG)
+                    <div className="space-y-2 p-4 border-2 border-orange-200 bg-orange-50 rounded-lg">
+                      <Label className="flex items-center gap-2 text-orange-800 font-semibold" htmlFor="pwaIconUrl">
+                        <Upload className="h-4 w-4 text-orange-600" />
+                        {adminT('themes.pwaIconUrl')} ⭐ NEW
                       </Label>
                       <Input 
                         id="pwaIconUrl" 
@@ -1808,9 +1804,7 @@ export default function ThemeManager() {
               <DialogDescription>
                 {adminT("themes.createDescription")}
               </DialogDescription>
-              <div style={{background: 'orange', padding: '10px', border: '3px solid purple', margin: '10px 0'}}>
-                DEBUG: Edit Theme Dialog is working! PWA field should be in Basic tab below.
-              </div>
+
             </DialogHeader>
             <form onSubmit={(e) => {
               e.preventDefault();
