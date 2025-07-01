@@ -4065,7 +4065,7 @@ export default function AdminDashboard() {
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >№</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'} w-32 sm:w-auto`}
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'} w-24 sm:w-32`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('orders.customer')}</TableHead>
                                 <TableHead 
@@ -4105,7 +4105,7 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell 
-                                    className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'} w-32 sm:w-auto px-1 sm:px-3`}
+                                    className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'} w-24 sm:w-32 px-1 sm:px-3`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'left'}}
                                   >
                                     <div className="space-y-1">
