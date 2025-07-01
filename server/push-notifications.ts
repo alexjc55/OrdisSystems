@@ -166,7 +166,7 @@ export class PushNotificationService {
 
     await this.sendToUser(userId, {
       title: `${statusIcons[status]} Заказ #${orderId}`,
-      body: messages[status] || `Статус заказа изменен на: ${status}`,
+      body: messages?.[status] || `Статус заказа изменен на: ${status}`,
       data: {
         type: 'order-status',
         orderId,
@@ -183,7 +183,7 @@ export class PushNotificationService {
 
   // Напоминание о корзине
   static async sendCartReminder(userId: string, cartCount: number, language: string = 'ru') {
-    const messages = {
+    const messages: Record<string, { title: string; body: string }> = {
       ru: {
         title: '🛒 Не забудьте о своем заказе!',
         body: `У вас ${cartCount} товаров в корзине. Завершите заказ, пока товары доступны!`
@@ -202,7 +202,7 @@ export class PushNotificationService {
       }
     };
 
-    const msg = messages[language] || messages.ru;
+    const msg = messages[language] || messages['ru'];
 
     await this.sendToUser(userId, {
       title: msg.title,
