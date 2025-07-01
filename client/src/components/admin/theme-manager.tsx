@@ -1057,6 +1057,9 @@ export default function ThemeManager() {
               <DialogDescription>
                 {adminT("themes.createDescription")}
               </DialogDescription>
+              <div style={{background: 'yellow', padding: '10px', border: '3px solid green', margin: '10px 0'}}>
+                DEBUG: Create Theme Dialog is working! PWA field should be in Basic tab below.
+              </div>
             </DialogHeader>
             <form onSubmit={(e) => {
               e.preventDefault();
@@ -1802,6 +1805,9 @@ export default function ThemeManager() {
               <DialogDescription>
                 {adminT("themes.createDescription")}
               </DialogDescription>
+              <div style={{background: 'orange', padding: '10px', border: '3px solid purple', margin: '10px 0'}}>
+                DEBUG: Edit Theme Dialog is working! PWA field should be in Basic tab below.
+              </div>
             </DialogHeader>
             <form onSubmit={(e) => {
               e.preventDefault();
