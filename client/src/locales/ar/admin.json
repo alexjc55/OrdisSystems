@@ -711,6 +711,9 @@
     "copySuccess": "تم نسخ الحقول",
     "fieldsCopied": "تم نسخ {{count}} حقول",
     "clearSuccess": "تم مسح الحقول",
-    "fieldsCleared": "تم مسح {{count}} حقول"
+    "fieldsCleared": "تم مسح {{count}} حقول",
+    "pwaSettings": "إعدادات PWA",
+    "pwaIconUrl": "أيقونة تطبيق PWA",
+    "pwaIconUrlTooltip": "رابط أيقونة التطبيق المحمول (تنسيق PNG 512x512)"
   }
 }

@@ -468,7 +468,10 @@
     "copySuccess": "שדות הועתקו",
     "fieldsCopied": "הועתקו {{count}} שדות",
     "clearSuccess": "שדות נוקו",
-    "fieldsCleared": "נוקו {{count}} שדות"
+    "fieldsCleared": "נוקו {{count}} שדות",
+    "pwaSettings": "הגדרות PWA",
+    "pwaIconUrl": "אייקון אפליקציית PWA",
+    "pwaIconUrlTooltip": "כתובת URL של האייקון לאפליקציה הנייד (פורמט PNG 512x512)"
   },
   "settings": {
     "title": "הגדרות חנות",

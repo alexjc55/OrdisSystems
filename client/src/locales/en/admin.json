@@ -881,6 +881,9 @@
     "copySuccess": "Fields copied",
     "fieldsCopied": "Copied {{count}} fields",
     "clearSuccess": "Fields cleared",
-    "fieldsCleared": "Cleared {{count}} fields"
+    "fieldsCleared": "Cleared {{count}} fields",
+    "pwaSettings": "PWA Settings",
+    "pwaIconUrl": "PWA App Icon",
+    "pwaIconUrlTooltip": "URL of the icon for mobile app (512x512 PNG format)"
   }
 }
