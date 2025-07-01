@@ -4941,17 +4941,63 @@ export default function AdminDashboard() {
                     </div>
                     
                     {/* Pagination for users table */}
-                    <div className={`flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-3 border-t border-gray-100 bg-gray-50/30 ${isRTL ? 'sm:flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                      <div className={`text-xs text-gray-600 text-center ${isRTL ? 'sm:text-right' : 'sm:text-left'}`}>
-                        <div className="sm:hidden">
-                          <div>{adminT('common.showing')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)}</div>
-                          <div>{adminT('common.of')} {usersTotal}</div>
-                        </div>
-                        <div className="hidden sm:block">
-                          {adminT('common.showing')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('common.of')} {usersTotal}
-                        </div>
+                    {/* Mobile: Compact layout */}
+                    <div className="sm:hidden flex flex-col items-center gap-3 px-2 py-3 border-t bg-gray-50">
+                      <div className="text-xs text-gray-600 text-center">
+                        {adminT('common.showing')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('common.of')} {usersTotal}
                       </div>
-                      
+                      <div className="flex items-center justify-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUsersPage(1)}
+                          disabled={usersPage === 1}
+                          title={adminT('common.firstPage')}
+                          className="h-8 w-8 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
+                        >
+                          <span className="text-base">⟨⟨</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
+                          disabled={usersPage === 1}
+                          title={adminT('common.previousPage')}
+                          className="h-8 w-8 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
+                        >
+                          {isRTL ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+                        </Button>
+                        <div className="px-3 py-1 bg-white border border-orange-300 rounded-md text-sm font-medium min-w-[50px] text-center" dir="ltr">
+                          {usersPage}/{usersTotalPages}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
+                          disabled={usersPage >= usersTotalPages}
+                          title={adminT('common.nextPage')}
+                          className="h-8 w-8 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
+                        >
+                          {isRTL ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setUsersPage(usersTotalPages)}
+                          disabled={usersPage >= usersTotalPages}
+                          title={adminT('common.lastPage')}
+                          className="h-8 w-8 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
+                        >
+                          <span className="text-base">⟩⟩</span>
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {/* Desktop: Standard layout */}
+                    <div className="hidden sm:flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-3 border-t border-gray-100 bg-gray-50/30">
+                      <div className="text-xs text-gray-600">
+                        {adminT('common.showing')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('common.of')} {usersTotal}
+                      </div>
                       <div className="flex items-center gap-1">
                         <Button
                           variant="outline"
@@ -4974,8 +5020,7 @@ export default function AdminDashboard() {
                           {isRTL ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
                         </Button>
                         <span className="text-xs text-gray-600 px-2 min-w-[60px] text-center" dir="ltr">
-                          <span className="sm:hidden">{usersPage}/{usersTotalPages}</span>
-                          <span className="hidden sm:inline">{usersPage} {adminT('common.of')} {usersTotalPages}</span>
+                          {usersPage} {adminT('common.of')} {usersTotalPages}
                         </span>
                         <Button
                           variant="outline"
