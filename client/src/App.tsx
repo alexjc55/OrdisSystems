@@ -10,6 +10,8 @@ import { CustomHtml } from "@/components/custom-html";
 import { WhatsAppChat } from "@/components/layout/whatsapp-chat";
 import { Footer } from "@/components/layout/footer";
 import { LanguageInitializer } from "@/components/language-initializer";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import PWAStatusBar from "@/components/PWAStatusBar";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
