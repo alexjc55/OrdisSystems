@@ -43,15 +43,24 @@ export function PWAInstallButton({ variant = 'mobile' }: PWAInstallButtonProps) 
       return;
     }
 
-    // Show button temporarily for testing
-    setShowButton(true);
-    console.log('Not in PWA mode, showing install button for testing');
-
+    // Check if browser supports PWA installation
+    const supportsPWA = 'serviceWorker' in navigator;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    
+    let fallbackTimer: NodeJS.Timeout | null = null;
+    
     const handleBeforeInstallPrompt = (e: Event) => {
       console.log('beforeinstallprompt event received');
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       setShowButton(true);
+      
+      // Clear fallback timer since we got the event
+      if (fallbackTimer) {
+        clearTimeout(fallbackTimer);
+        fallbackTimer = null;
+      }
     };
 
     const handleAppInstalled = () => {
@@ -60,10 +69,30 @@ export function PWAInstallButton({ variant = 'mobile' }: PWAInstallButtonProps) 
       setDeferredPrompt(null);
     };
 
+    // Show button for iOS Safari (doesn't support beforeinstallprompt) or after receiving the event
+    if (isIOS && isSafari) {
+      setShowButton(true);
+      console.log('iOS Safari detected, showing install button immediately');
+    } else {
+      setShowButton(false);
+      console.log('Waiting for beforeinstallprompt event or showing fallback after timeout');
+      
+      // Fallback: show button after 3 seconds if no beforeinstallprompt event
+      fallbackTimer = setTimeout(() => {
+        if (supportsPWA) {
+          setShowButton(true);
+          console.log('Fallback: showing install button after timeout');
+        }
+      }, 3000);
+    }
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
+      if (fallbackTimer) {
+        clearTimeout(fallbackTimer);
+      }
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
@@ -133,9 +162,13 @@ export function PWAInstallButton({ variant = 'mobile' }: PWAInstallButtonProps) 
       <button 
         className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white transition-all duration-200 hover:scale-105 shadow-md text-sm font-medium"
         onClick={handleInstall}
+        title={deferredPrompt ? t('pwa.installApp') : t('pwa.installInstructions')}
       >
         <Download className="h-4 w-4" />
-        <span className="hidden lg:inline">{t('pwa.installApp')}</span>
+        <span className="hidden lg:inline">
+          {t('pwa.installApp')}
+          {!deferredPrompt && <span className="text-xs opacity-75 ml-1">📋</span>}
+        </span>
       </button>
     );
   }
@@ -144,9 +177,13 @@ export function PWAInstallButton({ variant = 'mobile' }: PWAInstallButtonProps) 
     <div 
       className="flex items-center justify-center px-4 py-3 mx-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white transition-all duration-200 cursor-pointer transform hover:scale-105 shadow-lg"
       onClick={handleInstall}
+      title={deferredPrompt ? t('pwa.installApp') : t('pwa.installInstructions')}
     >
       <Download className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
-      <span className="font-medium">{t('pwa.installApp')}</span>
+      <span className="font-medium">
+        {t('pwa.installApp')}
+        {!deferredPrompt && <span className="text-xs opacity-75 ml-1">📋</span>}
+      </span>
     </div>
   );
 }
