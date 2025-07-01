@@ -907,14 +907,35 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       const id = parseInt(req.params.id);
       const { status, cancellationReason } = req.body;
       
+      let order;
+      
       // If status is cancelled and cancellation reason is provided, update order with reason
       if (status === 'cancelled' && cancellationReason) {
-        const order = await storage.updateOrder(id, { status, cancellationReason });
-        res.json(order);
+        order = await storage.updateOrder(id, { status, cancellationReason });
       } else {
-        const order = await storage.updateOrderStatus(id, status);
-        res.json(order);
+        order = await storage.updateOrderStatus(id, status);
       }
+      
+      // Send push notification to customer about status change
+      if (order && order.userId && order.userId !== 'guest') {
+        try {
+          // Get user's preferred language (you may need to implement this)
+          const customerUser = await storage.getUser(order.userId);
+          const language = customerUser?.preferredLanguage || 'ru';
+          
+          await PushNotificationService.notifyOrderStatus(
+            order.userId,
+            order.id,
+            status,
+            language
+          );
+        } catch (pushError) {
+          console.error('Error sending push notification:', pushError);
+          // Don't fail the order update if push notification fails
+        }
+      }
+      
+      res.json(order);
     } catch (error) {
       console.error("Error updating order status:", error);
       res.status(500).json({ message: "Failed to update order status" });
@@ -1725,6 +1746,186 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         return res.status(400).json({ message: "Invalid data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to create theme" });
+    }
+  });
+
+  // Push notification routes
+  
+  // Get VAPID public key for client
+  app.get('/api/push/vapid-key', (req, res) => {
+    res.json({ publicKey: PushNotificationService.getPublicKey() });
+  });
+
+  // Subscribe to push notifications
+  app.post('/api/push/subscribe', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const { endpoint, keys } = req.body;
+
+      if (!endpoint || !keys?.p256dh || !keys?.auth) {
+        return res.status(400).json({ message: 'Invalid subscription data' });
+      }
+
+      // Check if subscription already exists
+      const existingSubscription = await db
+        .select()
+        .from(pushSubscriptions)
+        .where(sql`endpoint = ${endpoint} AND user_id = ${userId}`)
+        .limit(1);
+
+      if (existingSubscription.length > 0) {
+        return res.json({ message: 'Already subscribed' });
+      }
+
+      // Save new subscription
+      await db.insert(pushSubscriptions).values({
+        userId,
+        endpoint,
+        p256dh: keys.p256dh,
+        auth: keys.auth,
+        userAgent: req.headers['user-agent'] || ''
+      });
+
+      res.json({ message: 'Subscription saved successfully' });
+    } catch (error) {
+      console.error('Error saving push subscription:', error);
+      res.status(500).json({ message: 'Failed to save subscription' });
+    }
+  });
+
+  // Unsubscribe from push notifications
+  app.delete('/api/push/unsubscribe', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const { endpoint } = req.body;
+
+      await db
+        .delete(pushSubscriptions)
+        .where(sql`endpoint = ${endpoint} AND user_id = ${userId}`);
+
+      res.json({ message: 'Unsubscribed successfully' });
+    } catch (error) {
+      console.error('Error unsubscribing:', error);
+      res.status(500).json({ message: 'Failed to unsubscribe' });
+    }
+  });
+
+  // Admin: Send marketing notification
+  app.post('/api/admin/push/marketing', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user;
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      const { title, message, titleEn, messageEn, titleHe, messageHe, titleAr, messageAr } = req.body;
+
+      if (!title || !message) {
+        return res.status(400).json({ message: 'Title and message are required' });
+      }
+
+      // Save marketing notification to database
+      const [notification] = await db.insert(marketingNotifications).values({
+        title,
+        message,
+        titleEn: titleEn || null,
+        messageEn: messageEn || null,
+        titleHe: titleHe || null,
+        messageHe: messageHe || null,
+        titleAr: titleAr || null,
+        messageAr: messageAr || null,
+        createdBy: user.id,
+        sentAt: new Date()
+      }).returning();
+
+      // Send notifications in multiple languages
+      const languages = ['ru', 'en', 'he', 'ar'];
+      let totalSent = 0;
+
+      for (const lang of languages) {
+        const notificationTitle = lang === 'ru' ? title :
+                                 lang === 'en' ? (titleEn || title) :
+                                 lang === 'he' ? (titleHe || title) :
+                                 lang === 'ar' ? (titleAr || title) : title;
+        
+        const notificationMessage = lang === 'ru' ? message :
+                                   lang === 'en' ? (messageEn || message) :
+                                   lang === 'he' ? (messageHe || message) :
+                                   lang === 'ar' ? (messageAr || message) : message;
+
+        const result = await PushNotificationService.sendToAll({
+          title: notificationTitle,
+          body: notificationMessage,
+          data: {
+            type: 'marketing',
+            notificationId: notification.id,
+            language: lang
+          }
+        });
+
+        if (result.success) {
+          totalSent += result.sent;
+        }
+      }
+
+      // Update sent count
+      await db
+        .update(marketingNotifications)
+        .set({ sentCount: totalSent })
+        .where(sql`id = ${notification.id}`);
+
+      res.json({ 
+        message: 'Marketing notification sent successfully',
+        sentCount: totalSent,
+        notificationId: notification.id
+      });
+    } catch (error) {
+      console.error('Error sending marketing notification:', error);
+      res.status(500).json({ message: 'Failed to send marketing notification' });
+    }
+  });
+
+  // Admin: Get marketing notifications history
+  app.get('/api/admin/push/marketing', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user;
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      const notifications = await db
+        .select()
+        .from(marketingNotifications)
+        .orderBy(sql`created_at DESC`)
+        .limit(50);
+
+      res.json(notifications);
+    } catch (error) {
+      console.error('Error fetching marketing notifications:', error);
+      res.status(500).json({ message: 'Failed to fetch notifications' });
+    }
+  });
+
+  // Test push notification (admin only)
+  app.post('/api/admin/push/test', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user;
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      await PushNotificationService.sendToUser(user.id, {
+        title: '🧪 Тестовое уведомление',
+        body: 'Система push уведомлений работает корректно!',
+        data: {
+          type: 'test'
+        }
+      });
+
+      res.json({ message: 'Test notification sent' });
+    } catch (error) {
+      console.error('Error sending test notification:', error);
+      res.status(500).json({ message: 'Failed to send test notification' });
     }
   });
 

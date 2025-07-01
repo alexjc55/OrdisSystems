@@ -17,6 +17,103 @@ const API_CACHE_PATTERNS = [
   '/api/products'
 ];
 
+// Push notification event handlers
+self.addEventListener('push', function(event) {
+  if (!event.data) return;
+
+  try {
+    const data = event.data.json();
+    console.log('Push notification received:', data);
+
+    const options = {
+      body: data.body,
+      icon: data.icon || '/api/icons/icon-192x192.png',
+      badge: data.badge || '/api/icons/icon-96x96.png',
+      data: data.data || {},
+      actions: data.actions || [],
+      tag: data.data?.type || 'default',
+      requireInteraction: data.data?.type === 'order-status' || data.data?.type === 'cart-reminder',
+      vibrate: [200, 100, 200],
+      silent: false
+    };
+
+    event.waitUntil(
+      self.registration.showNotification(data.title, options)
+    );
+  } catch (error) {
+    console.error('Error processing push notification:', error);
+    
+    // Fallback notification
+    event.waitUntil(
+      self.registration.showNotification('eDAHouse', {
+        body: 'У вас новое уведомление',
+        icon: '/api/icons/icon-192x192.png',
+        badge: '/api/icons/icon-96x96.png'
+      })
+    );
+  }
+});
+
+// Handle notification clicks
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+
+  const data = event.notification.data || {};
+  const action = event.action;
+
+  let url = '/';
+
+  // Determine URL based on notification type and action
+  if (data.type === 'order-status' && data.orderId) {
+    url = `/profile?tab=orders&order=${data.orderId}`;
+  } else if (data.type === 'cart-reminder') {
+    if (action === 'view-cart') {
+      url = '/?show-cart=true';
+    } else if (action === 'checkout') {
+      url = '/checkout';
+    } else {
+      url = '/';
+    }
+  } else if (data.type === 'marketing') {
+    url = '/';
+  } else if (action === 'view-order' && data.orderId) {
+    url = `/profile?tab=orders&order=${data.orderId}`;
+  }
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
+      // Try to focus existing window
+      for (const client of clientList) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          client.focus();
+          client.postMessage({
+            type: 'notification-click',
+            url: url,
+            data: data
+          });
+          return;
+        }
+      }
+      
+      // Open new window if no existing window found
+      if (clients.openWindow) {
+        return clients.openWindow(url);
+      }
+    })
+  );
+});
+
+// Handle notification close
+self.addEventListener('notificationclose', function(event) {
+  console.log('Notification closed:', event.notification.data);
+  
+  // Track notification close events if needed
+  const data = event.notification.data || {};
+  if (data.type === 'cart-reminder') {
+    // Could track cart reminder dismissals
+  }
+});
+
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
   console.log('Service Worker: Installing...');
