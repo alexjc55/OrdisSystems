@@ -1040,6 +1040,9 @@ export default function ThemeManager() {
             <Palette className="h-6 w-6" />
             {adminT("themes.title")}
           </h2>
+          <div style={{background: 'red', color: 'white', padding: '10px', margin: '10px 0', border: '3px solid black'}}>
+            DEBUG: ThemeManager component is working! Dialogs should work too.
+          </div>
           <p className="text-muted-foreground">
             {adminT("themes.description")}
           </p>
