@@ -412,6 +412,7 @@
     "installDescription": "Install eDAHouse for convenient access without browser",
     "installDescriptionIOS": "Add eDAHouse to your home screen for quick access",
     "install": "Install",
+    "installApp": "Install App",
     "later": "Later",
     "offline": "Working in offline mode",
     "installedMode": "App installed",

@@ -154,11 +154,11 @@ export default function PWAInstallPrompt() {
           </div>
         ) : (
           <div className="flex gap-2">
-            <Button onClick={handleInstallClick} className="flex-1">
+            <Button onClick={handleInstallClick} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
               <Download className="h-4 w-4 mr-2" />
               {t('pwa.install', 'Установить')}
             </Button>
-            <Button variant="outline" onClick={handleDismiss}>
+            <Button variant="outline" onClick={handleDismiss} className="border-blue-600 text-blue-600 hover:bg-blue-50">
               {t('pwa.later', 'Позже')}
             </Button>
           </div>
