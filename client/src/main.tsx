@@ -9,6 +9,17 @@ initializeTheme();
 // Force apply orange colors to override any black theme colors
 forceApplyOrangeTheme();
 
+// UNREGISTER ALL SERVICE WORKERS TO FIX PWA NOTIFICATION ISSUE
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+      registration.unregister().then(() => {
+        console.log('Service Worker unregistered:', registration);
+      });
+    }
+  });
+}
+
 // Global error suppression for ResizeObserver
 const resizeObserverErrDiv = document.getElementById('webpack-dev-server-client-overlay-div');
 const resizeObserverErrText = 'ResizeObserver loop completed with undelivered notifications';
