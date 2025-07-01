@@ -322,6 +322,7 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   cartBannerImage: z.string().optional(),
   cartBannerText: z.string().optional(),
   cartBannerBgColor: z.string().default("#f97316"),
+  pwaIconUrl: z.string().url().optional().or(z.literal("")),
 });
 
 

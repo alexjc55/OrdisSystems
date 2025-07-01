@@ -26,10 +26,10 @@ export function PWAInstaller() {
 
   // Update manifest.json with custom icon when settings change
   useEffect(() => {
-    if (storeSettings?.pwaIconUrl) {
-      updateManifestIcon(storeSettings.pwaIconUrl);
+    if ((storeSettings as any)?.pwaIconUrl) {
+      updateManifestIcon((storeSettings as any).pwaIconUrl);
     }
-  }, [storeSettings?.pwaIconUrl]);
+  }, [(storeSettings as any)?.pwaIconUrl]);
 
   const updateManifestIcon = (iconUrl: string) => {
     // Update existing manifest link
@@ -37,9 +37,9 @@ export function PWAInstaller() {
     if (manifestLink) {
       // Create new manifest with custom icon
       const newManifest = {
-        name: storeSettings?.storeName || "eDAHouse",
-        short_name: storeSettings?.storeName || "eDAHouse",
-        description: storeSettings?.storeDescription || "Готовые блюда с доставкой",
+        name: (storeSettings as any)?.storeName || "eDAHouse",
+        short_name: (storeSettings as any)?.storeName || "eDAHouse",
+        description: (storeSettings as any)?.storeDescription || "Готовые блюда с доставкой",
         start_url: "/",
         display: "standalone",
         background_color: "#ffffff",
