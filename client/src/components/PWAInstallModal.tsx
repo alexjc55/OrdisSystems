@@ -3,20 +3,12 @@ import { Button } from './ui/button';
 import { Download, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-
-interface BeforeInstallPromptEvent extends Event {
-  readonly platforms: string[];
-  readonly userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed';
-    platform: string;
-  }>;
-  prompt(): Promise<void>;
-}
+import { usePWAInstall } from '@/hooks/usePWAInstall';
 
 export function PWAInstallModal() {
   const { t, i18n } = useTranslation('common');
   const [showModal, setShowModal] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const { isInstallable, installApp, isInstalled } = usePWAInstall();
 
   // Get PWA settings from database
   const { data: settings } = useQuery({
@@ -25,12 +17,7 @@ export function PWAInstallModal() {
   });
 
   useEffect(() => {
-    // Check if running in PWA mode
-    const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches;
-    const isIOSStandalone = (window.navigator as any).standalone === true;
-    const isPWAMode = isStandaloneMode || isIOSStandalone;
-    
-    if (isPWAMode) {
+    if (isInstalled) {
       console.log('Already in PWA mode, not showing install modal');
       return;
     }
@@ -50,54 +37,21 @@ export function PWAInstallModal() {
       return;
     }
 
-    const handleBeforeInstallPrompt = (e: Event) => {
-      console.log('beforeinstallprompt event received for modal');
-      e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-      
-      // Show modal after 2 seconds delay to let page load
-      setTimeout(() => {
-        setShowModal(true);
-      }, 2000);
-    };
+    // Show modal after 3 seconds on mobile devices
+    const timer = setTimeout(() => {
+      setShowModal(true);
+    }, 3000);
 
-    const handleAppInstalled = () => {
-      console.log('App installed via modal');
-      setShowModal(false);
-      setDeferredPrompt(null);
-    };
-
-    // For mobile devices, show modal even without beforeinstallprompt (for iOS)
-    if (isMobile) {
-      setTimeout(() => {
-        setShowModal(true);
-      }, 3000); // Show after 3 seconds on mobile
-    }
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', handleAppInstalled);
-    };
-  }, []);
+    return () => clearTimeout(timer);
+  }, [isInstalled]);
 
   const handleInstall = async () => {
-    console.log('Install clicked from modal, deferredPrompt:', !!deferredPrompt);
+    console.log('Install clicked from modal, isInstallable:', isInstallable);
 
-    if (deferredPrompt) {
+    if (isInstallable) {
       try {
-        await deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        
-        console.log('Install outcome:', outcome);
-        
-        if (outcome === 'accepted') {
-          setShowModal(false);
-        }
-        
-        setDeferredPrompt(null);
+        await installApp();
+        setShowModal(false);
         return;
       } catch (error) {
         console.error('Auto install failed:', error);

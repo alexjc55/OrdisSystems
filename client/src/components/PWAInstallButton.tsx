@@ -126,12 +126,12 @@ export function PWAInstallButton({ variant = 'mobile' }: PWAInstallButtonProps) 
     <div 
       className="flex items-center justify-center px-4 py-3 mx-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white transition-all duration-200 cursor-pointer transform hover:scale-105 shadow-lg"
       onClick={handleInstall}
-      title={deferredPrompt ? t('pwa.installApp') : t('pwa.installInstructions')}
+      title={isInstallable ? t('pwa.installApp') : t('pwa.installInstructions')}
     >
       <Download className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
       <span className="font-medium">
         {t('pwa.installApp')}
-        {!deferredPrompt && <span className="text-xs opacity-75 ml-1">📋</span>}
+        {!isInstallable && <span className="text-xs opacity-75 ml-1">📋</span>}
       </span>
     </div>
   );
