@@ -21,6 +21,7 @@ import { LANGUAGES } from "@/lib/i18n";
 import { useTranslationManager } from "@/hooks/useTranslationManager";
 import { TranslationToolbar } from "@/components/ui/translation-toolbar";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
+import { getLocalizedFieldForAdmin } from "@shared/multilingual-helpers";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { getMultilingualValue, createMultilingualUpdate } from "@/components/ui/multilingual-store-settings";
 import { apiRequest } from "@/lib/queryClient";
@@ -6380,9 +6381,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const form = useForm({
     resolver: zodResolver(storeSettingsSchema),
     defaultValues: {
-      storeName: getMultilingualValue(storeSettings, 'storeName', currentLanguage) || "eDAHouse",
-      welcomeTitle: getMultilingualValue(storeSettings, 'welcomeTitle', currentLanguage) || "",
-      storeDescription: getMultilingualValue(storeSettings, 'storeDescription', currentLanguage) || "",
+      storeName: getLocalizedFieldForAdmin(storeSettings, 'storeName', currentLanguage, storeSettings) || "",
+      welcomeTitle: getLocalizedFieldForAdmin(storeSettings, 'welcomeTitle', currentLanguage, storeSettings) || "",
+      storeDescription: getLocalizedFieldForAdmin(storeSettings, 'storeDescription', currentLanguage, storeSettings) || "",
       logoUrl: storeSettings?.logoUrl || "",
       bannerImage: storeSettings?.bannerImage || "",
       contactPhone: storeSettings?.contactPhone || "",
@@ -6397,9 +6398,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         saturday: storeSettings?.workingHours?.saturday || "",
         sunday: storeSettings?.workingHours?.sunday || "",
       },
-      deliveryInfo: getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) || "",
-      paymentInfo: storeSettings?.paymentInfo || "",
-      aboutText: getMultilingualValue(storeSettings, 'aboutText', currentLanguage) || "",
+      deliveryInfo: getLocalizedFieldForAdmin(storeSettings, 'deliveryInfo', currentLanguage, storeSettings) || "",
+      paymentInfo: getLocalizedFieldForAdmin(storeSettings, 'paymentInfo', currentLanguage, storeSettings) || "",
+      aboutText: getLocalizedFieldForAdmin(storeSettings, 'aboutText', currentLanguage, storeSettings) || "",
       paymentMethods: storeSettings?.paymentMethods || [
         { name: "Наличными при получении", id: 1 },
         { name: "Банковской картой", id: 2 },
