@@ -46,6 +46,8 @@ function Router() {
     // Listen for language changes
     const handleLanguageChange = (lng: string) => {
       updateDocumentDirection(lng);
+      // Update HTML lang attribute for SEO
+      document.documentElement.lang = lng;
     };
     
     i18n.on('languageChanged', handleLanguageChange);
