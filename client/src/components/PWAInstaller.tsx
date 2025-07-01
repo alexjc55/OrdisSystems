@@ -24,14 +24,12 @@ export function PWAInstaller() {
     queryKey: ['/api/settings']
   });
 
-  const { data: themes } = useQuery({
-    queryKey: ['/api/admin/themes'],
-    enabled: false // Disable for now since this is public component
+  const { data: activeTheme } = useQuery({
+    queryKey: ['/api/theme/active']
   });
 
-  // Find active theme PWA icon
-  const activeTheme = Array.isArray(themes) ? themes.find((theme: any) => theme.isActive) : null;
-  const pwaIconUrl = activeTheme?.pwaIconUrl || (storeSettings as any)?.pwaIconUrl;
+  // Use PWA icon from active theme or fallback to store settings
+  const pwaIconUrl = (activeTheme as any)?.pwaIconUrl || (storeSettings as any)?.pwaIconUrl;
 
   // Update manifest.json with custom icon when icon changes
   useEffect(() => {
