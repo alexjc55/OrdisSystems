@@ -4064,7 +4064,7 @@ export default function AdminDashboard() {
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >№</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'} min-w-0 flex-1`}
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'} w-32 sm:w-auto`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('orders.customer')}</TableHead>
                                 <TableHead 
@@ -4104,7 +4104,7 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell 
-                                    className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'} min-w-0 flex-1 px-1 sm:px-3`}
+                                    className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'} w-32 sm:w-auto px-1 sm:px-3`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'left'}}
                                   >
                                     <div className="space-y-1">
@@ -4117,9 +4117,9 @@ export default function AdminDashboard() {
                                       {order.customerPhone && (
                                         <DropdownMenu>
                                           <DropdownMenuTrigger asChild>
-                                            <button className="text-blue-600 text-sm hover:text-blue-800 flex items-center gap-1 cursor-pointer">
-                                              <Phone className="h-4 w-4" />
-                                              {order.customerPhone}
+                                            <button className="text-blue-600 text-xs sm:text-sm hover:text-blue-800 flex items-center gap-1 cursor-pointer truncate max-w-full">
+                                              <Phone className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                                              <span className="truncate">{order.customerPhone}</span>
                                             </button>
                                           </DropdownMenuTrigger>
                                           <DropdownMenuContent align="start" className="w-40 bg-white border border-gray-200 shadow-lg">
