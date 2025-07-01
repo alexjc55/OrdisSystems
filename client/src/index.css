@@ -826,7 +826,7 @@ button:focus,
     flex-direction: row-reverse;
   }
   
-  .rtl .flex.items-center.gap-2 {
+  .rtl .flex.items-center.gap-2:not([class*="pagination"]):not(.pagination-controls) {
     flex-direction: row-reverse;
   }
   

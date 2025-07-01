@@ -4298,7 +4298,7 @@ export default function AdminDashboard() {
                           <div className="text-center text-xs text-gray-600">
                             {adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of')} {ordersResponse.total}
                           </div>
-                          <div className="flex items-center justify-center gap-2">
+                          <div className="flex items-center justify-center gap-2 pagination-controls">
                             <Button
                               variant="ghost"
                               size="sm"
@@ -4347,10 +4347,10 @@ export default function AdminDashboard() {
                         
                         {/* Desktop: Original layout */}
                         <div className={`hidden sm:flex items-center justify-between px-4 py-3 border-t ${isRTL ? 'flex-row-reverse' : ''}`}>
-                          <div className={`flex items-center gap-2 text-sm text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>
+                          <div className={`flex items-center gap-2 text-sm text-gray-700 pagination-controls ${isRTL ? 'text-right' : 'text-left'}`}>
                             <span>{adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of')} {ordersResponse.total}</span>
                           </div>
-                          <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          <div className={`flex items-center gap-2 pagination-controls ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <Button
                               variant="outline"
                               size="sm"
@@ -4652,7 +4652,7 @@ export default function AdminDashboard() {
                           <div className="text-center text-xs text-gray-600">
                             {adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of')} {ordersResponse.total}
                           </div>
-                          <div className="flex items-center justify-center gap-2">
+                          <div className="flex items-center justify-center gap-2 pagination-controls">
                             <Button
                               variant="ghost"
                               size="sm"
