@@ -7456,6 +7456,51 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
+        {/* PWA Settings */}
+        <Collapsible open={isPwaSettingsOpen} onOpenChange={setIsPwaSettingsOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                <Smartphone className="h-5 w-5 text-primary" />
+                <h3 className="text-lg font-semibold">{adminT('storeSettings.pwaSettings')}</h3>
+                {isPwaSettingsOpen ? (
+                  <ChevronUp className={`h-4 w-4 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+                ) : (
+                  <ChevronDown className={`h-4 w-4 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="pwaIconUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">{adminT('storeSettings.pwaIconUrl')}</FormLabel>
+                  <FormControl>
+                    <div className="space-y-2">
+                      <Input 
+                        placeholder="https://example.com/icon-512x512.png" 
+                        {...field}
+                        value={field.value || ""}
+                      />
+                      <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
+                        <Info className="h-3 w-3" />
+                        {adminT('storeSettings.pwaIconUrlTooltip')}
+                      </FormDescription>
+                    </div>
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+          </CollapsibleContent>
+        </Collapsible>
+
         <div className="flex justify-center">
           <Button 
             type="submit" 
