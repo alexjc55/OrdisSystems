@@ -407,6 +407,18 @@
     "poweredBy": "Powered by Ordis.",
     "tryBusiness": "Try it for your business."
   },
+  "pwa": {
+    "installTitle": "התקן אפליקציה",
+    "installDescription": "התקן את eDAHouse לגישה נוחה ללא דפדפן",
+    "installDescriptionIOS": "הוסף את eDAHouse למסך הבית לגישה מהירה",
+    "install": "התקן",
+    "later": "מאוחר יותר",
+    "offline": "עובד במצב לא מקוון",
+    "installedMode": "אפליקציה מותקנת",
+    "updateAvailable": "עדכון זמין",
+    "reload": "רענן",
+    "workingOffline": "עובד ללא אינטרנט"
+  },
   "error": "שגיאה",
   "cart": {
     "cart": "תורגם",
