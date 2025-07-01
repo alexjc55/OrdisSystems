@@ -322,6 +322,11 @@ export default function Header({ onResetView }: HeaderProps) {
                 );
               })()}
               
+              {/* PWA Install Button - Always show */}
+              <div className="border-t border-gray-200 pt-4 mt-4">
+                <PWAInstallButton />
+              </div>
+              
               {/* Login Button for non-logged in users */}
               {!user && (
                 <div className="border-t border-gray-200 pt-4 mt-4">
@@ -333,9 +338,6 @@ export default function Header({ onResetView }: HeaderProps) {
                   </Link>
                 </div>
               )}
-              
-              {/* PWA Install Button */}
-              <PWAInstallButton />
               
               {/* Logout Button - Only for logged in users */}
               {user && (

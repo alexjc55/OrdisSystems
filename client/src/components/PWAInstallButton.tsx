@@ -88,14 +88,12 @@ export function PWAInstallButton() {
   }
 
   return (
-    <div className="px-2 py-2">
-      <div 
-        className="flex items-center justify-center px-4 py-3 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-600 transition-colors cursor-pointer"
-        onClick={handleInstall}
-      >
-        <Download className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
-        <span className="font-medium">{t('pwa.installApp')}</span>
-      </div>
+    <div 
+      className="flex items-center justify-center px-4 py-3 mx-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white transition-all duration-200 cursor-pointer transform hover:scale-105 shadow-lg"
+      onClick={handleInstall}
+    >
+      <Download className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
+      <span className="font-medium">{t('pwa.installApp')}</span>
     </div>
   );
 }
