@@ -69,21 +69,23 @@ export function PWAInstallButton({ variant = 'mobile' }: PWAInstallButtonProps) 
       setDeferredPrompt(null);
     };
 
-    // Show button for iOS Safari (doesn't support beforeinstallprompt) or after receiving the event
-    if (isIOS && isSafari) {
+    // Show button immediately for all mobile devices to avoid delay
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile || (isIOS && isSafari)) {
       setShowButton(true);
-      console.log('iOS Safari detected, showing install button immediately');
+      console.log('Mobile device or iOS Safari detected, showing install button immediately');
     } else {
       setShowButton(false);
-      console.log('Waiting for beforeinstallprompt event or showing fallback after timeout');
+      console.log('Desktop - waiting for beforeinstallprompt event or showing fallback after timeout');
       
-      // Fallback: show button after 3 seconds if no beforeinstallprompt event
+      // Fallback: show button after 2 seconds if no beforeinstallprompt event (reduced from 3 to 2)
       fallbackTimer = setTimeout(() => {
         if (supportsPWA) {
           setShowButton(true);
           console.log('Fallback: showing install button after timeout');
         }
-      }, 3000);
+      }, 2000);
     }
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
