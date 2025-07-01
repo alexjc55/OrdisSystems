@@ -213,6 +213,7 @@ export const storeSettings = pgTable("store_settings", {
   }),
   defaultLanguage: varchar("default_language", { length: 5 }).default("ru"), // Default site language
   enabledLanguages: jsonb("enabled_languages").default(["ru", "en", "he", "ar"]), // Array of enabled language codes
+  pwaIconUrl: varchar("pwa_icon_url", { length: 500 }), // PWA app icon URL (512x512 PNG format)
   
   // Russian fields (base language)
   aboutTextRu: text("about_text_ru"),

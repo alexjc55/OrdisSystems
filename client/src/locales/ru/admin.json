@@ -823,7 +823,10 @@
     "canEditOrdersDescription": "Разрешить редактирование заказов клиентов",
     "canViewSettingsDescription": "Разрешить просмотр настроек магазина",
     "canManageSettingsDescription": "Разрешить изменение настроек магазина",
-    "canEditOrders": "Редактирование заказов"
+    "canEditOrders": "Редактирование заказов",
+    "pwaSettings": "Настройки PWA приложения",
+    "pwaIconUrl": "Иконка PWA приложения",
+    "pwaIconTooltip": "Формат: PNG, размер: 512x512 пикселей. Эта иконка будет отображаться на главном экране устройства при установке приложения."
   },
   "systemSettings": {
     "canManageProducts": "Управление товарами",
