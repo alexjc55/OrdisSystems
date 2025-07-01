@@ -4060,24 +4060,24 @@ export default function AdminDashboard() {
                             <TableHeader>
                               <TableRow dir={isRTL ? 'rtl' : 'ltr'}>
                                 <TableHead 
-                                  className={`text-sm sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '80px'} : {textAlign: 'center', width: '80px'}}
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'} w-12 sm:w-20`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >№</TableHead>
                                 <TableHead 
-                                  className={`text-sm sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '180px'} : {textAlign: 'center', width: '180px'}}
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'} min-w-0 flex-1`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('orders.customer')}</TableHead>
                                 <TableHead 
-                                  className={`text-sm sm:text-sm hidden sm:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '120px'} : {textAlign: 'center', width: '120px'}}
+                                  className={`text-xs sm:text-sm hidden sm:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'} w-24 sm:w-32`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('orders.statusHeader')}</TableHead>
                                 <TableHead 
-                                  className={`text-sm sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '100px'} : {textAlign: 'center', width: '100px'}}
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'} w-16 sm:w-24`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('orders.orderTotal')}</TableHead>
                                 <TableHead 
-                                  className={`text-sm sm:text-sm hidden md:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'}`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl', width: '120px'} : {textAlign: 'center', width: '120px'}}
+                                  className={`text-xs sm:text-sm hidden md:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'} w-20 sm:w-28`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('orders.orderDate')}</TableHead>
 
                               </TableRow>
@@ -4086,7 +4086,7 @@ export default function AdminDashboard() {
                               {ordersResponse.data.map((order: any) => (
                                 <TableRow key={order.id} className="hover:bg-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
                                   <TableCell 
-                                    className={`font-bold text-sm sm:text-sm text-primary ${isRTL ? 'text-right' : 'text-center'}`}
+                                    className={`font-bold text-xs sm:text-sm text-primary ${isRTL ? 'text-right' : 'text-center'} w-12 sm:w-20`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                   >
                                     <div className="flex flex-col items-center gap-1">
@@ -4104,7 +4104,7 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell 
-                                    className={`text-sm sm:text-sm ${isRTL ? 'text-right' : 'text-left'} px-3`}
+                                    className={`text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'} min-w-0 flex-1 px-1 sm:px-3`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'left'}}
                                   >
                                     <div className="space-y-1">
@@ -4146,7 +4146,7 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell 
-                                    className={`hidden sm:table-cell ${isRTL ? 'text-right' : 'text-center'}`}
+                                    className={`hidden sm:table-cell ${isRTL ? 'text-right' : 'text-center'} w-24 sm:w-32 px-1 sm:px-3`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                   >
                                     <Select
@@ -4173,7 +4173,7 @@ export default function AdminDashboard() {
                                     </Select>
                                   </TableCell>
                                   <TableCell 
-                                    className={`font-medium text-sm sm:text-sm ${isRTL ? 'text-right' : 'text-center'}`}
+                                    className={`font-medium text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-center'} w-16 sm:w-24 px-1 sm:px-3`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                   >
                                     {(() => {
