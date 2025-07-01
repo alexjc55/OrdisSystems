@@ -5030,7 +5030,7 @@ export default function AdminDashboard() {
                           title={adminT('common.nextPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isRTL ? <ChevronLeft className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                          <ChevronRight className="h-3 w-3" />
                         </Button>
                         <Button
                           variant="outline"
