@@ -1871,10 +1871,10 @@ export default function ThemeManager() {
                     </div>
                     
                     {/* PWA Settings */}
-                    <div className="space-y-2" style={{border: '2px solid blue', padding: '10px'}}>
-                      <Label className="flex items-center gap-2" htmlFor="edit-pwaIconUrl">
-                        <Upload className="h-4 w-4" />
-                        PWA Icon URL EDIT (DEBUG)
+                    <div className="space-y-2 p-4 border-2 border-orange-200 bg-orange-50 rounded-lg">
+                      <Label className="flex items-center gap-2 text-orange-800 font-semibold" htmlFor="edit-pwaIconUrl">
+                        <Upload className="h-4 w-4 text-orange-600" />
+                        {adminT('themes.pwaIconUrl')} ⭐ NEW
                       </Label>
                       <Input 
                         id="edit-pwaIconUrl" 
