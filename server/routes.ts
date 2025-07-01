@@ -18,10 +18,8 @@ import { promisify } from "util";
 const adminCache = new Map<string, { data: any; expiry: number }>();
 
 function setCache(key: string, data: any, ttlSeconds: number = 300) {
-  adminCache.set(key, {
-    data,
-    expiry: Date.now() + (ttlSeconds * 1000)
-  });
+  // Cache completely disabled for development
+  return;
 }
 
 function getCache(key: string) {
