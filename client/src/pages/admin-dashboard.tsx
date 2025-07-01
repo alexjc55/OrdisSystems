@@ -3141,7 +3141,7 @@ export default function AdminDashboard() {
     });
 
   return (
-    <div className={`min-h-screen bg-gray-50 pt-16`} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen bg-gray-50 pt-16 admin-dashboard`} dir={isRTL ? 'rtl' : 'ltr'}>
       <Header />
       
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
@@ -3832,10 +3832,10 @@ export default function AdminDashboard() {
                           title="Предыдущая страница"
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          <ChevronLeft className="h-4 w-4" />
+                          {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                         </Button>
-                        <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
-                          {productsPage} из {productsTotalPages}
+                        <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center" dir="ltr">
+                          {productsPage} / {productsTotalPages}
                         </span>
                         <Button
                           variant="outline"
@@ -3845,7 +3845,7 @@ export default function AdminDashboard() {
                           title="Следующая страница"
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          <ChevronRight className="h-4 w-4" />
+                          {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                         </Button>
                         <Button
                           variant="outline"
@@ -4631,10 +4631,10 @@ export default function AdminDashboard() {
                               title="Предыдущая страница"
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              <ChevronLeft className="h-4 w-4" />
+                              {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                             </Button>
-                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
-                              {ordersResponse.page} из {ordersResponse.totalPages}
+                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center" dir="ltr">
+                              {ordersResponse.page} / {ordersResponse.totalPages}
                             </span>
                             <Button
                               variant="outline"
@@ -4644,7 +4644,7 @@ export default function AdminDashboard() {
                               title="Следующая страница"
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              <ChevronRight className="h-4 w-4" />
+                              {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                             </Button>
                             <Button
                               variant="outline"
