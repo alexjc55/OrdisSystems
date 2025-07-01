@@ -3209,6 +3209,7 @@ export default function AdminDashboard() {
                           {activeTab === 'orders' && <ShoppingCart className="w-5 h-5" />}
                           {activeTab === 'users' && <Users className="w-5 h-5" />}
                           {activeTab === 'store' && <Settings className="w-5 h-5" />}
+                          {activeTab === 'notifications' && <Bell className="w-5 h-5" />}
                           {activeTab === 'settings' && <UserCheck className="w-5 h-5" />}
                           {activeTab === 'themes' && <Palette className="w-5 h-5" />}
                         </>
@@ -3219,6 +3220,7 @@ export default function AdminDashboard() {
                         {activeTab === 'orders' && adminT('tabs.orders')}
                         {activeTab === 'users' && adminT('tabs.users')}
                         {activeTab === 'store' && adminT('tabs.settings')}
+                        {activeTab === 'notifications' && "Push Уведомления"}
                         {activeTab === 'settings' && adminT('tabs.permissions')}
                         {activeTab === 'themes' && adminT('tabs.themes')}
                       </span>
@@ -3229,6 +3231,7 @@ export default function AdminDashboard() {
                           {activeTab === 'orders' && <ShoppingCart className="w-5 h-5" />}
                           {activeTab === 'users' && <Users className="w-5 h-5" />}
                           {activeTab === 'store' && <Settings className="w-5 h-5" />}
+                          {activeTab === 'notifications' && <Bell className="w-5 h-5" />}
                           {activeTab === 'settings' && <UserCheck className="w-5 h-5" />}
                           {activeTab === 'themes' && <Palette className="w-5 h-5" />}
                         </>
@@ -3279,6 +3282,15 @@ export default function AdminDashboard() {
                         {!isRTL && <Settings className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.settings')}</span>
                         {isRTL && <Settings className="w-5 h-5" />}
+                      </div>
+                    </SelectItem>
+                  )}
+                  {user?.role === 'admin' && (
+                    <SelectItem value="notifications" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        {!isRTL && <Bell className="w-5 h-5" />}
+                        <span className="text-lg">Push Уведомления</span>
+                        {isRTL && <Bell className="w-5 h-5" />}
                       </div>
                     </SelectItem>
                   )}
@@ -5103,6 +5115,28 @@ export default function AdminDashboard() {
 
             </div>
           </TabsContent>
+          )}
+
+          {/* Push Notifications Management */}
+          {user?.role === 'admin' && (
+            <TabsContent value="notifications" className="space-y-4 sm:space-y-6">
+              <Card>
+                <CardHeader>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                      <Bell className="h-5 w-5" />
+                      Push Уведомления
+                    </CardTitle>
+                    <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                      Управление push уведомлениями для пользователей
+                    </CardDescription>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <PushNotificationsPanel />
+                </CardContent>
+              </Card>
+            </TabsContent>
           )}
 
           {/* Settings Management */}
