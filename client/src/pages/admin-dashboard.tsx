@@ -295,7 +295,13 @@ const productSchema = z.object({
 
 const categorySchema = z.object({
   name: z.string().min(1),
+  name_en: z.string().optional(),
+  name_he: z.string().optional(),
+  name_ar: z.string().optional(),
   description: z.string().optional(),
+  description_en: z.string().optional(),
+  description_he: z.string().optional(),
+  description_ar: z.string().optional(),
   icon: z.string().default("🍽️"),
 });
 
@@ -5404,37 +5410,208 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm">{adminT('products.dialog.nameLabel')}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={adminT('products.dialog.namePlaceholder')} {...field} className="text-sm" />
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
+            
+            {/* Language Tabs for Name and Description */}
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2 mb-4">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('ru')}
+                  className={`px-3 py-1 text-sm rounded ${
+                    activeTab === 'ru' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  🇷🇺 Русский
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('en')}
+                  className={`px-3 py-1 text-sm rounded ${
+                    activeTab === 'en' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  🇺🇸 English
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('he')}
+                  className={`px-3 py-1 text-sm rounded ${
+                    activeTab === 'he' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  🇮🇱 עברית
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('ar')}
+                  className={`px-3 py-1 text-sm rounded ${
+                    activeTab === 'ar' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  🇸🇦 العربية
+                </button>
+              </div>
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm">{adminT('products.dialog.descriptionLabel')}</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder={adminT('products.dialog.descriptionPlaceholder')}
-                      className="resize-none text-sm"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
+              {/* Name Fields */}
+              {activeTab === 'ru' && (
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('products.dialog.nameLabel')} (Русский)</FormLabel>
+                      <FormControl>
+                        <Input placeholder={adminT('products.dialog.namePlaceholder')} {...field} className="text-sm" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
               )}
-            />
+
+              {activeTab === 'en' && (
+                <FormField
+                  control={form.control}
+                  name="name_en"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('products.dialog.nameLabel')} (English)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Product name in English" {...field} className="text-sm" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {activeTab === 'he' && (
+                <FormField
+                  control={form.control}
+                  name="name_he"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('products.dialog.nameLabel')} (עברית)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="שם המוצר בעברית" {...field} className="text-sm" dir="rtl" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {activeTab === 'ar' && (
+                <FormField
+                  control={form.control}
+                  name="name_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('products.dialog.nameLabel')} (العربية)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="اسم المنتج بالعربية" {...field} className="text-sm" dir="rtl" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {/* Description Fields */}
+              {activeTab === 'ru' && (
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('products.dialog.descriptionLabel')} (Русский)</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder={adminT('products.dialog.descriptionPlaceholder')}
+                          className="resize-none text-sm"
+                          rows={3}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {activeTab === 'en' && (
+                <FormField
+                  control={form.control}
+                  name="description_en"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('products.dialog.descriptionLabel')} (English)</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Product description in English"
+                          className="resize-none text-sm"
+                          rows={3}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {activeTab === 'he' && (
+                <FormField
+                  control={form.control}
+                  name="description_he"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('products.dialog.descriptionLabel')} (עברית)</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="תיאור המוצר בעברית"
+                          className="resize-none text-sm"
+                          rows={3}
+                          dir="rtl"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {activeTab === 'ar' && (
+                <FormField
+                  control={form.control}
+                  name="description_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('products.dialog.descriptionLabel')} (العربية)</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="وصف المنتج بالعربية"
+                          className="resize-none text-sm"
+                          rows={3}
+                          dir="rtl"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
 
             <FormField
               control={form.control}
@@ -5720,12 +5897,19 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
+  const [activeTab, setActiveTab] = useState('ru');
   
   const form = useForm({
     resolver: zodResolver(categorySchema),
     defaultValues: {
       name: "",
+      name_en: "",
+      name_he: "",
+      name_ar: "",
       description: "",
+      description_en: "",
+      description_he: "",
+      description_ar: "",
       icon: "🍽️",
     },
   });
@@ -5735,13 +5919,25 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
       if (category) {
         form.reset({
           name: category.name || "",
+          name_en: category.name_en || "",
+          name_he: category.name_he || "",
+          name_ar: category.name_ar || "",
           description: category.description || "",
+          description_en: category.description_en || "",
+          description_he: category.description_he || "",
+          description_ar: category.description_ar || "",
           icon: category.icon || "🍽️",
         });
       } else {
         form.reset({
           name: "",
+          name_en: "",
+          name_he: "",
+          name_ar: "",
           description: "",
+          description_en: "",
+          description_he: "",
+          description_ar: "",
           icon: "🍽️",
         });
       }
@@ -5764,43 +5960,208 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')}</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder={adminT('categories.fields.namePlaceholder')} 
-                      {...field} 
-                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                      dir={isRTL ? 'rtl' : 'ltr'}
-                    />
-                  </FormControl>
-                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
-                </FormItem>
-              )}
-            />
+            
+            {/* Language Tabs for Name and Description */}
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2 mb-4">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('ru')}
+                  className={`px-3 py-1 text-sm rounded ${
+                    activeTab === 'ru' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  🇷🇺 Русский
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('en')}
+                  className={`px-3 py-1 text-sm rounded ${
+                    activeTab === 'en' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  🇺🇸 English
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('he')}
+                  className={`px-3 py-1 text-sm rounded ${
+                    activeTab === 'he' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  🇮🇱 עברית
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('ar')}
+                  className={`px-3 py-1 text-sm rounded ${
+                    activeTab === 'ar' 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  🇸🇦 العربية
+                </button>
+              </div>
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description')}</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder={adminT('categories.fields.descriptionPlaceholder')}
-                      className={`resize-none text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                      dir={isRTL ? 'rtl' : 'ltr'}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
-                </FormItem>
+              {/* Name Fields */}
+              {activeTab === 'ru' && (
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('categories.fields.name')} (Русский)</FormLabel>
+                      <FormControl>
+                        <Input placeholder={adminT('categories.fields.namePlaceholder')} {...field} className="text-sm" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
               )}
-            />
+
+              {activeTab === 'en' && (
+                <FormField
+                  control={form.control}
+                  name="name_en"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('categories.fields.name')} (English)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Category name in English" {...field} className="text-sm" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {activeTab === 'he' && (
+                <FormField
+                  control={form.control}
+                  name="name_he"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('categories.fields.name')} (עברית)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="שם הקטגוריה בעברית" {...field} className="text-sm" dir="rtl" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {activeTab === 'ar' && (
+                <FormField
+                  control={form.control}
+                  name="name_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('categories.fields.name')} (العربية)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="اسم الفئة بالعربية" {...field} className="text-sm" dir="rtl" />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {/* Description Fields */}
+              {activeTab === 'ru' && (
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('categories.fields.description')} (Русский)</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder={adminT('categories.fields.descriptionPlaceholder')}
+                          className="resize-none text-sm"
+                          rows={3}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {activeTab === 'en' && (
+                <FormField
+                  control={form.control}
+                  name="description_en"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('categories.fields.description')} (English)</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Category description in English"
+                          className="resize-none text-sm"
+                          rows={3}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {activeTab === 'he' && (
+                <FormField
+                  control={form.control}
+                  name="description_he"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('categories.fields.description')} (עברית)</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="תיאור הקטגוריה בעברית"
+                          className="resize-none text-sm"
+                          rows={3}
+                          dir="rtl"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {activeTab === 'ar' && (
+                <FormField
+                  control={form.control}
+                  name="description_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('categories.fields.description')} (العربية)</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="وصف الفئة بالعربية"
+                          className="resize-none text-sm"
+                          rows={3}
+                          dir="rtl"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
 
             <FormField
               control={form.control}
