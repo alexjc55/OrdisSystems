@@ -4262,7 +4262,7 @@ export default function AdminDashboard() {
                                     })()}
                                   </TableCell>
                                   <TableCell 
-                                    className={`text-sm sm:text-sm hidden md:table-cell ${isRTL ? 'text-right' : 'text-center'}`}
+                                    className={`text-xs sm:text-sm hidden md:table-cell ${isRTL ? 'text-right' : 'text-center'} w-20 sm:w-28 px-1 sm:px-3`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                   >
                                     <div className="space-y-1" dir="ltr">
