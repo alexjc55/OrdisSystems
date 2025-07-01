@@ -1422,138 +1422,6 @@ button:focus,
     border-radius: 4px;
   }
 
-  /* CRITICAL RTL ADMIN PANEL FIXES */
-  
-  /* Admin Panel Tables - Force RTL for Hebrew and Arabic */
-  html[lang="he"] .admin-dashboard,
-  html[lang="ar"] .admin-dashboard {
-    direction: rtl !important;
-  }
-  
-  /* Table containers - RTL alignment */
-  html[lang="he"] .admin-dashboard table,
-  html[lang="ar"] .admin-dashboard table,
-  html[lang="he"] [data-tab] table,
-  html[lang="ar"] [data-tab] table {
-    direction: rtl !important;
-    text-align: right !important;
-  }
-  
-  /* All table cells - RTL text alignment */
-  html[lang="he"] .admin-dashboard th,
-  html[lang="ar"] .admin-dashboard th,
-  html[lang="he"] .admin-dashboard td,
-  html[lang="ar"] .admin-dashboard td {
-    text-align: right !important;
-    direction: rtl !important;
-  }
-  
-  /* Pagination - RTL layout for mobile */
-  html[lang="he"] .pagination-container,
-  html[lang="ar"] .pagination-container {
-    direction: rtl !important;
-  }
-  
-  /* Pagination buttons - proper RTL order */
-  html[lang="he"] .pagination-buttons,
-  html[lang="ar"] .pagination-buttons {
-    flex-direction: row-reverse !important;
-  }
-  
-  /* Pagination text alignment */
-  html[lang="he"] .pagination-info,
-  html[lang="ar"] .pagination-info {
-    text-align: right !important;
-    direction: rtl !important;
-  }
-  
-  /* Navigation arrows for RTL - reverse direction */
-  html[lang="he"] .pagination-prev,
-  html[lang="ar"] .pagination-prev {
-    order: 2 !important;
-  }
-  
-  html[lang="he"] .pagination-next,
-  html[lang="ar"] .pagination-next {
-    order: 1 !important;
-  }
-  
-  /* Mobile pagination fixes */
-  @media (max-width: 768px) {
-    html[lang="he"] .mobile-pagination,
-    html[lang="ar"] .mobile-pagination {
-      direction: rtl !important;
-      text-align: right !important;
-    }
-    
-    html[lang="he"] .mobile-pagination .flex,
-    html[lang="ar"] .mobile-pagination .flex {
-      flex-direction: row-reverse !important;
-    }
-    
-    html[lang="he"] .mobile-pagination .text-sm,
-    html[lang="ar"] .mobile-pagination .text-sm {
-      text-align: right !important;
-    }
-  }
-  
-  /* Tab list and tab triggers - RTL alignment */
-  html[lang="he"] .admin-tabs-list,
-  html[lang="ar"] .admin-tabs-list {
-    direction: rtl !important;
-    flex-direction: row-reverse !important;
-  }
-  
-  html[lang="he"] .admin-tabs-trigger,
-  html[lang="ar"] .admin-tabs-trigger {
-    text-align: right !important;
-  }
-  
-  /* Form controls and buttons - RTL alignment */
-  html[lang="he"] .admin-dashboard .flex.items-center,
-  html[lang="ar"] .admin-dashboard .flex.items-center {
-    flex-direction: row-reverse !important;
-  }
-  
-  html[lang="he"] .admin-dashboard .justify-between,
-  html[lang="ar"] .admin-dashboard .justify-between {
-    flex-direction: row-reverse !important;
-  }
-  
-  /* Search and filter controls */
-  html[lang="he"] .admin-controls,
-  html[lang="ar"] .admin-controls {
-    direction: rtl !important;
-  }
-  
-  html[lang="he"] .admin-search,
-  html[lang="ar"] .admin-search {
-    text-align: right !important;
-    direction: rtl !important;
-  }
-  
-  /* Dialog and modal content */
-  html[lang="he"] .dialog-content,
-  html[lang="ar"] .dialog-content,
-  html[lang="he"] [role="dialog"],
-  html[lang="ar"] [role="dialog"] {
-    direction: rtl !important;
-    text-align: right !important;
-  }
-  
-  /* Button text alignment - keep centered */
-  html[lang="he"] button,
-  html[lang="ar"] button {
-    text-align: center !important;
-  }
-  
-  /* Action buttons container */
-  html[lang="he"] .admin-actions,
-  html[lang="ar"] .admin-actions {
-    flex-direction: row-reverse !important;
-    justify-content: flex-start !important;
-  }
-
   [dir="rtl"] .table-container::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
   }
@@ -1720,6 +1588,7 @@ button:focus,
   .text-warning {
     color: hsl(var(--warning));
   }
+}
 
 /* СТИЛИ ДЛЯ SELECT МЕНЮ - МАКСИМАЛЬНАЯ СПЕЦИФИЧНОСТЬ */
 
@@ -2473,4 +2342,3 @@ html[lang="ar"] * {
 }
 
 
-}
