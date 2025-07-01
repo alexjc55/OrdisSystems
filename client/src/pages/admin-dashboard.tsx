@@ -6211,34 +6211,34 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             )}
           />
 
-            {/* PWA Icon URL Field */}
-            <FormField
-              control={form.control}
-              name="pwaIconUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm flex items-center gap-2">
-                    <Smartphone className="h-4 w-4 text-primary" />
-                    {adminT('storeSettings.pwaIconUrl')}
-                  </FormLabel>
-                  <FormControl>
-                    <div className="space-y-2">
-                      <Input 
-                        placeholder="https://example.com/icon-512x512.png" 
-                        {...field}
-                        value={field.value || ""}
-                        className="text-sm"
-                      />
-                      <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
-                        <Info className="h-3 w-3" />
-                        {adminT('storeSettings.pwaIconUrlTooltip')}
-                      </FormDescription>
-                    </div>
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
+          {/* PWA Icon URL Field */}
+          <FormField
+            control={form.control}
+            name="pwaIconUrl"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel className="text-sm flex items-center gap-2">
+                  <Smartphone className="h-4 w-4 text-primary" />
+                  {adminT('storeSettings.pwaIconUrl')}
+                </FormLabel>
+                <FormControl>
+                  <div className="space-y-2">
+                    <Input 
+                      placeholder="https://example.com/icon-512x512.png" 
+                      {...field}
+                      value={field.value || ""}
+                      className="text-sm"
+                    />
+                    <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
+                      <Info className="h-3 w-3" />
+                      {adminT('storeSettings.pwaIconUrlTooltip')}
+                    </FormDescription>
+                  </div>
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
             </div>
           </CollapsibleContent>
         </Collapsible>
