@@ -4994,18 +4994,18 @@ export default function AdminDashboard() {
                     </div>
                     
                     {/* Desktop: Standard layout */}
-                    <div className="hidden sm:flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-3 border-t border-gray-100 bg-gray-50/30">
-                      <div className="text-xs text-gray-600">
-                        {adminT('common.showing')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('common.of')} {usersTotal}
+                    <div className={`hidden sm:flex items-center justify-between px-4 py-3 border-t bg-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div className={`flex items-center gap-2 text-sm text-gray-700 pagination-controls ${isRTL ? 'text-right' : 'text-left'}`}>
+                        <span>{adminT('common.showing')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('common.of')} {usersTotal}</span>
                       </div>
-                      <div className="flex items-center gap-1 pagination-controls">
+                      <div className={`flex items-center gap-2 pagination-controls ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setUsersPage(1)}
                           disabled={usersPage === 1}
                           title={adminT('common.firstPage')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           ⟨⟨
                         </Button>
@@ -5014,12 +5014,12 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setUsersPage(prev => Math.max(1, prev - 1))}
                           disabled={usersPage === 1}
-                          title={adminT('common.prevPage')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                          title={adminT('common.previousPage')}
+                          className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          {(i18n.language === 'he' || i18n.language === 'ar') ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
+                          {(i18n.language === 'he' || i18n.language === 'ar') ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                         </Button>
-                        <span className="text-xs text-gray-600 px-2 min-w-[60px] text-center" dir="ltr">
+                        <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center" dir="ltr">
                           {usersPage} {adminT('common.of')} {usersTotalPages}
                         </span>
                         <Button
@@ -5028,9 +5028,9 @@ export default function AdminDashboard() {
                           onClick={() => setUsersPage(prev => Math.min(usersTotalPages, prev + 1))}
                           disabled={usersPage >= usersTotalPages}
                           title={adminT('common.nextPage')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          {(i18n.language === 'he' || i18n.language === 'ar') ? <ChevronLeft className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                          {(i18n.language === 'he' || i18n.language === 'ar') ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                         </Button>
                         <Button
                           variant="outline"
@@ -5038,7 +5038,7 @@ export default function AdminDashboard() {
                           onClick={() => setUsersPage(usersTotalPages)}
                           disabled={usersPage >= usersTotalPages}
                           title={adminT('common.lastPage')}
-                          className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           ⟩⟩
                         </Button>
