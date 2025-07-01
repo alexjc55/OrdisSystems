@@ -15,7 +15,7 @@ interface BeforeInstallPromptEvent extends Event {
 export function PWAInstallButton() {
   const { t } = useTranslation('common');
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isInstalled, setIsInstalled] = useState(false);
+  const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
     // Check if running in PWA mode (standalone mode)
@@ -23,33 +23,29 @@ export function PWAInstallButton() {
     const isIOSStandalone = (window.navigator as any).standalone === true;
     const isPWAMode = isStandaloneMode || isIOSStandalone;
     
+    console.log('PWA Detection:', { isStandaloneMode, isIOSStandalone, isPWAMode });
+    
     if (isPWAMode) {
       // Already running as PWA, don't show install button
-      setIsInstalled(true);
+      console.log('Already in PWA mode, hiding install button');
+      setShowButton(false);
       return;
     }
 
-    // Check if already installed
-    if ('serviceWorker' in navigator && 'getInstalledRelatedApps' in navigator) {
-      // @ts-ignore
-      navigator.getInstalledRelatedApps().then((apps: any[]) => {
-        setIsInstalled(apps.length > 0);
-      }).catch(() => {
-        // Fallback detection
-        setIsInstalled(false);
-      });
-    } else {
-      // Default to not installed for browsers that don't support detection
-      setIsInstalled(false);
-    }
+    // Show button temporarily for testing
+    setShowButton(true);
+    console.log('Not in PWA mode, showing install button for testing');
 
     const handleBeforeInstallPrompt = (e: Event) => {
+      console.log('beforeinstallprompt event received');
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
+      setShowButton(true);
     };
 
     const handleAppInstalled = () => {
-      setIsInstalled(true);
+      console.log('App installed');
+      setShowButton(false);
       setDeferredPrompt(null);
     };
 
@@ -63,14 +59,21 @@ export function PWAInstallButton() {
   }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return;
+    console.log('Install button clicked, deferredPrompt:', !!deferredPrompt);
+    
+    if (!deferredPrompt) {
+      console.log('No deferred prompt available');
+      return;
+    }
 
     try {
       await deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       
+      console.log('Install outcome:', outcome);
+      
       if (outcome === 'accepted') {
-        setIsInstalled(true);
+        setShowButton(false);
       }
       
       setDeferredPrompt(null);
@@ -79,8 +82,8 @@ export function PWAInstallButton() {
     }
   };
 
-  // Don't show if already installed or no install prompt available
-  if (isInstalled || !deferredPrompt) {
+  // Don't show if in PWA mode
+  if (!showButton) {
     return null;
   }
 

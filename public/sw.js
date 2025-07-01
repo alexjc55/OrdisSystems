@@ -1,49 +1,25 @@
-const CACHE_NAME = 'edahouse-v2';
-const STATIC_CACHE = 'edahouse-static-v2';
-const DYNAMIC_CACHE = 'edahouse-dynamic-v2';
+const CACHE_NAME = 'edahouse-v3';
 
-// Files to cache immediately
+// Minimal caching - only manifest
 const STATIC_FILES = [
-  '/',
-  '/admin',
-  '/auth',
-  '/manifest.json',
-  // Add more static assets as needed
+  '/manifest.json'
 ];
 
-// API endpoints to cache
-const API_CACHE_PATTERNS = [
-  '/api/settings',
-  '/api/categories',
-  '/api/products'
-];
-
-// Install event - cache static files
+// Install event - minimal setup
 self.addEventListener('install', (event) => {
   console.log('Service Worker installing...');
-  event.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then((cache) => {
-        console.log('Caching static files');
-        return cache.addAll(STATIC_FILES);
-      })
-      .then(() => {
-        return self.skipWaiting();
-      })
-  );
+  event.waitUntil(self.skipWaiting());
 });
 
-// Activate event - clean up old caches
+// Activate event - take control immediately
 self.addEventListener('activate', (event) => {
   console.log('Service Worker activating...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
+          console.log('Deleting cache:', cacheName);
+          return caches.delete(cacheName);
         })
       );
     }).then(() => {
@@ -52,121 +28,10 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - serve cached content when offline
+// Minimal fetch event - no caching
 self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
-  
-  // Handle API requests
-  if (url.pathname.startsWith('/api/')) {
-    event.respondWith(
-      handleApiRequest(event.request)
-    );
-    return;
-  }
-
-  // Always fetch admin panel fresh (no caching)
-  if (url.pathname === '/admin' || url.pathname.startsWith('/admin/')) {
-    event.respondWith(
-      fetch(event.request).catch(() => {
-        return caches.match('/');
-      })
-    );
-    return;
-  }
-
-  // Handle static files and pages
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        if (response) {
-          return response;
-        }
-        
-        return fetch(event.request)
-          .then((response) => {
-            // Don't cache non-successful responses
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-            
-            // Clone the response
-            const responseToCache = response.clone();
-            
-            caches.open(DYNAMIC_CACHE)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-            
-            return response;
-          })
-          .catch(() => {
-            // Return offline page for navigation requests
-            if (event.request.mode === 'navigate') {
-              return caches.match('/');
-            }
-          });
-      })
-  );
-});
-
-// Handle API requests with caching strategy
-async function handleApiRequest(request) {
-  const url = new URL(request.url);
-  
-  // Check if this API endpoint should be cached
-  const shouldCache = API_CACHE_PATTERNS.some(pattern => 
-    url.pathname.startsWith(pattern)
-  );
-  
-  if (!shouldCache) {
-    // For non-cached APIs, just fetch normally
-    try {
-      return await fetch(request);
-    } catch (error) {
-      return new Response('{"error": "Network unavailable"}', {
-        status: 503,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-  }
-  
-  try {
-    // Try network first for fresh data
-    const networkResponse = await fetch(request);
-    
-    if (networkResponse.ok) {
-      // Cache successful responses
-      const cache = await caches.open(DYNAMIC_CACHE);
-      cache.put(request, networkResponse.clone());
-      return networkResponse;
-    }
-    
-    // If network response is not ok, try cache
-    const cachedResponse = await caches.match(request);
-    return cachedResponse || networkResponse;
-    
-  } catch (error) {
-    // Network failed, try cache
-    const cachedResponse = await caches.match(request);
-    
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-    
-    // Return error response if no cache available
-    return new Response('{"error": "Network unavailable"}', {
-      status: 503,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-}
-
-// Background sync for offline actions
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'background-sync') {
-    console.log('Background sync triggered');
-    // Handle offline actions here
-  }
+  // Just pass through all requests without caching
+  event.respondWith(fetch(event.request));
 });
 
 // Push notifications (for future use)
