@@ -4701,10 +4701,10 @@ export default function AdminDashboard() {
                         
                         {/* Desktop: Original layout */}
                         <div className="hidden sm:flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <div className="flex items-center gap-2 text-sm text-gray-700 pagination-controls">
                             <span>{adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of')} {ordersResponse.total}</span>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 pagination-controls">
                             <Button
                               variant="outline"
                               size="sm"
@@ -4946,7 +4946,7 @@ export default function AdminDashboard() {
                       <div className="text-center text-xs text-gray-600">
                         {adminT('common.showing')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('common.of')} {usersTotal}
                       </div>
-                      <div className="flex items-center justify-center gap-2">
+                      <div className="flex items-center justify-center gap-2 pagination-controls">
                         <Button
                           variant="ghost"
                           size="sm"
@@ -4998,7 +4998,7 @@ export default function AdminDashboard() {
                       <div className="text-xs text-gray-600">
                         {adminT('common.showing')} {((usersPage - 1) * itemsPerPage) + 1}-{Math.min(usersPage * itemsPerPage, usersTotal)} {adminT('common.of')} {usersTotal}
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 pagination-controls">
                         <Button
                           variant="outline"
                           size="sm"
