@@ -1125,10 +1125,10 @@ export default function ThemeManager() {
                     </div>
                     
                     {/* PWA Settings */}
-                    <div className="space-y-2">
+                    <div className="space-y-2" style={{border: '2px solid red', padding: '10px'}}>
                       <Label className="flex items-center gap-2" htmlFor="pwaIconUrl">
                         <Upload className="h-4 w-4" />
-                        {adminT('themes.pwaIconUrl')}
+                        PWA Icon URL (DEBUG)
                       </Label>
                       <Input 
                         id="pwaIconUrl" 
@@ -1868,10 +1868,10 @@ export default function ThemeManager() {
                     </div>
                     
                     {/* PWA Settings */}
-                    <div className="space-y-2">
+                    <div className="space-y-2" style={{border: '2px solid blue', padding: '10px'}}>
                       <Label className="flex items-center gap-2" htmlFor="edit-pwaIconUrl">
                         <Upload className="h-4 w-4" />
-                        {adminT('themes.pwaIconUrl')}
+                        PWA Icon URL EDIT (DEBUG)
                       </Label>
                       <Input 
                         id="edit-pwaIconUrl" 
