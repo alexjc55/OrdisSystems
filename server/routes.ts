@@ -25,12 +25,8 @@ function setCache(key: string, data: any, ttlSeconds: number = 300) {
 }
 
 function getCache(key: string) {
-  const item = adminCache.get(key);
-  if (!item || Date.now() > item.expiry) {
-    adminCache.delete(key);
-    return null;
-  }
-  return item.data;
+  // Cache disabled for development
+  return null;
 }
 
 function clearCachePattern(pattern: string) {
@@ -78,6 +74,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Serve uploaded images
   app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
+  // Disable caching for development
+  app.use((req, res, next) => {
+    res.set({
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
+    next();
+  });
 
   // Auth middleware
   await setupAuth(app);
@@ -886,9 +892,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Get localized PWA name and description
       const getPwaField = (field: string) => {
-        if (currentLang === 'ru') return settings?.[field] || '';
+        if (currentLang === 'ru') return (settings as any)?.[field] || '';
         const langField = `${field}${currentLang.charAt(0).toUpperCase() + currentLang.slice(1)}`;
-        return settings?.[langField] || settings?.[field] || '';
+        return (settings as any)?.[langField] || (settings as any)?.[field] || '';
       };
       
       const manifest = {
@@ -988,6 +994,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error generating PWA manifest:', error);
       res.status(500).json({ message: 'Failed to generate PWA manifest' });
+    }
+  });
+
+  // Dynamic favicon endpoint
+  app.get('/api/favicon', async (req, res) => {
+    try {
+      const settings = await storage.getStoreSettings();
+      
+      if (settings?.pwaIcon) {
+        // Redirect to the uploaded PWA icon
+        res.redirect(settings.pwaIcon);
+      } else {
+        // Fallback to default favicon
+        res.redirect('/favicon.ico');
+      }
+    } catch (error) {
+      console.error('Error serving favicon:', error);
+      res.redirect('/favicon.ico');
     }
   });
 
