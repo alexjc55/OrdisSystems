@@ -131,6 +131,8 @@
     "buttonTextDefault": "اطلب الآن",
     "whatsappMessageDefault": "مرحباً! أنا مهتم بمنتجاتكم.",
     "whatsappChat": "دردشة WhatsApp",
+    "pwaIconUrl": "أيقونة PWA",
+    "pwaIconUrlTooltip": "رابط صورة الأيقونة لتطبيق PWA. التنسيق: PNG، الحجم: 512x512 بكسل.",
     "cartBannerTextPlaceholder": "أدخل نص شعار السلة",
     "brandColorsDescription": "ألوان العلامة التجارية الرئيسية للواجهة",
     "brandColors": "ألوان العلامة التجارية",

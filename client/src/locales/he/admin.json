@@ -144,6 +144,8 @@
     "buttonTextDefault": "הזמן עכשיו",
     "whatsappMessageDefault": "שלום! מעוניין במוצרים שלכם.",
     "whatsappChat": "צ׳אט WhatsApp",
+    "pwaIconUrl": "אייקון PWA",
+    "pwaIconUrlTooltip": "URL של תמונת האייקון עבור אפליקציית PWA. פורמט: PNG, גודל: 512x512 פיקסלים.",
     "logoStore": "לוגו החנות",
     "logoStoreDescription": "לוגו להצגה בכותרת האתר",
     "primaryFont": "גופן ראשי",

@@ -577,6 +577,8 @@
     "buttonTextDefault": "Order Now",
     "whatsappMessageDefault": "Hello! I am interested in your products.",
     "whatsappChat": "WhatsApp Chat",
+    "pwaIconUrl": "PWA App Icon",
+    "pwaIconUrlTooltip": "URL of the icon image for PWA application. Format: PNG, size: 512x512 pixels.",
     "cartBannerTextPlaceholder": "Enter cart banner text",
     "brandColorsDescription": "Main brand colors for interface",
     "brandColors": "Brand Colors",
