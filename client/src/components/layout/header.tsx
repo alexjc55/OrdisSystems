@@ -350,7 +350,7 @@ export default function Header({ onResetView }: HeaderProps) {
               {!isInstalled && (isMobile || isTablet) && (
                 <div className="border-t border-gray-200 pt-4 mt-4">
                   <div 
-                    className="flex items-center px-4 py-3 mx-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer"
+                    className="flex items-center justify-center px-4 py-3 mx-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer"
                     onClick={() => {
                       installApp();
                       setIsMobileMenuOpen(false);
