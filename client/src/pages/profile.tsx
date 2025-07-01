@@ -5,6 +5,8 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
+import { useSEO, generateKeywords } from "@/hooks/useSEO";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,7 +31,22 @@ export default function Profile() {
   const { t } = useCommonTranslation();
   const { t: tShop } = useShopTranslation();
   const { currentLanguage } = useLanguage();
+  const { storeSettings } = useStoreSettings();
   const queryClient = useQueryClient();
+
+  // SEO for profile page
+  const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
+  const title = `Личный кабинет - ${storeName || 'eDAHouse'}`;
+  const description = `Управление профилем, заказами и адресами доставки в ${storeName || 'eDAHouse'}`;
+  
+  useSEO({
+    title,
+    description,
+    keywords: generateKeywords(title, description),
+    ogTitle: title,
+    ogDescription: description,
+    canonical: currentLanguage === 'ru' ? '/profile' : `/${currentLanguage}/profile`
+  });
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
   const [addressForm, setAddressForm] = useState({

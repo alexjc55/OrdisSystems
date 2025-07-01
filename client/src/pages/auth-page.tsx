@@ -23,6 +23,20 @@ export default function AuthPage() {
   const { currentLanguage, changeLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState("login");
 
+  // SEO for auth page
+  const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
+  const title = `Вход в аккаунт - ${storeName || 'eDAHouse'}`;
+  const description = `Войдите в свой аккаунт в ${storeName || 'eDAHouse'} для оформления заказов`;
+  
+  useSEO({
+    title,
+    description,
+    keywords: generateKeywords(title, description),
+    ogTitle: title,
+    ogDescription: description,
+    canonical: currentLanguage === 'ru' ? '/auth' : `/${currentLanguage}/auth`
+  });
+
   // Dynamic validation messages based on current language
   const getValidationMessage = (key: string) => {
     type MessageKey = 'usernameRequired' | 'passwordRequired' | 'usernameMinLength' | 'passwordMinLength' | 'emailInvalid' | 'firstNameRequired' | 'lastNameRequired' | 'phoneRequired' | 'confirmPasswordRequired' | 'passwordMismatch' | 'usernameMaxLength' | 'usernameFormat';

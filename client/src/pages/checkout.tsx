@@ -25,6 +25,7 @@ import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, Ar
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
+import { useSEO, generateKeywords } from "@/hooks/useSEO";
 import { getPaymentMethodName as getLocalizedPaymentMethodName } from "@shared/multilingual-helpers";
 import { format } from "date-fns";
 import { ru, enUS, he } from "date-fns/locale";
@@ -163,6 +164,20 @@ export default function Checkout() {
   const { storeSettings } = useStoreSettings();
   const { currentLanguage } = useLanguage();
   const dateLocale = getDateLocale(currentLanguage);
+
+  // SEO for checkout page
+  const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
+  const title = `Оформление заказа - ${storeName || 'eDAHouse'}`;
+  const description = `Оформите заказ готовой еды с доставкой в ${storeName || 'eDAHouse'}`;
+  
+  useSEO({
+    title,
+    description,
+    keywords: generateKeywords(title, description),
+    ogTitle: title,
+    ogDescription: description,
+    canonical: currentLanguage === 'ru' ? '/checkout' : `/${currentLanguage}/checkout`
+  });
   
   // Helper function to get payment method name for current language with fallback to Russian
   const getPaymentMethodName = (method: any) => {

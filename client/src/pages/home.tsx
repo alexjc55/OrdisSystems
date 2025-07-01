@@ -336,10 +336,6 @@ export default function Home() {
     enabled: searchQuery.length > 2,
   });
 
-  const selectedCategory = useMemo(() => {
-    return categories.find(cat => cat.id === selectedCategoryId);
-  }, [categories, selectedCategoryId]);
-
   const handleCategorySelect = useCallback((categoryId: number | null) => {
     setSelectedCategoryId(categoryId);
     setSearchQuery("");
