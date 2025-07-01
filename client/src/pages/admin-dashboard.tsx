@@ -4108,7 +4108,7 @@ export default function AdminDashboard() {
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'left'}}
                                   >
                                     <div className="space-y-1">
-                                      <div className="font-medium">
+                                      <div className="font-medium text-xs sm:text-sm truncate">
                                         {order.user?.firstName && order.user?.lastName 
                                           ? `${order.user.firstName} ${order.user.lastName}`
                                           : order.user?.email || "—"
