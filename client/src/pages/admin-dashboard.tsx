@@ -267,7 +267,9 @@ import {
   Languages,
   Layers3,
   UserCheck,
-  MoreHorizontal
+  MoreHorizontal,
+  Smartphone,
+  Info
 } from "lucide-react";
 
 // Validation schemas
@@ -5892,6 +5894,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
   const [isVisualsOpen, setIsVisualsOpen] = useState(false);
+  const [isPwaSettingsOpen, setIsPwaSettingsOpen] = useState(false);
   const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
   const [isWorkingHoursOpen, setIsWorkingHoursOpen] = useState(false);
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
@@ -5958,6 +5961,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       cartBannerTextColor: storeSettings?.cartBannerTextColor || "#ffffff",
       defaultLanguage: storeSettings?.defaultLanguage || "ru",
       enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
+      pwaIconUrl: storeSettings?.pwaIconUrl || "",
     } as any,
   });
 
@@ -6028,6 +6032,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         modernBlock2Text: storeSettings?.modernBlock2Text || "",
         modernBlock3Icon: storeSettings?.modernBlock3Icon || "",
         modernBlock3Text: storeSettings?.modernBlock3Text || "",
+        pwaIconUrl: storeSettings?.pwaIconUrl || "",
       } as any);
     }
   }, [storeSettings, form]);
@@ -6207,6 +6212,52 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             )}
           />
             </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* PWA Settings */}
+        <Collapsible open={isPwaSettingsOpen} onOpenChange={setIsPwaSettingsOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                <Smartphone className="h-5 w-5 text-primary" />
+                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.pwaSettings')}</h3>
+                {isPwaSettingsOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-500" />
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="pwaIconUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">{adminT('storeSettings.pwaIconUrl')}</FormLabel>
+                  <FormControl>
+                    <div className="space-y-2">
+                      <Input 
+                        placeholder="https://example.com/icon-512x512.png" 
+                        {...field}
+                        value={field.value || ""}
+                        className="text-sm"
+                      />
+                      <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
+                        <Info className="h-3 w-3" />
+                        {adminT('storeSettings.pwaIconUrlTooltip')}
+                      </FormDescription>
+                    </div>
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
           </CollapsibleContent>
         </Collapsible>
 
