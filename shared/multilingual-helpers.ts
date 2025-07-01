@@ -96,8 +96,18 @@ export function getLocalizedStoreField(
     return '';
   }
   
-  // Return value for current language only, no fallback
-  return getValue(language);
+  // Try current language first
+  const currentValue = getValue(language);
+  if (currentValue) return currentValue;
+  
+  // Fallback to default language if different (for public website)
+  if (language !== defaultLanguage) {
+    const fallbackValue = getValue(defaultLanguage);
+    if (fallbackValue) return fallbackValue;
+  }
+  
+  // Final fallback to base field
+  return obj[fieldName] || '';
 }
 
 // No default theme values - system will show empty fields if no content exists
@@ -131,8 +141,18 @@ export function getLocalizedThemeField(
     return '';
   }
   
-  // Return value for current language only, no fallback
-  return getValue(language);
+  // Try current language first
+  const currentValue = getValue(language);
+  if (currentValue) return currentValue;
+  
+  // Fallback to default language if different (for public website)
+  if (language !== defaultLanguage) {
+    const fallbackValue = getValue(defaultLanguage);
+    if (fallbackValue) return fallbackValue;
+  }
+  
+  // Final fallback to base field
+  return theme[fieldName] || '';
 }
 
 /**
@@ -271,4 +291,35 @@ export function getLocalizedImageField(
   
   // Final fallback to base field
   return obj[fieldName] || '';
+}
+
+/**
+ * Get localized field value for ADMIN PANEL (no fallback to default language)
+ * Shows empty if field is not translated for specific language
+ */
+export function getLocalizedFieldForAdmin(
+  obj: any,
+  fieldName: string,
+  language: SupportedLanguage,
+  storeSettings?: { defaultLanguage?: string }
+): string {
+  if (!obj) return '';
+  
+  const defaultLanguage = getEffectiveDefaultLanguage(storeSettings);
+  
+  // For default language, try base field first, then suffixed version
+  if (language === defaultLanguage) {
+    const baseValue = obj[fieldName];
+    if (baseValue) return baseValue;
+    
+    const suffixedValue = obj[`${fieldName}_${defaultLanguage}`];
+    if (suffixedValue) return suffixedValue;
+  } else {
+    // For non-default languages, only return suffixed field (no fallback)
+    const suffixedValue = obj[`${fieldName}_${language}`];
+    if (suffixedValue) return suffixedValue;
+  }
+  
+  // Return empty string (no fallback to default language)
+  return '';
 }
