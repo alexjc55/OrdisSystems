@@ -154,6 +154,19 @@ export default function Header({ onResetView }: HeaderProps) {
               )}
             </Button>
 
+            {/* PWA Install Button for Tablets - Show only on tablet, not mobile or desktop */}
+            {!isInstalled && isTablet && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hidden md:flex lg:hidden p-2 text-gray-600 hover:text-primary"
+                onClick={() => installApp()}
+                title={t('pwa.installApp')}
+              >
+                <Download className="h-5 w-5" />
+              </Button>
+            )}
+
             {/* Desktop User Menu */}
             {user && (
               <div className="hidden md:block">
