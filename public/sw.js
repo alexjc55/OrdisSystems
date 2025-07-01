@@ -1,6 +1,6 @@
-const CACHE_NAME = 'edahouse-v1';
-const STATIC_CACHE = 'edahouse-static-v1';
-const DYNAMIC_CACHE = 'edahouse-dynamic-v1';
+const CACHE_NAME = 'edahouse-v2';
+const STATIC_CACHE = 'edahouse-static-v2';
+const DYNAMIC_CACHE = 'edahouse-dynamic-v2';
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -60,6 +60,16 @@ self.addEventListener('fetch', (event) => {
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       handleApiRequest(event.request)
+    );
+    return;
+  }
+
+  // Always fetch admin panel fresh (no caching)
+  if (url.pathname === '/admin' || url.pathname.startsWith('/admin/')) {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        return caches.match('/');
+      })
     );
     return;
   }
