@@ -275,7 +275,13 @@ import {
 // Validation schemas
 const productSchema = z.object({
   name: z.string().min(1),
+  name_en: z.string().optional(),
+  name_he: z.string().optional(),
+  name_ar: z.string().optional(),
   description: z.string().optional(),
+  description_en: z.string().optional(),
+  description_he: z.string().optional(),
+  description_ar: z.string().optional(),
   categoryIds: z.array(z.number()).min(1, "Выберите хотя бы одну категорию"),
   price: z.string().min(1),
   unit: z.enum(["100g", "100ml", "piece", "kg"]).default("100g"),
@@ -5301,12 +5307,21 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
 // Form Dialog Components
 function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDelete, adminT }: any) {
   type ProductFormData = z.infer<typeof productSchema>;
+  const { i18n } = useCommonTranslation();
+  const isRTL = i18n.language === 'he' || i18n.language === 'ar';
+  const [activeTab, setActiveTab] = useState('ru');
   
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: "",
+      name_en: "",
+      name_he: "",
+      name_ar: "",
       description: "",
+      description_en: "",
+      description_he: "",
+      description_ar: "",
       categoryIds: [],
       price: "",
       unit: "100g" as ProductUnit,
@@ -5332,7 +5347,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
         const categoryIds = product.categories ? product.categories.map((cat: any) => cat.id) : [];
         form.reset({
           name: product.name || "",
+          name_en: product.name_en || "",
+          name_he: product.name_he || "",
+          name_ar: product.name_ar || "",
           description: product.description || "",
+          description_en: product.description_en || "",
+          description_he: product.description_he || "",
+          description_ar: product.description_ar || "",
           categoryIds: categoryIds,
           price: (product.price || product.pricePerKg)?.toString() || "",
           unit: (product.unit || "100g") as ProductUnit,
@@ -5346,7 +5367,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       } else {
         form.reset({
           name: "",
+          name_en: "",
+          name_he: "",
+          name_ar: "",
           description: "",
+          description_en: "",
+          description_he: "",
+          description_ar: "",
           categoryIds: [],
           price: "",
           unit: "100g" as ProductUnit,
