@@ -55,6 +55,7 @@ import { ru, enUS, he, ar } from "date-fns/locale";
 import { insertStoreSettingsSchema, type StoreSettings, type CategoryWithCount } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
+import { PushNotificationsPanel } from "@/components/PushNotificationsPanel";
 import {
   DndContext,
   closestCenter,
@@ -278,7 +279,8 @@ import {
   Info,
   Globe,
   Type,
-  Smartphone
+  Smartphone,
+  Bell
 } from "lucide-react";
 
 // Validation schemas
@@ -2150,6 +2152,7 @@ export default function AdminDashboard() {
   const { t: adminT } = useAdminTranslation();
   const { t: commonT, i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
+  const isAdmin = user?.role === 'admin';
   const currentLanguage = i18n.language;
   const queryClient = useQueryClient();
 
@@ -3319,6 +3322,12 @@ export default function AdminDashboard() {
                       <span className="admin-tab-text">{adminT('tabs.permissions')}</span>
                     </TabsTrigger>
                   )}
+                  {isAdmin && (
+                    <TabsTrigger value="notifications" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title="Push Уведомления">
+                      <Bell className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">Push</span>
+                    </TabsTrigger>
+                  )}
                   {hasPermission("canViewSettings") && (
                     <TabsTrigger value="store" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.settings')}>
                       <Settings className="w-4 h-4 ml-1" />
@@ -3381,6 +3390,12 @@ export default function AdminDashboard() {
                     <TabsTrigger value="store" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.settings')}>
                       <Settings className="w-4 h-4 mr-1" />
                       <span className="admin-tab-text">{adminT('tabs.settings')}</span>
+                    </TabsTrigger>
+                  )}
+                  {isAdmin && (
+                    <TabsTrigger value="notifications" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title="Push Уведомления">
+                      <Bell className="w-4 h-4 mr-1" />
+                      <span className="admin-tab-text">Push</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canManageSettings") && (
