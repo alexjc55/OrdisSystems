@@ -4,8 +4,8 @@ import { pushSubscriptions } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
 // VAPID ключи для push уведомлений
-const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || 'BHMZNgF5xgV0q8KXw8rKxR5r1p5XKOKvYdGKkOK2OgF7xQvKv2F1v8V9VzXnBKYxHwKvYdGKkOK2OgF7xQvKv2F1v8V9VzXn';
-const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || 'your-private-key-here';
+const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || 'BAAMfY2mqdW51T4mXUIz1ckbnYJK-OMO9HoSh3yFYKQSvc2vsecHfbFSaXALhHpHK1XPkfQOfsl5VmljhPndzGU';
+const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || 'HL-vgkI1fxLdY4ZN19c52-2GR929lO42TqOJJZlKiog';
 const VAPID_EMAIL = process.env.VAPID_EMAIL || 'admin@edahouse.com';
 
 // Настройка web-push
