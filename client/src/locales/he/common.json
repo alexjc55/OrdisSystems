@@ -506,5 +506,13 @@
     "uploaded": "הועלה",
     "uploadSuccess": "התמונה הועלתה בהצלחה",
     "uploadFailed": "העלאת התמונה נכשלה"
+  },
+  "pwa": {
+    "installTitle": "התקן eDAHouse",
+    "installDescription": "גישה מהירה להזמנות ופאנל ניהול",
+    "install": "התקן",
+    "later": "מאוחר יותר",
+    "offline": "אתה במצב לא מקוון",
+    "online": "החיבור שוחזר"
   }
 }

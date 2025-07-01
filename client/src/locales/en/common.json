@@ -498,5 +498,13 @@
     "uploaded": "Uploaded",
     "uploadSuccess": "Image uploaded successfully",
     "uploadFailed": "Failed to upload image"
+  },
+  "pwa": {
+    "installTitle": "Install eDAHouse",
+    "installDescription": "Quick access to orders and admin panel",
+    "install": "Install",
+    "later": "Later",
+    "offline": "You are offline",
+    "online": "Connection restored"
   }
 }

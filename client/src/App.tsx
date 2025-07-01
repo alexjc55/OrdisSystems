@@ -10,6 +10,7 @@ import { CustomHtml } from "@/components/custom-html";
 import { WhatsAppChat } from "@/components/layout/whatsapp-chat";
 import { Footer } from "@/components/layout/footer";
 import { LanguageInitializer } from "@/components/language-initializer";
+import { PWAInstaller, usePWA } from "@/components/PWAInstaller";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
@@ -28,6 +29,7 @@ import { ProtectedRoute } from "@/lib/protected-route";
 function Router() {
   const { storeSettings } = useStoreSettings();
   const { i18n } = useTranslation();
+  const { isOnline, isInstalled } = usePWA();
 
   // Initialize language and direction on app start
   useEffect(() => {

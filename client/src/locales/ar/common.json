@@ -519,5 +519,13 @@
     "uploaded": "تم الرفع",
     "uploadSuccess": "تم رفع الصورة بنجاح",
     "uploadFailed": "فشل في رفع الصورة"
+  },
+  "pwa": {
+    "installTitle": "تثبيت eDAHouse",
+    "installDescription": "وصول سريع للطلبات ولوحة الإدارة",
+    "install": "تثبيت",
+    "later": "لاحقاً",
+    "offline": "أنت غير متصل",
+    "online": "تم استعادة الاتصال"
   }
 }
