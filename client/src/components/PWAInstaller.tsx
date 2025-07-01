@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { Download, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -17,6 +18,74 @@ export function PWAInstaller() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  
+  // Load store settings to get custom PWA icon
+  const { data: storeSettings } = useQuery({
+    queryKey: ['/api/settings']
+  });
+
+  // Update manifest.json with custom icon when settings change
+  useEffect(() => {
+    if (storeSettings?.pwaIconUrl) {
+      updateManifestIcon(storeSettings.pwaIconUrl);
+    }
+  }, [storeSettings?.pwaIconUrl]);
+
+  const updateManifestIcon = (iconUrl: string) => {
+    // Update existing manifest link
+    const manifestLink = document.querySelector('link[rel="manifest"]') as HTMLLinkElement;
+    if (manifestLink) {
+      // Create new manifest with custom icon
+      const newManifest = {
+        name: storeSettings?.storeName || "eDAHouse",
+        short_name: storeSettings?.storeName || "eDAHouse",
+        description: storeSettings?.storeDescription || "Готовые блюда с доставкой",
+        start_url: "/",
+        display: "standalone",
+        background_color: "#ffffff",
+        theme_color: "#f97316",
+        orientation: "portrait-primary",
+        scope: "/",
+        icons: [
+          {
+            src: iconUrl,
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "maskable any"
+          },
+          {
+            src: iconUrl,
+            sizes: "512x512", 
+            type: "image/png",
+            purpose: "maskable any"
+          }
+        ],
+        shortcuts: [
+          {
+            name: "Магазин",
+            short_name: "Shop", 
+            description: "Просмотр товаров и оформление заказов",
+            url: "/",
+            icons: [{ src: iconUrl, sizes: "96x96" }]
+          },
+          {
+            name: "Админ-панель",
+            short_name: "Admin",
+            description: "Управление магазином",
+            url: "/admin",
+            icons: [{ src: iconUrl, sizes: "96x96" }]
+          }
+        ]
+      };
+
+      // Create blob URL for new manifest
+      const blob = new Blob([JSON.stringify(newManifest)], { type: 'application/json' });
+      const newManifestUrl = URL.createObjectURL(blob);
+      
+      // Update manifest link
+      manifestLink.href = newManifestUrl;
+    }
+  };
 
   useEffect(() => {
     // Check if app is already installed
