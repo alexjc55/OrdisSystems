@@ -24,15 +24,15 @@ export default function PWAStatusBar() {
         </div>
       )}
       
-      {/* Standalone mode indicator */}
-      {isStandalone && (
+      {/* Standalone mode indicator - DISABLED: User requested removal */}
+      {/* {isStandalone && (
         <div className="bg-green-600 text-white text-center py-1 px-4 text-xs">
           <div className="flex items-center justify-center gap-1">
             <Download className="h-3 w-3" />
             <span>{t('pwa.installedMode', 'Приложение установлено')}</span>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

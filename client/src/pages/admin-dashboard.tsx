@@ -4073,13 +4073,17 @@ export default function AdminDashboard() {
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('orders.statusHeader')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'} w-16 sm:w-24`}
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'} w-20 sm:w-32`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('orders.orderTotal')}</TableHead>
                                 <TableHead 
-                                  className={`text-xs sm:text-sm hidden md:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'} w-20 sm:w-28`}
+                                  className={`text-xs sm:text-sm table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'} w-24 sm:w-36`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('orders.orderDate')}</TableHead>
+                                <TableHead 
+                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'} w-16 sm:w-20`}
+                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                >{adminT('common.actions')}</TableHead>
 
                               </TableRow>
                             </TableHeader>
@@ -4263,7 +4267,7 @@ export default function AdminDashboard() {
                                     })()}
                                   </TableCell>
                                   <TableCell 
-                                    className={`text-sm sm:text-sm hidden md:table-cell ${isRTL ? 'text-right' : 'text-center'}`}
+                                    className={`text-sm sm:text-sm table-cell ${isRTL ? 'text-right' : 'text-center'}`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                   >
                                     <div className="space-y-1" dir="ltr">
@@ -4286,6 +4290,30 @@ export default function AdminDashboard() {
                                         </>
                                       )}
                                     </div>
+                                  </TableCell>
+                                  <TableCell 
+                                    className={`text-sm sm:text-sm table-cell ${isRTL ? 'text-right' : 'text-center'}`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  >
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" className="h-8 w-8 p-0">
+                                          <span className="sr-only">{adminT('common.openMenu')}</span>
+                                          <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="end">
+                                        <DropdownMenuItem
+                                          onClick={() => {
+                                            setEditingOrder(order);
+                                            setIsOrderFormOpen(true);
+                                          }}
+                                        >
+                                          <Eye className="mr-2 h-4 w-4" />
+                                          {adminT('common.view')}
+                                        </DropdownMenuItem>
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
                                   </TableCell>
                                 </TableRow>
                               ))}
