@@ -254,21 +254,7 @@ export default function Header({ onResetView }: HeaderProps) {
                     </div>
                   </Link>
                   
-                  {/* PWA Install Button for non-logged users - Show on mobile/tablet but not desktop */}
-                  {!isInstalled && !isDesktop && (
-                    <div 
-                      className="flex items-center justify-center px-4 py-3 rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors cursor-pointer"
-                      onClick={() => {
-                        installApp();
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      <div className="mr-3 h-5 w-5 bg-white rounded flex items-center justify-center rtl:ml-3 rtl:mr-0">
-                        <span className="text-purple-600 text-xs font-bold">📱</span>
-                      </div>
-                      <span className="font-semibold">{t('pwa.install')}</span>
-                    </div>
-                  )}
+
                 </div>
               ) : (
                 /* All users - Menu and Profile buttons, plus Admin for admin/worker */
