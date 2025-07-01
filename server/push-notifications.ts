@@ -113,13 +113,13 @@ export class PushNotificationService {
       return { success: true, sent: subscriptions.length };
     } catch (error) {
       console.error('Error sending bulk push notification:', error);
-      return { success: false, error: error.message };
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
 
   // Уведомления о статусе заказа
   static async notifyOrderStatus(userId: string, orderId: number, status: string, language: string = 'ru') {
-    const statusMessages = {
+    const statusMessages: Record<string, Record<string, string>> = {
       ru: {
         pending: 'Ваш заказ принят и обрабатывается',
         preparing: 'Ваш заказ готовится',
@@ -155,7 +155,7 @@ export class PushNotificationService {
     };
 
     const messages = statusMessages[language] || statusMessages.ru;
-    const statusIcons = {
+    const statusIcons: Record<string, string> = {
       pending: '⏳',
       preparing: '👨‍🍳',
       ready: '✅',

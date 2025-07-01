@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useAuth } from './use-auth';
 
 export function usePushNotifications() {
   const [isSupported, setIsSupported] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useAuthStore();
+  const { user } = useAuth();
 
   useEffect(() => {
     // Check if push notifications are supported
