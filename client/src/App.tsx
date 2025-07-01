@@ -12,6 +12,7 @@ import { Footer } from "@/components/layout/footer";
 import { LanguageInitializer } from "@/components/language-initializer";
 import { PWAInstaller, usePWA } from "@/components/PWAInstaller";
 import { OfflineIndicator, OnlineIndicator } from "@/components/OfflineIndicator";
+import { useFavicon } from "@/hooks/useFavicon";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
@@ -31,6 +32,9 @@ function Router() {
   const { storeSettings } = useStoreSettings();
   const { i18n } = useTranslation();
   const { isOnline, isInstalled } = usePWA();
+  
+  // Initialize favicon based on PWA icon
+  useFavicon();
 
   // Initialize language and direction on app start
   useEffect(() => {
