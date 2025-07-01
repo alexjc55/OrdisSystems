@@ -11,6 +11,7 @@ import { WhatsAppChat } from "@/components/layout/whatsapp-chat";
 import { Footer } from "@/components/layout/footer";
 import { LanguageInitializer } from "@/components/language-initializer";
 import { PWAInstaller, usePWA } from "@/components/PWAInstaller";
+import { OfflineIndicator, OnlineIndicator } from "@/components/OfflineIndicator";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
@@ -90,6 +91,10 @@ function Router() {
       
       {/* PWA Install Prompt */}
       <PWAInstaller />
+      
+      {/* Network Status Indicators */}
+      <OfflineIndicator />
+      <OnlineIndicator />
     </ErrorBoundary>
   );
 }
