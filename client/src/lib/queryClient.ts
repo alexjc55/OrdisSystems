@@ -56,7 +56,7 @@ export const queryClient = new QueryClient({
       refetchInterval: false,
       refetchOnWindowFocus: true, // Re-enable for development
       staleTime: 0, // No caching for development
-      cacheTime: 0, // No cache retention
+      // gcTime: 0, // No cache retention (disabled as not supported in this version)
       retry: false,
     },
     mutations: {
