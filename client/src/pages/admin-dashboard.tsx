@@ -6238,6 +6238,166 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               </FormItem>
             )}
           />
+
+          {/* PWA Name and Description Fields */}
+          <div className="col-span-2 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="pwaName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.pwaName')} (Русский)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="eDAHouse"
+                        className="text-sm"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="pwaDescription"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.pwaDescription')} (Русский)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Заказ готовой еды онлайн"
+                        className="text-sm"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="pwaNameEn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.pwaName')} (English)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="eDAHouse"
+                        className="text-sm"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="pwaDescriptionEn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.pwaDescription')} (English)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Online food delivery"
+                        className="text-sm"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="pwaNameHe"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.pwaName')} (עברית)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="eDAHouse"
+                        className="text-sm"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="pwaDescriptionHe"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.pwaDescription')} (עברית)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="משלוח אוכל מוכן"
+                        className="text-sm"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="pwaNameAr"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.pwaName')} (العربية)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="eDAHouse"
+                        className="text-sm"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="pwaDescriptionAr"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('storeSettings.pwaDescription')} (العربية)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="توصيل الطعام الجاهز"
+                        className="text-sm"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
+              <Info className="h-3 w-3" />
+              {adminT('storeSettings.pwaNameDescription')}
+            </FormDescription>
+          </div>
             </div>
           </CollapsibleContent>
         </Collapsible>

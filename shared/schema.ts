@@ -214,6 +214,14 @@ export const storeSettings = pgTable("store_settings", {
   defaultLanguage: varchar("default_language", { length: 5 }).default("ru"), // Default site language
   enabledLanguages: jsonb("enabled_languages").default(["ru", "en", "he", "ar"]), // Array of enabled language codes
   pwaIconUrl: varchar("pwa_icon_url", { length: 500 }), // PWA app icon URL (512x512 PNG format)
+  pwaName: varchar("pwa_name", { length: 255 }).default("eDAHouse"), // PWA app name (Russian)
+  pwaDescription: varchar("pwa_description", { length: 500 }).default("Заказ готовой еды онлайн"), // PWA app description (Russian)
+  pwaNameEn: varchar("pwa_name_en", { length: 255 }), // PWA app name (English)
+  pwaDescriptionEn: varchar("pwa_description_en", { length: 500 }), // PWA app description (English)
+  pwaNameHe: varchar("pwa_name_he", { length: 255 }), // PWA app name (Hebrew)
+  pwaDescriptionHe: varchar("pwa_description_he", { length: 500 }), // PWA app description (Hebrew)
+  pwaNameAr: varchar("pwa_name_ar", { length: 255 }), // PWA app name (Arabic)
+  pwaDescriptionAr: varchar("pwa_description_ar", { length: 500 }), // PWA app description (Arabic)
   
   // Russian fields (base language)
   aboutTextRu: text("about_text_ru"),
