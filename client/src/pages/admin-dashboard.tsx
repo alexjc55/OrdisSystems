@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAdminTranslation, useCommonTranslation } from "@/hooks/use-language";
 import { LANGUAGES } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { getLocalizedField } from "@shared/localization";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -645,6 +646,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
 
 // OrderEditForm component
 function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRTL }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
+  const { i18n } = useCommonTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -1469,9 +1471,9 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 <TableRow key={index}>
                   <TableCell className="text-sm">
                     <div>
-                      <div className="font-medium">{item.product?.name}</div>
+                      <div className="font-medium">{getLocalizedField(item.product, 'name', i18n.language as any, 'ru')}</div>
                       {item.product?.description && (
-                        <div className="text-xs text-gray-500">{item.product.description}</div>
+                        <div className="text-xs text-gray-500">{getLocalizedField(item.product, 'description', i18n.language as any, 'ru')}</div>
                       )}
                     </div>
                   </TableCell>
@@ -1532,7 +1534,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                         <AlertDialogHeader>
                           <AlertDialogTitle>{adminT('actions.confirm')}</AlertDialogTitle>
                           <AlertDialogDescription>
-                            {adminT('orders.removeItemConfirm')} "{item.product?.name}"?
+                            {adminT('orders.removeItemConfirm')} "{getLocalizedField(item.product, 'name', i18n.language as any, 'ru')}"?
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -1560,7 +1562,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               {/* Product Header */}
               <div className="flex justify-between items-start mb-2">
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-base text-gray-900 truncate">{item.product?.name}</div>
+                  <div className="font-medium text-base text-gray-900 truncate">{getLocalizedField(item.product, 'name', i18n.language as any, 'ru')}</div>
                   <div className="text-sm text-gray-500 mt-0.5">{getUnitPrice(item.product)}</div>
                 </div>
                 <AlertDialog>
@@ -1577,7 +1579,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     <AlertDialogHeader>
                       <AlertDialogTitle>{adminT('actions.confirm')}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        {adminT('orders.removeItemConfirm')} "{item.product?.name}"?
+                        {adminT('orders.removeItemConfirm')} "{getLocalizedField(item.product, 'name', i18n.language as any, 'ru')}"?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className={`${isRTL ? 'flex-row-reverse space-x-reverse space-x-4' : ''}`}>
@@ -2035,7 +2037,7 @@ function ItemDiscountDialog({
         </DialogHeader>
         
         <div className="mb-4">
-          <div className="font-medium">{item.product?.name}</div>
+          <div className="font-medium">{getLocalizedField(item.product, 'name', i18n.language as any, 'ru')}</div>
           <div className="text-sm text-gray-500">
             {adminT('orders.baseCost')}: {formatCurrency(basePrice)}
           </div>
