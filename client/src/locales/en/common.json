@@ -500,6 +500,7 @@
     "uploadFailed": "Failed to upload image"
   },
   "pwa": {
+    "installApp": "Install App",
     "installTitle": "Install eDAHouse",
     "installDescription": "Quick access to orders and admin panel",
     "install": "Install",

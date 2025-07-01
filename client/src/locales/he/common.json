@@ -508,6 +508,7 @@
     "uploadFailed": "העלאת התמונה נכשלה"
   },
   "pwa": {
+    "installApp": "התקן אפליקציה",
     "installTitle": "התקן eDAHouse",
     "installDescription": "גישה מהירה להזמנות ופאנל ניהול",
     "install": "התקן",
