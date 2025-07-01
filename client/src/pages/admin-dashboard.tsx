@@ -6428,6 +6428,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       showWhatsAppChat: storeSettings?.showWhatsAppChat !== false,
       whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
       whatsappDefaultMessage: getLocalizedFieldForAdmin(storeSettings, 'whatsappDefaultMessage', currentLanguage, storeSettings) || "",
+      bannerButtonText: getLocalizedFieldForAdmin(storeSettings, 'bannerButtonText', currentLanguage, storeSettings) || "",
       showCartBanner: storeSettings?.showCartBanner || false,
       bannerButtonLink: storeSettings?.bannerButtonLink || "#categories",
       cartBannerType: storeSettings?.cartBannerType || "text",
