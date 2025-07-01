@@ -39,6 +39,14 @@ function clearCachePattern(pattern: string) {
 const scryptAsync = promisify(scrypt);
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Add cache control headers to prevent caching
+  app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    next();
+  });
+
   // Ensure uploads directory exists
   const uploadsDir = path.join(process.cwd(), 'uploads', 'images');
   if (!fs.existsSync(uploadsDir)) {
