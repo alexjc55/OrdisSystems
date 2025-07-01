@@ -80,10 +80,10 @@ function Router() {
       </Switch>
       
       {/* PWA Status Bar */}
-      <PWAStatusBar />
+      {/* <PWAStatusBar /> */}
       
       {/* PWA Install Prompt */}
-      <PWAInstallPrompt />
+      {/* <PWAInstallPrompt /> */}
       
       {/* WhatsApp Chat Widget */}
       <WhatsAppChat />
