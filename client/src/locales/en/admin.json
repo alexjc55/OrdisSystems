@@ -218,6 +218,7 @@
     "address": "Address",
     "deliveryDate": "Delivery date",
     "deliveryTime": "Delivery time",
+    "orderDate": "Order date",
     "orderHistory": "Order history",
     "filterByStatus": "Filter by status",
     "allOrders": "All orders",

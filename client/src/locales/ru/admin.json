@@ -522,6 +522,7 @@
     "address": "Адрес",
     "deliveryDate": "Дата доставки",
     "deliveryTime": "Время доставки",
+    "orderDate": "Дата заказа",
     "orderHistory": "История заказов",
     "filterByStatus": "Фильтр по статусу",
     "allOrders": "Все заказы",

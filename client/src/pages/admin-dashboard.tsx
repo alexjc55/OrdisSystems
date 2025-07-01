@@ -4080,10 +4080,6 @@ export default function AdminDashboard() {
                                   className={`text-xs sm:text-sm table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'} w-24 sm:w-36`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('orders.orderDate')}</TableHead>
-                                <TableHead 
-                                  className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'} w-16 sm:w-20`}
-                                  style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
-                                >{adminT('common.actions')}</TableHead>
 
                               </TableRow>
                             </TableHeader>
@@ -4290,30 +4286,6 @@ export default function AdminDashboard() {
                                         </>
                                       )}
                                     </div>
-                                  </TableCell>
-                                  <TableCell 
-                                    className={`text-sm sm:text-sm table-cell ${isRTL ? 'text-right' : 'text-center'}`}
-                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
-                                  >
-                                    <DropdownMenu>
-                                      <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" className="h-8 w-8 p-0">
-                                          <span className="sr-only">{adminT('common.openMenu')}</span>
-                                          <MoreHorizontal className="h-4 w-4" />
-                                        </Button>
-                                      </DropdownMenuTrigger>
-                                      <DropdownMenuContent align="end">
-                                        <DropdownMenuItem
-                                          onClick={() => {
-                                            setEditingOrder(order);
-                                            setIsOrderFormOpen(true);
-                                          }}
-                                        >
-                                          <Eye className="mr-2 h-4 w-4" />
-                                          {adminT('common.view')}
-                                        </DropdownMenuItem>
-                                      </DropdownMenuContent>
-                                    </DropdownMenu>
                                   </TableCell>
                                 </TableRow>
                               ))}
