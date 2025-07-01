@@ -870,6 +870,127 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Dynamic PWA manifest endpoint
+  app.get('/api/manifest', async (req, res) => {
+    try {
+      const settings = await storage.getStoreSettings();
+      const acceptLanguage = req.headers['accept-language'];
+      let currentLang = 'ru'; // default
+      
+      // Extract preferred language from Accept-Language header
+      if (acceptLanguage) {
+        if (acceptLanguage.includes('en')) currentLang = 'en';
+        else if (acceptLanguage.includes('he')) currentLang = 'he';
+        else if (acceptLanguage.includes('ar')) currentLang = 'ar';
+      }
+      
+      // Get localized PWA name and description
+      const getPwaField = (field: string) => {
+        if (currentLang === 'ru') return settings?.[field] || '';
+        const langField = `${field}${currentLang.charAt(0).toUpperCase() + currentLang.slice(1)}`;
+        return settings?.[langField] || settings?.[field] || '';
+      };
+      
+      const manifest = {
+        name: getPwaField('pwaName') || 'eDAHouse',
+        short_name: getPwaField('pwaName')?.split(' ')[0] || 'eDAHouse',
+        description: getPwaField('pwaDescription') || 'Готовые блюда с доставкой',
+        start_url: '/',
+        display: 'standalone',
+        background_color: '#ffffff',
+        theme_color: '#f97316',
+        orientation: 'portrait-primary',
+        scope: '/',
+        categories: ['food', 'shopping', 'lifestyle'],
+        lang: currentLang,
+        icons: [
+          {
+            src: settings?.pwaIcon || '/icons/icon-72x72.png',
+            sizes: '72x72',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: settings?.pwaIcon || '/icons/icon-96x96.png', 
+            sizes: '96x96',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: settings?.pwaIcon || '/icons/icon-128x128.png',
+            sizes: '128x128', 
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: settings?.pwaIcon || '/icons/icon-144x144.png',
+            sizes: '144x144',
+            type: 'image/png', 
+            purpose: 'any maskable'
+          },
+          {
+            src: settings?.pwaIcon || '/icons/icon-152x152.png',
+            sizes: '152x152',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: settings?.pwaIcon || '/icons/icon-192x192.png',
+            sizes: '192x192', 
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: settings?.pwaIcon || '/icons/icon-384x384.png',
+            sizes: '384x384',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: settings?.pwaIcon || '/icons/icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png', 
+            purpose: 'any maskable'
+          }
+        ],
+        shortcuts: [
+          {
+            name: currentLang === 'en' ? 'Product Catalog' : 
+                  currentLang === 'he' ? 'קטלוג מוצרים' :
+                  currentLang === 'ar' ? 'كتالوج المنتجات' : 'Каталог продуктов',
+            short_name: currentLang === 'en' ? 'Catalog' :
+                       currentLang === 'he' ? 'קטלוג' :
+                       currentLang === 'ar' ? 'كتالوج' : 'Каталог',
+            description: currentLang === 'en' ? 'View all products' :
+                        currentLang === 'he' ? 'צפה בכל המוצרים' :
+                        currentLang === 'ar' ? 'عرض جميع المنتجات' : 'Просмотр всех продуктов',
+            url: '/',
+            icons: [{ src: settings?.pwaIcon || '/icons/icon-96x96.png', sizes: '96x96' }]
+          },
+          {
+            name: currentLang === 'en' ? 'Shopping Cart' :
+                  currentLang === 'he' ? 'עגלת קניות' :
+                  currentLang === 'ar' ? 'سلة التسوق' : 'Корзина',
+            short_name: currentLang === 'en' ? 'Cart' :
+                       currentLang === 'he' ? 'עגלה' :
+                       currentLang === 'ar' ? 'سلة' : 'Корзина',
+            description: currentLang === 'en' ? 'View shopping cart' :
+                        currentLang === 'he' ? 'צפה בעגלת הקניות' :
+                        currentLang === 'ar' ? 'عرض سلة التسوق' : 'Просмотр корзины покупок',
+            url: '/checkout',
+            icons: [{ src: settings?.pwaIcon || '/icons/icon-96x96.png', sizes: '96x96' }]
+          }
+        ]
+      };
+
+      res.setHeader('Content-Type', 'application/manifest+json');
+      res.json(manifest);
+    } catch (error) {
+      console.error('Error generating PWA manifest:', error);
+      res.status(500).json({ message: 'Failed to generate PWA manifest' });
+    }
+  });
+
   app.put('/api/settings', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.id;
