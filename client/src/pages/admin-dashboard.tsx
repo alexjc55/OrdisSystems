@@ -4293,7 +4293,63 @@ export default function AdminDashboard() {
                         </div>
                         
                         {/* Pagination for table view */}
-                        <div className={`flex items-center justify-between px-4 py-3 border-t ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        {/* Mobile: Compact layout */}
+                        <div className="sm:hidden flex flex-col items-center gap-2 px-2 py-2 border-t bg-gray-50">
+                          <div className="text-xs text-gray-600 text-center">
+                            {adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)}
+                          </div>
+                          <div className="text-xs text-gray-500 text-center">
+                            {adminT('common.of')} {ordersResponse.total}
+                          </div>
+                          <div className="flex items-center justify-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setOrdersPage(1)}
+                              disabled={ordersResponse.page === 1}
+                              title={adminT('common.firstPage')}
+                              className="h-7 w-7 p-0 text-xs text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              ⟨⟨
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
+                              disabled={ordersResponse.page === 1}
+                              title={adminT('common.previousPage')}
+                              className="h-7 w-7 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {isRTL ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
+                            </Button>
+                            <span className="text-xs font-medium px-2 py-1 rounded min-w-[40px] text-center" dir="ltr">
+                              {ordersResponse.page}/{ordersResponse.totalPages}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
+                              disabled={ordersResponse.page === ordersResponse.totalPages}
+                              title={adminT('common.nextPage')}
+                              className="h-7 w-7 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {isRTL ? <ChevronLeft className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setOrdersPage(ordersResponse.totalPages)}
+                              disabled={ordersResponse.page === ordersResponse.totalPages}
+                              title={adminT('common.lastPage')}
+                              className="h-7 w-7 p-0 text-xs text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              ⟩⟩
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        {/* Desktop: Original layout */}
+                        <div className={`hidden sm:flex items-center justify-between px-4 py-3 border-t ${isRTL ? 'flex-row-reverse' : ''}`}>
                           <div className={`flex items-center gap-2 text-sm text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>
                             <span>{adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} {adminT('common.of')} {ordersResponse.total}</span>
                           </div>
@@ -4594,19 +4650,22 @@ export default function AdminDashboard() {
                     {/* Orders Pagination */}
                     {ordersResponse?.totalPages > 1 && (
                       <div className="px-4 py-3 border-t bg-gray-50 mt-4">
-                        {/* Mobile: Stack info and controls */}
-                        <div className="sm:hidden space-y-2">
-                          <div className="text-center text-xs text-gray-600">
-                            Показано {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)} из {ordersResponse.total}
+                        {/* Mobile: Compact layout */}
+                        <div className="sm:hidden flex flex-col items-center gap-2 px-2 py-2">
+                          <div className="text-xs text-gray-600 text-center">
+                            {adminT('common.showing')} {((ordersResponse.page - 1) * ordersResponse.limit) + 1}-{Math.min(ordersResponse.page * ordersResponse.limit, ordersResponse.total)}
                           </div>
-                          <div className="flex items-center justify-center gap-2">
+                          <div className="text-xs text-gray-500 text-center">
+                            {adminT('common.of')} {ordersResponse.total}
+                          </div>
+                          <div className="flex items-center justify-center gap-1">
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
                               title={adminT('common.firstPage')}
-                              className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-7 w-7 p-0 text-xs text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               ⟨⟨
                             </Button>
@@ -4616,11 +4675,11 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
                               title={adminT('common.previousPage')}
-                              className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-7 w-7 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                              {isRTL ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
                             </Button>
-                            <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
+                            <span className="text-xs font-medium px-2 py-1 rounded min-w-[40px] text-center" dir="ltr">
                               {ordersResponse.page}/{ordersResponse.totalPages}
                             </span>
                             <Button
@@ -4629,9 +4688,9 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title={adminT('common.nextPage')}
-                              className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-7 w-7 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                              {isRTL ? <ChevronLeft className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
                             </Button>
                             <Button
                               variant="ghost"
@@ -4639,7 +4698,7 @@ export default function AdminDashboard() {
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
                               title={adminT('common.lastPage')}
-                              className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                              className="h-7 w-7 p-0 text-xs text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               ⟩⟩
                             </Button>
