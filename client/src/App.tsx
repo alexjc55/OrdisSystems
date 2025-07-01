@@ -87,6 +87,9 @@ function Router() {
       
       {/* Ordis Footer */}
       <Footer />
+      
+      {/* PWA Install Prompt */}
+      <PWAInstaller />
     </ErrorBoundary>
   );
 }
