@@ -11,11 +11,11 @@
  * Последнее обновление: исправлены переводы ролей пользователей
  */
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { useLocation, useRoute } from "wouter";
+
 import { useAdminTranslation, useCommonTranslation } from "@/hooks/use-language";
 import { useTranslation } from "react-i18next";
 import { LANGUAGES } from "@/lib/i18n";
@@ -2226,29 +2226,25 @@ export default function AdminDashboard() {
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   
-  // URL-based navigation for admin tabs
-  const [location, setLocation] = useLocation();
-  
-  // Get current tab from URL parameters
-  const getCurrentTab = () => {
+  // Simple state-based navigation with URL sync
+  const [activeTab, setActiveTabState] = useState(() => {
+    // Initialize from URL on first load
     const urlParams = new URLSearchParams(window.location.search);
-    const tab = urlParams.get('tab');
-    return tab || 'products';
-  };
+    return urlParams.get('tab') || 'products';
+  });
   
   // Set active tab and update URL
-  const setActiveTab = (newTab: string) => {
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('tab', newTab);
-    const newUrl = `/admin?${urlParams.toString()}`;
-    setLocation(newUrl);
-  };
-  
-  const activeTab = getCurrentTab();
+  const setActiveTab = useCallback((newTab: string) => {
+    setActiveTabState(newTab);
+    // Update URL without causing re-renders
+    const url = new URL(window.location.href);
+    url.searchParams.set('tab', newTab);
+    window.history.replaceState({}, '', url.toString());
+  }, []);
 
   // Set default tab based on worker permissions - only once on mount
   useEffect(() => {
-    if (user?.role === "worker" && storeSettings && getCurrentTab() === "products") {
+    if (user?.role === "worker" && storeSettings && activeTab === "products") {
       const workerPermissions = (storeSettings?.workerPermissions as any) || {};
       let defaultTab = "products";
       
@@ -2270,7 +2266,7 @@ export default function AdminDashboard() {
         setActiveTab(defaultTab);
       }
     }
-  }, [user, storeSettings]);
+  }, [user, storeSettings, setActiveTab]); // Remove activeTab from dependencies
 
   // Orders management state
   const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
