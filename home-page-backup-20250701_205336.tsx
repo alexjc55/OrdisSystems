@@ -22,6 +22,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import CategoryNav from "@/components/menu/category-nav";
@@ -417,10 +418,10 @@ export default function Home() {
                         return `${t('searchResults')}: "${searchQuery}"`;
                       }
                       if (selectedCategory?.name) {
-                        return selectedCategory.name;
+                        return getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru');
                       }
                       if (storeSettings?.welcomeTitle) {
-                        return storeSettings.welcomeTitle;
+                        return getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage as SupportedLanguage, 'ru');
                       }
                       return t('defaultWelcomeTitle');
                     } catch (error) {
@@ -439,10 +440,10 @@ export default function Home() {
                         return t('foundItems').replace('{count}', displayProducts.length.toString());
                       }
                       if (selectedCategory?.description) {
-                        return selectedCategory.description;
+                        return getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru');
                       }
                       if (storeSettings?.storeDescription) {
-                        return storeSettings.storeDescription;
+                        return getLocalizedField(storeSettings, 'storeDescription', currentLanguage as SupportedLanguage, 'ru');
                       }
                       return t('defaultStoreDescription');
                     } catch (error) {
@@ -519,14 +520,17 @@ export default function Home() {
                         onClick={() => handleCategorySelect(category.id)}
                       >
                         <CardContent className="p-4 h-32 relative">
-                          <div className="flex items-start justify-between gap-4 h-full">
-                            <div className="flex-1 flex flex-col h-full">
+                          <div className="flex items-start gap-3 h-full">
+                            <div className="flex-1 flex flex-col h-full overflow-hidden">
                               <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300">
-                                {category.name}
+                                {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
                               </h3>
                               
-                              <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed flex-1">
-                                {category.description || t('defaultCategoryDescription')}
+                              <p className="text-gray-600 text-sm leading-tight truncate">
+                                {(() => {
+                                  const text = getLocalizedField(category, 'description', currentLanguage as SupportedLanguage, 'ru') || t('defaultCategoryDescription');
+                                  return text.length > 40 ? text.substring(0, 40) + '...' : text;
+                                })()}
                               </p>
                               
                               <div className="mt-auto">
@@ -536,12 +540,9 @@ export default function Home() {
                               </div>
                             </div>
                             
-                            <div className="flex-shrink-0 relative">
-                              <div className="text-5xl transform group-hover:scale-110 transition-transform duration-300">
+                            <div className="flex-shrink-0 w-16 flex justify-center">
+                              <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
                                 {category.icon || '📦'}
-                              </div>
-                              <div className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div className="w-3 h-3 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full animate-pulse"></div>
                               </div>
                             </div>
                           </div>
@@ -674,7 +675,7 @@ export default function Home() {
                       <SelectItem value="all">{t('allCategories')}</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
-                          {category.name}
+                          {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
                         </SelectItem>
                       ))}
                     </SelectContent>
