@@ -96,18 +96,8 @@ export function getLocalizedStoreField(
     return '';
   }
   
-  // Try current language first
-  const currentValue = getValue(language);
-  if (currentValue) return currentValue;
-  
-  // Fallback to default language if different
-  if (language !== defaultLanguage) {
-    const fallbackValue = getValue(defaultLanguage);
-    if (fallbackValue) return fallbackValue;
-  }
-  
-  // Final fallback to base field
-  return obj[fieldName] || '';
+  // Return value for current language only, no fallback
+  return getValue(language);
 }
 
 // No default theme values - system will show empty fields if no content exists
@@ -141,18 +131,8 @@ export function getLocalizedThemeField(
     return '';
   }
   
-  // Try current language first
-  const currentValue = getValue(language);
-  if (currentValue) return currentValue;
-  
-  // Fallback to default language if different
-  if (language !== defaultLanguage) {
-    const fallbackValue = getValue(defaultLanguage);
-    if (fallbackValue) return fallbackValue;
-  }
-  
-  // Final fallback to base field
-  return theme[fieldName] || '';
+  // Return value for current language only, no fallback
+  return getValue(language);
 }
 
 /**

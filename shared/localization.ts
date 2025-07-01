@@ -42,14 +42,8 @@ export function getLocalizedField(
   const localizedField = `${field}_${currentLanguage}`;
   const localizedValue = item[localizedField];
   
-  // If localized value exists, use it
-  if (localizedValue) {
-    return localizedValue;
-  }
-  
-  // Fallback to default language field
-  const defaultField = defaultLanguage === 'ru' ? field : `${field}_${defaultLanguage}`;
-  return item[defaultField] || '';
+  // Return localized value if it exists (including empty strings), otherwise return empty
+  return localizedValue || '';
 }
 
 /**

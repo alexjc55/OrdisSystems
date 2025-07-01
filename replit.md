@@ -131,6 +131,14 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- June 30, 2025: REMOVED FALLBACK LOGIC FROM MULTILINGUAL SYSTEM
+  - CRITICAL CHANGE: Eliminated automatic fallback to default language when field is empty on other languages
+  - UPDATED getLocalizedField(): Now returns empty string if field not translated, instead of showing default language content
+  - UPDATED getLocalizedStoreField(): Removed fallback logic for store settings multilingual fields
+  - UPDATED getLocalizedThemeField(): Removed fallback logic for theme multilingual fields
+  - USER EXPERIENCE: Fields now show empty if not translated instead of automatically displaying default language text
+  - ADMINISTRATOR CONTROL: Each language must be explicitly filled by admin, no automatic content copying
+  - RESULT: Clean language separation - users see content only if it exists for their selected language
 - June 30, 2025: COMPLETED MULTILINGUAL SYSTEM REDESIGN WITH FLEXIBLE DEFAULT LANGUAGE
   - FLEXIBLE DEFAULT LANGUAGE: System completely redesigned to use configurable default language from admin settings instead of hardcoded Russian
   - ENHANCED getLocalizedField FUNCTION: Updated to support both store settings object and direct language parameter for maximum compatibility
