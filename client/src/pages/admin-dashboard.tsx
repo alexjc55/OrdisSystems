@@ -275,7 +275,8 @@ import {
   MoreHorizontal,
   Info,
   Globe,
-  Type
+  Type,
+  Smartphone
 } from "lucide-react";
 
 // Validation schemas
@@ -6370,6 +6371,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
   const [isVisualsOpen, setIsVisualsOpen] = useState(false);
+  const [isPwaSettingsOpen, setIsPwaSettingsOpen] = useState(false);
   const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
   const [isWorkingHoursOpen, setIsWorkingHoursOpen] = useState(false);
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
@@ -6470,6 +6472,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         storeDescription: getMultilingualValue(storeSettings, 'storeDescription', currentLanguage) || "",
         logoUrl: storeSettings?.logoUrl || "",
         bannerImage: storeSettings?.bannerImage || "",
+        pwaIconUrl: storeSettings?.pwaIconUrl || "",
         contactPhone: getMultilingualValue(storeSettings, 'contactPhone', currentLanguage) || "",
         contactEmail: getMultilingualValue(storeSettings, 'contactEmail', currentLanguage) || "",
         address: getMultilingualValue(storeSettings, 'address', currentLanguage) || "",
@@ -6636,7 +6639,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           ...data, 
           ...preservedData, 
           ...multilingualUpdates,
-          paymentMethods: processedPaymentMethods
+          paymentMethods: processedPaymentMethods,
+          pwaIconUrl: data.pwaIconUrl
         };
         
 
@@ -6885,7 +6889,47 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-
+        {/* PWA Settings */}
+        <Collapsible open={isPwaSettingsOpen} onOpenChange={setIsPwaSettingsOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                <Smartphone className="h-5 w-5 text-primary" />
+                <h3 className="text-lg font-semibold">{adminT('storeSettings.pwaSettings')}</h3>
+                {isPwaSettingsOpen ? (
+                  <ChevronUp className={`h-4 w-4 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+                ) : (
+                  <ChevronDown className={`h-4 w-4 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="pwaIconUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">{adminT('storeSettings.pwaIconUrl')}</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="https://example.com/icon-512x512.png" 
+                      {...field} 
+                      className="text-sm" 
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs text-gray-500">
+                    {adminT('storeSettings.pwaIconTooltip')}
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+          </CollapsibleContent>
+        </Collapsible>
 
         {/* Language Settings */}
         <Collapsible open={isLanguageSettingsOpen} onOpenChange={setIsLanguageSettingsOpen} className="space-y-6">
