@@ -5,7 +5,6 @@ import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import type { SupportedLanguage } from '@shared/localization';
 import { Button } from "@/components/ui/button";
-import { PWAInstallButton } from "@/components/PWAInstallButton";
 
 // Import multilingual helper function with fallback to default language
 function getMultilingualValue(
@@ -126,11 +125,6 @@ export default function Header({ onResetView }: HeaderProps) {
                 <LanguageSwitcher variant="compact" />
               </div>
             )}
-            
-            {/* PWA Install Button - Tablet only (not mobile, not large desktop) */}
-            <div className="hidden md:block xl:hidden">
-              <PWAInstallButton variant="tablet" />
-            </div>
             
             {/* Cart Button - Always visible */}
             <Button 
@@ -326,11 +320,6 @@ export default function Header({ onResetView }: HeaderProps) {
                   </div>
                 );
               })()}
-              
-              {/* PWA Install Button - Always show */}
-              <div className="border-t border-gray-200 pt-4 mt-4">
-                <PWAInstallButton />
-              </div>
               
               {/* Login Button for non-logged in users */}
               {!user && (

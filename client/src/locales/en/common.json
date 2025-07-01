@@ -498,19 +498,5 @@
     "uploaded": "Uploaded",
     "uploadSuccess": "Image uploaded successfully",
     "uploadFailed": "Failed to upload image"
-  },
-  "pwa": {
-    "installApp": "Install App",
-    "installTitle": "Install eDAHouse",
-    "installDescription": "Quick access to orders and admin panel",
-    "install": "Install",
-    "later": "Later",
-    "offline": "You are offline",
-    "online": "Connection restored",
-    "installInstructions": "To install the app:",
-    "ios": "Tap the \"Share\" button ↗️ in Safari, then \"Add to Home Screen\"",
-    "android": "Open browser menu (⋮) and select \"Add to Home screen\"",
-    "chrome": "Open browser menu (⋮) and select \"Install {{appName}}...\"",
-    "fallback": "Open browser menu and find \"Add to Home screen\" or \"Install app\""
   }
 }

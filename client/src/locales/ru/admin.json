@@ -139,11 +139,6 @@
     "buttonTextDefault": "Заказать сейчас",
     "whatsappMessageDefault": "Здравствуйте! Интересует ваша продукция.",
     "whatsappChat": "WhatsApp чат",
-    "pwaIconUrl": "Иконка PWA приложения",
-    "pwaIconUrlTooltip": "URL изображения иконки для PWA приложения. Формат: PNG, размер: 512x512 пикселей.",
-    "pwaName": "Название PWA приложения",
-    "pwaDescription": "Описание PWA приложения",
-    "pwaNameDescription": "Название и описание приложения, которые будут отображаться при установке на мобильные устройства. Укажите для каждого языка.",
     "cartBannerTextPlaceholder": "Введите текст баннера корзины",
     "brandColorsDescription": "Основные цвета бренда для интерфейса",
     "brandColors": "Цвета бренда",
@@ -828,11 +823,7 @@
     "canEditOrdersDescription": "Разрешить редактирование заказов клиентов",
     "canViewSettingsDescription": "Разрешить просмотр настроек магазина",
     "canManageSettingsDescription": "Разрешить изменение настроек магазина",
-    "canEditOrders": "Редактирование заказов",
-    "pwaSettings": "Настройки PWA приложения",
-    "pwaIconUrl": "Иконка PWA приложения",
-    "pwaIconUrlTooltip": "URL изображения иконки для PWA приложения. Формат: PNG, размер: 512x512 пикселей.",
-    "pwaIconTooltip": "Формат: PNG, размер: 512x512 пикселей. Эта иконка будет отображаться на главном экране устройства при установке приложения."
+    "canEditOrders": "Редактирование заказов"
   },
   "systemSettings": {
     "canManageProducts": "Управление товарами",
@@ -874,9 +865,6 @@
     "copySuccess": "Поля скопированы",
     "fieldsCopied": "Скопировано полей: {{count}}",
     "clearSuccess": "Поля очищены",
-    "fieldsCleared": "Очищено полей: {{count}}",
-    "pwaSettings": "Настройки PWA",
-    "pwaIconUrl": "Иконка PWA приложения",
-    "pwaIconUrlTooltip": "URL-адрес иконки для мобильного приложения (512x512 PNG)"
+    "fieldsCleared": "Очищено полей: {{count}}"
   }
 }

@@ -464,14 +464,7 @@
     "canEditOrdersDescription": "Allow editing customer orders",
     "canViewSettingsDescription": "Allow viewing store settings",
     "canManageSettingsDescription": "Allow changing store settings",
-    "canEditOrders": "Edit Orders",
-    "pwaSettings": "PWA App Settings",
-    "pwaIconUrl": "PWA App Icon",
-    "pwaIconUrlTooltip": "URL of icon image for PWA application. Format: PNG, size: 512x512 pixels.",
-    "pwaName": "PWA App Name",
-    "pwaDescription": "PWA App Description",
-    "pwaNameDescription": "App name and description that will be displayed when installing on mobile devices. Specify for each language.",
-    "pwaIconTooltip": "Format: PNG, size: 512x512 pixels. This icon will be displayed on the device home screen when the app is installed."
+    "canEditOrders": "Edit Orders"
   },
   "themes": {
     "title": "Theme Management",
@@ -580,8 +573,6 @@
     "buttonTextDefault": "Order Now",
     "whatsappMessageDefault": "Hello! I am interested in your products.",
     "whatsappChat": "WhatsApp Chat",
-    "pwaIconUrl": "PWA App Icon",
-    "pwaIconUrlTooltip": "URL of the icon image for PWA application. Format: PNG, size: 512x512 pixels.",
     "cartBannerTextPlaceholder": "Enter cart banner text",
     "brandColorsDescription": "Main brand colors for interface",
     "brandColors": "Brand Colors",
@@ -884,9 +875,6 @@
     "copySuccess": "Fields copied",
     "fieldsCopied": "Copied {{count}} fields",
     "clearSuccess": "Fields cleared",
-    "fieldsCleared": "Cleared {{count}} fields",
-    "pwaSettings": "PWA Settings",
-    "pwaIconUrl": "PWA App Icon",
-    "pwaIconUrlTooltip": "URL of the icon for mobile app (512x512 PNG format)"
+    "fieldsCleared": "Cleared {{count}} fields"
   }
 }

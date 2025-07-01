@@ -16,9 +16,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminTranslation, useCommonTranslation } from "@/hooks/use-language";
+import { useTranslation } from "react-i18next";
 import { LANGUAGES } from "@/lib/i18n";
+import { useTranslationManager } from "@/hooks/useTranslationManager";
+import { TranslationToolbar } from "@/components/ui/translation-toolbar";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { getLocalizedField } from "@shared/localization";
+import { getMultilingualValue, createMultilingualUpdate } from "@/components/ui/multilingual-store-settings";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -82,6 +86,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
   setActiveTab: (tab: string) => void,
   setSelectedCategory: (category: string) => void
 }) {
+  const { i18n } = useTranslation();
   const {
     attributes,
     listeners,
@@ -166,8 +171,8 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
                 <AlertDialogTitle>{adminT('categories.deleteConfirmTitle')}</AlertDialogTitle>
                 <AlertDialogDescription>
                   {category.productCount && category.productCount > 0 ? 
-                    adminT('categories.deleteWithProductsWarning').replace('{{categoryName}}', category.name).replace('{{productCount}}', category.productCount.toString()) :
-                    adminT('categories.deleteConfirmDesc').replace('{{categoryName}}', category.name)
+                    adminT('categories.deleteWithProductsWarning').replace('{{categoryName}}', getLocalizedField(category, 'name', i18n.language as SupportedLanguage)).replace('{{productCount}}', category.productCount.toString()) :
+                    adminT('categories.deleteConfirmDesc').replace('{{categoryName}}', getLocalizedField(category, 'name', i18n.language as SupportedLanguage))
                   }
                 </AlertDialogDescription>
               </AlertDialogHeader>
@@ -197,13 +202,13 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
         >
           {/* Category name */}
           <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1 hover:text-blue-600">
-            {category.name}
+            {getLocalizedField(category, 'name', i18n.language as SupportedLanguage)}
           </h3>
 
           {/* Description if exists */}
-          {category.description && (
+          {getLocalizedField(category, 'description', i18n.language as SupportedLanguage) && (
             <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed hover:text-gray-700">
-              {category.description}
+              {getLocalizedField(category, 'description', i18n.language as SupportedLanguage)}
             </p>
           )}
         </div>
@@ -262,27 +267,21 @@ import {
   MessageCircle,
   Code,
   Layers,
-  Type,
   Palette,
   Settings,
   Languages,
   Layers3,
   UserCheck,
   MoreHorizontal,
-  Smartphone,
-  Info
+  Info,
+  Globe,
+  Type
 } from "lucide-react";
 
 // Validation schemas
 const productSchema = z.object({
-  name: z.string().min(1),
-  name_en: z.string().optional(),
-  name_he: z.string().optional(),
-  name_ar: z.string().optional(),
+  name: z.string().optional(),  // Allow empty for translation languages
   description: z.string().optional(),
-  description_en: z.string().optional(),
-  description_he: z.string().optional(),
-  description_ar: z.string().optional(),
   categoryIds: z.array(z.number()).min(1, "Выберите хотя бы одну категорию"),
   price: z.string().min(1),
   unit: z.enum(["100g", "100ml", "piece", "kg"]).default("100g"),
@@ -434,6 +433,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
   };
 
   const { t: adminT } = useAdminTranslation();
+  const { i18n } = useTranslation();
   
   const getStatusLabel = (status: string) => {
     console.log('OrderCard getStatusLabel called with status:', status);
@@ -646,9 +646,9 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
 
 // OrderEditForm component
 function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRTL }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
-  const { i18n } = useCommonTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { i18n } = useTranslation();
   
   // Status color function for consistent styling
   const getStatusColor = (status: string) => {
@@ -861,12 +861,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
   // Helper functions for order items editing
   const getUnitDisplay = (unit: string, quantity: number) => {
+    // Format quantity as whole number without decimal places
+    const qty = Math.round(quantity);
     switch (unit) {
-      case 'piece': return adminT('products.units.piece');
-      case 'kg': return adminT('products.units.kg');
-      case '100g': return adminT('products.units.g');
-      case '100ml': return adminT('products.units.ml');
-      default: return '';
+      case 'piece': return `${qty} ${adminT('products.units.piece')}`;
+      case 'kg': return `${qty} ${adminT('products.units.kg')}`;
+      case '100g': return `${qty} ${adminT('products.units.g')}`;
+      case '100ml': return `${qty} ${adminT('products.units.ml')}`;
+      default: return `${qty}`;
     }
   };
 
@@ -1471,23 +1473,24 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 <TableRow key={index}>
                   <TableCell className="text-sm">
                     <div>
-                      <div className="font-medium">{getLocalizedField(item.product, 'name', i18n.language as any, 'ru')}</div>
-                      {item.product?.description && (
-                        <div className="text-xs text-gray-500">{getLocalizedField(item.product, 'description', i18n.language as any, 'ru')}</div>
+                      <div className="font-medium">{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}</div>
+                      {(getLocalizedField(item.product, 'description', i18n.language as SupportedLanguage) || item.product?.description) && (
+                        <div className="text-xs text-gray-500">{getLocalizedField(item.product, 'description', i18n.language as SupportedLanguage) || item.product.description}</div>
                       )}
                     </div>
                   </TableCell>
                   <TableCell className="text-sm">
-                    <div className="flex items-center gap-1">
+                    <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <Input
                         type="number"
-                        step="0.1"
-                        min="0.1"
-                        value={item.quantity}
-                        onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
-                        className="w-20 h-7 text-xs"
+                        step="1"
+                        min="1"
+                        value={Math.round(parseFloat(item.quantity))}
+                        onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 1)}
+                        className={`w-20 h-7 text-xs ${isRTL ? 'text-right' : ''}`}
+                        dir="ltr"
                       />
-                      <span className="text-xs text-gray-500">
+                      <span className={`text-xs text-gray-500 ${isRTL ? 'text-right' : ''}`} dir="ltr">
                         {getUnitDisplay(item.product?.unit, item.quantity)}
                       </span>
                     </div>
@@ -1534,7 +1537,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                         <AlertDialogHeader>
                           <AlertDialogTitle>{adminT('actions.confirm')}</AlertDialogTitle>
                           <AlertDialogDescription>
-                            {adminT('orders.removeItemConfirm')} "{getLocalizedField(item.product, 'name', i18n.language as any, 'ru')}"?
+                            {adminT('orders.removeItemConfirm')} "{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}"?
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -1562,7 +1565,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               {/* Product Header */}
               <div className="flex justify-between items-start mb-2">
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-base text-gray-900 truncate">{getLocalizedField(item.product, 'name', i18n.language as any, 'ru')}</div>
+                  <div className="font-medium text-base text-gray-900 truncate">{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}</div>
                   <div className="text-sm text-gray-500 mt-0.5">{getUnitPrice(item.product)}</div>
                 </div>
                 <AlertDialog>
@@ -1579,7 +1582,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     <AlertDialogHeader>
                       <AlertDialogTitle>{adminT('actions.confirm')}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        {adminT('orders.removeItemConfirm')} "{getLocalizedField(item.product, 'name', i18n.language as any, 'ru')}"?
+                        {adminT('orders.removeItemConfirm')} "{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}"?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className={`${isRTL ? 'flex-row-reverse space-x-reverse space-x-4' : ''}`}>
@@ -1598,16 +1601,17 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               {/* Compact Controls Row */}
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Input
                       type="number"
-                      step="0.1"
-                      min="0.1"
-                      value={item.quantity}
-                      onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 0.1)}
-                      className="h-7 text-sm w-20 text-center"
+                      step="1"
+                      min="1"
+                      value={Math.round(parseFloat(item.quantity))}
+                      onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 1)}
+                      className={`h-7 text-sm w-20 ${isRTL ? 'text-right' : 'text-center'}`}
+                      dir="ltr"
                     />
-                    <span className="text-sm text-gray-600 min-w-[40px] flex-shrink-0">
+                    <span className={`text-sm text-gray-600 min-w-[40px] flex-shrink-0 ${isRTL ? 'text-right' : ''}`} dir="ltr">
                       {getUnitDisplay(item.product?.unit, item.quantity)}
                     </span>
                   </div>
@@ -1865,7 +1869,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
 // Add Item Dialog Component
 function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { onClose: () => void, onAdd: (product: any, quantity: number) => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
-  const { i18n } = useCommonTranslation();
+  const { i18n } = useTranslation();
   
   function getUnitDisplay(unit: string) {
     switch (unit) {
@@ -1917,7 +1921,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
   const { data: productsResponse } = useQuery({
     queryKey: ["/api/products"],
     select: (data: any) => data?.filter((product: any) => 
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      getLocalizedField(product, 'name', i18n.language as SupportedLanguage).toLowerCase().includes(searchQuery.toLowerCase())
     )
   });
 
@@ -1954,7 +1958,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
               }`}
               onClick={() => handleProductSelect(product)}
             >
-              <div className="font-medium">{getLocalizedField(product, 'name', i18n.language as any, 'ru')}</div>
+              <div className="font-medium">{getLocalizedField(product, 'name', i18n.language as SupportedLanguage)}</div>
               <div className="text-sm text-gray-500">
                 {formatCurrency(product.price || product.pricePerKg)} {adminT('products.per')} {getUnitDisplay(product.unit)}
               </div>
@@ -2011,7 +2015,7 @@ function ItemDiscountDialog({
   onApply: (index: number, type: 'percentage' | 'amount', value: number, reason: string) => void;
   adminT: (key: string) => string;
 }) {
-  const { i18n } = useCommonTranslation();
+  const { i18n } = useTranslation();
   const [discountType, setDiscountType] = useState<'percentage' | 'amount'>(currentDiscount?.type || 'percentage');
   const [discountValue, setDiscountValue] = useState(currentDiscount?.value || 0);
   const [discountReason, setDiscountReason] = useState(currentDiscount?.reason || '');
@@ -2039,7 +2043,7 @@ function ItemDiscountDialog({
         </DialogHeader>
         
         <div className="mb-4">
-          <div className="font-medium">{getLocalizedField(item.product, 'name', i18n.language as any, 'ru')}</div>
+          <div className="font-medium">{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}</div>
           <div className="text-sm text-gray-500">
             {adminT('orders.baseCost')}: {formatCurrency(basePrice)}
           </div>
@@ -2143,6 +2147,7 @@ export default function AdminDashboard() {
   const { t: adminT } = useAdminTranslation();
   const { t: commonT, i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
+  const currentLanguage = i18n.language;
   const queryClient = useQueryClient();
 
   // Force component remount key to prevent stale state issues
@@ -2654,10 +2659,25 @@ export default function AdminDashboard() {
       }
       return await response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+    onSuccess: (updatedProduct) => {
+      // Add timestamp to force fresh data
+      const timestamp = Date.now();
+      
+      // Clear all cached queries
+      queryClient.removeQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.removeQueries({ queryKey: ['/api/products'] });
+      
+      // Force refetch with fresh data
+      queryClient.invalidateQueries({ 
+        queryKey: ['/api/admin/products'],
+        refetchType: 'all'
+      });
+      queryClient.invalidateQueries({ 
+        queryKey: ['/api/products'],
+        refetchType: 'all'
+      });
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      
       setEditingProduct(null);
       setIsProductFormOpen(false);
       toast({ title: adminT('products.notifications.productUpdated'), description: adminT('products.notifications.productUpdatedDesc') });
@@ -2833,12 +2853,10 @@ export default function AdminDashboard() {
       const response = await apiRequest('PUT', '/api/settings', cleanedData);
       return await response.json();
     },
-    onSuccess: () => {
-      // Update cache data directly instead of invalidating to prevent tab switching
-      queryClient.setQueryData(['/api/settings'], (oldData: any) => {
-        if (!oldData) return oldData;
-        return { ...oldData };
-      });
+    onSuccess: (newData) => {
+      // Update cache with the new data returned from the server
+      queryClient.setQueryData(['/api/settings'], newData);
+      // Also invalidate the public settings cache to update header immediately
       queryClient.invalidateQueries({ queryKey: ['/api/settings'] });
       toast({ title: adminT('settings.saved'), description: adminT('settings.saveSuccess') });
     },
@@ -3099,8 +3117,8 @@ export default function AdminDashboard() {
   const filteredProducts = (productsData as any[] || [])
     .filter((product: any) => {
       const matchesSearch = !searchQuery || 
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase()));
+        (getLocalizedField(product, 'name', i18n.language as SupportedLanguage) || product.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (getLocalizedField(product, 'description', i18n.language as SupportedLanguage) || product.description || '').toLowerCase().includes(searchQuery.toLowerCase());
       
       const matchesCategory = selectedCategoryFilter === "all" || 
         product.categories?.some((cat: any) => cat.id === parseInt(selectedCategoryFilter));
@@ -3118,16 +3136,16 @@ export default function AdminDashboard() {
       
       switch (sortField) {
         case "name":
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
+          aValue = (getLocalizedField(a, 'name', i18n.language as SupportedLanguage) || a.name || '').toLowerCase();
+          bValue = (getLocalizedField(b, 'name', i18n.language as SupportedLanguage) || b.name || '').toLowerCase();
           break;
         case "price":
           aValue = parseFloat(a.price || a.pricePerKg || "0");
           bValue = parseFloat(b.price || b.pricePerKg || "0");
           break;
         case "category":
-          aValue = a.category?.name?.toLowerCase() || "";
-          bValue = b.category?.name?.toLowerCase() || "";
+          aValue = getLocalizedField(a.category, 'name', i18n.language as SupportedLanguage).toLowerCase() || "";
+          bValue = getLocalizedField(b.category, 'name', i18n.language as SupportedLanguage).toLowerCase() || "";
           break;
         default:
           return 0;
@@ -3417,10 +3435,10 @@ export default function AdminDashboard() {
                           {(categories as any[] || []).map((category: any) => (
                             <SelectItem 
                               key={category.id}
-                                          title={category.name} 
+                                          title={getLocalizedField(category, 'name', i18n.language as SupportedLanguage)} 
                               value={category.id.toString()}
                             >
-                              {category.name}
+                              {getLocalizedField(category, 'name', i18n.language as SupportedLanguage)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -3544,9 +3562,12 @@ export default function AdminDashboard() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {filteredProducts.map((product: any) => (
-                            <TableRow key={product.id} className={
-                              !(product.isAvailable && (product.availabilityStatus === "available"))
+                          {filteredProducts.map((product: any) => {
+                            // Get localized product name for display
+                            const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru');
+                            return (
+                              <TableRow key={product.id} className={
+                              product.availabilityStatus !== "available"
                                 ? 'bg-gray-50 hover:bg-gray-100' 
                                 : 'hover:bg-gray-50'
                             }>
@@ -3560,7 +3581,7 @@ export default function AdminDashboard() {
                                         size="sm"
                                         variant="ghost"
                                         onClick={() => {
-                                          const isActive = product.isAvailable && (product.availabilityStatus === "available");
+                                          const isActive = product.availabilityStatus === "available";
                                           if (isActive) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
@@ -3572,16 +3593,16 @@ export default function AdminDashboard() {
                                           }
                                         }}
                                         className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
-                                          product.isAvailable && (product.availabilityStatus === "available")
+                                          product.availabilityStatus === "available"
                                             ? 'text-green-600 hover:text-green-700 hover:bg-green-50'
                                             : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                                         }`}
-                                        title={product.isAvailable && (product.availabilityStatus === "available") 
+                                        title={product.availabilityStatus === "available" 
                                           ? adminT('products.hideProduct') 
                                           : adminT('products.showProduct')
                                         }
                                       >
-                                        {product.isAvailable && (product.availabilityStatus === "available") 
+                                        {product.availabilityStatus === "available" 
                                           ? <Eye className="h-6 w-6" /> 
                                           : <EyeOff className="h-6 w-6" />
                                         }
@@ -3620,11 +3641,11 @@ export default function AdminDashboard() {
                                       {product.categories?.map((category: any) => (
                                         <span 
                                           key={category.id}
-                                          title={category.name} 
+                                          title={getLocalizedField(category, "name", i18n.language as SupportedLanguage)} 
                                           className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white hover:bg-primary shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
                                         >
                                           
-                                          {category.name}
+                                          {getLocalizedField(category, "name", i18n.language as SupportedLanguage)}
                                         </span>
                                       ))}
                                     </div>
@@ -3637,7 +3658,7 @@ export default function AdminDashboard() {
                                       }}
                                       className={`font-medium text-xs sm:text-sm hover:text-primary transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
                                     >
-                                      {product.name}
+                                      {localizedName}
                                     </button>
                                   </TableCell>
                                 </>
@@ -3652,7 +3673,7 @@ export default function AdminDashboard() {
                                       }}
                                       className={`font-medium text-xs sm:text-sm hover:text-primary transition-colors cursor-pointer break-words whitespace-normal leading-relaxed p-0 border-0 bg-transparent ${isRTL ? 'text-right justify-end' : 'text-left justify-start'}`}
                                     >
-                                      {product.name}
+                                      {localizedName}
                                     </button>
                                   </TableCell>
                                   <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
@@ -3660,11 +3681,11 @@ export default function AdminDashboard() {
                                       {product.categories?.map((category: any) => (
                                         <span 
                                           key={category.id}
-                                          title={category.name} 
+                                          title={getLocalizedField(category, "name", i18n.language as SupportedLanguage)} 
                                           className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white hover:bg-primary shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 max-w-[120px] text-center whitespace-nowrap overflow-hidden text-ellipsis"
                                         >
                                           
-                                          {category.name}
+                                          {getLocalizedField(category, "name", i18n.language as SupportedLanguage)}
                                         </span>
                                       ))}
                                     </div>
@@ -3697,7 +3718,7 @@ export default function AdminDashboard() {
                                         size="sm"
                                         variant="ghost"
                                         onClick={() => {
-                                          const isActive = product.isAvailable && (product.availabilityStatus === "available");
+                                          const isActive = product.availabilityStatus === "available";
                                           if (isActive) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
@@ -3709,16 +3730,16 @@ export default function AdminDashboard() {
                                           }
                                         }}
                                         className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
-                                          product.isAvailable && (product.availabilityStatus === "available")
+                                          product.availabilityStatus === "available"
                                             ? 'text-green-600 hover:text-green-700 hover:bg-green-50'
                                             : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                                         }`}
-                                        title={product.isAvailable && (product.availabilityStatus === "available") 
+                                        title={product.availabilityStatus === "available" 
                                           ? adminT('products.hideProduct') 
                                           : adminT('products.showProduct')
                                         }
                                       >
-                                        {product.isAvailable && (product.availabilityStatus === "available") 
+                                        {product.availabilityStatus === "available" 
                                           ? <Eye className="h-6 w-6" /> 
                                           : <EyeOff className="h-6 w-6" />
                                         }
@@ -3733,7 +3754,8 @@ export default function AdminDashboard() {
                                 </>
                               )}
                             </TableRow>
-                          ))}
+                            );
+                          })}
                         </TableBody>
                       </Table>
                     </div>
@@ -3767,7 +3789,7 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setProductsPage(1)}
                           disabled={productsPage === 1}
-                          title="Первая страница"
+                          title={adminT('common.firstPage')}
                           className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           ⟨⟨
@@ -3777,12 +3799,12 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
                           disabled={productsPage === 1}
-                          title="Предыдущая страница"
+                          title={adminT('common.previousPage')}
                           className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
-                          <ChevronLeft className="h-4 w-4" />
+                          {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                         </Button>
-                        <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]">
+                        <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
                           {productsPage}/{productsTotalPages}
                         </span>
                         <Button
@@ -3790,17 +3812,17 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
                           disabled={productsPage === productsTotalPages}
-                          title="Следующая страница"
+                          title={adminT('common.nextPage')}
                           className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
-                          <ChevronRight className="h-4 w-4" />
+                          {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => setProductsPage(productsTotalPages)}
                           disabled={productsPage === productsTotalPages}
-                          title="Последняя страница"
+                          title={adminT('common.lastPage')}
                           className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         >
                           ⟩⟩
@@ -3819,7 +3841,7 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setProductsPage(1)}
                           disabled={productsPage === 1}
-                          title="Первая страница"
+                          title={adminT('common.firstPage')}
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           ⟨⟨
@@ -3829,30 +3851,30 @@ export default function AdminDashboard() {
                           size="sm"
                           onClick={() => setProductsPage(prev => Math.max(1, prev - 1))}
                           disabled={productsPage === 1}
-                          title="Предыдущая страница"
+                          title={adminT('common.previousPage')}
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          <ChevronLeft className="h-4 w-4" />
+                          {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                         </Button>
-                        <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
-                          {productsPage} из {productsTotalPages}
+                        <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center" dir="ltr">
+                          {productsPage} {adminT('common.of')} {productsTotalPages}
                         </span>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setProductsPage(prev => Math.min(productsTotalPages, prev + 1))}
                           disabled={productsPage === productsTotalPages}
-                          title="Следующая страница"
+                          title={adminT('common.nextPage')}
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
-                          <ChevronRight className="h-4 w-4" />
+                          {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setProductsPage(productsTotalPages)}
                           disabled={productsPage === productsTotalPages}
-                          title="Последняя страница"
+                          title={adminT('common.lastPage')}
                           className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                         >
                           ⟩⟩
@@ -4277,9 +4299,9 @@ export default function AdminDashboard() {
                               title={adminT('common.previousPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              <ChevronLeft className="h-4 w-4" />
+                              {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                             </Button>
-                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
+                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center" dir="ltr">
                               {ordersResponse.page} {adminT('common.of')} {ordersResponse.totalPages}
                             </span>
                             <Button
@@ -4287,17 +4309,17 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Следующая страница"
+                              title={adminT('common.nextPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              <ChevronRight className="h-4 w-4" />
+                              {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Последняя страница"
+                              title={adminT('common.lastPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟩⟩
@@ -4566,7 +4588,7 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(1)}
                               disabled={ordersResponse.page === 1}
-                              title="Первая страница"
+                              title={adminT('common.firstPage')}
                               className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               ⟨⟨
@@ -4576,12 +4598,12 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
-                              title="Предыдущая страница"
+                              title={adminT('common.previousPage')}
                               className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
-                              <ChevronLeft className="h-4 w-4" />
+                              {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                             </Button>
-                            <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]">
+                            <span className="text-sm font-medium px-4 bg-white border border-primary rounded h-9 flex items-center justify-center min-w-[60px]" dir="ltr">
                               {ordersResponse.page}/{ordersResponse.totalPages}
                             </span>
                             <Button
@@ -4589,17 +4611,17 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Следующая страница"
+                              title={adminT('common.nextPage')}
                               className="h-9 w-9 p-0 bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
-                              <ChevronRight className="h-4 w-4" />
+                              {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                             </Button>
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Последняя страница"
+                              title={adminT('common.lastPage')}
                               className="h-9 w-9 p-0 text-xs bg-white text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             >
                               ⟩⟩
@@ -4628,30 +4650,30 @@ export default function AdminDashboard() {
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
-                              title="Предыдущая страница"
+                              title={adminT('common.previousPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              <ChevronLeft className="h-4 w-4" />
+                              {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                             </Button>
-                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center">
-                              {ordersResponse.page} из {ordersResponse.totalPages}
+                            <span className="text-sm font-medium px-3 py-1 bg-white border border-primary rounded h-8 flex items-center" dir="ltr">
+                              {ordersResponse.page} {adminT('common.of')} {ordersResponse.totalPages}
                             </span>
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => setOrdersPage(prev => Math.min(ordersResponse.totalPages, prev + 1))}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Следующая страница"
+                              title={adminT('common.nextPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
-                              <ChevronRight className="h-4 w-4" />
+                              {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => setOrdersPage(ordersResponse.totalPages)}
                               disabled={ordersResponse.page === ordersResponse.totalPages}
-                              title="Последняя страница"
+                              title={adminT('common.lastPage')}
                               className="h-8 px-3 bg-white border-primary text-primary hover:bg-primary hover:text-white focus:ring-0 focus:ring-offset-0"
                             >
                               ⟩⟩
@@ -4712,7 +4734,7 @@ export default function AdminDashboard() {
 
           {/* Users Management */}
           {hasPermission("canViewUsers") && (
-            <TabsContent value="users" className="space-y-4 sm:space-y-6">
+            <TabsContent value="users" className="space-y-4 sm:space-y-6 users-container" data-tab="users">
               <Card>
                 <CardHeader>
                   <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
@@ -4860,7 +4882,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       
-                      <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div className="flex items-center gap-1">
                         <Button
                           variant="outline"
                           size="sm"
@@ -4869,7 +4891,7 @@ export default function AdminDashboard() {
                           title={adminT('common.firstPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isRTL ? '⟩⟩' : '⟨⟨'}
+                          ⟨⟨
                         </Button>
                         <Button
                           variant="outline"
@@ -4879,9 +4901,9 @@ export default function AdminDashboard() {
                           title={adminT('common.prevPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isRTL ? '⟩' : '⟨'}
+                          {isRTL ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
                         </Button>
-                        <span className="text-xs text-gray-600 px-2 min-w-[60px] text-center">
+                        <span className="text-xs text-gray-600 px-2 min-w-[60px] text-center" dir="ltr">
                           <span className="sm:hidden">{usersPage}/{usersTotalPages}</span>
                           <span className="hidden sm:inline">{usersPage} {adminT('common.of')} {usersTotalPages}</span>
                         </span>
@@ -4893,7 +4915,7 @@ export default function AdminDashboard() {
                           title={adminT('common.nextPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isRTL ? '⟨' : '⟩'}
+                          {isRTL ? <ChevronLeft className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
                         </Button>
                         <Button
                           variant="outline"
@@ -4903,7 +4925,7 @@ export default function AdminDashboard() {
                           title={adminT('common.lastPage')}
                           className="h-7 w-7 p-0 text-xs bg-white border-orange-200 text-primary hover:bg-primary hover:text-white hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isRTL ? '⟨⟨' : '⟩⟩'}
+                          ⟩⟩
                         </Button>
                       </div>
                     </div>
@@ -4946,6 +4968,8 @@ export default function AdminDashboard() {
                   />
                 </CardContent>
               </Card>
+
+
             </div>
           </TabsContent>
           )}
@@ -5150,12 +5174,16 @@ export default function AdminDashboard() {
         categories={categories}
         product={editingProduct}
         adminT={adminT}
-        onSubmit={(data: any) => {
+        onSubmit={(combinedData: any) => {
+          console.log('Received combined data from form:', combinedData);
+          
           // Set isAvailable based on availability status
           const productData = {
-            ...data,
-            isAvailable: data.availabilityStatus !== 'completely_unavailable'
+            ...combinedData,
+            isAvailable: combinedData.availabilityStatus !== 'completely_unavailable'
           };
+          
+          console.log('Final product data for mutation:', productData);
           
           if (editingProduct) {
             updateProductMutation.mutate({ id: editingProduct.id, ...productData });
@@ -5317,21 +5345,21 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
 // Form Dialog Components
 function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDelete, adminT }: any) {
   type ProductFormData = z.infer<typeof productSchema>;
-  const { i18n } = useCommonTranslation();
-  const isRTL = i18n.language === 'he' || i18n.language === 'ar';
-  const [activeTab, setActiveTab] = useState('ru');
+  
+  const { toast } = useToast();
+  const { i18n } = useTranslation();
+  const translationManager = useTranslationManager({
+    defaultLanguage: 'ru',
+    baseFields: ['name', 'description']
+  });
+  
+  const [formData, setFormData] = useState<any>({});
   
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: "",
-      name_en: "",
-      name_he: "",
-      name_ar: "",
       description: "",
-      description_en: "",
-      description_he: "",
-      description_ar: "",
       categoryIds: [],
       price: "",
       unit: "100g" as ProductUnit,
@@ -5349,41 +5377,44 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   const discountType = useWatch({ control: form.control, name: "discountType" });
   const unit = useWatch({ control: form.control, name: "unit" });
 
-  // Reset form when product or dialog state changes
+  // Initialize form data with multilingual support - ONLY when dialog opens
   useEffect(() => {
     if (open) {
       if (product) {
-        // Extract category IDs from product categories array
-        const categoryIds = product.categories ? product.categories.map((cat: any) => cat.id) : [];
-        form.reset({
-          name: product.name || "",
-          name_en: product.name_en || "",
-          name_he: product.name_he || "",
-          name_ar: product.name_ar || "",
-          description: product.description || "",
-          description_en: product.description_en || "",
-          description_he: product.description_he || "",
-          description_ar: product.description_ar || "",
-          categoryIds: categoryIds,
+        // Set up form data with all language fields
+        const initialData = {
+          ...product,
+          categoryIds: product.categories ? product.categories.map((cat: any) => cat.id) : [],
           price: (product.price || product.pricePerKg)?.toString() || "",
           unit: (product.unit || "100g") as ProductUnit,
-          imageUrl: product.imageUrl || "",
-          isAvailable: product.isAvailable ?? true,
-          availabilityStatus: product.availabilityStatus || "available",
-          isSpecialOffer: product.isSpecialOffer ?? false,
-          discountType: product.discountType || "",
           discountValue: product.discountValue?.toString() || "",
+        };
+        setFormData(initialData);
+        
+        // Set form values based on current language
+        const nameValue = translationManager.getFieldValue(initialData, 'name');
+        const descriptionValue = translationManager.getFieldValue(initialData, 'description');
+        
+        form.reset({
+          name: nameValue,
+          description: descriptionValue,
+          categoryIds: initialData.categoryIds,
+          price: initialData.price,
+          unit: initialData.unit,
+          imageUrl: initialData.imageUrl || "",
+          isAvailable: initialData.isAvailable ?? true,
+          availabilityStatus: initialData.availabilityStatus || "available",
+          isSpecialOffer: initialData.isSpecialOffer ?? false,
+          discountType: initialData.discountType || "",
+          discountValue: initialData.discountValue,
         });
       } else {
+        // New product - reset everything
+        const emptyData = {};
+        setFormData(emptyData);
         form.reset({
           name: "",
-          name_en: "",
-          name_he: "",
-          name_ar: "",
           description: "",
-          description_en: "",
-          description_he: "",
-          description_ar: "",
           categoryIds: [],
           price: "",
           unit: "100g" as ProductUnit,
@@ -5396,7 +5427,164 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
         });
       }
     }
-  }, [open, product, form]);
+  }, [open, product]);
+
+  // Handle input changes and save to formData
+  const handleFieldChange = (fieldName: string, value: any, isMultilingual = false) => {
+    if (isMultilingual) {
+      const currentLang = translationManager.currentLanguage;
+      const defaultLang = translationManager.defaultLanguage;
+      
+      if (currentLang === defaultLang) {
+        setFormData((prev: any) => ({ ...prev, [fieldName]: value }));
+      } else {
+        const localizedField = `${fieldName}_${currentLang}`;
+        setFormData((prev: any) => ({ ...prev, [localizedField]: value }));
+      }
+    } else {
+      // Common fields - same for all languages
+      setFormData((prev: any) => ({ ...prev, [fieldName]: value }));
+    }
+  };
+
+
+
+  // Update form values when language changes - TEMPORARILY DISABLED
+  /*useEffect(() => {
+    if (open && formData && Object.keys(formData).length > 0) {
+      const currentLang = translationManager.currentLanguage;
+      const defaultLang = translationManager.defaultLanguage;
+      
+      let nameValue = '';
+      let descriptionValue = '';
+      
+      if (currentLang === defaultLang) {
+        // For default language, use base fields
+        nameValue = formData.name || '';
+        descriptionValue = formData.description || '';
+      } else {
+        // For other languages, use localized fields with fallback
+        const nameField = `name_${currentLang}`;
+        const descField = `description_${currentLang}`;
+        nameValue = formData[nameField] || '';
+        descriptionValue = formData[descField] || '';
+      }
+      
+      // Only update form if values are different to prevent infinite loops
+      const currentName = form.getValues('name');
+      const currentDesc = form.getValues('description');
+      
+      if (currentName !== nameValue) {
+        form.setValue('name', nameValue);
+      }
+      if (currentDesc !== descriptionValue) {
+        form.setValue('description', descriptionValue);
+      }
+    }
+  }, [translationManager.currentLanguage, open]);*/
+  
+  // Handle translation copy/clear
+  const handleCopyAllFields = () => {
+    if (translationManager.currentLanguage === translationManager.defaultLanguage) {
+      toast({
+        title: 'Уже на основном языке',
+        description: 'Копирование не требуется для основного языка',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    // Get values from default language fields
+    const defaultName = formData.name || '';
+    const defaultDescription = formData.description || '';
+    
+    if (!defaultName && !defaultDescription) {
+      toast({
+        title: 'Нет данных для копирования',
+        description: 'Заполните поля на русском языке сначала',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    // Update formData with copied values FIRST
+    const targetNameField = `name_${translationManager.currentLanguage}`;
+    const targetDescField = `description_${translationManager.currentLanguage}`;
+    
+    const updatedFormData = {
+      ...formData,
+      [targetNameField]: defaultName,
+      [targetDescField]: defaultDescription
+    };
+    
+    setFormData(updatedFormData);
+
+    // Then set form values
+    if (defaultName) {
+      form.setValue('name', defaultName);
+    }
+    if (defaultDescription) {
+      form.setValue('description', defaultDescription);
+    }
+
+    let copiedCount = 0;
+    if (defaultName) copiedCount++;
+    if (defaultDescription) copiedCount++;
+
+    toast({
+      title: adminT('translation.copySuccess'),
+      description: adminT('translation.fieldsCopied', { count: copiedCount }),
+    });
+  };
+  
+  const handleClearAllFields = () => {
+    const clearedCount = translationManager.clearAllFields(setFormData);
+    if (clearedCount > 0) {
+      form.setValue('name', '');
+      form.setValue('description', '');
+      
+      toast({
+        title: adminT('translation.clearSuccess'),
+        description: adminT('translation.fieldsCleared', { count: clearedCount }),
+      });
+    }
+  };
+
+  // Local onSubmit handler that merges multilingual data
+  const handleFormSubmit = (data: any) => {
+    // Save current form values to formData before submitting
+    const currentLang = translationManager.currentLanguage;
+    const defaultLang = translationManager.defaultLanguage;
+    
+    const updatedFormData = { ...formData };
+    
+    // Save current name and description to formData
+    if (currentLang === defaultLang) {
+      updatedFormData.name = data.name;
+      updatedFormData.description = data.description;
+    } else {
+      updatedFormData[`name_${currentLang}`] = data.name;
+      updatedFormData[`description_${currentLang}`] = data.description;
+    }
+    
+    // Save imageUrl if it's a multilingual field
+    if (currentLang === defaultLang) {
+      updatedFormData.imageUrl = data.imageUrl;
+    } else {
+      updatedFormData[`imageUrl_${currentLang}`] = data.imageUrl;
+    }
+    
+    // Merge all data - form data + multilingual data from formData
+    const finalData = {
+      ...data,
+      ...updatedFormData
+    };
+    
+    console.log('Submitting product data:', finalData);
+    
+    // Send to parent component
+    onSubmit(finalData);
+  };
 
   if (!open) return null;
 
@@ -5412,210 +5600,66 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           </DialogDescription>
         </DialogHeader>
         
+        {/* Translation Toolbar */}
+        <TranslationToolbar
+          currentLanguage={translationManager.currentLanguage}
+          defaultLanguage={translationManager.defaultLanguage}
+          formData={formData}
+          baseFields={['name', 'description']}
+          onCopyAllFields={handleCopyAllFields}
+          onClearAllFields={handleClearAllFields}
+        />
+        
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            
-            {/* Language Tabs for Name and Description */}
-            <div className="space-y-4">
-              <div className="flex flex-wrap gap-2 mb-4">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('ru')}
-                  className={`px-3 py-1 text-sm rounded ${
-                    activeTab === 'ru' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                  }`}
-                >
-                  🇷🇺 Русский
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('en')}
-                  className={`px-3 py-1 text-sm rounded ${
-                    activeTab === 'en' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                  }`}
-                >
-                  🇺🇸 English
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('he')}
-                  className={`px-3 py-1 text-sm rounded ${
-                    activeTab === 'he' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                  }`}
-                >
-                  🇮🇱 עברית
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('ar')}
-                  className={`px-3 py-1 text-sm rounded ${
-                    activeTab === 'ar' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                  }`}
-                >
-                  🇸🇦 العربية
-                </button>
-              </div>
-
-              {/* Name Fields */}
-              {activeTab === 'ru' && (
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('products.dialog.nameLabel')} (Русский)</FormLabel>
-                      <FormControl>
-                        <Input placeholder={adminT('products.dialog.namePlaceholder')} {...field} className="text-sm" />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">
+                    {translationManager.getFieldLabel('name', adminT('products.dialog.nameLabel'))}
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder={adminT('products.dialog.namePlaceholder')} 
+                      {...field}
+                      onChange={(e) => {
+                        console.log('Name field changed:', e.target.value);
+                        field.onChange(e.target.value);
+                        handleFieldChange('name', e.target.value, true);
+                      }}
+                      className="text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
               )}
+            />
 
-              {activeTab === 'en' && (
-                <FormField
-                  control={form.control}
-                  name="name_en"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('products.dialog.nameLabel')} (English)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Product name in English" {...field} className="text-sm" />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">
+                    {translationManager.getFieldLabel('description', adminT('products.dialog.descriptionLabel'))}
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder={adminT('products.dialog.descriptionPlaceholder')}
+                      className="resize-none text-sm"
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        handleFieldChange('description', e.target.value, true);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
               )}
-
-              {activeTab === 'he' && (
-                <FormField
-                  control={form.control}
-                  name="name_he"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('products.dialog.nameLabel')} (עברית)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="שם המוצר בעברית" {...field} className="text-sm" dir="rtl" />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              {activeTab === 'ar' && (
-                <FormField
-                  control={form.control}
-                  name="name_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('products.dialog.nameLabel')} (العربية)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="اسم المنتج بالعربية" {...field} className="text-sm" dir="rtl" />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              {/* Description Fields */}
-              {activeTab === 'ru' && (
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('products.dialog.descriptionLabel')} (Русский)</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder={adminT('products.dialog.descriptionPlaceholder')}
-                          className="resize-none text-sm"
-                          rows={3}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              {activeTab === 'en' && (
-                <FormField
-                  control={form.control}
-                  name="description_en"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('products.dialog.descriptionLabel')} (English)</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Product description in English"
-                          className="resize-none text-sm"
-                          rows={3}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              {activeTab === 'he' && (
-                <FormField
-                  control={form.control}
-                  name="description_he"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('products.dialog.descriptionLabel')} (עברית)</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="תיאור המוצר בעברית"
-                          className="resize-none text-sm"
-                          rows={3}
-                          dir="rtl"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              {activeTab === 'ar' && (
-                <FormField
-                  control={form.control}
-                  name="description_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('products.dialog.descriptionLabel')} (العربية)</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="وصف المنتج بالعربية"
-                          className="resize-none text-sm"
-                          rows={3}
-                          dir="rtl"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              )}
-            </div>
+            />
 
             <FormField
               control={form.control}
@@ -5627,23 +5671,26 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     <div className="border rounded-md p-3 max-h-32 overflow-y-auto category-selector-block">
                       {categories?.map((category: any) => (
                         <div key={category.id}
-                                          title={category.name} className="flex items-center space-x-2 py-1">
+                                          title={getLocalizedField(category, "name", i18n.language as SupportedLanguage)} className="flex items-center space-x-2 py-1">
                           <input
                             type="checkbox"
                             id={`category-${category.id}`}
                             checked={field.value?.includes(category.id) || false}
                             onChange={(e) => {
                               const currentIds = field.value || [];
+                              let newIds;
                               if (e.target.checked) {
-                                field.onChange([...currentIds, category.id]);
+                                newIds = [...currentIds, category.id];
                               } else {
-                                field.onChange(currentIds.filter((id: number) => id !== category.id));
+                                newIds = currentIds.filter((id: number) => id !== category.id);
                               }
+                              field.onChange(newIds);
+                              handleFieldChange('categoryIds', newIds, false);
                             }}
                             className="rounded border-gray-300"
                           />
                           <label htmlFor={`category-${category.id}`} className="text-sm cursor-pointer flex-1">
-                            {category.icon} {category.name}
+                            {category.icon} {getLocalizedField(category, "name", i18n.language as SupportedLanguage)}
                           </label>
                         </div>
                       ))}
@@ -5667,6 +5714,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                         step="0.01"
                         placeholder={adminT('products.dialog.pricePlaceholder')}
                         {...field}
+                        onChange={(e) => {
+                          console.log('Price field changed:', e.target.value);
+                          field.onChange(e.target.value);
+                          handleFieldChange('price', e.target.value, false);
+                        }}
                         className="text-sm"
                       />
                     </FormControl>
@@ -5681,7 +5733,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">{adminT('products.dialog.unitLabel')}</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={(value) => {
+                      field.onChange(value);
+                      handleFieldChange('unit', value, false);
+                    }} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="text-sm">
                           <SelectValue placeholder={adminT('products.dialog.unitLabel')} />
@@ -5705,11 +5760,16 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               name="imageUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">{adminT('products.dialog.imageLabel')}</FormLabel>
+                  <FormLabel className="text-sm">
+                    {translationManager.getFieldLabel('imageUrl', adminT('products.dialog.imageLabel'))}
+                  </FormLabel>
                   <FormControl>
                     <ImageUpload
                       value={field.value || ""}
-                      onChange={field.onChange}
+                      onChange={(value) => {
+                        field.onChange(value);
+                        handleFieldChange('imageUrl', value, true);
+                      }}
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
@@ -5726,7 +5786,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm">{adminT('products.dialog.availabilityLabel')}</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={(value) => {
+                    field.onChange(value);
+                    handleFieldChange('availabilityStatus', value, false);
+                  }} value={field.value}>
                     <FormControl>
                       <SelectTrigger className="text-sm">
                         <SelectValue placeholder={adminT('products.dialog.availabilityPlaceholder')} />
@@ -5762,7 +5825,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => field.onChange(!field.value)}
+                      onClick={() => {
+                        const newValue = !field.value;
+                        field.onChange(newValue);
+                        handleFieldChange('isSpecialOffer', newValue, false);
+                      }}
                       className={`h-8 w-8 p-0 rounded-lg transition-all duration-200 ${
                         field.value 
                           ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50' 
@@ -5788,7 +5855,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       <FormItem>
                         <FormLabel className="text-sm">{adminT('products.dialog.discountTypeLabel')}</FormLabel>
                         <Select 
-                          onValueChange={field.onChange}
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            handleFieldChange('discountType', value, false);
+                          }}
                           value={field.value}
                         >
                           <FormControl>
@@ -5820,6 +5890,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                             step="0.01"
                             placeholder={discountType === "percentage" ? "10" : "5.00"}
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e.target.value);
+                              handleFieldChange('discountValue', e.target.value, false);
+                            }}
                             className="text-sm"
                           />
                         </FormControl>
@@ -5901,7 +5975,29 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
-  const [activeTab, setActiveTab] = useState('ru');
+  const [activeTab, setActiveTab] = useState("basic");
+  
+  // Get enabled languages from settings
+  const { data: settings } = useQuery({
+    queryKey: ['/api/settings'],
+    enabled: open, // Only fetch when dialog is open
+  });
+  
+  // Define available language tabs based on enabled languages
+  const enabledLanguages = (settings as any)?.enabledLanguages || ['ru', 'en', 'he', 'ar'];
+  const availableTabs = [
+    { key: 'basic', label: adminT('categories.tabs.basic'), icon: Info, langCode: 'ru' },
+    { key: 'english', label: 'English', icon: Globe, langCode: 'en' },
+    { key: 'hebrew', label: 'עברית', icon: Languages, langCode: 'he' },
+    { key: 'arabic', label: 'العربية', icon: Type, langCode: 'ar' }
+  ].filter(tab => tab.langCode === 'ru' || enabledLanguages.includes(tab.langCode));
+
+  // Reset activeTab if current tab is not available
+  useEffect(() => {
+    if (availableTabs.length > 0 && !availableTabs.some(tab => tab.key === activeTab)) {
+      setActiveTab(availableTabs[0].key);
+    }
+  }, [availableTabs, activeTab]);
   
   const form = useForm({
     resolver: zodResolver(categorySchema),
@@ -5962,293 +6058,280 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
           </DialogDescription>
         </DialogHeader>
         
+        {/* Dynamic Translation Tabs based on enabled languages */}
+        <div className="flex border-b border-gray-200 mb-4">
+          {availableTabs.map((tab) => {
+            const IconComponent = tab.icon;
+            return (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 flex-1 ${
+                  activeTab === tab.key
+                    ? "border-b-2 border-primary text-primary bg-primary/5"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                <IconComponent className="h-4 w-4" />
+                <span className="hidden sm:inline">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            
-            {/* Language Tabs for Name and Description */}
-            <div className="space-y-4">
-              <div className="flex flex-wrap gap-2 mb-4">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('ru')}
-                  className={`px-3 py-1 text-sm rounded ${
-                    activeTab === 'ru' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                  }`}
-                >
-                  🇷🇺 Русский
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('en')}
-                  className={`px-3 py-1 text-sm rounded ${
-                    activeTab === 'en' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                  }`}
-                >
-                  🇺🇸 English
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('he')}
-                  className={`px-3 py-1 text-sm rounded ${
-                    activeTab === 'he' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                  }`}
-                >
-                  🇮🇱 עברית
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('ar')}
-                  className={`px-3 py-1 text-sm rounded ${
-                    activeTab === 'ar' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                  }`}
-                >
-                  🇸🇦 العربية
-                </button>
-              </div>
-
-              {/* Name Fields */}
-              {activeTab === 'ru' && (
+            {activeTab === "basic" && (
+              <>
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm">{adminT('categories.fields.name')} (Русский)</FormLabel>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (Русский)</FormLabel>
                       <FormControl>
-                        <Input placeholder={adminT('categories.fields.namePlaceholder')} {...field} className="text-sm" />
+                        <Input 
+                          placeholder={adminT('categories.fields.namePlaceholder')} 
+                          {...field} 
+                          className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                          dir={isRTL ? 'rtl' : 'ltr'}
+                        />
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                     </FormItem>
                   )}
                 />
-              )}
 
-              {activeTab === 'en' && (
-                <FormField
-                  control={form.control}
-                  name="name_en"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('categories.fields.name')} (English)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Category name in English" {...field} className="text-sm" />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              {activeTab === 'he' && (
-                <FormField
-                  control={form.control}
-                  name="name_he"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('categories.fields.name')} (עברית)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="שם הקטגוריה בעברית" {...field} className="text-sm" dir="rtl" />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              {activeTab === 'ar' && (
-                <FormField
-                  control={form.control}
-                  name="name_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('categories.fields.name')} (العربية)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="اسم الفئة بالعربية" {...field} className="text-sm" dir="rtl" />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              {/* Description Fields */}
-              {activeTab === 'ru' && (
                 <FormField
                   control={form.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm">{adminT('categories.fields.description')} (Русский)</FormLabel>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description')} (Русский)</FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder={adminT('categories.fields.descriptionPlaceholder')}
-                          className="resize-none text-sm"
-                          rows={3}
+                          className={`resize-none text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                          dir={isRTL ? 'rtl' : 'ltr'}
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                     </FormItem>
                   )}
                 />
-              )}
 
-              {activeTab === 'en' && (
+                <FormField
+                  control={form.control}
+                  name="icon"
+                  render={({ field }) => {
+                    const commonIcons = [
+                      "🥗", "🍖", "🐟", "🥩", "🥕", "🍎", "🍞", "🥛", 
+                      "🍽️", "🥘", "🍱", "🥙", "🧀", "🍯", "🥜", "🍲",
+                      "🍰", "🥧", "🍚", "🌮", "🍕", "🍝", "🥪", "🌯"
+                    ];
+                    
+                    return (
+                      <FormItem>
+                        <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.icon')}</FormLabel>
+                        <div className="space-y-3">
+                          {/* Current selected icon display */}
+                          <div className={`flex items-center gap-3 p-3 border rounded-lg bg-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                            <span className="text-2xl">{field.value}</span>
+                            <div className="flex-1">
+                              <div className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.selectedIcon')}</div>
+                              <div className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.clickToSelect')}</div>
+                            </div>
+                          </div>
+                          
+                          {/* Icon grid selector */}
+                          <div>
+                            <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.popularIcons')}:</div>
+                            <div className="grid grid-cols-8 gap-2">
+                              {commonIcons.map((icon) => (
+                                <Button
+                                  key={icon}
+                                  type="button"
+                                  variant={field.value === icon ? "default" : "outline"}
+                                  className={`h-10 w-10 p-0 text-lg ${
+                                    field.value === icon 
+                                      ? "bg-primary border-primary hover:bg-primary" 
+                                      : "hover:bg-orange-50 hover:border-orange-300"
+                                  }`}
+                                  onClick={() => field.onChange(icon)}
+                                >
+                                  {icon}
+                                </Button>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* Custom icon input */}
+                          <div>
+                            <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.customIcon')}:</div>
+                            <FormControl>
+                              <Input 
+                                placeholder={adminT('categories.iconPlaceholder')}
+                                value={field.value}
+                                onChange={(e) => field.onChange(e.target.value)}
+                                className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                                dir={isRTL ? 'rtl' : 'ltr'}
+                              />
+                            </FormControl>
+                          </div>
+                          
+                          {/* Image upload option */}
+                          <div>
+                            <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.uploadImage')}:</div>
+                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-orange-300 transition-colors">
+                              <ImageUpload
+                                value=""
+                                onChange={(url) => {
+                                  if (url) {
+                                    field.onChange(url);
+                                  }
+                                }}
+                              />
+                              <div className={`text-xs text-gray-400 mt-2 text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+                                {adminT('categories.recommendedSize')}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                      </FormItem>
+                    );
+                  }}
+                />
+              </>
+            )}
+
+            {activeTab === "english" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="name_en"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (English)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Category name in English" 
+                          {...field} 
+                          className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                          dir="ltr"
+                        />
+                      </FormControl>
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="description_en"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm">{adminT('categories.fields.description')} (English)</FormLabel>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description')} (English)</FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder="Category description in English"
-                          className="resize-none text-sm"
-                          rows={3}
+                          className={`resize-none text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                          dir="ltr"
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                     </FormItem>
                   )}
                 />
-              )}
+              </>
+            )}
 
-              {activeTab === 'he' && (
+            {activeTab === "hebrew" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="name_he"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (עברית)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="שם הקטגוריה בעברית" 
+                          {...field} 
+                          className="text-sm text-right"
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="description_he"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm">{adminT('categories.fields.description')} (עברית)</FormLabel>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description')} (עברית)</FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder="תיאור הקטגוריה בעברית"
-                          className="resize-none text-sm"
-                          rows={3}
+                          className="resize-none text-sm text-right"
                           dir="rtl"
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                     </FormItem>
                   )}
                 />
-              )}
+              </>
+            )}
 
-              {activeTab === 'ar' && (
+            {activeTab === "arabic" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="name_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (العربية)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="اسم الفئة بالعربية" 
+                          {...field} 
+                          className="text-sm text-right"
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="description_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm">{adminT('categories.fields.description')} (العربية)</FormLabel>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.description')} (العربية)</FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder="وصف الفئة بالعربية"
-                          className="resize-none text-sm"
-                          rows={3}
+                          className="resize-none text-sm text-right"
                           dir="rtl"
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
                     </FormItem>
                   )}
                 />
-              )}
-            </div>
-
-            <FormField
-              control={form.control}
-              name="icon"
-              render={({ field }) => {
-                const commonIcons = [
-                  "🥗", "🍖", "🐟", "🥩", "🥕", "🍎", "🍞", "🥛", 
-                  "🍽️", "🥘", "🍱", "🥙", "🧀", "🍯", "🥜", "🍲",
-                  "🍰", "🥧", "🍚", "🌮", "🍕", "🍝", "🥪", "🌯"
-                ];
-                
-                return (
-                  <FormItem>
-                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.icon')}</FormLabel>
-                    <div className="space-y-3">
-                      {/* Current selected icon display */}
-                      <div className={`flex items-center gap-3 p-3 border rounded-lg bg-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <span className="text-2xl">{field.value}</span>
-                        <div className="flex-1">
-                          <div className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.selectedIcon')}</div>
-                          <div className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.clickToSelect')}</div>
-                        </div>
-                      </div>
-                      
-                      {/* Icon grid selector */}
-                      <div>
-                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.popularIcons')}:</div>
-                        <div className="grid grid-cols-8 gap-2">
-                          {commonIcons.map((icon) => (
-                            <Button
-                              key={icon}
-                              type="button"
-                              variant={field.value === icon ? "default" : "outline"}
-                              className={`h-10 w-10 p-0 text-lg ${
-                                field.value === icon 
-                                  ? "bg-primary border-primary hover:bg-primary" 
-                                  : "hover:bg-orange-50 hover:border-orange-300"
-                              }`}
-                              onClick={() => field.onChange(icon)}
-                            >
-                              {icon}
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {/* Custom icon input */}
-                      <div>
-                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.customIcon')}:</div>
-                        <FormControl>
-                          <Input 
-                            placeholder={adminT('categories.iconPlaceholder')}
-                            value={field.value}
-                            onChange={(e) => field.onChange(e.target.value)}
-                            className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                            dir={isRTL ? 'rtl' : 'ltr'}
-                          />
-                        </FormControl>
-                      </div>
-                      
-                      {/* Image upload option */}
-                      <div>
-                        <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.uploadImage')}:</div>
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-orange-300 transition-colors">
-                          <ImageUpload
-                            value=""
-                            onChange={(url) => {
-                              if (url) {
-                                field.onChange(url);
-                              }
-                            }}
-                          />
-                          <div className={`text-xs text-gray-400 mt-2 text-center ${isRTL ? 'text-right' : 'text-left'}`}>
-                            {adminT('categories.recommendedSize')}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
-                  </FormItem>
-                );
-              }}
-            />
+              </>
+            )}
 
             <div className={`flex flex-col sm:flex-row justify-center gap-3 ${isRTL ? 'sm:flex-row-reverse rtl:space-x-reverse' : 'space-x-4'}`}>
               <Button 
@@ -6282,17 +6365,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 }) {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
+  const currentLanguage = i18n.language as SupportedLanguage;
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
-
-  // Helper function to get field name based on language
-  const getFieldName = (baseField: string, language: string) => {
-    if (language === 'ru') return baseField;
-    if (language === 'en') return `${baseField}En`;
-    if (language === 'he') return `${baseField}He`;
-    if (language === 'ar') return `${baseField}Ar`;
-    return baseField;
-  };
-
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
   const [isVisualsOpen, setIsVisualsOpen] = useState(false);
@@ -6306,9 +6380,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const form = useForm({
     resolver: zodResolver(storeSettingsSchema),
     defaultValues: {
-      storeName: storeSettings?.storeName || "eDAHouse",
-      welcomeTitle: storeSettings?.welcomeTitle || "",
-      storeDescription: storeSettings?.storeDescription || "",
+      storeName: getMultilingualValue(storeSettings, 'storeName', currentLanguage) || "eDAHouse",
+      welcomeTitle: getMultilingualValue(storeSettings, 'welcomeTitle', currentLanguage) || "",
+      storeDescription: getMultilingualValue(storeSettings, 'storeDescription', currentLanguage) || "",
       logoUrl: storeSettings?.logoUrl || "",
       bannerImage: storeSettings?.bannerImage || "",
       contactPhone: storeSettings?.contactPhone || "",
@@ -6323,8 +6397,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         saturday: storeSettings?.workingHours?.saturday || "",
         sunday: storeSettings?.workingHours?.sunday || "",
       },
-      deliveryInfo: storeSettings?.deliveryInfo || "",
+      deliveryInfo: getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) || "",
       paymentInfo: storeSettings?.paymentInfo || "",
+      aboutText: getMultilingualValue(storeSettings, 'aboutText', currentLanguage) || "",
       paymentMethods: storeSettings?.paymentMethods || [
         { name: "Наличными при получении", id: 1 },
         { name: "Банковской картой", id: 2 },
@@ -6353,7 +6428,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
       whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || "Здравствуйте! Я хотел бы узнать больше о ваших товарах.",
       showCartBanner: storeSettings?.showCartBanner || false,
-      bannerButtonText: storeSettings?.bannerButtonText || "Смотреть каталог",
       bannerButtonLink: storeSettings?.bannerButtonLink || "#categories",
       cartBannerType: storeSettings?.cartBannerType || "text",
       cartBannerImage: storeSettings?.cartBannerImage || "",
@@ -6362,30 +6436,42 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       cartBannerTextColor: storeSettings?.cartBannerTextColor || "#ffffff",
       defaultLanguage: storeSettings?.defaultLanguage || "ru",
       enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
-      pwaIconUrl: storeSettings?.pwaIconUrl || "",
-      pwaName: storeSettings?.pwaName || "eDAHouse",
-      pwaDescription: storeSettings?.pwaDescription || "Заказ готовой еды онлайн",
-      pwaNameEn: storeSettings?.pwaNameEn || "",
-      pwaDescriptionEn: storeSettings?.pwaDescriptionEn || "",
-      pwaNameHe: storeSettings?.pwaNameHe || "",
-      pwaDescriptionHe: storeSettings?.pwaDescriptionHe || "",
-      pwaNameAr: storeSettings?.pwaNameAr || "",
-      pwaDescriptionAr: storeSettings?.pwaDescriptionAr || "",
     } as any,
   });
 
-  // Reset form when storeSettings changes
+  // Helper function to get payment method name for current language
+  const getPaymentMethodName = (method: any, language: string) => {
+    switch (language) {
+      case 'en': return method.name_en || method.name || '';
+      case 'he': return method.name_he || method.name || '';
+      case 'ar': return method.name_ar || method.name || '';
+      default: return method.name || '';
+    }
+  };
+
+  // Helper function to update payment method name for current language
+  const updatePaymentMethodName = (method: any, language: string, newName: string) => {
+    switch (language) {
+      case 'en': return { ...method, name_en: newName };
+      case 'he': return { ...method, name_he: newName };
+      case 'ar': return { ...method, name_ar: newName };
+      default: return { ...method, name: newName };
+    }
+  };
+
+  // Reset form when storeSettings or language changes
   useEffect(() => {
     if (storeSettings) {
+      console.log('Updating form with paymentMethods:', storeSettings?.paymentMethods);
       form.reset({
-        storeName: storeSettings?.storeName || "eDAHouse",
-        welcomeTitle: storeSettings?.welcomeTitle || "",
-        storeDescription: storeSettings?.storeDescription || "",
+        storeName: getMultilingualValue(storeSettings, 'storeName', currentLanguage) || "",
+        welcomeTitle: getMultilingualValue(storeSettings, 'welcomeTitle', currentLanguage) || "",
+        storeDescription: getMultilingualValue(storeSettings, 'storeDescription', currentLanguage) || "",
         logoUrl: storeSettings?.logoUrl || "",
         bannerImage: storeSettings?.bannerImage || "",
-        contactPhone: storeSettings?.contactPhone || "",
-        contactEmail: storeSettings?.contactEmail || "",
-        address: storeSettings?.address || "",
+        contactPhone: getMultilingualValue(storeSettings, 'contactPhone', currentLanguage) || "",
+        contactEmail: getMultilingualValue(storeSettings, 'contactEmail', currentLanguage) || "",
+        address: getMultilingualValue(storeSettings, 'address', currentLanguage) || "",
         workingHours: {
           monday: storeSettings?.workingHours?.monday || "",
           tuesday: storeSettings?.workingHours?.tuesday || "",
@@ -6395,17 +6481,18 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           saturday: storeSettings?.workingHours?.saturday || "",
           sunday: storeSettings?.workingHours?.sunday || "",
         },
-        deliveryInfo: storeSettings?.deliveryInfo || "",
-        paymentInfo: storeSettings?.paymentInfo || "",
-        paymentMethods: storeSettings?.paymentMethods || [
-          { name: adminT('storeSettings.cashOnDelivery'), id: 1 },
-          { name: adminT('storeSettings.bankCard'), id: 2 },
-          { name: adminT('storeSettings.bankTransfer'), id: 3 }
-        ],
+        deliveryInfo: getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) || "",
+        aboutText: getMultilingualValue(storeSettings, 'aboutText', currentLanguage) || "",
+        bannerButtonText: getMultilingualValue(storeSettings, 'bannerButtonText', currentLanguage) || "",
+        paymentInfo: getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage) || "",
+        discountBadgeText: getMultilingualValue(storeSettings, 'discountBadgeText', currentLanguage) || "",
+        whatsappDefaultMessage: getMultilingualValue(storeSettings, 'whatsappDefaultMessage', currentLanguage) || "",
+        cartBannerText: getMultilingualValue(storeSettings, 'cartBannerText', currentLanguage) || "",
+        paymentMethods: storeSettings?.paymentMethods || [],
         aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
         deliveryFee: storeSettings?.deliveryFee || "15.00",
         freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
-        discountBadgeText: storeSettings?.discountBadgeText || adminT('storeSettings.discountBadgeText'),
+
         showBannerImage: storeSettings?.showBannerImage !== false,
         showTitleDescription: storeSettings?.showTitleDescription !== false,
         showInfoBlocks: storeSettings?.showInfoBlocks !== false,
@@ -6423,17 +6510,16 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         footerHtml: storeSettings?.footerHtml || "",
         showWhatsAppChat: storeSettings?.showWhatsAppChat !== false,
         whatsappPhoneNumber: storeSettings?.whatsappPhoneNumber || "",
-        whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || adminT('storeSettings.defaultWhatsappMessage'),
+
         showCartBanner: storeSettings?.showCartBanner || false,
         cartBannerType: storeSettings?.cartBannerType || "text",
         cartBannerImage: storeSettings?.cartBannerImage || "",
-        cartBannerText: storeSettings?.cartBannerText || "",
+
         cartBannerBgColor: storeSettings?.cartBannerBgColor || "#f97316",
         cartBannerTextColor: storeSettings?.cartBannerTextColor || "#ffffff",
 
         defaultLanguage: storeSettings?.defaultLanguage || "ru",
         enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
-        bannerButtonText: storeSettings?.bannerButtonText || "",
         bannerButtonLink: storeSettings?.bannerButtonLink || "",
         modernBlock1Icon: storeSettings?.modernBlock1Icon || "",
         modernBlock1Text: storeSettings?.modernBlock1Text || "",
@@ -6441,22 +6527,121 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         modernBlock2Text: storeSettings?.modernBlock2Text || "",
         modernBlock3Icon: storeSettings?.modernBlock3Icon || "",
         modernBlock3Text: storeSettings?.modernBlock3Text || "",
-        pwaIconUrl: storeSettings?.pwaIconUrl || "",
-        pwaName: storeSettings?.pwaName || "eDAHouse",
-        pwaDescription: storeSettings?.pwaDescription || "Заказ готовой еды онлайн",
-        pwaNameEn: storeSettings?.pwaNameEn || "",
-        pwaDescriptionEn: storeSettings?.pwaDescriptionEn || "",
-        pwaNameHe: storeSettings?.pwaNameHe || "",
-        pwaDescriptionHe: storeSettings?.pwaDescriptionHe || "",
-        pwaNameAr: storeSettings?.pwaNameAr || "",
-        pwaDescriptionAr: storeSettings?.pwaDescriptionAr || "",
       } as any);
     }
-  }, [storeSettings, form]);
+  }, [storeSettings, currentLanguage, form]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-8 ${isRTL ? 'rtl' : 'ltr'}`}>
+      <form onSubmit={form.handleSubmit((data) => {
+        // Create multilingual updates for text fields - only update current language
+        const multilingualUpdates = {
+          ...createMultilingualUpdate('storeName', data.storeName, currentLanguage),
+          ...createMultilingualUpdate('welcomeTitle', data.welcomeTitle, currentLanguage),
+          ...createMultilingualUpdate('storeDescription', data.storeDescription, currentLanguage),
+          ...createMultilingualUpdate('deliveryInfo', data.deliveryInfo, currentLanguage),
+          ...createMultilingualUpdate('aboutText', data.aboutText, currentLanguage),
+          ...createMultilingualUpdate('bannerButtonText', data.bannerButtonText, currentLanguage),
+          ...createMultilingualUpdate('paymentInfo', data.paymentInfo, currentLanguage),
+          ...createMultilingualUpdate('discountBadgeText', data.discountBadgeText, currentLanguage),
+          ...createMultilingualUpdate('whatsappDefaultMessage', data.whatsappDefaultMessage, currentLanguage),
+          ...createMultilingualUpdate('cartBannerText', data.cartBannerText, currentLanguage),
+          ...createMultilingualUpdate('contactPhone', data.contactPhone, currentLanguage),
+          ...createMultilingualUpdate('contactEmail', data.contactEmail, currentLanguage),
+          ...createMultilingualUpdate('address', data.address, currentLanguage),
+        };
+        
+        // Preserve existing data for other languages using correct database field names
+        const preservedData = {
+          // Keep all existing multilingual data with proper camelCase naming
+          storeName: storeSettings?.storeName || '',
+          storeNameEn: storeSettings?.storeNameEn || '',
+          storeNameHe: storeSettings?.storeNameHe || '',
+          storeNameAr: storeSettings?.storeNameAr || '',
+          welcomeTitle: storeSettings?.welcomeTitle || '',
+          welcomeTitleEn: storeSettings?.welcomeTitleEn || '',
+          welcomeTitleHe: storeSettings?.welcomeTitleHe || '',
+          welcomeTitleAr: storeSettings?.welcomeTitleAr || '',
+          storeDescription: storeSettings?.storeDescription || '',
+          storeDescriptionEn: storeSettings?.storeDescriptionEn || '',
+          storeDescriptionHe: storeSettings?.storeDescriptionHe || '',
+          storeDescriptionAr: storeSettings?.storeDescriptionAr || '',
+          deliveryInfo: storeSettings?.deliveryInfo || '',
+          deliveryInfoEn: storeSettings?.deliveryInfoEn || '',
+          deliveryInfoHe: storeSettings?.deliveryInfoHe || '',
+          deliveryInfoAr: storeSettings?.deliveryInfoAr || '',
+          aboutText: storeSettings?.aboutText || '',
+          aboutTextEn: storeSettings?.aboutTextEn || '',
+          aboutTextHe: storeSettings?.aboutTextHe || '',
+          aboutTextAr: storeSettings?.aboutTextAr || '',
+          bannerButtonText: storeSettings?.bannerButtonText || '',
+          bannerButtonTextEn: storeSettings?.bannerButtonTextEn || '',
+          bannerButtonTextHe: storeSettings?.bannerButtonTextHe || '',
+          bannerButtonTextAr: storeSettings?.bannerButtonTextAr || '',
+          paymentInfo: storeSettings?.paymentInfo || '',
+          paymentInfoEn: storeSettings?.paymentInfoEn || '',
+          paymentInfoHe: storeSettings?.paymentInfoHe || '',
+          paymentInfoAr: storeSettings?.paymentInfoAr || '',
+          discountBadgeText: storeSettings?.discountBadgeText || '',
+          discountBadgeTextEn: storeSettings?.discountBadgeTextEn || '',
+          discountBadgeTextHe: storeSettings?.discountBadgeTextHe || '',
+          discountBadgeTextAr: storeSettings?.discountBadgeTextAr || '',
+          whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || '',
+          whatsappDefaultMessageEn: storeSettings?.whatsappDefaultMessageEn || '',
+          whatsappDefaultMessageHe: storeSettings?.whatsappDefaultMessageHe || '',
+          whatsappDefaultMessageAr: storeSettings?.whatsappDefaultMessageAr || '',
+          cartBannerText: storeSettings?.cartBannerText || '',
+          cartBannerTextEn: storeSettings?.cartBannerTextEn || '',
+          cartBannerTextHe: storeSettings?.cartBannerTextHe || '',
+          cartBannerTextAr: storeSettings?.cartBannerTextAr || '',
+          contactPhone: storeSettings?.contactPhone || '',
+          contactPhoneEn: storeSettings?.contactPhoneEn || '',
+          contactPhoneHe: storeSettings?.contactPhoneHe || '',
+          contactPhoneAr: storeSettings?.contactPhoneAr || '',
+          contactEmail: storeSettings?.contactEmail || '',
+          contactEmailEn: storeSettings?.contactEmailEn || '',
+          contactEmailHe: storeSettings?.contactEmailHe || '',
+          contactEmailAr: storeSettings?.contactEmailAr || '',
+          address: storeSettings?.address || '',
+          addressEn: storeSettings?.addressEn || '',
+          addressHe: storeSettings?.addressHe || '',
+          addressAr: storeSettings?.addressAr || '',
+        };
+        
+        // Handle payment methods specially - preserve all language data
+        const processedPaymentMethods = data.paymentMethods?.map((method: any) => {
+          // Find corresponding method in existing data
+          const existingMethod = storeSettings?.paymentMethods?.find((existing: any) => 
+            existing.name === method.name || existing.id === method.id
+          );
+          
+          if (existingMethod) {
+            // Merge current language changes with existing multilingual data
+            return {
+              ...existingMethod,
+              ...method,
+              // Preserve other language data that might not be in current form
+              name_en: existingMethod.name_en || method.name_en || '',
+              name_he: existingMethod.name_he || method.name_he || '',
+              name_ar: existingMethod.name_ar || method.name_ar || ''
+            };
+          }
+          
+          return method;
+        }) || [];
+
+        // Merge preserved data with current language updates and other form data
+        const finalData = { 
+          ...data, 
+          ...preservedData, 
+          ...multilingualUpdates,
+          paymentMethods: processedPaymentMethods
+        };
+        
+
+        
+        onSubmit(finalData);
+      })} className={`space-y-8 ${isRTL ? 'rtl' : 'ltr'}`}>
         {/* {adminT('storeSettings.basicInfo')} */}
         <Collapsible open={isBasicInfoOpen} onOpenChange={setIsBasicInfoOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
@@ -6491,6 +6676,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleTrigger>
           
           <CollapsibleContent className="space-y-6">
+            {/* Language indicator for multilingual fields */}
+            <div className={`flex items-center gap-2 p-3 bg-blue-50 rounded-lg ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <Languages className="h-4 w-4 text-blue-600" />
+              <span className="text-sm text-blue-700">
+                {adminT('storeSettings.editingLanguage')}: <strong>{currentLanguage.toUpperCase()}</strong>
+              </span>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
             control={form.control}
@@ -6628,86 +6821,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               </FormItem>
             )}
           />
-
-          {/* PWA Icon Upload Field */}
-          <FormField
-            control={form.control}
-            name="pwaIconUrl"
-            render={({ field }) => (
-              <FormItem className="col-span-2">
-                <FormLabel className="text-sm flex items-center gap-2">
-                  <Smartphone className="h-4 w-4 text-primary" />
-                  {adminT('storeSettings.pwaIconUrl')}
-                </FormLabel>
-                <FormControl>
-                  <div className="space-y-2">
-                    <ImageUpload
-                      key="pwa-icon-upload"
-                      value={field.value || ""}
-                      onChange={(url: string) => field.onChange(url)}
-                    />
-                    <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
-                      <Info className="h-3 w-3" />
-                      {adminT('storeSettings.pwaIconUrlTooltip')}
-                    </FormDescription>
-                  </div>
-                </FormControl>
-                <FormMessage className="text-xs" />
-              </FormItem>
-            )}
-          />
-
-          {/* PWA Name and Description Fields */}
-          <div className="col-span-2 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name={getFieldName('pwaName', i18n.language)}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.pwaName')}</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder={i18n.language === 'ru' ? "eDAHouse" : 
-                                   i18n.language === 'en' ? "eDAHouse" :
-                                   i18n.language === 'he' ? "eDAHouse" : 
-                                   "eDAHouse"}
-                        className="text-sm"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name={getFieldName('pwaDescription', i18n.language)}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.pwaDescription')}</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder={i18n.language === 'ru' ? "Заказ готовой еды онлайн" : 
-                                   i18n.language === 'en' ? "Online food delivery" :
-                                   i18n.language === 'he' ? "משלוח אוכל מוכן" : 
-                                   "توصيل الطعام الجاهز"}
-                        className="text-sm"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
-              <Info className="h-3 w-3" />
-              {adminT('storeSettings.pwaNameDescription')}
-            </FormDescription>
-          </div>
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -7156,10 +7269,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <div key={method.id || index} className="flex items-center gap-2 p-3 border rounded-lg">
                     <Input
                       placeholder={adminT('storeSettings.paymentMethodPlaceholder')}
-                      value={method.name || ""}
+                      value={getPaymentMethodName(method, currentLanguage)}
                       onChange={(e) => {
                         const updatedMethods = [...(field.value || [])];
-                        updatedMethods[index] = { ...method, name: e.target.value };
+                        updatedMethods[index] = updatePaymentMethodName(method, currentLanguage, e.target.value);
                         field.onChange(updatedMethods);
                       }}
                       className="flex-1"
@@ -7183,7 +7296,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    const newMethod = { name: "", id: Date.now() };
+                    const newMethod = { 
+                      name: "", 
+                      name_en: "", 
+                      name_he: "", 
+                      name_ar: "", 
+                      fee: 0, 
+                      enabled: true, 
+                      id: Date.now() 
+                    };
                     field.onChange([...(field.value || []), newMethod]);
                   }}
                   className="w-full"

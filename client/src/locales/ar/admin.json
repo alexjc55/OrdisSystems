@@ -131,11 +131,6 @@
     "buttonTextDefault": "اطلب الآن",
     "whatsappMessageDefault": "مرحباً! أنا مهتم بمنتجاتكم.",
     "whatsappChat": "دردشة WhatsApp",
-    "pwaIconUrl": "أيقونة PWA",
-    "pwaIconUrlTooltip": "رابط صورة الأيقونة لتطبيق PWA. التنسيق: PNG، الحجم: 512x512 بكسل.",
-    "pwaName": "اسم تطبيق PWA",
-    "pwaDescription": "وصف تطبيق PWA",
-    "pwaNameDescription": "اسم ووصف التطبيق الذي سيظهر عند التثبيت على الأجهزة المحمولة. حدد لكل لغة.",
     "cartBannerTextPlaceholder": "أدخل نص شعار السلة",
     "brandColorsDescription": "ألوان العلامة التجارية الرئيسية للواجهة",
     "brandColors": "ألوان العلامة التجارية",
@@ -668,11 +663,7 @@
     "canEditOrdersDescription": "السماح بتعديل طلبات العملاء",
     "canViewSettingsDescription": "السماح بعرض إعدادات المتجر",
     "canManageSettingsDescription": "السماح بتغيير إعدادات المتجر",
-    "canEditOrders": "تعديل الطلبات",
-    "pwaSettings": "إعدادات تطبيق PWA",
-    "pwaIconUrl": "أيقونة تطبيق PWA",
-    "pwaIconUrlTooltip": "رابط URL لصورة الأيقونة لتطبيق PWA. التنسيق: PNG، الحجم: 512×512 بكسل.",
-    "pwaIconTooltip": "التنسيق: PNG، الحجم: 512x512 بكسل. ستظهر هذه الأيقونة على الشاشة الرئيسية للجهاز عند تثبيت التطبيق."
+    "canEditOrders": "تعديل الطلبات"
   },
   "systemSettings": {
     "canManageProducts": "إدارة المنتجات",
@@ -714,9 +705,6 @@
     "copySuccess": "تم نسخ الحقول",
     "fieldsCopied": "تم نسخ {{count}} حقول",
     "clearSuccess": "تم مسح الحقول",
-    "fieldsCleared": "تم مسح {{count}} حقول",
-    "pwaSettings": "إعدادات PWA",
-    "pwaIconUrl": "أيقونة تطبيق PWA",
-    "pwaIconUrlTooltip": "رابط أيقونة التطبيق المحمول (تنسيق PNG 512x512)"
+    "fieldsCleared": "تم مسح {{count}} حقول"
   }
 }

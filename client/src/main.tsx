@@ -3,32 +3,11 @@ import App from "./App";
 import "./index.css";
 import "./lib/i18n";
 import { initializeTheme, forceApplyOrangeTheme } from "./lib/theme-system";
-import i18n from "./lib/i18n";
 
 // Initialize theme system
 initializeTheme();
 // Force apply orange colors to override any black theme colors
 forceApplyOrangeTheme();
-
-// Update manifest link based on language
-function updateManifestLink() {
-  const currentLanguage = i18n.language || 'ru';
-  let manifestLink = document.querySelector('link[rel="manifest"]') as HTMLLinkElement;
-  
-  if (!manifestLink) {
-    manifestLink = document.createElement('link');
-    manifestLink.rel = 'manifest';
-    document.head.appendChild(manifestLink);
-  }
-  
-  manifestLink.href = `/manifest.json?lang=${currentLanguage}`;
-}
-
-// Update manifest when language changes
-i18n.on('languageChanged', updateManifestLink);
-
-// Initial manifest update
-updateManifestLink();
 
 // Global error suppression for ResizeObserver
 const resizeObserverErrDiv = document.getElementById('webpack-dev-server-client-overlay-div');
@@ -86,18 +65,5 @@ window.ResizeObserver = class extends OriginalResizeObserver {
     });
   }
 };
-
-// Register Service Worker for PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((registration) => {
-        console.log('SW registered: ', registration);
-      })
-      .catch((registrationError) => {
-        console.log('SW registration failed: ', registrationError);
-      });
-  });
-}
 
 createRoot(document.getElementById("root")!).render(<App />);

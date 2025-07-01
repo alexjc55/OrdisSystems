@@ -144,11 +144,6 @@
     "buttonTextDefault": "הזמן עכשיו",
     "whatsappMessageDefault": "שלום! מעוניין במוצרים שלכם.",
     "whatsappChat": "צ׳אט WhatsApp",
-    "pwaIconUrl": "אייקון PWA",
-    "pwaIconUrlTooltip": "URL של תמונת האייקון עבור אפליקציית PWA. פורמט: PNG, גודל: 512x512 פיקסלים.",
-    "pwaName": "שם אפליקציית PWA",
-    "pwaDescription": "תיאור אפליקציית PWA",
-    "pwaNameDescription": "שם ותיאור האפליקציה שיוצגו בעת התקנה במכשירים ניידים. ציין עבור כל שפה.",
     "logoStore": "לוגו החנות",
     "logoStoreDescription": "לוגו להצגה בכותרת האתר",
     "primaryFont": "גופן ראשי",
@@ -425,11 +420,7 @@
     "canEditOrdersDescription": "אפשר עריכת הזמנות לקוחות",
     "canViewSettingsDescription": "אפשר צפייה בהגדרות החנות",
     "canManageSettingsDescription": "אפשר שינוי הגדרות החנות",
-    "canEditOrders": "עריכת הזמנות",
-    "pwaSettings": "הגדרות יישום PWA",
-    "pwaIconUrl": "אייקון יישום PWA",
-    "pwaIconUrlTooltip": "כתובת URL של תמונת האייקון עבור יישום PWA. פורמט: PNG, גודל: 512x512 פיקסלים.",
-    "pwaIconTooltip": "פורמט: PNG, גודל: 512x512 פיקסלים. אייקון זה יוצג במסך הבית של המכשיר כאשר היישום מותקן."
+    "canEditOrders": "עריכת הזמנות"
   },
   "systemSettings": {
     "canManageProducts": "ניהול מוצרים",
@@ -471,10 +462,7 @@
     "copySuccess": "שדות הועתקו",
     "fieldsCopied": "הועתקו {{count}} שדות",
     "clearSuccess": "שדות נוקו",
-    "fieldsCleared": "נוקו {{count}} שדות",
-    "pwaSettings": "הגדרות PWA",
-    "pwaIconUrl": "אייקון אפליקציית PWA",
-    "pwaIconUrlTooltip": "כתובת URL של האייקון לאפליקציה הנייד (פורמט PNG 512x512)"
+    "fieldsCleared": "נוקו {{count}} שדות"
   },
   "settings": {
     "title": "הגדרות חנות",

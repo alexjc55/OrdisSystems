@@ -142,7 +142,6 @@ interface ThemeData {
   description_en?: string;
   description_he?: string;
   description_ar?: string;
-  pwaIconUrl?: string;
   isActive: boolean;
   primaryColor: string;
   primaryTextColor: string;
@@ -1040,7 +1039,6 @@ export default function ThemeManager() {
             <Palette className="h-6 w-6" />
             {adminT("themes.title")}
           </h2>
-
           <p className="text-muted-foreground">
             {adminT("themes.description")}
           </p>
@@ -1058,7 +1056,6 @@ export default function ThemeManager() {
               <DialogDescription>
                 {adminT("themes.createDescription")}
               </DialogDescription>
-
             </DialogHeader>
             <form onSubmit={(e) => {
               e.preventDefault();
@@ -1125,8 +1122,6 @@ export default function ThemeManager() {
                       {i18n.language !== 'he' && <input type="hidden" name="description_he" value={themeFields.description_he} />}
                       {i18n.language !== 'ar' && <input type="hidden" name="description_ar" value={themeFields.description_ar} />}
                     </div>
-                    
-
                     
                     {/* Изображения */}
                     <div className="space-y-6">
@@ -1788,7 +1783,6 @@ export default function ThemeManager() {
               <DialogDescription>
                 {adminT("themes.createDescription")}
               </DialogDescription>
-
             </DialogHeader>
             <form onSubmit={(e) => {
               e.preventDefault();
@@ -1853,8 +1847,6 @@ export default function ThemeManager() {
                       {i18n.language !== 'he' && <input type="hidden" name="description_he" value={themeFields.description_he} />}
                       {i18n.language !== 'ar' && <input type="hidden" name="description_ar" value={themeFields.description_ar} />}
                     </div>
-                    
-
                     
                     {/* Изображения - многоязычная поддержка */}
                     <div className="space-y-6">
