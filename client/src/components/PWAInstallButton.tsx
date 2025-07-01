@@ -66,7 +66,23 @@ export function PWAInstallButton({ variant = 'mobile' }: PWAInstallButtonProps) 
     console.log('Install button clicked, deferredPrompt:', !!deferredPrompt);
     
     if (!deferredPrompt) {
-      console.log('No deferred prompt available');
+      console.log('No deferred prompt available, showing manual instructions');
+      
+      // Показать инструкции для ручной установки
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isAndroid = /Android/.test(navigator.userAgent);
+      
+      let message = '';
+      
+      if (isIOS) {
+        message = 'Для установки приложения:\n1. Нажмите кнопку "Поделиться" в Safari\n2. Выберите "На экран Домой"';
+      } else if (isAndroid) {
+        message = 'Для установки приложения:\n1. Откройте меню браузера (⋮)\n2. Выберите "Установить приложение" или "Добавить на главный экран"';
+      } else {
+        message = 'Для установки приложения:\n1. Откройте меню браузера\n2. Найдите опцию "Установить приложение" или "Добавить на рабочий стол"';
+      }
+      
+      alert(message);
       return;
     }
 
