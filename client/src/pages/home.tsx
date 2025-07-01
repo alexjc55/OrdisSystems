@@ -22,6 +22,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useSEO, generateKeywords } from "@/hooks/useSEO";
+import { generateHomeSEO } from "@/lib/seo-utils";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
@@ -248,6 +250,76 @@ export default function Home() {
 
   // Get header style from store settings (accessible to all users)
   const headerStyle = storeSettings?.headerStyle || 'classic';
+
+  // Calculate selected category first
+  const selectedCategory = useMemo(() => {
+    return categories.find(cat => cat.id === selectedCategoryId);
+  }, [categories, selectedCategoryId]);
+
+  // Generate SEO data for home page
+  const seoData = useMemo(() => {
+    if (selectedCategory) {
+      // Category page SEO
+      const categoryName = getLocalizedField(selectedCategory, 'name', currentLanguage);
+      const categoryDescription = getLocalizedField(selectedCategory, 'description', currentLanguage);
+      const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
+      
+      const title = categoryName 
+        ? `${categoryName} - ${storeName || 'eDAHouse'}`
+        : storeName || 'eDAHouse';
+        
+      const description = categoryDescription || 
+        `Просмотр товаров в категории ${categoryName} в магазине ${storeName}`;
+      
+      return {
+        title,
+        description,
+        keywords: generateKeywords(title, description),
+        ogTitle: title,
+        ogDescription: description,
+        canonical: currentLanguage === 'ru' ? `/category/${selectedCategory.id}` : `/${currentLanguage}/category/${selectedCategory.id}`
+      };
+    } else if (searchQuery.length > 2) {
+      // Search results SEO
+      const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
+      const title = `${t('searchResults')}: "${searchQuery}" - ${storeName || 'eDAHouse'}`;
+      const description = `Результаты поиска "${searchQuery}" в магазине ${storeName}`;
+      
+      return {
+        title,
+        description,
+        keywords: generateKeywords(title, description),
+        ogTitle: title,
+        ogDescription: description,
+        canonical: currentLanguage === 'ru' ? `/search?q=${searchQuery}` : `/${currentLanguage}/search?q=${searchQuery}`
+      };
+    } else {
+      // Home page SEO
+      const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
+      const welcomeTitle = getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage);
+      const welcomeSubtitle = getLocalizedField(storeSettings, 'welcomeSubtitle', currentLanguage);
+      
+      const title = welcomeTitle 
+        ? `${storeName} - ${welcomeTitle}`
+        : storeName || 'eDAHouse';
+        
+      const description = welcomeSubtitle || 
+        getLocalizedField(storeSettings, 'description', currentLanguage) ||
+        'Система доставки готовой еды с многоязычной поддержкой';
+      
+      return {
+        title,
+        description,
+        keywords: generateKeywords(title, description),
+        ogTitle: title,
+        ogDescription: description,
+        canonical: currentLanguage === 'ru' ? '/' : `/${currentLanguage}/`
+      };
+    }
+  }, [storeSettings, selectedCategory, searchQuery, currentLanguage, t]);
+
+  // Apply SEO data
+  useSEO(seoData);
 
   // Fetch products for selected category
   const { data: products = [], isLoading: productsLoading } = useQuery<ProductWithCategories[]>({

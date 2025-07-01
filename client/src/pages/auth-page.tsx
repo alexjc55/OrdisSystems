@@ -12,6 +12,8 @@ import { Loader2, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
+import { useSEO, generateKeywords } from "@/hooks/useSEO";
+import { getLocalizedField } from "@shared/localization";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
