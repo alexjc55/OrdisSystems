@@ -7411,93 +7411,48 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* PWA Settings */}
-        <Collapsible open={isPwaSettingsOpen} onOpenChange={setIsPwaSettingsOpen} className="space-y-6">
+        {/* PWA Settings - TEST VERSION */}
+        <Collapsible open={true} onOpenChange={setIsPwaSettingsOpen} className="space-y-6 border-4 border-red-500 bg-red-50 p-4 rounded-lg">
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
               className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
             >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                <Smartphone className="h-5 w-5 text-primary" />
-                <h3 className="text-lg font-semibold">{adminT('storeSettings.pwaSettings')}</h3>
-                {isPwaSettingsOpen ? (
-                  <ChevronUp className={`h-4 w-4 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
-                ) : (
-                  <ChevronDown className={`h-4 w-4 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
-                )}
+              <div className={`flex items-center gap-2 pb-2 border-b border-red-300 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                <Smartphone className="h-5 w-5 text-red-600" />
+                <h3 className="text-lg font-semibold text-red-800">🔴 PWA НАСТРОЙКИ (ТЕСТ) - ЕСЛИ ВИДИТЕ ЭТО, ТО ПОЛЕ РАБОТАЕТ!</h3>
+                <ChevronDown className={`h-4 w-4 text-red-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
               </div>
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="pwaIconUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm">{adminT('storeSettings.pwaIconUrl')}</FormLabel>
-                  <FormControl>
-                    <div className="space-y-2">
-                      <Input 
-                        placeholder="https://example.com/icon-512x512.png" 
-                        {...field}
-                        value={field.value || ""}
-                      />
-                      <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
-                        <Info className="h-3 w-3" />
-                        {adminT('storeSettings.pwaIconUrlTooltip')}
-                      </FormDescription>
-                    </div>
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
-          </CollapsibleContent>
-        </Collapsible>
-
-        {/* PWA Settings */}
-        <Collapsible open={isPwaSettingsOpen} onOpenChange={setIsPwaSettingsOpen} className="space-y-6">
-          <CollapsibleTrigger asChild>
-            <Button 
-              variant="ghost" 
-              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
-            >
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                <Smartphone className="h-5 w-5 text-primary" />
-                <h3 className="text-lg font-semibold">{adminT('storeSettings.pwaSettings')}</h3>
-                {isPwaSettingsOpen ? (
-                  <ChevronUp className={`h-4 w-4 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
-                ) : (
-                  <ChevronDown className={`h-4 w-4 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+            <div className="p-4 bg-red-100 border-2 border-red-400 rounded">
+              <div className="text-red-800 font-bold mb-2">🔴 ТЕСТОВОЕ PWA ПОЛЕ - ВЫ ЕГО НАШЛИ!</div>
+              <FormField
+                control={form.control}
+                name="pwaIconUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm text-red-700 font-bold">ИКОНКА PWA ПРИЛОЖЕНИЯ (ТЕСТ)</FormLabel>
+                    <FormControl>
+                      <div className="space-y-2">
+                        <Input 
+                          placeholder="https://example.com/icon-512x512.png" 
+                          {...field}
+                          value={field.value || ""}
+                          className="border-red-300"
+                        />
+                        <FormDescription className="text-xs text-red-600 flex items-center gap-1">
+                          <Info className="h-3 w-3" />
+                          URL изображения иконки для PWA приложения. Формат: PNG, размер: 512x512 пикселей.
+                        </FormDescription>
+                      </div>
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
                 )}
-              </div>
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="pwaIconUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm">{adminT('storeSettings.pwaIconUrl')}</FormLabel>
-                  <FormControl>
-                    <div className="space-y-2">
-                      <Input 
-                        placeholder="https://example.com/icon-512x512.png" 
-                        {...field}
-                        value={field.value || ""}
-                      />
-                      <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
-                        <Info className="h-3 w-3" />
-                        {adminT('storeSettings.pwaIconUrlTooltip')}
-                      </FormDescription>
-                    </div>
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
+              />
+            </div>
           </CollapsibleContent>
         </Collapsible>
 
