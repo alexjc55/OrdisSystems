@@ -142,6 +142,7 @@ interface ThemeData {
   description_en?: string;
   description_he?: string;
   description_ar?: string;
+  pwaIconUrl?: string;
   isActive: boolean;
   primaryColor: string;
   primaryTextColor: string;
@@ -1876,7 +1877,7 @@ export default function ThemeManager() {
                         id="edit-pwaIconUrl" 
                         name="pwaIconUrl"
                         placeholder="https://example.com/icon-512x512.png" 
-                        defaultValue={editingTheme?.pwaIconUrl || ''}
+                        defaultValue={(editingTheme as any)?.pwaIconUrl || ''}
                         className="text-sm"
                       />
                       <div className="text-xs text-gray-500 flex items-center gap-1">

@@ -24,12 +24,21 @@ export function PWAInstaller() {
     queryKey: ['/api/settings']
   });
 
-  // Update manifest.json with custom icon when settings change
+  const { data: themes } = useQuery({
+    queryKey: ['/api/admin/themes'],
+    enabled: false // Disable for now since this is public component
+  });
+
+  // Find active theme PWA icon
+  const activeTheme = Array.isArray(themes) ? themes.find((theme: any) => theme.isActive) : null;
+  const pwaIconUrl = activeTheme?.pwaIconUrl || (storeSettings as any)?.pwaIconUrl;
+
+  // Update manifest.json with custom icon when icon changes
   useEffect(() => {
-    if ((storeSettings as any)?.pwaIconUrl) {
-      updateManifestIcon((storeSettings as any).pwaIconUrl);
+    if (pwaIconUrl) {
+      updateManifestIcon(pwaIconUrl);
     }
-  }, [(storeSettings as any)?.pwaIconUrl]);
+  }, [pwaIconUrl]);
 
   const updateManifestIcon = (iconUrl: string) => {
     // Update existing manifest link
