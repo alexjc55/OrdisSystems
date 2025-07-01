@@ -468,6 +468,9 @@
     "pwaSettings": "PWA App Settings",
     "pwaIconUrl": "PWA App Icon",
     "pwaIconUrlTooltip": "URL of icon image for PWA application. Format: PNG, size: 512x512 pixels.",
+    "pwaName": "PWA App Name",
+    "pwaDescription": "PWA App Description",
+    "pwaNameDescription": "App name and description that will be displayed when installing on mobile devices. Specify for each language.",
     "pwaIconTooltip": "Format: PNG, size: 512x512 pixels. This icon will be displayed on the device home screen when the app is installed."
   },
   "themes": {

@@ -5961,6 +5961,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       defaultLanguage: storeSettings?.defaultLanguage || "ru",
       enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
       pwaIconUrl: storeSettings?.pwaIconUrl || "",
+      pwaName: storeSettings?.pwaName || "eDAHouse",
+      pwaDescription: storeSettings?.pwaDescription || "Заказ готовой еды онлайн",
+      pwaNameEn: storeSettings?.pwaNameEn || "",
+      pwaDescriptionEn: storeSettings?.pwaDescriptionEn || "",
+      pwaNameHe: storeSettings?.pwaNameHe || "",
+      pwaDescriptionHe: storeSettings?.pwaDescriptionHe || "",
+      pwaNameAr: storeSettings?.pwaNameAr || "",
+      pwaDescriptionAr: storeSettings?.pwaDescriptionAr || "",
     } as any,
   });
 
@@ -6032,6 +6040,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         modernBlock3Icon: storeSettings?.modernBlock3Icon || "",
         modernBlock3Text: storeSettings?.modernBlock3Text || "",
         pwaIconUrl: storeSettings?.pwaIconUrl || "",
+        pwaName: storeSettings?.pwaName || "eDAHouse",
+        pwaDescription: storeSettings?.pwaDescription || "Заказ готовой еды онлайн",
+        pwaNameEn: storeSettings?.pwaNameEn || "",
+        pwaDescriptionEn: storeSettings?.pwaDescriptionEn || "",
+        pwaNameHe: storeSettings?.pwaNameHe || "",
+        pwaDescriptionHe: storeSettings?.pwaDescriptionHe || "",
+        pwaNameAr: storeSettings?.pwaNameAr || "",
+        pwaDescriptionAr: storeSettings?.pwaDescriptionAr || "",
       } as any);
     }
   }, [storeSettings, form]);
