@@ -83,6 +83,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   });
 
+  // SEO Routes (must be before auth middleware)
+  app.get('/robots.txt', (req, res) => {
+    res.type('text/plain');
+    res.send(`User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /auth
+Disallow: /checkout
+Disallow: /profile
+
+Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
+  });
+
+  app.get('/sitemap.xml', async (req, res) => {
+    try {
+      const categories = await storage.getCategories();
+      const products = await storage.getProducts();
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      
+      let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${baseUrl}</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>`;
+
+      // Add category pages
+      categories.forEach(category => {
+        sitemap += `
+  <url>
+    <loc>${baseUrl}/?category=${category.id}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+      });
+
+      sitemap += `
+</urlset>`;
+
+      res.type('application/xml');
+      res.send(sitemap);
+    } catch (error) {
+      console.error('Error generating sitemap:', error);
+      res.status(500).send('Error generating sitemap');
+    }
+  });
+
   // Auth middleware
   await setupAuth(app);
 
