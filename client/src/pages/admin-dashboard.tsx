@@ -1865,6 +1865,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
 // Add Item Dialog Component
 function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { onClose: () => void, onAdd: (product: any, quantity: number) => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
+  const { i18n } = useCommonTranslation();
   
   function getUnitDisplay(unit: string) {
     switch (unit) {
@@ -1953,7 +1954,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
               }`}
               onClick={() => handleProductSelect(product)}
             >
-              <div className="font-medium">{product.name}</div>
+              <div className="font-medium">{getLocalizedField(product, 'name', i18n.language as any, 'ru')}</div>
               <div className="text-sm text-gray-500">
                 {formatCurrency(product.price || product.pricePerKg)} {adminT('products.per')} {getUnitDisplay(product.unit)}
               </div>
@@ -2010,6 +2011,7 @@ function ItemDiscountDialog({
   onApply: (index: number, type: 'percentage' | 'amount', value: number, reason: string) => void;
   adminT: (key: string) => string;
 }) {
+  const { i18n } = useCommonTranslation();
   const [discountType, setDiscountType] = useState<'percentage' | 'amount'>(currentDiscount?.type || 'percentage');
   const [discountValue, setDiscountValue] = useState(currentDiscount?.value || 0);
   const [discountReason, setDiscountReason] = useState(currentDiscount?.reason || '');
