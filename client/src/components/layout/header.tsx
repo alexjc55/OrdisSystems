@@ -5,6 +5,7 @@ import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import type { SupportedLanguage } from '@shared/localization';
 import { Button } from "@/components/ui/button";
+import { usePWA } from "@/hooks/usePWA";
 
 // Import multilingual helper function with fallback to default language
 function getMultilingualValue(
@@ -51,6 +52,10 @@ export default function Header({ onResetView }: HeaderProps) {
   const { currentLanguage, changeLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const { isInstalled, installApp, isStandalone } = usePWA();
+  
+  // Detect if device is desktop (for hiding install button on desktop)
+  const isDesktop = typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches;
 
   const cartItemsCount = items.length; // Count unique products, not total quantity
 
@@ -263,6 +268,22 @@ export default function Header({ onResetView }: HeaderProps) {
                       </div>
                     </Link>
                   </div>
+                  
+                  {/* PWA Install Button - Show on mobile/tablet but not desktop */}
+                  {!isInstalled && !isDesktop && (
+                    <div 
+                      className="flex items-center justify-center px-4 py-3 rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors cursor-pointer"
+                      onClick={() => {
+                        handleInstall();
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <div className="mr-2 h-4 w-4 bg-white rounded flex items-center justify-center rtl:ml-2 rtl:mr-0">
+                        <span className="text-purple-600 text-xs font-bold">📱</span>
+                      </div>
+                      <span className="font-semibold text-sm">{t('pwa.install')}</span>
+                    </div>
+                  )}
                   
                   {/* Second row - Admin button only for admin/worker */}
                   {(user?.role === 'admin' || user?.role === 'worker') && (
