@@ -36,7 +36,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X } from "lucide-react";
+import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import type { User as UserType } from "@shared/schema";
 
@@ -54,7 +54,9 @@ export default function Header({ onResetView }: HeaderProps) {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const { isInstalled, installApp, isStandalone } = usePWA();
   
-  // Detect if device is desktop (for hiding install button on desktop)
+  // Detect device types for PWA install button visibility
+  const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
+  const isTablet = typeof window !== 'undefined' && window.matchMedia('(min-width: 768px) and (max-width: 1023px)').matches;
   const isDesktop = typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches;
 
   const cartItemsCount = items.length; // Count unique products, not total quantity
@@ -287,22 +289,6 @@ export default function Header({ onResetView }: HeaderProps) {
                     </Link>
                   </div>
                   
-                  {/* PWA Install Button - Show on mobile/tablet but not desktop */}
-                  {!isInstalled && !isDesktop && (
-                    <div 
-                      className="flex items-center justify-center px-4 py-3 rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors cursor-pointer"
-                      onClick={() => {
-                        installApp();
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      <div className="mr-2 h-4 w-4 bg-white rounded flex items-center justify-center rtl:ml-2 rtl:mr-0">
-                        <span className="text-purple-600 text-xs font-bold">📱</span>
-                      </div>
-                      <span className="font-semibold text-sm">{t('pwa.install')}</span>
-                    </div>
-                  )}
-                  
                   {/* Second row - Admin button only for admin/worker */}
                   {(user?.role === 'admin' || user?.role === 'worker') && (
                     <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
@@ -359,6 +345,22 @@ export default function Header({ onResetView }: HeaderProps) {
                   </div>
                 );
               })()}
+              
+              {/* PWA Install Button - Show on mobile/tablet but not desktop */}
+              {!isInstalled && (isMobile || isTablet) && (
+                <div className="border-t border-gray-200 pt-4 mt-4">
+                  <div 
+                    className="flex items-center px-4 py-3 mx-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer"
+                    onClick={() => {
+                      installApp();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <Download className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
+                    <span className="font-medium">{t('pwa.installApp')}</span>
+                  </div>
+                </div>
+              )}
               
               {/* Login Button for non-logged in users */}
               {!user && (
