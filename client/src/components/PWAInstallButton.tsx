@@ -12,7 +12,11 @@ interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 
-export function PWAInstallButton() {
+interface PWAInstallButtonProps {
+  variant?: 'mobile' | 'tablet';
+}
+
+export function PWAInstallButton({ variant = 'mobile' }: PWAInstallButtonProps) {
   const { t } = useTranslation('common');
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showButton, setShowButton] = useState(false);
@@ -85,6 +89,18 @@ export function PWAInstallButton() {
   // Don't show if in PWA mode
   if (!showButton) {
     return null;
+  }
+
+  if (variant === 'tablet') {
+    return (
+      <button 
+        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white transition-all duration-200 hover:scale-105 shadow-md text-sm font-medium"
+        onClick={handleInstall}
+      >
+        <Download className="h-4 w-4" />
+        <span className="hidden lg:inline">{t('pwa.installApp')}</span>
+      </button>
+    );
   }
 
   return (

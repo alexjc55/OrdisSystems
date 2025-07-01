@@ -127,6 +127,11 @@ export default function Header({ onResetView }: HeaderProps) {
               </div>
             )}
             
+            {/* PWA Install Button - Tablet only (not mobile, not large desktop) */}
+            <div className="hidden md:block xl:hidden">
+              <PWAInstallButton variant="tablet" />
+            </div>
+            
             {/* Cart Button - Always visible */}
             <Button 
               variant="ghost" 
