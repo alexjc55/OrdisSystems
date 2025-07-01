@@ -6224,6 +6224,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormControl>
                   <div className="space-y-2">
                     <ImageUpload
+                      key="pwa-icon-upload"
                       value={field.value || ""}
                       onChange={(url: string) => field.onChange(url)}
                     />
