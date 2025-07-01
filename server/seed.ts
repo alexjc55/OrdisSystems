@@ -4,9 +4,14 @@ import { categories, products, users } from "@shared/schema";
 export async function seedDatabase() {
   console.log("🌱 Seeding database...");
 
-  // Clear existing data
-  await db.delete(products);
-  await db.delete(categories);
+  // Check if data already exists
+  const existingProducts = await db.select().from(products).limit(1);
+  const existingCategories = await db.select().from(categories).limit(1);
+  
+  if (existingProducts.length > 0 || existingCategories.length > 0) {
+    console.log("✅ Database already contains data, skipping seed");
+    return;
+  }
 
   // Insert test users
   const testUsers = [
