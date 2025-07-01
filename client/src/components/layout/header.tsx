@@ -5,6 +5,7 @@ import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import type { SupportedLanguage } from '@shared/localization';
 import { Button } from "@/components/ui/button";
+import { PWAInstallButton } from "@/components/PWAInstallButton";
 
 // Import multilingual helper function with fallback to default language
 function getMultilingualValue(
@@ -332,6 +333,9 @@ export default function Header({ onResetView }: HeaderProps) {
                   </Link>
                 </div>
               )}
+              
+              {/* PWA Install Button */}
+              <PWAInstallButton />
               
               {/* Logout Button - Only for logged in users */}
               {user && (
