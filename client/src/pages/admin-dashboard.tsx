@@ -5891,6 +5891,16 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
+
+  // Helper function to get field name based on language
+  const getFieldName = (baseField: string, language: string) => {
+    if (language === 'ru') return baseField;
+    if (language === 'en') return `${baseField}En`;
+    if (language === 'he') return `${baseField}He`;
+    if (language === 'ar') return `${baseField}Ar`;
+    return baseField;
+  };
+
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
   const [isVisualsOpen, setIsVisualsOpen] = useState(false);
@@ -6260,13 +6270,16 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="pwaName"
+                name={getFieldName('pwaName', i18n.language)}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.pwaName')} (Русский)</FormLabel>
+                    <FormLabel className="text-sm">{adminT('storeSettings.pwaName')}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="eDAHouse"
+                        placeholder={i18n.language === 'ru' ? "eDAHouse" : 
+                                   i18n.language === 'en' ? "eDAHouse" :
+                                   i18n.language === 'he' ? "eDAHouse" : 
+                                   "eDAHouse"}
                         className="text-sm"
                         {...field}
                       />
@@ -6278,127 +6291,16 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
 
               <FormField
                 control={form.control}
-                name="pwaDescription"
+                name={getFieldName('pwaDescription', i18n.language)}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.pwaDescription')} (Русский)</FormLabel>
+                    <FormLabel className="text-sm">{adminT('storeSettings.pwaDescription')}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Заказ готовой еды онлайн"
-                        className="text-sm"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="pwaNameEn"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.pwaName')} (English)</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="eDAHouse"
-                        className="text-sm"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="pwaDescriptionEn"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.pwaDescription')} (English)</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Online food delivery"
-                        className="text-sm"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="pwaNameHe"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.pwaName')} (עברית)</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="eDAHouse"
-                        className="text-sm"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="pwaDescriptionHe"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.pwaDescription')} (עברית)</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="משלוח אוכל מוכן"
-                        className="text-sm"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="pwaNameAr"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.pwaName')} (العربية)</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="eDAHouse"
-                        className="text-sm"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="pwaDescriptionAr"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('storeSettings.pwaDescription')} (العربية)</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="توصيل الطعام الجاهز"
+                        placeholder={i18n.language === 'ru' ? "Заказ готовой еды онлайн" : 
+                                   i18n.language === 'en' ? "Online food delivery" :
+                                   i18n.language === 'he' ? "משלוח אוכל מוכן" : 
+                                   "توصيل الطعام الجاهز"}
                         className="text-sm"
                         {...field}
                       />

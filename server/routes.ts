@@ -1538,6 +1538,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Dynamic PWA manifest.json endpoint
+  app.get('/manifest.json', async (req, res) => {
+    try {
+      const storeSettings = await storage.getStoreSettings();
+      const language = req.query.lang as string || 'ru';
+      
+      // Get PWA name and description based on language
+      let pwaName = 'eDAHouse';
+      let pwaDescription = 'Заказ готовой еды онлайн';
+      
+      if (language === 'ru') {
+        pwaName = storeSettings?.pwaName || 'eDAHouse';
+        pwaDescription = storeSettings?.pwaDescription || 'Заказ готовой еды онлайн';
+      } else if (language === 'en') {
+        pwaName = storeSettings?.pwaNameEn || storeSettings?.pwaName || 'eDAHouse';
+        pwaDescription = storeSettings?.pwaDescriptionEn || storeSettings?.pwaDescription || 'Online food delivery';
+      } else if (language === 'he') {
+        pwaName = storeSettings?.pwaNameHe || storeSettings?.pwaName || 'eDAHouse';
+        pwaDescription = storeSettings?.pwaDescriptionHe || storeSettings?.pwaDescription || 'משלוח אוכל מוכן';
+      } else if (language === 'ar') {
+        pwaName = storeSettings?.pwaNameAr || storeSettings?.pwaName || 'eDAHouse';
+        pwaDescription = storeSettings?.pwaDescriptionAr || storeSettings?.pwaDescription || 'توصيل الطعام الجاهز';
+      }
+
+      // Use custom PWA icon if available, otherwise use default
+      const iconUrl = storeSettings?.pwaIconUrl || '/icon-512x512.png';
+
+      const manifest = {
+        name: pwaName,
+        short_name: pwaName,
+        description: pwaDescription,
+        start_url: '/',
+        display: 'standalone',
+        background_color: '#ffffff',
+        theme_color: '#f97316',
+        orientation: 'portrait-primary',
+        scope: '/',
+        lang: language,
+        dir: (language === 'he' || language === 'ar') ? 'rtl' : 'ltr',
+        categories: ['food', 'lifestyle', 'shopping'],
+        shortcuts: [
+          {
+            name: language === 'ru' ? 'Магазин' : 
+                  language === 'en' ? 'Shop' :
+                  language === 'he' ? 'חנות' : 'متجر',
+            short_name: language === 'ru' ? 'Магазин' : 
+                       language === 'en' ? 'Shop' :
+                       language === 'he' ? 'חנות' : 'متجر',
+            description: language === 'ru' ? 'Перейти к каталогу продуктов' : 
+                        language === 'en' ? 'Browse product catalog' :
+                        language === 'he' ? 'עיון בקטלוג המוצרים' : 'تصفح كتالوج المنتجات',
+            url: '/',
+            icons: [{ src: iconUrl, sizes: '192x192' }]
+          },
+          {
+            name: language === 'ru' ? 'Админ' : 
+                  language === 'en' ? 'Admin' :
+                  language === 'he' ? 'ניהול' : 'إدارة',
+            short_name: language === 'ru' ? 'Админ' : 
+                       language === 'en' ? 'Admin' :
+                       language === 'he' ? 'ניהול' : 'إدارة',
+            description: language === 'ru' ? 'Панель администратора' : 
+                        language === 'en' ? 'Administration panel' :
+                        language === 'he' ? 'פאנל ניהול' : 'لوحة الإدارة',
+            url: '/admin',
+            icons: [{ src: iconUrl, sizes: '192x192' }]
+          }
+        ],
+        icons: [
+          {
+            src: iconUrl,
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable any'
+          },
+          {
+            src: iconUrl,
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable any'
+          }
+        ]
+      };
+
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+      res.json(manifest);
+    } catch (error) {
+      console.error('Error generating manifest:', error);
+      res.status(500).json({ error: 'Failed to generate manifest' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
