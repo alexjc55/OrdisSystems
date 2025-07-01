@@ -268,6 +268,18 @@ export const storeSettings = pgTable("store_settings", {
   modernBlock2Text: varchar("modern_block2_text", { length: 255 }), // Text for second modern block
   modernBlock3Icon: varchar("modern_block3_icon", { length: 50 }), // Icon name for third modern block
   modernBlock3Text: varchar("modern_block3_text", { length: 255 }), // Text for third modern block
+  
+  // PWA Settings
+  pwaIcon: varchar("pwa_icon", { length: 500 }), // PWA app icon URL
+  pwaName: varchar("pwa_name", { length: 100 }).default("eDAHouse"), // PWA app name (Russian)
+  pwaDescription: text("pwa_description").default("Готовые блюда с доставкой"), // PWA app description (Russian)
+  pwaNameEn: varchar("pwa_name_en", { length: 100 }), // PWA app name (English)
+  pwaDescriptionEn: text("pwa_description_en"), // PWA app description (English)
+  pwaNameHe: varchar("pwa_name_he", { length: 100 }), // PWA app name (Hebrew)
+  pwaDescriptionHe: text("pwa_description_he"), // PWA app description (Hebrew)
+  pwaNameAr: varchar("pwa_name_ar", { length: 100 }), // PWA app name (Arabic)
+  pwaDescriptionAr: text("pwa_description_ar"), // PWA app description (Arabic)
+  
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
