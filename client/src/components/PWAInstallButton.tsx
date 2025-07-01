@@ -65,41 +65,44 @@ export function PWAInstallButton({ variant = 'mobile' }: PWAInstallButtonProps) 
   const handleInstall = async () => {
     console.log('Install button clicked, deferredPrompt:', !!deferredPrompt);
     
-    if (!deferredPrompt) {
-      console.log('No deferred prompt available, showing manual instructions');
-      
-      // Показать инструкции для ручной установки
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      const isAndroid = /Android/.test(navigator.userAgent);
-      
-      let message = '';
-      
-      if (isIOS) {
-        message = 'Для установки приложения:\n1. Нажмите кнопку "Поделиться" в Safari\n2. Выберите "На экран Домой"';
-      } else if (isAndroid) {
-        message = 'Для установки приложения:\n1. Откройте меню браузера (⋮)\n2. Выберите "Установить приложение" или "Добавить на главный экран"';
-      } else {
-        message = 'Для установки приложения:\n1. Откройте меню браузера\n2. Найдите опцию "Установить приложение" или "Добавить на рабочий стол"';
+    // Сначала попробуем автоматическую установку
+    if (deferredPrompt) {
+      try {
+        await deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        console.log('Install outcome:', outcome);
+        
+        if (outcome === 'accepted') {
+          setShowButton(false);
+        }
+        
+        setDeferredPrompt(null);
+        return;
+      } catch (error) {
+        console.error('Auto install failed:', error);
       }
-      
-      alert(message);
-      return;
     }
-
-    try {
-      await deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      
-      console.log('Install outcome:', outcome);
-      
-      if (outcome === 'accepted') {
-        setShowButton(false);
-      }
-      
-      setDeferredPrompt(null);
-    } catch (error) {
-      console.error('Install failed:', error);
+    
+    // Если автоматическая установка недоступна, направляем к меню браузера
+    console.log('No auto-install available, directing to browser menu');
+    
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    const isChrome = /Chrome/.test(navigator.userAgent);
+    
+    let message = '';
+    
+    if (isIOS) {
+      message = 'Нажмите кнопку "Поделиться" ↗️ в Safari, затем "На экран Домой"';
+    } else if (isAndroid || isChrome) {
+      message = 'Откройте меню браузера (⋮) и выберите "Установить приложение"';
+    } else {
+      message = 'Откройте меню браузера и найдите "Установить приложение" или "Добавить на рабочий стол"';
     }
+    
+    // Показываем краткое уведомление с инструкцией
+    alert(`Для установки приложения:\n${message}`);
   };
 
   // Don't show if in PWA mode
