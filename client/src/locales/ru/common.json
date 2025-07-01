@@ -407,6 +407,18 @@
     "poweredBy": "Powered by Ordis.",
     "tryBusiness": "Try it for your business."
   },
+  "pwa": {
+    "installTitle": "Установить приложение",
+    "installDescription": "Установите eDAHouse для удобного доступа без браузера",
+    "installDescriptionIOS": "Добавьте eDAHouse на главный экран для быстрого доступа",
+    "install": "Установить",
+    "later": "Позже",
+    "offline": "Работаем в офлайн режиме",
+    "installedMode": "Приложение установлено",
+    "updateAvailable": "Доступно обновление",
+    "reload": "Обновить",
+    "workingOffline": "Работаем без интернета"
+  },
   "error": "Ошибка",
   "cart": {
     "cart": "Корзина",

@@ -77,6 +77,12 @@ function Router() {
         <Route component={NotFound} />
       </Switch>
       
+      {/* PWA Status Bar */}
+      <PWAStatusBar />
+      
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
+      
       {/* WhatsApp Chat Widget */}
       <WhatsAppChat />
       

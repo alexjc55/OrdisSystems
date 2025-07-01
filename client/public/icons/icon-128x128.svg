@@ -1,0 +1,6 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" fill="#f97316" rx="12"/>
+  <text x="64" y="70" text-anchor="middle" fill="white" font-size="FONT1281" font-family="Arial, sans-serif" font-weight="bold">eDA</text>
+  <text x="64" y="96" text-anchor="middle" fill="white" font-size="FONT1282" font-family="Arial, sans-serif">House</text>
+  <circle cx="64" cy="38" r="9" fill="white"/>
+</svg>

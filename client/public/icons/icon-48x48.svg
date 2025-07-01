@@ -1,0 +1,6 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="48" fill="#f97316" rx="4"/>
+  <text x="24" y="26" text-anchor="middle" fill="white" font-size="FONT481" font-family="Arial, sans-serif" font-weight="bold">eDA</text>
+  <text x="24" y="36" text-anchor="middle" fill="white" font-size="FONT482" font-family="Arial, sans-serif">House</text>
+  <circle cx="24" cy="14" r="3" fill="white"/>
+</svg>
