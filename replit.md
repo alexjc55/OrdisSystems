@@ -131,14 +131,20 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
-- June 30, 2025: REMOVED FALLBACK LOGIC FROM MULTILINGUAL SYSTEM
-  - CRITICAL CHANGE: Eliminated automatic fallback to default language when field is empty on other languages
-  - UPDATED getLocalizedField(): Now returns empty string if field not translated, instead of showing default language content
-  - UPDATED getLocalizedStoreField(): Removed fallback logic for store settings multilingual fields
-  - UPDATED getLocalizedThemeField(): Removed fallback logic for theme multilingual fields
-  - USER EXPERIENCE: Fields now show empty if not translated instead of automatically displaying default language text
-  - ADMINISTRATOR CONTROL: Each language must be explicitly filled by admin, no automatic content copying
-  - RESULT: Clean language separation - users see content only if it exists for their selected language
+- July 1, 2025: IMPLEMENTED DUAL MULTILINGUAL SYSTEM WITH SEPARATE ADMIN AND PUBLIC BEHAVIOR
+  - CRITICAL IMPLEMENTATION: Created dual behavior for multilingual content management
+  - PUBLIC WEBSITE: Full fallback logic restored - shows default language content when translation missing
+    - getLocalizedStoreField(): Uses fallback to default language for seamless public experience
+    - getLocalizedThemeField(): Falls back to default language to ensure content always displays
+    - USER EXPERIENCE: Public visitors see content in their language or fallback to default language
+  - ADMIN PANEL: No fallback logic - shows empty fields when translation missing
+    - NEW FUNCTION: getLocalizedFieldForAdmin() shows empty fields for untranslated content
+    - ADMINISTRATOR CONTROL: Admin sees exactly what is translated vs what needs translation
+    - CLEAR DISTINCTION: Admin can identify which fields need translation work
+  - DUAL SYSTEM BENEFITS:
+    - Public site: Seamless experience with content always visible
+    - Admin interface: Clear indication of translation status for content management
+    - Best of both worlds: Professional public experience + precise admin control
 - June 30, 2025: COMPLETED MULTILINGUAL SYSTEM REDESIGN WITH FLEXIBLE DEFAULT LANGUAGE
   - FLEXIBLE DEFAULT LANGUAGE: System completely redesigned to use configurable default language from admin settings instead of hardcoded Russian
   - ENHANCED getLocalizedField FUNCTION: Updated to support both store settings object and direct language parameter for maximum compatibility
