@@ -1126,26 +1126,7 @@ export default function ThemeManager() {
                       {i18n.language !== 'ar' && <input type="hidden" name="description_ar" value={themeFields.description_ar} />}
                     </div>
                     
-                    {/* PWA Settings - TEST */}
-                    <div className="space-y-2 p-4 border-4 border-red-500 bg-red-100 rounded-lg">
-                      <div className="text-red-800 font-bold text-lg">
-                        🔴 PWA ICON FIELD TEST - ЕСЛИ ВЫ ВИДИТЕ ЭТО, ТО ПОЛЕ РАБОТАЕТ!
-                      </div>
-                      <Label className="flex items-center gap-2 text-red-800 font-semibold" htmlFor="pwaIconUrl">
-                        <Upload className="h-4 w-4 text-red-600" />
-                        Иконка PWA приложения (ТЕСТ)
-                      </Label>
-                      <Input 
-                        id="pwaIconUrl" 
-                        name="pwaIconUrl"
-                        placeholder="https://example.com/icon-512x512.png" 
-                        className="text-sm border-red-300"
-                      />
-                      <div className="text-xs text-red-600 flex items-center gap-1">
-                        <Info className="h-3 w-3" />
-                        URL изображения иконки для PWA приложения. Формат: PNG, размер: 512x512 пикселей.
-                      </div>
-                    </div>
+
                     
                     {/* Изображения */}
                     <div className="space-y-6">
@@ -1873,27 +1854,7 @@ export default function ThemeManager() {
                       {i18n.language !== 'ar' && <input type="hidden" name="description_ar" value={themeFields.description_ar} />}
                     </div>
                     
-                    {/* PWA Settings - EDIT TEST */}
-                    <div className="space-y-2 p-4 border-4 border-red-500 bg-red-100 rounded-lg">
-                      <div className="text-red-800 font-bold text-lg">
-                        🔴 PWA ICON FIELD EDIT TEST - ЕСЛИ ВЫ ВИДИТЕ ЭТО, ТО ПОЛЕ РАБОТАЕТ!
-                      </div>
-                      <Label className="flex items-center gap-2 text-red-800 font-semibold" htmlFor="edit-pwaIconUrl">
-                        <Upload className="h-4 w-4 text-red-600" />
-                        Иконка PWA приложения (ТЕСТ РЕДАКТИРОВАНИЯ)
-                      </Label>
-                      <Input 
-                        id="edit-pwaIconUrl" 
-                        name="pwaIconUrl"
-                        placeholder="https://example.com/icon-512x512.png" 
-                        defaultValue={(editingTheme as any)?.pwaIconUrl || ''}
-                        className="text-sm border-red-300"
-                      />
-                      <div className="text-xs text-red-600 flex items-center gap-1">
-                        <Info className="h-3 w-3" />
-                        URL изображения иконки для PWA приложения. Формат: PNG, размер: 512x512 пикселей.
-                      </div>
-                    </div>
+
                     
                     {/* Изображения - многоязычная поддержка */}
                     <div className="space-y-6">

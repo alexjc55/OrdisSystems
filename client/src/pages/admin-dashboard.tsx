@@ -6224,9 +6224,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 <FormControl>
                   <div className="space-y-2">
                     <ImageUpload
-                      value={field.value}
-                      onChange={field.onChange}
-                      onRemove={() => field.onChange("")}
+                      value={field.value || ""}
+                      onChange={(url: string) => field.onChange(url)}
                     />
                     <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
                       <Info className="h-3 w-3" />
