@@ -141,6 +141,11 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
     - NEW FUNCTION: getLocalizedFieldForAdmin() shows empty fields for untranslated content
     - ADMINISTRATOR CONTROL: Admin sees exactly what is translated vs what needs translation
     - CLEAR DISTINCTION: Admin can identify which fields need translation work
+  - DATABASE CLEANUP: Removed all duplicated Russian text from multilingual fields
+    - Cleared store_settings: All _en, _he, _ar fields now empty (no Russian duplicates)
+    - Cleared themes: All multilingual name/description fields now empty
+    - Clean state: Only Russian (default language) fields contain content
+    - Result: Admin panel now correctly shows empty fields for untranslated languages
   - DUAL SYSTEM BENEFITS:
     - Public site: Seamless experience with content always visible
     - Admin interface: Clear indication of translation status for content management
