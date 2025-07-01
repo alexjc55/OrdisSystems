@@ -4302,12 +4302,22 @@ export default function AdminDashboard() {
                             <Button
                               variant="ghost"
                               size="sm"
+                              onClick={() => setOrdersPage(1)}
+                              disabled={ordersResponse.page === 1}
+                              title={adminT('common.firstPage')}
+                              className="h-8 w-8 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
+                            >
+                              <span className="text-base">⟨⟨</span>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
                               title={adminT('common.previousPage')}
                               className="h-8 w-8 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
                             >
-                              {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                              {isRTL ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
                             </Button>
                             <div className="px-3 py-1 bg-white border border-orange-300 rounded-md text-sm font-medium min-w-[50px] text-center" dir="ltr">
                               {ordersResponse.page}/{ordersResponse.totalPages}
@@ -4320,7 +4330,17 @@ export default function AdminDashboard() {
                               title={adminT('common.nextPage')}
                               className="h-8 w-8 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
                             >
-                              {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                              {isRTL ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setOrdersPage(ordersResponse.totalPages)}
+                              disabled={ordersResponse.page === ordersResponse.totalPages}
+                              title={adminT('common.lastPage')}
+                              className="h-8 w-8 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
+                            >
+                              <span className="text-base">⟩⟩</span>
                             </Button>
                           </div>
                         </div>
@@ -4636,12 +4656,22 @@ export default function AdminDashboard() {
                             <Button
                               variant="ghost"
                               size="sm"
+                              onClick={() => setOrdersPage(1)}
+                              disabled={ordersResponse.page === 1}
+                              title={adminT('common.firstPage')}
+                              className="h-8 w-8 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
+                            >
+                              <span className="text-base">⟨⟨</span>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               onClick={() => setOrdersPage(prev => Math.max(1, prev - 1))}
                               disabled={ordersResponse.page === 1}
                               title={adminT('common.previousPage')}
                               className="h-8 w-8 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
                             >
-                              {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                              {isRTL ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
                             </Button>
                             <div className="px-3 py-1 bg-white border border-orange-300 rounded-md text-sm font-medium min-w-[50px] text-center" dir="ltr">
                               {ordersResponse.page}/{ordersResponse.totalPages}
@@ -4654,7 +4684,17 @@ export default function AdminDashboard() {
                               title={adminT('common.nextPage')}
                               className="h-8 w-8 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
                             >
-                              {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                              {isRTL ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setOrdersPage(ordersResponse.totalPages)}
+                              disabled={ordersResponse.page === ordersResponse.totalPages}
+                              title={adminT('common.lastPage')}
+                              className="h-8 w-8 p-0 text-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
+                            >
+                              <span className="text-base">⟩⟩</span>
                             </Button>
                           </div>
                         </div>
