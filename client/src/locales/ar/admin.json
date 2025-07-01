@@ -666,6 +666,7 @@
     "canEditOrders": "تعديل الطلبات",
     "pwaSettings": "إعدادات تطبيق PWA",
     "pwaIconUrl": "أيقونة تطبيق PWA",
+    "pwaIconUrlTooltip": "رابط URL لصورة الأيقونة لتطبيق PWA. التنسيق: PNG، الحجم: 512×512 بكسل.",
     "pwaIconTooltip": "التنسيق: PNG، الحجم: 512x512 بكسل. ستظهر هذه الأيقونة على الشاشة الرئيسية للجهاز عند تثبيت التطبيق."
   },
   "systemSettings": {

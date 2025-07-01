@@ -423,6 +423,7 @@
     "canEditOrders": "עריכת הזמנות",
     "pwaSettings": "הגדרות יישום PWA",
     "pwaIconUrl": "אייקון יישום PWA",
+    "pwaIconUrlTooltip": "כתובת URL של תמונת האייקון עבור יישום PWA. פורמט: PNG, גודל: 512x512 פיקסלים.",
     "pwaIconTooltip": "פורמט: PNG, גודל: 512x512 פיקסלים. אייקון זה יוצג במסך הבית של המכשיר כאשר היישום מותקן."
   },
   "systemSettings": {

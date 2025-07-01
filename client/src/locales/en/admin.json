@@ -467,6 +467,7 @@
     "canEditOrders": "Edit Orders",
     "pwaSettings": "PWA App Settings",
     "pwaIconUrl": "PWA App Icon",
+    "pwaIconUrlTooltip": "URL of icon image for PWA application. Format: PNG, size: 512x512 pixels.",
     "pwaIconTooltip": "Format: PNG, size: 512x512 pixels. This icon will be displayed on the device home screen when the app is installed."
   },
   "themes": {
