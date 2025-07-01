@@ -277,7 +277,8 @@ import {
   MoreHorizontal,
   Info,
   Globe,
-  Type
+  Type,
+  Smartphone
 } from "lucide-react";
 
 // Validation schemas
@@ -6552,6 +6553,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       cartBannerTextColor: storeSettings?.cartBannerTextColor || "#ffffff",
       defaultLanguage: storeSettings?.defaultLanguage || "ru",
       enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
+      // PWA Settings
+      pwaIcon: storeSettings?.pwaIcon || "",
+      pwaName: getLocalizedFieldForAdmin(storeSettings, 'pwaName', currentLanguage, storeSettings) || "",
+      pwaDescription: getLocalizedFieldForAdmin(storeSettings, 'pwaDescription', currentLanguage, storeSettings) || "",
     } as any,
   });
 
@@ -6937,6 +6942,74 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               </FormItem>
             )}
           />
+            
+            {/* PWA Settings */}
+            <div className="col-span-1 md:col-span-2">
+              <div className="border-t pt-6 mt-6">
+                <h4 className="text-md font-medium mb-4 flex items-center gap-2">
+                  <div className="h-4 w-4 bg-blue-600 rounded flex items-center justify-center">
+                    <span className="text-white text-xs font-bold">PWA</span>
+                  </div>
+                  {adminT('storeSettings.pwaSettings')}
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="pwaIcon"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm">{adminT('storeSettings.pwaIcon')}</FormLabel>
+                        <FormControl>
+                          <ImageUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-xs">
+                          {adminT('storeSettings.pwaIconDescription')}
+                        </FormDescription>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="pwaName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm">{adminT('storeSettings.pwaName')}</FormLabel>
+                          <FormControl>
+                            <Input placeholder={adminT('storeSettings.pwaNamePlaceholder')} {...field} className="text-sm" />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="pwaDescription"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm">{adminT('storeSettings.pwaDescription')}</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder={adminT('storeSettings.pwaDescriptionPlaceholder')} 
+                              {...field} 
+                              className="text-sm resize-none"
+                              rows={3}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
             </div>
           </CollapsibleContent>
         </Collapsible>
