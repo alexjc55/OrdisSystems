@@ -6211,7 +6211,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             )}
           />
 
-          {/* PWA Icon URL Field */}
+          {/* PWA Icon Upload Field */}
           <FormField
             control={form.control}
             name="pwaIconUrl"
@@ -6223,11 +6223,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 </FormLabel>
                 <FormControl>
                   <div className="space-y-2">
-                    <Input 
-                      placeholder="https://example.com/icon-512x512.png" 
-                      {...field}
-                      value={field.value || ""}
-                      className="text-sm"
+                    <ImageUpload
+                      value={field.value}
+                      onChange={field.onChange}
+                      onRemove={() => field.onChange("")}
                     />
                     <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
                       <Info className="h-3 w-3" />
