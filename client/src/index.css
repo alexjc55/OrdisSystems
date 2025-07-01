@@ -794,39 +794,6 @@ button:focus,
   html[lang="ar"] [data-tab="products"] .table-container table {
     direction: rtl !important;
   }
-
-  /* Mobile table optimization for orders */
-  @media (max-width: 640px) {
-    .table-container {
-      overflow-x: auto;
-    }
-    
-    .table-container table {
-      min-width: 500px; /* Ensure horizontal scroll on very small screens */
-    }
-    
-    /* Compact mobile table cells */
-    .table-container td,
-    .table-container th {
-      padding: 4px 8px !important;
-      font-size: 12px !important;
-      line-height: 1.2 !important;
-    }
-    
-    /* Reduce button sizes in table on mobile */
-    .table-container button {
-      height: 32px !important;
-      width: 32px !important;
-      padding: 4px !important;
-    }
-    
-    /* Compact select triggers in table */
-    .table-container .select-trigger {
-      height: 28px !important;
-      font-size: 11px !important;
-      padding: 2px 6px !important;
-    }
-  }
   
   html[lang="he"] .products-container table th,
   html[lang="ar"] .products-container table th,
