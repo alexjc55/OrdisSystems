@@ -15,6 +15,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation, useRoute } from "wouter";
 import { useAdminTranslation, useCommonTranslation } from "@/hooks/use-language";
 import { useTranslation } from "react-i18next";
 import { LANGUAGES } from "@/lib/i18n";
@@ -2224,11 +2225,30 @@ export default function AdminDashboard() {
 
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [activeTab, setActiveTab] = useState("products");
+  
+  // URL-based navigation for admin tabs
+  const [location, setLocation] = useLocation();
+  
+  // Get current tab from URL parameters
+  const getCurrentTab = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    return tab || 'products';
+  };
+  
+  // Set active tab and update URL
+  const setActiveTab = (newTab: string) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('tab', newTab);
+    const newUrl = `/admin?${urlParams.toString()}`;
+    setLocation(newUrl);
+  };
+  
+  const activeTab = getCurrentTab();
 
   // Set default tab based on worker permissions - only once on mount
   useEffect(() => {
-    if (user?.role === "worker" && storeSettings && activeTab === "products") {
+    if (user?.role === "worker" && storeSettings && getCurrentTab() === "products") {
       const workerPermissions = (storeSettings?.workerPermissions as any) || {};
       let defaultTab = "products";
       
@@ -2250,7 +2270,7 @@ export default function AdminDashboard() {
         setActiveTab(defaultTab);
       }
     }
-  }, [user, storeSettings]); // Removed activeTab from dependencies to prevent loops
+  }, [user, storeSettings]);
 
   // Orders management state
   const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
