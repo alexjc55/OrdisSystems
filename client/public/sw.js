@@ -19,11 +19,16 @@ const API_CACHE_PATTERNS = [
 
 // Push notification event handlers
 self.addEventListener('push', function(event) {
-  if (!event.data) return;
+  console.log('🔔 Push event received!', event);
+  
+  if (!event.data) {
+    console.log('❌ No data in push event');
+    return;
+  }
 
   try {
     const data = event.data.json();
-    console.log('Push notification received:', data);
+    console.log('✅ Push notification data parsed:', data);
 
     // Create unique tag to prevent duplicate notifications
     const notificationTag = (data.data?.type || 'default') + '_' + Date.now();
@@ -41,8 +46,16 @@ self.addEventListener('push', function(event) {
       renotify: false // Prevent re-notification for same tag
     };
 
+    console.log('🔔 Showing notification with options:', options);
+    
     event.waitUntil(
       self.registration.showNotification(data.title, options)
+        .then(() => {
+          console.log('✅ Notification shown successfully:', data.title);
+        })
+        .catch(error => {
+          console.error('❌ Failed to show notification:', error);
+        })
     );
   } catch (error) {
     console.error('Error processing push notification:', error);
