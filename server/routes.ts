@@ -1766,25 +1766,37 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         return res.status(400).json({ message: 'Invalid subscription data' });
       }
 
-      // Check if subscription already exists
+      // Check if subscription already exists for this user
       const existingSubscription = await db
         .select()
         .from(pushSubscriptions)
-        .where(sql`endpoint = ${endpoint} AND user_id = ${userId}`)
+        .where(sql`user_id = ${userId}`)
         .limit(1);
 
       if (existingSubscription.length > 0) {
-        return res.json({ message: 'Already subscribed' });
+        // Update existing subscription with new endpoint and keys
+        await db
+          .update(pushSubscriptions)
+          .set({
+            endpoint,
+            p256dh: keys.p256dh,
+            auth: keys.auth,
+            userAgent: req.headers['user-agent'] || '',
+            updatedAt: new Date()
+          })
+          .where(sql`user_id = ${userId}`);
+        
+        return res.json({ message: 'Subscription updated successfully' });
+      } else {
+        // Save new subscription
+        await db.insert(pushSubscriptions).values({
+          userId,
+          endpoint,
+          p256dh: keys.p256dh,
+          auth: keys.auth,
+          userAgent: req.headers['user-agent'] || ''
+        });
       }
-
-      // Save new subscription
-      await db.insert(pushSubscriptions).values({
-        userId,
-        endpoint,
-        p256dh: keys.p256dh,
-        auth: keys.auth,
-        userAgent: req.headers['user-agent'] || ''
-      });
 
       res.json({ message: 'Subscription saved successfully' });
     } catch (error) {

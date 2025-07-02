@@ -25,16 +25,20 @@ self.addEventListener('push', function(event) {
     const data = event.data.json();
     console.log('Push notification received:', data);
 
+    // Create unique tag to prevent duplicate notifications
+    const notificationTag = (data.data?.type || 'default') + '_' + Date.now();
+    
     const options = {
       body: data.body,
       icon: data.icon || '/api/icons/icon-192x192.png',
       badge: data.badge || '/api/icons/icon-96x96.png',
       data: data.data || {},
       actions: data.actions || [],
-      tag: data.data?.type || 'default',
+      tag: notificationTag,
       requireInteraction: data.data?.type === 'order-status' || data.data?.type === 'cart-reminder',
       vibrate: [200, 100, 200],
-      silent: false
+      silent: false,
+      renotify: false // Prevent re-notification for same tag
     };
 
     event.waitUntil(

@@ -45,7 +45,7 @@ export default function PushNotificationRequest() {
           const registration = await navigator.serviceWorker.ready;
           if (registration.pushManager) {
             try {
-              const response = await fetch('/api/push/vapid-public-key');
+              const response = await fetch('/api/push/vapid-key');
               const { publicKey } = await response.json();
               
               const subscription = await registration.pushManager.subscribe({

@@ -16,46 +16,7 @@ export default function PWAInstallPrompt() {
   const [isIOS, setIsIOS] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
 
-  // Function to request push notification permission
-  const requestPushPermission = async () => {
-    try {
-      if ('Notification' in window && 'serviceWorker' in navigator) {
-        const permission = await Notification.requestPermission();
-        console.log('Push notification permission:', permission);
-        
-        if (permission === 'granted') {
-          // Subscribe to push notifications
-          const registration = await navigator.serviceWorker.ready;
-          if (registration.pushManager) {
-            try {
-              const response = await fetch('/api/push/vapid-public-key');
-              const { publicKey } = await response.json();
-              
-              const subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: publicKey
-              });
-              
-              // Send subscription to server
-              await fetch('/api/push/subscribe', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(subscription)
-              });
-              
-              console.log('Successfully subscribed to push notifications');
-            } catch (subscribeError) {
-              console.error('Error subscribing to push notifications:', subscribeError);
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error requesting push permission:', error);
-    }
-  };
+  // Push notifications are handled by separate PushNotificationRequest component
 
   useEffect(() => {
     // Check if app is already installed (standalone mode)
