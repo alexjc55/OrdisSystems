@@ -95,7 +95,7 @@ server {
 
 ### PM2 конфигурация
 
-Файл: `/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/ecosystem.config.js`
+Файл: `/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/ecosystem.edahouse.config.cjs`
 
 ```javascript
 module.exports = {

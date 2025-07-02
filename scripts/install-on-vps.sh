@@ -152,7 +152,7 @@ npm run db:push
 echo "🚀 Настраиваем PM2..."
 
 # Создаем конфигурацию PM2 для этого инстанса
-cat > ecosystem.${PROJECT_NAME}.config.js <<EOF
+cat > ecosystem.${PROJECT_NAME}.config.cjs <<EOF
 module.exports = {
   apps: [
     {
@@ -185,7 +185,7 @@ module.exports = {
 EOF
 
 # Запускаем приложение
-pm2 start ecosystem.${PROJECT_NAME}.config.js
+pm2 start ecosystem.${PROJECT_NAME}.config.cjs
 pm2 save
 
 echo "🌐 Настраиваем Nginx..."
