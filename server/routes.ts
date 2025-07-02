@@ -1757,9 +1757,9 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
   });
 
   // Subscribe to push notifications
-  app.post('/api/push/subscribe', isAuthenticated, async (req: any, res) => {
+  app.post('/api/push/subscribe', async (req: any, res) => {
     try {
-      const userId = req.user.id;
+      const userId = req.user?.id || 'guest';
       const { endpoint, keys } = req.body;
 
       if (!endpoint || !keys?.p256dh || !keys?.auth) {
@@ -1819,6 +1819,55 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     } catch (error) {
       console.error('Error unsubscribing:', error);
       res.status(500).json({ message: 'Failed to unsubscribe' });
+    }
+  });
+
+  // Test marketing push notification (no auth required for testing)
+  app.post('/api/test/push/marketing', async (req: any, res) => {
+    try {
+      const { title, message } = req.body;
+
+      if (!title || !message) {
+        return res.status(400).json({ message: 'Title and message are required' });
+      }
+
+      // Create test notification record
+      const [notification] = await db.insert(marketingNotifications).values({
+        title,
+        message,
+        createdBy: 'test',
+        sentAt: new Date()
+      }).returning();
+
+      // Send single notification with test data
+      const result = await PushNotificationService.sendMarketingNotification({
+        title,
+        message,
+        notificationId: notification.id
+      });
+
+      let totalSent = 0;
+      if (result.success) {
+        totalSent = result.sent || 0;
+        console.log(`📱 Test marketing notification: ${totalSent} notifications sent successfully`);
+      } else {
+        console.error(`❌ Failed to send test marketing notifications`, result.error);
+      }
+
+      // Update sent count
+      await db
+        .update(marketingNotifications)
+        .set({ sentCount: totalSent })
+        .where(sql`id = ${notification.id}`);
+
+      res.json({ 
+        message: 'Test marketing notification sent successfully',
+        sentCount: totalSent,
+        notificationId: notification.id
+      });
+    } catch (error) {
+      console.error('Error sending test marketing notification:', error);
+      res.status(500).json({ message: 'Failed to send test marketing notification' });
     }
   });
 
