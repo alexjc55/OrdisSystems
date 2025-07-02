@@ -1,0 +1,53 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ cd /var/www/edahouse.ordis.co.il
+npm run build
+-bash: cd: /var/www/edahouse.ordis.co.il: No such file or directory
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+transforming (24) ../node_modules/i18next/dist/esm/i18next.jsBrowserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2796 modules transformed.
+../dist/public/index.html                                        4.20 kB │ gzip:   1.43 kB
+../dist/public/assets/logo-white_1750456267684-DSssD_B9.png      8.43 kB
+../dist/public/assets/index-DGXV_-NY.css                       167.71 kB │ gzip:  28.61 kB
+../dist/public/assets/index-BfN8nOPH.js                      1,493.21 kB │ gzip: 411.81 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 16.42s
+
+  dist/index.js  198.2kb
+
+⚡ Done in 26ms
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ sudo kill 249311
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ ps aux | grep node | grep -v grep
+ordis_c+  250103  9.7  4.0 21900196 82228 ?      Ssl  21:51   0:01 node /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.i
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ cd /var/www/edahouse.ordis.co.il
+PORT=3000 NODE_ENV=production node dist/index.js
+-bash: cd: /var/www/edahouse.ordis.co.il: No such file or directory
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+TypeError [ERR_INVALID_ARG_TYPE]: The "paths[0]" argument must be of type string. Received undefined
+    at new NodeError (node:internal/errors:405:5)
+    at validateString (node:internal/validators:162:11)
+    at Object.resolve (node:path:1115:7)
+    at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3614:18
+    at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:337:24)
+    at async loadESM (node:internal/process/esm_loader:34:7)
+    at async handleMainPromise (node:internal/modules/run_main:106:12) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+
+Node.js v18.20.6
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ ss -tlnp | grep :3000
+curl http://127.0.0.1:3000/api/health
+curl: (7) Failed to connect to 127.0.0.1 port 3000 after 0 ms: Couldn't connect to server
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$
