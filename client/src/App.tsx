@@ -12,6 +12,7 @@ import { Footer } from "@/components/layout/footer";
 import { LanguageInitializer } from "@/components/language-initializer";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import PWAStatusBar from "@/components/PWAStatusBar";
+import PushNotificationRequest from "@/components/PushNotificationRequest";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
@@ -84,6 +85,9 @@ function Router() {
       
       {/* PWA Install Prompt */}
       <PWAInstallPrompt />
+      
+      {/* Push Notification Request */}
+      <PushNotificationRequest />
       
       {/* WhatsApp Chat Widget */}
       <WhatsAppChat />
