@@ -55,7 +55,7 @@ import { ru, enUS, he, ar } from "date-fns/locale";
 import { insertStoreSettingsSchema, type StoreSettings, type CategoryWithCount } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
-import { PushNotificationsPanel } from "@/components/PushNotificationsPanel";
+// import { PushNotificationsPanel } from "@/components/PushNotificationsPanel";
 import {
   DndContext,
   closestCenter,
@@ -5133,7 +5133,10 @@ export default function AdminDashboard() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <PushNotificationsPanel />
+                  {/* <PushNotificationsPanel /> */}
+                  <div className="text-center text-gray-500 py-8">
+                    Push-уведомления временно недоступны
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
