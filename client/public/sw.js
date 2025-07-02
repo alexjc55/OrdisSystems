@@ -107,7 +107,11 @@ self.addEventListener('notificationclick', function(event) {
           client.postMessage({
             type: 'notification-click',
             url: url,
-            data: data
+            data: data,
+            notification: {
+              title: event.notification.title,
+              body: event.notification.body
+            }
           });
           return;
         }

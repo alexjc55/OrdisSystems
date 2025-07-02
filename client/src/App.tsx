@@ -13,7 +13,8 @@ import { LanguageInitializer } from "@/components/language-initializer";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import PWAStatusBar from "@/components/PWAStatusBar";
 import PushNotificationRequest from "@/components/PushNotificationRequest";
-import { useEffect } from "react";
+import NotificationModal from "@/components/NotificationModal";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
 import Landing from "@/pages/landing";
@@ -31,6 +32,19 @@ import { ProtectedRoute } from "@/lib/protected-route";
 function Router() {
   const { storeSettings } = useStoreSettings();
   const { i18n } = useTranslation();
+  
+  // State for notification modal
+  const [notificationModal, setNotificationModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'marketing' | 'order-status' | 'cart-reminder';
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'marketing'
+  });
 
   // Initialize language and direction on app start
   useEffect(() => {
@@ -57,6 +71,29 @@ function Router() {
       i18n.off('languageChanged', handleLanguageChange);
     };
   }, [i18n]);
+
+  // Listen for messages from Service Worker (notification clicks)
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'notification-click' && event.data?.notification) {
+        const { title, body } = event.data.notification;
+        const type = event.data.data?.type || 'marketing';
+        
+        setNotificationModal({
+          isOpen: true,
+          title: title || 'Уведомление',
+          message: body || 'Новое уведомление',
+          type: type
+        });
+      }
+    };
+
+    navigator.serviceWorker?.addEventListener('message', handleMessage);
+    
+    return () => {
+      navigator.serviceWorker?.removeEventListener('message', handleMessage);
+    };
+  }, []);
 
   return (
     <ErrorBoundary>
@@ -88,6 +125,15 @@ function Router() {
       
       {/* Push Notification Request */}
       <PushNotificationRequest />
+      
+      {/* Notification Modal */}
+      <NotificationModal
+        isOpen={notificationModal.isOpen}
+        onClose={() => setNotificationModal(prev => ({ ...prev, isOpen: false }))}
+        title={notificationModal.title}
+        message={notificationModal.message}
+        type={notificationModal.type}
+      />
       
       {/* WhatsApp Chat Widget */}
       <WhatsAppChat />
