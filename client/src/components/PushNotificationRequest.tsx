@@ -16,9 +16,9 @@ export default function PushNotificationRequest() {
       setPermission(Notification.permission);
     }
 
-    // Show request after 30 seconds if user is logged in and permission not granted
+    // Show request after 30 seconds if permission not granted
     const timer = setTimeout(() => {
-      if (user && Notification.permission === 'default') {
+      if (Notification.permission === 'default') {
         const lastRequested = localStorage.getItem('push-permission-requested');
         const daysSinceRequest = lastRequested ? 
           (Date.now() - parseInt(lastRequested)) / (1000 * 60 * 60 * 24) : 999;
@@ -32,7 +32,7 @@ export default function PushNotificationRequest() {
 
     // Listen for PWA installation event
     const handlePWAInstalled = () => {
-      if (user && Notification.permission === 'default') {
+      if (Notification.permission === 'default') {
         setShowRequest(true);
       }
     };
@@ -45,9 +45,9 @@ export default function PushNotificationRequest() {
                           (window.navigator as any).standalone ||
                           document.referrer.includes('android-app://');
       
-      if (isStandalone && user && Notification.permission === 'default') {
+      if (isStandalone && Notification.permission === 'default') {
         // Delay showing the request in standalone mode
-        setTimeout(() => setShowRequest(true), 5000);
+        setTimeout(() => setShowRequest(true), 3000);
       }
     };
 
@@ -82,16 +82,34 @@ export default function PushNotificationRequest() {
                 applicationServerKey: publicKey
               });
               
-              // Send subscription to server
-              await fetch('/api/push/subscribe', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(subscription)
-              });
-              
-              console.log('Successfully subscribed to push notifications');
+              // Send subscription to server if user is authenticated
+              if (user) {
+                await fetch('/api/push/subscribe', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  credentials: 'include',
+                  body: JSON.stringify({
+                    endpoint: subscription.endpoint,
+                    keys: {
+                      p256dh: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(subscription.getKey('p256dh') || [])))),
+                      auth: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(subscription.getKey('auth') || []))))
+                    }
+                  })
+                });
+                console.log('Successfully subscribed to push notifications');
+              } else {
+                // Store subscription locally for later when user logs in
+                localStorage.setItem('pending-push-subscription', JSON.stringify({
+                  endpoint: subscription.endpoint,
+                  keys: {
+                    p256dh: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(subscription.getKey('p256dh') || [])))),
+                    auth: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(subscription.getKey('auth') || []))))
+                  }
+                }));
+                console.log('Push subscription stored locally, will sync when user logs in');
+              }
             } catch (subscribeError) {
               console.error('Error subscribing to push notifications:', subscribeError);
             }
@@ -112,8 +130,8 @@ export default function PushNotificationRequest() {
     localStorage.setItem('push-permission-requested', Date.now().toString());
   };
 
-  // Don't show if permission already granted/denied or user not logged in
-  if (!showRequest || !user || permission !== 'default') {
+  // Don't show if permission already granted/denied 
+  if (!showRequest || permission !== 'default') {
     return null;
   }
 
