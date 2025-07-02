@@ -56,7 +56,7 @@ pm2 status
 
 ```bash
 # Обновление проекта (сохраняет все данные)
-cd /var/www/edahouse
+cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
 ./update-edahouse.sh
 
 # Резервная копия
@@ -77,7 +77,7 @@ pm2 restart edahouse
 Если захотите добавить еще один магазин:
 
 ```bash
-cd /var/www/edahouse
+cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
 ./scripts/create-multisite.sh
 
 # Введите:
@@ -97,7 +97,7 @@ cd /var/www/edahouse
 ## Файлы проекта на сервере
 
 ```
-/var/www/edahouse/
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/
 ├── client/          # Фронтенд
 ├── server/          # Бэкенд  
 ├── uploads/         # Загруженные файлы (сохраняются при обновлениях)

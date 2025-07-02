@@ -12,7 +12,7 @@ declare -A SITES=(
     ["sushihouse"]="sushihouse.ordi.co.il:3002"
 )
 
-BASE_DIR="/var/www"
+BASE_DIR="/var/www/ordis_co_il_usr/data/www"
 REPO_URL="https://github.com/your-username/edahouse.git"
 
 echo "🏗️ Создание мультисайт конфигурации eDAHouse"

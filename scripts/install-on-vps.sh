@@ -84,7 +84,7 @@ EOF
 echo "✅ База данных $DB_NAME создана"
 
 # Создаем директорию проекта
-PROJECT_DIR="/var/www/$PROJECT_NAME"
+PROJECT_DIR="/var/www/ordis_co_il_usr/data/www/$DOMAIN"
 sudo mkdir -p "$PROJECT_DIR"
 sudo chown -R $USER:$USER "$PROJECT_DIR"
 

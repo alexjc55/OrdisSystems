@@ -5,7 +5,7 @@
 
 set -e
 
-PROJECT_DIR="/var/www/edahouse"
+PROJECT_DIR="/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il"
 BACKUP_DIR="$PROJECT_DIR/backups"
 DATE=$(date +"%Y%m%d_%H%M%S")
 
