@@ -1850,37 +1850,25 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         sentAt: new Date()
       }).returning();
 
-      // Send notifications in multiple languages
-      const languages = ['ru', 'en', 'he', 'ar'];
+      // Send single notification with multilingual content
+      const result = await PushNotificationService.sendMarketingNotification({
+        title,
+        message,
+        titleEn,
+        messageEn,
+        titleHe,
+        messageHe,
+        titleAr,
+        messageAr,
+        notificationId: notification.id
+      });
+
       let totalSent = 0;
-
-      for (const lang of languages) {
-        const notificationTitle = lang === 'ru' ? title :
-                                 lang === 'en' ? (titleEn || title) :
-                                 lang === 'he' ? (titleHe || title) :
-                                 lang === 'ar' ? (titleAr || title) : title;
-        
-        const notificationMessage = lang === 'ru' ? message :
-                                   lang === 'en' ? (messageEn || message) :
-                                   lang === 'he' ? (messageHe || message) :
-                                   lang === 'ar' ? (messageAr || message) : message;
-
-        const result = await PushNotificationService.sendToAll({
-          title: notificationTitle,
-          body: notificationMessage,
-          data: {
-            type: 'marketing',
-            notificationId: notification.id,
-            language: lang
-          }
-        });
-
-        if (result.success) {
-          totalSent += result.sent || 0;
-          console.log(`📱 Language ${lang}: ${result.sent || 0} notifications sent successfully`);
-        } else {
-          console.error(`❌ Language ${lang}: Failed to send notifications`, result.error);
-        }
+      if (result.success) {
+        totalSent = result.sent || 0;
+        console.log(`📱 Marketing notification: ${totalSent} notifications sent successfully`);
+      } else {
+        console.error(`❌ Failed to send marketing notifications`, result.error);
       }
 
       // Update sent count

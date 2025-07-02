@@ -244,6 +244,101 @@ export class PushNotificationService {
     });
   }
 
+  // Отправить маркетинговое уведомление с учетом языка пользователя
+  static async sendMarketingNotification({
+    title,
+    message,
+    titleEn,
+    messageEn,
+    titleHe,
+    messageHe,
+    titleAr,
+    messageAr,
+    notificationId
+  }: {
+    title: string;
+    message: string;
+    titleEn?: string;
+    messageEn?: string;
+    titleHe?: string;
+    messageHe?: string;
+    titleAr?: string;
+    messageAr?: string;
+    notificationId: number;
+  }) {
+    try {
+      const subscriptions = await db.select().from(pushSubscriptions);
+      console.log(`📡 Attempting to send marketing notification to ${subscriptions.length} subscriptions`);
+
+      if (subscriptions.length === 0) {
+        return { success: true, sent: 0, failed: 0, total: 0 };
+      }
+
+      // Для каждой подписки отправляем уведомление на русском языке (основной язык)
+      // В будущем можно добавить определение языка пользователя из базы данных
+      const uniqueTag = `marketing-${notificationId}-${Date.now()}`;
+      const payload = JSON.stringify({
+        title: title,
+        body: message,
+        icon: '/api/icons/icon-192x192.png',
+        badge: '/api/icons/icon-96x96.png',
+        tag: uniqueTag,
+        renotify: false,
+        data: {
+          type: 'marketing',
+          notificationId: notificationId,
+          language: 'ru',
+          timestamp: Date.now()
+        },
+        actions: []
+      });
+
+      console.log(`📄 Marketing notification payload:`, JSON.stringify({ title, message }, null, 2));
+
+      const promises = subscriptions.map(sub => {
+        const pushConfig = {
+          endpoint: sub.endpoint,
+          keys: {
+            auth: sub.auth,
+            p256dh: sub.p256dh
+          }
+        };
+
+        return webpush.sendNotification(pushConfig, payload)
+          .then(result => {
+            console.log('✅ Marketing notification sent successfully to:', sub.endpoint.substring(0, 50) + '...');
+            return result;
+          })
+          .catch(error => {
+            console.error('❌ Marketing notification failed for:', sub.endpoint.substring(0, 50) + '...', error);
+            if (error.statusCode === 404 || error.statusCode === 410) {
+              console.log('🗑️ Removing invalid subscription:', sub.id);
+              return db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, sub.id));
+            }
+            throw error;
+          });
+      });
+
+      const results = await Promise.allSettled(promises);
+      const successful = results.filter(result => result.status === 'fulfilled').length;
+      const failed = results.filter(result => result.status === 'rejected').length;
+      
+      console.log(`📊 Marketing notification results: ${successful} successful, ${failed} failed out of ${subscriptions.length} total`);
+      
+      if (failed > 0) {
+        const failedResults = results.filter(result => result.status === 'rejected') as PromiseRejectedResult[];
+        failedResults.forEach((result, index) => {
+          console.error(`❌ Failed marketing notification ${index + 1}:`, result.reason);
+        });
+      }
+      
+      return { success: true, sent: successful, failed: failed, total: subscriptions.length };
+    } catch (error) {
+      console.error('Error sending marketing notification:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+
   static getPublicKey() {
     return VAPID_PUBLIC_KEY;
   }
