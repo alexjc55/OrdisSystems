@@ -16,7 +16,7 @@ export default function NotificationModal({
   message, 
   type = 'marketing' 
 }: NotificationModalProps) {
-  const { t } = useCommonTranslation();
+  const { t } = useTranslation('common');
 
   if (!isOpen) return null;
 
@@ -72,7 +72,7 @@ export default function NotificationModal({
             onClick={onClose}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
-            {t('close', 'Закрыть')}
+            {t('close')}
           </button>
         </div>
       </div>

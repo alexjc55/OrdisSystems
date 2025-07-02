@@ -6,6 +6,7 @@
   "loading": "Loading...",
   "error": "Error",
   "success": "Success",
+  "close": "Close",
   "profile": {
     "title": "My Profile",
     "subtitle": "Profile management and order history",
