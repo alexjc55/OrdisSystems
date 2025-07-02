@@ -16,6 +16,47 @@ export default function PWAInstallPrompt() {
   const [isIOS, setIsIOS] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
 
+  // Function to request push notification permission
+  const requestPushPermission = async () => {
+    try {
+      if ('Notification' in window && 'serviceWorker' in navigator) {
+        const permission = await Notification.requestPermission();
+        console.log('Push notification permission:', permission);
+        
+        if (permission === 'granted') {
+          // Subscribe to push notifications
+          const registration = await navigator.serviceWorker.ready;
+          if (registration.pushManager) {
+            try {
+              const response = await fetch('/api/push/vapid-public-key');
+              const { publicKey } = await response.json();
+              
+              const subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: publicKey
+              });
+              
+              // Send subscription to server
+              await fetch('/api/push/subscribe', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(subscription)
+              });
+              
+              console.log('Successfully subscribed to push notifications');
+            } catch (subscribeError) {
+              console.error('Error subscribing to push notifications:', subscribeError);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error requesting push permission:', error);
+    }
+  };
+
   useEffect(() => {
     // Check if app is already installed (standalone mode)
     const checkStandalone = () => {
@@ -54,6 +95,11 @@ export default function PWAInstallPrompt() {
       setShowPrompt(false);
       setDeferredPrompt(null);
       console.log('PWA was installed');
+      
+      // Request push notification permission after PWA installation
+      setTimeout(() => {
+        requestPushPermission();
+      }, 2000); // Wait 2 seconds after installation
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -84,6 +130,10 @@ export default function PWAInstallPrompt() {
       
       if (choiceResult.outcome === 'accepted') {
         console.log('User accepted PWA install');
+        // Also request push permission after manual install
+        setTimeout(() => {
+          requestPushPermission();
+        }, 1000);
       } else {
         console.log('User dismissed PWA install');
         localStorage.setItem('pwa-dismissed', Date.now().toString());
@@ -98,72 +148,101 @@ export default function PWAInstallPrompt() {
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    localStorage.setItem('pwa-dismissed', Date.now().toString());
-    
     if (isIOS) {
       localStorage.setItem('ios-prompt-shown', 'true');
+    } else {
+      localStorage.setItem('pwa-dismissed', Date.now().toString());
     }
   };
 
+  const handleIOSInstall = () => {
+    setShowPrompt(false);
+    localStorage.setItem('ios-prompt-shown', 'true');
+    // For iOS, we can't auto-request push permission, user needs to do it manually
+  };
+
   // Don't show if already installed
-  if (isInstalled || isStandalone || !showPrompt) {
+  if (isInstalled || isStandalone) {
+    return null;
+  }
+
+  if (!showPrompt) {
     return null;
   }
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-50">
-      <div className="bg-white border border-primary/20 rounded-lg shadow-lg p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2">
-            {isIOS ? <Smartphone className="h-5 w-5 text-primary" /> : <Download className="h-5 w-5 text-primary" />}
-            <h3 className="font-semibold text-gray-900">
-              {t('pwa.installTitle', 'Установить приложение')}
-            </h3>
+    <>
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" />
+      
+      {/* Install Prompt */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white border-t border-gray-200 shadow-lg">
+        <div className="max-w-md mx-auto">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+              {isIOS ? <Smartphone className="w-5 h-5 text-white" /> : <Download className="w-5 h-5 text-white" />}
+            </div>
+            
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-semibold text-gray-900 mb-1">
+                {isIOS ? t('pwa.iosInstallTitle') : t('pwa.installTitle')}
+              </h3>
+              <p className="text-xs text-gray-600 mb-3">
+                {isIOS ? t('pwa.iosInstallMessage') : t('pwa.installMessage')}
+              </p>
+              
+              {isIOS ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-xs text-gray-600">
+                    <span>1.</span>
+                    <span>{t('pwa.iosStep1')}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-gray-600">
+                    <span>2.</span>
+                    <span>{t('pwa.iosStep2')}</span>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+            
+            <button
+              onClick={handleDismiss}
+              className="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleDismiss}
-            className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          
+          <div className="flex gap-2 mt-4">
+            {!isIOS && (
+              <Button 
+                onClick={handleInstallClick}
+                className="flex-1 text-xs"
+                size="sm"
+              >
+                {t('pwa.install')}
+              </Button>
+            )}
+            {isIOS && (
+              <Button 
+                onClick={handleIOSInstall}
+                className="flex-1 text-xs"
+                size="sm"
+              >
+                {t('pwa.gotIt')}
+              </Button>
+            )}
+            <Button 
+              onClick={handleDismiss}
+              variant="outline"
+              className="flex-1 text-xs"
+              size="sm"
+            >
+              {t('pwa.later')}
+            </Button>
+          </div>
         </div>
-        
-        <p className="text-sm text-gray-600 mb-4">
-          {isIOS 
-            ? t('pwa.installDescriptionIOS', 'Добавьте eDAHouse на главный экран для быстрого доступа')
-            : t('pwa.installDescription', 'Установите eDAHouse для удобного доступа без браузера')
-          }
-        </p>
-
-        {isIOS ? (
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 text-sm text-gray-700">
-              <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xs">
-                1
-              </div>
-              <span>Нажмите кнопку "Поделиться" <span className="inline-block">📤</span></span>
-            </div>
-            <div className="flex items-center gap-3 text-sm text-gray-700">
-              <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xs">
-                2
-              </div>
-              <span>Выберите "На экран Домой" <span className="inline-block">📱</span></span>
-            </div>
-          </div>
-        ) : (
-          <div className="flex gap-2">
-            <Button onClick={handleInstallClick} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
-              <Download className="h-4 w-4 mr-2" />
-              {t('pwa.install', 'Установить')}
-            </Button>
-            <Button variant="outline" onClick={handleDismiss} className="border-blue-600 text-blue-600 hover:bg-blue-50">
-              {t('pwa.later', 'Позже')}
-            </Button>
-          </div>
-        )}
       </div>
-    </div>
+    </>
   );
 }
