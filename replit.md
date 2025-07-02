@@ -131,6 +131,12 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 2, 2025: FIXED PORT CONFIGURATION FOR FASTPANEL DEPLOYMENT
+  - CRITICAL FIX: Fixed hardcoded port 5000 in server/index.ts to use environment variable PORT
+  - SERVER CONFIGURATION: Changed from hardcoded `const port = 5000` to `parseInt(process.env.PORT || "3000", 10)`
+  - DEPLOYMENT ALIGNMENT: Server now respects PORT=3000 setting in FastPanel Node.js application configuration
+  - NGINX COMPATIBILITY: Fixed mismatch between Nginx proxy (port 3000) and Node.js server (was port 5000)
+  - FASTPANEL INTEGRATION: Server now properly starts on port configured in FastPanel environment variables
 - July 2, 2025: FIXED CRITICAL DEPLOYMENT ISSUE WITH REPOSITORY CLONING AND ENVIRONMENT VARIABLES
   - REPOSITORY FIX: Corrected install script to clone actual project repository instead of empty git repo
     - Fixed repository URL from placeholder to real GitHub repo: https://github.com/alexjc55/Ordis.git
