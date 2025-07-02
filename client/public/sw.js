@@ -47,12 +47,13 @@ self.addEventListener('push', function(event) {
   } catch (error) {
     console.error('Error processing push notification:', error);
     
-    // Fallback notification
+    // Fallback notification with unique tag
     event.waitUntil(
       self.registration.showNotification('eDAHouse', {
         body: 'У вас новое уведомление',
         icon: '/api/icons/icon-192x192.png',
-        badge: '/api/icons/icon-96x96.png'
+        badge: '/api/icons/icon-96x96.png',
+        tag: 'fallback_' + Date.now()
       })
     );
   }
