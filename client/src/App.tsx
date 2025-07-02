@@ -77,6 +77,11 @@ function Router() {
     const handleMessage = (event: MessageEvent) => {
       console.log('📨 Received message from Service Worker:', event.data);
       
+      // Показать алерт для отладки на мобильном устройстве
+      if (event.data?.type === 'notification-click') {
+        alert(`Получено сообщение от Service Worker: ${JSON.stringify(event.data)}`);
+      }
+      
       if (event.data?.type === 'notification-click' && event.data?.notification) {
         const { title, body, type: notificationType } = event.data.notification;
         const fallbackType = event.data.data?.type || 'marketing';
@@ -96,6 +101,9 @@ function Router() {
       }
     };
 
+    // Добавить listener к window вместо navigator.serviceWorker
+    window.addEventListener('message', handleMessage);
+    
     if (navigator.serviceWorker) {
       navigator.serviceWorker.addEventListener('message', handleMessage);
       console.log('👂 Service Worker message listener added');
@@ -111,17 +119,34 @@ function Router() {
         });
       };
       
-      console.log('🧪 Test function added: window.testNotificationModal()');
+      // Тестовая функция для симуляции Service Worker сообщения
+      (window as any).testServiceWorkerMessage = () => {
+        console.log('🧪 Testing Service Worker message simulation');
+        handleMessage({
+          data: {
+            type: 'notification-click',
+            notification: {
+              title: 'Тест SW сообщения',
+              body: 'Симуляция сообщения от Service Worker',
+              type: 'marketing'
+            }
+          }
+        } as MessageEvent);
+      };
+      
+      console.log('🧪 Test functions added: window.testNotificationModal(), window.testServiceWorkerMessage()');
     } else {
       console.log('❌ Service Worker not available');
     }
     
     return () => {
+      window.removeEventListener('message', handleMessage);
       if (navigator.serviceWorker) {
         navigator.serviceWorker.removeEventListener('message', handleMessage);
         console.log('🔇 Service Worker message listener removed');
       }
       delete (window as any).testNotificationModal;
+      delete (window as any).testServiceWorkerMessage;
     };
   }, []);
 
