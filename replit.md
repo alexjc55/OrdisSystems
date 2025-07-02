@@ -131,6 +131,18 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 2, 2025: FIXED PUSH NOTIFICATION AND PWA TRANSLATION KEYS DISPLAY ISSUES
+  - CRITICAL TRANSLATION FIX: Resolved push notification component showing translation keys instead of actual text
+  - COMPREHENSIVE TRANSLATION COVERAGE: Added complete push notification translations across all 4 languages (RU/EN/HE/AR)
+    - Added push.requestTitle, push.requestMessage, push.allow, push.dismiss keys
+    - Added PWA installation translations: iosInstallTitle, iosInstallMessage, installMessage, iosStep1, iosStep2, gotIt, later
+  - COMPONENT FIXES: Updated PushNotificationRequest component to use correct translation key (push.dismiss instead of push.notNow)
+  - UNAUTHENTICATED USER SUPPORT: Modified push notification logic to work without user authentication
+    - Removed user requirement from standalone mode detection and permission requests
+    - Added local storage fallback for subscription data when user not logged in
+    - Enabled push notifications in PWA mode for guest users
+  - TECHNICAL IMPROVEMENTS: Fixed TypeScript Uint8Array iteration errors using Array.from() conversion
+  - USER EXPERIENCE: Push notification requests now appear for all users in PWA standalone mode after 3-second delay
 - July 2, 2025: COMPLETED PUSH NOTIFICATION SYSTEM FIXES AND PWA INTEGRATION
   - CRITICAL FIX: Resolved duplicate push notifications by removing duplicate handlers from PWAInstallPrompt
   - API ENDPOINT FIXES: Unified push notification endpoints (/api/push/vapid-key) across all components

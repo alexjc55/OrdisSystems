@@ -424,7 +424,13 @@
     "installedMode": "App installed",
     "updateAvailable": "Update available",
     "reload": "Reload",
-    "workingOffline": "Working without internet"
+    "workingOffline": "Working without internet",
+    "iosInstallTitle": "Install on iPhone",
+    "iosInstallMessage": "Add the app to your home screen for quick access",
+    "installMessage": "Install the app for convenient access without browser",
+    "iosStep1": "Tap the 'Share' button at the bottom",
+    "iosStep2": "Select 'Add to Home Screen'",
+    "gotIt": "Got it"
   },
   "error": "Error",
   "cart": {

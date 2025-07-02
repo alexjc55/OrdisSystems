@@ -424,6 +424,12 @@
     "installedMode": "אפליקציה מותקנת",
     "updateAvailable": "עדכון זמין",
     "reload": "רענן",
+    "iosInstallTitle": "התקן על iPhone",
+    "iosInstallMessage": "הוסף את האפליקציה למסך הבית לגישה מהירה",
+    "installMessage": "התקן את האפליקציה לגישה נוחה ללא דפדפן",
+    "iosStep1": "לחץ על כפתור 'שתף' בתחתית המסך",
+    "iosStep2": "בחר 'הוסף למסך הבית'",
+    "gotIt": "הבנתי",
     "workingOffline": "עובד ללא אינטרנט"
   },
   "error": "שגיאה",
