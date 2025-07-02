@@ -75,23 +75,53 @@ function Router() {
   // Listen for messages from Service Worker (notification clicks)
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
+      console.log('📨 Received message from Service Worker:', event.data);
+      
       if (event.data?.type === 'notification-click' && event.data?.notification) {
-        const { title, body } = event.data.notification;
-        const type = event.data.data?.type || 'marketing';
+        const { title, body, type: notificationType } = event.data.notification;
+        const fallbackType = event.data.data?.type || 'marketing';
+        
+        console.log('🔔 Opening notification modal:', {
+          title,
+          body,
+          type: notificationType || fallbackType
+        });
         
         setNotificationModal({
           isOpen: true,
           title: title || 'Уведомление',
           message: body || 'Новое уведомление',
-          type: type
+          type: notificationType || fallbackType
         });
       }
     };
 
-    navigator.serviceWorker?.addEventListener('message', handleMessage);
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker.addEventListener('message', handleMessage);
+      console.log('👂 Service Worker message listener added');
+      
+      // Add global test function for debugging
+      (window as any).testNotificationModal = (title: string = 'Тест', message: string = 'Тестовое сообщение', type: 'marketing' | 'order-status' | 'cart-reminder' = 'marketing') => {
+        console.log('🧪 Testing notification modal manually');
+        setNotificationModal({
+          isOpen: true,
+          title,
+          message,
+          type
+        });
+      };
+      
+      console.log('🧪 Test function added: window.testNotificationModal()');
+    } else {
+      console.log('❌ Service Worker not available');
+    }
     
     return () => {
-      navigator.serviceWorker?.removeEventListener('message', handleMessage);
+      if (navigator.serviceWorker) {
+        navigator.serviceWorker.removeEventListener('message', handleMessage);
+        console.log('🔇 Service Worker message listener removed');
+      }
+      delete (window as any).testNotificationModal;
     };
   }, []);
 

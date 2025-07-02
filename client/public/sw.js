@@ -74,6 +74,12 @@ self.addEventListener('push', function(event) {
 
 // Handle notification clicks
 self.addEventListener('notificationclick', function(event) {
+  console.log('🔔 Notification clicked:', {
+    title: event.notification.title,
+    body: event.notification.body,
+    data: event.notification.data
+  });
+  
   event.notification.close();
 
   const data = event.notification.data || {};
@@ -98,28 +104,47 @@ self.addEventListener('notificationclick', function(event) {
     url = `/profile?tab=orders&order=${data.orderId}`;
   }
 
+  const notificationData = {
+    type: 'notification-click',
+    url: url,
+    data: data,
+    notification: {
+      title: event.notification.title,
+      body: event.notification.body,
+      type: data.type || 'marketing'
+    }
+  };
+
+  console.log('📤 Preparing to send message:', notificationData);
+
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
-      // Try to focus existing window
+      console.log('🔍 Found clients:', clientList.length);
+      
+      // Try to focus existing window and send message
       for (const client of clientList) {
         if (client.url.includes(self.location.origin) && 'focus' in client) {
+          console.log('✅ Focusing existing client and sending message');
           client.focus();
-          client.postMessage({
-            type: 'notification-click',
-            url: url,
-            data: data,
-            notification: {
-              title: event.notification.title,
-              body: event.notification.body
-            }
-          });
-          return;
+          client.postMessage(notificationData);
+          return Promise.resolve();
         }
       }
       
       // Open new window if no existing window found
+      console.log('🆕 Opening new window');
       if (clients.openWindow) {
-        return clients.openWindow(url);
+        return clients.openWindow(url).then(function(newClient) {
+          // Wait a bit for the new window to load, then send message
+          if (newClient) {
+            console.log('⏰ Waiting for new window to load...');
+            setTimeout(() => {
+              console.log('📤 Sending message to new window');
+              newClient.postMessage(notificationData);
+            }, 1000);
+          }
+          return newClient;
+        });
       }
     })
   );
