@@ -131,6 +131,12 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 2, 2025: CRITICAL FIX: RESOLVED import.meta.dirname COMPATIBILITY ISSUE FOR PRODUCTION DEPLOYMENT
+  - PROBLEM IDENTIFIED: vite.config.ts and server/vite.ts used non-standard import.meta.dirname causing production build failures
+  - SOLUTION IMPLEMENTED: Added automatic file replacement in deployment script using fileURLToPath(import.meta.url) pattern
+  - FILES FIXED: Updated deployment script to replace both vite.config.ts and server/vite.ts with Node.js compatible versions
+  - COMPATIBILITY: Fixed ESM module path resolution for production Node.js environments without Replit-specific extensions
+  - DEPLOYMENT READY: Installation script now automatically resolves this compatibility issue during server setup
 - July 2, 2025: FIXED PORT CONFIGURATION FOR FASTPANEL DEPLOYMENT
   - CRITICAL FIX: Fixed hardcoded port 5000 in server/index.ts to use environment variable PORT
   - SERVER CONFIGURATION: Changed from hardcoded `const port = 5000` to `parseInt(process.env.PORT || "3000", 10)`
