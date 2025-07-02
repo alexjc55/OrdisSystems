@@ -49,8 +49,16 @@ export function PushNotificationsPanel() {
 
   // Send marketing notification mutation
   const sendMarketingMutation = useMutation({
-    mutationFn: (data: typeof marketingForm) => 
-      apiRequest('/api/admin/push/marketing', data),
+    mutationFn: async (data: typeof marketingForm) => {
+      const response = await fetch('/api/admin/push/marketing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to send notification');
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/push/marketing'] });
       setMarketingForm({
