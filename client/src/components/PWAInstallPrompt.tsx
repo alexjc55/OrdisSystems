@@ -89,7 +89,11 @@ export default function PWAInstallPrompt() {
       
       if (choiceResult.outcome === 'accepted') {
         console.log('User accepted PWA install');
-        // Push notifications handled by PushNotificationRequest component
+        // After successful install, automatically request push permissions
+        setTimeout(() => {
+          // Trigger push notification request after PWA installation
+          window.dispatchEvent(new CustomEvent('pwa-installed'));
+        }, 1000);
       } else {
         console.log('User dismissed PWA install');
         localStorage.setItem('pwa-dismissed', Date.now().toString());
@@ -114,6 +118,10 @@ export default function PWAInstallPrompt() {
   const handleIOSInstall = () => {
     setShowPrompt(false);
     localStorage.setItem('ios-prompt-shown', 'true');
+    // Trigger push notification request after iOS "installation"
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('pwa-installed'));
+    }, 2000); // Longer delay for iOS
     // For iOS, we can't auto-request push permission, user needs to do it manually
   };
 

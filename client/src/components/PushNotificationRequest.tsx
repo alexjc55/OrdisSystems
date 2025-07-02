@@ -30,7 +30,36 @@ export default function PushNotificationRequest() {
       }
     }, 30000); // 30 seconds
 
-    return () => clearTimeout(timer);
+    // Listen for PWA installation event
+    const handlePWAInstalled = () => {
+      if (user && Notification.permission === 'default') {
+        setShowRequest(true);
+      }
+    };
+
+    window.addEventListener('pwa-installed', handlePWAInstalled);
+
+    // Check if running in standalone mode (PWA already installed)
+    const checkStandaloneMode = () => {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                          (window.navigator as any).standalone ||
+                          document.referrer.includes('android-app://');
+      
+      if (isStandalone && user && Notification.permission === 'default') {
+        // Delay showing the request in standalone mode
+        setTimeout(() => setShowRequest(true), 5000);
+      }
+    };
+
+    // Check immediately and on app focus
+    checkStandaloneMode();
+    window.addEventListener('focus', checkStandaloneMode);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('pwa-installed', handlePWAInstalled);
+      window.removeEventListener('focus', checkStandaloneMode);
+    };
   }, [user]);
 
   const requestPushPermission = async () => {
