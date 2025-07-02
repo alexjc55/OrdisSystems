@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
@@ -10,10 +10,25 @@ interface SearchInputProps {
 }
 
 export default function SearchInput({ value, onChange, placeholder, className = "" }: SearchInputProps) {
+  const [localValue, setLocalValue] = useState(value);
+
+  // Sync external value changes with local state
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  // Debounced onChange - only call parent onChange after 300ms of no typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onChange(localValue);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [localValue, onChange]);
+
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    onChange(newValue);
-  }, [onChange]);
+    setLocalValue(e.target.value);
+  }, []);
 
   return (
     <div className={`relative max-w-md ${className}`}>
@@ -21,7 +36,7 @@ export default function SearchInput({ value, onChange, placeholder, className = 
       <Input
         type="text"
         placeholder={placeholder}
-        value={value}
+        value={localValue}
         onChange={handleChange}
         className="pl-10 bg-white border-gray-300"
       />
