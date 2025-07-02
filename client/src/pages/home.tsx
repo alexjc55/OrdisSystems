@@ -548,7 +548,6 @@ export default function Home() {
           {(selectedCategory || selectedCategoryId === 0) && (
             <div className="mb-8">
               <SearchInput
-                value={searchQuery}
                 onChange={setSearchQuery}
                 placeholder={t('searchPlaceholder')}
               />
