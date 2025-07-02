@@ -230,6 +230,7 @@ export default function Home() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [discountFilter, setDiscountFilter] = useState("all");
   const swiperRef = useRef<any>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
   const { isOpen: isCartOpen, addItem } = useCartStore();
   const { storeSettings } = useStoreSettings();
