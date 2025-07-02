@@ -4,6 +4,17 @@ import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/use-auth';
 
+// Helper function to convert ArrayBuffer to base64
+function arrayBufferToBase64(buffer: ArrayBuffer | null): string {
+  if (!buffer) return '';
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 export default function PushNotificationRequest() {
   const { t } = useTranslation('common');
   const { user } = useAuth();
@@ -93,8 +104,8 @@ export default function PushNotificationRequest() {
                   body: JSON.stringify({
                     endpoint: subscription.endpoint,
                     keys: {
-                      p256dh: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(subscription.getKey('p256dh') || [])))),
-                      auth: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(subscription.getKey('auth') || []))))
+                      p256dh: arrayBufferToBase64(subscription.getKey('p256dh')),
+                      auth: arrayBufferToBase64(subscription.getKey('auth'))
                     }
                   })
                 });
@@ -104,8 +115,8 @@ export default function PushNotificationRequest() {
                 localStorage.setItem('pending-push-subscription', JSON.stringify({
                   endpoint: subscription.endpoint,
                   keys: {
-                    p256dh: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(subscription.getKey('p256dh') || [])))),
-                    auth: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(subscription.getKey('auth') || []))))
+                    p256dh: arrayBufferToBase64(subscription.getKey('p256dh')),
+                    auth: arrayBufferToBase64(subscription.getKey('auth'))
                   }
                 }));
                 console.log('Push subscription stored locally, will sync when user logs in');
