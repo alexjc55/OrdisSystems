@@ -3,12 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
 interface SearchInputProps {
+  value: string;
   onChange: (value: string) => void;
   placeholder: string;
   className?: string;
 }
 
-export default function SearchInput({ onChange, placeholder, className = "" }: SearchInputProps) {
+export default function SearchInput({ value, onChange, placeholder, className = "" }: SearchInputProps) {
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     onChange(newValue);
@@ -20,6 +21,7 @@ export default function SearchInput({ onChange, placeholder, className = "" }: S
       <Input
         type="text"
         placeholder={placeholder}
+        value={value}
         onChange={handleChange}
         className="pl-10 bg-white border-gray-300"
       />
