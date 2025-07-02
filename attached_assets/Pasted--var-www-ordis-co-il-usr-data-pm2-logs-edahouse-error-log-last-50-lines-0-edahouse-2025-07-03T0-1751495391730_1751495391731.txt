@@ -1,0 +1,51 @@
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-error.log last 50 lines:
+0|edahouse | 2025-07-03T01:26:41:     code: 'ECONNREFUSED',
+0|edahouse | 2025-07-03T01:26:41:     syscall: 'connect',
+0|edahouse | 2025-07-03T01:26:41:     address: '::1',
+0|edahouse | 2025-07-03T01:26:41:     port: 443
+0|edahouse | 2025-07-03T01:26:41:   },
+0|edahouse | 2025-07-03T01:26:41:   [Symbol(kMessage)]: 'connect ECONNREFUSED ::1:443'
+0|edahouse | 2025-07-03T01:26:41: }
+0|edahouse | 2025-07-03T01:26:42: Error fetching store settings: ErrorEvent {
+0|edahouse | 2025-07-03T01:26:42:   [Symbol(kTarget)]: WebSocket {
+0|edahouse | 2025-07-03T01:26:42:     _events: [Object: null prototype] {
+0|edahouse | 2025-07-03T01:26:42:       error: [Function],
+0|edahouse | 2025-07-03T01:26:42:       message: [Function],
+0|edahouse | 2025-07-03T01:26:42:       close: [Function],
+0|edahouse | 2025-07-03T01:26:42:       open: [Function]
+0|edahouse | 2025-07-03T01:26:42:     },
+0|edahouse | 2025-07-03T01:26:42:     _eventsCount: 4,
+0|edahouse | 2025-07-03T01:26:42:     _maxListeners: undefined,
+0|edahouse | 2025-07-03T01:26:42:     _binaryType: 'arraybuffer',
+0|edahouse | 2025-07-03T01:26:42:     _closeCode: 1006,
+0|edahouse | 2025-07-03T01:26:42:     _closeFrameReceived: false,
+0|edahouse | 2025-07-03T01:26:42:     _closeFrameSent: false,
+0|edahouse | 2025-07-03T01:26:42:     _closeMessage: <Buffer >,
+0|edahouse | 2025-07-03T01:26:42:     _closeTimer: null,
+0|edahouse | 2025-07-03T01:26:42:     _errorEmitted: true,
+0|edahouse | 2025-07-03T01:26:42:     _extensions: {},
+0|edahouse | 2025-07-03T01:26:42:     _paused: false,
+0|edahouse | 2025-07-03T01:26:42:     _protocol: '',
+0|edahouse | 2025-07-03T01:26:42:     _readyState: 3,
+0|edahouse | 2025-07-03T01:26:42:     _receiver: null,
+0|edahouse | 2025-07-03T01:26:42:     _sender: null,
+0|edahouse | 2025-07-03T01:26:42:     _socket: null,
+0|edahouse | 2025-07-03T01:26:42:     _bufferedAmount: 0,
+0|edahouse | 2025-07-03T01:26:42:     _isServer: false,
+0|edahouse | 2025-07-03T01:26:42:     _redirects: 0,
+0|edahouse | 2025-07-03T01:26:42:     _autoPong: true,
+0|edahouse | 2025-07-03T01:26:42:     _url: 'wss://localhost/v2',
+0|edahouse | 2025-07-03T01:26:42:     _req: null,
+0|edahouse | 2025-07-03T01:26:42:     [Symbol(kCapture)]: false
+0|edahouse | 2025-07-03T01:26:42:   },
+0|edahouse | 2025-07-03T01:26:42:   [Symbol(kType)]: 'error',
+0|edahouse | 2025-07-03T01:26:42:   [Symbol(kError)]: Error: connect ECONNREFUSED ::1:443
+0|edahouse | 2025-07-03T01:26:42:       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+0|edahouse | 2025-07-03T01:26:42:     errno: -111,
+0|edahouse | 2025-07-03T01:26:42:     code: 'ECONNREFUSED',
+0|edahouse | 2025-07-03T01:26:42:     syscall: 'connect',
+0|edahouse | 2025-07-03T01:26:42:     address: '::1',
+0|edahouse | 2025-07-03T01:26:42:     port: 443
+0|edahouse | 2025-07-03T01:26:42:   },
+0|edahouse | 2025-07-03T01:26:42:   [Symbol(kMessage)]: 'connect ECONNREFUSED ::1:443'
+0|edahouse | 2025-07-03T01:26:42: }
