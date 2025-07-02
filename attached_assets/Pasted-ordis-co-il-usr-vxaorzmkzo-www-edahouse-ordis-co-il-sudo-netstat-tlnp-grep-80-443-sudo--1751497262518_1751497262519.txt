@@ -1,0 +1,52 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ sudo netstat -tlnp | grep ":80\|:443"
+sudo: netstat: command not found
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ ls -la /etc/letsencrypt/live/ 2>/dev/null || echo "Нет SSL сертификатов"
+Нет SSL сертификатов
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ ^C
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ ls -la /etc/nginx/fastpanel2-sites/
+ls: cannot open directory '/etc/nginx/fastpanel2-sites/': Permission denied
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ ^C
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ sudo ls -la /etc/nginx/fastpanel2-sites/
+total 12
+drwxr-x---  3 root root 4096 Jun 27 00:09 .
+drwxr-xr-x 12 root root 4096 Jul  2 20:34 ..
+drwxr-x---  2 root root 4096 Jul  3 00:25 ordis_co_il_usr
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ sudo cat /etc/nginx/sites-available/edahouse.ordis.co.il.disabled
+server {
+    listen 80;
+    server_name edahouse.ordis.co.il;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    location /uploads/ {
+        alias /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/uploads/;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+
+    client_max_body_size 50M;
+}
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ sudo find /etc/nginx/conf.d -name "*edahouse*" -o -name "*ordis*" 2>/dev/null
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ sudo ls -la /etc/nginx/conf.d/
+total 32
+drwxr-xr-x  2 root root 4096 Jul  2 20:56 .
+drwxr-xr-x 12 root root 4096 Jul  2 20:34 ..
+-rw-r--r--  1 root root  211 Jun 26 22:39 99-fastpanel.conf
+-rw-r--r--  1 root root  838 Jun 26 22:39 cloudflare.conf
+-rw-r--r--  1 root root   24 Jul  2 01:07 default.conf
+-rw-r--r--  1 root root 1174 Jul  2 20:34 parking.conf.disabled
+-rw-r--r--  1 root root  290 Jul  2 01:07 reuseport.conf
+-rw-r--r--  1 root root   63 Jul  2 01:07 ssl.conf
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ ss -tlnp | grep ":80\|:443"
+LISTEN 0      511    178.236.17.141:80        0.0.0.0:*
+LISTEN 0      511    178.236.17.141:443       0.0.0.0:*
