@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест Push Уведомлений - eDAHouse</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Тест Push Уведомлений - eDAHouse v1.2</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -246,14 +249,23 @@
             try {
                 addLog('Отправляем тестовое уведомление через сервер...', 'info');
                 
-                const response = await fetch('/api/test/push/marketing', {
+                // Тестируем доступность endpoint
+                const testEndpoint = '/api/test/push/marketing';
+                addLog(`Используем endpoint: ${testEndpoint}`, 'info');
+                
+                const response = await fetch(testEndpoint, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    },
                     body: JSON.stringify({
-                        title: '🧪 Тест с диагностической страницы',
-                        message: 'Это тестовое уведомление с диагностической страницы'
+                        title: '🧪 Тест с диагностической страницы v1.1',
+                        message: 'Это тестовое уведомление с диагностической страницы - исправленная версия'
                     })
                 });
+                
+                addLog(`Response status: ${response.status}`, 'info');
                 
                 if (response.ok) {
                     const result = await response.json();
@@ -292,6 +304,9 @@
         document.getElementById('subscribe-btn').onclick = subscribe;
         document.getElementById('test-local').onclick = testLocalNotification;
         document.getElementById('test-server').onclick = testServerNotification;
+        
+        // Версия для диагностики кеша
+        console.log('Test page loaded - version 1.1 - using /api/test/push/marketing endpoint');
     </script>
 </body>
 </html>
