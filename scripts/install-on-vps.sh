@@ -69,17 +69,13 @@ fi
 
 echo "🗄️ Настраиваем PostgreSQL..."
 
-# Генерируем случайный пароль
-DB_PASSWORD=$(openssl rand -base64 32)
+# Используем существующие данные базы данных
+DB_NAME="edahouse_ord"
+DB_USER="edahouse_ord"
+DB_PASSWORD="33V0R1N5qi81paiA"
 
-# Создаем базу данных и пользователя
-sudo -u postgres psql <<EOF
-CREATE DATABASE $DB_NAME;
-CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
-GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
-ALTER USER $DB_USER CREATEDB;
-\q
-EOF
+echo "🔗 Используем существующую базу данных: $DB_NAME"
+echo "👤 Пользователь: $DB_USER"
 
 echo "✅ База данных $DB_NAME создана"
 

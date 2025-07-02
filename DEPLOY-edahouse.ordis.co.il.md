@@ -1,5 +1,11 @@
 # Команды развертывания для edahouse.ordis.co.il
 
+## База данных (уже создана)
+- **База**: edahouse_ord
+- **Пользователь**: edahouse_ord
+- **Пароль**: 33V0R1N5qi81paiA
+- **Путь установки**: /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
+
 ## Готовые команды для копирования
 
 ### 1. Сначала создайте Git репозиторий
