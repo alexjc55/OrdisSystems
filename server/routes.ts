@@ -1876,7 +1876,10 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         });
 
         if (result.success) {
-          totalSent += result.sent;
+          totalSent += result.sent || 0;
+          console.log(`📱 Language ${lang}: ${result.sent || 0} notifications sent successfully`);
+        } else {
+          console.error(`❌ Language ${lang}: Failed to send notifications`, result.error);
         }
       }
 

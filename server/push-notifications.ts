@@ -81,6 +81,8 @@ export class PushNotificationService {
       }
 
       const subscriptions = await query;
+      console.log(`📡 Attempting to send push notification to ${subscriptions.length} subscriptions`);
+      console.log(`📄 Notification payload:`, JSON.stringify(notification, null, 2));
 
       const payload = JSON.stringify({
         title: notification.title,
@@ -101,16 +103,34 @@ export class PushNotificationService {
         };
 
         return webpush.sendNotification(pushConfig, payload)
+          .then(result => {
+            console.log('✅ Push notification sent successfully to:', sub.endpoint.substring(0, 50) + '...');
+            return result;
+          })
           .catch(error => {
-            console.error('Push notification failed:', error);
+            console.error('❌ Push notification failed for:', sub.endpoint.substring(0, 50) + '...', error);
             if (error.statusCode === 404 || error.statusCode === 410) {
+              console.log('🗑️ Removing invalid subscription:', sub.id);
               return db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, sub.id));
             }
+            throw error;
           });
       });
 
-      await Promise.all(promises);
-      return { success: true, sent: subscriptions.length };
+      const results = await Promise.allSettled(promises);
+      const successful = results.filter(result => result.status === 'fulfilled').length;
+      const failed = results.filter(result => result.status === 'rejected').length;
+      
+      console.log(`📊 Push notification results: ${successful} successful, ${failed} failed out of ${subscriptions.length} total`);
+      
+      if (failed > 0) {
+        const failedResults = results.filter(result => result.status === 'rejected') as PromiseRejectedResult[];
+        failedResults.forEach((result, index) => {
+          console.error(`❌ Failed notification ${index + 1}:`, result.reason);
+        });
+      }
+      
+      return { success: true, sent: successful, failed: failed, total: subscriptions.length };
     } catch (error) {
       console.error('Error sending bulk push notification:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
