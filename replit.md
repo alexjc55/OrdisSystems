@@ -131,6 +131,20 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 2, 2025: FIXED CRITICAL DEPLOYMENT ISSUE WITH REPOSITORY CLONING AND ENVIRONMENT VARIABLES
+  - REPOSITORY FIX: Corrected install script to clone actual project repository instead of empty git repo
+    - Fixed repository URL from placeholder to real GitHub repo: https://github.com/alexjc55/Ordis.git
+    - Added automatic repository cloning with success validation (package.json check)
+    - Updated update script to automatically fix incorrect remote origins
+  - ENVIRONMENT VARIABLES SOLUTION: Implemented dual-system for PM2 environment loading
+    - Added dotenv package and import 'dotenv/config' to server/index.ts
+    - Enhanced PM2 configuration with complete environment variables set
+    - Created PM2-ENV-SETUP.md with multiple loading strategies
+    - Ensures variables load through both .env file and PM2 configuration
+  - PRODUCTION READY: All deployment scripts now work with actual project code
+    - Fixed .cjs extension for PM2 compatibility with ES modules
+    - Complete environment variable coverage in both development and production
+    - Automated validation and error handling for common deployment issues
 - July 2, 2025: COMPLETED VPS DEPLOYMENT READINESS WITH COMPREHENSIVE UPDATE SYSTEM
   - DEPLOYMENT AUTOMATION: Created complete set of deployment scripts for VPS installation
     - install-on-vps.sh: Full automated installation on new server

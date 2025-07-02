@@ -33,6 +33,17 @@ fi
 echo "🔄 Получаем последние изменения из репозитория..."
 cd "$PROJECT_DIR"
 
+# Проверяем что remote origin настроен правильно
+CURRENT_REMOTE=$(git remote get-url origin 2>/dev/null || echo "")
+EXPECTED_REMOTE="https://github.com/alexjc55/Ordis.git"
+
+if [ "$CURRENT_REMOTE" != "$EXPECTED_REMOTE" ]; then
+    echo "⚠️ Исправляем адрес репозитория..."
+    git remote remove origin 2>/dev/null || true
+    git remote add origin "$EXPECTED_REMOTE"
+    echo "✅ Remote origin установлен: $EXPECTED_REMOTE"
+fi
+
 # Сохраняем текущий коммит
 CURRENT_COMMIT=$(git rev-parse HEAD)
 echo "Текущий коммит: $CURRENT_COMMIT" > "$BACKUP_DIR/commit_$DATE.txt"
