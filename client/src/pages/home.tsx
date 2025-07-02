@@ -544,14 +544,16 @@ export default function Home() {
             />
           )}
 
-          {/* Search Bar - hide on main page, show on category/product pages */}
-          <div className={`mb-8 ${!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 ? 'hidden' : ''}`}>
-            <SearchInput
-              value={searchQuery}
-              onChange={setSearchQuery}
-              placeholder={t('searchPlaceholder')}
-            />
-          </div>
+          {/* Search Bar - show on category/product pages */}
+          {(selectedCategory || selectedCategoryId === 0) && (
+            <div className="mb-8">
+              <SearchInput
+                value={searchQuery}
+                onChange={setSearchQuery}
+                placeholder={t('searchPlaceholder')}
+              />
+            </div>
+          )}
 
           {/* Special Offers or Category View */}
           {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && (
