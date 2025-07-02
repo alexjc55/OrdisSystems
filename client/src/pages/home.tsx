@@ -358,8 +358,14 @@ export default function Home() {
     navigate('/');
   }, [navigate]);
 
+  // Handle search query changes
+  useEffect(() => {
+    if (searchQuery.length <= 2) {
+      setSelectedCategoryId(null);
+    }
+  }, [searchQuery]);
+
   const handleSearch = useCallback((query: string) => {
-    setSearchQuery(query);
     if (query.length <= 2) {
       setSelectedCategoryId(null);
     }
@@ -545,7 +551,7 @@ export default function Home() {
                 type="text"
                 placeholder={t('searchPlaceholder')}
                 value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 bg-white border-gray-300"
               />
             </div>
