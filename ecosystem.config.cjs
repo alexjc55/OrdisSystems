@@ -8,10 +8,28 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PORT: 3000,
+        DATABASE_URL: 'postgresql://edahouse_ord:33V0R1N5qi81paiA@localhost:5432/edahouse_ord',
+        SESSION_SECRET: 'WAVl58TU5MAzQkQa6w8YTsuFYyyCwIl24D2j5BNsX4reNv1iYPdNQHtog2Y0CYQ39U1HGYYG1cNQhLIGfxPVNg==',
+        ENABLE_REGISTRATION: 'true',
+        ENABLE_GUEST_ORDERS: 'true',
+        MAX_FILE_SIZE: '5242880',
+        UPLOAD_PATH: './uploads',
+        ALLOWED_ORIGINS: 'https://edahouse.ordis.co.il',
+        STORE_NAME: 'edahouse',
+        STORE_DESCRIPTION: 'Food delivery service'
       },
       env_production: {
         NODE_ENV: 'production',
         PORT: 3000,
+        DATABASE_URL: 'postgresql://edahouse_ord:33V0R1N5qi81paiA@localhost:5432/edahouse_ord',
+        SESSION_SECRET: 'WAVl58TU5MAzQkQa6w8YTsuFYyyCwIl24D2j5BNsX4reNv1iYPdNQHtog2Y0CYQ39U1HGYYG1cNQhLIGfxPVNg==',
+        ENABLE_REGISTRATION: 'true',
+        ENABLE_GUEST_ORDERS: 'true',
+        MAX_FILE_SIZE: '5242880',
+        UPLOAD_PATH: './uploads',
+        ALLOWED_ORIGINS: 'https://edahouse.ordis.co.il',
+        STORE_NAME: 'edahouse',
+        STORE_DESCRIPTION: 'Food delivery service'
       },
       // Restart settings
       max_memory_restart: '1G',

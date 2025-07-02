@@ -163,10 +163,28 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PORT: $PORT,
+        DATABASE_URL: 'postgresql://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME',
+        SESSION_SECRET: 'WAVl58TU5MAzQkQa6w8YTsuFYyyCwIl24D2j5BNsX4reNv1iYPdNQHtog2Y0CYQ39U1HGYYG1cNQhLIGfxPVNg==',
+        ENABLE_REGISTRATION: 'true',
+        ENABLE_GUEST_ORDERS: 'true',
+        MAX_FILE_SIZE: '5242880',
+        UPLOAD_PATH: './uploads',
+        ALLOWED_ORIGINS: 'https://$DOMAIN',
+        STORE_NAME: '$PROJECT_NAME',
+        STORE_DESCRIPTION: 'Food delivery service'
       },
       env_production: {
         NODE_ENV: 'production',
         PORT: $PORT,
+        DATABASE_URL: 'postgresql://$DB_USER:$DB_PASSWORD@localhost:5432/$DB_NAME',
+        SESSION_SECRET: 'WAVl58TU5MAzQkQa6w8YTsuFYyyCwIl24D2j5BNsX4reNv1iYPdNQHtog2Y0CYQ39U1HGYYG1cNQhLIGfxPVNg==',
+        ENABLE_REGISTRATION: 'true',
+        ENABLE_GUEST_ORDERS: 'true',
+        MAX_FILE_SIZE: '5242880',
+        UPLOAD_PATH: './uploads',
+        ALLOWED_ORIGINS: 'https://$DOMAIN',
+        STORE_NAME: '$PROJECT_NAME',
+        STORE_DESCRIPTION: 'Food delivery service'
       },
       max_memory_restart: '1G',
       autorestart: true,
