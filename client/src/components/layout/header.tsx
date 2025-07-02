@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCartStore } from "@/lib/cart";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
@@ -73,6 +73,24 @@ export default function Header({ onResetView }: HeaderProps) {
     return getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse";
   }, [storeSettings, currentLanguage]);
 
+  // Memoize callback functions to prevent re-renders
+  const handleResetView = useCallback(() => {
+    onResetView?.();
+  }, [onResetView]);
+
+  const handleMobileMenuToggle = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev);
+  }, []);
+
+  const handleCloseMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(false);
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    logoutMutation.mutate();
+    setIsMobileMenuOpen(false);
+  }, [logoutMutation]);
+
   // Close mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -99,7 +117,7 @@ export default function Header({ onResetView }: HeaderProps) {
         <div className="flex justify-between items-center h-16">
           {/* Left side - Logo and Title */}
           <div className="flex items-center min-w-0 flex-1">
-            <Link href="/" onClick={() => onResetView?.()}>
+            <Link href="/" onClick={handleResetView}>
               <div className="flex items-center cursor-pointer">
                 {storeSettings?.logoUrl ? (
                   <img 
@@ -125,7 +143,7 @@ export default function Header({ onResetView }: HeaderProps) {
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex ml-8 rtl:ml-0 rtl:mr-8 space-x-8 rtl:space-x-reverse">
-              <Link href="/" onClick={() => onResetView?.()} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+              <Link href="/" onClick={handleResetView} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                 {t('menu')}
               </Link>
               {(user?.role === 'admin' || user?.role === 'worker') && (
@@ -256,7 +274,7 @@ export default function Header({ onResetView }: HeaderProps) {
                 variant="ghost"
                 size="sm"
                 className="p-2 text-gray-600 hover:text-primary"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={handleMobileMenuToggle}
               >
                 <Menu className="h-5 w-5" />
               </Button>
@@ -272,7 +290,7 @@ export default function Header({ onResetView }: HeaderProps) {
               {!user ? (
                 /* Not logged in - Menu button and PWA install button */
                 <div className="flex flex-col space-y-3 px-4">
-                  <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }}>
+                  <Link href="/" onClick={() => { handleResetView(); handleCloseMobileMenu(); }}>
                     <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
                       <Utensils className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
                       <span className="font-semibold">{t('menu')}</span>
@@ -286,13 +304,13 @@ export default function Header({ onResetView }: HeaderProps) {
                 <div className="flex flex-col space-y-3 px-4">
                   {/* First row - Menu and Profile for everyone */}
                   <div className="flex space-x-4 rtl:space-x-reverse">
-                    <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }} className="flex-1">
+                    <Link href="/" onClick={() => { handleResetView(); handleCloseMobileMenu(); }} className="flex-1">
                       <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
                         <Utensils className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                         <span className="font-semibold text-sm">{t('menu')}</span>
                       </div>
                     </Link>
-                    <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
+                    <Link href="/profile" onClick={handleCloseMobileMenu} className="flex-1">
                       <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer">
                         <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                         <span className="font-semibold text-sm">{t('profile.title')}</span>
@@ -302,7 +320,7 @@ export default function Header({ onResetView }: HeaderProps) {
                   
                   {/* Second row - Admin button only for admin/worker */}
                   {(user?.role === 'admin' || user?.role === 'worker') && (
-                    <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link href="/admin" onClick={handleCloseMobileMenu}>
                       <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-orange-600 hover:bg-orange-700 text-white transition-colors cursor-pointer">
                         <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                         <span className="font-semibold text-sm">{t('admin')}</span>
@@ -390,10 +408,7 @@ export default function Header({ onResetView }: HeaderProps) {
                 <div className="border-t border-gray-200 pt-4 mt-4">
                   <div 
                     className="flex items-center justify-center px-4 py-3 mx-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors cursor-pointer"
-                    onClick={() => {
-                      logoutMutation.mutate();
-                      setIsMobileMenuOpen(false);
-                    }}
+                    onClick={handleLogout}
                   >
                     <LogOut className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
                     <span className="font-medium">{t('logout')}</span>
