@@ -414,12 +414,18 @@
     "androidInstructions": "Нажмите 'Добавить на главный экран' для быстрого доступа",
     "iosInstallTitle": "Установить на iPhone",
     "iosInstallMessage": "Добавьте приложение на домашний экран для быстрого доступа",
-    "installMessage": "Установите приложение для удобного доступа без браузера",
+    "installMessage": "Установите наше приложение для быстрого доступа и лучшего опыта покупок",
     "iosStep1": "Нажмите кнопку 'Поделиться' внизу экрана",
     "iosStep2": "Выберите 'На экран Домой'",
     "install": "Установить",
     "gotIt": "Понятно",
-    "later": "Позже"
+    "later": "Позже",
+    "installApp": "Установить приложение",
+    "offline": "Работаем в офлайн режиме",
+    "installedMode": "Приложение установлено",
+    "updateAvailable": "Доступно обновление",
+    "reload": "Обновить",
+    "workingOffline": "Работаем без интернета"
   },
   "pageNotFound": {
     "title": "404 Страница не найдена",
@@ -428,19 +434,6 @@
   "footer": {
     "poweredBy": "Powered by Ordis.",
     "tryBusiness": "Try it for your business."
-  },
-  "pwa": {
-    "installTitle": "Установить приложение",
-    "installDescription": "Установите eDAHouse для удобного доступа без браузера",
-    "installDescriptionIOS": "Добавьте eDAHouse на главный экран для быстрого доступа",
-    "install": "Установить",
-    "installApp": "Установить приложение",
-    "later": "Позже",
-    "offline": "Работаем в офлайн режиме",
-    "installedMode": "Приложение установлено",
-    "updateAvailable": "Доступно обновление",
-    "reload": "Обновить",
-    "workingOffline": "Работаем без интернета"
   },
   "push": {
     "requestTitle": "Включить уведомления",
