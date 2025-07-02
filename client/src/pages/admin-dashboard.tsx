@@ -133,7 +133,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
             }}
             className="cursor-pointer"
           >
-            <span className="text-xs font-medium text-white hover:text-white transition-colors bg-primary hover:bg-primary px-2.5 py-1 rounded-full backdrop-blur-sm shadow-sm">
+            <span className="text-xs font-medium text-gray-700 hover:text-gray-800 transition-colors bg-gray-200 hover:bg-gray-300 px-2.5 py-1 rounded-full backdrop-blur-sm shadow-sm">
               {category.productCount || 0} {adminT('categories.products')}
             </span>
           </div>
@@ -3336,8 +3336,7 @@ export default function AdminDashboard() {
                   )}
                   {isAdmin && (
                     <TabsTrigger value="notifications" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title="Push Уведомления">
-                      <Bell className="w-4 h-4 ml-1" />
-                      <span className="admin-tab-text">Push</span>
+                      <Bell className="w-4 h-4" />
                     </TabsTrigger>
                   )}
                   {hasPermission("canViewSettings") && (
@@ -3406,8 +3405,7 @@ export default function AdminDashboard() {
                   )}
                   {isAdmin && (
                     <TabsTrigger value="notifications" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title="Push Уведомления">
-                      <Bell className="w-4 h-4 mr-1" />
-                      <span className="admin-tab-text">Push</span>
+                      <Bell className="w-4 h-4" />
                     </TabsTrigger>
                   )}
                   {hasPermission("canManageSettings") && (
