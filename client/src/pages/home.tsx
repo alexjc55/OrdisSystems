@@ -31,6 +31,7 @@ import CategoryNav from "@/components/menu/category-nav";
 import ProductCard from "@/components/menu/product-card";
 import CartSidebar from "@/components/cart/cart-sidebar";
 import { HeaderVariant } from "@/components/layout/header-variants";
+import SearchInput from "@/components/SearchInput";
 import { useCartStore } from "@/lib/cart";
 import { formatCurrency } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
@@ -42,7 +43,6 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { 
-  Search, 
   Clock, 
   Phone, 
   MapPin, 
@@ -546,16 +546,11 @@ export default function Home() {
 
           {/* Search Bar - hide on main page, show on category/product pages */}
           <div className={`mb-8 ${!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 ? 'hidden' : ''}`}>
-            <div className="relative max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                type="text"
-                placeholder={t('searchPlaceholder')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-white border-gray-300"
-              />
-            </div>
+            <SearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder={t('searchPlaceholder')}
+            />
           </div>
 
           {/* Special Offers or Category View */}
