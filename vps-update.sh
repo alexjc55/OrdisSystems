@@ -1,3 +1,10 @@
+#!/bin/bash
+
+# VPS Header Fix Update Script
+echo "🔧 Fixing header component on VPS to stop menu flickering..."
+
+# Create the optimized header component for VPS
+cat > /tmp/header-fix.tsx << 'EOF'
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCartStore } from "@/lib/cart";
@@ -21,6 +28,8 @@ const getMultilingualValue = (
   currentLanguage: SupportedLanguage,
   defaultLanguage: SupportedLanguage = 'ru'
 ): string => {
+  if (!storeSettings) return '';
+  
   let langField: string;
   
   if (currentLanguage === 'ru') {
@@ -49,12 +58,12 @@ export default function Header({ onResetView }: HeaderProps) {
   const { items, toggleCart } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useCommonTranslation();
-  const { currentLanguage, changeLanguage } = useLanguage();
+  const { currentLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const { isInstalled, installApp, isStandalone } = usePWA();
+  const { isInstalled, installApp } = usePWA();
   
-  // Memoize device detection to prevent unnecessary recalculations
+  // Memoize device detection to prevent unnecessary recalculations  
   const deviceInfo = useMemo(() => {
     if (typeof window === 'undefined') return { isMobile: false, isTablet: false, isDesktop: false };
     
@@ -161,7 +170,7 @@ export default function Header({ onResetView }: HeaderProps) {
                 <Badge 
                   className="cart-badge absolute -top-1 -right-1 h-5 w-5 md:h-6 md:w-6 flex items-center justify-center text-xs p-0 bg-primary hover:bg-primary-hover text-white border-2 border-white animate-pulse font-bold"
                 >
-                  {Math.round(cartItemsCount)}
+                  {cartItemsCount}
                 </Badge>
               )}
             </Button>
@@ -172,8 +181,7 @@ export default function Header({ onResetView }: HeaderProps) {
                 variant="ghost"
                 size="sm"
                 className="hidden md:flex lg:hidden p-2 text-gray-600 hover:text-primary"
-                onClick={() => installApp()}
-                title={t('pwa.installApp')}
+                onClick={installApp}
               >
                 <Download className="h-5 w-5" />
               </Button>
@@ -184,23 +192,35 @@ export default function Header({ onResetView }: HeaderProps) {
               <div className="hidden md:block">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
-                        <AvatarFallback>
-                          {user?.firstName?.[0]}{user?.lastName?.[0]}
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={user.avatar || undefined} alt={user.firstName || user.username} />
+                        <AvatarFallback className="bg-primary text-white">
+                          {user.firstName ? user.firstName.charAt(0).toUpperCase() : user.username.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <div className="flex items-center justify-start gap-2 p-2">
-                      <div className="flex flex-col space-y-1 leading-none">
-                        {user?.firstName && (
-                          <p className="font-medium">{user.firstName} {user.lastName}</p>
+                  <DropdownMenuContent className="w-72" align="end" forceMount>
+                    <div className="flex items-center justify-start gap-3 p-4">
+                      <Avatar className="h-12 w-12 flex-shrink-0">
+                        <AvatarImage src={user.avatar || undefined} alt={user.firstName || user.username} />
+                        <AvatarFallback className="bg-primary text-white text-lg">
+                          {user.firstName ? user.firstName.charAt(0).toUpperCase() : user.username.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col min-w-0 flex-1">
+                        {user.firstName && user.lastName ? (
+                          <p className="text-sm font-medium leading-none truncate">
+                            {user.firstName} {user.lastName}
+                          </p>
+                        ) : (
+                          <p className="text-sm font-medium leading-none truncate">
+                            {user.username}
+                          </p>
                         )}
-                        {user?.email && (
-                          <p className="w-[200px] truncate text-sm text-muted-foreground">
+                        {user.email && (
+                          <p className="text-xs leading-none text-muted-foreground mt-1 truncate">
                             {user.email}
                           </p>
                         )}
@@ -278,7 +298,6 @@ export default function Header({ onResetView }: HeaderProps) {
                       <span className="font-semibold">{t('menu')}</span>
                     </div>
                   </Link>
-                  
 
                 </div>
               ) : (
@@ -324,12 +343,6 @@ export default function Header({ onResetView }: HeaderProps) {
                 // Don't show language switcher if only 1 language
                 if (languages.length <= 1) return null;
                 
-                // Layout logic: 
-                // 1 language = hidden (not shown)
-                // 2 languages = flex row
-                // 3 languages = flex row  
-                // 4+ languages = flex wrap (will wrap to new lines automatically)
-                
                 return (
                   <div className="border-t border-gray-200 pt-4 mt-4">
                     <div className="px-4">
@@ -373,23 +386,11 @@ export default function Header({ onResetView }: HeaderProps) {
                 </div>
               )}
               
-              {/* Login Button for non-logged in users */}
-              {!user && (
-                <div className="border-t border-gray-200 pt-4 mt-4">
-                  <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>
-                    <div className="flex items-center px-4 py-3 mx-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors cursor-pointer">
-                      <User className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
-                      <span className="font-medium">{t('login')}</span>
-                    </div>
-                  </Link>
-                </div>
-              )}
-              
-              {/* Logout Button - Only for logged in users */}
+              {/* Logout Button for Mobile */}
               {user && (
                 <div className="border-t border-gray-200 pt-4 mt-4">
                   <div 
-                    className="flex items-center justify-center px-4 py-3 mx-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors cursor-pointer"
+                    className="flex items-center justify-center px-4 py-3 mx-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors cursor-pointer"
                     onClick={() => {
                       logoutMutation.mutate();
                       setIsMobileMenuOpen(false);
@@ -407,3 +408,14 @@ export default function Header({ onResetView }: HeaderProps) {
     </header>
   );
 }
+EOF
+
+echo "📄 Header fix created successfully. Copy this to VPS:"
+echo "----------------------------------------------------"
+echo "cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il"
+echo "cp client/src/components/layout/header.tsx client/src/components/layout/header.tsx.backup"
+echo "curl -o client/src/components/layout/header.tsx https://raw.githubusercontent.com/alexjc55/Ordis/main/client/src/components/layout/header.tsx"
+echo "npm run build"  
+echo "pm2 restart edahouse"
+echo "----------------------------------------------------"
+echo "✅ This will stop menu flickering by preventing infinite re-renders"
