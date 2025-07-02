@@ -1,0 +1,43 @@
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-error.log last 20 lines:
+0|edahouse | 2025-07-03T01:43:27: error: relation "session" does not exist
+0|edahouse | 2025-07-03T01:43:27:     at /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/pg-pool/index.js:45:11
+0|edahouse | 2025-07-03T01:43:27:     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|edahouse | 2025-07-03T01:43:27:     at async PGStore._asyncQuery (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/connect-pg-simple/index.js:322:21)
+0|edahouse | 2025-07-03T01:43:31: error: relation "session" does not exist
+0|edahouse | 2025-07-03T01:43:31:     at /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/pg-pool/index.js:45:11
+0|edahouse | 2025-07-03T01:43:31:     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|edahouse | 2025-07-03T01:43:31:     at async PGStore._asyncQuery (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/connect-pg-simple/index.js:322:21)
+0|edahouse | 2025-07-03T01:43:31: error: relation "session" does not exist
+0|edahouse | 2025-07-03T01:43:31:     at /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/pg-pool/index.js:45:11
+0|edahouse | 2025-07-03T01:43:31:     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|edahouse | 2025-07-03T01:43:31:     at async PGStore._asyncQuery (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/connect-pg-simple/index.js:322:21)
+0|edahouse | 2025-07-03T01:43:31: error: relation "session" does not exist
+0|edahouse | 2025-07-03T01:43:31:     at /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/pg-pool/index.js:45:11
+0|edahouse | 2025-07-03T01:43:31:     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|edahouse | 2025-07-03T01:43:31:     at async PGStore._asyncQuery (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/connect-pg-simple/index.js:322:21)
+0|edahouse | 2025-07-03T01:43:31: error: relation "session" does not exist
+0|edahouse | 2025-07-03T01:43:31:     at /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/pg-pool/index.js:45:11
+0|edahouse | 2025-07-03T01:43:31:     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|edahouse | 2025-07-03T01:43:31:     at async PGStore._asyncQuery (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/connect-pg-simple/index.js:322:21)
+
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-out.log last 20 lines:
+0|edahouse | 2025-07-03T01:53:29: 1:53:29 AM [express] GET /api/settings 200 in 29ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 2025-07-03T01:53:29: 1:53:29 AM [express] GET /api/auth/user 200 in 37ms :: {"id":"admin","username":"admin","email":"adm…
+0|edahouse | 2025-07-03T01:53:29: 1:53:29 AM [express] GET /api/admin/products 200 in 43ms :: {"data":[{"id":380,"name":"Абжерка","nam…
+0|edahouse | 2025-07-03T01:53:37: 1:53:37 AM [express] GET /api/settings 200 in 13ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 2025-07-03T01:53:37: 1:53:37 AM [express] GET /api/auth/user 200 in 10ms :: {"id":"admin","username":"admin","email":"adm…
+0|edahouse | 2025-07-03T01:53:37: 1:53:37 AM [express] GET /api/favicon 302 in 8ms
+0|edahouse | 2025-07-03T01:53:37: 1:53:37 AM [express] GET /api/settings 200 in 8ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":"…
+0|edahouse | 2025-07-03T01:53:37: 1:53:37 AM [express] GET /api/admin/products 200 in 18ms :: {"data":[{"id":380,"name":"Абжерка","nam…
+0|edahouse | 2025-07-03T01:53:37: 1:53:37 AM [express] GET /api/admin/users 200 in 14ms :: {"data":[{"id":"manual_1750335401590_mpgm1w…
+0|edahouse | 2025-07-03T01:53:37: 1:53:37 AM [express] GET /api/admin/orders 200 in 60ms :: {"data":[{"id":18,"userId":"admin","status…
+0|edahouse | 2025-07-03T01:53:37: 1:53:37 AM [express] GET /api/categories 200 in 15ms :: [{"id":47,"name":"Салаты","name_en":"","name…
+0|edahouse | 2025-07-03T01:53:37: 1:53:37 AM [express] GET /api/favicon 302 in 10ms
+0|edahouse | 2025-07-03T01:53:38: 1:53:38 AM [express] GET /api/favicon 302 in 12ms
+0|edahouse | 2025-07-03T01:53:42: 1:53:42 AM [express] GET /api/products 200 in 19ms :: [{"id":380,"name":"Абжерка","name_en":null,"na…
+0|edahouse | 2025-07-03T01:53:42: 1:53:42 AM [express] GET /api/categories 200 in 37ms :: [{"id":47,"name":"Салаты","name_en":"","name…
+0|edahouse | 2025-07-03T01:53:42: 1:53:42 AM [express] GET /api/favicon 302 in 14ms
+0|edahouse | 2025-07-03T01:53:42: 1:53:42 AM [express] GET /api/auth/user 200 in 38ms :: {"id":"admin","username":"admin","email":"adm…
+0|edahouse | 2025-07-03T01:53:42: 1:53:42 AM [express] GET /api/favicon 302 in 9ms
+0|edahouse | 2025-07-03T01:53:43: 1:53:43 AM [express] GET /api/favicon 302 in 8ms
+0|edahouse | 2025-07-03T01:55:24: 🚀 Server running on port 3000
