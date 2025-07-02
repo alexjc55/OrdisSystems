@@ -3336,7 +3336,8 @@ export default function AdminDashboard() {
                   )}
                   {isAdmin && (
                     <TabsTrigger value="notifications" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title="Push Уведомления">
-                      <Bell className="w-4 h-4" />
+                      <Bell className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">Push</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canViewSettings") && (
@@ -3405,7 +3406,8 @@ export default function AdminDashboard() {
                   )}
                   {isAdmin && (
                     <TabsTrigger value="notifications" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title="Push Уведомления">
-                      <Bell className="w-4 h-4" />
+                      <Bell className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">Push</span>
                     </TabsTrigger>
                   )}
                   {hasPermission("canManageSettings") && (
