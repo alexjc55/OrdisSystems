@@ -339,7 +339,7 @@ export default function Home() {
 
   const handleCategorySelect = useCallback((categoryId: number | null) => {
     setSelectedCategoryId(categoryId);
-    setSearchQuery("");
+    // Don't clear search query when switching categories
     
     // Navigate to appropriate URL
     if (categoryId === 0) {
@@ -548,6 +548,7 @@ export default function Home() {
           {(selectedCategory || selectedCategoryId === 0) && (
             <div className="mb-8">
               <SearchInput
+                key="search-input-stable"
                 onChange={setSearchQuery}
                 placeholder={t('searchPlaceholder')}
               />
