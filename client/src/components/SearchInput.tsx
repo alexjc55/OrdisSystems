@@ -17,10 +17,12 @@ export default function SearchInput({ value, onChange, placeholder, className = 
     setLocalValue(value);
   }, [value]);
 
-  // Debounced onChange - only call parent onChange after 300ms of no typing
+  // Only call parent onChange when we have 3+ characters or when clearing (0 characters)
   useEffect(() => {
     const timer = setTimeout(() => {
-      onChange(localValue);
+      if (localValue.length >= 3 || localValue.length === 0) {
+        onChange(localValue);
+      }
     }, 300);
 
     return () => clearTimeout(timer);
