@@ -96,10 +96,8 @@ export default function PWAInstallPrompt() {
       setDeferredPrompt(null);
       console.log('PWA was installed');
       
-      // Request push notification permission after PWA installation
-      setTimeout(() => {
-        requestPushPermission();
-      }, 2000); // Wait 2 seconds after installation
+      // Push notifications are handled by separate PushNotificationRequest component
+      console.log('PWA installed successfully');
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -130,10 +128,7 @@ export default function PWAInstallPrompt() {
       
       if (choiceResult.outcome === 'accepted') {
         console.log('User accepted PWA install');
-        // Also request push permission after manual install
-        setTimeout(() => {
-          requestPushPermission();
-        }, 1000);
+        // Push notifications handled by PushNotificationRequest component
       } else {
         console.log('User dismissed PWA install');
         localStorage.setItem('pwa-dismissed', Date.now().toString());

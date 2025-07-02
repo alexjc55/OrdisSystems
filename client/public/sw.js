@@ -273,45 +273,4 @@ async function fetchAndCache(request, cache) {
   }
 }
 
-// Handle push notifications (optional)
-self.addEventListener('push', (event) => {
-  if (event.data) {
-    const data = event.data.json();
-    console.log('Service Worker: Push notification received', data);
-    
-    const options = {
-      body: data.body || 'У вас новое уведомление',
-      icon: '/icons/icon-192x192.png',
-      badge: '/icons/icon-72x72.png',
-      vibrate: [100, 50, 100],
-      data: data.data || {},
-      actions: [
-        {
-          action: 'open',
-          title: 'Открыть',
-          icon: '/icons/icon-96x96.png'
-        },
-        {
-          action: 'close',
-          title: 'Закрыть'
-        }
-      ]
-    };
-    
-    event.waitUntil(
-      self.registration.showNotification(data.title || 'eDAHouse', options)
-    );
-  }
-});
-
-// Handle notification clicks
-self.addEventListener('notificationclick', (event) => {
-  console.log('Service Worker: Notification clicked');
-  event.notification.close();
-  
-  if (event.action === 'open' || !event.action) {
-    event.waitUntil(
-      clients.openWindow(event.notification.data.url || '/')
-    );
-  }
-});
+// DUPLICATE PUSH HANDLERS REMOVED - using unified handler at top of file
