@@ -407,6 +407,12 @@
     "poweredBy": "Powered by Ordis.",
     "tryBusiness": "Try it for your business."
   },
+  "push": {
+    "requestTitle": "לאפשר התראות?",
+    "requestMessage": "קבל התראות על סטטוס הזמנות, הצעות מיוחדות וחדשות החנות.",
+    "allow": "אפשר",
+    "dismiss": "לא עכשיו"
+  },
   "pwa": {
     "installTitle": "התקן אפליקציה",
     "installDescription": "התקן את eDAHouse לגישה נוחה ללא דפדפן",

@@ -532,5 +532,19 @@
     "uploaded": "تم الرفع",
     "uploadSuccess": "تم رفع الصورة بنجاح",
     "uploadFailed": "فشل في رفع الصورة"
+  },
+  "push": {
+    "requestTitle": "السماح بالإشعارات؟",
+    "requestMessage": "احصل على إشعارات حول حالة الطلبات والعروض الخاصة وأخبار المتجر.",
+    "allow": "السماح",
+    "dismiss": "ليس الآن"
+  },
+  "pwa": {
+    "installTitle": "تثبيت التطبيق",
+    "installDescription": "ثبت تطبيقنا للوصول السريع وتجربة تسوق أفضل",
+    "installButton": "تثبيت",
+    "dismissButton": "ليس الآن",
+    "iosInstructions": "اضغط على زر 'مشاركة' واختر 'إضافة إلى الشاشة الرئيسية'",
+    "androidInstructions": "اضغط على 'إضافة إلى الشاشة الرئيسية' للوصول السريع"
   }
 }

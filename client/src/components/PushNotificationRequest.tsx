@@ -190,7 +190,7 @@ export default function PushNotificationRequest() {
               className="flex-1"
               size="sm"
             >
-              {t('push.notNow')}
+              {t('push.dismiss')}
             </Button>
           </div>
         </div>

@@ -407,6 +407,12 @@
     "poweredBy": "Powered by Ordis.",
     "tryBusiness": "Try it for your business."
   },
+  "push": {
+    "requestTitle": "Allow notifications?",
+    "requestMessage": "Get notifications about order status, special offers, and store news.",
+    "allow": "Allow",
+    "dismiss": "Not now"
+  },
   "pwa": {
     "installTitle": "Install App",
     "installDescription": "Install eDAHouse for convenient access without browser",
