@@ -17,7 +17,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, NoScrollLockSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
@@ -739,7 +739,7 @@ export default function Home() {
               {/* Filter Controls */}
               {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
                 <div className="flex gap-2 sm:gap-4 mb-6">
-                  <NoScrollLockSelect value={categoryFilter} onValueChange={handleCategoryFilterChange}>
+                  <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
                     <SelectTrigger className="flex-1 min-w-0 text-sm">
                       <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
                     </SelectTrigger>
@@ -751,9 +751,9 @@ export default function Home() {
                         </SelectItem>
                       ))}
                     </SelectContent>
-                  </NoScrollLockSelect>
+                  </Select>
 
-                  <NoScrollLockSelect value={discountFilter} onValueChange={setDiscountFilter}>
+                  <Select value={discountFilter} onValueChange={setDiscountFilter}>
                     <SelectTrigger className="flex-1 min-w-0 text-sm">
                       <SelectValue placeholder={t('filterByDiscount')} />
                     </SelectTrigger>
@@ -761,7 +761,7 @@ export default function Home() {
                       <SelectItem value="all">{t('allProducts')}</SelectItem>
                       <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
                     </SelectContent>
-                  </NoScrollLockSelect>
+                  </Select>
                 </div>
               )}
 
