@@ -700,38 +700,26 @@ button:focus,
     width: 100% !important;
   }
   
-  .admin-select-trigger,
-  [data-radix-select-trigger] {
+  .admin-select-trigger {
     position: relative !important;
-    min-width: 0 !important;
   }
   
-  .admin-select-content,
-  [data-radix-select-content] {
-    position: fixed !important;
+  .admin-select-content {
+    position: absolute !important;
     z-index: 50 !important;
     min-width: 8rem !important;
     max-width: 20rem !important;
-    contain: layout !important;
   }
   
   /* Prevent layout shifts from dropdowns */
-  .admin-filters-container,
-  .admin-content-area .container {
-    contain: layout style !important;
-    overflow: visible !important;
+  .admin-filters-container {
+    position: relative !important;
+    isolation: isolate !important;
   }
   
   /* Stabilize viewport for admin panel */
   body:has(.admin-content-area) {
     overflow-x: hidden !important;
-  }
-  
-  /* Stabilize select content positioning */
-  [data-radix-popper-content-wrapper] {
-    will-change: auto !important;
-    transform: none !important;
-    position: fixed !important;
   }
   
   /* Force stable positioning for Radix Select components */
