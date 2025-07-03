@@ -100,12 +100,12 @@ export function PushNotificationsPanel() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <CardTitle className="flex items-center gap-2">
               <Bell className="h-5 w-5" />
               {t('pushNotifications.title')}
             </CardTitle>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-gray-100 px-3 py-1 rounded-full">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-gray-100 px-3 py-1 rounded-full self-start sm:self-auto">
               <Users className="h-4 w-4" />
               <span>{stats?.totalSubscriptions || 0} {t('pushNotifications.subscribers')}</span>
             </div>
