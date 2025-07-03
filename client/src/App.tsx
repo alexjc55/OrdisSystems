@@ -72,33 +72,25 @@ function Router() {
     };
   }, [i18n]);
 
-  // Selectively disable scroll lock while preserving layout
+  // Disable scroll lock without visual flickers
   useEffect(() => {
-    const disableScrollLock = () => {
-      // Only override overflow, preserve positioning and margins
-      if (document.body.hasAttribute('data-scroll-locked')) {
-        document.body.style.overflow = 'auto';
-        document.body.style.paddingRight = '0';
+    // Override Radix UI scroll lock behavior completely
+    const style = document.createElement('style');
+    style.textContent = `
+      body[data-scroll-locked] {
+        overflow: auto !important;
+        padding-right: 0 !important;
+        margin-right: 0 !important;
       }
-    };
-
-    // Set up observer to watch for scroll lock attributes
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'data-scroll-locked') {
-          disableScrollLock();
-        }
-      });
-    });
-
-    // Observe body for scroll lock attribute changes
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ['data-scroll-locked']
-    });
+    `;
+    style.id = 'radix-scroll-lock-override';
+    document.head.appendChild(style);
 
     return () => {
-      observer.disconnect();
+      const existingStyle = document.getElementById('radix-scroll-lock-override');
+      if (existingStyle) {
+        existingStyle.remove();
+      }
     };
   }, []);
 
