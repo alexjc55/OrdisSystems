@@ -9,6 +9,44 @@ import { useLanguage } from "@/hooks/use-language"
 
 const Select = SelectPrimitive.Root
 
+// NoScrollLockSelect - для фильтров и других случаев, где нужно сохранить прокрутку
+const NoScrollLockSelect = (props: React.ComponentProps<typeof SelectPrimitive.Root>) => {
+  React.useEffect(() => {
+    // Отключаем scroll-lock когда открыт NoScrollLockSelect
+    const handleOpen = () => {
+      const style = document.createElement('style');
+      style.textContent = `
+        body[data-scroll-locked] {
+          overflow: auto !important;
+          padding-right: 0 !important;
+        }
+      `;
+      style.id = 'no-scroll-lock-override';
+      document.head.appendChild(style);
+    };
+    
+    const handleClose = () => {
+      const style = document.getElementById('no-scroll-lock-override');
+      if (style) {
+        style.remove();
+      }
+    };
+
+    // Слушаем изменения открытия/закрытия
+    if (props.open) {
+      handleOpen();
+    } else {
+      handleClose();
+    }
+
+    return () => {
+      handleClose();
+    };
+  }, [props.open]);
+
+  return <SelectPrimitive.Root {...props} />;
+}
+
 const SelectGroup = SelectPrimitive.Group
 
 const SelectValue = SelectPrimitive.Value
@@ -173,6 +211,7 @@ SelectSeparator.displayName = SelectPrimitive.Separator.displayName
 
 export {
   Select,
+  NoScrollLockSelect,
   SelectGroup,
   SelectValue,
   SelectTrigger,

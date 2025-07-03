@@ -1022,11 +1022,7 @@ button:focus,
   }
 }
 
-/* Disable scroll lock for Radix UI components while preserving layout */
-body[data-scroll-locked] {
-  overflow: auto !important;
-  padding-right: 0 !important;
-}
+
 
 /* Additional RTL utilities */
 @layer utilities {

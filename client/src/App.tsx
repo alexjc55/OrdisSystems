@@ -72,27 +72,7 @@ function Router() {
     };
   }, [i18n]);
 
-  // Disable scroll lock without visual flickers
-  useEffect(() => {
-    // Override Radix UI scroll lock behavior completely
-    const style = document.createElement('style');
-    style.textContent = `
-      body[data-scroll-locked] {
-        overflow: auto !important;
-        padding-right: 0 !important;
-        margin-right: 0 !important;
-      }
-    `;
-    style.id = 'radix-scroll-lock-override';
-    document.head.appendChild(style);
 
-    return () => {
-      const existingStyle = document.getElementById('radix-scroll-lock-override');
-      if (existingStyle) {
-        existingStyle.remove();
-      }
-    };
-  }, []);
 
   // Listen for messages from Service Worker (notification clicks)
   useEffect(() => {
