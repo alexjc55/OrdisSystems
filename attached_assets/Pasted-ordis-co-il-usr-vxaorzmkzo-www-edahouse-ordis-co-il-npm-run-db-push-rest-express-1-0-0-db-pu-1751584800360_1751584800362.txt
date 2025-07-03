@@ -1,0 +1,95 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ npm run db:push
+
+> rest-express@1.0.0 db:push
+> drizzle-kit push
+
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/drizzle.config.ts'
+Using 'pg' driver for database querying
+[✓] Pulling schema from database...
+· You're about to add product_categories_product_id_category_id_unique unique constraint to the table, which contains 52 items. If this statement fails, you will receive an error from the database. Do you want to truncate product_categories table?
+
+ Warning  Found data-loss statements:
+· You're about to delete session table with 2 items
+· You're about to change info_blocks_position column type from varchar(10) to varchar with 1 items
+· You're about to change store_name_ar column type from text to varchar(255) with 1 items
+· You're about to change welcome_title_ar column type from text to varchar(255) with 1 items
+· You're about to change store_name_he column type from text to varchar(255) with 1 items
+· You're about to change welcome_title_he column type from text to varchar(255) with 1 items
+· You're about to change store_name_en column type from text to varchar(255) with 1 items
+· You're about to change welcome_title_en column type from text to varchar(255) with 1 items
+· You're about to change delivery_time column type from varchar(20) to varchar(50) with 18 items
+· You're about to change id column type from text to varchar(50) with 1 items
+· You're about to change name column type from text to varchar(100) with 1 items
+· You're about to change primary_color column type from text to varchar(20) with 1 items
+· You're about to change primary_dark_color column type from text to varchar(20) with 1 items
+· You're about to change primary_light_color column type from text to varchar(20) with 1 items
+· You're about to change secondary_color column type from text to varchar(20) with 1 items
+· You're about to change accent_color column type from text to varchar(20) with 1 items
+· You're about to change success_color column type from text to varchar(20) with 1 items
+· You're about to change success_light_color column type from text to varchar(20) with 1 items
+· You're about to change warning_color column type from text to varchar(20) with 1 items
+· You're about to change warning_light_color column type from text to varchar(20) with 1 items
+· You're about to change error_color column type from text to varchar(20) with 1 items
+· You're about to change error_light_color column type from text to varchar(20) with 1 items
+· You're about to change info_color column type from text to varchar(20) with 1 items
+· You're about to change info_light_color column type from text to varchar(20) with 1 items
+· You're about to change white_color column type from text to varchar(20) with 1 items
+· You're about to change gray50_color column type from text to varchar(20) with 1 items
+· You're about to change gray100_color column type from text to varchar(20) with 1 items
+· You're about to change gray200_color column type from text to varchar(20) with 1 items
+· You're about to change gray300_color column type from text to varchar(20) with 1 items
+· You're about to change gray400_color column type from text to varchar(20) with 1 items
+· You're about to change gray500_color column type from text to varchar(20) with 1 items
+· You're about to change gray600_color column type from text to varchar(20) with 1 items
+· You're about to change gray700_color column type from text to varchar(20) with 1 items
+· You're about to change gray800_color column type from text to varchar(20) with 1 items
+· You're about to change gray900_color column type from text to varchar(20) with 1 items
+· You're about to change font_family_primary column type from text to varchar(100) with 1 items
+· You're about to change font_family_secondary column type from text to varchar(100) with 1 items
+· You're about to change primary_shadow column type from text to varchar(100) with 1 items
+· You're about to change success_shadow column type from text to varchar(100) with 1 items
+· You're about to change warning_shadow column type from text to varchar(100) with 1 items
+· You're about to change error_shadow column type from text to varchar(100) with 1 items
+· You're about to change info_shadow column type from text to varchar(100) with 1 items
+· You're about to change gray_shadow column type from text to varchar(100) with 1 items
+· You're about to change logo_url_en column type from text to varchar(500) with 1 items
+· You're about to change logo_url_he column type from text to varchar(500) with 1 items
+· You're about to change logo_url_ar column type from text to varchar(500) with 1 items
+· You're about to change banner_image_url_en column type from text to varchar(500) with 1 items
+· You're about to change banner_image_url_he column type from text to varchar(500) with 1 items
+· You're about to change banner_image_url_ar column type from text to varchar(500) with 1 items
+· You're about to change cart_banner_image_en column type from text to varchar(500) with 1 items
+· You're about to change cart_banner_image_he column type from text to varchar(500) with 1 items
+· You're about to change cart_banner_image_ar column type from text to varchar(500) with 1 items
+· You're about to change bottom_banner1_url_en column type from text to varchar(500) with 1 items
+· You're about to change bottom_banner1_url_he column type from text to varchar(500) with 1 items
+· You're about to change bottom_banner1_url_ar column type from text to varchar(500) with 1 items
+· You're about to change bottom_banner2_url_en column type from text to varchar(500) with 1 items
+· You're about to change bottom_banner2_url_he column type from text to varchar(500) with 1 items
+· You're about to change bottom_banner2_url_ar column type from text to varchar(500) with 1 items
+· You're about to delete welcome_subtitle_ar column in store_settings table with 1 items
+· You're about to delete show_prices column in themes table with 1 items
+· You're about to delete show_product_images column in themes table with 1 items
+· You're about to delete show_cart column in themes table with 1 items
+· You're about to delete logourl_en column in themes table with 1 items
+· You're about to delete logourl_he column in themes table with 1 items
+· You're about to delete logourl_ar column in themes table with 1 items
+· You're about to delete bannerimageurl_en column in themes table with 1 items
+· You're about to delete bannerimageurl_he column in themes table with 1 items
+· You're about to delete bannerimageurl_ar column in themes table with 1 items
+· You're about to delete cartbannerimage_en column in themes table with 1 items
+· You're about to delete cartbannerimage_he column in themes table with 1 items
+· You're about to delete cartbannerimage_ar column in themes table with 1 items
+· You're about to delete bottombanner1url_en column in themes table with 1 items
+· You're about to delete bottombanner1url_he column in themes table with 1 items
+· You're about to delete bottombanner1url_ar column in themes table with 1 items
+· You're about to delete bottombanner2url_en column in themes table with 1 items
+· You're about to delete bottombanner2url_he column in themes table with 1 items
+· You're about to delete bottombanner2url_ar column in themes table with 1 items
+
+THIS ACTION WILL CAUSE DATA LOSS AND CANNOT BE REVERTED
+
+Do you still want to push changes?
+❯ No, abort
+  Yes, I want to remove 1 table, remove 19 columns, truncate 3 tables
