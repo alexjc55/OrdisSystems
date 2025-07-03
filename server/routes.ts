@@ -40,8 +40,13 @@ function clearCachePattern(pattern: string) {
 const scryptAsync = promisify(scrypt);
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Add cache control headers to prevent caching
+  // Add cache control headers to prevent caching (except for favicon)
   app.use((req, res, next) => {
+    // Skip cache control for favicon endpoint
+    if (req.path === '/api/favicon') {
+      return next();
+    }
+    
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
@@ -1103,21 +1108,25 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
-  // Dynamic favicon endpoint
+  // Dynamic favicon endpoint with caching
   app.get('/api/favicon', async (req, res) => {
     try {
+      // Set aggressive caching headers for favicon
+      res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+      res.setHeader('Expires', new Date(Date.now() + 3600000).toUTCString());
+      
       const settings = await storage.getStoreSettings();
       
       if (settings?.pwaIcon) {
         // Redirect to the uploaded PWA icon
-        res.redirect(settings.pwaIcon);
+        res.redirect(301, settings.pwaIcon); // Permanent redirect
       } else {
         // Fallback to default favicon
-        res.redirect('/favicon.ico');
+        res.redirect(301, '/favicon.ico'); // Permanent redirect
       }
     } catch (error) {
       console.error('Error serving favicon:', error);
-      res.redirect('/favicon.ico');
+      res.redirect(301, '/favicon.ico');
     }
   });
 
