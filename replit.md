@@ -137,6 +137,7 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
   - CONSISTENT DISPLAY: Ensures products never display more than 3 per row regardless of screen resolution
   - USER EXPERIENCE: Better readability and product focus with limited columns
   - UPDATED CLASSES: Removed xl:grid-cols-4, kept grid-cols-1 md:grid-cols-2 lg:grid-cols-3
+  - CATEGORY CARDS: Also applied same 3-column limit to category cards, replaced CSS Grid with Tailwind classes
 - July 3, 2025: ADDED SUBSCRIBER COUNT DISPLAY IN PUSH NOTIFICATIONS ADMIN PANEL
   - NEW FEATURE: Added real-time subscriber count display in push notifications section header
   - API ENDPOINT: Created /api/admin/push/stats endpoint to fetch subscription statistics
