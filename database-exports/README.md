@@ -13,15 +13,15 @@ pm2 stop edahouse
 # 2. Загрузить переменные окружения
 source .env
 
-# 3. Распаковать экспорт базы данных
-gunzip database-exports/replit_data_export.sql.gz
+# 3. Создать очищенный экспорт (удаляет Neon-специфичные команды)
+./database-exports/create_clean_export.sh
 
 # 4. Удалить и пересоздать базу данных
 dropdb -U $PGUSER -h $PGHOST -p $PGPORT $PGDATABASE
 createdb -U $PGUSER -h $PGHOST -p $PGPORT $PGDATABASE
 
-# 5. Восстановить данные из экспорта
-psql -U $PGUSER -h $PGHOST -p $PGPORT $PGDATABASE < database-exports/replit_data_export.sql
+# 5. Восстановить данные из очищенного экспорта
+psql -U $PGUSER -h $PGHOST -p $PGPORT $PGDATABASE < database-exports/clean_data_export.sql
 
 # 6. Запустить приложение
 pm2 start edahouse
