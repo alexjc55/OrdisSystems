@@ -131,6 +131,12 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 3, 2025: LIMITED PRODUCT GRID TO MAXIMUM 3 COLUMNS FOR IMPROVED LAYOUT
+  - GRID CONSTRAINT: Changed product grid from max 4 columns to max 3 columns on all screen sizes
+  - RESPONSIVE LAYOUT: Mobile: 1 column, Tablet: 2 columns, Desktop+: 3 columns maximum
+  - CONSISTENT DISPLAY: Ensures products never display more than 3 per row regardless of screen resolution
+  - USER EXPERIENCE: Better readability and product focus with limited columns
+  - UPDATED CLASSES: Removed xl:grid-cols-4, kept grid-cols-1 md:grid-cols-2 lg:grid-cols-3
 - July 3, 2025: ADDED SUBSCRIBER COUNT DISPLAY IN PUSH NOTIFICATIONS ADMIN PANEL
   - NEW FEATURE: Added real-time subscriber count display in push notifications section header
   - API ENDPOINT: Created /api/admin/push/stats endpoint to fetch subscription statistics
