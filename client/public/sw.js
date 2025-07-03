@@ -1,6 +1,7 @@
-const CACHE_NAME = 'edahouse-v1.0.0';
-const STATIC_CACHE = 'edahouse-static-v1.0.0';
-const DYNAMIC_CACHE = 'edahouse-dynamic-v1.0.0';
+// CACHING DISABLED FOR DEBUGGING - v3.44.15
+const CACHE_NAME = 'edahouse-disabled';
+const STATIC_CACHE = 'edahouse-disabled';
+const DYNAMIC_CACHE = 'edahouse-disabled';
 
 // Static assets to cache
 const STATIC_ASSETS = [
@@ -200,7 +201,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - serve cached content when offline
+// Fetch event - CACHING DISABLED FOR DEBUGGING
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const { url, method } = request;
@@ -210,14 +211,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Handle API requests
-  if (url.includes('/api/')) {
-    event.respondWith(handleApiRequest(request));
-    return;
-  }
-
-  // Handle static assets and pages
-  event.respondWith(handleStaticRequest(request));
+  // DISABLED: Just pass through to network, no caching
+  return;
 });
 
 // Handle API requests with cache-first strategy for safe endpoints

@@ -4,6 +4,16 @@ import "./index.css";
 import "./lib/i18n";
 import { initializeTheme, forceApplyOrangeTheme } from "./lib/theme-system";
 
+// Clear all caches for debugging dropdown issue
+if ('caches' in window) {
+  caches.keys().then(cacheNames => {
+    cacheNames.forEach(cacheName => {
+      console.log('Clearing cache:', cacheName);
+      caches.delete(cacheName);
+    });
+  });
+}
+
 // Initialize theme system
 initializeTheme();
 // Force apply orange colors to override any black theme colors
