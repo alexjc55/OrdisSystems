@@ -874,5 +874,31 @@
     "fieldsCopied": "Скопировано полей: {{count}}",
     "clearSuccess": "Поля очищены",
     "fieldsCleared": "Очищено полей: {{count}}"
+  },
+  "pushNotifications": {
+    "title": "Push Уведомления",
+    "description": "Управление push уведомлениями для клиентов",
+    "notSupported": "Push уведомления не поддерживаются в этом браузере",
+    "subscriptionStatus": "Статус подписки",
+    "subscriptionActive": "Активна",
+    "subscriptionInactive": "Неактивна",
+    "subscribe": "Подписаться на уведомления",
+    "test": "Тест",
+    "sendNotification": "Отправить уведомление",
+    "history": "История",
+    "createMarketing": "Создать маркетинговую рассылку",
+    "createMarketingDesc": "Отправить уведомление всем подписанным пользователям",
+    "title_field": "Заголовок",
+    "message_field": "Сообщение",
+    "titlePlaceholder": "Заголовок уведомления",
+    "messagePlaceholder": "Текст уведомления",
+    "sendToAll": "Отправить всем",
+    "sending": "Отправка...",
+    "historyTitle": "История уведомлений",
+    "historyDesc": "Последние отправленные маркетинговые уведомления",
+    "noNotifications": "Уведомления еще не отправлялись",
+    "sentTo": "Отправлено: {{count}} получателей",
+    "date": "Дата",
+    "author": "Автор"
   }
 }

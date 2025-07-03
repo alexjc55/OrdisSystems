@@ -79,10 +79,10 @@ export function PushNotificationsPanel() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Bell className="h-5 w-5" />
-            Push Уведомления
+            {t('pushNotifications.title')}
           </CardTitle>
           <CardDescription>
-            Push уведомления не поддерживаются в этом браузере
+            {t('pushNotifications.notSupported')}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -95,10 +95,10 @@ export function PushNotificationsPanel() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Bell className="h-5 w-5" />
-            Push Уведомления
+            {t('pushNotifications.title')}
           </CardTitle>
           <CardDescription>
-            Управление push уведомлениями для клиентов
+            {t('pushNotifications.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -106,19 +106,19 @@ export function PushNotificationsPanel() {
             <div className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               <span className="text-sm">
-                Статус подписки: {isSubscribed ? 'Активна' : 'Неактивна'}
+                {t('pushNotifications.subscriptionStatus')}: {isSubscribed ? t('pushNotifications.subscriptionActive') : t('pushNotifications.subscriptionInactive')}
               </span>
             </div>
             
             {!isSubscribed && (
               <Button onClick={subscribe} size="sm">
-                Подписаться на уведомления
+                {t('pushNotifications.subscribe')}
               </Button>
             )}
             
             <Button onClick={handleTestNotification} variant="outline" size="sm">
               <TestTube className="h-4 w-4 mr-2" />
-              Тест
+              {t('pushNotifications.test')}
             </Button>
           </div>
         </CardContent>
@@ -128,9 +128,9 @@ export function PushNotificationsPanel() {
         <TabsList>
           <TabsTrigger value="send">
             <Send className="h-4 w-4 mr-2" />
-            Отправить уведомление
+            {t('pushNotifications.sendNotification')}
           </TabsTrigger>
-          <TabsTrigger value="history">История</TabsTrigger>
+          <TabsTrigger value="history">{t('pushNotifications.history')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="send">
@@ -138,31 +138,31 @@ export function PushNotificationsPanel() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Send className="h-5 w-5" />
-                Создать маркетинговую рассылку
+                {t('pushNotifications.createMarketing')}
               </CardTitle>
               <CardDescription>
-                Отправить уведомление всем подписанным пользователям
+                {t('pushNotifications.createMarketingDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4 max-w-md">
                 <div>
-                  <Label htmlFor="title">Заголовок *</Label>
+                  <Label htmlFor="title">{t('pushNotifications.title_field')} *</Label>
                   <Input
                     id="title"
                     value={marketingForm.title}
                     onChange={(e) => setMarketingForm(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="Заголовок уведомления"
+                    placeholder={t('pushNotifications.titlePlaceholder')}
                     required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="message">Сообщение *</Label>
+                  <Label htmlFor="message">{t('pushNotifications.message_field')} *</Label>
                   <Textarea
                     id="message"
                     value={marketingForm.message}
                     onChange={(e) => setMarketingForm(prev => ({ ...prev, message: e.target.value }))}
-                    placeholder="Текст уведомления"
+                    placeholder={t('pushNotifications.messagePlaceholder')}
                     rows={3}
                     required
                   />
@@ -176,11 +176,11 @@ export function PushNotificationsPanel() {
                   className="min-w-32"
                 >
                   {sendMarketingMutation.isPending ? (
-                    'Отправка...'
+                    t('pushNotifications.sending')
                   ) : (
                     <>
                       <Users className="h-4 w-4 mr-2" />
-                      Отправить всем
+                      {t('pushNotifications.sendToAll')}
                     </>
                   )}
                 </Button>
@@ -192,16 +192,16 @@ export function PushNotificationsPanel() {
         <TabsContent value="history">
           <Card>
             <CardHeader>
-              <CardTitle>История уведомлений</CardTitle>
+              <CardTitle>{t('pushNotifications.historyTitle')}</CardTitle>
               <CardDescription>
-                Последние отправленные маркетинговые уведомления
+                {t('pushNotifications.historyDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {notifications.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
-                    Уведомления еще не отправлялись
+                    {t('pushNotifications.noNotifications')}
                   </div>
                 ) : (
                   notifications.map((notification) => (
@@ -212,9 +212,9 @@ export function PushNotificationsPanel() {
                       <div className="font-medium">{notification.title}</div>
                       <div className="text-sm text-muted-foreground">{notification.message}</div>
                       <div className="text-xs text-muted-foreground flex items-center gap-4">
-                        <span>Отправлено: {notification.sentCount} получателей</span>
-                        <span>Дата: {new Date(notification.sentAt).toLocaleString('ru-RU')}</span>
-                        <span>Автор: {notification.createdBy}</span>
+                        <span>{t('pushNotifications.sentTo', { count: notification.sentCount })}</span>
+                        <span>{t('pushNotifications.date')}: {new Date(notification.sentAt).toLocaleString()}</span>
+                        <span>{t('pushNotifications.author')}: {notification.createdBy}</span>
                       </div>
                     </div>
                   ))

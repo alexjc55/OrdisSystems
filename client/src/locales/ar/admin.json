@@ -713,5 +713,31 @@
     "fieldsCopied": "تم نسخ {{count}} حقول",
     "clearSuccess": "تم مسح الحقول",
     "fieldsCleared": "تم مسح {{count}} حقول"
+  },
+  "pushNotifications": {
+    "title": "إشعارات الدفع",
+    "description": "إدارة إشعارات الدفع للعملاء",
+    "notSupported": "إشعارات الدفع غير مدعومة في هذا المتصفح",
+    "subscriptionStatus": "حالة الاشتراك",
+    "subscriptionActive": "نشط",
+    "subscriptionInactive": "غير نشط",
+    "subscribe": "اشتراك في الإشعارات",
+    "test": "اختبار",
+    "sendNotification": "إرسال إشعار",
+    "history": "التاريخ",
+    "createMarketing": "إنشاء حملة تسويقية",
+    "createMarketingDesc": "إرسال إشعار لجميع المستخدمين المشتركين",
+    "title_field": "العنوان",
+    "message_field": "الرسالة",
+    "titlePlaceholder": "عنوان الإشعار",
+    "messagePlaceholder": "نص الإشعار",
+    "sendToAll": "إرسال للجميع",
+    "sending": "جاري الإرسال...",
+    "historyTitle": "تاريخ الإشعارات",
+    "historyDesc": "الإشعارات التسويقية الأخيرة المرسلة",
+    "noNotifications": "لم يتم إرسال إشعارات بعد",
+    "sentTo": "تم الإرسال إلى: {{count}} مستلم",
+    "date": "التاريخ",
+    "author": "المؤلف"
   }
 }

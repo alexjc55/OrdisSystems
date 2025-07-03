@@ -1050,5 +1050,31 @@
     "admin": "מנהל",
     "worker": "עובד",
     "customer": "לקוח"
+  },
+  "pushNotifications": {
+    "title": "התראות Push",
+    "description": "ניהול התראות push ללקוחות",
+    "notSupported": "התראות push אינן נתמכות בדפדפן זה",
+    "subscriptionStatus": "סטטוס מנוי",
+    "subscriptionActive": "פעיל",
+    "subscriptionInactive": "לא פעיל",
+    "subscribe": "הירשם להתראות",
+    "test": "בדיקה",
+    "sendNotification": "שלח התראה",
+    "history": "היסטוריה",
+    "createMarketing": "צור קמפיין שיווקי",
+    "createMarketingDesc": "שלח התראה לכל המשתמשים הרשומים",
+    "title_field": "כותרת",
+    "message_field": "הודעה",
+    "titlePlaceholder": "כותרת ההתראה",
+    "messagePlaceholder": "טקסט ההתראה",
+    "sendToAll": "שלח לכולם",
+    "sending": "שולח...",
+    "historyTitle": "היסטוריית התראות",
+    "historyDesc": "התראות שיווקיות אחרונות שנשלחו",
+    "noNotifications": "עדיין לא נשלחו התראות",
+    "sentTo": "נשלח ל: {{count}} נמענים",
+    "date": "תאריך",
+    "author": "כותב"
   }
 }

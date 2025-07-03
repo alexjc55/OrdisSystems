@@ -884,5 +884,31 @@
     "fieldsCopied": "Copied {{count}} fields",
     "clearSuccess": "Fields cleared",
     "fieldsCleared": "Cleared {{count}} fields"
+  },
+  "pushNotifications": {
+    "title": "Push Notifications",
+    "description": "Manage push notifications for customers",
+    "notSupported": "Push notifications are not supported in this browser",
+    "subscriptionStatus": "Subscription status",
+    "subscriptionActive": "Active",
+    "subscriptionInactive": "Inactive",
+    "subscribe": "Subscribe to notifications",
+    "test": "Test",
+    "sendNotification": "Send notification",
+    "history": "History",
+    "createMarketing": "Create marketing campaign",
+    "createMarketingDesc": "Send notification to all subscribed users",
+    "title_field": "Title",
+    "message_field": "Message",
+    "titlePlaceholder": "Notification title",
+    "messagePlaceholder": "Notification text",
+    "sendToAll": "Send to all",
+    "sending": "Sending...",
+    "historyTitle": "Notifications history",
+    "historyDesc": "Recent marketing notifications sent",
+    "noNotifications": "No notifications sent yet",
+    "sentTo": "Sent to: {{count}} recipients",
+    "date": "Date",
+    "author": "Author"
   }
 }
