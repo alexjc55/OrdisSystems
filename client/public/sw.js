@@ -19,16 +19,29 @@ const API_CACHE_PATTERNS = [
 
 // Push notification event handlers
 self.addEventListener('push', function(event) {
-  console.log('🔔 Push event received!', event);
+  console.log('🔔 [SW] Push event received!', {
+    hasData: !!event.data,
+    timestamp: new Date().toISOString()
+  });
   
   if (!event.data) {
-    console.log('❌ No data in push event');
+    console.log('❌ [SW] No data in push event');
+    // Show test notification anyway
+    event.waitUntil(
+      self.registration.showNotification('eDAHouse - Тест', {
+        body: 'Push событие получено, но без данных',
+        icon: '/api/icons/icon-192x192.png',
+        badge: '/api/icons/icon-96x96.png',
+        tag: 'no-data_' + Date.now(),
+        requireInteraction: true
+      })
+    );
     return;
   }
 
   try {
     const data = event.data.json();
-    console.log('✅ Push notification data parsed:', data);
+    console.log('✅ [SW] Push notification data parsed:', JSON.stringify(data, null, 2));
 
     // Create unique tag to prevent duplicate notifications
     const notificationTag = (data.data?.type || 'default') + '_' + Date.now();
@@ -40,33 +53,53 @@ self.addEventListener('push', function(event) {
       data: data.data || {},
       actions: data.actions || [],
       tag: notificationTag,
-      requireInteraction: data.data?.type === 'order-status' || data.data?.type === 'cart-reminder',
+      requireInteraction: true, // Force interaction for testing
       vibrate: [200, 100, 200],
       silent: false,
-      renotify: false // Prevent re-notification for same tag
+      renotify: false
     };
 
-    console.log('🔔 Showing notification with options:', options);
+    console.log('🔔 [SW] About to show notification with options:', JSON.stringify(options, null, 2));
     
     event.waitUntil(
       self.registration.showNotification(data.title, options)
         .then(() => {
-          console.log('✅ Notification shown successfully:', data.title);
+          console.log('✅ [SW] Notification shown successfully:', data.title);
+          // Broadcast to main thread for debugging
+          self.clients.matchAll().then(clients => {
+            clients.forEach(client => {
+              client.postMessage({
+                type: 'notification-shown',
+                title: data.title,
+                body: data.body
+              });
+            });
+          });
         })
         .catch(error => {
-          console.error('❌ Failed to show notification:', error);
+          console.error('❌ [SW] Failed to show notification:', error);
+          // Broadcast error to main thread
+          self.clients.matchAll().then(clients => {
+            clients.forEach(client => {
+              client.postMessage({
+                type: 'notification-error',
+                error: error.message
+              });
+            });
+          });
         })
     );
   } catch (error) {
-    console.error('Error processing push notification:', error);
+    console.error('❌ [SW] Error processing push notification:', error);
     
     // Fallback notification with unique tag
     event.waitUntil(
-      self.registration.showNotification('eDAHouse', {
-        body: 'У вас новое уведомление',
+      self.registration.showNotification('eDAHouse - Ошибка', {
+        body: 'Ошибка обработки уведомления: ' + error.message,
         icon: '/api/icons/icon-192x192.png',
         badge: '/api/icons/icon-96x96.png',
-        tag: 'fallback_' + Date.now()
+        tag: 'error_' + Date.now(),
+        requireInteraction: true
       })
     );
   }

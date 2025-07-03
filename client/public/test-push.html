@@ -3,310 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Тест Push Уведомлений - eDAHouse v1.2</title>
+    <title>Push Notifications Test - eDAHouse</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 600px;
+            font-family: Arial, sans-serif;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             background: #f5f5f5;
         }
         .container {
             background: white;
-            padding: 30px;
-            border-radius: 10px;
+            padding: 20px;
+            border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .status {
+        .section {
+            margin: 20px 0;
             padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .status {
+            padding: 10px;
             margin: 10px 0;
             border-radius: 5px;
             font-weight: bold;
         }
-        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
         button {
             background: #007bff;
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-            margin: 10px 5px 10px 0;
-            font-size: 16px;
+            margin: 5px;
         }
         button:hover { background: #0056b3; }
         button:disabled { background: #6c757d; cursor: not-allowed; }
-        .log {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 15px;
-            margin-top: 20px;
-            font-family: monospace;
-            font-size: 14px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .log-entry {
+        textarea, input {
+            width: 100%;
+            padding: 8px;
             margin: 5px 0;
-            padding: 5px;
-            border-left: 3px solid #007bff;
-            padding-left: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        textarea { height: 60px; resize: vertical; }
+        .log {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            border-radius: 4px;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔔 Тест Push Уведомлений</h1>
-        <p>Эта страница поможет диагностировать проблемы с push уведомлениями.</p>
+        <h1>🔔 Push Notifications Test</h1>
         
-        <div id="status-container">
-            <div id="browser-support" class="status info">
-                Проверка поддержки браузера...
-            </div>
-            <div id="sw-status" class="status info">
-                Проверка Service Worker...
-            </div>
-            <div id="permission-status" class="status info">
-                Проверка разрешений...
-            </div>
-            <div id="subscription-status" class="status info">
-                Проверка подписки...
-            </div>
+        <div class="section">
+            <h2>1. Browser Support Check</h2>
+            <div id="support-status"></div>
         </div>
 
-        <div style="margin: 20px 0;">
-            <button id="request-permission">Запросить разрешение</button>
-            <button id="subscribe-btn">Подписаться на уведомления</button>
-            <button id="test-local">Тест локального уведомления</button>
-            <button id="test-server">Тест серверного уведомления</button>
+        <div class="section">
+            <h2>2. Permission Status</h2>
+            <div id="permission-status"></div>
+            <button id="request-permission">Request Permission</button>
         </div>
 
-        <div class="log" id="log-container">
-            <div class="log-entry">Журнал событий:</div>
+        <div class="section">
+            <h2>3. Service Worker Status</h2>
+            <div id="sw-status"></div>
+            <button id="register-sw">Register Service Worker</button>
+        </div>
+
+        <div class="section">
+            <h2>4. Push Subscription</h2>
+            <div id="subscription-status"></div>
+            <button id="subscribe-btn">Subscribe to Push</button>
+            <button id="unsubscribe-btn">Unsubscribe</button>
+        </div>
+
+        <div class="section">
+            <h2>5. Test Notification</h2>
+            <input type="text" id="test-title" placeholder="Заголовок уведомления" value="Тест eDAHouse">
+            <textarea id="test-message" placeholder="Текст уведомления">Это тестовое push уведомление для проверки системы</textarea>
+            <button id="send-test">Send Test Notification</button>
+        </div>
+
+        <div class="section">
+            <h2>6. Debug Log</h2>
+            <button id="clear-log">Clear Log</button>
+            <div id="debug-log" class="log"></div>
         </div>
     </div>
 
     <script>
-        const log = document.getElementById('log-container');
+        let registration = null;
+        let subscription = null;
         
-        function addLog(message, type = 'info') {
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            entry.style.borderLeftColor = type === 'error' ? '#dc3545' : 
-                                         type === 'success' ? '#28a745' : 
-                                         type === 'warning' ? '#ffc107' : '#007bff';
-            entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
-            log.appendChild(entry);
-            log.scrollTop = log.scrollHeight;
+        function log(message) {
+            console.log(message);
+            const logDiv = document.getElementById('debug-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
         }
 
-        function updateStatus(elementId, message, type) {
+        function setStatus(elementId, message, type = 'info') {
             const element = document.getElementById(elementId);
-            element.textContent = message;
-            element.className = `status ${type}`;
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
         }
 
-        async function checkBrowserSupport() {
-            if ('serviceWorker' in navigator && 'PushManager' in window) {
-                updateStatus('browser-support', '✅ Браузер поддерживает push уведомления', 'success');
-                addLog('Браузер поддерживает push уведомления', 'success');
-                return true;
+        // 1. Check browser support
+        function checkSupport() {
+            const hasNotifications = 'Notification' in window;
+            const hasServiceWorker = 'serviceWorker' in navigator;
+            const hasPushManager = 'PushManager' in window;
+            
+            if (hasNotifications && hasServiceWorker && hasPushManager) {
+                setStatus('support-status', '✅ Push notifications fully supported', 'success');
+                log('✅ Browser supports push notifications');
             } else {
-                updateStatus('browser-support', '❌ Браузер не поддерживает push уведомления', 'error');
-                addLog('Браузер не поддерживает push уведомления', 'error');
-                return false;
+                setStatus('support-status', '❌ Push notifications not supported', 'error');
+                log('❌ Browser does not support push notifications');
             }
+            
+            log(`Notifications: ${hasNotifications}, SW: ${hasServiceWorker}, Push: ${hasPushManager}`);
         }
 
-        async function checkServiceWorker() {
-            try {
-                const registration = await navigator.serviceWorker.register('/sw.js');
-                await navigator.serviceWorker.ready;
-                updateStatus('sw-status', '✅ Service Worker зарегистрирован', 'success');
-                addLog('Service Worker зарегистрирован успешно', 'success');
-                return registration;
-            } catch (error) {
-                updateStatus('sw-status', '❌ Ошибка регистрации Service Worker', 'error');
-                addLog(`Ошибка Service Worker: ${error.message}`, 'error');
-                return null;
-            }
-        }
-
-        async function checkPermission() {
-            const permission = Notification.permission;
-            if (permission === 'granted') {
-                updateStatus('permission-status', '✅ Разрешение на уведомления получено', 'success');
-                addLog('Разрешение на уведомления получено', 'success');
-            } else if (permission === 'denied') {
-                updateStatus('permission-status', '❌ Разрешение на уведомления запрещено', 'error');
-                addLog('Разрешение на уведомления запрещено', 'error');
-            } else {
-                updateStatus('permission-status', '⚠️ Разрешение на уведомления не запрошено', 'warning');
-                addLog('Разрешение на уведомления не запрошено', 'warning');
-            }
-            return permission;
-        }
-
-        async function checkSubscription() {
-            try {
-                const registration = await navigator.serviceWorker.ready;
-                const subscription = await registration.pushManager.getSubscription();
+        // 2. Check permission status
+        function checkPermission() {
+            if ('Notification' in window) {
+                const permission = Notification.permission;
+                const statusMap = {
+                    'granted': { message: '✅ Permission granted', type: 'success' },
+                    'denied': { message: '❌ Permission denied', type: 'error' },
+                    'default': { message: '⚠️ Permission not requested', type: 'warning' }
+                };
                 
-                if (subscription) {
-                    updateStatus('subscription-status', '✅ Подписка на push уведомления активна', 'success');
-                    addLog('Подписка на push уведомления найдена', 'success');
-                    addLog(`Endpoint: ${subscription.endpoint.substring(0, 50)}...`, 'info');
-                } else {
-                    updateStatus('subscription-status', '⚠️ Подписка на push уведомления отсутствует', 'warning');
-                    addLog('Подписка на push уведомления не найдена', 'warning');
+                const status = statusMap[permission] || { message: '❓ Unknown status', type: 'warning' };
+                setStatus('permission-status', status.message, status.type);
+                log(`Permission status: ${permission}`);
+            }
+        }
+
+        // 3. Register service worker
+        async function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    registration = await navigator.serviceWorker.register('/sw.js');
+                    setStatus('sw-status', '✅ Service Worker registered', 'success');
+                    log('✅ Service Worker registered successfully');
+                    
+                    // Listen for Service Worker messages
+                    navigator.serviceWorker.addEventListener('message', (event) => {
+                        log(`📨 Message from SW: ${JSON.stringify(event.data)}`);
+                    });
+                    
+                } catch (error) {
+                    setStatus('sw-status', `❌ Service Worker failed: ${error.message}`, 'error');
+                    log(`❌ Service Worker registration failed: ${error}`);
                 }
-                return subscription;
-            } catch (error) {
-                updateStatus('subscription-status', '❌ Ошибка проверки подписки', 'error');
-                addLog(`Ошибка проверки подписки: ${error.message}`, 'error');
-                return null;
+            } else {
+                setStatus('sw-status', '❌ Service Worker not supported', 'error');
             }
         }
 
-        async function requestPermission() {
-            try {
-                const permission = await Notification.requestPermission();
-                addLog(`Результат запроса разрешения: ${permission}`, permission === 'granted' ? 'success' : 'error');
-                await checkPermission();
-            } catch (error) {
-                addLog(`Ошибка запроса разрешения: ${error.message}`, 'error');
+        // 4. Subscribe to push notifications
+        async function subscribeToPush() {
+            if (!registration) {
+                log('❌ No service worker registration');
+                return;
             }
-        }
 
-        async function subscribe() {
             try {
-                const registration = await navigator.serviceWorker.ready;
-                
-                // Получаем VAPID ключ с сервера
+                // Get VAPID key
                 const response = await fetch('/api/push/vapid-key');
                 const { publicKey } = await response.json();
-                
-                addLog(`Получен VAPID ключ: ${publicKey.substring(0, 20)}...`, 'info');
-                
-                const subscription = await registration.pushManager.subscribe({
+                log(`📝 Got VAPID key: ${publicKey.substring(0, 20)}...`);
+
+                // Subscribe
+                subscription = await registration.pushManager.subscribe({
                     userVisibleOnly: true,
                     applicationServerKey: publicKey
                 });
+
+                setStatus('subscription-status', '✅ Subscribed to push notifications', 'success');
+                log('✅ Successfully subscribed to push notifications');
                 
-                addLog('Подписка создана успешно', 'success');
-                
-                // Отправляем подписку на сервер
-                const saveResponse = await fetch('/api/push/subscribe', {
+                // Send subscription to server
+                await fetch('/api/push/subscribe', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(subscription)
-                });
-                
-                if (saveResponse.ok) {
-                    addLog('Подписка сохранена на сервере', 'success');
-                } else {
-                    addLog('Ошибка сохранения подписки на сервере', 'error');
-                }
-                
-                await checkSubscription();
-            } catch (error) {
-                addLog(`Ошибка подписки: ${error.message}`, 'error');
-            }
-        }
-
-        async function testLocalNotification() {
-            if (Notification.permission === 'granted') {
-                try {
-                    const registration = await navigator.serviceWorker.ready;
-                    
-                    await registration.showNotification('🧪 Тестовое уведомление через SW', {
-                        body: 'Это локальное тестовое уведомление через Service Worker',
-                        icon: '/api/icons/icon-192x192.png',
-                        badge: '/api/icons/icon-96x96.png',
-                        tag: 'test-local-' + Date.now(),
-                        data: { type: 'test-local' },
-                        vibrate: [200, 100, 200]
-                    });
-                    
-                    addLog('Локальное уведомление через Service Worker отправлено', 'success');
-                } catch (error) {
-                    addLog(`Ошибка локального уведомления: ${error.message}`, 'error');
-                }
-            } else {
-                addLog('Нет разрешения для локального уведомления', 'error');
-            }
-        }
-
-        async function testServerNotification() {
-            try {
-                addLog('Отправляем тестовое уведомление через сервер...', 'info');
-                
-                // Тестируем доступность endpoint
-                const testEndpoint = '/api/test/push/marketing';
-                addLog(`Используем endpoint: ${testEndpoint}`, 'info');
-                
-                const response = await fetch(testEndpoint, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Cache-Control': 'no-cache'
-                    },
+                    credentials: 'include',
                     body: JSON.stringify({
-                        title: '🧪 Тест с диагностической страницы v1.1',
-                        message: 'Это тестовое уведомление с диагностической страницы - исправленная версия'
+                        endpoint: subscription.endpoint,
+                        keys: {
+                            p256dh: arrayBufferToBase64(subscription.getKey('p256dh')),
+                            auth: arrayBufferToBase64(subscription.getKey('auth'))
+                        }
                     })
                 });
                 
-                addLog(`Response status: ${response.status}`, 'info');
+                log('✅ Subscription sent to server');
                 
-                if (response.ok) {
-                    const result = await response.json();
-                    addLog(`Серверное уведомление отправлено: ${result.message}`, 'success');
-                    addLog(`Отправлено ${result.sentCount} уведомлений`, 'info');
-                } else {
-                    const errorText = await response.text();
-                    addLog(`Ошибка отправки серверного уведомления: ${response.status} - ${errorText}`, 'error');
-                }
             } catch (error) {
-                addLog(`Ошибка серверного уведомления: ${error.message}`, 'error');
+                setStatus('subscription-status', `❌ Subscription failed: ${error.message}`, 'error');
+                log(`❌ Push subscription failed: ${error}`);
             }
         }
 
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', async () => {
-            addLog('Начинаем диагностику...', 'info');
-            
-            const isSupported = await checkBrowserSupport();
-            if (!isSupported) return;
-            
-            await checkServiceWorker();
-            await checkPermission();
-            await checkSubscription();
-            
-            // Прослушиваем сообщения от Service Worker
-            navigator.serviceWorker.addEventListener('message', event => {
-                addLog(`Сообщение от SW: ${JSON.stringify(event.data)}`, 'info');
-            });
-            
-            addLog('Диагностика завершена', 'success');
-        });
+        // Helper function
+        function arrayBufferToBase64(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let binary = '';
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+        }
 
-        // Обработчики кнопок
-        document.getElementById('request-permission').onclick = requestPermission;
-        document.getElementById('subscribe-btn').onclick = subscribe;
-        document.getElementById('test-local').onclick = testLocalNotification;
-        document.getElementById('test-server').onclick = testServerNotification;
-        
-        // Версия для диагностики кеша
-        console.log('Test page loaded - version 1.1 - using /api/test/push/marketing endpoint');
+        // 5. Send test notification
+        async function sendTestNotification() {
+            const title = document.getElementById('test-title').value;
+            const message = document.getElementById('test-message').value;
+            
+            if (!title || !message) {
+                log('❌ Title and message required');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/test/push/marketing', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, message })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    log(`✅ Test notification sent: ${JSON.stringify(result)}`);
+                } else {
+                    log(`❌ Test notification failed: ${response.status}`);
+                }
+            } catch (error) {
+                log(`❌ Test notification error: ${error.message}`);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('request-permission').onclick = () => {
+            Notification.requestPermission().then(permission => {
+                log(`Permission result: ${permission}`);
+                checkPermission();
+            });
+        };
+
+        document.getElementById('register-sw').onclick = registerServiceWorker;
+        document.getElementById('subscribe-btn').onclick = subscribeToPush;
+        document.getElementById('send-test').onclick = sendTestNotification;
+        document.getElementById('clear-log').onclick = () => {
+            document.getElementById('debug-log').innerHTML = '';
+        };
+
+        // Initial checks
+        window.addEventListener('load', () => {
+            log('🚀 Push notification test page loaded');
+            checkSupport();
+            checkPermission();
+            
+            // Auto-register service worker
+            if ('serviceWorker' in navigator) {
+                registerServiceWorker();
+            }
+        });
     </script>
 </body>
 </html>

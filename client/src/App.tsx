@@ -75,29 +75,34 @@ function Router() {
   // Listen for messages from Service Worker (notification clicks)
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      console.log('📨 Received message from Service Worker:', event.data);
+      console.log('📨 [App] Received message from Service Worker:', event.data);
       
-      // Показать алерт для отладки на мобильном устройстве
-      if (event.data?.type === 'notification-click') {
-        alert(`Получено сообщение от Service Worker: ${JSON.stringify(event.data)}`);
-      }
-      
-      if (event.data?.type === 'notification-click' && event.data?.notification) {
-        const { title, body, type: notificationType } = event.data.notification;
-        const fallbackType = event.data.data?.type || 'marketing';
+      // Handle different message types from Service Worker
+      if (event.data?.type === 'notification-shown') {
+        console.log('✅ [App] Notification was shown successfully:', event.data.title);
+      } else if (event.data?.type === 'notification-error') {
+        console.error('❌ [App] Notification failed to show:', event.data.error);
+        alert(`Push notification error: ${event.data.error}`);
+      } else if (event.data?.type === 'notification-click') {
+        console.log('🔔 [App] Notification was clicked:', event.data);
         
-        console.log('🔔 Opening notification modal:', {
-          title,
-          body,
-          type: notificationType || fallbackType
-        });
-        
-        setNotificationModal({
-          isOpen: true,
-          title: title || 'Уведомление',
-          message: body || 'Новое уведомление',
-          type: notificationType || fallbackType
-        });
+        if (event.data?.notification) {
+          const { title, body, type: notificationType } = event.data.notification;
+          const fallbackType = event.data.data?.type || 'marketing';
+          
+          console.log('🔔 [App] Opening notification modal:', {
+            title,
+            body,
+            type: notificationType || fallbackType
+          });
+          
+          setNotificationModal({
+            isOpen: true,
+            title: title || 'Уведомление',
+            message: body || 'Новое уведомление',
+            type: notificationType || fallbackType
+          });
+        }
       }
     };
 
