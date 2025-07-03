@@ -3183,7 +3183,7 @@ export default function AdminDashboard() {
     <div className={`min-h-screen bg-gray-50 pt-16`} dir={isRTL ? 'rtl' : 'ltr'}>
       <Header />
       
-      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+      <div className="admin-content-area container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         <div className="mb-4 sm:mb-8">
           <div className={`flex flex-col sm:flex-row sm:items-center ${isRTL ? 'sm:flex-row-reverse' : ''} justify-between gap-4`}>
             <div className={`${isRTL ? 'text-right ml-auto' : 'text-left mr-auto'} w-full sm:w-auto`}>
@@ -3458,7 +3458,7 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Search and Filter Controls */}
-                <div className={`flex flex-col gap-3 ${isRTL ? 'lg:flex-row-reverse' : 'lg:flex-row'}`}>
+                <div className={`admin-filters-container flex flex-col gap-3 ${isRTL ? 'lg:flex-row-reverse' : 'lg:flex-row'}`}>
                   <div className="relative flex-1">
                     <Search className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                     <Input
@@ -3472,10 +3472,10 @@ export default function AdminDashboard() {
                     <div className="relative min-w-[180px]">
                       <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                       <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
-                        <SelectTrigger className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
+                        <SelectTrigger className={`admin-select-trigger text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
                           <SelectValue placeholder={adminT('products.allCategories')} />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="admin-select-content">
                           <SelectItem value="all">{adminT('products.allCategories')}</SelectItem>
                           {(categories as any[] || []).map((category: any) => (
                             <SelectItem 
@@ -3492,10 +3492,10 @@ export default function AdminDashboard() {
                     <div className="relative min-w-[160px]">
                       <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                       <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
-                        <SelectTrigger className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
+                        <SelectTrigger className={`admin-select-trigger text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
                           <SelectValue placeholder={adminT('products.productStatus')} />
                         </SelectTrigger>
-                        <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                        <SelectContent className="admin-select-content bg-white border border-gray-200 shadow-lg">
                           <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{adminT('products.allProducts')}</SelectItem>
                           <SelectItem value="available" className="text-gray-900 hover:bg-gray-100">{adminT('products.availableProducts')}</SelectItem>
                           <SelectItem value="unavailable" className="text-gray-900 hover:bg-gray-100">{adminT('products.unavailableProducts')}</SelectItem>

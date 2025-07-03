@@ -693,6 +693,37 @@ button:focus,
     font-feature-settings: 'lnum' 1;
   }
   
+  /* Admin dropdown stability fixes */
+  .admin-select-trigger,
+  [data-radix-select-trigger] {
+    position: relative !important;
+  }
+  
+  .admin-select-content,
+  [data-radix-select-content] {
+    position: absolute !important;
+    z-index: 50 !important;
+    min-width: 8rem !important;
+    max-width: 20rem !important;
+  }
+  
+  /* Prevent layout shifts from dropdowns */
+  .admin-filters-container {
+    contain: layout !important;
+  }
+  
+  /* Stabilize select content positioning */
+  [data-radix-popper-content-wrapper] {
+    will-change: auto !important;
+    transform: none !important;
+  }
+  
+  /* Admin panel container stability */
+  .admin-content-area {
+    position: relative !important;
+    isolation: isolate !important;
+  }
+  
   [dir="rtl"] .table-container table {
     direction: rtl !important;
   }
