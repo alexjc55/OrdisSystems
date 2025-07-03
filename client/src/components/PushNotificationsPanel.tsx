@@ -9,17 +9,12 @@ import { Bell, Send, TestTube, Users, Settings } from 'lucide-react';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
+import { useTranslation } from 'react-i18next';
 
 interface MarketingNotification {
   id: number;
   title: string;
   message: string;
-  titleEn?: string;
-  messageEn?: string;
-  titleHe?: string;
-  messageHe?: string;
-  titleAr?: string;
-  messageAr?: string;
   sentCount: number;
   createdBy: string;
   sentAt: string;
@@ -29,16 +24,11 @@ interface MarketingNotification {
 export function PushNotificationsPanel() {
   const { isSupported, isSubscribed, subscribe, sendTestNotification } = usePushNotifications();
   const queryClient = useQueryClient();
+  const { t } = useTranslation('admin');
   
   const [marketingForm, setMarketingForm] = useState({
     title: '',
-    message: '',
-    titleEn: '',
-    messageEn: '',
-    titleHe: '',
-    messageHe: '',
-    titleAr: '',
-    messageAr: ''
+    message: ''
   });
 
   // Fetch marketing notifications history
@@ -49,12 +39,10 @@ export function PushNotificationsPanel() {
 
   // Send marketing notification mutation
   const sendMarketingMutation = useMutation({
-    mutationFn: async (data: typeof marketingForm) => {
-      const response = await fetch('/api/admin/push/marketing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(data)
+    mutationFn: async (data: { title: string; message: string }) => {
+      const response = await apiRequest('POST', '/api/admin/push/marketing', {
+        title: data.title,
+        message: data.message
       });
       if (!response.ok) throw new Error('Failed to send notification');
       return response.json();
@@ -63,13 +51,7 @@ export function PushNotificationsPanel() {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/push/marketing'] });
       setMarketingForm({
         title: '',
-        message: '',
-        titleEn: '',
-        messageEn: '',
-        titleHe: '',
-        messageHe: '',
-        titleAr: '',
-        messageAr: ''
+        message: ''
       });
     }
   });
@@ -134,7 +116,7 @@ export function PushNotificationsPanel() {
               </Button>
             )}
             
-            <Button onClick={handleTestNotification} size="sm" variant="outline">
+            <Button onClick={handleTestNotification} variant="outline" size="sm">
               <TestTube className="h-4 w-4 mr-2" />
               Тест
             </Button>
@@ -142,13 +124,16 @@ export function PushNotificationsPanel() {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="marketing" className="space-y-4">
+      <Tabs defaultValue="send" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="marketing">Маркетинговые рассылки</TabsTrigger>
-          <TabsTrigger value="history">История уведомлений</TabsTrigger>
+          <TabsTrigger value="send">
+            <Send className="h-4 w-4 mr-2" />
+            Отправить уведомление
+          </TabsTrigger>
+          <TabsTrigger value="history">История</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="marketing">
+        <TabsContent value="send">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -160,114 +145,31 @@ export function PushNotificationsPanel() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Russian version */}
-                <div className="space-y-4">
-                  <h4 className="font-medium">Русский язык</h4>
-                  <div>
-                    <Label htmlFor="title-ru">Заголовок *</Label>
-                    <Input
-                      id="title-ru"
-                      value={marketingForm.title}
-                      onChange={(e) => setMarketingForm(prev => ({ ...prev, title: e.target.value }))}
-                      placeholder="Заголовок уведомления"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="message-ru">Сообщение *</Label>
-                    <Textarea
-                      id="message-ru"
-                      value={marketingForm.message}
-                      onChange={(e) => setMarketingForm(prev => ({ ...prev, message: e.target.value }))}
-                      placeholder="Текст уведомления"
-                      rows={3}
-                      required
-                    />
-                  </div>
+              <div className="space-y-4 max-w-md">
+                <div>
+                  <Label htmlFor="title">Заголовок *</Label>
+                  <Input
+                    id="title"
+                    value={marketingForm.title}
+                    onChange={(e) => setMarketingForm(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="Заголовок уведомления"
+                    required
+                  />
                 </div>
-
-                {/* English version */}
-                <div className="space-y-4">
-                  <h4 className="font-medium">English</h4>
-                  <div>
-                    <Label htmlFor="title-en">Title</Label>
-                    <Input
-                      id="title-en"
-                      value={marketingForm.titleEn}
-                      onChange={(e) => setMarketingForm(prev => ({ ...prev, titleEn: e.target.value }))}
-                      placeholder="Notification title"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="message-en">Message</Label>
-                    <Textarea
-                      id="message-en"
-                      value={marketingForm.messageEn}
-                      onChange={(e) => setMarketingForm(prev => ({ ...prev, messageEn: e.target.value }))}
-                      placeholder="Notification message"
-                      rows={3}
-                    />
-                  </div>
-                </div>
-
-                {/* Hebrew version */}
-                <div className="space-y-4">
-                  <h4 className="font-medium">עברית</h4>
-                  <div>
-                    <Label htmlFor="title-he">כותרת</Label>
-                    <Input
-                      id="title-he"
-                      value={marketingForm.titleHe}
-                      onChange={(e) => setMarketingForm(prev => ({ ...prev, titleHe: e.target.value }))}
-                      placeholder="כותרת ההודעה"
-                      dir="rtl"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="message-he">הודעה</Label>
-                    <Textarea
-                      id="message-he"
-                      value={marketingForm.messageHe}
-                      onChange={(e) => setMarketingForm(prev => ({ ...prev, messageHe: e.target.value }))}
-                      placeholder="טקסט ההודעה"
-                      rows={3}
-                      dir="rtl"
-                    />
-                  </div>
-                </div>
-
-                {/* Arabic version */}
-                <div className="space-y-4">
-                  <h4 className="font-medium">العربية</h4>
-                  <div>
-                    <Label htmlFor="title-ar">العنوان</Label>
-                    <Input
-                      id="title-ar"
-                      value={marketingForm.titleAr}
-                      onChange={(e) => setMarketingForm(prev => ({ ...prev, titleAr: e.target.value }))}
-                      placeholder="عنوان الإشعار"
-                      dir="rtl"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="message-ar">الرسالة</Label>
-                    <Textarea
-                      id="message-ar"
-                      value={marketingForm.messageAr}
-                      onChange={(e) => setMarketingForm(prev => ({ ...prev, messageAr: e.target.value }))}
-                      placeholder="نص الإشعار"
-                      rows={3}
-                      dir="rtl"
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="message">Сообщение *</Label>
+                  <Textarea
+                    id="message"
+                    value={marketingForm.message}
+                    onChange={(e) => setMarketingForm(prev => ({ ...prev, message: e.target.value }))}
+                    placeholder="Текст уведомления"
+                    rows={3}
+                    required
+                  />
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t">
-                <div className="text-sm text-muted-foreground">
-                  * Русский язык обязателен. Другие языки опциональны.
-                </div>
+              <div className="flex justify-end pt-4 border-t">
                 <Button 
                   onClick={handleMarketingSend}
                   disabled={!marketingForm.title || !marketingForm.message || sendMarketingMutation.isPending}
@@ -296,30 +198,28 @@ export function PushNotificationsPanel() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {notifications.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  Уведомления еще не отправлялись
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {notifications.map((notification) => (
-                    <div key={notification.id} className="border rounded-lg p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-medium">{notification.title}</h4>
-                        <div className="text-sm text-muted-foreground">
-                          Отправлено: {notification.sentCount} пользователям
-                        </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {notification.message}
-                      </p>
-                      <div className="text-xs text-muted-foreground">
-                        {new Date(notification.sentAt).toLocaleString('ru-RU')}
+              <div className="space-y-4">
+                {notifications.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    Уведомления еще не отправлялись
+                  </div>
+                ) : (
+                  notifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className="border rounded-lg p-4 space-y-2"
+                    >
+                      <div className="font-medium">{notification.title}</div>
+                      <div className="text-sm text-muted-foreground">{notification.message}</div>
+                      <div className="text-xs text-muted-foreground flex items-center gap-4">
+                        <span>Отправлено: {notification.sentCount} получателей</span>
+                        <span>Дата: {new Date(notification.sentAt).toLocaleString('ru-RU')}</span>
+                        <span>Автор: {notification.createdBy}</span>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  ))
+                )}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
