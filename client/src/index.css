@@ -2386,6 +2386,37 @@ html[dir="ltr"] {
   direction: ltr !important;
 }
 
+/* Fix main layout container flex direction for LTR languages */
+html[lang="ru"] .flex,
+html[lang="en"] .flex,
+html[dir="ltr"] .flex {
+  flex-direction: row !important;
+}
+
+/* Override any RTL flex-row-reverse rules for LTR languages */
+html[lang="ru"] .flex-row-reverse,
+html[lang="en"] .flex-row-reverse,
+html[dir="ltr"] .flex-row-reverse {
+  flex-direction: row !important;
+}
+
+/* Force LTR layout for main page container */
+html[lang="ru"] .min-h-screen,
+html[lang="en"] .min-h-screen,
+html[dir="ltr"] .min-h-screen {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* Ensure main container doesn't shift right */
+html[lang="ru"] main,
+html[lang="en"] main,
+html[dir="ltr"] main {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  text-align: left !important;
+}
+
 /* Force all elements in LTR to be LTR, but preserve center alignment */
 html[lang="ru"] *:not(.text-center):not([class*="center"]):not(button),
 html[lang="en"] *:not(.text-center):not([class*="center"]):not(button),
