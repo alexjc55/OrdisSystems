@@ -139,6 +139,20 @@ function Router() {
         } as MessageEvent);
       };
       
+      // Тестовая функция для PWA push уведомлений
+      (window as any).testPWANotification = async () => {
+        console.log('🧪 Testing PWA notification via Service Worker');
+        try {
+          const registration = await navigator.serviceWorker.ready;
+          registration.active?.postMessage({ 
+            type: 'test-pwa-notification' 
+          });
+          console.log('✅ PWA notification test message sent to Service Worker');
+        } catch (error) {
+          console.error('❌ PWA notification test failed:', error);
+        }
+      };
+      
       console.log('🧪 Test functions added: window.testNotificationModal(), window.testServiceWorkerMessage()');
     } else {
       console.log('❌ Service Worker not available');

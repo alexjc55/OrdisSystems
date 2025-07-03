@@ -19,21 +19,28 @@ const API_CACHE_PATTERNS = [
 
 // Push notification event handlers
 self.addEventListener('push', function(event) {
-  console.log('🔔 [SW] Push event received!', {
+  console.log('🔔 [SW] Push event received in Service Worker!', {
     hasData: !!event.data,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    isStandalone: self.clients ? 'clients available' : 'no clients'
   });
   
   if (!event.data) {
     console.log('❌ [SW] No data in push event');
-    // Show test notification anyway
+    // Show test notification anyway for debugging
     event.waitUntil(
-      self.registration.showNotification('eDAHouse - Тест', {
-        body: 'Push событие получено, но без данных',
+      self.registration.showNotification('eDAHouse - Debug', {
+        body: 'Push событие получено в Service Worker, но без данных',
         icon: '/api/icons/icon-192x192.png',
         badge: '/api/icons/icon-96x96.png',
         tag: 'no-data_' + Date.now(),
-        requireInteraction: true
+        requireInteraction: true,
+        actions: [
+          {
+            action: 'open',
+            title: 'Открыть приложение'
+          }
+        ]
       })
     );
     return;
@@ -46,17 +53,33 @@ self.addEventListener('push', function(event) {
     // Create unique tag to prevent duplicate notifications
     const notificationTag = (data.data?.type || 'default') + '_' + Date.now();
     
+    // Enhanced options for PWA mode
     const options = {
       body: data.body,
       icon: data.icon || '/api/icons/icon-192x192.png',
       badge: data.badge || '/api/icons/icon-96x96.png',
       data: data.data || {},
-      actions: data.actions || [],
+      actions: data.actions?.length > 0 ? data.actions : [
+        {
+          action: 'open',
+          title: 'Открыть',
+          icon: '/api/icons/icon-96x96.png'
+        },
+        {
+          action: 'close',
+          title: 'Закрыть'
+        }
+      ],
       tag: notificationTag,
-      requireInteraction: true, // Force interaction for testing
-      vibrate: [200, 100, 200],
+      requireInteraction: true,
+      vibrate: [200, 100, 200, 100, 200],
       silent: false,
-      renotify: false
+      renotify: false,
+      timestamp: Date.now(),
+      // Enhanced for PWA
+      image: data.image,
+      dir: 'auto',
+      lang: 'ru'
     };
 
     console.log('🔔 [SW] About to show notification with options:', JSON.stringify(options, null, 2));
@@ -105,11 +128,12 @@ self.addEventListener('push', function(event) {
   }
 });
 
-// Handle notification clicks
+// Handle notification clicks - Enhanced for PWA
 self.addEventListener('notificationclick', function(event) {
-  console.log('🔔 Notification clicked:', {
+  console.log('🔔 [SW] Notification clicked in PWA:', {
     title: event.notification.title,
     body: event.notification.body,
+    action: event.action,
     data: event.notification.data
   });
   
@@ -117,6 +141,12 @@ self.addEventListener('notificationclick', function(event) {
 
   const data = event.notification.data || {};
   const action = event.action;
+
+  // Handle close action
+  if (action === 'close') {
+    console.log('🔔 [SW] Notification closed by user');
+    return;
+  }
 
   let url = '/';
 
@@ -353,4 +383,52 @@ async function fetchAndCache(request, cache) {
   }
 }
 
-// DUPLICATE PUSH HANDLERS REMOVED - using unified handler at top of file
+// PWA Debug Functions
+self.testPWANotification = function() {
+  console.log('🧪 [SW] Testing PWA notification from Service Worker');
+  
+  const testOptions = {
+    body: 'Тестовое уведомление из Service Worker для PWA',
+    icon: '/api/icons/icon-192x192.png',
+    badge: '/api/icons/icon-96x96.png',
+    tag: 'pwa-test-' + Date.now(),
+    requireInteraction: true,
+    vibrate: [200, 100, 200],
+    actions: [
+      {
+        action: 'open',
+        title: 'Открыть приложение'
+      },
+      {
+        action: 'close',
+        title: 'Закрыть'
+      }
+    ],
+    data: {
+      type: 'test',
+      timestamp: Date.now()
+    }
+  };
+  
+  return self.registration.showNotification('eDAHouse - PWA Тест', testOptions)
+    .then(() => {
+      console.log('✅ [SW] PWA test notification shown successfully');
+      return 'Test notification shown';
+    })
+    .catch(error => {
+      console.error('❌ [SW] PWA test notification failed:', error);
+      throw error;
+    });
+};
+
+// Message handler for communication with main app
+self.addEventListener('message', function(event) {
+  console.log('📨 [SW] Received message:', event.data);
+  
+  if (event.data?.type === 'test-pwa-notification') {
+    console.log('🧪 [SW] Testing PWA notification via message');
+    self.testPWANotification();
+  }
+});
+
+console.log('🔔 [SW] PWA Service Worker loaded with enhanced push notification support');
