@@ -191,18 +191,18 @@ button:focus,
   }
   
   /* Global RTL styles for Hebrew and Arabic content */
-  html[lang="he"][dir="rtl"] div,
-  html[lang="ar"][dir="rtl"] div,
-  html[lang="he"][dir="rtl"] section,
-  html[lang="ar"][dir="rtl"] section,
-  html[lang="he"][dir="rtl"] article,
-  html[lang="ar"][dir="rtl"] article,
-  html[lang="he"][dir="rtl"] aside,
-  html[lang="ar"][dir="rtl"] aside,
-  html[lang="he"][dir="rtl"] nav,
-  html[lang="ar"][dir="rtl"] nav,
-  html[lang="he"][dir="rtl"] header,
-  html[lang="ar"][dir="rtl"] header {
+  html[lang="he"] div,
+  html[lang="ar"] div,
+  html[lang="he"] section,
+  html[lang="ar"] section,
+  html[lang="he"] article,
+  html[lang="ar"] article,
+  html[lang="he"] aside,
+  html[lang="ar"] aside,
+  html[lang="he"] nav,
+  html[lang="ar"] nav,
+  html[lang="he"] header,
+  html[lang="ar"] header {
     direction: rtl !important;
     text-align: right !important;
   }
@@ -2379,70 +2379,14 @@ html[lang="ar"] .swiper-button-next {
   left: 10px !important;
 }
 
-/* Force LTR for Russian and English */
-html[lang="ru"],
-html[lang="en"],
-html[dir="ltr"] {
-  direction: ltr !important;
-}
-
-/* Fix main layout container flex direction for LTR languages */
-html[lang="ru"] .flex,
-html[lang="en"] .flex,
-html[dir="ltr"] .flex {
-  flex-direction: row !important;
-}
-
-/* Override any RTL flex-row-reverse rules for LTR languages */
-html[lang="ru"] .flex-row-reverse,
-html[lang="en"] .flex-row-reverse,
-html[dir="ltr"] .flex-row-reverse {
-  flex-direction: row !important;
-}
-
-/* Force LTR layout for main page container */
-html[lang="ru"] .min-h-screen,
-html[lang="en"] .min-h-screen,
-html[dir="ltr"] .min-h-screen {
-  direction: ltr !important;
-  text-align: left !important;
-}
-
-/* Ensure main container doesn't shift right */
-html[lang="ru"] main,
-html[lang="en"] main,
-html[dir="ltr"] main {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  text-align: left !important;
-}
-
-/* Force all elements in LTR to be LTR, but preserve center alignment */
-html[lang="ru"] *:not(.text-center):not([class*="center"]):not(button),
-html[lang="en"] *:not(.text-center):not([class*="center"]):not(button),
-html[dir="ltr"] *:not(.text-center):not([class*="center"]):not(button) {
-  direction: ltr !important;
-  text-align: left !important;
-}
-
-/* Preserve center alignment for specific classes */
-html[lang="ru"] .text-center,
-html[lang="en"] .text-center,
-html[dir="ltr"] .text-center,
-html[lang="ru"] [class*="center"],
-html[lang="en"] [class*="center"],
-html[dir="ltr"] [class*="center"] {
-  text-align: center !important;
-}
-
 /* Unified RTL base direction for Hebrew and Arabic */
-html[lang="he"]:not([dir="ltr"]),
-html[lang="ar"]:not([dir="ltr"]) {
+html[lang="he"],
+html[lang="ar"] {
   direction: rtl !important;
 }
 
-html[lang="he"][dir="rtl"] *,
-html[lang="ar"][dir="rtl"] * {
+html[lang="he"] *,
+html[lang="ar"] * {
   direction: inherit;
 }
 
