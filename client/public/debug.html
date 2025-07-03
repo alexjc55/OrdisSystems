@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - eDAHouse</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .log {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Diagnostic Page</h1>
+        <p>Эта страница поможет диагностировать проблемы с основным сайтом</p>
+    </div>
+
+    <div class="container">
+        <h2>Browser Information</h2>
+        <div id="browser-info"></div>
+    </div>
+
+    <div class="container">
+        <h2>API Tests</h2>
+        <button onclick="testAPI()">Test API Connection</button>
+        <div id="api-results"></div>
+    </div>
+
+    <div class="container">
+        <h2>JavaScript Test</h2>
+        <button onclick="testJS()">Test JavaScript</button>
+        <div id="js-results"></div>
+    </div>
+
+    <div class="container">
+        <h2>Console Log</h2>
+        <button onclick="clearLog()">Clear Log</button>
+        <div id="debug-log" class="log"></div>
+    </div>
+
+    <script>
+        // Capture console logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addToLog(type, ...args) {
+            const logDiv = document.getElementById('debug-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const message = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)).join(' ');
+            logDiv.textContent += `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToLog('log', ...args);
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToLog('error', ...args);
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToLog('warn', ...args);
+        };
+        
+        // Global error handler
+        window.onerror = function(message, source, lineno, colno, error) {
+            addToLog('error', `Global error: ${message} at ${source}:${lineno}:${colno}`);
+        };
+        
+        window.addEventListener('unhandledrejection', function(event) {
+            addToLog('error', `Unhandled promise rejection: ${event.reason}`);
+        });
+
+        function showBrowserInfo() {
+            const info = {
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                cookieEnabled: navigator.cookieEnabled,
+                onLine: navigator.onLine,
+                platform: navigator.platform,
+                screenWidth: screen.width,
+                screenHeight: screen.height,
+                windowWidth: window.innerWidth,
+                windowHeight: window.innerHeight,
+                supportServiceWorker: 'serviceWorker' in navigator,
+                supportNotifications: 'Notification' in window,
+                supportPushManager: 'PushManager' in window
+            };
+            
+            const infoDiv = document.getElementById('browser-info');
+            infoDiv.innerHTML = Object.entries(info)
+                .map(([key, value]) => `<div><strong>${key}:</strong> ${value}</div>`)
+                .join('');
+                
+            console.log('Browser info loaded', info);
+        }
+
+        async function testAPI() {
+            const resultsDiv = document.getElementById('api-results');
+            resultsDiv.innerHTML = '<div class="warning">Testing API...</div>';
+            
+            try {
+                console.log('Testing API endpoints...');
+                
+                // Test settings endpoint
+                const settingsResponse = await fetch('/api/settings');
+                const settingsData = await settingsResponse.json();
+                console.log('Settings API response:', settingsData);
+                
+                // Test products endpoint
+                const productsResponse = await fetch('/api/products');
+                const productsData = await productsResponse.json();
+                console.log('Products API response:', productsData.length, 'products');
+                
+                // Test categories endpoint
+                const categoriesResponse = await fetch('/api/categories');
+                const categoriesData = await categoriesResponse.json();
+                console.log('Categories API response:', categoriesData.length, 'categories');
+                
+                resultsDiv.innerHTML = `
+                    <div class="success">✅ API Tests Passed</div>
+                    <div>Settings: ${settingsData.storeName}</div>
+                    <div>Products: ${productsData.length} items</div>
+                    <div>Categories: ${categoriesData.length} items</div>
+                `;
+                
+            } catch (error) {
+                console.error('API test failed:', error);
+                resultsDiv.innerHTML = `<div class="error">❌ API Test Failed: ${error.message}</div>`;
+            }
+        }
+
+        function testJS() {
+            const resultsDiv = document.getElementById('js-results');
+            console.log('Testing JavaScript functionality...');
+            
+            try {
+                // Test basic JavaScript features
+                const testObject = { test: 'value', number: 42 };
+                const testArray = [1, 2, 3, 4, 5];
+                const testPromise = Promise.resolve('test');
+                
+                // Test modern JavaScript features
+                const testArrowFunction = (x) => x * 2;
+                const testDestructuring = { a, b } = { a: 1, b: 2 };
+                const testTemplateString = `Template string works: ${testObject.test}`;
+                
+                console.log('JavaScript test results:', {
+                    testObject,
+                    testArray,
+                    arrowFunction: testArrowFunction(5),
+                    destructuring: { a, b },
+                    templateString: testTemplateString
+                });
+                
+                resultsDiv.innerHTML = '<div class="success">✅ JavaScript Test Passed</div>';
+                
+            } catch (error) {
+                console.error('JavaScript test failed:', error);
+                resultsDiv.innerHTML = `<div class="error">❌ JavaScript Test Failed: ${error.message}</div>`;
+            }
+        }
+
+        function clearLog() {
+            document.getElementById('debug-log').textContent = '';
+        }
+
+        // Initialize page
+        window.addEventListener('load', function() {
+            console.log('Debug page loaded successfully');
+            showBrowserInfo();
+            
+            // Auto-test API after 1 second
+            setTimeout(testAPI, 1000);
+        });
+    </script>
+</body>
+</html>

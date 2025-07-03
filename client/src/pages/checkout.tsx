@@ -704,7 +704,7 @@ export default function Checkout() {
                                   if (input) input.value = addr?.address ? String(addr.address) : '';
                                 }}
                               >
-                                {String(addr?.label ? `${addr.label}: ${addr.address || ''}` : (addr?.address || ''))}
+                                {addr?.label ? `${addr.label}: ${addr.address || ''}` : (addr?.address || '')}
                               </Button>
                             ))}
                           </div>
