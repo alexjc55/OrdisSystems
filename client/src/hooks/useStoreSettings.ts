@@ -44,12 +44,9 @@ export function useStoreSettings() {
         };
       }
     },
-    retry: 1,
-    staleTime: 15 * 60 * 1000, // 15 minutes - prevent frequent refetches
-    gcTime: 30 * 60 * 1000, // 30 minutes
-    refetchOnWindowFocus: false, // CRITICAL: prevent refetch on window focus
-    refetchOnReconnect: false, // prevent refetch on reconnect
-    refetchOnMount: false, // prevent refetch on component mount
+    retry: 2,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
   return {
