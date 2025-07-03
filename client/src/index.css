@@ -1020,7 +1020,21 @@ button:focus,
   [dir="rtl"] .rtl\:items-end {
     align-items: flex-end;
   }
-  
+}
+
+/* Disable scroll lock for Radix UI Select components */
+body[data-scroll-locked] {
+  overflow: auto !important;
+  padding-right: 0 !important;
+}
+
+/* Force body to remain scrollable */
+body {
+  overflow: auto !important;
+}
+
+/* Additional RTL utilities */
+@layer utilities {
   [dir="rtl"] .rtl\:pr-10 {
     padding-right: 2.5rem;
   }
@@ -2341,5 +2355,6 @@ html[lang="ar"] * {
   direction: inherit;
 }
 
+}
 
 /* Cache bust: 1751412738 */
