@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { X, Save } from "lucide-react";
@@ -153,23 +153,23 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Категория</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <select
-                        value={field.value.toString()}
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
-                        className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                      >
-                        <option value="">Выберите категорию</option>
-                        {categories.map((category) => (
-                          <option key={category.id} value={category.id.toString()}>
-                            {category.icon} {category.name}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                    </div>
-                  </FormControl>
+                  <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value.toString()}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Выберите категорию" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.id.toString()}>
+                          <span className="flex items-center">
+                            <span className="mr-2">{category.icon}</span>
+                            {category.name}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -219,21 +219,18 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Статус наличия</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <select
-                        value={field.value}
-                        onChange={(e) => field.onChange(e.target.value)}
-                        className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                      >
-                        <option value="">Выберите статус</option>
-                        <option value="in_stock">В наличии</option>
-                        <option value="low_stock">Мало</option>
-                        <option value="out_of_stock">Нет в наличии</option>
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                    </div>
-                  </FormControl>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Выберите статус" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="in_stock">В наличии</SelectItem>
+                      <SelectItem value="low_stock">Мало</SelectItem>
+                      <SelectItem value="out_of_stock">Нет в наличии</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

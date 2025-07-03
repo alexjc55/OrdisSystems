@@ -5,17 +5,6 @@ import { setupVite, serveStatic, log } from "./vite";
 import { seedDatabase } from "./seed";
 
 const app = express();
-// Development cache control middleware
-if (process.env.NODE_ENV === 'development') {
-  app.use((req, res, next) => {
-    res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.header('Pragma', 'no-cache');
-    res.header('Expires', '0');
-    res.header('Last-Modified', new Date().toUTCString());
-    next();
-  });
-}
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -76,8 +65,8 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Use PORT from environment variables, 5000 for Replit dev, 3000 for production
-  const port = parseInt(process.env.PORT || "5000", 10);
+  // Use PORT from environment variables or default to 3000
+  const port = parseInt(process.env.PORT || "3000", 10);
   server.listen({
     port,
     host: "0.0.0.0",

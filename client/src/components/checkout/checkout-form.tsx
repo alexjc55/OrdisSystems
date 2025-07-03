@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency, formatWeight } from "@/lib/currency";
 import { Calendar, Clock, MapPin, Phone, CreditCard, Package } from "lucide-react";
@@ -294,45 +294,45 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="deliveryDate">{t('checkout.deliveryDate')}</Label>
-                <div className="relative mt-1">
-                  <select
-                    value={formData.requestedDeliveryDate}
-                    onChange={(e) => setFormData({ ...formData, requestedDeliveryDate: e.target.value, requestedDeliveryTime: "" })}
-                    className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                  >
-                    <option value="">{t('selectTime')}</option>
+                <Select 
+                  value={formData.requestedDeliveryDate} 
+                  onValueChange={(value) => setFormData({ ...formData, requestedDeliveryDate: value, requestedDeliveryTime: "" })}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder={t('selectTime')} />
+                  </SelectTrigger>
+                  <SelectContent>
                     {availableDates.map((date) => (
-                      <option key={date.toISOString()} value={date.toISOString().split('T')[0]}>
+                      <SelectItem key={date.toISOString()} value={date.toISOString().split('T')[0]}>
                         {date.toLocaleDateString('ru-RU', { 
                           weekday: 'long', 
                           day: 'numeric', 
                           month: 'long' 
                         })}
-                      </option>
+                      </SelectItem>
                     ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                </div>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
                 <Label htmlFor="deliveryTime">{t('checkout.deliveryTimeLabel')}</Label>
-                <div className="relative mt-1">
-                  <select
-                    value={formData.requestedDeliveryTime}
-                    onChange={(e) => setFormData({ ...formData, requestedDeliveryTime: e.target.value })}
-                    disabled={!formData.requestedDeliveryDate}
-                    className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <option value="">{t('selectTime')}</option>
+                <Select 
+                  value={formData.requestedDeliveryTime} 
+                  onValueChange={(value) => setFormData({ ...formData, requestedDeliveryTime: value })}
+                  disabled={!formData.requestedDeliveryDate}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder={t('selectTime')} />
+                  </SelectTrigger>
+                  <SelectContent>
                     {availableTimeSlots.map((slot) => (
-                      <option key={slot.value} value={slot.value}>
+                      <SelectItem key={slot.value} value={slot.value}>
                         {slot.label}
-                      </option>
+                      </SelectItem>
                     ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                </div>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
@@ -344,19 +344,19 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
               {t('checkout.paymentMethod')}
             </h3>
             
-            <div className="relative">
-              <select
-                value={formData.paymentMethod}
-                onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
-                className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                <option value="">{t('checkout.selectPaymentMethod')}</option>
-                <option value="cash">{t('checkout.cashOnDelivery')}</option>
-                <option value="card">{t('checkout.cardOnDelivery')}</option>
-                <option value="transfer">{t('checkout.bankTransfer')}</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-            </div>
+            <Select 
+              value={formData.paymentMethod} 
+              onValueChange={(value) => setFormData({ ...formData, paymentMethod: value })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="cash">{t('checkout.cashOnDelivery')}</SelectItem>
+                <SelectItem value="card">{t('checkout.cardOnDelivery')}</SelectItem>
+                <SelectItem value="transfer">{t('checkout.bankTransfer')}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Additional Notes */}

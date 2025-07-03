@@ -35,6 +35,7 @@ export function AdminSelect({ value, onValueChange, placeholder, options, classN
         align="start" 
         side="bottom" 
         sideOffset={4}
+        style={{ position: 'fixed' }}
       >
         {options.map((option) => (
           <DropdownMenuItem

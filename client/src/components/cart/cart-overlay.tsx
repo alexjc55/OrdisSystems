@@ -14,7 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ChevronDown } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency, formatQuantity, formatWeight, type ProductUnit } from "@/lib/currency";
 import { useShopTranslation, useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
@@ -446,27 +446,25 @@ export default function CartOverlay() {
                       <label className="text-sm font-medium text-gray-700 mb-1 block">
                         Время
                       </label>
-                      <div className="relative">
-                        <select
-                          value={deliveryTime}
-                          onChange={(e) => setDeliveryTime(e.target.value)}
-                          className="w-full h-9 bg-white border border-gray-200 rounded-md px-3 py-1 text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                        >
-                          <option value="">{t('selectTime')}</option>
+                      <Select value={deliveryTime} onValueChange={setDeliveryTime}>
+                        <SelectTrigger className="text-sm">
+                          <SelectValue placeholder={t('selectTime')} />
+                        </SelectTrigger>
+                        <SelectContent>
                           {(() => {
                             if (!deliveryDate) {
-                              return <option value="select-date" disabled>Сначала выберите дату</option>;
+                              return <SelectItem key="select-date" value="select-date" disabled>Сначала выберите дату</SelectItem>;
                             }
 
                             if (!storeSettings?.workingHours) {
                               return [
-                                <option key="asap" value="asap">Как можно скорее</option>,
-                                <option key="10-12" value="10:00-12:00">10:00 - 12:00</option>,
-                                <option key="12-14" value="12:00-14:00">12:00 - 14:00</option>,
-                                <option key="14-16" value="14:00-16:00">14:00 - 16:00</option>,
-                                <option key="16-18" value="16:00-18:00">16:00 - 18:00</option>,
-                                <option key="18-20" value="18:00-20:00">18:00 - 20:00</option>,
-                                <option key="20-22" value="20:00-22:00">20:00 - 22:00</option>
+                                <SelectItem key="asap" value="asap">Как можно скорее</SelectItem>,
+                                <SelectItem key="10-12" value="10:00-12:00">10:00 - 12:00</SelectItem>,
+                                <SelectItem key="12-14" value="12:00-14:00">12:00 - 14:00</SelectItem>,
+                                <SelectItem key="14-16" value="14:00-16:00">14:00 - 16:00</SelectItem>,
+                                <SelectItem key="16-18" value="16:00-18:00">16:00 - 18:00</SelectItem>,
+                                <SelectItem key="18-20" value="18:00-20:00">18:00 - 20:00</SelectItem>,
+                                <SelectItem key="20-22" value="20:00-22:00">20:00 - 22:00</SelectItem>
                               ];
                             }
 
@@ -483,13 +481,13 @@ export default function CartOverlay() {
                                 todayHours.toLowerCase().includes('закрыто') ||
                                 todayHours.trim() === '' ||
                                 todayHours.toLowerCase() === 'closed') {
-                              return <option value="closed" disabled>Выходной день - магазин закрыт</option>;
+                              return <SelectItem key="closed" value="closed" disabled>Выходной день - магазин закрыт</SelectItem>;
                             }
 
                             // Parse working hours (e.g., "10:00-22:00")
                             const hoursMatch = todayHours.match(/(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})/);
                             if (!hoursMatch) {
-                              return <option value="invalid-hours" disabled>Часы работы не указаны</option>;
+                              return <SelectItem key="invalid-hours" value="invalid-hours" disabled>Часы работы не указаны</SelectItem>;
                             }
 
                             const startHour = parseInt(hoursMatch[1]);
@@ -517,14 +515,13 @@ export default function CartOverlay() {
                                 return slot.start >= Math.max(startHour, minDeliveryTime) && slot.end <= endHour;
                               })
                               .map(slot => (
-                                <option key={slot.value} value={slot.value}>
+                                <SelectItem key={slot.value} value={slot.value}>
                                   {slot.label}
-                                </option>
+                                </SelectItem>
                               ));
                           })()}
-                        </select>
-                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                      </div>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </div>
@@ -593,30 +590,29 @@ export default function CartOverlay() {
                   {user && (userAddresses as UserAddress[]).length > 0 && (
                     <div className="space-y-2">
                       <label className="text-xs text-gray-600">{t('cart.selectSavedAddress')}:</label>
-                      <div className="relative">
-                        <select
-                          value={selectedAddressId?.toString() || ""}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            if (value === "new") {
-                              setDeliveryAddress("");
-                              setSelectedAddressId(null);
-                            } else {
-                              handleAddressSelect(parseInt(value));
-                            }
-                          }}
-                          className="w-full h-9 bg-white border border-gray-200 rounded-md px-3 py-1 text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                        >
-                          <option value="">{t('selectAddress')}</option>
+                      <Select
+                        value={selectedAddressId?.toString() || ""}
+                        onValueChange={(value) => {
+                          if (value === "new") {
+                            setDeliveryAddress("");
+                            setSelectedAddressId(null);
+                          } else {
+                            handleAddressSelect(parseInt(value));
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="text-sm">
+                          <SelectValue placeholder={t('selectAddress')} />
+                        </SelectTrigger>
+                        <SelectContent>
                           {(userAddresses as UserAddress[]).map((addr) => (
-                            <option key={addr.id} value={addr.id.toString()}>
+                            <SelectItem key={addr.id} value={addr.id.toString()}>
                               {addr.label}{addr.isDefault ? ` (${t('cart.default')})` : ""}: {addr.address.substring(0, 50)}...
-                            </option>
+                            </SelectItem>
                           ))}
-                          <option value="new">+ {t('cart.newAddress')}</option>
-                        </select>
-                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                      </div>
+                          <SelectItem value="new">+ {t('cart.newAddress')}</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   )}
 

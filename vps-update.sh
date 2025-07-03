@@ -1,12 +1,14 @@
 #!/bin/bash
 
-# VPS Header Component Fix - Eliminates menu flickering on production
-echo "🔧 Creating optimized header component for VPS production environment..."
+# VPS Header Fix Update Script
+echo "🔧 Fixing header component on VPS to stop menu flickering..."
 
-cat > /tmp/header-vps-fix.tsx << 'EOF'
-import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+# Create the optimized header component for VPS
+cat > /tmp/header-fix.tsx << 'EOF'
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCartStore } from "@/lib/cart";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import type { SupportedLanguage } from '@shared/localization';
 import { Button } from "@/components/ui/button";
@@ -18,61 +20,8 @@ import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download } fro
 import { Link, useLocation } from "wouter";
 import { usePWA } from "@/hooks/usePWA";
 import type { User as UserType } from "@shared/schema";
-import { useQuery } from "@tanstack/react-query";
 
-// CRITICAL: Cache store settings at module level to prevent re-fetches
-let cachedStoreSettings: any = null;
-let cacheTimestamp = 0;
-const CACHE_DURATION = 15 * 60 * 1000; // 15 minutes
-
-// VPS-optimized store settings hook with aggressive caching
-function useVPSStoreSettings() {
-  const now = Date.now();
-  
-  // Return cached data if still valid
-  if (cachedStoreSettings && (now - cacheTimestamp) < CACHE_DURATION) {
-    return {
-      storeSettings: cachedStoreSettings,
-      isLoading: false,
-      error: null,
-    };
-  }
-
-  const query = useQuery({
-    queryKey: ["/api/settings"],
-    queryFn: async () => {
-      const res = await fetch("/api/settings", { credentials: "include" });
-      if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
-      const data = await res.json();
-      
-      // Update module-level cache
-      cachedStoreSettings = {
-        ...data,
-        storeName: data.storeName || "eDAHouse",
-        welcomeTitle: data.welcomeTitle || "",
-        storeDescription: data.storeDescription || "",
-        workingHours: data.workingHours || {}
-      };
-      cacheTimestamp = Date.now();
-      
-      return cachedStoreSettings;
-    },
-    staleTime: CACHE_DURATION,
-    gcTime: CACHE_DURATION * 2,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchOnMount: false,
-    enabled: !cachedStoreSettings || (now - cacheTimestamp) >= CACHE_DURATION,
-  });
-
-  return {
-    storeSettings: query.data || cachedStoreSettings,
-    isLoading: query.isLoading,
-    error: query.error,
-  };
-}
-
-// Move multilingual helper outside component - CRITICAL for performance
+// Move multilingual helper function outside component to prevent recreating on each render
 const getMultilingualValue = (
   storeSettings: any,
   baseField: string,
@@ -90,11 +39,13 @@ const getMultilingualValue = (
     langField = `${baseField}${capitalizedLang}`;
   }
   
+  // Try to get value for current language, fallback to default language if empty
   const currentValue = storeSettings?.[langField];
   if (currentValue && currentValue.trim() !== '') {
     return currentValue;
   }
   
+  // Fallback to default language (Russian)
   return storeSettings?.[baseField] || '';
 };
 
@@ -108,11 +59,11 @@ export default function Header({ onResetView }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useCommonTranslation();
   const { currentLanguage } = useLanguage();
-  const { storeSettings } = useVPSStoreSettings(); // Use optimized hook
+  const { storeSettings } = useStoreSettings();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const { isInstalled, installApp } = usePWA();
   
-  // CRITICAL: Memoize all expensive computations to prevent re-renders
+  // Memoize device detection to prevent unnecessary recalculations  
   const deviceInfo = useMemo(() => {
     if (typeof window === 'undefined') return { isMobile: false, isTablet: false, isDesktop: false };
     
@@ -123,29 +74,13 @@ export default function Header({ onResetView }: HeaderProps) {
     };
   }, []);
 
+  // Memoize cart count to prevent unnecessary renders
   const cartItemsCount = useMemo(() => items.length, [items.length]);
   
+  // Memoize store name to prevent recalculation on every render
   const storeName = useMemo(() => {
     return getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse";
   }, [storeSettings, currentLanguage]);
-
-  // Memoize click handlers to prevent re-renders
-  const handleResetView = useCallback(() => {
-    onResetView?.();
-  }, [onResetView]);
-
-  const handleMobileMenuToggle = useCallback(() => {
-    setIsMobileMenuOpen(prev => !prev);
-  }, []);
-
-  const handleCloseMobileMenu = useCallback(() => {
-    setIsMobileMenuOpen(false);
-  }, []);
-
-  const handleLogout = useCallback(() => {
-    logoutMutation.mutate();
-    setIsMobileMenuOpen(false);
-  }, [logoutMutation]);
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -173,7 +108,7 @@ export default function Header({ onResetView }: HeaderProps) {
         <div className="flex justify-between items-center h-16">
           {/* Left side - Logo and Title */}
           <div className="flex items-center min-w-0 flex-1">
-            <Link href="/" onClick={handleResetView}>
+            <Link href="/" onClick={() => onResetView?.()}>
               <div className="flex items-center cursor-pointer">
                 {storeSettings?.logoUrl ? (
                   <img 
@@ -199,7 +134,7 @@ export default function Header({ onResetView }: HeaderProps) {
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex ml-8 rtl:ml-0 rtl:mr-8 space-x-8 rtl:space-x-reverse">
-              <Link href="/" onClick={handleResetView} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+              <Link href="/" onClick={() => onResetView?.()} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                 {t('menu')}
               </Link>
               {(user?.role === 'admin' || user?.role === 'worker') && (
@@ -239,6 +174,18 @@ export default function Header({ onResetView }: HeaderProps) {
                 </Badge>
               )}
             </Button>
+
+            {/* PWA Install Button for Tablets - Show only on tablet, not mobile or desktop */}
+            {!isInstalled && deviceInfo.isTablet && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hidden md:flex lg:hidden p-2 text-gray-600 hover:text-primary"
+                onClick={installApp}
+              >
+                <Download className="h-5 w-5" />
+              </Button>
+            )}
 
             {/* Desktop User Menu */}
             {user && (
@@ -300,7 +247,7 @@ export default function Header({ onResetView }: HeaderProps) {
                     )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
-                      onClick={handleLogout}
+                      onClick={() => logoutMutation.mutate()}
                       className="text-red-600 hover:text-red-700 hover:bg-red-50 focus:text-red-700 focus:bg-red-50"
                     >
                       <LogOut className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
@@ -329,7 +276,7 @@ export default function Header({ onResetView }: HeaderProps) {
                 variant="ghost"
                 size="sm"
                 className="p-2 text-gray-600 hover:text-primary"
-                onClick={handleMobileMenuToggle}
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
                 <Menu className="h-5 w-5" />
               </Button>
@@ -341,26 +288,30 @@ export default function Header({ onResetView }: HeaderProps) {
         {isMobileMenuOpen && (
           <div ref={mobileMenuRef} className="md:hidden border-t border-gray-200 py-4 bg-gradient-to-b from-gray-50 to-white">
             <div className="flex flex-col space-y-3">
-              {/* Navigation Links */}
+              {/* Navigation Links - First Row */}
               {!user ? (
+                /* Not logged in - Menu button and PWA install button */
                 <div className="flex flex-col space-y-3 px-4">
-                  <Link href="/" onClick={() => { handleResetView(); handleCloseMobileMenu(); }}>
+                  <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }}>
                     <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
                       <Utensils className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
                       <span className="font-semibold">{t('menu')}</span>
                     </div>
                   </Link>
+
                 </div>
               ) : (
+                /* All users - Menu and Profile buttons, plus Admin for admin/worker */
                 <div className="flex flex-col space-y-3 px-4">
+                  {/* First row - Menu and Profile for everyone */}
                   <div className="flex space-x-4 rtl:space-x-reverse">
-                    <Link href="/" onClick={() => { handleResetView(); handleCloseMobileMenu(); }} className="flex-1">
+                    <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }} className="flex-1">
                       <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
                         <Utensils className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                         <span className="font-semibold text-sm">{t('menu')}</span>
                       </div>
                     </Link>
-                    <Link href="/profile" onClick={handleCloseMobileMenu} className="flex-1">
+                    <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
                       <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer">
                         <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                         <span className="font-semibold text-sm">{t('profile.title')}</span>
@@ -368,8 +319,9 @@ export default function Header({ onResetView }: HeaderProps) {
                     </Link>
                   </div>
                   
+                  {/* Second row - Admin button only for admin/worker */}
                   {(user?.role === 'admin' || user?.role === 'worker') && (
-                    <Link href="/admin" onClick={handleCloseMobileMenu}>
+                    <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
                       <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-orange-600 hover:bg-orange-700 text-white transition-colors cursor-pointer">
                         <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                         <span className="font-semibold text-sm">{t('admin')}</span>
@@ -379,12 +331,70 @@ export default function Header({ onResetView }: HeaderProps) {
                 </div>
               )}
               
+              {/* Language Switcher */}
+              {(() => {
+                const languages: Array<{ code: 'ru' | 'en' | 'he' | 'ar', flag: string, name: string }> = [
+                  { code: 'ru', flag: '🇷🇺', name: 'Русский' },
+                  { code: 'en', flag: '🇺🇸', name: 'English' },
+                  { code: 'he', flag: '🇮🇱', name: 'עברית' },
+                  { code: 'ar', flag: '🇸🇦', name: 'العربية' }
+                ];
+                
+                // Don't show language switcher if only 1 language
+                if (languages.length <= 1) return null;
+                
+                return (
+                  <div className="border-t border-gray-200 pt-4 mt-4">
+                    <div className="px-4">
+                      <span className="text-sm font-medium text-gray-700 block mb-3">{t('language')}</span>
+                      <div className={`flex ${languages.length >= 4 ? 'flex-wrap' : 'flex-nowrap'} gap-2 w-full`}>
+                        {languages.map((lang) => (
+                          <button
+                            key={lang.code}
+                            onClick={() => {
+                              changeLanguage(lang.code);
+                              setIsMobileMenuOpen(false);
+                            }}
+                            className={`flex items-center justify-center px-2 py-2 rounded-lg transition-colors text-xs flex-1 ${
+                              currentLanguage === lang.code 
+                                ? 'bg-blue-50 text-blue-600 font-medium' 
+                                : 'text-gray-700 hover:bg-gray-50'
+                            }`}
+                          >
+                            <span className="text-xs whitespace-nowrap">{lang.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+              
+              {/* PWA Install Button - Show on mobile/tablet but not desktop */}
+              {!isInstalled && (deviceInfo.isMobile || deviceInfo.isTablet) && (
+                <div className="border-t border-gray-200 pt-4 mt-4">
+                  <div 
+                    className="flex items-center justify-center px-4 py-3 mx-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer"
+                    onClick={() => {
+                      installApp();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <Download className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
+                    <span className="font-medium">{t('pwa.installApp')}</span>
+                  </div>
+                </div>
+              )}
+              
               {/* Logout Button for Mobile */}
               {user && (
                 <div className="border-t border-gray-200 pt-4 mt-4">
                   <div 
                     className="flex items-center justify-center px-4 py-3 mx-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors cursor-pointer"
-                    onClick={handleLogout}
+                    onClick={() => {
+                      logoutMutation.mutate();
+                      setIsMobileMenuOpen(false);
+                    }}
                   >
                     <LogOut className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
                     <span className="font-medium">{t('logout')}</span>
@@ -400,17 +410,12 @@ export default function Header({ onResetView }: HeaderProps) {
 }
 EOF
 
-echo "✅ VPS-optimized header created with:"
-echo "   • Module-level caching for store settings"
-echo "   • Memoized callbacks to prevent re-renders"
-echo "   • Disabled unnecessary React Query refetches"
-echo "   • Aggressive 15-minute cache duration"
-echo ""
-echo "📋 VPS Update Commands:"
-echo "1. cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il"
-echo "2. cp client/src/components/layout/header.tsx client/src/components/layout/header.tsx.backup"
-echo "3. wget -O /tmp/header-vps-fix.tsx [github-raw-url]"
-echo "4. cp /tmp/header-vps-fix.tsx client/src/components/layout/header.tsx"
-echo "5. npm run build && pm2 restart edahouse"
-echo ""
-echo "This will eliminate menu flickering by preventing excessive re-renders and API calls."
+echo "📄 Header fix created successfully. Copy this to VPS:"
+echo "----------------------------------------------------"
+echo "cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il"
+echo "cp client/src/components/layout/header.tsx client/src/components/layout/header.tsx.backup"
+echo "curl -o client/src/components/layout/header.tsx https://raw.githubusercontent.com/alexjc55/Ordis/main/client/src/components/layout/header.tsx"
+echo "npm run build"  
+echo "pm2 restart edahouse"
+echo "----------------------------------------------------"
+echo "✅ This will stop menu flickering by preventing infinite re-renders"

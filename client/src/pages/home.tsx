@@ -17,7 +17,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
@@ -739,35 +739,29 @@ export default function Home() {
               {/* Filter Controls */}
               {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
                 <div className="flex gap-2 sm:gap-4 mb-6">
-                  <div className="relative flex-1 min-w-0">
-                    <select
-                      value={categoryFilter}
-                      onChange={(e) => handleCategoryFilterChange(e.target.value)}
-                      className="w-full h-9 bg-white border border-gray-200 rounded-md px-3 py-1 text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    >
-                      <option value="">{t('filterByCategory', 'Фильтр по категории')}</option>
-                      <option value="all">{t('allCategories')}</option>
+                  <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
+                    <SelectTrigger className="flex-1 min-w-0 text-sm">
+                      <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('allCategories')}</SelectItem>
                       {categories.map((category) => (
-                        <option key={category.id} value={category.id.toString()}>
+                        <SelectItem key={category.id} value={category.id.toString()}>
                           {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                        </option>
+                        </SelectItem>
                       ))}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                  </div>
+                    </SelectContent>
+                  </Select>
 
-                  <div className="relative flex-1 min-w-0">
-                    <select
-                      value={discountFilter}
-                      onChange={(e) => setDiscountFilter(e.target.value)}
-                      className="w-full h-9 bg-white border border-gray-200 rounded-md px-3 py-1 text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    >
-                      <option value="">{t('filterByDiscount')}</option>
-                      <option value="all">{t('allProducts')}</option>
-                      <option value="discount">{t('onlyDiscounted')}</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                  </div>
+                  <Select value={discountFilter} onValueChange={setDiscountFilter}>
+                    <SelectTrigger className="flex-1 min-w-0 text-sm">
+                      <SelectValue placeholder={t('filterByDiscount')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('allProducts')}</SelectItem>
+                      <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
 

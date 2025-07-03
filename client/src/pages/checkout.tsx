@@ -4,8 +4,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ChevronDown } from "lucide-react";
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -234,7 +235,9 @@ export default function Checkout() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [selectedGuestPaymentMethod, setSelectedGuestPaymentMethod] = useState("");
   const [selectedRegisterPaymentMethod, setSelectedRegisterPaymentMethod] = useState("");
-
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [guestDatePickerOpen, setGuestDatePickerOpen] = useState(false);
+  const [registerDatePickerOpen, setRegisterDatePickerOpen] = useState(false);
 
   const { t: tCommon } = useCommonTranslation();
   const { t: tShop } = useShopTranslation();
@@ -712,75 +715,112 @@ export default function Checkout() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="deliveryDate">{tShop('checkout.deliveryDate')} *</Label>
-                        <Input
-                          type="date"
-                          id="deliveryDate"
-                          value={selectedDate ? format(selectedDate, "yyyy-MM-dd") : ""}
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              setSelectedDate(new Date(e.target.value));
-                              setSelectedTime(""); // Reset time selection when date changes
-                            } else {
-                              setSelectedDate(undefined);
-                            }
-                          }}
-                          min={format(new Date(), "yyyy-MM-dd")}
-                          className="w-full"
-                        />
+                        <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !selectedDate && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {selectedDate ? format(selectedDate, "dd MMMM yyyy", { locale: dateLocale }) : tShop('checkout.selectDate')}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <CalendarComponent
+                              mode="single"
+                              selected={selectedDate}
+                              locale={dateLocale}
+                              onSelect={(date) => {
+                                setSelectedDate(date);
+                                setSelectedTime(""); // Reset time selection when date changes
+                                setDatePickerOpen(false); // Close calendar after selection
+                              }}
+                              disabled={(date) => {
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
+                                
+                                // Check if date is before today
+                                if (date < today) return true;
+                                
+                                // Check if it's a non-working day
+                                if (storeSettings?.workingHours) {
+                                  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                                  const dayName = dayNames[date.getDay()];
+                                  const daySchedule = storeSettings.workingHours[dayName];
+                                  
+                                  // Disable if no schedule or closed or weekend
+                                  if (!daySchedule || daySchedule.trim() === '' || 
+                                      daySchedule.toLowerCase().includes('закрыто') || 
+                                      daySchedule.toLowerCase().includes('closed') ||
+                                      daySchedule.toLowerCase().includes('выходной')) {
+                                    return true;
+                                  }
+                                  
+                                  // Check if today has no available delivery times
+                                  if (date.getTime() === today.getTime()) {
+                                    const todayTimeSlots = generateDeliveryTimes(
+                                      storeSettings.workingHours, 
+                                      format(date, "yyyy-MM-dd"), 
+                                      storeSettings.weekStartDay
+                                    );
+                                    return !todayTimeSlots.some(slot => slot.value !== 'closed');
+                                  }
+                                }
+                                
+                                return false;
+                              }}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
                       </div>
 
                       <div>
                         <Label htmlFor="deliveryTime">{tShop('checkout.deliveryTime')} *</Label>
-                        <div className="relative">
-                          <select
-                            value={selectedTime}
-                            onChange={(e) => setSelectedTime(e.target.value)}
-                            disabled={!selectedDate}
-                            required
-                            className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <option value="">{tShop('checkout.selectTime')}</option>
+                        <Select value={selectedTime} onValueChange={setSelectedTime} disabled={!selectedDate} required>
+                          <SelectTrigger>
+                            <SelectValue placeholder={tShop('checkout.selectTime')} />
+                          </SelectTrigger>
+                          <SelectContent>
                             {selectedDate && generateDeliveryTimes(
                               storeSettings?.workingHours,
                               format(selectedDate, "yyyy-MM-dd"),
                               storeSettings?.weekStartDay
                             ).map((time) => (
-                              <option key={time.value} value={time.value}>
+                              <SelectItem key={time.value} value={time.value}>
                                 {time.label}
-                              </option>
+                              </SelectItem>
                             ))}
-                          </select>
-                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                        </div>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
 
                     <div>
                       <Label htmlFor="paymentMethod">{tShop('checkout.paymentMethod')} *</Label>
-                      <div className="relative">
-                        <select
-                          value={selectedPaymentMethod}
-                          onChange={(e) => setSelectedPaymentMethod(e.target.value)}
-                          required
-                          className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                        >
-                          <option value="">{tShop('checkout.selectPaymentMethod')}</option>
+                      <Select value={selectedPaymentMethod} onValueChange={setSelectedPaymentMethod} required>
+                        <SelectTrigger>
+                          <SelectValue placeholder={tShop('checkout.selectPaymentMethod')} />
+                        </SelectTrigger>
+                        <SelectContent>
                           {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
                             storeSettings.paymentMethods.map((method: any) => (
-                              <option key={method.id} value={method.name}>
+                              <SelectItem key={method.id} value={method.name}>
                                 {getPaymentMethodName(method)}
-                              </option>
+                              </SelectItem>
                             )) : (
                               <>
-                                <option value="cash">{tShop('checkout.cashOnDelivery')}</option>
-                                <option value="card">{tShop('checkout.cardOnDelivery')}</option>
-                                <option value="transfer">{tShop('checkout.bankTransfer')}</option>
+                                <SelectItem value="cash">{tShop('checkout.cashOnDelivery')}</SelectItem>
+                                <SelectItem value="card">{tShop('checkout.cardOnDelivery')}</SelectItem>
+                                <SelectItem value="transfer">{tShop('checkout.bankTransfer')}</SelectItem>
                               </>
                             )
                           }
-                        </select>
-                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                      </div>
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <Button 
@@ -914,75 +954,106 @@ export default function Checkout() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="registerDeliveryDate">{tShop('checkout.deliveryDate')} *</Label>
-                          <Input
-                            type="date"
-                            id="registerDeliveryDate"
-                            value={selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : ""}
-                            onChange={(e) => {
-                              if (e.target.value) {
-                                setSelectedRegisterDate(new Date(e.target.value));
-                                setSelectedRegisterTime(""); // Reset time selection when date changes
-                              } else {
-                                setSelectedRegisterDate(undefined);
-                              }
-                            }}
-                            min={format(new Date(), "yyyy-MM-dd")}
-                            className="w-full"
-                          />
+                          <Popover open={registerDatePickerOpen} onOpenChange={setRegisterDatePickerOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full justify-start text-left font-normal",
+                                  !selectedRegisterDate && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {selectedRegisterDate ? format(selectedRegisterDate, "dd MMMM yyyy", { locale: dateLocale }) : tShop('checkout.selectDate')}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <CalendarComponent
+                                mode="single"
+                                selected={selectedRegisterDate}
+                                locale={dateLocale}
+                                onSelect={(date) => {
+                                  setSelectedRegisterDate(date);
+                                  setSelectedRegisterTime(""); // Reset time selection when date changes
+                                  setRegisterDatePickerOpen(false); // Close calendar after selection
+                                }}
+                                disabled={(date) => {
+                                  const today = new Date();
+                                  today.setHours(0, 0, 0, 0);
+                                  
+                                  // Check if date is before today
+                                  if (date < today) return true;
+                                  
+                                  // Check if it's a non-working day
+                                  if (storeSettings?.workingHours) {
+                                    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                                    const dayName = dayNames[date.getDay()];
+                                    const daySchedule = storeSettings.workingHours[dayName];
+                                    
+                                    // Disable if no schedule or closed or weekend
+                                    if (!daySchedule || daySchedule.trim() === '' || 
+                                        daySchedule.toLowerCase().includes('закрыто') || 
+                                        daySchedule.toLowerCase().includes('closed') ||
+                                        daySchedule.toLowerCase().includes('выходной')) {
+                                      return true;
+                                    }
+                                  }
+                                  
+                                  return false;
+                                }}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
                         </div>
 
                         <div>
                           <Label htmlFor="registerDeliveryTime">{tShop('checkout.deliveryTime')} *</Label>
-                          <div className="relative">
-                            <select
-                              value={selectedRegisterTime}
-                              onChange={(e) => setSelectedRegisterTime(e.target.value)}
-                              disabled={!selectedRegisterDate}
-                              required
-                              className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <option value="">{tShop('checkout.selectTime')}</option>
+                          <Select value={selectedRegisterTime} onValueChange={setSelectedRegisterTime} disabled={!selectedRegisterDate} required>
+                            <SelectTrigger>
+                              <SelectValue placeholder={tShop('checkout.selectTime')} />
+                            </SelectTrigger>
+                            <SelectContent>
                               {selectedRegisterDate && generateDeliveryTimes(
                                 storeSettings?.workingHours,
                                 format(selectedRegisterDate, "yyyy-MM-dd"),
                                 storeSettings?.weekStartDay
                               ).map((time) => (
-                                <option key={time.value} value={time.value}>
+                                <SelectItem key={time.value} value={time.value}>
                                   {time.label}
-                                </option>
+                                </SelectItem>
                               ))}
-                            </select>
-                            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                          </div>
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
 
                       <div>
                         <Label htmlFor="registerPaymentMethod">{tShop('checkout.paymentMethod')} *</Label>
-                        <div className="relative">
-                          <select
-                            value={selectedRegisterPaymentMethod}
-                            onChange={(e) => setSelectedRegisterPaymentMethod(e.target.value)}
-                            required
-                            className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                          >
-                            <option value="">{tShop('checkout.selectPaymentMethod')}</option>
+                        <Select 
+                          value={selectedRegisterPaymentMethod} 
+                          onValueChange={setSelectedRegisterPaymentMethod} 
+                          required
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder={tShop('checkout.selectPaymentMethod')} />
+                          </SelectTrigger>
+                          <SelectContent>
                             {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
                               storeSettings.paymentMethods.map((method: any) => (
-                                <option key={method.id} value={method.name}>
+                                <SelectItem key={method.id} value={method.name}>
                                   {getPaymentMethodName(method)}
-                                </option>
+                                </SelectItem>
                               )) : (
                                 <>
-                                  <option value="cash">{tShop('checkout.cashOnDelivery')}</option>
-                                  <option value="card">{tShop('checkout.cardOnDelivery')}</option>
-                                  <option value="transfer">{tShop('checkout.bankTransfer')}</option>
+                                  <SelectItem value="cash">{tShop('checkout.cashOnDelivery')}</SelectItem>
+                                  <SelectItem value="card">{tShop('checkout.cardOnDelivery')}</SelectItem>
+                                  <SelectItem value="transfer">{tShop('checkout.bankTransfer')}</SelectItem>
                                 </>
                               )
                             }
-                          </select>
-                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                        </div>
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       <Button 
@@ -1119,75 +1190,106 @@ export default function Checkout() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="guestDeliveryDate">{tShop('checkout.deliveryDate')} *</Label>
-                          <Input
-                            type="date"
-                            id="guestDeliveryDate"
-                            value={selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : ""}
-                            onChange={(e) => {
-                              if (e.target.value) {
-                                setSelectedGuestDate(new Date(e.target.value));
-                                setSelectedGuestTime(""); // Reset time selection when date changes
-                              } else {
-                                setSelectedGuestDate(undefined);
-                              }
-                            }}
-                            min={format(new Date(), "yyyy-MM-dd")}
-                            className="w-full"
-                          />
+                          <Popover open={guestDatePickerOpen} onOpenChange={setGuestDatePickerOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full justify-start text-left font-normal",
+                                  !selectedGuestDate && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {selectedGuestDate ? format(selectedGuestDate, "dd MMMM yyyy", { locale: dateLocale }) : tShop('checkout.selectDate')}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <CalendarComponent
+                                mode="single"
+                                selected={selectedGuestDate}
+                                locale={dateLocale}
+                                onSelect={(date) => {
+                                  setSelectedGuestDate(date);
+                                  setSelectedGuestTime(""); // Reset time selection when date changes
+                                  setGuestDatePickerOpen(false); // Close calendar after selection
+                                }}
+                                disabled={(date) => {
+                                  const today = new Date();
+                                  today.setHours(0, 0, 0, 0);
+                                  
+                                  // Check if date is before today
+                                  if (date < today) return true;
+                                  
+                                  // Check if it's a non-working day
+                                  if (storeSettings?.workingHours) {
+                                    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                                    const dayName = dayNames[date.getDay()];
+                                    const daySchedule = storeSettings.workingHours[dayName];
+                                    
+                                    // Disable if no schedule or closed or weekend
+                                    if (!daySchedule || daySchedule.trim() === '' || 
+                                        daySchedule.toLowerCase().includes('закрыто') || 
+                                        daySchedule.toLowerCase().includes('closed') ||
+                                        daySchedule.toLowerCase().includes('выходной')) {
+                                      return true;
+                                    }
+                                  }
+                                  
+                                  return false;
+                                }}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
                         </div>
 
                         <div>
                           <Label htmlFor="guestDeliveryTime">{tShop('checkout.deliveryTime')} *</Label>
-                          <div className="relative">
-                            <select
-                              value={selectedGuestTime}
-                              onChange={(e) => setSelectedGuestTime(e.target.value)}
-                              disabled={!selectedGuestDate}
-                              required
-                              className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <option value="">{tShop('checkout.selectTime')}</option>
+                          <Select value={selectedGuestTime} onValueChange={setSelectedGuestTime} disabled={!selectedGuestDate} required>
+                            <SelectTrigger>
+                              <SelectValue placeholder={tShop('checkout.selectTime')} />
+                            </SelectTrigger>
+                            <SelectContent>
                               {selectedGuestDate && generateDeliveryTimes(
                                 storeSettings?.workingHours,
                                 format(selectedGuestDate, "yyyy-MM-dd"),
                                 storeSettings?.weekStartDay
                               ).map((time) => (
-                                <option key={time.value} value={time.value}>
+                                <SelectItem key={time.value} value={time.value}>
                                   {time.label}
-                                </option>
+                                </SelectItem>
                               ))}
-                            </select>
-                            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                          </div>
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
 
                       <div>
                         <Label htmlFor="guestPaymentMethod">{tShop('checkout.paymentMethod')} *</Label>
-                        <div className="relative">
-                          <select
-                            value={selectedGuestPaymentMethod}
-                            onChange={(e) => setSelectedGuestPaymentMethod(e.target.value)}
-                            required
-                            className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                          >
-                            <option value="">{tShop('checkout.selectPaymentMethod')}</option>
+                        <Select 
+                          value={selectedGuestPaymentMethod} 
+                          onValueChange={setSelectedGuestPaymentMethod} 
+                          required
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder={tShop('checkout.selectPaymentMethod')} />
+                          </SelectTrigger>
+                          <SelectContent>
                             {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
                               storeSettings.paymentMethods.map((method: any) => (
-                                <option key={method.id} value={method.name}>
+                                <SelectItem key={method.id} value={method.name}>
                                   {getPaymentMethodName(method)}
-                                </option>
+                                </SelectItem>
                               )) : (
                                 <>
-                                  <option value="cash">{tShop('checkout.cashOnDelivery')}</option>
-                                  <option value="card">{tShop('checkout.cardOnDelivery')}</option>
-                                  <option value="transfer">{tShop('checkout.bankTransfer')}</option>
+                                  <SelectItem value="cash">{tShop('checkout.cashOnDelivery')}</SelectItem>
+                                  <SelectItem value="card">{tShop('checkout.cardOnDelivery')}</SelectItem>
+                                  <SelectItem value="transfer">{tShop('checkout.bankTransfer')}</SelectItem>
                                 </>
                               )
                             }
-                          </select>
-                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                        </div>
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       <Button 

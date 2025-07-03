@@ -36,13 +36,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import * as SelectPrimitive from "@radix-ui/react-select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
-
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -618,28 +620,28 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
               <Eye className="h-3 w-3 mr-1" />
               {adminT('orders.orderDetails')}
             </Button>
-            <div className="relative">
-              <select
-                value={order.status}
-                onChange={(e) => {
-                  const newStatus = e.target.value;
-                  if (newStatus === 'cancelled') {
-                    onCancelOrder(order.id);
-                  } else {
-                    onStatusChange({ orderId: order.id, status: newStatus });
-                  }
-                }}
-                className="w-32 h-8 text-xs border border-input rounded-md bg-background px-2 py-1 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                <option value="pending">{adminT('orders.status.pending')}</option>
-                <option value="confirmed">{adminT('orders.status.confirmed')}</option>
-                <option value="preparing">{adminT('orders.status.preparing')}</option>
-                <option value="ready">{adminT('orders.status.ready')}</option>
-                <option value="delivered">{adminT('orders.status.delivered')}</option>
-                <option value="cancelled">{adminT('orders.status.cancelled')}</option>
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
-            </div>
+            <Select
+              value={order.status}
+              onValueChange={(newStatus) => {
+                if (newStatus === 'cancelled') {
+                  onCancelOrder(order.id);
+                } else {
+                  onStatusChange({ orderId: order.id, status: newStatus });
+                }
+              }}
+            >
+              <SelectTrigger className="w-32 h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">{adminT('orders.status.pending')}</SelectItem>
+                <SelectItem value="confirmed">{adminT('orders.status.confirmed')}</SelectItem>
+                <SelectItem value="preparing">{adminT('orders.status.preparing')}</SelectItem>
+                <SelectItem value="ready">{adminT('orders.status.ready')}</SelectItem>
+                <SelectItem value="delivered">{adminT('orders.status.delivered')}</SelectItem>
+                <SelectItem value="cancelled">{adminT('orders.status.cancelled')}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardContent>
@@ -729,7 +731,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   const [showAddItem, setShowAddItem] = useState(false);
   const [editedOrderItems, setEditedOrderItems] = useState(order.items || []);
   const [showDiscountDialog, setShowDiscountDialog] = useState<number | null>(null);
-
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [mobileDatePickerOpen, setMobileDatePickerOpen] = useState(false);
 
   // Get locale for calendar based on current language
   const getCalendarLocale = () => {
@@ -1116,21 +1119,50 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             </div>
             <div className="bg-white rounded-lg px-3 py-2 shadow-sm flex-1">
               <div className="text-xs text-gray-500 mb-1">{adminT('orders.orderStatus')}</div>
-              <div className="relative">
-                <select
-                  value={editedOrder.status}
-                  onChange={(e) => setEditedOrder(prev => ({ ...prev, status: e.target.value }))}
-                  className={`w-full h-8 text-sm border rounded-md px-2 py-1 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${getStatusColor(editedOrder.status)}`}
-                >
-                  <option value="pending">{adminT('orders.status.pending')}</option>
-                  <option value="confirmed">{adminT('orders.status.confirmed')}</option>
-                  <option value="preparing">{adminT('orders.status.preparing')}</option>
-                  <option value="ready">{adminT('orders.status.ready')}</option>
-                  <option value="delivered">{adminT('orders.status.delivered')}</option>
-                  <option value="cancelled">{adminT('orders.status.cancelled')}</option>
-                </select>
-                <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
-              </div>
+              <Select
+                value={editedOrder.status}
+                onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
+              >
+                <SelectTrigger className={`text-sm h-8 border w-full ${getStatusColor(editedOrder.status)}`}>
+                  <SelectValue>
+                    <span className="text-sm font-medium">
+                      {getStatusDisplayName(editedOrder.status)}
+                    </span>
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent className="z-[10000]">
+                  <SelectItem value="pending">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-yellow-800">
+                      {adminT('orders.status.pending')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="confirmed">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-blue-800">
+                      {adminT('orders.status.confirmed')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="preparing">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-orange-800">
+                      {adminT('orders.status.preparing')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="ready">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-green-800">
+                      {adminT('orders.status.ready')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="delivered">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-gray-800">
+                      {adminT('orders.status.delivered')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="cancelled">
+                    <span className="text-xs md:text-xs sm:text-sm font-medium text-red-800">
+                      {adminT('orders.status.cancelled')}
+                    </span>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
@@ -1154,21 +1186,50 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             </div>
             <div className="bg-white rounded-lg px-3 py-2 shadow-sm min-w-[160px]">
               <div className="text-xs text-gray-500">{adminT('orders.orderStatus')}</div>
-              <div className="relative">
-                <select
-                  value={editedOrder.status}
-                  onChange={(e) => setEditedOrder(prev => ({ ...prev, status: e.target.value }))}
-                  className={`w-full h-8 text-sm border rounded-md px-2 py-1 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${getStatusColor(editedOrder.status)}`}
-                >
-                  <option value="pending">{adminT('orders.status.pending')}</option>
-                  <option value="confirmed">{adminT('orders.status.confirmed')}</option>
-                  <option value="preparing">{adminT('orders.status.preparing')}</option>
-                  <option value="ready">{adminT('orders.status.ready')}</option>
-                  <option value="delivered">{adminT('orders.status.delivered')}</option>
-                  <option value="cancelled">{adminT('orders.status.cancelled')}</option>
-                </select>
-                <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
-              </div>
+              <Select
+                value={editedOrder.status}
+                onValueChange={(value) => setEditedOrder(prev => ({ ...prev, status: value }))}
+              >
+                <SelectTrigger className={`text-sm h-8 border w-full ${getStatusColor(editedOrder.status)}`}>
+                  <SelectValue>
+                    <span className="text-sm font-medium">
+                      {getStatusDisplayName(editedOrder.status)}
+                    </span>
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent className="z-[10000]">
+                  <SelectItem value="pending" className="bg-yellow-50 hover:bg-yellow-100">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-yellow-100 text-yellow-800">
+                      {adminT('orders.status.pending')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="confirmed" className="bg-blue-50 hover:bg-blue-100">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-blue-100 text-blue-800">
+                      {adminT('orders.status.confirmed')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="preparing" className="bg-orange-50 hover:bg-orange-100">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-orange-100 text-orange-800">
+                      {adminT('orders.status.preparing')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="ready" className="bg-green-50 hover:bg-green-100">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-green-100 text-green-800">
+                      {adminT('orders.status.ready')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="delivered" className="bg-gray-50 hover:bg-gray-100">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-gray-100 text-gray-800">
+                      {adminT('orders.status.delivered')}
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="cancelled" className="bg-red-50 hover:bg-red-100">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs md:text-xs sm:text-sm font-medium bg-red-100 text-red-800">
+                      {adminT('orders.status.cancelled')}
+                    </span>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="text-right">
@@ -1244,27 +1305,46 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   className="text-sm h-8"
                 />
                 <div className="grid grid-cols-2 gap-2">
-                  <Input
-                    type="date"
-                    value={editedOrder.deliveryDate || ""}
-                    onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
-                    className="h-8 text-sm"
-                  />
-                  <div className="relative">
-                    <select
-                      value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
-                      onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryTime: e.target.value }))}
-                      className="w-full h-8 text-sm border border-input rounded-md bg-background px-2 py-1 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    >
-                      <option value="">{adminT('orders.selectTime')}</option>
+                  <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="text-sm h-8 justify-start text-left font-normal"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "PPP", { locale: getCalendarLocale() }) : adminT('orders.selectDate')}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <CalendarComponent
+                        mode="single"
+                        selected={editedOrder.deliveryDate ? new Date(editedOrder.deliveryDate) : undefined}
+                        onSelect={(date) => {
+                          if (date) {
+                            setEditedOrder(prev => ({ ...prev, deliveryDate: format(date, "yyyy-MM-dd") }));
+                            setDatePickerOpen(false);
+                          }
+                        }}
+                        locale={getCalendarLocale()}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <Select
+                    value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
+                    onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
+                  >
+                    <SelectTrigger className="text-sm h-8">
+                      <SelectValue placeholder={adminT('orders.selectTime')} />
+                    </SelectTrigger>
+                    <SelectContent>
                       {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
-                        <option key={slot.value} value={slot.label}>
+                        <SelectItem key={slot.value} value={slot.label}>
                           {slot.label}
-                        </option>
+                        </SelectItem>
                       ))}
-                    </select>
-                    <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
-                  </div>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -1317,27 +1397,46 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   placeholder={adminT('orders.addressPlaceholder')}
                   className="text-sm h-8"
                 />
-                <Input
-                  type="date"
-                  value={editedOrder.deliveryDate || ""}
-                  onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
-                  className="h-8 text-sm"
-                />
-                <div className="relative">
-                  <select
-                    value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
-                    onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryTime: e.target.value }))}
-                    className="w-full h-8 text-sm border border-input rounded-md bg-background px-2 py-1 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                  >
-                    <option value="">{adminT('orders.selectTime')}</option>
+                <Popover open={mobileDatePickerOpen} onOpenChange={setMobileDatePickerOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="text-sm h-8 justify-start text-left font-normal"
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "PPP", { locale: getCalendarLocale() }) : adminT('orders.selectDate')}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={editedOrder.deliveryDate ? new Date(editedOrder.deliveryDate) : undefined}
+                      onSelect={(date) => {
+                        if (date) {
+                          setEditedOrder(prev => ({ ...prev, deliveryDate: format(date, "yyyy-MM-dd") }));
+                          setMobileDatePickerOpen(false);
+                        }
+                      }}
+                      locale={getCalendarLocale()}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <Select
+                  value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
+                  onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
+                >
+                  <SelectTrigger className="text-sm h-8">
+                    <SelectValue placeholder={adminT('orders.selectTime')} />
+                  </SelectTrigger>
+                  <SelectContent>
                     {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
-                      <option key={slot.value} value={slot.label}>
+                      <SelectItem key={slot.value} value={slot.label}>
                         {slot.label}
-                      </option>
+                      </SelectItem>
                     ))}
-                  </select>
-                  <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
-                </div>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
@@ -1589,17 +1688,20 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               {/* Mobile Layout - Stack vertically */}
               <div className="block sm:hidden space-y-2">
                 <div className="flex gap-1">
-                  <div className="relative">
-                    <select
-                      value={orderDiscount.type}
-                      onChange={(e) => setOrderDiscount(prev => ({ ...prev, type: e.target.value as 'percentage' | 'amount' }))}
-                      className="w-16 h-8 text-xs border border-input rounded-md bg-background px-2 py-1 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    >
-                      <option value="percentage">%</option>
-                      <option value="amount">₪</option>
-                    </select>
-                    <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 h-2 w-2 text-gray-400 pointer-events-none" />
-                  </div>
+                  <Select
+                    value={orderDiscount.type}
+                    onValueChange={(value: 'percentage' | 'amount') => 
+                      setOrderDiscount(prev => ({ ...prev, type: value }))
+                    }
+                  >
+                    <SelectTrigger className="h-8 text-xs w-16">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="percentage">%</SelectItem>
+                      <SelectItem value="amount">₪</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <Input
                     type="number"
                     placeholder="0"
@@ -1624,17 +1726,20 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
               {/* Desktop Layout - Horizontal */}
               <div className="hidden sm:flex gap-2">
-                <div className="relative">
-                  <select
-                    value={orderDiscount.type}
-                    onChange={(e) => setOrderDiscount(prev => ({ ...prev, type: e.target.value as 'percentage' | 'amount' }))}
-                    className="w-20 h-8 text-xs border border-input rounded-md bg-background px-2 py-1 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                  >
-                    <option value="percentage">%</option>
-                    <option value="amount">₪</option>
-                  </select>
-                  <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 h-2 w-2 text-gray-400 pointer-events-none" />
-                </div>
+                <Select
+                  value={orderDiscount.type}
+                  onValueChange={(value: 'percentage' | 'amount') => 
+                    setOrderDiscount(prev => ({ ...prev, type: value }))
+                  }
+                >
+                  <SelectTrigger className="h-8 text-xs w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="percentage">%</SelectItem>
+                    <SelectItem value="amount">₪</SelectItem>
+                  </SelectContent>
+                </Select>
                 <Input
                   type="number"
                   placeholder="0"
@@ -1952,17 +2057,18 @@ function ItemDiscountDialog({
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2">{adminT('orders.discountType')}</label>
-            <div className="relative">
-              <select
-                value={discountType}
-                onChange={(e) => setDiscountType(e.target.value as 'percentage' | 'amount')}
-                className="w-full h-10 text-sm border border-input rounded-md bg-background px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                <option value="percentage">{adminT('orders.percentage')} (%)</option>
-                <option value="amount">{adminT('orders.amount')} (₪)</option>
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-            </div>
+            <Select
+              value={discountType}
+              onValueChange={(value: 'percentage' | 'amount') => setDiscountType(value)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="z-[10000]">
+                <SelectItem value="percentage">{adminT('orders.percentage')} (%)</SelectItem>
+                <SelectItem value="amount">{adminT('orders.amount')} (₪)</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
@@ -3074,10 +3180,10 @@ export default function AdminDashboard() {
     });
 
   return (
-    <div className={`admin-layout-stable min-h-screen bg-gray-50 pt-16`} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen bg-gray-50 pt-16`} dir={isRTL ? 'rtl' : 'ltr'}>
       <Header />
       
-      <div className="admin-content-area container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         <div className="mb-4 sm:mb-8">
           <div className={`flex flex-col sm:flex-row sm:items-center ${isRTL ? 'sm:flex-row-reverse' : ''} justify-between gap-4`}>
             <div className={`${isRTL ? 'text-right ml-auto' : 'text-left mr-auto'} w-full sm:w-auto`}>
@@ -3092,38 +3198,122 @@ export default function AdminDashboard() {
           <div>
             {/* Mobile Dropdown Menu */}
             <div className="block sm:hidden mb-4">
-              <div className="relative">
-                <select
-                  value={activeTab}
-                  onChange={(e) => setActiveTab(e.target.value)}
-                  className="w-full h-12 bg-white border-gray-200 border rounded-md px-3 py-2 text-lg font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                >
-
+              <Select value={activeTab} onValueChange={setActiveTab}>
+                <SelectTrigger className="w-full bg-white border-gray-200 h-12">
+                  <SelectValue>
+                    <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      {!isRTL && (
+                        <>
+                          {activeTab === 'products' && <Package className="w-5 h-5" />}
+                          {activeTab === 'categories' && <Layers3 className="w-5 h-5" />}
+                          {activeTab === 'orders' && <ShoppingCart className="w-5 h-5" />}
+                          {activeTab === 'users' && <Users className="w-5 h-5" />}
+                          {activeTab === 'store' && <Settings className="w-5 h-5" />}
+                          {activeTab === 'notifications' && <Bell className="w-5 h-5" />}
+                          {activeTab === 'settings' && <UserCheck className="w-5 h-5" />}
+                          {activeTab === 'themes' && <Palette className="w-5 h-5" />}
+                        </>
+                      )}
+                      <span className="text-lg font-medium">
+                        {activeTab === 'products' && adminT('tabs.products')}
+                        {activeTab === 'categories' && adminT('tabs.categories')}
+                        {activeTab === 'orders' && adminT('tabs.orders')}
+                        {activeTab === 'users' && adminT('tabs.users')}
+                        {activeTab === 'store' && adminT('tabs.settings')}
+                        {activeTab === 'notifications' && "Push Уведомления"}
+                        {activeTab === 'settings' && adminT('tabs.permissions')}
+                        {activeTab === 'themes' && adminT('tabs.themes')}
+                      </span>
+                      {isRTL && (
+                        <>
+                          {activeTab === 'products' && <Package className="w-5 h-5" />}
+                          {activeTab === 'categories' && <Layers3 className="w-5 h-5" />}
+                          {activeTab === 'orders' && <ShoppingCart className="w-5 h-5" />}
+                          {activeTab === 'users' && <Users className="w-5 h-5" />}
+                          {activeTab === 'store' && <Settings className="w-5 h-5" />}
+                          {activeTab === 'notifications' && <Bell className="w-5 h-5" />}
+                          {activeTab === 'settings' && <UserCheck className="w-5 h-5" />}
+                          {activeTab === 'themes' && <Palette className="w-5 h-5" />}
+                        </>
+                      )}
+                    </div>
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
                   {hasPermission("canManageProducts") && (
-                    <option value="products">{adminT('tabs.products')}</option>
+                    <SelectItem value="products" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        {!isRTL && <Package className="w-5 h-5" />}
+                        <span className="text-lg">{adminT('tabs.products')}</span>
+                        {isRTL && <Package className="w-5 h-5" />}
+                      </div>
+                    </SelectItem>
                   )}
-                  {hasPermission("canManageProducts") && (
-                    <option value="categories">{adminT('tabs.categories')}</option>
+                  {hasPermission("canManageCategories") && (
+                    <SelectItem value="categories" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        {!isRTL && <Layers3 className="w-5 h-5" />}
+                        <span className="text-lg">{adminT('tabs.categories')}</span>
+                        {isRTL && <Layers3 className="w-5 h-5" />}
+                      </div>
+                    </SelectItem>
                   )}
                   {hasPermission("canManageOrders") && (
-                    <option value="orders">{adminT('tabs.orders')}</option>
+                    <SelectItem value="orders" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        {!isRTL && <ShoppingCart className="w-5 h-5" />}
+                        <span className="text-lg">{adminT('tabs.orders')}</span>
+                        {isRTL && <ShoppingCart className="w-5 h-5" />}
+                      </div>
+                    </SelectItem>
                   )}
-                  {hasPermission("canManageUsers") && (
-                    <option value="users">{adminT('tabs.users')}</option>
+                  {hasPermission("canViewUsers") && (
+                    <SelectItem value="users" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        {!isRTL && <Users className="w-5 h-5" />}
+                        <span className="text-lg">{adminT('tabs.users')}</span>
+                        {isRTL && <Users className="w-5 h-5" />}
+                      </div>
+                    </SelectItem>
                   )}
-                  <option value="store">{adminT('tabs.settings')}</option>
+                  {hasPermission("canViewSettings") && (
+                    <SelectItem value="store" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        {!isRTL && <Settings className="w-5 h-5" />}
+                        <span className="text-lg">{adminT('tabs.settings')}</span>
+                        {isRTL && <Settings className="w-5 h-5" />}
+                      </div>
+                    </SelectItem>
+                  )}
+                  {user?.role === 'admin' && (
+                    <SelectItem value="notifications" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        {!isRTL && <Bell className="w-5 h-5" />}
+                        <span className="text-lg">Push Уведомления</span>
+                        {isRTL && <Bell className="w-5 h-5" />}
+                      </div>
+                    </SelectItem>
+                  )}
                   {hasPermission("canManageSettings") && (
-                    <option value="notifications">Push Уведомления</option>
-                  )}
-                  {hasPermission("canManageSettings") && (
-                    <option value="settings">{adminT('tabs.permissions')}</option>
+                    <SelectItem value="settings" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        {!isRTL && <UserCheck className="w-5 h-5" />}
+                        <span className="text-lg">{adminT('tabs.permissions')}</span>
+                        {isRTL && <UserCheck className="w-5 h-5" />}
+                      </div>
+                    </SelectItem>
                   )}
                   {(hasPermission("canManageSettings") || hasPermission("canManageThemes")) && (
-                    <option value="themes">{adminT('tabs.themes')}</option>
+                    <SelectItem value="themes" className="py-3">
+                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        {!isRTL && <Palette className="w-5 h-5" />}
+                        <span className="text-lg">{adminT('tabs.themes')}</span>
+                        {isRTL && <Palette className="w-5 h-5" />}
+                      </div>
+                    </SelectItem>
                   )}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
-              </div>
+                </SelectContent>
+              </Select>
             </div>
             
             {/* Desktop Tabs - hidden on mobile screens */}
@@ -3268,7 +3458,7 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Search and Filter Controls */}
-                <div className={`dropdown-stable admin-filters-container flex flex-col gap-3 ${isRTL ? 'lg:flex-row-reverse' : 'lg:flex-row'}`}>
+                <div className={`flex flex-col gap-3 ${isRTL ? 'lg:flex-row-reverse' : 'lg:flex-row'}`}>
                   <div className="relative flex-1">
                     <Search className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                     <Input
@@ -3280,38 +3470,39 @@ export default function AdminDashboard() {
                   </div>
                   <div className={`flex flex-col gap-3 lg:flex-shrink-0 ${isRTL ? 'sm:flex-row-reverse' : 'sm:flex-row'}`}>
                     <div className="relative min-w-[180px]">
-                      <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'} pointer-events-none z-10`} />
-                      <select 
-                        value={selectedCategoryFilter} 
-                        onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-                        className={`w-full h-10 text-sm border border-input rounded-md bg-background px-3 py-2 ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'} appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50`}
-                      >
-                        <option value="all">{adminT('products.allCategories')}</option>
-                        {(categories as any[] || []).map((category: any) => (
-                          <option 
-                            key={category.id}
-                            value={category.id.toString()}
-                          >
-                            {getLocalizedField(category, 'name', i18n.language as SupportedLanguage)}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'left-3' : 'right-3'} pointer-events-none`} />
+                      <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
+                      <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
+                        <SelectTrigger className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
+                          <SelectValue placeholder={adminT('products.allCategories')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">{adminT('products.allCategories')}</SelectItem>
+                          {(categories as any[] || []).map((category: any) => (
+                            <SelectItem 
+                              key={category.id}
+                                          title={getLocalizedField(category, 'name', i18n.language as SupportedLanguage)} 
+                              value={category.id.toString()}
+                            >
+                              {getLocalizedField(category, 'name', i18n.language as SupportedLanguage)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="relative min-w-[160px]">
-                      <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'} pointer-events-none z-10`} />
-                      <select 
-                        value={selectedStatusFilter} 
-                        onChange={(e) => setSelectedStatusFilter(e.target.value)}
-                        className={`w-full h-10 text-sm border border-input rounded-md bg-background px-3 py-2 ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'} appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50`}
-                      >
-                        <option value="all">{adminT('products.allProducts')}</option>
-                        <option value="available">{adminT('products.availableProducts')}</option>
-                        <option value="unavailable">{adminT('products.unavailableProducts')}</option>
-                        <option value="out_of_stock_today">{adminT('products.preorderProducts')}</option>
-                        <option value="with_discount">{adminT('products.productsWithDiscount')}</option>
-                      </select>
-                      <ChevronDown className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'left-3' : 'right-3'} pointer-events-none`} />
+                      <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
+                      <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
+                        <SelectTrigger className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
+                          <SelectValue placeholder={adminT('products.productStatus')} />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                          <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{adminT('products.allProducts')}</SelectItem>
+                          <SelectItem value="available" className="text-gray-900 hover:bg-gray-100">{adminT('products.availableProducts')}</SelectItem>
+                          <SelectItem value="unavailable" className="text-gray-900 hover:bg-gray-100">{adminT('products.unavailableProducts')}</SelectItem>
+                          <SelectItem value="out_of_stock_today" className="text-gray-900 hover:bg-gray-100">{adminT('products.preorderProducts')}</SelectItem>
+                          <SelectItem value="with_discount" className="text-gray-900 hover:bg-gray-100">{adminT('products.productsWithDiscount')}</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </div>
@@ -3856,19 +4047,17 @@ export default function AdminDashboard() {
 
                 {/* Filters */}
                 <div className={`flex gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <div className="relative">
-                    <select 
-                      value={ordersStatusFilter} 
-                      onChange={(e) => setOrdersStatusFilter(e.target.value)}
-                      className="w-40 h-8 text-xs border border-input rounded-md bg-background px-3 py-1 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    >
-                      <option value="active">{adminT('orders.activeOrders')}</option>
-                      <option value="delivered">{adminT('orders.deliveredOrders')}</option>
-                      <option value="cancelled">{adminT('orders.cancelledOrders')}</option>
-                      <option value="all">{adminT('orders.allOrders')}</option>
-                    </select>
-                    <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
-                  </div>
+                  <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
+                    <SelectTrigger className="w-40 text-xs h-8">
+                      <SelectValue placeholder={adminT('orders.filterOrders')} />
+                    </SelectTrigger>
+                    <SelectContent className="min-w-[160px] max-w-[200px] bg-white border border-gray-200 shadow-lg z-50">
+                      <SelectItem value="active">{adminT('orders.activeOrders')}</SelectItem>
+                      <SelectItem value="delivered">{adminT('orders.deliveredOrders')}</SelectItem>
+                      <SelectItem value="cancelled">{adminT('orders.cancelledOrders')}</SelectItem>
+                      <SelectItem value="all">{adminT('orders.allOrders')}</SelectItem>
+                    </SelectContent>
+                  </Select>
 
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
@@ -3988,28 +4177,28 @@ export default function AdminDashboard() {
                                     className={`hidden sm:table-cell ${isRTL ? 'text-right' : 'text-center'} w-24 sm:w-32 px-1 sm:px-3`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                   >
-                                    <div className="relative">
-                                      <select
-                                        value={order.status}
-                                        onChange={(e) => {
-                                          const newStatus = e.target.value;
-                                          if (newStatus === 'cancelled') {
-                                            handleOrderCancellation(order.id);
-                                          } else {
-                                            updateOrderStatusMutation.mutate({ orderId: order.id, status: newStatus });
-                                          }
-                                        }}
-                                        className={`w-full h-8 text-xs border-2 rounded-md px-2 py-1 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${getStatusColor(order.status)} ${isRTL ? 'text-right' : 'text-center'}`}
-                                      >
-                                        <option value="pending">{adminT('orders.status.pending')}</option>
-                                        <option value="confirmed">{adminT('orders.status.confirmed')}</option>
-                                        <option value="preparing">{adminT('orders.status.preparing')}</option>
-                                        <option value="ready">{adminT('orders.status.ready')}</option>
-                                        <option value="delivered">{adminT('orders.status.delivered')}</option>
-                                        <option value="cancelled">{adminT('orders.status.cancelled')}</option>
-                                      </select>
-                                      <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
-                                    </div>
+                                    <Select
+                                      value={order.status}
+                                      onValueChange={(newStatus) => {
+                                        if (newStatus === 'cancelled') {
+                                          handleOrderCancellation(order.id);
+                                        } else {
+                                          updateOrderStatusMutation.mutate({ orderId: order.id, status: newStatus });
+                                        }
+                                      }}
+                                    >
+                                      <SelectTrigger className={`w-full h-8 text-xs border-2 ${getStatusColor(order.status)} ${isRTL ? 'text-right' : 'text-center'}`}>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                                        <SelectItem value="pending" className="text-yellow-800 hover:bg-yellow-50">{adminT('orders.status.pending')}</SelectItem>
+                                        <SelectItem value="confirmed" className="text-blue-800 hover:bg-blue-50">{adminT('orders.status.confirmed')}</SelectItem>
+                                        <SelectItem value="preparing" className="text-orange-800 hover:bg-orange-50">{adminT('orders.status.preparing')}</SelectItem>
+                                        <SelectItem value="ready" className="text-green-800 hover:bg-green-50">{adminT('orders.status.ready')}</SelectItem>
+                                        <SelectItem value="delivered" className="text-gray-800 hover:bg-gray-50">{adminT('orders.status.delivered')}</SelectItem>
+                                        <SelectItem value="cancelled" className="text-red-800 hover:bg-red-50">{adminT('orders.status.cancelled')}</SelectItem>
+                                      </SelectContent>
+                                    </Select>
                                   </TableCell>
                                   <TableCell 
                                     className={`font-medium text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-center'} w-16 sm:w-24 px-1 sm:px-3`}
@@ -4670,19 +4859,17 @@ export default function AdminDashboard() {
                       <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                       {adminT('users.createUser')}
                     </Button>
-                    <div className="relative">
-                      <select 
-                        value={usersRoleFilter} 
-                        onChange={(e) => setUsersRoleFilter(e.target.value)}
-                        className="w-40 h-10 text-sm border border-input rounded-md bg-background px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                      >
-                        <option value="all">{adminT('users.allRoles')}</option>
-                        <option value="admin">{adminT('roles.admin')}</option>
-                        <option value="worker">{adminT('roles.worker')}</option>
-                        <option value="customer">{adminT('roles.customer')}</option>
-                      </select>
-                      <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                    </div>
+                    <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
+                      <SelectTrigger className="w-40">
+                        <SelectValue placeholder={adminT('users.allRoles')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{adminT('users.allRoles')}</SelectItem>
+                        <SelectItem value="admin">{adminT('roles.admin')}</SelectItem>
+                        <SelectItem value="worker">{adminT('roles.worker')}</SelectItem>
+                        <SelectItem value="customer">{adminT('roles.customer')}</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   {/* Search field */}
                   <div className={`flex-1 ${isRTL ? 'order-last' : 'order-first'}`}>
@@ -5711,25 +5898,22 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm">{adminT('products.dialog.unitLabel')}</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <select
-                          value={field.value}
-                          onChange={(e) => {
-                            field.onChange(e.target.value);
-                            handleFieldChange('unit', e.target.value, false);
-                          }}
-                          className="w-full h-10 text-sm border border-input rounded-md bg-background px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                        >
-                          <option value="">{adminT('products.dialog.unitLabel')}</option>
-                          <option value="100g">{adminT('products.units.100g')}</option>
-                          <option value="100ml">{adminT('products.units.100ml')}</option>
-                          <option value="piece">{adminT('products.units.piece')}</option>
-                          <option value="kg">{adminT('products.units.kg')}</option>
-                        </select>
-                        <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                      </div>
-                    </FormControl>
+                    <Select onValueChange={(value) => {
+                      field.onChange(value);
+                      handleFieldChange('unit', value, false);
+                    }} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="text-sm">
+                          <SelectValue placeholder={adminT('products.dialog.unitLabel')} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="100g" className="text-sm">{adminT('products.units.100g')}</SelectItem>
+                        <SelectItem value="100ml" className="text-sm">{adminT('products.units.100ml')}</SelectItem>
+                        <SelectItem value="piece" className="text-sm">{adminT('products.units.piece')}</SelectItem>
+                        <SelectItem value="kg" className="text-sm">{adminT('products.units.kg')}</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage className="text-xs" />
                   </FormItem>
                 )}
@@ -5767,24 +5951,21 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm">{adminT('products.dialog.availabilityLabel')}</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <select
-                        value={field.value}
-                        onChange={(e) => {
-                          field.onChange(e.target.value);
-                          handleFieldChange('availabilityStatus', e.target.value, false);
-                        }}
-                        className="w-full h-10 text-sm border border-input rounded-md bg-background px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                      >
-                        <option value="">{adminT('products.dialog.availabilityPlaceholder')}</option>
-                        <option value="available">{adminT('products.dialog.statusAvailable')}</option>
-                        <option value="completely_unavailable">{adminT('products.dialog.statusUnavailable')}</option>
-                        <option value="out_of_stock_today">{adminT('products.dialog.statusOutOfStock')}</option>
-                      </select>
-                      <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                    </div>
-                  </FormControl>
+                  <Select onValueChange={(value) => {
+                    field.onChange(value);
+                    handleFieldChange('availabilityStatus', value, false);
+                  }} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder={adminT('products.dialog.availabilityPlaceholder')} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="available" className="text-sm">{adminT('products.dialog.statusAvailable')}</SelectItem>
+                      <SelectItem value="completely_unavailable" className="text-sm">{adminT('products.dialog.statusUnavailable')}</SelectItem>
+                      <SelectItem value="out_of_stock_today" className="text-sm">{adminT('products.dialog.statusOutOfStock')}</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormDescription className="text-xs text-gray-500">
                     {adminT('products.dialog.statusDescription')}
                   </FormDescription>
@@ -5838,23 +6019,23 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm">{adminT('products.dialog.discountTypeLabel')}</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <select
-                              value={field.value}
-                              onChange={(e) => {
-                                field.onChange(e.target.value);
-                                handleFieldChange('discountType', e.target.value, false);
-                              }}
-                              className="w-full h-10 text-sm border border-input rounded-md bg-background px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                            >
-                              <option value="">{adminT('products.dialog.discountTypePlaceholder')}</option>
-                              <option value="percentage">{adminT('products.dialog.discountTypePercent')}</option>
-                              <option value="fixed">{adminT('products.dialog.discountTypeFixed')}</option>
-                            </select>
-                            <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                          </div>
-                        </FormControl>
+                        <Select 
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            handleFieldChange('discountType', value, false);
+                          }}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="text-sm">
+                              <SelectValue placeholder={adminT('products.dialog.discountTypePlaceholder')} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="percentage">{adminT('products.dialog.discountTypePercent')}</SelectItem>
+                            <SelectItem value="fixed">{adminT('products.dialog.discountTypeFixed')}</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
@@ -6764,23 +6945,24 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm">{adminT('storeSettings.defaultItemsPerPage')}</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <select
-                      value={field.value?.toString() || "10"}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      className="w-full h-10 text-sm border border-input rounded-md bg-background px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    >
-                      <option value="10">{adminT('storeSettings.items10')}</option>
-                      <option value="15">{adminT('storeSettings.items15')}</option>
-                      <option value="25">{adminT('storeSettings.items25')}</option>
-                      <option value="50">{adminT('storeSettings.items50')}</option>
-                      <option value="100">{adminT('storeSettings.items100')}</option>
-                      <option value="1000">{adminT('storeSettings.allItems')}</option>
-                    </select>
-                    <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                  </div>
-                </FormControl>
+                <Select 
+                  onValueChange={(value) => field.onChange(parseInt(value))} 
+                  value={field.value?.toString() || "10"}
+                >
+                  <FormControl>
+                    <SelectTrigger className="text-sm">
+                      <SelectValue placeholder={adminT('storeSettings.selectQuantity')} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="10">{adminT('storeSettings.items10')}</SelectItem>
+                    <SelectItem value="15">{adminT('storeSettings.items15')}</SelectItem>
+                    <SelectItem value="25">{adminT('storeSettings.items25')}</SelectItem>
+                    <SelectItem value="50">{adminT('storeSettings.items50')}</SelectItem>
+                    <SelectItem value="100">{adminT('storeSettings.items100')}</SelectItem>
+                    <SelectItem value="1000">{adminT('storeSettings.allItems')}</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormDescription className="text-xs text-gray-500">
                   {adminT('storeSettings.itemsPerPageDescription')}
                 </FormDescription>
@@ -6966,23 +7148,27 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               <div className="space-y-4">
                 <h4 className="text-sm font-medium">{adminT('storeSettings.defaultLanguage')}</h4>
                 <div className="p-3 border rounded-lg bg-gray-50">
-                  <div className="relative">
-                    <select
-                      value={form.watch("defaultLanguage") || "ru"}
-                      onChange={(e) => form.setValue("defaultLanguage", e.target.value)}
-                      className="w-full h-10 text-sm border border-input rounded-md bg-background px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    >
+                  <Select 
+                    value={form.watch("defaultLanguage") || "ru"}
+                    onValueChange={(value) => form.setValue("defaultLanguage", value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
                       {Object.entries(LANGUAGES).filter(([code]) => {
                         const enabledLanguages = form.watch("enabledLanguages") || ["ru", "en", "he"];
                         return enabledLanguages.includes(code);
                       }).map(([code, info]) => (
-                        <option key={code} value={code}>
-                          {(info as any).flag} {(info as any).name}
-                        </option>
+                        <SelectItem key={code} value={code}>
+                          <div className="flex items-center gap-2">
+                            <span>{(info as any).flag}</span>
+                            <span>{(info as any).name}</span>
+                          </div>
+                        </SelectItem>
                       ))}
-                    </select>
-                    <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                  </div>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <p className="text-xs text-gray-500">
                   {adminT('storeSettings.defaultLanguageDescription')}
@@ -7102,20 +7288,17 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-sm">{adminT('storeSettings.weekStartDay')}</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <select
-                      value={field.value}
-                      onChange={(e) => field.onChange(e.target.value)}
-                      className="w-full h-10 text-sm border border-input rounded-md bg-background px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    >
-                      <option value="">{adminT('storeSettings.weekStartDayPlaceholder')}</option>
-                      <option value="monday">{adminT('storeSettings.monday')}</option>
-                      <option value="sunday">{adminT('storeSettings.sunday')}</option>
-                    </select>
-                    <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                  </div>
-                </FormControl>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="text-sm">
+                      <SelectValue placeholder={adminT('storeSettings.weekStartDayPlaceholder')} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="monday">{adminT('storeSettings.monday')}</SelectItem>
+                    <SelectItem value="sunday">{adminT('storeSettings.sunday')}</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormDescription className="text-xs">
                   {adminT('storeSettings.weekStartDayDescription')}
                 </FormDescription>
@@ -7173,56 +7356,56 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <div className="space-y-2">
                       <div>
                         <FormLabel className="text-xs text-gray-600 block mb-1">{adminT('storeSettings.openTime')}</FormLabel>
-                        <div className="relative">
-                          <select
-                            value={openTime}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              const currentClose = closeTime || "18:00";
-                              form.setValue(`workingHours.${key}` as any, `${value}-${currentClose}`);
-                            }}
-                            className="w-full h-8 text-xs border border-input rounded-md bg-background px-2 py-1 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                          >
+                        <Select
+                          value={openTime}
+                          onValueChange={(value) => {
+                            const currentClose = closeTime || "18:00";
+                            form.setValue(`workingHours.${key}` as any, `${value}-${currentClose}`);
+                          }}
+                        >
+                          <SelectTrigger className="text-xs h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
                             {Array.from({ length: 48 }, (_, i) => {
                               const hour = Math.floor(i / 2);
                               const minute = i % 2 === 0 ? "00" : "30";
                               const time = `${hour.toString().padStart(2, "0")}:${minute}`;
                               return (
-                                <option key={time} value={time}>
+                                <SelectItem key={time} value={time}>
                                   {time}
-                                </option>
+                                </SelectItem>
                               );
                             })}
-                          </select>
-                          <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
-                        </div>
+                          </SelectContent>
+                        </Select>
                       </div>
                       
                       <div>
                         <FormLabel className="text-xs text-gray-600 block mb-1">{adminT('storeSettings.closeTime')}</FormLabel>
-                        <div className="relative">
-                          <select
-                            value={closeTime}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              const currentOpen = openTime || "09:00";
-                              form.setValue(`workingHours.${key}` as any, `${currentOpen}-${value}`);
-                            }}
-                            className="w-full h-8 text-xs border border-input rounded-md bg-background px-2 py-1 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                          >
+                        <Select
+                          value={closeTime}
+                          onValueChange={(value) => {
+                            const currentOpen = openTime || "09:00";
+                            form.setValue(`workingHours.${key}` as any, `${currentOpen}-${value}`);
+                          }}
+                        >
+                          <SelectTrigger className="text-xs h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
                             {Array.from({ length: 48 }, (_, i) => {
                               const hour = Math.floor(i / 2);
                               const minute = i % 2 === 0 ? "00" : "30";
                               const time = `${hour.toString().padStart(2, "0")}:${minute}`;
                               return (
-                                <option key={time} value={time}>
+                                <SelectItem key={time} value={time}>
                                   {time}
-                                </option>
+                                </SelectItem>
                               );
                             })}
-                          </select>
-                          <ChevronDown className="absolute right-1 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
-                        </div>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                   )}
@@ -7711,21 +7894,18 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('dialog.roleLabel')} *</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <select
-                        value={field.value}
-                        onChange={(e) => field.onChange(e.target.value)}
-                        className={`w-full h-10 text-sm border border-input rounded-md bg-background px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${isRTL ? 'text-right' : 'text-left'}`}
-                      >
-                        <option value="">{adminT('dialog.rolePlaceholder')}</option>
-                        <option value="customer">{adminT('roles.customer')}</option>
-                        <option value="worker">{adminT('roles.worker')}</option>
-                        <option value="admin">{adminT('roles.admin')}</option>
-                      </select>
-                      <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                    </div>
-                  </FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                        <SelectValue placeholder={adminT('dialog.rolePlaceholder')} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="customer">{adminT('roles.customer')}</SelectItem>
+                      <SelectItem value="worker">{adminT('roles.worker')}</SelectItem>
+                      <SelectItem value="admin">{adminT('roles.admin')}</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage className="text-xs" />
                 </FormItem>
               )}
