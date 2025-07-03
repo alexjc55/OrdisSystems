@@ -1,0 +1,23 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ sudo tail -f /var/www/ordis_co_il_usr/data/logs/edahouse.ordis.co.il-frontend.access.log &
+sudo tail -f /var/www/ordis_co_il_usr/data/logs/edahouse.ordis.co.il-frontend.error.log &
+[1] 256978
+[2] 256979
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ 77.137.64.248 - - [03/Jul/2025:01:56:46 +0300] "GET /api/products HTTP/1.1" 200 52102 "https://edahouse.ordis.co.il/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+77.137.64.248 - - [03/Jul/2025:01:56:46 +0300] "GET /api/auth/user HTTP/1.1" 401 26 "https://edahouse.ordis.co.il/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+77.137.64.248 - - [03/Jul/2025:01:56:46 +0300] "GET /api/categories HTTP/1.1" 200 2136 "https://edahouse.ordis.co.il/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
+89.42.231.140 - - [03/Jul/2025:01:57:11 +0300] "GET / HTTP/1.1" 301 169 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.46"
+204.76.203.206 - - [03/Jul/2025:01:57:45 +0300] "GET / HTTP/1.1" 301 169 "-" "-"
+178.236.17.141 - - [03/Jul/2025:02:00:01 +0300] "GET / HTTP/1.1" 200 1540 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36"
+149.86.227.49 - - [03/Jul/2025:02:02:42 +0300] "GET / HTTP/1.1" 301 169 "-" "Hello World/1.0"
+178.236.17.141 - - [03/Jul/2025:02:03:19 +0300] "HEAD / HTTP/1.1" 200 0 "-" "curl/7.88.1"2025/07/03 00:42:01 [error] 253120#253120: *675 connect() failed (111: Connection refused) while connecting to upstream, client: 178.236.17.141, server: edahouse.ordis.co.il, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:3000/", host: "edahouse.ordis.co.il"
+2025/07/03 00:55:20 [error] 253120#253120: *681 connect() failed (111: Connection refused) while connecting to upstream, client: 77.137.64.248, server: edahouse.ordis.co.il, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:3000/", host: "edahouse.ordis.co.il"
+2025/07/03 00:55:37 [error] 253120#253120: *681 connect() failed (111: Connection refused) while connecting to upstream, client: 77.137.64.248, server: edahouse.ordis.co.il, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:3000/", host: "edahouse.ordis.co.il"
+2025/07/03 00:56:02 [error] 253120#253120: *687 connect() failed (111: Connection refused) while connecting to upstream, client: 178.236.17.141, server: edahouse.ordis.co.il, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:3000/", host: "edahouse.ordis.co.il"
+
+2025/07/03 01:00:01 [error] 253120#253120: *691 connect() failed (111: Connection refused) while connecting to upstream, client: 178.236.17.141, server: edahouse.ordis.co.il, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:3000/", host: "edahouse.ordis.co.il"
+2025/07/03 01:14:01 [error] 253119#253119: *698 connect() failed (111: Connection refused) while connecting to upstream, client: 178.236.17.141, server: edahouse.ordis.co.il, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:3000/", host: "edahouse.ordis.co.il"
+2025/07/03 01:14:02 [error] 253120#253120: *695 connect() failed (111: Connection refused) while connecting to upstream, client: 162.244.82.179, server: edahouse.ordis.co.il, request: "GET /restore.php HTTP/1.1", upstream: "http://127.0.0.1:3000/restore.php", host: "178.236.17.141"
+2025/07/03 01:14:02 [error] 253120#253120: *695 connect() failed (111: Connection refused) while connecting to upstream, client: 162.244.82.179, server: edahouse.ordis.co.il, request: "GET /restore.php HTTP/1.1", upstream: "http://127.0.0.1:3000/restore.php", host: "178.236.17.141", referrer: "http://178.236.17.141/restore.php"
+2025/07/03 01:21:12 [error] 253119#253119: *704 connect() failed (111: Connection refused) while connecting to upstream, client: 43.157.22.57, server: edahouse.ordis.co.il, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:3000/", host: "178.236.17.141", referrer: "http://178.236.17.141:80"
+2025/07/03 01:43:11 [error] 253119#253119: *904 upstream prematurely closed connection while reading upstream, client: 77.137.64.248, server: edahouse.ordis.co.il, request: "POST /api/login HTTP/1.1", upstream: "http://127.0.0.1:3000/api/login", host: "edahouse.ordis.co.il", referrer: "https://edahouse.ordis.co.il/auth"178.236.17.141 - - [03/Jul/2025:02:03:19 +0300] "GET / HTTP/1.1" 200 4634 "-" "curl/7.88.1"
+185.191.127.222 - - [03/Jul/2025:02:03:22 +0300] "GET / HTTP/1.1" 301 169 "-" "Hello World/1.0"
