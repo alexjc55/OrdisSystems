@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ChevronDown } from "lucide-react";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -780,47 +780,56 @@ export default function Checkout() {
 
                       <div>
                         <Label htmlFor="deliveryTime">{tShop('checkout.deliveryTime')} *</Label>
-                        <Select value={selectedTime} onValueChange={setSelectedTime} disabled={!selectedDate} required>
-                          <SelectTrigger>
-                            <SelectValue placeholder={tShop('checkout.selectTime')} />
-                          </SelectTrigger>
-                          <SelectContent>
+                        <div className="relative">
+                          <select
+                            value={selectedTime}
+                            onChange={(e) => setSelectedTime(e.target.value)}
+                            disabled={!selectedDate}
+                            required
+                            className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <option value="">{tShop('checkout.selectTime')}</option>
                             {selectedDate && generateDeliveryTimes(
                               storeSettings?.workingHours,
                               format(selectedDate, "yyyy-MM-dd"),
                               storeSettings?.weekStartDay
                             ).map((time) => (
-                              <SelectItem key={time.value} value={time.value}>
+                              <option key={time.value} value={time.value}>
                                 {time.label}
-                              </SelectItem>
+                              </option>
                             ))}
-                          </SelectContent>
-                        </Select>
+                          </select>
+                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                        </div>
                       </div>
                     </div>
 
                     <div>
                       <Label htmlFor="paymentMethod">{tShop('checkout.paymentMethod')} *</Label>
-                      <Select value={selectedPaymentMethod} onValueChange={setSelectedPaymentMethod} required>
-                        <SelectTrigger>
-                          <SelectValue placeholder={tShop('checkout.selectPaymentMethod')} />
-                        </SelectTrigger>
-                        <SelectContent>
+                      <div className="relative">
+                        <select
+                          value={selectedPaymentMethod}
+                          onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                          required
+                          className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                        >
+                          <option value="">{tShop('checkout.selectPaymentMethod')}</option>
                           {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
                             storeSettings.paymentMethods.map((method: any) => (
-                              <SelectItem key={method.id} value={method.name}>
+                              <option key={method.id} value={method.name}>
                                 {getPaymentMethodName(method)}
-                              </SelectItem>
+                              </option>
                             )) : (
                               <>
-                                <SelectItem value="cash">{tShop('checkout.cashOnDelivery')}</SelectItem>
-                                <SelectItem value="card">{tShop('checkout.cardOnDelivery')}</SelectItem>
-                                <SelectItem value="transfer">{tShop('checkout.bankTransfer')}</SelectItem>
+                                <option value="cash">{tShop('checkout.cashOnDelivery')}</option>
+                                <option value="card">{tShop('checkout.cardOnDelivery')}</option>
+                                <option value="transfer">{tShop('checkout.bankTransfer')}</option>
                               </>
                             )
                           }
-                        </SelectContent>
-                      </Select>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                      </div>
                     </div>
 
                     <Button 
@@ -1009,51 +1018,56 @@ export default function Checkout() {
 
                         <div>
                           <Label htmlFor="registerDeliveryTime">{tShop('checkout.deliveryTime')} *</Label>
-                          <Select value={selectedRegisterTime} onValueChange={setSelectedRegisterTime} disabled={!selectedRegisterDate} required>
-                            <SelectTrigger>
-                              <SelectValue placeholder={tShop('checkout.selectTime')} />
-                            </SelectTrigger>
-                            <SelectContent>
+                          <div className="relative">
+                            <select
+                              value={selectedRegisterTime}
+                              onChange={(e) => setSelectedRegisterTime(e.target.value)}
+                              disabled={!selectedRegisterDate}
+                              required
+                              className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <option value="">{tShop('checkout.selectTime')}</option>
                               {selectedRegisterDate && generateDeliveryTimes(
                                 storeSettings?.workingHours,
                                 format(selectedRegisterDate, "yyyy-MM-dd"),
                                 storeSettings?.weekStartDay
                               ).map((time) => (
-                                <SelectItem key={time.value} value={time.value}>
+                                <option key={time.value} value={time.value}>
                                   {time.label}
-                                </SelectItem>
+                                </option>
                               ))}
-                            </SelectContent>
-                          </Select>
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                          </div>
                         </div>
                       </div>
 
                       <div>
                         <Label htmlFor="registerPaymentMethod">{tShop('checkout.paymentMethod')} *</Label>
-                        <Select 
-                          value={selectedRegisterPaymentMethod} 
-                          onValueChange={setSelectedRegisterPaymentMethod} 
-                          required
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder={tShop('checkout.selectPaymentMethod')} />
-                          </SelectTrigger>
-                          <SelectContent>
+                        <div className="relative">
+                          <select
+                            value={selectedRegisterPaymentMethod}
+                            onChange={(e) => setSelectedRegisterPaymentMethod(e.target.value)}
+                            required
+                            className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                          >
+                            <option value="">{tShop('checkout.selectPaymentMethod')}</option>
                             {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
                               storeSettings.paymentMethods.map((method: any) => (
-                                <SelectItem key={method.id} value={method.name}>
+                                <option key={method.id} value={method.name}>
                                   {getPaymentMethodName(method)}
-                                </SelectItem>
+                                </option>
                               )) : (
                                 <>
-                                  <SelectItem value="cash">{tShop('checkout.cashOnDelivery')}</SelectItem>
-                                  <SelectItem value="card">{tShop('checkout.cardOnDelivery')}</SelectItem>
-                                  <SelectItem value="transfer">{tShop('checkout.bankTransfer')}</SelectItem>
+                                  <option value="cash">{tShop('checkout.cashOnDelivery')}</option>
+                                  <option value="card">{tShop('checkout.cardOnDelivery')}</option>
+                                  <option value="transfer">{tShop('checkout.bankTransfer')}</option>
                                 </>
                               )
                             }
-                          </SelectContent>
-                        </Select>
+                          </select>
+                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                        </div>
                       </div>
 
                       <Button 
@@ -1245,51 +1259,56 @@ export default function Checkout() {
 
                         <div>
                           <Label htmlFor="guestDeliveryTime">{tShop('checkout.deliveryTime')} *</Label>
-                          <Select value={selectedGuestTime} onValueChange={setSelectedGuestTime} disabled={!selectedGuestDate} required>
-                            <SelectTrigger>
-                              <SelectValue placeholder={tShop('checkout.selectTime')} />
-                            </SelectTrigger>
-                            <SelectContent>
+                          <div className="relative">
+                            <select
+                              value={selectedGuestTime}
+                              onChange={(e) => setSelectedGuestTime(e.target.value)}
+                              disabled={!selectedGuestDate}
+                              required
+                              className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <option value="">{tShop('checkout.selectTime')}</option>
                               {selectedGuestDate && generateDeliveryTimes(
                                 storeSettings?.workingHours,
                                 format(selectedGuestDate, "yyyy-MM-dd"),
                                 storeSettings?.weekStartDay
                               ).map((time) => (
-                                <SelectItem key={time.value} value={time.value}>
+                                <option key={time.value} value={time.value}>
                                   {time.label}
-                                </SelectItem>
+                                </option>
                               ))}
-                            </SelectContent>
-                          </Select>
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                          </div>
                         </div>
                       </div>
 
                       <div>
                         <Label htmlFor="guestPaymentMethod">{tShop('checkout.paymentMethod')} *</Label>
-                        <Select 
-                          value={selectedGuestPaymentMethod} 
-                          onValueChange={setSelectedGuestPaymentMethod} 
-                          required
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder={tShop('checkout.selectPaymentMethod')} />
-                          </SelectTrigger>
-                          <SelectContent>
+                        <div className="relative">
+                          <select
+                            value={selectedGuestPaymentMethod}
+                            onChange={(e) => setSelectedGuestPaymentMethod(e.target.value)}
+                            required
+                            className="w-full h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                          >
+                            <option value="">{tShop('checkout.selectPaymentMethod')}</option>
                             {storeSettings?.paymentMethods && Array.isArray(storeSettings.paymentMethods) ? 
                               storeSettings.paymentMethods.map((method: any) => (
-                                <SelectItem key={method.id} value={method.name}>
+                                <option key={method.id} value={method.name}>
                                   {getPaymentMethodName(method)}
-                                </SelectItem>
+                                </option>
                               )) : (
                                 <>
-                                  <SelectItem value="cash">{tShop('checkout.cashOnDelivery')}</SelectItem>
-                                  <SelectItem value="card">{tShop('checkout.cardOnDelivery')}</SelectItem>
-                                  <SelectItem value="transfer">{tShop('checkout.bankTransfer')}</SelectItem>
+                                  <option value="cash">{tShop('checkout.cashOnDelivery')}</option>
+                                  <option value="card">{tShop('checkout.cardOnDelivery')}</option>
+                                  <option value="transfer">{tShop('checkout.bankTransfer')}</option>
                                 </>
                               )
                             }
-                          </SelectContent>
-                        </Select>
+                          </select>
+                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                        </div>
                       </div>
 
                       <Button 

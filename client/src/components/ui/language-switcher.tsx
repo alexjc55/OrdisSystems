@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ChevronDown } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useLanguage, useCommonTranslation } from "@/hooks/use-language";
 import { Languages, Globe } from "lucide-react";
@@ -31,26 +31,20 @@ export function LanguageSwitcher({
 
   if (variant === "select") {
     return (
-      <Select value={currentLanguage} onValueChange={changeLanguage}>
-        <SelectTrigger className="w-auto min-w-[120px]">
-          <SelectValue>
-            <div className="flex items-center gap-2">
-              {showFlag && <span className={`${currentLanguageInfo.flagClass} inline-block`}></span>}
-              {showText && <span>{currentLanguageInfo.nativeName}</span>}
-            </div>
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
+      <div className="relative">
+        <select
+          value={currentLanguage}
+          onChange={(e) => changeLanguage(e.target.value as "ru" | "en" | "he" | "ar")}
+          className="w-auto min-w-[120px] h-10 bg-white border border-gray-200 rounded-md px-3 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+        >
           {Object.entries(availableLanguages).map(([code, info]) => (
-            <SelectItem key={code} value={code}>
-              <div className="flex items-center gap-2">
-                {showFlag && <span className={`${info.flagClass} inline-block`}></span>}
-                <span>{info.nativeName}</span>
-              </div>
-            </SelectItem>
+            <option key={code} value={code}>
+              {info.nativeName}
+            </option>
           ))}
-        </SelectContent>
-      </Select>
+        </select>
+        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+      </div>
     );
   }
 
