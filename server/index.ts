@@ -5,17 +5,6 @@ import { setupVite, serveStatic, log } from "./vite";
 import { seedDatabase } from "./seed";
 
 const app = express();
-
-// Disable all caching
-app.use((req, res, next) => {
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, private');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-  res.setHeader('Last-Modified', new Date().toUTCString());
-  res.setHeader('ETag', '');
-  next();
-});
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

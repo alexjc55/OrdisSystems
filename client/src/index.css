@@ -1,4 +1,3 @@
-/* Cache busting version: v3.44.14 */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+Hebrew:wght@300;400;500;600;700&family=Assistant:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap');
 @import './lib/design-system.css';
 
@@ -701,21 +700,26 @@ button:focus,
     width: 100% !important;
   }
   
-  .admin-select-trigger {
+  .admin-select-trigger,
+  [data-radix-select-trigger] {
     position: relative !important;
+    min-width: 0 !important;
   }
   
-  .admin-select-content {
-    position: absolute !important;
+  .admin-select-content,
+  [data-radix-select-content] {
+    position: fixed !important;
     z-index: 50 !important;
     min-width: 8rem !important;
     max-width: 20rem !important;
+    contain: layout !important;
   }
   
   /* Prevent layout shifts from dropdowns */
-  .admin-filters-container {
-    position: relative !important;
-    isolation: isolate !important;
+  .admin-filters-container,
+  .admin-content-area .container {
+    contain: layout style !important;
+    overflow: visible !important;
   }
   
   /* Stabilize viewport for admin panel */
@@ -723,41 +727,11 @@ button:focus,
     overflow-x: hidden !important;
   }
   
-  /* CRITICAL: Fix table container width to prevent shrinking on dropdown */
-  .admin-content-area .table-container {
-    width: 100% !important;
-    min-width: 100% !important;
-    flex-shrink: 0 !important;
-    position: relative !important;
-  }
-  
-  .admin-content-area .table-container table {
-    width: 100% !important;
-    min-width: 100% !important;
-    table-layout: auto !important;
-  }
-  
-  /* Prevent container width changes during dropdown events */
-  .admin-content-area .products {
-    width: 100% !important;
-    min-width: 100% !important;
-    flex-shrink: 0 !important;
-  }
-  
-  /* Lock the overflow container dimensions */
-  .admin-content-area .overflow-x-auto {
-    width: 100% !important;
-    min-width: 100% !important;
-    max-width: 100% !important;
-    flex-shrink: 0 !important;
-    box-sizing: border-box !important;
-  }
-  
-  /* Prevent width recalculation when dropdown opens */
-  .admin-filters-container:has([data-state="open"]) ~ * .table-container,
-  .admin-content-area:has([data-state="open"]) .table-container {
-    width: 100% !important;
-    min-width: 100% !important;
+  /* Stabilize select content positioning */
+  [data-radix-popper-content-wrapper] {
+    will-change: auto !important;
+    transform: none !important;
+    position: fixed !important;
   }
   
   /* Force stable positioning for Radix Select components */
