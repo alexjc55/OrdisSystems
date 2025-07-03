@@ -34,7 +34,7 @@ function getMultilingualValue(
 }
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download } from "lucide-react";
 import { Link, useLocation } from "wouter";
@@ -48,9 +48,25 @@ export default function Header({ onResetView }: HeaderProps) {
   const { user, logoutMutation } = useAuth();
   const { items, toggleCart } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
   const { t } = useCommonTranslation();
   const { currentLanguage, changeLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
+
+  // Close profile menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const { isInstalled, installApp, isStandalone } = usePWA();
   
@@ -170,59 +186,70 @@ export default function Header({ onResetView }: HeaderProps) {
             {/* Desktop User Menu */}
             {user && (
               <div className="hidden md:block">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
-                        <AvatarFallback>
-                          {user?.firstName?.[0]}{user?.lastName?.[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <div className="flex items-center justify-start gap-2 p-2">
-                      <div className="flex flex-col space-y-1 leading-none">
-                        {user?.firstName && (
-                          <p className="font-medium">{user.firstName} {user.lastName}</p>
-                        )}
-                        {user?.email && (
-                          <p className="w-[200px] truncate text-sm text-muted-foreground">
-                            {user.email}
-                          </p>
-                        )}
-                        <Badge variant="secondary" className="w-fit text-xs">
-                          {user?.role === 'admin' ? t('userRole.admin') : 
-                           user?.role === 'worker' ? t('userRole.worker') : t('userRole.customer')}
-                        </Badge>
+                <div className="relative" ref={profileMenuRef}>
+                  <Button 
+                    variant="ghost" 
+                    className="relative h-8 w-8 rounded-full"
+                    onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  >
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
+                      <AvatarFallback>
+                        {user?.firstName?.[0]}{user?.lastName?.[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                  {isProfileMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                      <div className="flex items-center justify-start gap-2 p-2">
+                        <div className="flex flex-col space-y-1 leading-none">
+                          {user?.firstName && (
+                            <p className="font-medium">{user.firstName} {user.lastName}</p>
+                          )}
+                          {user?.email && (
+                            <p className="w-[200px] truncate text-sm text-muted-foreground">
+                              {user.email}
+                            </p>
+                          )}
+                          <Badge variant="secondary" className="w-fit text-xs">
+                            {user?.role === 'admin' ? t('userRole.admin') : 
+                             user?.role === 'worker' ? t('userRole.worker') : t('userRole.customer')}
+                          </Badge>
+                        </div>
                       </div>
-                    </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href="/profile">
+                      <hr className="border-gray-200" />
+                      <Link 
+                        href="/profile" 
+                        className="flex items-center px-2 py-2 text-sm hover:bg-gray-100 text-gray-900"
+                        onClick={() => setIsProfileMenuOpen(false)}
+                      >
                         <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                         <span>{t('navigation.profile')}</span>
                       </Link>
-                    </DropdownMenuItem>
-                    {user?.role === 'admin' && (
-                      <DropdownMenuItem asChild>
-                        <Link href="/admin">
+                      {user?.role === 'admin' && (
+                        <Link 
+                          href="/admin" 
+                          className="flex items-center px-2 py-2 text-sm hover:bg-gray-100 text-gray-900"
+                          onClick={() => setIsProfileMenuOpen(false)}
+                        >
                           <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                           <span>{t('adminPanel')}</span>
                         </Link>
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={() => logoutMutation.mutate()}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50 focus:text-red-700 focus:bg-red-50"
-                    >
-                      <LogOut className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                      <span>{t('logout')}</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      )}
+                      <hr className="border-gray-200" />
+                      <button 
+                        onClick={() => {
+                          logoutMutation.mutate();
+                          setIsProfileMenuOpen(false);
+                        }}
+                        className="w-full flex items-center px-2 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <LogOut className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                        <span>{t('logout')}</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 

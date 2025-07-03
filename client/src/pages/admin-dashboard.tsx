@@ -42,8 +42,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/image-upload";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -730,8 +729,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   const [showAddItem, setShowAddItem] = useState(false);
   const [editedOrderItems, setEditedOrderItems] = useState(order.items || []);
   const [showDiscountDialog, setShowDiscountDialog] = useState<number | null>(null);
-  const [datePickerOpen, setDatePickerOpen] = useState(false);
-  const [mobileDatePickerOpen, setMobileDatePickerOpen] = useState(false);
+
 
   // Get locale for calendar based on current language
   const getCalendarLocale = () => {
@@ -1246,31 +1244,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   className="text-sm h-8"
                 />
                 <div className="grid grid-cols-2 gap-2">
-                  <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="text-sm h-8 justify-start text-left font-normal"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "PPP", { locale: getCalendarLocale() }) : adminT('orders.selectDate')}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <CalendarComponent
-                        mode="single"
-                        selected={editedOrder.deliveryDate ? new Date(editedOrder.deliveryDate) : undefined}
-                        onSelect={(date) => {
-                          if (date) {
-                            setEditedOrder(prev => ({ ...prev, deliveryDate: format(date, "yyyy-MM-dd") }));
-                            setDatePickerOpen(false);
-                          }
-                        }}
-                        locale={getCalendarLocale()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <Input
+                    type="date"
+                    value={editedOrder.deliveryDate || ""}
+                    onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
+                    className="h-8 text-sm"
+                  />
                   <div className="relative">
                     <select
                       value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
@@ -1338,31 +1317,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   placeholder={adminT('orders.addressPlaceholder')}
                   className="text-sm h-8"
                 />
-                <Popover open={mobileDatePickerOpen} onOpenChange={setMobileDatePickerOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="text-sm h-8 justify-start text-left font-normal"
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "PPP", { locale: getCalendarLocale() }) : adminT('orders.selectDate')}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <CalendarComponent
-                      mode="single"
-                      selected={editedOrder.deliveryDate ? new Date(editedOrder.deliveryDate) : undefined}
-                      onSelect={(date) => {
-                        if (date) {
-                          setEditedOrder(prev => ({ ...prev, deliveryDate: format(date, "yyyy-MM-dd") }));
-                          setMobileDatePickerOpen(false);
-                        }
-                      }}
-                      locale={getCalendarLocale()}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+                <Input
+                  type="date"
+                  value={editedOrder.deliveryDate || ""}
+                  onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryDate: e.target.value }))}
+                  className="h-8 text-sm"
+                />
                 <div className="relative">
                   <select
                     value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}

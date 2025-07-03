@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronDown } from "lucide-react";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -235,9 +234,7 @@ export default function Checkout() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [selectedGuestPaymentMethod, setSelectedGuestPaymentMethod] = useState("");
   const [selectedRegisterPaymentMethod, setSelectedRegisterPaymentMethod] = useState("");
-  const [datePickerOpen, setDatePickerOpen] = useState(false);
-  const [guestDatePickerOpen, setGuestDatePickerOpen] = useState(false);
-  const [registerDatePickerOpen, setRegisterDatePickerOpen] = useState(false);
+
 
   const { t: tCommon } = useCommonTranslation();
   const { t: tShop } = useShopTranslation();
@@ -715,67 +712,21 @@ export default function Checkout() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="deliveryDate">{tShop('checkout.deliveryDate')} *</Label>
-                        <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full justify-start text-left font-normal",
-                                !selectedDate && "text-muted-foreground"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {selectedDate ? format(selectedDate, "dd MMMM yyyy", { locale: dateLocale }) : tShop('checkout.selectDate')}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <CalendarComponent
-                              mode="single"
-                              selected={selectedDate}
-                              locale={dateLocale}
-                              onSelect={(date) => {
-                                setSelectedDate(date);
-                                setSelectedTime(""); // Reset time selection when date changes
-                                setDatePickerOpen(false); // Close calendar after selection
-                              }}
-                              disabled={(date) => {
-                                const today = new Date();
-                                today.setHours(0, 0, 0, 0);
-                                
-                                // Check if date is before today
-                                if (date < today) return true;
-                                
-                                // Check if it's a non-working day
-                                if (storeSettings?.workingHours) {
-                                  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-                                  const dayName = dayNames[date.getDay()];
-                                  const daySchedule = storeSettings.workingHours[dayName];
-                                  
-                                  // Disable if no schedule or closed or weekend
-                                  if (!daySchedule || daySchedule.trim() === '' || 
-                                      daySchedule.toLowerCase().includes('закрыто') || 
-                                      daySchedule.toLowerCase().includes('closed') ||
-                                      daySchedule.toLowerCase().includes('выходной')) {
-                                    return true;
-                                  }
-                                  
-                                  // Check if today has no available delivery times
-                                  if (date.getTime() === today.getTime()) {
-                                    const todayTimeSlots = generateDeliveryTimes(
-                                      storeSettings.workingHours, 
-                                      format(date, "yyyy-MM-dd"), 
-                                      storeSettings.weekStartDay
-                                    );
-                                    return !todayTimeSlots.some(slot => slot.value !== 'closed');
-                                  }
-                                }
-                                
-                                return false;
-                              }}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
+                        <Input
+                          type="date"
+                          id="deliveryDate"
+                          value={selectedDate ? format(selectedDate, "yyyy-MM-dd") : ""}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              setSelectedDate(new Date(e.target.value));
+                              setSelectedTime(""); // Reset time selection when date changes
+                            } else {
+                              setSelectedDate(undefined);
+                            }
+                          }}
+                          min={format(new Date(), "yyyy-MM-dd")}
+                          className="w-full"
+                        />
                       </div>
 
                       <div>
@@ -963,57 +914,21 @@ export default function Checkout() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="registerDeliveryDate">{tShop('checkout.deliveryDate')} *</Label>
-                          <Popover open={registerDatePickerOpen} onOpenChange={setRegisterDatePickerOpen}>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="outline"
-                                className={cn(
-                                  "w-full justify-start text-left font-normal",
-                                  !selectedRegisterDate && "text-muted-foreground"
-                                )}
-                              >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {selectedRegisterDate ? format(selectedRegisterDate, "dd MMMM yyyy", { locale: dateLocale }) : tShop('checkout.selectDate')}
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                              <CalendarComponent
-                                mode="single"
-                                selected={selectedRegisterDate}
-                                locale={dateLocale}
-                                onSelect={(date) => {
-                                  setSelectedRegisterDate(date);
-                                  setSelectedRegisterTime(""); // Reset time selection when date changes
-                                  setRegisterDatePickerOpen(false); // Close calendar after selection
-                                }}
-                                disabled={(date) => {
-                                  const today = new Date();
-                                  today.setHours(0, 0, 0, 0);
-                                  
-                                  // Check if date is before today
-                                  if (date < today) return true;
-                                  
-                                  // Check if it's a non-working day
-                                  if (storeSettings?.workingHours) {
-                                    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-                                    const dayName = dayNames[date.getDay()];
-                                    const daySchedule = storeSettings.workingHours[dayName];
-                                    
-                                    // Disable if no schedule or closed or weekend
-                                    if (!daySchedule || daySchedule.trim() === '' || 
-                                        daySchedule.toLowerCase().includes('закрыто') || 
-                                        daySchedule.toLowerCase().includes('closed') ||
-                                        daySchedule.toLowerCase().includes('выходной')) {
-                                      return true;
-                                    }
-                                  }
-                                  
-                                  return false;
-                                }}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
+                          <Input
+                            type="date"
+                            id="registerDeliveryDate"
+                            value={selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : ""}
+                            onChange={(e) => {
+                              if (e.target.value) {
+                                setSelectedRegisterDate(new Date(e.target.value));
+                                setSelectedRegisterTime(""); // Reset time selection when date changes
+                              } else {
+                                setSelectedRegisterDate(undefined);
+                              }
+                            }}
+                            min={format(new Date(), "yyyy-MM-dd")}
+                            className="w-full"
+                          />
                         </div>
 
                         <div>
@@ -1204,57 +1119,21 @@ export default function Checkout() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="guestDeliveryDate">{tShop('checkout.deliveryDate')} *</Label>
-                          <Popover open={guestDatePickerOpen} onOpenChange={setGuestDatePickerOpen}>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="outline"
-                                className={cn(
-                                  "w-full justify-start text-left font-normal",
-                                  !selectedGuestDate && "text-muted-foreground"
-                                )}
-                              >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {selectedGuestDate ? format(selectedGuestDate, "dd MMMM yyyy", { locale: dateLocale }) : tShop('checkout.selectDate')}
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                              <CalendarComponent
-                                mode="single"
-                                selected={selectedGuestDate}
-                                locale={dateLocale}
-                                onSelect={(date) => {
-                                  setSelectedGuestDate(date);
-                                  setSelectedGuestTime(""); // Reset time selection when date changes
-                                  setGuestDatePickerOpen(false); // Close calendar after selection
-                                }}
-                                disabled={(date) => {
-                                  const today = new Date();
-                                  today.setHours(0, 0, 0, 0);
-                                  
-                                  // Check if date is before today
-                                  if (date < today) return true;
-                                  
-                                  // Check if it's a non-working day
-                                  if (storeSettings?.workingHours) {
-                                    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-                                    const dayName = dayNames[date.getDay()];
-                                    const daySchedule = storeSettings.workingHours[dayName];
-                                    
-                                    // Disable if no schedule or closed or weekend
-                                    if (!daySchedule || daySchedule.trim() === '' || 
-                                        daySchedule.toLowerCase().includes('закрыто') || 
-                                        daySchedule.toLowerCase().includes('closed') ||
-                                        daySchedule.toLowerCase().includes('выходной')) {
-                                      return true;
-                                    }
-                                  }
-                                  
-                                  return false;
-                                }}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
+                          <Input
+                            type="date"
+                            id="guestDeliveryDate"
+                            value={selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : ""}
+                            onChange={(e) => {
+                              if (e.target.value) {
+                                setSelectedGuestDate(new Date(e.target.value));
+                                setSelectedGuestTime(""); // Reset time selection when date changes
+                              } else {
+                                setSelectedGuestDate(undefined);
+                              }
+                            }}
+                            min={format(new Date(), "yyyy-MM-dd")}
+                            className="w-full"
+                          />
                         </div>
 
                         <div>
