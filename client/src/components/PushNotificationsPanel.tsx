@@ -22,7 +22,7 @@ interface MarketingNotification {
 }
 
 export function PushNotificationsPanel() {
-  const { isSupported, isSubscribed, subscribe, sendTestNotification } = usePushNotifications();
+  const { isSupported, isSubscribed, subscribe, sendTestNotification, permission } = usePushNotifications();
   const queryClient = useQueryClient();
   const { t } = useTranslation('admin');
   
@@ -102,24 +102,50 @@ export function PushNotificationsPanel() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              <span className="text-sm">
-                {t('pushNotifications.subscriptionStatus')}: {isSubscribed ? t('pushNotifications.subscriptionActive') : t('pushNotifications.subscriptionInactive')}
-              </span>
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                <span className="text-sm">
+                  {t('pushNotifications.subscriptionStatus')}: {isSubscribed ? t('pushNotifications.subscriptionActive') : t('pushNotifications.subscriptionInactive')}
+                </span>
+              </div>
+              
+              {!isSubscribed && (
+                <Button onClick={subscribe} size="sm">
+                  {t('pushNotifications.subscribe')}
+                </Button>
+              )}
+              
+              <Button onClick={handleTestNotification} variant="outline" size="sm">
+                <TestTube className="h-4 w-4 mr-2" />
+                {t('pushNotifications.test')}
+              </Button>
             </div>
             
-            {!isSubscribed && (
-              <Button onClick={subscribe} size="sm">
-                {t('pushNotifications.subscribe')}
-              </Button>
-            )}
-            
-            <Button onClick={handleTestNotification} variant="outline" size="sm">
-              <TestTube className="h-4 w-4 mr-2" />
-              {t('pushNotifications.test')}
-            </Button>
+            {/* Debug info */}
+            <div className="text-xs text-muted-foreground space-y-1 p-2 bg-gray-50 rounded">
+              <div>Поддержка: {isSupported ? '✅' : '❌'}</div>
+              <div>Разрешение: {permission}</div>
+              <div>Подписка: {isSubscribed ? '✅' : '❌'}</div>
+              <div>Service Worker: {'serviceWorker' in navigator ? '✅' : '❌'}</div>
+              <div>Push Manager: {'PushManager' in window ? '✅' : '❌'}</div>
+              <div className="mt-2 pt-2 border-t space-y-1">
+                <div className="font-medium">Тестовые функции:</div>
+                <button 
+                  onClick={() => (window as any).showPushRequest?.()} 
+                  className="text-blue-600 hover:underline mr-3"
+                >
+                  Показать запрос подписки
+                </button>
+                <button 
+                  onClick={() => (window as any).clearPushCache?.()} 
+                  className="text-blue-600 hover:underline"
+                >
+                  Очистить кэш
+                </button>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

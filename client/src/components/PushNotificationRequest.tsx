@@ -27,19 +27,20 @@ export default function PushNotificationRequest() {
       setPermission(Notification.permission);
     }
 
-    // Show request after 30 seconds if permission not granted
+    // Show request after shorter delay if permission not granted
     const timer = setTimeout(() => {
       if (Notification.permission === 'default') {
         const lastRequested = localStorage.getItem('push-permission-requested');
         const daysSinceRequest = lastRequested ? 
           (Date.now() - parseInt(lastRequested)) / (1000 * 60 * 60 * 24) : 999;
         
-        // Show request if not asked in last 7 days
-        if (daysSinceRequest > 7) {
+        // Show request if not asked in last 24 hours (reduced from 7 days)
+        // or if user is admin (for testing)
+        if (daysSinceRequest > 1 || (user && user.role === 'admin')) {
           setShowRequest(true);
         }
       }
-    }, 30000); // 30 seconds
+    }, 5000); // 5 seconds (reduced from 30 seconds)
 
     // Listen for PWA installation event
     const handlePWAInstalled = () => {
@@ -66,10 +67,25 @@ export default function PushNotificationRequest() {
     checkStandaloneMode();
     window.addEventListener('focus', checkStandaloneMode);
 
+    // Add global test functions for debugging
+    (window as any).showPushRequest = () => {
+      console.log('🧪 Forcing push notification request to show');
+      setShowRequest(true);
+    };
+
+    (window as any).clearPushCache = () => {
+      console.log('🧪 Clearing push notification cache');
+      localStorage.removeItem('push-permission-requested');
+      localStorage.removeItem('pwa-dismissed');
+      localStorage.removeItem('ios-prompt-shown');
+      setShowRequest(true);
+    };
+
     return () => {
       clearTimeout(timer);
       window.removeEventListener('pwa-installed', handlePWAInstalled);
       window.removeEventListener('focus', checkStandaloneMode);
+      delete (window as any).showPushRequest;
     };
   }, [user]);
 
