@@ -131,6 +131,13 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 3, 2025: DISABLED RADIX UI SCROLL-LOCK FOR IMPROVED USER EXPERIENCE
+  - COMPONENT UPDATES: Modified Dialog, Sheet, DropdownMenu, and Popover components to use modal={false}
+  - CSS OVERRIDE: Added selective CSS rules to disable scroll-lock while preserving layout positioning
+  - JAVASCRIPT OBSERVER: Implemented MutationObserver to automatically remove data-scroll-locked attributes
+  - USER EXPERIENCE: Background content remains scrollable when modals, dropdowns, or dialogs are open
+  - LAYOUT PRESERVATION: Maintained proper site positioning and prevented content shifting to right side
+  - SELECTIVE APPROACH: Only disabled scroll behavior without affecting modal positioning or overlay functionality
 - July 3, 2025: LIMITED PRODUCT GRID TO MAXIMUM 3 COLUMNS FOR IMPROVED LAYOUT
   - GRID CONSTRAINT: Changed product grid from max 4 columns to max 3 columns on all screen sizes
   - RESPONSIVE LAYOUT: Mobile: 1 column, Tablet: 2 columns, Desktop+: 3 columns maximum
