@@ -131,13 +131,6 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
-- July 3, 2025: ✅ WEBSITE PAGES RESTORED FROM BACKUP FILES AFTER COMPONENT REPLACEMENT ISSUES
-  - CRITICAL RESTORATION: Restored all website pages from backup files dated 20250701_205336
-  - PAGES RESTORED: home.tsx, admin-dashboard.tsx, checkout.tsx, auth.tsx, profile.tsx, change-password.tsx, forgot-password.tsx, reset-password.tsx, landing.tsx, not-found.tsx
-  - REASON: Previous extensive Radix UI component replacement caused functionality issues
-  - BACKUP SYSTEM: Complete backup set from July 1st, 2025 contained stable versions with full functionality
-  - RESULT: All website pages now use proven stable versions with complete Radix UI functionality
-  - STATUS: Website functionality restored to working state with all original features intact
 - July 3, 2025: ✅ DEPLOYMENT COMPLETED SUCCESSFULLY AT edahouse.ordis.co.il
   - PRODUCTION READY: Successfully deployed eDAHouse food delivery application to external VPS
   - DOMAIN: https://edahouse.ordis.co.il/ fully operational with SSL certificate

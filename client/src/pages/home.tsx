@@ -17,11 +17,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useSEO, generateKeywords } from "@/hooks/useSEO";
+import { generateHomeSEO } from "@/lib/seo-utils";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
@@ -29,6 +31,7 @@ import CategoryNav from "@/components/menu/category-nav";
 import ProductCard from "@/components/menu/product-card";
 import CartSidebar from "@/components/cart/cart-sidebar";
 import { HeaderVariant } from "@/components/layout/header-variants";
+import SearchInput from "@/components/SearchInput";
 import { useCartStore } from "@/lib/cart";
 import { formatCurrency } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
@@ -40,7 +43,6 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { 
-  Search, 
   Clock, 
   Phone, 
   MapPin, 
@@ -228,6 +230,7 @@ export default function Home() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [discountFilter, setDiscountFilter] = useState("all");
   const swiperRef = useRef<any>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
   const { isOpen: isCartOpen, addItem } = useCartStore();
   const { storeSettings } = useStoreSettings();
@@ -249,6 +252,76 @@ export default function Home() {
   // Get header style from store settings (accessible to all users)
   const headerStyle = storeSettings?.headerStyle || 'classic';
 
+  // Calculate selected category first
+  const selectedCategory = useMemo(() => {
+    return categories.find(cat => cat.id === selectedCategoryId);
+  }, [categories, selectedCategoryId]);
+
+  // Generate SEO data for home page
+  const seoData = useMemo(() => {
+    if (selectedCategory) {
+      // Category page SEO
+      const categoryName = getLocalizedField(selectedCategory, 'name', currentLanguage);
+      const categoryDescription = getLocalizedField(selectedCategory, 'description', currentLanguage);
+      const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
+      
+      const title = categoryName 
+        ? `${categoryName} - ${storeName || 'eDAHouse'}`
+        : storeName || 'eDAHouse';
+        
+      const description = categoryDescription || 
+        `Просмотр товаров в категории ${categoryName} в магазине ${storeName}`;
+      
+      return {
+        title,
+        description,
+        keywords: generateKeywords(title, description),
+        ogTitle: title,
+        ogDescription: description,
+        canonical: currentLanguage === 'ru' ? `/category/${selectedCategory.id}` : `/${currentLanguage}/category/${selectedCategory.id}`
+      };
+    } else if (searchQuery.length > 2) {
+      // Search results SEO
+      const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
+      const title = `${t('searchResults')}: "${searchQuery}" - ${storeName || 'eDAHouse'}`;
+      const description = `Результаты поиска "${searchQuery}" в магазине ${storeName}`;
+      
+      return {
+        title,
+        description,
+        keywords: generateKeywords(title, description),
+        ogTitle: title,
+        ogDescription: description,
+        canonical: currentLanguage === 'ru' ? `/search?q=${searchQuery}` : `/${currentLanguage}/search?q=${searchQuery}`
+      };
+    } else {
+      // Home page SEO
+      const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
+      const welcomeTitle = getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage);
+      const welcomeSubtitle = getLocalizedField(storeSettings, 'welcomeSubtitle', currentLanguage);
+      
+      const title = welcomeTitle 
+        ? `${storeName} - ${welcomeTitle}`
+        : storeName || 'eDAHouse';
+        
+      const description = welcomeSubtitle || 
+        getLocalizedField(storeSettings, 'description', currentLanguage) ||
+        'Система доставки готовой еды с многоязычной поддержкой';
+      
+      return {
+        title,
+        description,
+        keywords: generateKeywords(title, description),
+        ogTitle: title,
+        ogDescription: description,
+        canonical: currentLanguage === 'ru' ? '/' : `/${currentLanguage}/`
+      };
+    }
+  }, [storeSettings, selectedCategory, searchQuery, currentLanguage, t]);
+
+  // Apply SEO data
+  useSEO(seoData);
+
   // Fetch products for selected category
   const { data: products = [], isLoading: productsLoading } = useQuery<ProductWithCategories[]>({
     queryKey: ["/api/products", selectedCategoryId],
@@ -264,13 +337,9 @@ export default function Home() {
     enabled: searchQuery.length > 2,
   });
 
-  const selectedCategory = useMemo(() => {
-    return categories.find(cat => cat.id === selectedCategoryId);
-  }, [categories, selectedCategoryId]);
-
   const handleCategorySelect = useCallback((categoryId: number | null) => {
     setSelectedCategoryId(categoryId);
-    setSearchQuery("");
+    // Don't clear search query when switching categories
     
     // Navigate to appropriate URL
     if (categoryId === 0) {
@@ -290,8 +359,14 @@ export default function Home() {
     navigate('/');
   }, [navigate]);
 
+  // Handle search query changes
+  useEffect(() => {
+    if (searchQuery.length <= 2) {
+      setSelectedCategoryId(null);
+    }
+  }, [searchQuery]);
+
   const handleSearch = useCallback((query: string) => {
-    setSearchQuery(query);
     if (query.length <= 2) {
       setSelectedCategoryId(null);
     }
@@ -469,19 +544,16 @@ export default function Home() {
             />
           )}
 
-          {/* Search Bar - hide on main page, show on category/product pages */}
-          <div className={`mb-8 ${!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 ? 'hidden' : ''}`}>
-            <div className="relative max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                type="text"
-                placeholder={t('searchPlaceholder')}
+          {/* Search Bar - show on category/product pages */}
+          {(selectedCategory || selectedCategoryId === 0) && (
+            <div className="mb-8">
+              <SearchInput
                 value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10 bg-white border-gray-300"
+                onChange={setSearchQuery}
+                placeholder={t('searchPlaceholder')}
               />
             </div>
-          </div>
+          )}
 
           {/* Special Offers or Category View */}
           {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && (
@@ -667,29 +739,35 @@ export default function Home() {
               {/* Filter Controls */}
               {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
                 <div className="flex gap-2 sm:gap-4 mb-6">
-                  <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
-                    <SelectTrigger className="flex-1 min-w-0 text-sm">
-                      <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t('allCategories')}</SelectItem>
+                  <div className="relative flex-1 min-w-0">
+                    <select
+                      value={categoryFilter}
+                      onChange={(e) => handleCategoryFilterChange(e.target.value)}
+                      className="w-full h-9 bg-white border border-gray-200 rounded-md px-3 py-1 text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    >
+                      <option value="">{t('filterByCategory', 'Фильтр по категории')}</option>
+                      <option value="all">{t('allCategories')}</option>
                       {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
+                        <option key={category.id} value={category.id.toString()}>
                           {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                        </SelectItem>
+                        </option>
                       ))}
-                    </SelectContent>
-                  </Select>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                  </div>
 
-                  <Select value={discountFilter} onValueChange={setDiscountFilter}>
-                    <SelectTrigger className="flex-1 min-w-0 text-sm">
-                      <SelectValue placeholder={t('filterByDiscount')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t('allProducts')}</SelectItem>
-                      <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="relative flex-1 min-w-0">
+                    <select
+                      value={discountFilter}
+                      onChange={(e) => setDiscountFilter(e.target.value)}
+                      className="w-full h-9 bg-white border border-gray-200 rounded-md px-3 py-1 text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    >
+                      <option value="">{t('filterByDiscount')}</option>
+                      <option value="all">{t('allProducts')}</option>
+                      <option value="discount">{t('onlyDiscounted')}</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                  </div>
                 </div>
               )}
 
