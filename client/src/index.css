@@ -722,6 +722,36 @@ button:focus,
     overflow-x: hidden !important;
   }
   
+  /* CRITICAL: Prevent RTL interference with admin tables */
+  .admin-content-area table,
+  .admin-content-area thead,
+  .admin-content-area tbody,
+  .admin-content-area tr,
+  .admin-content-area th,
+  .admin-content-area td,
+  .admin-content-area .table-container {
+    direction: ltr !important;
+    text-align: left !important;
+  }
+  
+  /* Prevent RTL CSS from affecting admin layout during dropdown events */
+  html[lang="ar"] .admin-content-area table,
+  html[lang="ar"] .admin-content-area thead,
+  html[lang="ar"] .admin-content-area tbody,
+  html[lang="ar"] .admin-content-area tr,
+  html[lang="ar"] .admin-content-area th,
+  html[lang="ar"] .admin-content-area td {
+    direction: ltr !important;
+    text-align: left !important;
+  }
+  
+  /* Block RTL interference when dropdowns are open */
+  [data-radix-portal]:has([data-radix-select-content]) ~ * .admin-content-area table {
+    direction: ltr !important;
+    width: 100% !important;
+    table-layout: fixed !important;
+  }
+  
   /* Force stable positioning for Radix Select components */
   [data-radix-select-viewport] {
     position: relative !important;
