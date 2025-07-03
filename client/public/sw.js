@@ -197,17 +197,57 @@ self.addEventListener('notificationclick', function(event) {
       // Open new window if no existing window found
       console.log('🆕 Opening new window');
       if (clients.openWindow) {
-        return clients.openWindow(url).then(function(newClient) {
-          // Wait a bit for the new window to load, then send message
-          if (newClient) {
-            console.log('⏰ Waiting for new window to load...');
-            setTimeout(() => {
-              console.log('📤 Sending message to new window');
-              newClient.postMessage(notificationData);
-            }, 1000);
-          }
-          return newClient;
-        });
+        // Store notification data in localStorage for the new window
+        const notificationStorageData = {
+          type: 'pending-notification',
+          title: event.notification.title,
+          body: event.notification.body,
+          notificationType: data.type || 'marketing',
+          timestamp: Date.now(),
+          url: url
+        };
+        
+        // Use IndexedDB or try localStorage fallback
+        try {
+          // Store in a way that the new window can access
+          console.log('💾 Storing notification data for new window:', notificationStorageData);
+          
+          // Add notification data as URL parameter
+          const urlWithNotification = url + (url.includes('?') ? '&' : '?') + 
+            'notification=' + encodeURIComponent(JSON.stringify({
+              title: event.notification.title,
+              body: event.notification.body,
+              type: data.type || 'marketing'
+            }));
+          
+          return clients.openWindow(urlWithNotification).then(function(newClient) {
+            if (newClient) {
+              console.log('✅ New window opened with notification data in URL');
+              // Also try sending message with multiple attempts
+              let attempts = 0;
+              const sendMessage = () => {
+                attempts++;
+                console.log(`📤 Attempt ${attempts} to send message to new window`);
+                try {
+                  newClient.postMessage(notificationData);
+                  console.log('✅ Message sent successfully');
+                } catch (error) {
+                  console.log('⚠️ Message send failed, will retry:', error.message);
+                  if (attempts < 5) {
+                    setTimeout(sendMessage, 500 * attempts);
+                  }
+                }
+              };
+              
+              // First attempt after 500ms
+              setTimeout(sendMessage, 500);
+            }
+            return newClient;
+          });
+        } catch (error) {
+          console.error('❌ Failed to store notification data:', error);
+          return clients.openWindow(url);
+        }
       }
     })
   );

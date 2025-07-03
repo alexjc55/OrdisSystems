@@ -74,6 +74,31 @@ function Router() {
 
   // Listen for messages from Service Worker (notification clicks)
   useEffect(() => {
+    // Check for notification data in URL parameters on app startup
+    const urlParams = new URLSearchParams(window.location.search);
+    const notificationData = urlParams.get('notification');
+    
+    if (notificationData) {
+      try {
+        const notification = JSON.parse(decodeURIComponent(notificationData));
+        console.log('🔗 [App] Found notification data in URL:', notification);
+        
+        setNotificationModal({
+          isOpen: true,
+          title: notification.title || 'Уведомление',
+          message: notification.body || 'Новое уведомление',
+          type: notification.type || 'marketing'
+        });
+        
+        // Clean URL after processing notification
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+        
+      } catch (error) {
+        console.error('❌ [App] Failed to parse notification data from URL:', error);
+      }
+    }
+
     const handleMessage = (event: MessageEvent) => {
       console.log('📨 [App] Received message from Service Worker:', event.data);
       
