@@ -1966,6 +1966,27 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
+  // Admin: Get push subscription statistics
+  app.get('/api/admin/push/stats', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user;
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      const subscriptionsCount = await db
+        .select({ count: sql`count(*)`.mapWith(Number) })
+        .from(pushSubscriptions);
+
+      res.json({ 
+        totalSubscriptions: subscriptionsCount[0]?.count || 0 
+      });
+    } catch (error) {
+      console.error('Error fetching push statistics:', error);
+      res.status(500).json({ message: 'Failed to fetch push statistics' });
+    }
+  });
+
   // Admin: Get marketing notifications history
   app.get('/api/admin/push/marketing', isAuthenticated, async (req: any, res) => {
     try {

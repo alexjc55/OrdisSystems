@@ -37,6 +37,12 @@ export function PushNotificationsPanel() {
     enabled: isSupported
   });
 
+  // Fetch subscription statistics
+  const { data: stats } = useQuery<{ totalSubscriptions: number }>({
+    queryKey: ['/api/admin/push/stats'],
+    enabled: isSupported
+  });
+
   // Send marketing notification mutation
   const sendMarketingMutation = useMutation({
     mutationFn: async (data: { title: string; message: string }) => {
@@ -49,6 +55,7 @@ export function PushNotificationsPanel() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/push/marketing'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/push/stats'] });
       setMarketingForm({
         title: '',
         message: ''
@@ -93,10 +100,16 @@ export function PushNotificationsPanel() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            {t('pushNotifications.title')}
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Bell className="h-5 w-5" />
+              {t('pushNotifications.title')}
+            </CardTitle>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground bg-gray-100 px-3 py-1 rounded-full">
+              <Users className="h-4 w-4" />
+              <span>{stats?.totalSubscriptions || 0} {t('pushNotifications.subscribers')}</span>
+            </div>
+          </div>
           <CardDescription>
             {t('pushNotifications.description')}
           </CardDescription>

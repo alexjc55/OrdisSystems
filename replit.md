@@ -131,6 +131,14 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 3, 2025: ADDED SUBSCRIBER COUNT DISPLAY IN PUSH NOTIFICATIONS ADMIN PANEL
+  - NEW FEATURE: Added real-time subscriber count display in push notifications section header
+  - API ENDPOINT: Created /api/admin/push/stats endpoint to fetch subscription statistics
+  - UI ENHANCEMENT: Subscriber count appears as badge next to "Push Уведомления" title
+  - TRANSLATION COVERAGE: Added "subscribers" translation key to all 4 languages (RU/EN/HE/AR)
+  - CACHE MANAGEMENT: Subscriber count refreshes after sending notifications or subscription changes
+  - VISUAL DESIGN: Clean badge design with Users icon and count display
+  - ADMIN FEEDBACK: Admins now see exact number of subscribers before sending campaigns
 - July 3, 2025: COMPLETED PUSH NOTIFICATIONS INTERFACE TRANSLATIONS FOR ALL 4 LANGUAGES
   - FULL TRANSLATION COVERAGE: Added complete Arabic translations for push notifications section
   - INTERFACE LOCALIZATION: All push notification components now use translation keys instead of hardcoded Russian text

@@ -1075,6 +1075,7 @@
     "noNotifications": "עדיין לא נשלחו התראות",
     "sentTo": "נשלח ל: {{count}} נמענים",
     "date": "תאריך",
-    "author": "כותב"
+    "author": "כותב",
+    "subscribers": "מנויים"
   }
 }

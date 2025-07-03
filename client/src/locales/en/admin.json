@@ -909,6 +909,7 @@
     "noNotifications": "No notifications sent yet",
     "sentTo": "Sent to: {{count}} recipients",
     "date": "Date",
-    "author": "Author"
+    "author": "Author",
+    "subscribers": "subscribers"
   }
 }
