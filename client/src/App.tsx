@@ -72,53 +72,33 @@ function Router() {
     };
   }, [i18n]);
 
-  // Force disable scroll lock on any attempt by Radix UI
+  // Selectively disable scroll lock while preserving layout
   useEffect(() => {
     const disableScrollLock = () => {
-      // Remove scroll lock attributes
-      document.body.removeAttribute('data-scroll-locked');
-      document.documentElement.removeAttribute('data-scroll-locked');
-      
-      // Force body styles
-      document.body.style.overflow = 'auto';
-      document.body.style.paddingRight = '0';
-      document.body.style.marginRight = '0';
-      document.body.style.position = 'static';
-      document.documentElement.style.overflow = 'auto';
+      // Only override overflow, preserve positioning and margins
+      if (document.body.hasAttribute('data-scroll-locked')) {
+        document.body.style.overflow = 'auto';
+        document.body.style.paddingRight = '0';
+      }
     };
-
-    // Run immediately
-    disableScrollLock();
 
     // Set up observer to watch for scroll lock attributes
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes') {
-          const target = mutation.target as Element;
-          if (target.hasAttribute('data-scroll-locked')) {
-            disableScrollLock();
-          }
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-scroll-locked') {
+          disableScrollLock();
         }
       });
     });
 
-    // Observe both body and html for attribute changes
+    // Observe body for scroll lock attribute changes
     observer.observe(document.body, {
       attributes: true,
-      attributeFilter: ['data-scroll-locked', 'style']
+      attributeFilter: ['data-scroll-locked']
     });
-    
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-scroll-locked', 'style']
-    });
-
-    // Also run periodically as backup
-    const interval = setInterval(disableScrollLock, 100);
 
     return () => {
       observer.disconnect();
-      clearInterval(interval);
     };
   }, []);
 
