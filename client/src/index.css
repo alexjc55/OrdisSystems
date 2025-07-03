@@ -129,6 +129,14 @@ button:focus,
     max-width: 1023px;
     margin: 0 auto;
   }
+  
+  /* Override body centering when scroll-lock is attempted */
+  body[data-scroll-locked],
+  body[data-scroll-locked="1"],
+  body[data-scroll-locked="true"] {
+    max-width: 1023px !important;
+    margin: 0 auto !important;
+  }
 }
 
 /* RTL Support for Hebrew and Arabic with unified behavior */
