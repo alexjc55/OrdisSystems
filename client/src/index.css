@@ -722,34 +722,41 @@ button:focus,
     overflow-x: hidden !important;
   }
   
-  /* CRITICAL: Prevent RTL interference with admin tables */
-  .admin-content-area table,
-  .admin-content-area thead,
-  .admin-content-area tbody,
-  .admin-content-area tr,
-  .admin-content-area th,
-  .admin-content-area td,
+  /* CRITICAL: Fix table container width to prevent shrinking on dropdown */
   .admin-content-area .table-container {
-    direction: ltr !important;
-    text-align: left !important;
-  }
-  
-  /* Prevent RTL CSS from affecting admin layout during dropdown events */
-  html[lang="ar"] .admin-content-area table,
-  html[lang="ar"] .admin-content-area thead,
-  html[lang="ar"] .admin-content-area tbody,
-  html[lang="ar"] .admin-content-area tr,
-  html[lang="ar"] .admin-content-area th,
-  html[lang="ar"] .admin-content-area td {
-    direction: ltr !important;
-    text-align: left !important;
-  }
-  
-  /* Block RTL interference when dropdowns are open */
-  [data-radix-portal]:has([data-radix-select-content]) ~ * .admin-content-area table {
-    direction: ltr !important;
     width: 100% !important;
-    table-layout: fixed !important;
+    min-width: 100% !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+  }
+  
+  .admin-content-area .table-container table {
+    width: 100% !important;
+    min-width: 100% !important;
+    table-layout: auto !important;
+  }
+  
+  /* Prevent container width changes during dropdown events */
+  .admin-content-area .products {
+    width: 100% !important;
+    min-width: 100% !important;
+    flex-shrink: 0 !important;
+  }
+  
+  /* Lock the overflow container dimensions */
+  .admin-content-area .overflow-x-auto {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Prevent width recalculation when dropdown opens */
+  .admin-filters-container:has([data-state="open"]) ~ * .table-container,
+  .admin-content-area:has([data-state="open"]) .table-container {
+    width: 100% !important;
+    min-width: 100% !important;
   }
   
   /* Force stable positioning for Radix Select components */
