@@ -131,6 +131,13 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 3, 2025: ✅ CRITICAL UI FIX: RESOLVED ADMIN DROPDOWN LAYOUT SHIFT ISSUE
+  - PROBLEM SOLVED: Fixed dropdown menus in admin panel causing entire design to shift horizontally when clicked
+  - TECHNICAL SOLUTION: Removed position: fixed from AdminSelect component, replaced with position: absolute
+  - CSS STABILIZATION: Added admin-select-trigger and admin-select-content classes for UI isolation
+  - CONTAINER ISOLATION: Added admin-content-area class to main admin container for layout stability
+  - USER VALIDATION: Before/after screenshots confirm complete resolution of layout shifting
+  - RESULT: All dropdown menus in admin panel now function without disrupting page layout
 - July 3, 2025: ✅ DEPLOYMENT COMPLETED SUCCESSFULLY AT edahouse.ordis.co.il
   - PRODUCTION READY: Successfully deployed eDAHouse food delivery application to external VPS
   - DOMAIN: https://edahouse.ordis.co.il/ fully operational with SSL certificate
