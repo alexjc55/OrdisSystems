@@ -131,24 +131,6 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
-- July 3, 2025: ✅ DEPLOYMENT COMPLETED SUCCESSFULLY AT edahouse.ordis.co.il
-  - PRODUCTION READY: Successfully deployed eDAHouse food delivery application to external VPS
-  - DOMAIN: https://edahouse.ordis.co.il/ fully operational with SSL certificate
-  - DATABASE: Complete data migration from Replit to local PostgreSQL (edahouse_ord database)
-  - INFRASTRUCTURE: FastPanel + Nginx + PM2 + Node.js stack configured and optimized
-  - DATA INTEGRITY: All products, categories, users, orders, and store settings migrated successfully
-  - SESSION MANAGEMENT: Created session table for connect-pg-simple PostgreSQL session storage
-  - SPA ROUTING: Fixed Nginx configuration conflicts preventing proper Single Page Application routing
-  - API ENDPOINTS: All /api/ routes responding correctly with 200 OK status
-  - SSL/HTTPS: Automatic SSL certificate provisioning and HTTP→HTTPS redirect configured
-  - PERFORMANCE: Server running on port 3000 with proper proxy configuration and gzip compression
-  - FINAL STATUS: Production deployment complete - application fully functional for end users
-- July 2, 2025: CRITICAL FIX: RESOLVED import.meta.dirname COMPATIBILITY ISSUE FOR PRODUCTION DEPLOYMENT
-  - PROBLEM IDENTIFIED: vite.config.ts and server/vite.ts used non-standard import.meta.dirname causing production build failures
-  - SOLUTION IMPLEMENTED: Added automatic file replacement in deployment script using fileURLToPath(import.meta.url) pattern
-  - FILES FIXED: Updated deployment script to replace both vite.config.ts and server/vite.ts with Node.js compatible versions
-  - COMPATIBILITY: Fixed ESM module path resolution for production Node.js environments without Replit-specific extensions
-  - DEPLOYMENT READY: Installation script now automatically resolves this compatibility issue during server setup
 - July 2, 2025: FIXED PORT CONFIGURATION FOR FASTPANEL DEPLOYMENT
   - CRITICAL FIX: Fixed hardcoded port 5000 in server/index.ts to use environment variable PORT
   - SERVER CONFIGURATION: Changed from hardcoded `const port = 5000` to `parseInt(process.env.PORT || "3000", 10)`
