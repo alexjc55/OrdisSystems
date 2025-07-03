@@ -4,7 +4,7 @@ import "./index.css";
 import "./lib/i18n";
 import { initializeTheme, forceApplyOrangeTheme } from "./lib/theme-system";
 
-// Clear all caches for debugging dropdown issue
+// FORCE CACHE CLEAR AND RELOAD - v3.44.16
 if ('caches' in window) {
   caches.keys().then(cacheNames => {
     cacheNames.forEach(cacheName => {
@@ -13,6 +13,49 @@ if ('caches' in window) {
     });
   });
 }
+
+// Force hard reload if we detect old cached version
+setTimeout(() => {
+  // Check if old dropdown components are still cached
+  const dropdownElements = document.querySelectorAll('[data-radix-dropdown-menu-content]');
+  if (dropdownElements.length > 0) {
+    console.log('Old dropdown components detected, forcing hard reload...');
+    window.location.reload();
+  }
+}, 2000);
+
+// Add global function for manual cache clearing
+(window as any).clearAllCaches = async () => {
+  console.log('🧹 Clearing all caches manually...');
+  
+  // Clear Service Worker caches
+  if ('caches' in window) {
+    const cacheNames = await caches.keys();
+    await Promise.all(cacheNames.map(name => caches.delete(name)));
+    console.log('✅ Service Worker caches cleared');
+  }
+  
+  // Clear localStorage
+  localStorage.clear();
+  console.log('✅ localStorage cleared');
+  
+  // Clear sessionStorage
+  sessionStorage.clear();
+  console.log('✅ sessionStorage cleared');
+  
+  // Unregister service worker
+  if ('serviceWorker' in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map(reg => reg.unregister()));
+    console.log('✅ Service Workers unregistered');
+  }
+  
+  // Force hard reload
+  console.log('🔄 Forcing hard reload...');
+  window.location.reload();
+};
+
+console.log('🔧 DEBUG: Type clearAllCaches() in console to force clear all caches');
 
 // Initialize theme system
 initializeTheme();
