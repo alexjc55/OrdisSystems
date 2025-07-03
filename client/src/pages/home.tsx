@@ -463,13 +463,11 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 overflow-x-hidden pt-16">
       <Header onResetView={handleResetView} />
       
-      {/* Header Variant - Full width banners - only show on main page */}
-      {!selectedCategory && !searchQuery && (
-        <HeaderVariant 
-          storeSettings={storeSettings} 
-          style={headerStyle as 'classic' | 'modern' | 'minimal'}
-        />
-      )}
+      {/* Header Variant - Full width banners - ALWAYS SHOW for debugging */}
+      <HeaderVariant 
+        storeSettings={storeSettings} 
+        style={headerStyle as 'classic' | 'modern' | 'minimal'}
+      />
       
       <div className="flex overflow-x-hidden">
         {storeSettings?.showCategoryMenu !== false && (
