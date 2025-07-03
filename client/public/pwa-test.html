@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Installation Test - eDAHouse</title>
+    <link rel="manifest" href="/api/manifest">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .log {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 PWA Installation Diagnostics</h1>
+        <p>Эта страница поможет диагностировать проблемы с установкой PWA</p>
+    </div>
+
+    <div class="container">
+        <h2>1. Browser & Device Info</h2>
+        <div id="device-info"></div>
+    </div>
+
+    <div class="container">
+        <h2>2. PWA Manifest Check</h2>
+        <button onclick="checkManifest()">Check Manifest</button>
+        <div id="manifest-results"></div>
+    </div>
+
+    <div class="container">
+        <h2>3. Install Criteria Check</h2>
+        <button onclick="checkInstallCriteria()">Check Criteria</button>
+        <div id="criteria-results"></div>
+    </div>
+
+    <div class="container">
+        <h2>4. Service Worker Status</h2>
+        <button onclick="checkServiceWorker()">Check Service Worker</button>
+        <div id="sw-results"></div>
+    </div>
+
+    <div class="container">
+        <h2>5. Force Install Prompt</h2>
+        <button onclick="forceInstallPrompt()">Force Install Prompt</button>
+        <button onclick="clearCache()">Clear Cache & Reset</button>
+        <div id="install-results"></div>
+    </div>
+
+    <div class="container">
+        <h2>6. Debug Log</h2>
+        <button onclick="clearLog()">Clear Log</button>
+        <div id="debug-log" class="log"></div>
+    </div>
+
+    <script>
+        let deferredPrompt = null;
+        
+        function log(message) {
+            console.log(message);
+            const logDiv = document.getElementById('debug-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function setStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        // Check device and browser info
+        function showDeviceInfo() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            const isChrome = /Chrome/.test(navigator.userAgent);
+            const isSafari = /Safari/.test(navigator.userAgent) && !isChrome;
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                               (window.navigator as any).standalone ||
+                               document.referrer.includes('android-app://');
+
+            const info = {
+                userAgent: navigator.userAgent,
+                isIOS,
+                isAndroid,
+                isChrome,
+                isSafari,
+                isStandalone,
+                hasServiceWorker: 'serviceWorker' in navigator,
+                hasBeforeInstallPrompt: 'onbeforeinstallprompt' in window,
+                displayMode: window.matchMedia('(display-mode: standalone)').matches ? 'standalone' :
+                           window.matchMedia('(display-mode: fullscreen)').matches ? 'fullscreen' :
+                           window.matchMedia('(display-mode: minimal-ui)').matches ? 'minimal-ui' : 'browser',
+                screenWidth: screen.width,
+                screenHeight: screen.height,
+                windowWidth: window.innerWidth,
+                windowHeight: window.innerHeight
+            };
+
+            const infoDiv = document.getElementById('device-info');
+            infoDiv.innerHTML = Object.entries(info)
+                .map(([key, value]) => `<div><strong>${key}:</strong> ${value}</div>`)
+                .join('');
+
+            log(`Device info: ${JSON.stringify(info, null, 2)}`);
+        }
+
+        // Check manifest
+        async function checkManifest() {
+            const resultsDiv = document.getElementById('manifest-results');
+            resultsDiv.innerHTML = '<div class="warning">Checking manifest...</div>';
+
+            try {
+                const response = await fetch('/api/manifest');
+                const manifest = await response.json();
+                
+                log(`Manifest loaded: ${JSON.stringify(manifest, null, 2)}`);
+
+                // Check required fields
+                const requiredFields = ['name', 'icons', 'start_url', 'display'];
+                const missingFields = requiredFields.filter(field => !manifest[field]);
+
+                // Check icon sizes
+                const hasValidIcons = manifest.icons && manifest.icons.some(icon => {
+                    const sizes = icon.sizes.split('x');
+                    return parseInt(sizes[0]) >= 192;
+                });
+
+                if (missingFields.length === 0 && hasValidIcons) {
+                    setStatus('manifest-results', '✅ Manifest is valid for PWA installation', 'success');
+                } else {
+                    setStatus('manifest-results', `❌ Manifest issues: Missing fields: ${missingFields.join(', ')}, Valid icons: ${hasValidIcons}`, 'error');
+                }
+
+            } catch (error) {
+                log(`Manifest check failed: ${error}`);
+                setStatus('manifest-results', `❌ Failed to load manifest: ${error.message}`, 'error');
+            }
+        }
+
+        // Check install criteria
+        function checkInstallCriteria() {
+            const resultsDiv = document.getElementById('criteria-results');
+            
+            const criteria = {
+                hasManifest: !!document.querySelector('link[rel="manifest"]'),
+                hasServiceWorker: 'serviceWorker' in navigator,
+                isHTTPS: location.protocol === 'https:' || location.hostname === 'localhost',
+                hasValidIcons: true, // Assume true for now
+                notAlreadyInstalled: !window.matchMedia('(display-mode: standalone)').matches,
+                hasBeforeInstallPrompt: !!deferredPrompt
+            };
+
+            const passed = Object.values(criteria).filter(Boolean).length;
+            const total = Object.keys(criteria).length;
+
+            log(`Install criteria check: ${passed}/${total} passed`);
+            log(`Criteria details: ${JSON.stringify(criteria, null, 2)}`);
+
+            if (passed === total) {
+                setStatus('criteria-results', `✅ All install criteria met (${passed}/${total})`, 'success');
+            } else {
+                const failedCriteria = Object.entries(criteria)
+                    .filter(([key, value]) => !value)
+                    .map(([key]) => key);
+                setStatus('criteria-results', `⚠️ Some criteria not met (${passed}/${total}): ${failedCriteria.join(', ')}`, 'warning');
+            }
+
+            resultsDiv.innerHTML += Object.entries(criteria)
+                .map(([key, value]) => `<div>${value ? '✅' : '❌'} ${key}</div>`)
+                .join('');
+        }
+
+        // Check service worker
+        async function checkServiceWorker() {
+            const resultsDiv = document.getElementById('sw-results');
+            resultsDiv.innerHTML = '<div class="warning">Checking service worker...</div>';
+
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    
+                    if (registration) {
+                        log(`Service Worker registered: ${registration.scope}`);
+                        setStatus('sw-results', `✅ Service Worker active: ${registration.scope}`, 'success');
+                    } else {
+                        log('Service Worker not registered, attempting registration...');
+                        const newRegistration = await navigator.serviceWorker.register('/sw.js');
+                        log(`Service Worker registered successfully: ${newRegistration.scope}`);
+                        setStatus('sw-results', `✅ Service Worker registered: ${newRegistration.scope}`, 'success');
+                    }
+                } catch (error) {
+                    log(`Service Worker error: ${error}`);
+                    setStatus('sw-results', `❌ Service Worker error: ${error.message}`, 'error');
+                }
+            } else {
+                log('Service Worker not supported');
+                setStatus('sw-results', '❌ Service Worker not supported', 'error');
+            }
+        }
+
+        // Force install prompt
+        function forceInstallPrompt() {
+            const resultsDiv = document.getElementById('install-results');
+            
+            if (deferredPrompt) {
+                log('Showing deferred install prompt');
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    log(`Install prompt result: ${choiceResult.outcome}`);
+                    if (choiceResult.outcome === 'accepted') {
+                        setStatus('install-results', '✅ User accepted the install prompt', 'success');
+                    } else {
+                        setStatus('install-results', '❌ User dismissed the install prompt', 'warning');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                log('No deferred prompt available - trying to trigger beforeinstallprompt');
+                
+                // Try to call main app function
+                if (parent && parent.window.showPWAPrompt) {
+                    parent.window.showPWAPrompt();
+                    setStatus('install-results', '🔄 Triggered PWA prompt in main app', 'info');
+                } else {
+                    setStatus('install-results', '❌ No install prompt available. Try visiting the main site first.', 'warning');
+                }
+            }
+        }
+
+        // Clear cache and reset
+        function clearCache() {
+            log('Clearing PWA cache and localStorage');
+            localStorage.removeItem('pwa-dismissed');
+            localStorage.removeItem('ios-prompt-shown');
+            
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        caches.delete(name);
+                        log(`Deleted cache: ${name}`);
+                    });
+                });
+            }
+            
+            setStatus('install-results', '🔄 Cache cleared. Refresh the main site to trigger install prompt again.', 'info');
+        }
+
+        function clearLog() {
+            document.getElementById('debug-log').textContent = '';
+        }
+
+        // Listen for beforeinstallprompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            log('beforeinstallprompt event captured!');
+            setStatus('install-results', '✅ Install prompt is available!', 'success');
+        });
+
+        // Listen for app installed
+        window.addEventListener('appinstalled', () => {
+            log('PWA was installed successfully');
+            setStatus('install-results', '✅ PWA installed successfully!', 'success');
+        });
+
+        // Initialize
+        window.addEventListener('load', () => {
+            log('PWA test page loaded');
+            showDeviceInfo();
+            setTimeout(checkManifest, 500);
+            setTimeout(checkInstallCriteria, 1000);
+            setTimeout(checkServiceWorker, 1500);
+        });
+    </script>
+</body>
+</html>
