@@ -718,6 +718,93 @@ button:focus,
     transform: none !important;
   }
   
+  /* Critical fixes for dropdown positioning issues */
+  .admin-content-area {
+    position: relative !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+  
+  .admin-content-area * {
+    box-sizing: border-box !important;
+  }
+  
+  /* Prevent container collapse during dropdown interactions */
+  .admin-content-area .container {
+    width: 100% !important;
+    min-width: 320px !important;
+    max-width: 1200px !important;
+  }
+  
+  /* Force proper dropdown positioning */
+  [data-radix-popper-content-wrapper] {
+    z-index: 9999 !important;
+    position: fixed !important;
+  }
+  
+  /* Override transform that moves dropdowns incorrectly */
+  [data-radix-select-content] {
+    transform: none !important;
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: auto !important;
+  }
+  
+  /* Prevent layout shifts in main admin container */
+  .admin-layout-stable {
+    position: relative !important;
+    overflow: visible !important;
+    min-height: 100vh !important;
+    width: 100% !important;
+    contain: none !important;
+  }
+  
+  /* Ensure select triggers maintain proper positioning */
+  [data-radix-select-trigger] {
+    position: relative !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+  
+  /* Fix for select viewport that might be causing issues */
+  [data-radix-select-viewport] {
+    position: static !important;
+    transform: none !important;
+  }
+  
+  /* Additional dropdown stabilization */
+  .dropdown-stable {
+    position: relative !important;
+    contain: layout !important;
+    overflow: visible !important;
+  }
+  
+  .dropdown-stable [data-radix-select-trigger] {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+  
+  .dropdown-stable [data-radix-select-content] {
+    position: absolute !important;
+    z-index: 50 !important;
+    top: 100% !important;
+    left: 0 !important;
+    min-width: 100% !important;
+    transform: none !important;
+  }
+  
+  /* Force Radix UI to use stable positioning */
+  [data-radix-popper-content-wrapper][data-side="bottom"] {
+    transform: translateY(0px) !important;
+  }
+  
+  [data-radix-popper-content-wrapper][data-align="start"] {
+    transform: translateX(0px) !important;
+  }
+  
   /* Admin panel container stability */
   .admin-content-area {
     position: relative !important;

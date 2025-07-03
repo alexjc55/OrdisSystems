@@ -3180,7 +3180,7 @@ export default function AdminDashboard() {
     });
 
   return (
-    <div className={`min-h-screen bg-gray-50 pt-16`} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={`admin-layout-stable min-h-screen bg-gray-50 pt-16`} dir={isRTL ? 'rtl' : 'ltr'}>
       <Header />
       
       <div className="admin-content-area container mx-auto px-2 sm:px-4 py-4 sm:py-8">
@@ -3458,7 +3458,7 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Search and Filter Controls */}
-                <div className={`admin-filters-container flex flex-col gap-3 ${isRTL ? 'lg:flex-row-reverse' : 'lg:flex-row'}`}>
+                <div className={`dropdown-stable admin-filters-container flex flex-col gap-3 ${isRTL ? 'lg:flex-row-reverse' : 'lg:flex-row'}`}>
                   <div className="relative flex-1">
                     <Search className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                     <Input
