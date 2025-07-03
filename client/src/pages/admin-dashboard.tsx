@@ -3470,39 +3470,38 @@ export default function AdminDashboard() {
                   </div>
                   <div className={`flex flex-col gap-3 lg:flex-shrink-0 ${isRTL ? 'sm:flex-row-reverse' : 'sm:flex-row'}`}>
                     <div className="relative min-w-[180px]">
-                      <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
-                      <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
-                        <SelectTrigger className={`admin-select-trigger text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
-                          <SelectValue placeholder={adminT('products.allCategories')} />
-                        </SelectTrigger>
-                        <SelectContent className="admin-select-content">
-                          <SelectItem value="all">{adminT('products.allCategories')}</SelectItem>
-                          {(categories as any[] || []).map((category: any) => (
-                            <SelectItem 
-                              key={category.id}
-                                          title={getLocalizedField(category, 'name', i18n.language as SupportedLanguage)} 
-                              value={category.id.toString()}
-                            >
-                              {getLocalizedField(category, 'name', i18n.language as SupportedLanguage)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'} pointer-events-none z-10`} />
+                      <select 
+                        value={selectedCategoryFilter} 
+                        onChange={(e) => setSelectedCategoryFilter(e.target.value)}
+                        className={`w-full h-10 text-sm border border-gray-300 rounded-md bg-white ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'} appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                      >
+                        <option value="all">{adminT('products.allCategories')}</option>
+                        {(categories as any[] || []).map((category: any) => (
+                          <option 
+                            key={category.id}
+                            value={category.id.toString()}
+                          >
+                            {getLocalizedField(category, 'name', i18n.language as SupportedLanguage)}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'left-3' : 'right-3'} pointer-events-none`} />
                     </div>
                     <div className="relative min-w-[160px]">
-                      <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
-                      <Select value={selectedStatusFilter} onValueChange={setSelectedStatusFilter}>
-                        <SelectTrigger className={`admin-select-trigger text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
-                          <SelectValue placeholder={adminT('products.productStatus')} />
-                        </SelectTrigger>
-                        <SelectContent className="admin-select-content bg-white border border-gray-200 shadow-lg">
-                          <SelectItem value="all" className="text-gray-900 hover:bg-gray-100">{adminT('products.allProducts')}</SelectItem>
-                          <SelectItem value="available" className="text-gray-900 hover:bg-gray-100">{adminT('products.availableProducts')}</SelectItem>
-                          <SelectItem value="unavailable" className="text-gray-900 hover:bg-gray-100">{adminT('products.unavailableProducts')}</SelectItem>
-                          <SelectItem value="out_of_stock_today" className="text-gray-900 hover:bg-gray-100">{adminT('products.preorderProducts')}</SelectItem>
-                          <SelectItem value="with_discount" className="text-gray-900 hover:bg-gray-100">{adminT('products.productsWithDiscount')}</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'} pointer-events-none z-10`} />
+                      <select 
+                        value={selectedStatusFilter} 
+                        onChange={(e) => setSelectedStatusFilter(e.target.value)}
+                        className={`w-full h-10 text-sm border border-gray-300 rounded-md bg-white ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'} appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                      >
+                        <option value="all">{adminT('products.allProducts')}</option>
+                        <option value="available">{adminT('products.availableProducts')}</option>
+                        <option value="unavailable">{adminT('products.unavailableProducts')}</option>
+                        <option value="out_of_stock_today">{adminT('products.preorderProducts')}</option>
+                        <option value="with_discount">{adminT('products.productsWithDiscount')}</option>
+                      </select>
+                      <ChevronDown className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'left-3' : 'right-3'} pointer-events-none`} />
                     </div>
                   </div>
                 </div>

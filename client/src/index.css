@@ -805,6 +805,75 @@ button:focus,
     transform: translateX(0px) !important;
   }
   
+  /* Critical fixes to prevent page breaking */
+  [data-radix-portal] {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 9999 !important;
+    pointer-events: none !important;
+  }
+  
+  [data-radix-portal] * {
+    pointer-events: auto !important;
+  }
+  
+  /* Prevent transforms that break layout */
+  [data-radix-select-content] {
+    will-change: auto !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  
+  /* Force stable positioning for all Radix poppers */
+  [data-radix-popper-content-wrapper] {
+    transform: none !important;
+    will-change: auto !important;
+    position: absolute !important;
+  }
+  
+  /* Disable any animations that might cause issues */
+  [data-radix-select-content][data-state="open"] {
+    animation: none !important;
+    transform: none !important;
+  }
+  
+  [data-radix-select-content][data-state="closed"] {
+    animation: none !important;
+    transform: none !important;
+  }
+  
+  /* Prevent Radix UI from modifying body */
+  body[data-scroll-locked] {
+    overflow: auto !important;
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  body[data-scroll-locked="true"] {
+    overflow: auto !important;
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Force body to maintain normal behavior */
+  html, body {
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    position: static !important;
+  }
+  
+  /* Prevent any radix-related styles from breaking layout */
+  body[style*="overflow"] {
+    overflow: auto !important;
+  }
+  
+  body[style*="padding-right"] {
+    padding-right: 0 !important;
+  }
+  
   /* Admin panel container stability */
   .admin-content-area {
     position: relative !important;
