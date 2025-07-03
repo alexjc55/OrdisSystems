@@ -1029,19 +1029,11 @@ body[data-scroll-locked="true"] {
   overflow: auto !important;
   padding-right: 0 !important;
   margin-right: 0 !important;
-  position: static !important;
-  top: auto !important;
-  left: auto !important;
-  right: auto !important;
-  bottom: auto !important;
-  width: auto !important;
-  height: auto !important;
 }
 
 /* Force body to remain scrollable at all times */
 body {
   overflow: auto !important;
-  position: static !important;
 }
 
 /* Disable scroll lock for specific Radix components */

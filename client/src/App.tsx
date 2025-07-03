@@ -79,11 +79,10 @@ function Router() {
       document.body.removeAttribute('data-scroll-locked');
       document.documentElement.removeAttribute('data-scroll-locked');
       
-      // Force body styles
+      // Force only overflow and padding styles, don't touch positioning
       document.body.style.overflow = 'auto';
       document.body.style.paddingRight = '0';
       document.body.style.marginRight = '0';
-      document.body.style.position = 'static';
       document.documentElement.style.overflow = 'auto';
     };
 
