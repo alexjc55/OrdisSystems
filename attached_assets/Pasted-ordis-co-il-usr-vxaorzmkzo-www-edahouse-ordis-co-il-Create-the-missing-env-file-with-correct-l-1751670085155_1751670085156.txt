@@ -1,0 +1,80 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Create the missing .env file with correct local database settings
+cat > .env << 'EOF'
+DATABASE_URL=postgresql://edahouse_ord:33V0R1N5qi81paiA@localhost:5432/edahouse_ord
+PORT=3000
+NODE_ENV=production
+SESSION_SECRET=WAVl58TU5MAzQkQa6w8YTsuFYyyCwIl24D2j5BNsX4reNv1iYPdNQHtog2Y0CYQ39U1HGYYG1cNQhLIGfxPVNg==
+ENABLE_REGISTRATION=true
+ENABLE_GUEST_ORDERS=true
+MAX_FILE_SIZE=5242880
+UPLOAD_PATH=./uploads
+ALLOWED_ORIGINS=https://edahouse.ordis.co.il
+STORE_NAME=edahouse
+STORE_DESCRIPTION=Food delivery service
+EOF
+
+# Verify the file was created
+ls -la .env
+cat .env | grep DATABASE_URL
+
+# Test database connection with new environment
+node -e "
+require('dotenv').config();
+const { Client } = require('pg');
+console.log('DATABASE_URL:', process.env.DATABASE_URL);
+const client = new Client(process.env.DATABASE_URL);
+client.connect()
+  .then(() => {
+    console.log('✅ Environment database connection successful');
+    return client.query('SELECT COUNT(*) FROM products');
+  })
+  .then(result => {
+    console.log('✅ Products found:', result.rows[0].count);
+    client.end();
+  })
+  .catch(err => {
+    console.error('❌ Environment database error:', err.message);
+    client.end();
+  });
+"
+
+# Restart PM2 to reload environment
+pm2 restart edahouse
+sleep 5
+
+# Test APIs again
+echo "Local health check:"
+curl -s http://localhost:3000/api/health
+echo ""
+echo "Local products:"
+curl -s http://localhost:3000/api/products | head -c 50
+echo ""
+echo "External health check:"
+curl -s https://edahouse.ordis.co.il/api/health
+-rw-r--r-- 1 ordis_co_il_usr ordis_co_il_usr 417 Jul  5 02:00 .env
+DATABASE_URL=postgresql://edahouse_ord:33V0R1N5qi81paiA@localhost:5432/edahouse_ord
+[dotenv@17.0.1] injecting env (11) from .env – [tip] encrypt with dotenvx: https://dotenvx.com
+DATABASE_URL: postgresql://edahouse_ord:33V0R1N5qi81paiA@localhost:5432/edahouse_ord
+✅ Environment database connection successful
+✅ Products found: 52
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 321089   │ 0s     │ 6    │ online    │ 0%       │ 41.6mb   │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Local health check:
+
+Local products:
+
+External health check:
+<html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.28.0</center>
+</body>
+</html>
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$
