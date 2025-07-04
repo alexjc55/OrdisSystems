@@ -131,20 +131,6 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
-- July 4, 2025: UNIVERSAL DATABASE CONNECTION SYSTEM IMPLEMENTED
-  - CRITICAL FIX: Created universal database connection system for cross-platform compatibility
-  - AUTOMATIC DETECTION: System now automatically detects database type by URL pattern
-    - Neon databases (containing 'neon.tech') → uses @neondatabase/serverless with WebSocket
-    - Regular PostgreSQL → uses standard 'pg' library connection
-  - DEPLOYMENT READY: Same codebase now works seamlessly on both Replit and VPS environments
-    - Replit: Automatically uses Neon connection with proper WebSocket configuration
-    - VPS: Automatically uses PostgreSQL connection without WebSocket dependencies
-  - CODE CONSOLIDATION: Single db.ts file handles both connection types dynamically
-    - Eliminates need for separate database configurations per environment
-    - Prevents production deployment issues caused by environment-specific code
-  - PRODUCTION STABILITY: Fixes WebSocket connection errors on VPS servers
-    - Resolves 'ECONNREFUSED ::1:443' errors when deploying Replit code to production
-    - Ensures proper database connectivity regardless of deployment target
 - July 4, 2025: UI IMPROVEMENTS AND MOBILE FIXES DEPLOYED TO PRODUCTION
   - MODAL BUTTON ALIGNMENT FIX: Fixed product status modal buttons alignment on mobile devices
     - Changed AlertDialogFooter from horizontal flex-row to vertical flex-col sm:flex-row layout
