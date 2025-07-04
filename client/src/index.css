@@ -130,6 +130,17 @@ button:focus,
     margin: 0 auto;
   }
   
+  /* Full-width footer override */
+  .full-width-footer {
+    position: relative !important;
+    left: 50% !important;
+    right: 50% !important;
+    margin-left: -50vw !important;
+    margin-right: -50vw !important;
+    width: 100vw !important;
+    max-width: none !important;
+  }
+  
   /* Override body centering when scroll-lock is attempted */
   body[data-scroll-locked],
   body[data-scroll-locked="1"],
