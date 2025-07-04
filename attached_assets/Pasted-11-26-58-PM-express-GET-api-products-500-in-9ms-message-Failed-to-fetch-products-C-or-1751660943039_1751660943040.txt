@@ -1,0 +1,336 @@
+11:26:58 PM [express] GET /api/products 500 in 9ms :: {"message":"Failed to fetch products"}
+^C
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Остановим сервер (Ctrl+C)
+# Проверим переменную DATABASE_URL
+echo $DATABASE_URL
+
+# Если не задана, добавим в сессию
+export DATABASE_URL="postgresql://edahouse_ord:33V0R1N5qi81paiA@localhost:5432/edahouse_ord"
+
+# Проверим подключение к базе напрямую
+psql -U edahouse_ord -h localhost -p 5432 -d edahouse_ord -c "SELECT COUNT(*) FROM store_settings;"
+
+Password for user edahouse_ord:
+ count
+-------
+     1
+(1 row)
+
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Создадим скрипт автоисправления
+cat > fix-build.sh << 'EOF'
+#!/bin/bash
+echo "Fixing import.meta.dirname issue..."
+sed -i 's/import\.meta\.dirname/process.cwd()/g' dist/index.js
+echo "Build fixed successfully"
+EOF
+
+chmod +x fix-build.sh
+
+# Применим исправление
+./fix-build.sh
+
+# Запустим через PM2
+pm2 start ecosystem.config.cjs
+
+# Проверим статус
+pm2 logs edahouse --lines 10
+Fixing import.meta.dirname issue...
+Build fixed successfully
+[PM2] Applying action restartProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 313554   │ 0s     │ 3    │ online    │ 0%       │ 39.7mb   │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[TAILING] Tailing last 10 lines for [edahouse] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/out-0.log last 10 lines:
+0|edahouse | 2025-07-04T23:11:13: 11:11:13 PM [express] GET /api/settings 200 in 11ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 2025-07-04T23:11:14: 11:11:14 PM [express] GET /api/auth/user 200 in 8ms :: {"id":"admin","username":"admin","email":"admi…
+0|edahouse | 2025-07-04T23:11:14: 11:11:14 PM [express] GET /api/favicon 301 in 27ms
+0|edahouse | 2025-07-04T23:11:14: 11:11:14 PM [express] GET /api/products 200 in 15ms :: [{"id":380,"name":"Абжерка","name_en":null,"na…
+0|edahouse | 2025-07-04T23:11:14: 11:11:14 PM [express] GET /api/categories 200 in 22ms :: [{"id":47,"name":"Салаты","name_en":"","name…
+0|edahouse | 2025-07-04T23:11:37: 11:11:37 PM [express] GET /api/auth/user 401 in 1ms :: {"message":"Unauthorized"}
+0|edahouse | 2025-07-04T23:11:37: 11:11:37 PM [express] GET /api/settings 200 in 21ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 2025-07-04T23:11:38: 11:11:38 PM [express] GET /api/products 200 in 10ms :: [{"id":380,"name":"Абжерка","name_en":null,"na…
+0|edahouse | 2025-07-04T23:11:38: 11:11:38 PM [express] GET /api/categories 200 in 9ms :: [{"id":47,"name":"Салаты","name_en":"","name_…
+0|edahouse | 2025-07-04T23:11:39: 11:11:39 PM [express] GET /api/favicon 301 in 5ms
+
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/err-0.log last 10 lines:
+0|edahouse |     at async importModuleDynamicallyWrapper (node:internal/vm/module:432:15)
+0|edahouse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|edahouse | TypeError [ERR_INVALID_ARG_TYPE]: The "paths[0]" argument must be of type string. Received undefined
+0|edahouse |     at new NodeError (node:internal/errors:405:5)
+0|edahouse |     at validateString (node:internal/validators:162:11)
+0|edahouse |     at Object.resolve (node:path:1115:7)
+0|edahouse |     at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3655:18
+0|edahouse |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|edahouse |     at async ModuleLoader.import (node:internal/modules/esm/loader:337:24)
+0|edahouse |     at async importModuleDynamicallyWrapper (node:internal/vm/module:432:15)
+
+0|edahouse  | 2025-07-04T23:28:30: 🌱 Seeding database...
+0|edahouse  | 2025-07-04T23:28:30: Database already seeded or error occurred: ErrorEvent {
+0|edahouse  |   [Symbol(kTarget)]: WebSocket {
+0|edahouse  |     _events: [Object: null prototype] {
+0|edahouse  |       error: [Function],
+0|edahouse  |       message: [Function],
+0|edahouse  |       close: [Function],
+0|edahouse  |       open: [Function]
+0|edahouse  |     },
+0|edahouse  |     _eventsCount: 4,
+0|edahouse  |     _maxListeners: undefined,
+0|edahouse  |     _binaryType: 'arraybuffer',
+0|edahouse  |     _closeCode: 1006,
+0|edahouse  |     _closeFrameReceived: false,
+0|edahouse  |     _closeFrameSent: false,
+0|edahouse  |     _closeMessage: <Buffer >,
+0|edahouse  |     _closeTimer: null,
+0|edahouse  |     _errorEmitted: true,
+0|edahouse  |     _extensions: {},
+0|edahouse  |     _paused: false,
+0|edahouse  |     _protocol: '',
+0|edahouse  |     _readyState: 3,
+0|edahouse  |     _receiver: null,
+0|edahouse  |     _sender: null,
+0|edahouse  |     _socket: null,
+0|edahouse  |     _bufferedAmount: 0,
+0|edahouse  |     _isServer: false,
+0|edahouse  |     _redirects: 0,
+0|edahouse  |     _autoPong: true,
+0|edahouse  |     _url: 'wss://localhost/v2',
+0|edahouse  |     _req: null,
+0|edahouse  |     [Symbol(kCapture)]: false
+0|edahouse  |   },
+0|edahouse  |   [Symbol(kType)]: 'error',
+0|edahouse  |   [Symbol(kError)]: Error: connect ECONNREFUSED ::1:443
+0|edahouse  |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+0|edahouse  |     errno: -111,
+0|edahouse  |     code: 'ECONNREFUSED',
+0|edahouse  |     syscall: 'connect',
+0|edahouse  |     address: '::1',
+0|edahouse  |     port: 443
+0|edahouse  |   },
+0|edahouse  |   [Symbol(kMessage)]: 'connect ECONNREFUSED ::1:443'
+0|edahouse  | }
+0|edahouse  | 2025-07-04T23:28:30: 11:28:30 PM [express] serving on port 3000
+0|edahouse  | 2025-07-04T23:28:37: 11:28:37 PM [express] GET /api/auth/user 401 in 3ms :: {"message":"Unauthorized"}
+0|edahouse  | 2025-07-04T23:28:37: Error fetching store settings: ErrorEvent {
+0|edahouse  |   [Symbol(kTarget)]: WebSocket {
+0|edahouse  |     _events: [Object: null prototype] {
+0|edahouse  |       error: [Function],
+0|edahouse  |       message: [Function],
+0|edahouse  |       close: [Function],
+0|edahouse  |       open: [Function]
+0|edahouse  |     },
+0|edahouse  |     _eventsCount: 4,
+0|edahouse  |     _maxListeners: undefined,
+0|edahouse  |     _binaryType: 'arraybuffer',
+0|edahouse  |     _closeCode: 1006,
+0|edahouse  |     _closeFrameReceived: false,
+0|edahouse  |     _closeFrameSent: false,
+0|edahouse  |     _closeMessage: <Buffer >,
+0|edahouse  |     _closeTimer: null,
+0|edahouse  |     _errorEmitted: true,
+0|edahouse  |     _extensions: {},
+0|edahouse  |     _paused: false,
+0|edahouse  |     _protocol: '',
+0|edahouse  |     _readyState: 3,
+0|edahouse  |     _receiver: null,
+0|edahouse  |     _sender: null,
+0|edahouse  |     _socket: null,
+0|edahouse  |     _bufferedAmount: 0,
+0|edahouse  |     _isServer: false,
+0|edahouse  |     _redirects: 0,
+0|edahouse  |     _autoPong: true,
+0|edahouse  |     _url: 'wss://localhost/v2',
+0|edahouse  |     _req: null,
+0|edahouse  |     [Symbol(kCapture)]: false
+0|edahouse  |   },
+0|edahouse  |   [Symbol(kType)]: 'error',
+0|edahouse  |   [Symbol(kError)]: Error: connect ECONNREFUSED ::1:443
+0|edahouse  |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+0|edahouse  |     errno: -111,
+0|edahouse  |     code: 'ECONNREFUSED',
+0|edahouse  |     syscall: 'connect',
+0|edahouse  |     address: '::1',
+0|edahouse  |     port: 443
+0|edahouse  |   },
+0|edahouse  |   [Symbol(kMessage)]: 'connect ECONNREFUSED ::1:443'
+0|edahouse  | }
+0|edahouse  | 2025-07-04T23:28:37: 11:28:37 PM [express] GET /api/settings 500 in 15ms :: {"message":"Failed to fetch store settings"}
+0|edahouse  | 2025-07-04T23:28:37: Error fetching categories: ErrorEvent {
+0|edahouse  |   [Symbol(kTarget)]: WebSocket {
+0|edahouse  |     _events: [Object: null prototype] {
+0|edahouse  |       error: [Function],
+0|edahouse  |       message: [Function],
+0|edahouse  |       close: [Function],
+0|edahouse  |       open: [Function]
+0|edahouse  |     },
+0|edahouse  |     _eventsCount: 4,
+0|edahouse  |     _maxListeners: undefined,
+0|edahouse  |     _binaryType: 'arraybuffer',
+0|edahouse  |     _closeCode: 1006,
+0|edahouse  |     _closeFrameReceived: false,
+0|edahouse  |     _closeFrameSent: false,
+0|edahouse  |     _closeMessage: <Buffer >,
+0|edahouse  |     _closeTimer: null,
+0|edahouse  |     _errorEmitted: true,
+0|edahouse  |     _extensions: {},
+0|edahouse  |     _paused: false,
+0|edahouse  |     _protocol: '',
+0|edahouse  |     _readyState: 3,
+0|edahouse  |     _receiver: null,
+0|edahouse  |     _sender: null,
+0|edahouse  |     _socket: null,
+0|edahouse  |     _bufferedAmount: 0,
+0|edahouse  |     _isServer: false,
+0|edahouse  |     _redirects: 0,
+0|edahouse  |     _autoPong: true,
+0|edahouse  |     _url: 'wss://localhost/v2',
+0|edahouse  |     _req: null,
+0|edahouse  |     [Symbol(kCapture)]: false
+0|edahouse  |   },
+0|edahouse  |   [Symbol(kType)]: 'error',
+0|edahouse  |   [Symbol(kError)]: Error: connect ECONNREFUSED ::1:443
+0|edahouse  |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+0|edahouse  |     errno: -111,
+0|edahouse  |     code: 'ECONNREFUSED',
+0|edahouse  |     syscall: 'connect',
+0|edahouse  |     address: '::1',
+0|edahouse  |     port: 443
+0|edahouse  |   },
+0|edahouse  |   [Symbol(kMessage)]: 'connect ECONNREFUSED ::1:443'
+0|edahouse  | }
+0|edahouse  | 2025-07-04T23:28:37: 11:28:37 PM [express] GET /api/categories 500 in 12ms :: {"message":"Failed to fetch categories"}
+0|edahouse  | 2025-07-04T23:28:37: Error fetching products: ErrorEvent {
+0|edahouse  |   [Symbol(kTarget)]: WebSocket {
+0|edahouse  |     _events: [Object: null prototype] {
+0|edahouse  |       error: [Function],
+0|edahouse  |       message: [Function],
+0|edahouse  |       close: [Function],
+0|edahouse  |       open: [Function]
+0|edahouse  |     },
+0|edahouse  |     _eventsCount: 4,
+0|edahouse  |     _maxListeners: undefined,
+0|edahouse  |     _binaryType: 'arraybuffer',
+0|edahouse  |     _closeCode: 1006,
+0|edahouse  |     _closeFrameReceived: false,
+0|edahouse  |     _closeFrameSent: false,
+0|edahouse  |     _closeMessage: <Buffer >,
+0|edahouse  |     _closeTimer: null,
+0|edahouse  |     _errorEmitted: true,
+0|edahouse  |     _extensions: {},
+0|edahouse  |     _paused: false,
+0|edahouse  |     _protocol: '',
+0|edahouse  |     _readyState: 3,
+0|edahouse  |     _receiver: null,
+0|edahouse  |     _sender: null,
+0|edahouse  |     _socket: null,
+0|edahouse  |     _bufferedAmount: 0,
+0|edahouse  |     _isServer: false,
+0|edahouse  |     _redirects: 0,
+0|edahouse  |     _autoPong: true,
+0|edahouse  |     _url: 'wss://localhost/v2',
+0|edahouse  |     _req: null,
+0|edahouse  |     [Symbol(kCapture)]: false
+0|edahouse  |   },
+0|edahouse  |   [Symbol(kType)]: 'error',
+0|edahouse  |   [Symbol(kError)]: Error: connect ECONNREFUSED ::1:443
+0|edahouse  |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+0|edahouse  |     errno: -111,
+0|edahouse  |     code: 'ECONNREFUSED',
+0|edahouse  |     syscall: 'connect',
+0|edahouse  |     address: '::1',
+0|edahouse  |     port: 443
+0|edahouse  |   },
+0|edahouse  |   [Symbol(kMessage)]: 'connect ECONNREFUSED ::1:443'
+0|edahouse  | }
+0|edahouse  | 2025-07-04T23:28:37: 11:28:37 PM [express] GET /api/products 500 in 10ms :: {"message":"Failed to fetch products"}
+0|edahouse  | 2025-07-04T23:28:37: Error serving favicon: ErrorEvent {
+0|edahouse  |   [Symbol(kTarget)]: WebSocket {
+0|edahouse  |     _events: [Object: null prototype] {
+0|edahouse  |       error: [Function],
+0|edahouse  |       message: [Function],
+0|edahouse  |       close: [Function],
+0|edahouse  |       open: [Function]
+0|edahouse  |     },
+0|edahouse  |     _eventsCount: 4,
+0|edahouse  |     _maxListeners: undefined,
+0|edahouse  |     _binaryType: 'arraybuffer',
+0|edahouse  |     _closeCode: 1006,
+0|edahouse  |     _closeFrameReceived: false,
+0|edahouse  |     _closeFrameSent: false,
+0|edahouse  |     _closeMessage: <Buffer >,
+0|edahouse  |     _closeTimer: null,
+0|edahouse  |     _errorEmitted: true,
+0|edahouse  |     _extensions: {},
+0|edahouse  |     _paused: false,
+0|edahouse  |     _protocol: '',
+0|edahouse  |     _readyState: 3,
+0|edahouse  |     _receiver: null,
+0|edahouse  |     _sender: null,
+0|edahouse  |     _socket: null,
+0|edahouse  |     _bufferedAmount: 0,
+0|edahouse  |     _isServer: false,
+0|edahouse  |     _redirects: 0,
+0|edahouse  |     _autoPong: true,
+0|edahouse  |     _url: 'wss://localhost/v2',
+0|edahouse  |     _req: null,
+0|edahouse  |     [Symbol(kCapture)]: false
+0|edahouse  |   },
+0|edahouse  |   [Symbol(kType)]: 'error',
+0|edahouse  |   [Symbol(kError)]: Error: connect ECONNREFUSED ::1:443
+0|edahouse  |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+0|edahouse  |     errno: -111,
+0|edahouse  |     code: 'ECONNREFUSED',
+0|edahouse  |     syscall: 'connect',
+0|edahouse  |     address: '::1',
+0|edahouse  |     port: 443
+0|edahouse  |   },
+0|edahouse  |   [Symbol(kMessage)]: 'connect ECONNREFUSED ::1:443'
+0|edahouse  | }
+0|edahouse  | 2025-07-04T23:28:37: 11:28:37 PM [express] GET /api/favicon 301 in 20ms
+0|edahouse  | 2025-07-04T23:28:37: Error serving favicon: ErrorEvent {
+0|edahouse  |   [Symbol(kTarget)]: WebSocket {
+0|edahouse  |     _events: [Object: null prototype] {
+0|edahouse  |       error: [Function],
+0|edahouse  |       message: [Function],
+0|edahouse  |       close: [Function],
+0|edahouse  |       open: [Function]
+0|edahouse  |     },
+0|edahouse  |     _eventsCount: 4,
+0|edahouse  |     _maxListeners: undefined,
+0|edahouse  |     _binaryType: 'arraybuffer',
+0|edahouse  |     _closeCode: 1006,
+0|edahouse  |     _closeFrameReceived: false,
+0|edahouse  |     _closeFrameSent: false,
+0|edahouse  |     _closeMessage: <Buffer >,
+0|edahouse  |     _closeTimer: null,
+0|edahouse  |     _errorEmitted: true,
+0|edahouse  |     _extensions: {},
+0|edahouse  |     _paused: false,
+0|edahouse  |     _protocol: '',
+0|edahouse  |     _readyState: 3,
+0|edahouse  |     _receiver: null,
+0|edahouse  |     _sender: null,
+0|edahouse  |     _socket: null,
+0|edahouse  |     _bufferedAmount: 0,
+0|edahouse  |     _isServer: false,
+0|edahouse  |     _redirects: 0,
+0|edahouse  |     _autoPong: true,
+0|edahouse  |     _url: 'wss://localhost/v2',
+0|edahouse  |     _req: null,
+0|edahouse  |     [Symbol(kCapture)]: false
+0|edahouse  |   },
+0|edahouse  |   [Symbol(kType)]: 'error',
+0|edahouse  |   [Symbol(kError)]: Error: connect ECONNREFUSED ::1:443
+0|edahouse  |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+0|edahouse  |     errno: -111,
+0|edahouse  |     code: 'ECONNREFUSED',
+0|edahouse  |     syscall: 'connect',
+0|edahouse  |     address: '::1',
+0|edahouse  |     port: 443
+0|edahouse  |   },
+0|edahouse  |   [Symbol(kMessage)]: 'connect ECONNREFUSED ::1:443'
+0|edahouse  | }
+0|edahouse  | 2025-07-04T23:28:37: 11:28:37 PM [express] GET /api/favicon 301 in 16ms
