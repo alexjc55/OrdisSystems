@@ -1,0 +1,73 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Rebuild the application with the fixed database import path
+npm run build
+
+# Restart PM2 to apply the changes
+pm2 restart edahouse --update-env
+sleep 5
+
+# Test all endpoints to verify the fix
+echo "Health endpoint:"
+curl -s http://localhost:3000/api/health
+
+echo -e "\nProducts endpoint:"
+curl -s http://localhost:3000/api/products | head -c 100
+
+echo -e "\nExternal health check:"
+curl -s https://edahouse.ordis.co.il/api/health
+
+echo -e "\nChecking for Neon connection attempts in logs:"
+pm2 logs edahouse --lines 10 --nostream | grep -E "(443|ECONNREFUSED|neon)" || echo "No Neon connection attempts found!"
+
+echo -e "\nApplication status:"
+pm2 status
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+transforming (3) src/main.tsxBrowserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2796 modules transformed.
+../dist/public/index.html                                        4.20 kB │ gzip:   1.43 kB
+../dist/public/assets/logo-white_1750456267684-DSssD_B9.png      8.43 kB
+../dist/public/assets/index-DM0duixA.css                       168.81 kB │ gzip:  28.82 kB
+../dist/public/assets/index-BXX_iQ-T.js                      1,504.02 kB │ gzip: 414.47 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 16.04s
+
+  dist/index.js  200.8kb
+
+⚡ Done in 19ms
+[PM2] Applying action restartProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 325620   │ 0s     │ 1    │ online    │ 0%       │ 41.7mb   │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Health endpoint:
+{"status":"unhealthy","timestamp":"2025-07-04T23:13:26.622Z","error":"Unknown error"}
+Products endpoint:
+{"message":"Failed to fetch products"}
+External health check:
+{"status":"unhealthy","timestamp":"2025-07-04T23:13:27.065Z","error":"Unknown error"}
+Checking for Neon connection attempts in logs:
+0|edahouse |   [Symbol(kError)]: Error: connect ECONNREFUSED ::1:443
+0|edahouse |     code: 'ECONNREFUSED',
+0|edahouse |     port: 443
+0|edahouse |   [Symbol(kMessage)]: 'connect ECONNREFUSED ::1:443'
+0|edahouse |     port: 443
+0|edahouse |   [Symbol(kMessage)]: 'connect ECONNREFUSED ::1:443'
+
+Application status:
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 325620   │ 6s     │ 1    │ online    │ 0%       │ 103.3mb  │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ pm2 status
