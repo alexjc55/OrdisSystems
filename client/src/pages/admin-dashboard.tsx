@@ -5436,7 +5436,7 @@ export default function AdminDashboard() {
               {adminT('products.statusDialog.description')}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className={`${isRTL ? 'flex-row-reverse' : 'flex-row'} gap-2`}>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
             <AlertDialogAction
               onClick={() => {
                 if (productToToggle) {
@@ -5446,7 +5446,7 @@ export default function AdminDashboard() {
                   });
                 }
               }}
-              className={`btn-system btn-error ${isRTL ? 'mr-2' : 'ml-2'}`}
+              className="btn-system btn-error w-full"
             >
               {adminT('products.statusDialog.disable')}
             </AlertDialogAction>
@@ -5459,7 +5459,7 @@ export default function AdminDashboard() {
                   });
                 }
               }}
-              className={`btn-system btn-info ${isRTL ? 'ml-2' : 'mr-2'}`}
+              className="btn-system btn-info w-full"
             >
               {adminT('products.statusDialog.keep')}
             </AlertDialogAction>
