@@ -272,20 +272,26 @@ export function getLocalizedImageField(
 ): string {
   if (!obj) return '';
   
-  // Try current language field first
-  if (language === defaultLanguage) {
-    // For default language, try base field first
-    const baseValue = obj[fieldName];
-    if (baseValue) return baseValue;
-  } else {
-    // For non-default languages, try suffixed field first
-    const suffixedValue = obj[`${fieldName}_${language}`];
-    if (suffixedValue) return suffixedValue;
-  }
+  // Convert camelCase to proper field names for different languages
+  const getFieldForLanguage = (base: string, lang: SupportedLanguage) => {
+    if (lang === 'ru') {
+      return base; // Russian uses base field name
+    } else {
+      // For other languages, use camelCase format: logoUrl -> logoUrlEn
+      const capitalizedLang = lang.charAt(0).toUpperCase() + lang.slice(1);
+      return `${base}${capitalizedLang}`;
+    }
+  };
   
-  // Fallback to default language
+  // Try current language field first
+  const currentField = getFieldForLanguage(fieldName, language);
+  const currentValue = obj[currentField];
+  if (currentValue) return currentValue;
+  
+  // Fallback to default language if different from current
   if (language !== defaultLanguage) {
-    const fallbackValue = getLocalizedImageField(obj, fieldName, defaultLanguage, defaultLanguage);
+    const fallbackField = getFieldForLanguage(fieldName, defaultLanguage);
+    const fallbackValue = obj[fallbackField];
     if (fallbackValue) return fallbackValue;
   }
   
