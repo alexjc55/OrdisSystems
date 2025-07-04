@@ -1,0 +1,59 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Проверим где находятся статические файлы
+ls -la dist/
+
+# Создадим символическую ссылку или скопируем файлы
+ln -sf dist/public public
+
+# Или если папка dist/public не существует, создадим её
+mkdir -p dist/public
+
+# Пересоберем фронтенд в правильную папку
+npm run build
+
+# Попробуем запустить снова
+NODE_ENV=production PORT=3000 node dist/index.js
+total 216
+drwxr-xr-x  3 ordis_co_il_usr ordis_co_il_usr   4096 Jul  4 23:22 .
+drwxr-xr-x 17 ordis_co_il_usr ordis_co_il_usr   4096 Jul  4 23:16 ..
+-rw-r--r--  1 ordis_co_il_usr ordis_co_il_usr 205270 Jul  4 23:22 index.js
+drwxr-xr-x  4 ordis_co_il_usr ordis_co_il_usr   4096 Jul  4 23:17 public
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+transforming (24) ../node_modules/i18next/dist/esm/i18next.jsBrowserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2796 modules transformed.
+../dist/public/index.html                                        4.20 kB │ gzip:   1.43 kB
+../dist/public/assets/logo-white_1750456267684-DSssD_B9.png      8.43 kB
+../dist/public/assets/index-DunQRkmW.css                       168.49 kB │ gzip:  28.76 kB
+../dist/public/assets/index-D4kYRxCJ.js                      1,502.72 kB │ gzip: 414.21 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 16.25s
+
+  dist/index.js  200.5kb
+
+⚡ Done in 23ms
+node:internal/errors:496
+    ErrorCaptureStackTrace(err);
+    ^
+
+TypeError [ERR_INVALID_ARG_TYPE]: The "paths[0]" argument must be of type string. Received undefined
+    at new NodeError (node:internal/errors:405:5)
+    at validateString (node:internal/validators:162:11)
+    at Object.resolve (node:path:1115:7)
+    at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3655:18
+    at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:337:24)
+    at async loadESM (node:internal/process/esm_loader:34:7)
+    at async handleMainPromise (node:internal/modules/run_main:106:12) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+
+Node.js v18.20.6
