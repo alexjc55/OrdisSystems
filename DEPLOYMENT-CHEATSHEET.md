@@ -2,12 +2,12 @@
 
 ## 🎯 Быстрый выбор команды
 
-| Ситуация | Команда |
-|----------|---------|
-| 🆕 **Новый сервер** | `git clone https://github.com/alexjc55/Ordis.git www/edahouse.ordis.co.il && cd www/edahouse.ordis.co.il && ./deploy/install-on-vps.sh` |
-| 🔄 **Обычное обновление** | `cd www/edahouse.ordis.co.il && ./deploy/update-project.sh` |
-| 🔀 **Нет скриптов deploy/** | `cd www/edahouse.ordis.co.il && curl -sSL https://raw.githubusercontent.com/alexjc55/Ordis/main/deploy/sync-from-replit.sh \| bash` |
-| 🚨 **Что-то сломалось** | `cd www/edahouse.ordis.co.il && ./deploy/fix-environment.sh` |
+| Ситуация | База данных | Команда |
+|----------|-------------|---------|
+| 🆕 **Новый сервер** | Создается с нуля + начальные данные | `git clone https://github.com/alexjc55/Ordis.git www/edahouse.ordis.co.il && cd www/edahouse.ordis.co.il && ./deploy/install-on-vps.sh` |
+| 🔄 **Обычное обновление** | Схема обновляется, ДАННЫЕ СОХРАНЯЮТСЯ | `cd www/edahouse.ordis.co.il && ./deploy/update-project.sh` |
+| 🔀 **Нет скриптов deploy/** | Схема обновляется, ДАННЫЕ СОХРАНЯЮТСЯ | `cd www/edahouse.ordis.co.il && curl -sSL https://raw.githubusercontent.com/alexjc55/Ordis/main/deploy/sync-from-replit.sh \| bash` |
+| 🚨 **Что-то сломалось** | БД НЕ ТРОГАЕТСЯ | `cd www/edahouse.ordis.co.il && ./deploy/fix-environment.sh` |
 
 ---
 
@@ -89,6 +89,22 @@ curl http://localhost:3000/api/health
 
 # Проверить сайт
 curl -I https://edahouse.ordis.co.il
+
+# Проверить базу данных
+psql -U ordis_co_il_usr -d edahouse_ord -c "SELECT COUNT(*) FROM products;"
+```
+
+## 🗄️ Работа с базой данных
+
+```bash
+# Подключение к БД
+psql -U ordis_co_il_usr -d edahouse_ord
+
+# Резервная копия БД
+pg_dump -U ordis_co_il_usr edahouse_ord > backup_$(date +%Y%m%d).sql
+
+# Проверить схему БД (безопасное обновление)
+cd www/edahouse.ordis.co.il && npm run db:push
 ```
 
 ---
