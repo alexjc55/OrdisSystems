@@ -1,2 +1,2 @@
-// Use universal database connection that supports both Neon and PostgreSQL
-export { db, pool } from './db-universal.js';
+// Use PostgreSQL database connection for VPS deployment
+export { db, pool } from './db-universal';
