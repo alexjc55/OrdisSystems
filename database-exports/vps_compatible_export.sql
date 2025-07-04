@@ -56,7 +56,7 @@ INSERT INTO product_categories (product_id, category_id) VALUES
 (377, 47), (378, 47), (379, 47), (380, 47), (381, 47), (382, 47), (383, 47), (384, 47), (385, 47), (386, 47);
 
 -- Админ пользователь (логин: admin, пароль: admin123)
-INSERT INTO users (id, username, email, password_hash, role, first_name, last_name, is_active) VALUES 
+INSERT INTO users (id, username, email, password, role, first_name, last_name, is_active) VALUES 
 ('admin-001', 'admin', 'admin@edahouse.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 'Администратор', 'Системы', true);
 
 -- Обновление последовательностей
