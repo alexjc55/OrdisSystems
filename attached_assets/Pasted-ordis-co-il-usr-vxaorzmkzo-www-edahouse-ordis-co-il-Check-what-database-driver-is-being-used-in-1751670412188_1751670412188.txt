@@ -1,0 +1,107 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Check what database driver is being used in the code
+grep -r "neondatabase\|neon" server/ shared/ --include="*.ts" || echo "No neon references in TypeScript"
+
+# Check if there are any hardcoded Neon connections in the built code
+grep -r "neondatabase\|neon" . --exclude-dir=node_modules --exclude-dir=.git | head -10
+
+# The issue is likely in server/storage.ts - check the database import
+cat server/storage.ts | head -20
+
+# Replace Neon database driver with standard pg client
+sed -i 's/@neondatabase\/serverless/pg/g' server/storage.ts
+
+# Check if the import needs to be updated
+grep -n "import.*Client.*from" server/storage.ts
+
+# Update the import to use standard PostgreSQL client
+sed -i 's/import { Client } from "pg"/import pkg from "pg";\nconst { Client } = pkg;/g' server/storage.ts
+
+# Rebuild with the correct database driver
+npm run build
+
+# Restart the application
+pm2 restart edahouse --update-env
+sleep 5
+
+# Test the fix
+echo "Testing health endpoint:"
+curl -s http://localhost:3000/api/health
+echo ""
+echo "Testing products endpoint:"
+curl -s http://localhost:3000/api/products | head -c 100
+echo ""
+echo "Testing external access:"
+curl -s https://edahouse.ordis.co.il/api/health
+server/db-universal.ts:const isNeonDatabase = process.env.DATABASE_URL?.includes('neon.tech');
+server/db-universal.ts:  const { Pool, neonConfig } = await import('@neondatabase/serverless');
+server/db-universal.ts:  const { drizzle } = await import('drizzle-orm/neon-serverless');
+server/db-universal.ts:  neonConfig.webSocketConstructor = ws.default;
+server/db.ts:import { Pool, neonConfig } from '@neondatabase/serverless';
+server/db.ts:import { drizzle } from 'drizzle-orm/neon-serverless';
+server/db.ts:neonConfig.webSocketConstructor = ws;
+./dist/index.js:import { Pool, neonConfig } from "@neondatabase/serverless";
+./dist/index.js:import { drizzle } from "drizzle-orm/neon-serverless";
+./dist/index.js:neonConfig.webSocketConstructor = ws;
+./logs/combined-0.log:    at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/@neondatabase/serverless/index.mjs:1345:74
+./logs/err-0.log:    at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/@neondatabase/serverless/index.mjs:1345:74
+./package-lock.json:        "@neondatabase/serverless": "^0.10.4",
+./package-lock.json:    "node_modules/@neondatabase/serverless": {
+./package-lock.json:      "resolved": "https://registry.npmjs.org/@neondatabase/serverless/-/serverless-0.10.4.tgz",
+./package-lock.json:        "@neondatabase/serverless": ">=0.10.0",
+./package-lock.json:        "@neondatabase/serverless": {
+import {
+  users,
+  userAddresses,
+  categories,
+  products,
+  productCategories,
+  orders,
+  orderItems,
+  storeSettings,
+  themes,
+  type User,
+  type UpsertUser,
+  type UserAddress,
+  type InsertUserAddress,
+  type Category,
+  type InsertCategory,
+  type Product,
+  type InsertProduct,
+  type ProductWithCategory,
+  type ProductWithCategories,
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+transforming (24) src/pages/landing.tsxBrowserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2796 modules transformed.
+../dist/public/index.html                                        4.20 kB │ gzip:   1.43 kB
+../dist/public/assets/logo-white_1750456267684-DSssD_B9.png      8.43 kB
+../dist/public/assets/index-DM0duixA.css                       168.81 kB │ gzip:  28.82 kB
+../dist/public/assets/index-BXX_iQ-T.js                      1,504.02 kB │ gzip: 414.47 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 16.35s
+
+  dist/index.js  200.8kb
+
+⚡ Done in 21ms
+[PM2] Applying action restartProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 325233   │ 0s     │ 9    │ online    │ 0%       │ 41.7mb   │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Testing health endpoint:
+{"status":"unhealthy","timestamp":"2025-07-04T23:06:19.857Z","error":"Unknown error"}
+Testing products endpoint:
+{"message":"Failed to fetch products"}
+Testing external access:
+{"status":"unhealthy","timestamp":"2025-07-04T23:06:20.277Z","error":"Unknown error"}ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$
