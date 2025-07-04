@@ -131,6 +131,24 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 4, 2025: UI IMPROVEMENTS AND MOBILE FIXES DEPLOYED TO PRODUCTION
+  - MODAL BUTTON ALIGNMENT FIX: Fixed product status modal buttons alignment on mobile devices
+    - Changed AlertDialogFooter from horizontal flex-row to vertical flex-col sm:flex-row layout
+    - Removed margin classes that caused button misalignment on mobile
+    - Added w-full class for full-width buttons on mobile devices
+    - Desktop layout preserved with horizontal button arrangement
+  - MOBILE MENU OPTIMIZATION: Shortened profile button text for better mobile display
+    - Russian: "Мой Профиль" → "Профиль" (more compact)
+    - Arabic: "ملفي الشخصي" → "الملف" (single word)
+    - Improved mobile menu layout and readability
+  - TRANSLATION COMPLETENESS: Added missing translation keys for user form dialog
+    - Added emailLabel, firstNameLabel, lastNameLabel, phoneLabel, roleLabel across all 4 languages
+    - Fixed translation key display issues in user creation/editing forms
+    - Complete coverage for Hebrew and Arabic user interface elements
+  - PRODUCTION DEPLOYMENT: All improvements successfully deployed to edahouse.ordis.co.il
+    - Server updated with latest code changes and tsx dependency update
+    - PM2 process restarted successfully on port 3000
+    - All UI fixes now live in production environment
 - July 4, 2025: CRITICAL BUG FIX: RESOLVED VPS PORT CONFLICTS AND THEME ACTIVATION ERRORS
   - VPS PORT CONFLICT RESOLVED: Fixed PM2 God process occupying port 3000, forcing app to run on 3001
     - Stopped all PM2 processes and killed God process to free port 3000
