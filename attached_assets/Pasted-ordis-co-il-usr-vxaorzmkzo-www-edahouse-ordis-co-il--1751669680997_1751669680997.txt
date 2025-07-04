@@ -1,0 +1,36 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Очистить логи и посмотреть что происходит при запуске
+pm2 flush edahouse
+pm2 restart edahouse
+sleep 2
+pm2 logs edahouse --lines 5
+
+# Проверить переменные окружения в процессе
+cat .env
+
+# Попробовать запустить напрямую для отладки
+node dist/index.js
+
+# Если не получится, проверим проблему с import.meta.dirname
+grep -n "import.meta.dirname" dist/index.js || echo "No import.meta.dirname found"
+grep -n "path.resolve" dist/index.js | head -5
+[PM2] Flushing:
+[PM2] /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/combined-0.log
+[PM2] /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/out-0.log
+[PM2] /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/err-0.log
+[PM2] Logs flushed
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 318406   │ 0s     │ 2    │ online    │ 0%       │ 41.7mb   │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[TAILING] Tailing last 5 lines for [edahouse] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/out-0.log last 5 lines:
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/err-0.log last 5 lines:
+0|edahouse |     at Object.resolve (node:path:1115:7)
+0|edahouse |     at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3655:18
+0|edahouse |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|edahouse |     at async ModuleLoader.import (node:internal/modules/esm/loader:337:24)
+0|edahouse |     at async importModuleDynamicallyWrapper (node:internal/vm/module:432:15)
