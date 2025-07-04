@@ -1,0 +1,515 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ psql -U $PGUSER -h $PGHOST -p $PGPORT $PGDATABASE < database-exports/clean_vps_export.sql
+Password for user edahouse_ord:
+SET
+SET
+SET
+SET
+SET
+ set_config
+------------
+
+(1 row)
+
+SET
+SET
+SET
+SET
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+DROP INDEX
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ERROR:  cannot drop constraint products_pkey on table public.products because other objects depend on it
+DETAIL:  constraint product_categories_product_id_products_id_fk on table public.product_categories depends on index public.products_pkey
+HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ERROR:  cannot drop constraint categories_pkey on table public.categories because other objects depend on it
+DETAIL:  constraint product_categories_category_id_categories_id_fk on table public.product_categories depends on index public.categories_pkey
+HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+DROP TABLE
+DROP SEQUENCE
+DROP TABLE
+DROP TABLE
+DROP SEQUENCE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP SEQUENCE
+DROP TABLE
+DROP SEQUENCE
+ERROR:  cannot drop table public.products because other objects depend on it
+DETAIL:  constraint product_categories_product_id_products_id_fk on table public.product_categories depends on table public.products
+HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+DROP SEQUENCE
+DROP TABLE
+DROP SEQUENCE
+DROP TABLE
+DROP SEQUENCE
+DROP TABLE
+DROP SEQUENCE
+DROP TABLE
+DROP SEQUENCE
+DROP TABLE
+SET
+SET
+CREATE TABLE
+CREATE SEQUENCE
+ALTER SEQUENCE
+CREATE TABLE
+CREATE SEQUENCE
+ALTER SEQUENCE
+CREATE TABLE
+CREATE SEQUENCE
+ALTER SEQUENCE
+CREATE TABLE
+CREATE SEQUENCE
+ALTER SEQUENCE
+CREATE TABLE
+CREATE SEQUENCE
+ALTER SEQUENCE
+ERROR:  relation "products" already exists
+CREATE SEQUENCE
+ALTER SEQUENCE
+CREATE TABLE
+CREATE SEQUENCE
+ALTER SEQUENCE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE SEQUENCE
+ALTER SEQUENCE
+CREATE TABLE
+CREATE TABLE
+CREATE SEQUENCE
+ALTER SEQUENCE
+CREATE TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 23:59:22.574"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-07-01 19:32:29.948"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-07-0...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-07-01 20:50:32.275"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-07-0...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-07-01 20:50:34.312"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-07-0...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 18:46:47.892589"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-17 20:36:16.722"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-18 14:43:39.892"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-1...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-30 09:56:42.616"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-3...
+                                                             ^
+ERROR:  invalid input syntax for type numeric: "2025-06-22 22:49:35.391"
+LINE 1: ...rue, 'in_stock', 0, '2025-06-17 18:46:47.892589', '2025-06-2...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ setval
+--------
+     59
+(1 row)
+
+ setval
+--------
+     35
+(1 row)
+
+ setval
+--------
+     85
+(1 row)
+
+ setval
+--------
+     18
+(1 row)
+
+ setval
+--------
+     86
+(1 row)
+
+ setval
+--------
+    428
+(1 row)
+
+ setval
+--------
+      5
+(1 row)
+
+ setval
+--------
+      1
+(1 row)
+
+ setval
+--------
+      5
+(1 row)
+
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ERROR:  multiple primary keys for table "products" are not allowed
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+CREATE INDEX
+ALTER TABLE
+ERROR:  insert or update on table "order_items" violates foreign key constraint "order_items_product_id_products_id_fk"
+DETAIL:  Key (product_id)=(382) is not present in table "products".
+ALTER TABLE
+ALTER TABLE
+ERROR:  insert or update on table "product_categories" violates foreign key constraint "product_categories_product_id_fkey"
+DETAIL:  Key (product_id)=(377) is not present in table "products".
+ALTER TABLE

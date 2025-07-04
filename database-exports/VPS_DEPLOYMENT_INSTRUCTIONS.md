@@ -2,12 +2,12 @@
 
 ## Файлы для синхронизации с GitHub
 
-1. `database-exports/clean_vps_export.sql` - Полный экспорт базы данных из Replit, очищенный от Neon-специфичных команд
+1. `database-exports/vps_compatible_export.sql` - Совместимый экспорт данных из Replit для VPS
 2. Этот файл содержит:
-   - Все таблицы с данными (52 продукта, 6 категорий, настройки магазина)
-   - Пользователей и роли
-   - Полную схему базы данных
-   - Последовательности и индексы
+   - Все продукты (10 основных товаров) и категории
+   - Настройки магазина, адаптированные под структуру VPS
+   - Только INSERT команды без конфликтов структуры
+   - Администратора для доступа в панель
 
 ## Команды для выполнения на VPS
 
@@ -29,8 +29,8 @@ pm2 stop edahouse
 # 5. Создай бэкап текущей базы (на всякий случай)
 pg_dump -U $PGUSER -h $PGHOST -p $PGPORT $PGDATABASE > backup_before_import_$(date +%Y%m%d_%H%M%S).sql
 
-# 6. Восстанови базу данных из экспорта Replit
-psql -U $PGUSER -h $PGHOST -p $PGPORT $PGDATABASE < database-exports/clean_vps_export.sql
+# 6. Восстанови данные из совместимого экспорта
+psql -U $PGUSER -h $PGHOST -p $PGPORT $PGDATABASE < database-exports/vps_compatible_export.sql
 
 # 7. Проверь данные
 psql -U $PGUSER -h $PGHOST -p $PGPORT $PGDATABASE -c "
