@@ -1,30 +1,7 @@
-// Универсальное подключение к базе данных для Replit (Neon) и VPS (PostgreSQL)
+// Universal PostgreSQL connection for VPS deployment
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
-
-let db: any;
-let pool: any;
-
-// Определяем тип базы данных по URL
-const isDevelopment = process.env.NODE_ENV === 'development';
-const isNeonDatabase = process.env.DATABASE_URL?.includes('neon.tech');
-
-if (isNeonDatabase) {
-  // Для Neon (Replit)
-  const { Pool, neonConfig } = await import('@neondatabase/serverless');
-  const { drizzle } = await import('drizzle-orm/neon-serverless');
-  const ws = await import('ws');
-  
-  neonConfig.webSocketConstructor = ws.default;
-  pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  db = drizzle({ client: pool, schema });
-} else {
-  // Для обычного PostgreSQL (VPS)
-  const pg = await import('pg');
-  const { drizzle } = await import('drizzle-orm/node-postgres');
-  
-  pool = new pg.default.Pool({ connectionString: process.env.DATABASE_URL });
-  db = drizzle({ client: pool, schema });
-}
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
@@ -32,4 +9,5 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-export { db, pool };
+export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+export const db = drizzle({ client: pool, schema });
