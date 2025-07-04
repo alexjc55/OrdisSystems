@@ -1,0 +1,30 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Проверить статус PM2
+pm2 status
+
+# Проверить логи приложения
+pm2 logs edahouse --lines 5
+
+# Проверить на каком порту работает приложение
+netstat -tulpn | grep :3000
+
+# Проверить конфигурацию Nginx
+sudo cat /etc/nginx/sites-available/edahouse.ordis.co.il | grep -A 5 -B 5 proxy_pass
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 316967   │ 2m     │ 0    │ online    │ 0%       │ 81.5mb   │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[TAILING] Tailing last 5 lines for [edahouse] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/out-0.log last 5 lines:
+0|edahouse | 2025-07-05T01:38:43: 1:38:43 AM [express] GET /api/auth/user 401 in 1ms :: {"message":"Unauthorized"}
+0|edahouse | 2025-07-05T01:38:43: 1:38:43 AM [express] GET /api/settings 500 in 12ms :: {"message":"Failed to fetch store settings"}
+0|edahouse | 2025-07-05T01:38:43: 1:38:43 AM [express] GET /api/categories 500 in 11ms :: {"message":"Failed to fetch categories"}
+0|edahouse | 2025-07-05T01:39:22: 1:39:22 AM [express] GET /api/products 500 in 6ms :: {"message":"Failed to fetch products"}
+0|edahouse | 2025-07-05T01:39:26: 1:39:26 AM [express] GET /api/health 503 in 5ms :: {"status":"unhealthy","timestamp":"2025-07-04T22:…
+
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/err-0.log last 5 lines:
+0|edahouse |     at Object.resolve (node:path:1115:7)
+0|edahouse |     at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3655:18
+0|edahouse |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|edahouse |     at async ModuleLoader.import (node:internal/modules/esm/loader:337:24)
+0|edahouse |     at async importModuleDynamicallyWrapper (node:internal/vm/module:432:15)
