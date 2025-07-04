@@ -128,17 +128,18 @@ button:focus,
   body {
     max-width: 1023px;
     margin: 0 auto;
+    padding-bottom: 60px; /* Space for absolute footer */
   }
   
   /* Full-width footer override */
   .full-width-footer {
-    position: relative !important;
-    left: 50% !important;
-    right: 50% !important;
-    margin-left: -50vw !important;
-    margin-right: -50vw !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     width: 100vw !important;
     max-width: none !important;
+    margin: 0 !important;
   }
   
   /* Override body centering when scroll-lock is attempted */
