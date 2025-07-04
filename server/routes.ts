@@ -1674,14 +1674,14 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       const imageFields = [
         `logo_url = '${theme.logoUrl || ''}'`,
         `banner_image_url = '${theme.bannerImageUrl || ''}'`,
-        // Multilingual logo URLs
-        `logo_url_en = '${(theme as any).logoUrl_en || ''}'`,
-        `logo_url_he = '${(theme as any).logoUrl_he || ''}'`,
-        `logo_url_ar = '${(theme as any).logoUrl_ar || ''}'`,
-        // Multilingual banner URLs  
-        `banner_image_url_en = '${(theme as any).bannerImageUrl_en || ''}'`,
-        `banner_image_url_he = '${(theme as any).bannerImageUrl_he || ''}'`,
-        `banner_image_url_ar = '${(theme as any).bannerImageUrl_ar || ''}'`
+        // Multilingual logo URLs - safely handle undefined values
+        `logo_url_en = '${theme.logoUrl_en || ''}'`,
+        `logo_url_he = '${theme.logoUrl_he || ''}'`,
+        `logo_url_ar = '${theme.logoUrl_ar || ''}'`,
+        // Multilingual banner URLs - safely handle undefined values
+        `banner_image_url_en = '${theme.bannerImageUrl_en || ''}'`,
+        `banner_image_url_he = '${theme.bannerImageUrl_he || ''}'`,
+        `banner_image_url_ar = '${theme.bannerImageUrl_ar || ''}'`
       ];
       await db.execute(sql.raw(`UPDATE store_settings SET ${imageFields.join(', ')} WHERE id = 1`));
       

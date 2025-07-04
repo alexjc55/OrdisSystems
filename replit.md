@@ -131,6 +131,19 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 4, 2025: CRITICAL BUG FIX: RESOLVED VPS PORT CONFLICTS AND THEME ACTIVATION ERRORS
+  - VPS PORT CONFLICT RESOLVED: Fixed PM2 God process occupying port 3000, forcing app to run on 3001
+    - Stopped all PM2 processes and killed God process to free port 3000
+    - Updated Nginx configuration to correctly proxy to port 3000 instead of 3001
+    - Application now runs on correct port 3000 matching Nginx proxy configuration
+  - THEME ACTIVATION FIX: Fixed critical error when activating themes with uploaded images
+    - Fixed undefined multilingual field access in theme activation route (server/routes.ts line 1678-1684)
+    - Safely handle logoUrl_en, logoUrl_he, logoUrl_ar fields that may be undefined during theme activation
+    - Theme activation now works properly after image uploads without throwing server errors
+  - DEPLOYMENT STATUS: VPS application fully operational on edahouse.ordis.co.il
+    - Port configuration corrected (3000)
+    - Logo infinite reload issue addressed with previous multilingual fixes
+    - Admin theme management with image uploads now functional
 - July 4, 2025: CRITICAL BUG FIX: RESOLVED INFINITE LOGO RELOADING AND ADMIN IMAGE UPLOAD ISSUES
   - INFINITE LOGO RELOAD FIX: Fixed logo constantly reloading due to improper multilingual handling in header.tsx
     - Replaced direct storeSettings.logoUrl access with getLocalizedImageField() function
