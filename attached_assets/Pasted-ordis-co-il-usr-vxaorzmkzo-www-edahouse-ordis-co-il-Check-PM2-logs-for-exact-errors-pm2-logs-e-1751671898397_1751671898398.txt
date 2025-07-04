@@ -1,0 +1,105 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Check PM2 logs for exact errors
+pm2 logs edahouse --lines 20 --nostream
+
+# Check if port 3000 is actually listening
+netstat -tlnp | grep :3000
+
+# Test database connection directly
+export DATABASE_URL="postgresql://edahouse_ord:33V0R1N5qi81paiA@localhost:5432/edahouse_ord"
+node -e "
+const { Pool } = require('pg');
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+pool.query('SELECT name FROM products LIMIT 1')
+  .then(result => console.log('✅ DB Test - First product:', result.rows[0]?.name))
+  .catch(err => console.error('❌ DB Test failed:', err.message));
+"
+
+# Check PM2 environment variables
+pm2 env 0
+[TAILING] Tailing last 20 lines for [edahouse] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/out-0.log last 20 lines:
+0|edahouse |     port: 443
+0|edahouse |   },
+0|edahouse |   [Symbol(kMessage)]: 'connect ECONNREFUSED ::1:443'
+0|edahouse | }
+0|edahouse | 2025-07-05T02:26:51: 2:26:51 AM [express] serving on port 3000
+0|edahouse | 2025-07-05T02:26:59: 2:26:59 AM [express] GET /api/health 503 in 12ms :: {"status":"unhealthy","timestamp":"2025-07-04T23…
+0|edahouse | 2025-07-05T02:27:00: 2:27:00 AM [express] GET /api/health 503 in 7ms :: {"status":"unhealthy","timestamp":"2025-07-04T23:…
+0|edahouse | 2025-07-05T02:27:00: 2:27:00 AM [express] GET /api/products 500 in 13ms :: {"message":"Failed to fetch products"}
+0|edahouse | 2025-07-05T02:27:01: 2:27:01 AM [express] GET /api/health 503 in 5ms :: {"status":"unhealthy","timestamp":"2025-07-04T23:…
+0|edahouse | 2025-07-05T02:27:21: 2:27:21 AM [express] GET /api/auth/user 401 in 1ms :: {"message":"Unauthorized"}
+0|edahouse | 2025-07-05T02:27:21: 2:27:21 AM [express] GET /api/settings 500 in 13ms :: {"message":"Failed to fetch store settings"}
+0|edahouse | 2025-07-05T02:27:21: 2:27:21 AM [express] GET /api/products 500 in 12ms :: {"message":"Failed to fetch products"}
+0|edahouse | 2025-07-05T02:27:21: 2:27:21 AM [express] GET /api/categories 500 in 11ms :: {"message":"Failed to fetch categories"}
+0|edahouse | 2025-07-05T02:27:21: 2:27:21 AM [express] GET /api/favicon 301 in 11ms
+0|edahouse | 2025-07-05T02:27:26: 2:27:26 AM [express] GET /api/auth/user 401 in 2ms :: {"message":"Unauthorized"}
+0|edahouse | 2025-07-05T02:27:26: 2:27:26 AM [express] GET /api/settings 500 in 8ms :: {"message":"Failed to fetch store settings"}
+0|edahouse | 2025-07-05T02:27:26: 2:27:26 AM [express] GET /api/products 500 in 6ms :: {"message":"Failed to fetch products"}
+0|edahouse | 2025-07-05T02:27:26: 2:27:26 AM [express] GET /api/categories 500 in 6ms :: {"message":"Failed to fetch categories"}
+0|edahouse | 2025-07-05T02:27:26: 2:27:26 AM [express] GET /api/favicon 301 in 15ms
+0|edahouse | 2025-07-05T02:27:26: 2:27:26 AM [express] GET /api/favicon 301 in 11ms
+
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/err-0.log last 20 lines:
+0|edahouse |     _socket: null,
+0|edahouse |     _bufferedAmount: 0,
+0|edahouse |     _isServer: false,
+0|edahouse |     _redirects: 0,
+0|edahouse |     _autoPong: true,
+0|edahouse |     _url: 'wss://localhost/v2',
+0|edahouse |     _req: null,
+0|edahouse |     [Symbol(kCapture)]: false
+0|edahouse |   },
+0|edahouse |   [Symbol(kType)]: 'error',
+0|edahouse |   [Symbol(kError)]: Error: connect ECONNREFUSED ::1:443
+0|edahouse |       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+0|edahouse |     errno: -111,
+0|edahouse |     code: 'ECONNREFUSED',
+0|edahouse |     syscall: 'connect',
+0|edahouse |     address: '::1',
+0|edahouse |     port: 443
+0|edahouse |   },
+0|edahouse |   [Symbol(kMessage)]: 'connect ECONNREFUSED ::1:443'
+0|edahouse | }
+
+-bash: netstat: command not found
+✅ DB Test - First product: Оливье
+
+node_version: 18.20.6
+version: 1.0.0
+_pm2_version: 6.0.8
+unique_id: 1f2b635f-0bc2-4060-89f0-5877c4285c11
+SHELL: /bin/bash
+DATABASE_URL: postgresql://edahouse_ord:33V0R1N5qi81paiA@localhost:5432/edahouse_ord
+PWD: /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
+LOGNAME: ordis_co_il_usr
+XDG_SESSION_TYPE: tty
+MOTD_SHOWN: pam
+HOME: /var/www/ordis_co_il_usr/data
+LANG: en_US.UTF-8
+SSH_CONNECTION: 77.137.64.248 2787 178.236.17.141 22
+XDG_SESSION_CLASS: user
+TERM: xterm
+USER: ordis_co_il_usr
+SHLVL: 2
+XDG_SESSION_ID: 5016
+XDG_RUNTIME_DIR: /run/user/1001
+SSH_CLIENT: 77.137.64.248 2787 22
+PATH: /var/www/ordis_co_il_usr/data/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/var/www/ordis_co_il_usr/data/.local/bin
+SSH_TTY: /dev/pts/0
+OLDPWD: /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
+_: /usr/bin/pm2
+PM2_USAGE: CLI
+PM2_JSON_PROCESSING: true
+PORT: 3000
+NODE_ENV: production
+PM2_HOME: /var/www/ordis_co_il_usr/data/.pm2
+edahouse: {}
+NODE_APP_INSTANCE: 0
+vizion_running: false
+km_link: false
+pm_log_path: /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/combined-0.log
+log_date_format: YYYY-MM-DDTHH:mm:ss
+time: true
+env_file: .env
+namespace: default
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$
