@@ -648,10 +648,10 @@ export default function Profile() {
               <CardContent>
                 <div className="space-y-6">
                   {/* Password Management */}
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center gap-3">
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center gap-3 mb-4">
                       <Lock className="h-5 w-5 text-blue-600" />
-                      <div>
+                      <div className="flex-1">
                         <h3 className="font-medium">{t('auth.password')}</h3>
                         <p className="text-sm text-gray-600">
                           {user.password 
@@ -662,7 +662,7 @@ export default function Profile() {
                       </div>
                     </div>
                     <Link href="/change-password">
-                      <Button variant="outline">
+                      <Button variant="outline" className="w-full sm:w-auto">
                         <Lock className="h-4 w-4 mr-2" />
                         {user.password ? t('auth.changePassword') : t('profile.setPassword')}
                       </Button>
