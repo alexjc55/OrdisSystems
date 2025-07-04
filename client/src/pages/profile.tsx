@@ -14,12 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { formatCurrency, formatQuantity, getUnitShortLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
-import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin, Lock, Shield, Camera, Upload } from "lucide-react";
+import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin, Lock, Shield, Camera, Upload, ChevronDown } from "lucide-react";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "wouter";
@@ -69,6 +70,7 @@ export default function Profile() {
     lastName: user?.lastName || ""
   });
   const [isNameEditing, setIsNameEditing] = useState(false);
+  const [activeTab, setActiveTab] = useState("profile");
 
   // Update forms when user data changes
   useEffect(() => {
@@ -390,13 +392,49 @@ export default function Profile() {
           </Card>
         </div>
 
-        <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground w-fit">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          {/* Desktop/Tablet Tabs */}
+          <TabsList className="hidden md:inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground w-fit">
             <TabsTrigger value="profile" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">{t('profile.profileTab')}</TabsTrigger>
             <TabsTrigger value="security" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">{t('profile.securityTab')}</TabsTrigger>
             <TabsTrigger value="addresses" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">{t('profile.addressesTab')}</TabsTrigger>
             <TabsTrigger value="orders" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">{t('profile.ordersTab')}</TabsTrigger>
           </TabsList>
+
+          {/* Mobile Dropdown */}
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full justify-between">
+                  <span>
+                    {activeTab === 'profile' && t('profile.profileTab')}
+                    {activeTab === 'security' && t('profile.securityTab')}
+                    {activeTab === 'addresses' && t('profile.addressesTab')}
+                    {activeTab === 'orders' && t('profile.ordersTab')}
+                  </span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-full" align="start">
+                <DropdownMenuItem onClick={() => setActiveTab('profile')}>
+                  <User className="h-4 w-4 mr-2" />
+                  {t('profile.profileTab')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab('security')}>
+                  <Shield className="h-4 w-4 mr-2" />
+                  {t('profile.securityTab')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab('addresses')}>
+                  <MapPin className="h-4 w-4 mr-2" />
+                  {t('profile.addressesTab')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab('orders')}>
+                  <Package className="h-4 w-4 mr-2" />
+                  {t('profile.ordersTab')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
           {/* Profile Information */}
           <TabsContent value="profile" className="space-y-6">
