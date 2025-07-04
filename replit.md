@@ -131,6 +131,29 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 4, 2025: CRITICAL BUG FIX: RESOLVED INFINITE LOGO RELOADING AND ADMIN IMAGE UPLOAD ISSUES
+  - INFINITE LOGO RELOAD FIX: Fixed logo constantly reloading due to improper multilingual handling in header.tsx
+    - Replaced direct storeSettings.logoUrl access with getLocalizedImageField() function
+    - Added proper validation to avoid empty string fallback triggering infinite reloads
+    - Removed fallback to /@assets/ path that caused 404 loops
+    - Added console debug logging to track logoUrl resolution for troubleshooting
+  - ADMIN IMAGE UPLOAD FIX: Fixed images not saving/displaying properly in theme manager
+    - Enhanced theme creation to include multilingual logo fields (logoUrl_en, logoUrl_he, logoUrl_ar)
+    - Fixed theme activation sync to include multilingual image fields in store_settings updates
+    - Added proper synchronization of multilingual banner and logo URLs between themes and settings
+    - Updated server routes to sync all language-specific image fields during theme operations
+  - MULTILINGUAL IMAGE SYSTEM: Complete overhaul of image handling for all languages
+    - All image uploads now properly save across all supported languages (RU/EN/HE/AR)
+    - Theme activation correctly syncs multilingual images to main store settings
+    - Logo display system now uses proper language-specific URLs without fallback loops
+  - CACHING OPTIMIZATION: Improved static file caching strategy
+    - Static assets (images, CSS, JS) now cache for 1 hour for better performance
+    - API endpoints remain uncached to ensure real-time data accuracy
+    - Reduced server load from repeated logo requests
+  - PRODUCTION DEPLOYMENT: All fixes applied to VPS production server
+    - Code updates pushed to edahouse.ordis.co.il successfully
+    - Server restarted on port 3001 with all improvements active
+    - Database schema updates for multilingual image support
 - July 3, 2025: COMPLETELY DISABLED RADIX UI SCROLL-LOCK FUNCTIONALITY
   - COMPONENT LEVEL: Added modal={false} to Dialog and Sheet components to disable scroll blocking
   - CSS OVERRIDE: Aggressive CSS rules to force body overflow:auto regardless of data-scroll-locked attribute
