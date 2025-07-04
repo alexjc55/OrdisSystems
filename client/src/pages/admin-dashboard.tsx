@@ -1446,7 +1446,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
       {/* Order Items - Important section with visual accent */}
       <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border-2 border-green-200 p-4 shadow-sm">
-        <div className={`flex justify-between items-center mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={`flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-3 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
           <h3 className="font-semibold text-green-800 flex items-center gap-2">
             <ShoppingCart className="h-4 w-4 text-green-600" />
             {adminT('orders.orderItems')}
@@ -1454,7 +1454,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
           <Button 
             size="sm" 
             onClick={() => setShowAddItem(true)}
-            className="text-xs bg-primary hover:bg-primary text-white border-primary"
+            className="text-xs bg-primary hover:bg-primary text-white border-primary w-full sm:w-auto"
           >
             <Plus className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
             {adminT('orders.addProduct')}
