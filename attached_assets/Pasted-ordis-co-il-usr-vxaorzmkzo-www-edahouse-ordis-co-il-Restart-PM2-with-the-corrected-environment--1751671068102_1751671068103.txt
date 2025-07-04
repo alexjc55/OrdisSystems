@@ -1,0 +1,45 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Restart PM2 with the corrected environment variables
+pm2 restart edahouse --update-env
+sleep 5
+
+# Test all endpoints with the local PostgreSQL database
+echo "Health endpoint:"
+curl -s http://localhost:3000/api/health
+
+echo -e "\nProducts endpoint:"
+curl -s http://localhost:3000/api/products | head -c 100
+
+echo -e "\nExternal access:"
+curl -s https://edahouse.ordis.co.il/api/health
+
+# Check PM2 status
+pm2 status
+
+# Verify no more Neon connection attempts
+echo -e "\nChecking for database connection attempts:"
+pm2 logs edahouse --lines 5 --nostream | tail -5
+[PM2] Applying action restartProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 325819   │ 0s     │ 3    │ online    │ 0%       │ 39.6mb   │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Health endpoint:
+{"status":"unhealthy","timestamp":"2025-07-04T23:17:34.830Z","error":"Unknown error"}
+Products endpoint:
+{"message":"Failed to fetch products"}
+External access:
+{"status":"unhealthy","timestamp":"2025-07-04T23:17:34.930Z","error":"Unknown error"}┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 325819   │ 5s     │ 3    │ online    │ 0%       │ 105.4mb  │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+Checking for database connection attempts:
+0|edahouse | 2025-07-05T02:17:30: 2:17:30 AM [express] serving on port 3000
+0|edahouse | 2025-07-05T02:17:34: 2:17:34 AM [express] GET /api/health 503 in 11ms :: {"status":"unhealthy","timestamp":"2025-07-04T23…
+0|edahouse | 2025-07-05T02:17:34: 2:17:34 AM [express] GET /api/products 500 in 11ms :: {"message":"Failed to fetch products"}
+0|edahouse | 2025-07-05T02:17:34: 2:17:34 AM [express] GET /api/health 503 in 4ms :: {"status":"unhealthy","timestamp":"2025-07-04T23:…
+
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$
