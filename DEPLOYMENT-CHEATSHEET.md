@@ -5,9 +5,25 @@
 | Ситуация | База данных | Команда |
 |----------|-------------|---------|
 | 🆕 **Новый сервер** | Создается с нуля + начальные данные | `git clone https://github.com/alexjc55/Ordis.git www/edahouse.ordis.co.il && cd www/edahouse.ordis.co.il && ./deploy/install-on-vps.sh` |
-| 🔄 **Обычное обновление** | Схема обновляется, ДАННЫЕ СОХРАНЯЮТСЯ | `cd www/edahouse.ordis.co.il && ./deploy/update-project.sh` |
-| 🔀 **Нет скриптов deploy/** | Схема обновляется, ДАННЫЕ СОХРАНЯЮТСЯ | `cd www/edahouse.ordis.co.il && curl -sSL https://raw.githubusercontent.com/alexjc55/Ordis/main/deploy/sync-from-replit.sh \| bash` |
+| 🔄 **Есть deploy/ папка** | Схема обновляется, ДАННЫЕ СОХРАНЯЮТСЯ | `cd www/edahouse.ordis.co.il && ./deploy/update-project.sh` |
+| 🔀 **НЕТ deploy/ папки** | Схема обновляется, ДАННЫЕ СОХРАНЯЮТСЯ | `cd www/edahouse.ordis.co.il && curl -sSL https://raw.githubusercontent.com/alexjc55/Ordis/main/deploy/sync-from-replit.sh \| bash` |
 | 🚨 **Что-то сломалось** | БД НЕ ТРОГАЕТСЯ | `cd www/edahouse.ordis.co.il && ./deploy/fix-environment.sh` |
+
+## 🎯 Универсальная команда
+
+**Не знаете какая у вас ситуация?** Используйте эту команду - она автоматически определит и выполнит нужные действия:
+
+```bash
+ssh ordis_co_il_usr@your-server-ip
+cd www/edahouse.ordis.co.il 2>/dev/null || { 
+  echo "Новая установка"
+  cd /var/www/ordis_co_il_usr/data/
+  git clone https://github.com/alexjc55/Ordis.git www/edahouse.ordis.co.il
+  cd www/edahouse.ordis.co.il && ./deploy/install-on-vps.sh
+  exit 0
+}
+[ -f "deploy/update-project.sh" ] && ./deploy/update-project.sh || curl -sSL https://raw.githubusercontent.com/alexjc55/Ordis/main/deploy/sync-from-replit.sh | bash
+```
 
 ---
 

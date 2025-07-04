@@ -35,7 +35,20 @@ ordis_co_il_usr@server:~/www/edahouse.ordis.co.il$ curl -s http://localhost:3000
 {"status":"healthy","uptime":172800.245,"database":"connected"}
 ```
 
-### 4️⃣ Запуск обновления
+### 4️⃣ Проверка наличия скриптов развертывания
+```bash
+ordis_co_il_usr@server:~/www/edahouse.ordis.co.il$ ls -la deploy/
+total 32
+drwxr-xr-x 2 ordis_co_il_usr ordis_co_il_usr 4096 Jul  4 21:30 .
+drwxr-xr-x 8 ordis_co_il_usr ordis_co_il_usr 4096 Jul  4 21:30 ..
+-rwxr-xr-x 1 ordis_co_il_usr ordis_co_il_usr 2847 Jul  4 21:30 install-on-vps.sh
+-rwxr-xr-x 1 ordis_co_il_usr ordis_co_il_usr 3241 Jul  4 21:30 update-project.sh
+-rwxr-xr-x 1 ordis_co_il_usr ordis_co_il_usr 2156 Jul  4 21:30 sync-from-replit.sh
+
+# Папка deploy/ есть - можно использовать обычное обновление
+```
+
+### 5️⃣ Запуск обновления
 ```bash
 ordis_co_il_usr@server:~/www/edahouse.ordis.co.il$ ./deploy/update-project.sh
 🔄 eDAHouse Project Update Script

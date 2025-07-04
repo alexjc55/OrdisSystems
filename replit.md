@@ -131,6 +131,21 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 4, 2025: CRITICAL FIX: ADDRESSED MISSING DEPLOY/ FOLDER ISSUE IN DEPLOYMENT EXAMPLES
+  - DEPLOYMENT SCENARIOS: Created comprehensive documentation for all three deployment situations
+    - Scenario 1 (🆕): New server - git clone includes deploy/ folder automatically
+    - Scenario 2 (🔄): Existing project with deploy/ folder - standard update-project.sh
+    - Scenario 3 (🔀): Existing project WITHOUT deploy/ folder - hybrid sync via curl command
+  - HYBRID SYNC SOLUTION: Fixed critical gap where old projects lacked deployment scripts
+    - sync-from-replit.sh downloads directly from GitHub and executes
+    - Automatically backs up data, syncs code, restores configuration
+    - Adds complete deploy/ folder to existing projects for future updates
+  - UNIVERSAL COMMAND: Created one-command solution that auto-detects situation and acts accordingly
+  - DOCUMENTATION UPDATES:
+    - DEPLOYMENT-SCENARIOS.md: Complete breakdown of all three situations
+    - EXAMPLE-HYBRID-UPDATE.md: Real session example for projects missing deploy/ folder
+    - Updated DEPLOYMENT-CHEATSHEET.md with correct scenario descriptions
+  - RESOLVED ASSUMPTION ISSUE: All previous examples assumed deploy/ folder existed - now covers all cases
 - July 4, 2025: COMPLETE VPS DEPLOYMENT AUTOMATION SYSTEM CREATED
   - DEPLOYMENT SCRIPTS: Created comprehensive automation system for VPS deployment without "танцы с бубном"
     - install-on-vps.sh: Full automated installation script for new VPS servers with FastPanel
