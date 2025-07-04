@@ -1,0 +1,24 @@
+[TAILING] Tailing last 10 lines for [edahouse] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/out-0.log last 10 lines:
+0|edahouse | 2025-07-04T23:11:13: 11:11:13 PM [express] GET /api/settings 200 in 11ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 2025-07-04T23:11:14: 11:11:14 PM [express] GET /api/auth/user 200 in 8ms :: {"id":"admin","username":"admin","email":"admi…
+0|edahouse | 2025-07-04T23:11:14: 11:11:14 PM [express] GET /api/favicon 301 in 27ms
+0|edahouse | 2025-07-04T23:11:14: 11:11:14 PM [express] GET /api/products 200 in 15ms :: [{"id":380,"name":"Абжерка","name_en":null,"na…
+0|edahouse | 2025-07-04T23:11:14: 11:11:14 PM [express] GET /api/categories 200 in 22ms :: [{"id":47,"name":"Салаты","name_en":"","name…
+0|edahouse | 2025-07-04T23:11:37: 11:11:37 PM [express] GET /api/auth/user 401 in 1ms :: {"message":"Unauthorized"}
+0|edahouse | 2025-07-04T23:11:37: 11:11:37 PM [express] GET /api/settings 200 in 21ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 2025-07-04T23:11:38: 11:11:38 PM [express] GET /api/products 200 in 10ms :: [{"id":380,"name":"Абжерка","name_en":null,"na…
+0|edahouse | 2025-07-04T23:11:38: 11:11:38 PM [express] GET /api/categories 200 in 9ms :: [{"id":47,"name":"Салаты","name_en":"","name_…
+0|edahouse | 2025-07-04T23:11:39: 11:11:39 PM [express] GET /api/favicon 301 in 5ms
+
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/err-0.log last 10 lines:
+0|edahouse | }
+0|edahouse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|edahouse | TypeError [ERR_INVALID_ARG_TYPE]: The "paths[0]" argument must be of type string. Received undefined
+0|edahouse |     at new NodeError (node:internal/errors:405:5)
+0|edahouse |     at validateString (node:internal/validators:162:11)
+0|edahouse |     at Object.resolve (node:path:1115:7)
+0|edahouse |     at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3655:18
+0|edahouse |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|edahouse |     at async ModuleLoader.import (node:internal/modules/esm/loader:337:24)
+0|edahouse |     at async importModuleDynamicallyWrapper (node:internal/vm/module:432:15)
