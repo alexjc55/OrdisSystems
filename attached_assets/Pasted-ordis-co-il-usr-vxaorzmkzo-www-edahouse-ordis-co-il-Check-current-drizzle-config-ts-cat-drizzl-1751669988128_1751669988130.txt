@@ -1,0 +1,95 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Check current drizzle.config.ts
+cat drizzle.config.ts
+
+# Replace with local database configuration
+cat > drizzle.config.ts << 'EOF'
+import { defineConfig } from 'drizzle-kit';
+
+export default defineConfig({
+  dialect: 'postgresql',
+  schema: './shared/schema.ts',
+  out: './migrations',
+  dbCredentials: {
+    url: 'postgresql://edahouse_ord:33V0R1N5qi81paiA@localhost:5432/edahouse_ord'
+  }
+});
+EOF
+
+# Verify .env file has correct DATABASE_URL
+echo "DATABASE_URL in .env:"
+grep DATABASE_URL .env
+
+# Rebuild application to ensure all configs are updated
+npm run build
+
+# Restart PM2 with environment update
+pm2 restart edahouse --update-env
+sleep 5
+
+# Test the fix
+echo "Testing local API:"
+curl -s http://localhost:3000/api/health
+echo ""
+curl -s http://localhost:3000/api/products | head -c 50
+
+echo ""
+echo "Testing external access:"
+curl -s https://edahouse.ordis.co.il/api/health
+import { defineConfig } from "drizzle-kit";
+
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL, ensure the database is provisioned");
+}
+
+export default defineConfig({
+  out: "./migrations",
+  schema: "./shared/schema.ts",
+  dialect: "postgresql",
+  dbCredentials: {
+    url: process.env.DATABASE_URL,
+  },
+});
+DATABASE_URL in .env:
+grep: .env: No such file or directory
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+transforming (4) src/lib/theme-system.tsBrowserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2796 modules transformed.
+../dist/public/index.html                                        4.20 kB │ gzip:   1.43 kB
+../dist/public/assets/logo-white_1750456267684-DSssD_B9.png      8.43 kB
+../dist/public/assets/index-DM0duixA.css                       168.81 kB │ gzip:  28.82 kB
+../dist/public/assets/index-BXX_iQ-T.js                      1,504.02 kB │ gzip: 414.47 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 16.44s
+
+  dist/index.js  200.5kb
+
+⚡ Done in 24ms
+[PM2] Applying action restartProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 320971   │ 0s     │ 5    │ online    │ 0%       │ 39.0mb   │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Testing local API:
+
+
+Testing external access:
+<html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.28.0</center>
+</body>
+</html>
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$
