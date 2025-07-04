@@ -1,0 +1,99 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ chmod +x fix-database-final.sh && ./fix-database-final.sh
+🔧 Applying final database connection fix...
+📦 Removing Neon database package...
+
+up to date, audited 536 packages in 6s
+
+71 packages are looking for funding
+  run `npm fund` for details
+
+8 vulnerabilities (1 low, 7 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+📦 Installing PostgreSQL packages...
+
+added 6 packages, removed 5 packages, changed 11 packages, and audited 537 packages in 15s
+
+71 packages are looking for funding
+  run `npm fund` for details
+
+8 vulnerabilities (1 low, 7 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+🔧 Fixing .env file...
+🔌 Testing database connectivity...
+✅ Database connection successful! Products count: 52
+🏗️ Rebuilding application...
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+transforming (2) ../vite/modulepreload-polyfill.jsBrowserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2796 modules transformed.
+../dist/public/index.html                                        4.20 kB │ gzip:   1.43 kB
+../dist/public/assets/logo-white_1750456267684-DSssD_B9.png      8.43 kB
+../dist/public/assets/index-DM0duixA.css                       168.81 kB │ gzip:  28.82 kB
+../dist/public/assets/index-BXX_iQ-T.js                      1,504.02 kB │ gzip: 414.47 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 15.99s
+
+  dist/index.js  200.8kb
+
+⚡ Done in 23ms
+🔄 Restarting PM2...
+[PM2] Applying action stopProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 0        │ 0      │ 3    │ stopped   │ 0%       │ 0b       │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[PM2] Applying action deleteProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬───────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name      │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+└────┴───────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[PM2][WARN] Applications edahouse not running, starting...
+[PM2][WARN] Environment [production] is not defined in process file
+[PM2] App [edahouse] launched (1 instances)
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 326081   │ 0s     │ 0    │ online    │ 0%       │ 41.6mb   │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+⏳ Waiting for application startup...
+🧪 Testing endpoints...
+Health endpoint:
+{"status":"unhealthy","timestamp":"2025-07-04T23:27:00.484Z","error":"Unknown error"}
+Products endpoint:
+{"message":"Failed to fetch products"}
+External access:
+{"status":"unhealthy","timestamp":"2025-07-04T23:27:01.086Z","error":"Unknown error"}
+📊 PM2 Status:
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 326081   │ 10s    │ 0    │ online    │ 0%       │ 90.5mb   │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+✅ Database fix completed!
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$
