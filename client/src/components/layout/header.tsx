@@ -92,21 +92,25 @@ export default function Header({ onResetView }: HeaderProps) {
               <div className="flex items-center cursor-pointer">
                 {(() => {
                   const logoUrl = getLocalizedImageField(storeSettings, 'logoUrl', currentLanguage as SupportedLanguage);
-                  return logoUrl ? (
+                  console.log('Header logoUrl debug:', { logoUrl, storeSettings: storeSettings?.logoUrl, currentLanguage });
+                  
+                  // Use the logoUrl only if it's a valid non-empty string
+                  const validLogoUrl = logoUrl && logoUrl.trim() !== '' ? logoUrl : null;
+                  
+                  return validLogoUrl ? (
                     <img 
-                      src={logoUrl} 
+                      src={validLogoUrl} 
                       alt={getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse"} 
                       className="h-8 md:h-10 w-auto mr-2 md:mr-3 rtl:mr-0 rtl:ml-2 md:rtl:ml-3 flex-shrink-0"
                       onError={(e) => {
-                        e.currentTarget.src = "/@assets/Edahouse_sign__source_1750184330403.png";
+                        console.log('Logo failed to load:', validLogoUrl);
+                        e.currentTarget.style.display = 'none';
                       }}
                     />
                   ) : (
-                    <img 
-                      src="/@assets/Edahouse_sign__source_1750184330403.png" 
-                      alt="eDAHouse" 
-                      className="h-8 md:h-10 w-auto mr-2 md:mr-3 rtl:mr-0 rtl:ml-2 md:rtl:ml-3 flex-shrink-0"
-                    />
+                    <div className="h-8 md:h-10 w-auto mr-2 md:mr-3 rtl:mr-0 rtl:ml-2 md:rtl:ml-3 flex-shrink-0 flex items-center">
+                      <span className="text-lg md:text-xl font-bold text-primary">📋</span>
+                    </div>
                   );
                 })()}
                 <h1 className="text-lg md:text-2xl font-poppins font-bold text-primary truncate">

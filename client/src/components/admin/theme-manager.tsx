@@ -784,6 +784,13 @@ export default function ThemeManager() {
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
       logoUrl: createLogoUrl,
       bannerImageUrl: createBannerImageUrl,
+      // Multilingual image URLs - sync same images to all languages for now
+      logoUrl_en: createLogoUrl,
+      logoUrl_he: createLogoUrl,
+      logoUrl_ar: createLogoUrl,
+      bannerImageUrl_en: createBannerImageUrl,
+      bannerImageUrl_he: createBannerImageUrl,
+      bannerImageUrl_ar: createBannerImageUrl,
       // Cart banner settings
       showCartBanner: formData.get("showCartBanner") === "true",
       cartBannerType: formData.get("cartBannerType") as string || "text",

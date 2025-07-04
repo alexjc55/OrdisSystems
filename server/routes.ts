@@ -1577,9 +1577,19 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
           if (themeData.modernBlock3Text !== undefined) updateFields.push(`modern_block3_text = '${themeData.modernBlock3Text || ''}'`);
         }
         
-        // Sync logo and banner images (CRITICAL FOR DISPLAY)
+        // Sync logo and banner images (CRITICAL FOR DISPLAY) - including multilingual versions
         if (themeData.logoUrl !== undefined) updateFields.push(`logo_url = '${themeData.logoUrl || ''}'`);
         if (themeData.bannerImageUrl !== undefined) updateFields.push(`banner_image_url = '${themeData.bannerImageUrl || ''}'`);
+        
+        // Sync multilingual logo URLs
+        if ((themeData as any).logoUrl_en !== undefined) updateFields.push(`logo_url_en = '${(themeData as any).logoUrl_en || ''}'`);
+        if ((themeData as any).logoUrl_he !== undefined) updateFields.push(`logo_url_he = '${(themeData as any).logoUrl_he || ''}'`);
+        if ((themeData as any).logoUrl_ar !== undefined) updateFields.push(`logo_url_ar = '${(themeData as any).logoUrl_ar || ''}'`);
+        
+        // Sync multilingual banner URLs
+        if ((themeData as any).bannerImageUrl_en !== undefined) updateFields.push(`banner_image_url_en = '${(themeData as any).bannerImageUrl_en || ''}'`);
+        if ((themeData as any).bannerImageUrl_he !== undefined) updateFields.push(`banner_image_url_he = '${(themeData as any).bannerImageUrl_he || ''}'`);
+        if ((themeData as any).bannerImageUrl_ar !== undefined) updateFields.push(`banner_image_url_ar = '${(themeData as any).bannerImageUrl_ar || ''}'`);
         
         // Sync cart banner settings
         if (themeData.showCartBanner !== undefined) updateFields.push(`show_cart_banner = ${themeData.showCartBanner}`);
@@ -1660,10 +1670,18 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         await db.execute(sql.raw(`UPDATE store_settings SET ${modernFields.join(', ')} WHERE id = 1`));
       }
       
-      // Sync logo and banner images (CRITICAL FOR DISPLAY)
+      // Sync logo and banner images (CRITICAL FOR DISPLAY) - including multilingual versions
       const imageFields = [
         `logo_url = '${theme.logoUrl || ''}'`,
-        `banner_image_url = '${theme.bannerImageUrl || ''}'`
+        `banner_image_url = '${theme.bannerImageUrl || ''}'`,
+        // Multilingual logo URLs
+        `logo_url_en = '${(theme as any).logoUrl_en || ''}'`,
+        `logo_url_he = '${(theme as any).logoUrl_he || ''}'`,
+        `logo_url_ar = '${(theme as any).logoUrl_ar || ''}'`,
+        // Multilingual banner URLs  
+        `banner_image_url_en = '${(theme as any).bannerImageUrl_en || ''}'`,
+        `banner_image_url_he = '${(theme as any).bannerImageUrl_he || ''}'`,
+        `banner_image_url_ar = '${(theme as any).bannerImageUrl_ar || ''}'`
       ];
       await db.execute(sql.raw(`UPDATE store_settings SET ${imageFields.join(', ')} WHERE id = 1`));
       
