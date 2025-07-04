@@ -784,45 +784,55 @@ export default function Profile() {
                     {userAddresses.map((address) => (
                       <Card key={address.id} className={`${address.isDefault ? 'border-orange-200 bg-orange-50' : ''}`}>
                         <CardContent className="p-4">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <h4 className="font-medium text-gray-900">{address.label}</h4>
-                                {address.isDefault && (
-                                  <Badge variant="outline" className="text-orange-600 border-orange-300">
-                                    {t('profile.default')}
-                                  </Badge>
-                                )}
-                              </div>
-                              <p className="text-sm text-gray-600">{address.address}</p>
+                          <div className="space-y-3">
+                            {/* Header with title and default badge */}
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-medium text-gray-900">{address.label}</h4>
+                              {address.isDefault && (
+                                <Badge variant="outline" className="text-orange-600 border-orange-300">
+                                  {t('profile.default')}
+                                </Badge>
+                              )}
                             </div>
-                            <div className="flex items-center gap-2 ml-4">
+                            
+                            {/* Address text */}
+                            <p className="text-sm text-gray-600">{address.address}</p>
+                            
+                            {/* Action buttons - responsive layout */}
+                            <div className="flex flex-col sm:flex-row gap-2 sm:gap-2 pt-2">
                               {!address.isDefault && (
                                 <Button
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => setDefaultAddressMutation.mutate(address.id)}
                                   disabled={setDefaultAddressMutation.isPending}
+                                  className="w-full sm:w-auto justify-start sm:justify-center"
                                 >
+                                  <CheckCircle className="h-4 w-4 mr-2" />
                                   {t('profile.makeDefault')}
                                 </Button>
                               )}
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleEditAddress(address)}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => deleteAddressMutation.mutate(address.id)}
-                                disabled={deleteAddressMutation.isPending}
-                                className="text-red-600 hover:text-red-700"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                              <div className="flex gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleEditAddress(address)}
+                                  className="flex-1 sm:flex-initial"
+                                >
+                                  <Edit className="h-4 w-4 mr-2 sm:mr-0" />
+                                  <span className="sm:hidden">{t('actions.edit')}</span>
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => deleteAddressMutation.mutate(address.id)}
+                                  disabled={deleteAddressMutation.isPending}
+                                  className="text-red-600 hover:text-red-700 flex-1 sm:flex-initial"
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2 sm:mr-0" />
+                                  <span className="sm:hidden">{t('actions.delete')}</span>
+                                </Button>
+                              </div>
                             </div>
                           </div>
                         </CardContent>
