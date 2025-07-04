@@ -1,0 +1,79 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ sudo find /etc/nginx -name "*edahouse*" -type f
+/etc/nginx/fastpanel2-sites/ordis_co_il_usr/edahouse.ordis.co.il.includes
+/etc/nginx/sites-available/edahouse.ordis.co.il.disabled
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ sudo sed -i 's/proxy_pass.*3000/proxy_pass http:\/\/127.0.0.1:3001/g' /etc/nginx/sites-available/edahouse.ordis.co.il
+sed: can't read /etc/nginx/sites-available/edahouse.ordis.co.il: No such file or directory
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ sudo grep -n "proxy_pass" /etc/nginx/sites-available/edahouse.ordis.co.il
+grep: /etc/nginx/sites-available/edahouse.ordis.co.il: No such file or directory
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ ^C
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ sudo find /etc/nginx -name "*.conf" -o -name "*edahouse*" -o -name "*ordis*"
+/etc/nginx/fastpanel2-sites/ordis_co_il_usr
+/etc/nginx/fastpanel2-sites/ordis_co_il_usr/ordis.co.il.conf
+/etc/nginx/fastpanel2-sites/ordis_co_il_usr/edahouse.ordis.co.il.conf
+/etc/nginx/fastpanel2-sites/ordis_co_il_usr/ordis.co.il.includes
+/etc/nginx/fastpanel2-sites/ordis_co_il_usr/edahouse.ordis.co.il.includes
+/etc/nginx/conf.d/reuseport.conf
+/etc/nginx/conf.d/default.conf
+/etc/nginx/conf.d/ssl.conf
+/etc/nginx/conf.d/cloudflare.conf
+/etc/nginx/conf.d/99-fastpanel.conf
+/etc/nginx/nginx.conf
+/etc/nginx/sites-available/edahouse.ordis.co.il.disabled
+/etc/nginx/fastpanel2-available/ordis_co_il_usr
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/ordis.co.il.conf
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup
+/etc/nginx/fastpanel2-includes/letsencrypt.conf
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ sudo grep -r "edahouse.ordis.co.il" /etc/nginx/ 2>/dev/null
+sudo grep -r "3000" /etc/nginx/ 2>/dev/null
+/etc/nginx/conf.d/parking.conf.disabled:    server_name edahouse.ordis.co.il; # managed by Certbot
+/etc/nginx/conf.d/parking.conf.disabled:    ssl_certificate /etc/letsencrypt/live/edahouse.ordis.co.il/fullchain.pem; # managed by Certbot
+/etc/nginx/conf.d/parking.conf.disabled:    ssl_certificate_key /etc/letsencrypt/live/edahouse.ordis.co.il/privkey.pem; # managed by Certbot
+/etc/nginx/conf.d/parking.conf.disabled:    if ($host = edahouse.ordis.co.il) {
+/etc/nginx/conf.d/parking.conf.disabled:    server_name edahouse.ordis.co.il;
+/etc/nginx/sites-available/edahouse.ordis.co.il.disabled:    server_name edahouse.ordis.co.il;
+/etc/nginx/sites-available/edahouse.ordis.co.il.disabled:        alias /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/uploads/;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:upstream edahouse.ordis.co.il {
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:    server_name edahouse.ordis.co.il ;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:    ssl_certificate "/var/www/httpd-cert/edahouse.ordis.co.il_2025-07-02-20-37_46.crt";
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:    ssl_certificate_key "/var/www/httpd-cert/edahouse.ordis.co.il_2025-07-02-20-37_46.key";
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:    set $root_path /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:        proxy_pass http://edahouse.ordis.co.il;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:        proxy_pass http://edahouse.ordis.co.il;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:    include "/etc/nginx/fastpanel2-sites/ordis_co_il_usr/edahouse.ordis.co.il.includes";
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:    error_log /var/www/ordis_co_il_usr/data/logs/edahouse.ordis.co.il-frontend.error.log;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:    access_log /var/www/ordis_co_il_usr/data/logs/edahouse.ordis.co.il-frontend.access.log;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:    server_name edahouse.ordis.co.il ;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:    error_log /var/www/ordis_co_il_usr/data/logs/edahouse.ordis.co.il-frontend.error.log;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:    access_log /var/www/ordis_co_il_usr/data/logs/edahouse.ordis.co.il-frontend.access.log;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:upstream edahouse.ordis.co.il {
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:    server_name edahouse.ordis.co.il ;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:    ssl_certificate "/var/www/httpd-cert/edahouse.ordis.co.il_2025-07-02-20-37_46.crt";
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:    ssl_certificate_key "/var/www/httpd-cert/edahouse.ordis.co.il_2025-07-02-20-37_46.key";
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:    set $root_path /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:        proxy_pass http://edahouse.ordis.co.il;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:        proxy_pass http://edahouse.ordis.co.il;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:    include "/etc/nginx/fastpanel2-sites/ordis_co_il_usr/edahouse.ordis.co.il.includes";
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:    error_log /var/www/ordis_co_il_usr/data/logs/edahouse.ordis.co.il-frontend.error.log;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:    access_log /var/www/ordis_co_il_usr/data/logs/edahouse.ordis.co.il-frontend.access.log;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:    server_name edahouse.ordis.co.il ;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:    error_log /var/www/ordis_co_il_usr/data/logs/edahouse.ordis.co.il-frontend.error.log;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:    access_log /var/www/ordis_co_il_usr/data/logs/edahouse.ordis.co.il-frontend.access.log;
+/etc/nginx/sites-available/edahouse.ordis.co.il.disabled:        proxy_pass http://localhost:3000;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:    server 127.0.0.1:3000;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:    server 127.0.0.1:3000;
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ ls /etc/nginx/sites-available/
+ls /etc/nginx/conf.d/
+edahouse.ordis.co.il.disabled
+99-fastpanel.conf  cloudflare.conf  default.conf  parking.conf.disabled  reuseport.conf  ssl.conf
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ sudo grep -r "proxy_pass" /etc/nginx/ 2>/dev/null
+/etc/nginx/sites-available/edahouse.ordis.co.il.disabled:        proxy_pass http://localhost:3000;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/ordis.co.il.conf:        proxy_pass http://127.0.0.1:81;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/ordis.co.il.conf:        proxy_pass http://127.0.0.1:81;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:        proxy_pass http://edahouse.ordis.co.il;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf:        proxy_pass http://edahouse.ordis.co.il;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:        proxy_pass http://edahouse.ordis.co.il;
+/etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup:        proxy_pass http://edahouse.ordis.co.il;
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ ^C
