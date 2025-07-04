@@ -5,6 +5,44 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CRITICAL: DISABLE RADIX UI SCROLL LOCK SYSTEM */
+/* Force body overflow visible to prevent scroll blocking */
+body,
+body[data-scroll-locked],
+body[data-scroll-locked="1"],
+body[data-scroll-locked="true"],
+html body,
+html body[data-scroll-locked] {
+  overflow: auto !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  position: static !important;
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Remove any padding/margin adjustments from scroll-lock */
+body[style*="overflow"],
+body[style*="padding-right"],
+body[style*="margin-right"] {
+  overflow: auto !important;
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Ensure background scrolling always works */
+html,
+html[data-scroll-locked],
+html body,
+html body[data-scroll-locked] {
+  overflow: auto !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  position: static !important;
+}
+
 /* Header animations */
 @keyframes float {
   0%, 100% { 
