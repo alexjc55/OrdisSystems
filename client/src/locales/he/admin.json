@@ -1030,7 +1030,17 @@
     "newPasswordLabel": "סיסמה חדשה",
     "passwordLabel": "סיסמה",
     "passwordMinLength": "מינימום 6 תווים",
-    "deleteWarning": "פעולה זו לא ניתנת לביטול. המשתמש יימחק לצמיתות."
+    "deleteWarning": "פעולה זו לא ניתנת לביטול. המשתמש יימחק לצמיתות.",
+    "emailLabel": "אימייל",
+    "emailPlaceholder": "הכנס כתובת אימייל",
+    "firstNameLabel": "שם פרטי",
+    "firstNamePlaceholder": "הכנס שם פרטי",
+    "lastNameLabel": "שם משפחה",
+    "lastNamePlaceholder": "הכנס שם משפחה",
+    "phoneLabel": "טלפון",
+    "phonePlaceholder": "הכנס מספר טלפון",
+    "roleLabel": "תפקיד",
+    "rolePlaceholder": "בחר תפקיד"
   },
   "table": {
     "name": "שם",

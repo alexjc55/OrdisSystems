@@ -676,7 +676,17 @@
     "newPasswordLabel": "Новый пароль",
     "passwordLabel": "Пароль",
     "passwordMinLength": "Минимум 6 символов",
-    "deleteWarning": "Это действие нельзя отменить. Пользователь будет удален навсегда."
+    "deleteWarning": "Это действие нельзя отменить. Пользователь будет удален навсегда.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Введите email адрес",
+    "firstNameLabel": "Имя",
+    "firstNamePlaceholder": "Введите имя",
+    "lastNameLabel": "Фамилия",
+    "lastNamePlaceholder": "Введите фамилию",
+    "phoneLabel": "Телефон",
+    "phonePlaceholder": "Введите номер телефона",
+    "roleLabel": "Роль",
+    "rolePlaceholder": "Выберите роль"
   },
   "table": {
     "name": "Название",

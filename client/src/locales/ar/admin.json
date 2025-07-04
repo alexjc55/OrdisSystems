@@ -540,7 +540,17 @@
     "newPasswordLabel": "كلمة مرور جديدة",
     "passwordLabel": "كلمة المرور",
     "passwordMinLength": "6 أحرف كحد أدنى",
-    "deleteWarning": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف المستخدم نهائياً."
+    "deleteWarning": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف المستخدم نهائياً.",
+    "emailLabel": "البريد الإلكتروني",
+    "emailPlaceholder": "أدخل عنوان البريد الإلكتروني",
+    "firstNameLabel": "الاسم الأول",
+    "firstNamePlaceholder": "أدخل الاسم الأول",
+    "lastNameLabel": "اسم العائلة",
+    "lastNamePlaceholder": "أدخل اسم العائلة",
+    "phoneLabel": "الهاتف",
+    "phonePlaceholder": "أدخل رقم الهاتف",
+    "roleLabel": "الدور",
+    "rolePlaceholder": "اختر الدور"
   },
   "table": {
     "name": "الاسم",

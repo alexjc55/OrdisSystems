@@ -796,7 +796,17 @@
     "newPasswordLabel": "New Password",
     "passwordLabel": "Password",
     "passwordMinLength": "Minimum 6 characters",
-    "deleteWarning": "This action cannot be undone. The user will be permanently deleted."
+    "deleteWarning": "This action cannot be undone. The user will be permanently deleted.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter email address",
+    "firstNameLabel": "First Name",
+    "firstNamePlaceholder": "Enter first name",
+    "lastNameLabel": "Last Name",
+    "lastNamePlaceholder": "Enter last name",
+    "phoneLabel": "Phone",
+    "phonePlaceholder": "Enter phone number",
+    "roleLabel": "Role",
+    "rolePlaceholder": "Select role"
   },
   "table": {
     "name": "Name",
