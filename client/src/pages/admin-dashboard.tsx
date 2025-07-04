@@ -4849,18 +4849,18 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 {/* Users Filters and Controls */}
-                <div className={`flex flex-col sm:flex-row gap-4 mb-6 ${isRTL ? '' : ''}`}>
-                  {/* Button first for RTL */}
-                  <div className={`flex gap-2 ${isRTL ? 'order-first' : 'order-last'}`}>
+                <div className={`flex flex-col gap-3 mb-6 ${isRTL ? '' : ''}`}>
+                  {/* Button and Filter - stacked on mobile, inline on larger screens */}
+                  <div className={`flex flex-col sm:flex-row gap-2 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
                     <Button 
                       onClick={() => setIsUserFormOpen(true)}
-                      className={`bg-primary hover:bg-primary text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+                      className={`bg-primary hover:bg-primary text-white flex items-center gap-2 w-full sm:w-auto ${isRTL ? 'flex-row-reverse' : ''}`}
                     >
                       <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                       {adminT('users.createUser')}
                     </Button>
                     <Select value={usersRoleFilter} onValueChange={setUsersRoleFilter}>
-                      <SelectTrigger className="w-40">
+                      <SelectTrigger className="w-full sm:w-40">
                         <SelectValue placeholder={adminT('users.allRoles')} />
                       </SelectTrigger>
                       <SelectContent>
