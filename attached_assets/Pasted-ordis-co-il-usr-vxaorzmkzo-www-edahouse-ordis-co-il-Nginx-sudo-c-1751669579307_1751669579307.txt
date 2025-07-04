@@ -1,0 +1,79 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Сначала исправим конфигурацию Nginx
+sudo cp /etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf /etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup2
+
+sudo sed -i 's|proxy_pass http://edahouse.ordis.co.il;|proxy_pass http://127.0.0.1:3000;|g' /etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf
+
+# Проверить что изменилось
+sudo cat /etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf | grep proxy_pass
+
+# Перезагрузить Nginx
+sudo nginx -t && sudo systemctl reload nginx
+
+# Теперь исправим проблему с приложением - пересобрать
+pm2 delete edahouse
+rm -rf dist
+npm run build
+
+# Проверить что сборка прошла успешно
+ls -la dist/
+
+# Запустить заново
+pm2 start ecosystem.config.cjs
+sleep 5
+
+# Проверить
+curl -s http://localhost:3000/api/health || echo "Local port still not working"
+curl -s https://edahouse.ordis.co.il/api/health || echo "External still not working"
+        proxy_pass http://127.0.0.1:3000;
+        proxy_pass http://127.0.0.1:3000;
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+[PM2] Applying action deleteProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬───────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name      │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+└────┴───────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+transforming (26) ../node_modules/i18next/dist/esm/i18next.jsBrowserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2796 modules transformed.
+../dist/public/index.html                                        4.20 kB │ gzip:   1.43 kB
+../dist/public/assets/logo-white_1750456267684-DSssD_B9.png      8.43 kB
+../dist/public/assets/index-DM0duixA.css                       168.81 kB │ gzip:  28.82 kB
+../dist/public/assets/index-BXX_iQ-T.js                      1,504.02 kB │ gzip: 414.47 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 16.64s
+
+  dist/index.js  200.5kb
+
+⚡ Done in 26ms
+total 216
+drwxr-xr-x  3 ordis_co_il_usr ordis_co_il_usr   4096 Jul  5 01:52 .
+drwxr-xr-x 18 ordis_co_il_usr ordis_co_il_usr   4096 Jul  5 01:52 ..
+-rw-r--r--  1 ordis_co_il_usr ordis_co_il_usr 205312 Jul  5 01:52 index.js
+drwxr-xr-x  4 ordis_co_il_usr ordis_co_il_usr   4096 Jul  5 01:52 public
+[PM2][WARN] Applications edahouse not running, starting...
+[PM2] App [edahouse] launched (1 instances)
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 318302   │ 0s     │ 0    │ online    │ 0%       │ 39.4mb   │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Local port still not working
+<html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.28.0</center>
+</body>
+</html>
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$
