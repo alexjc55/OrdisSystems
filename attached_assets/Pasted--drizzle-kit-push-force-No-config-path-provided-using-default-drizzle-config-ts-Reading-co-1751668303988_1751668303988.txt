@@ -1,0 +1,55 @@
+> drizzle-kit push --force
+
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/drizzle.config.ts'
+Using 'pg' driver for database querying
+[✓] Pulling schema from database...
+
+Is translations table created or renamed from another table?
+❯ + translations           create table
+  ~ session › translations rename table
+^C
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ npm run db:push -- --force
+
+> rest-express@1.0.0 db:push
+> drizzle-kit push --force
+
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/drizzle.config.ts'
+Using 'pg' driver for database querying
+[✓] Pulling schema from database...
++ translations table will be created
+--- all table conflicts resolved ---
+
+· You're about to add users_username_unique unique constraint to the table, which contains 7 items. If this statement fails, you will receive an error from the database. Do you want to truncate users table?
+
+· You're about to add users_email_unique unique constraint to the table, which contains 7 items. If this statement fails, you will receive an error from the database. Do you want to truncate users table?
+
+· You're about to add product_categories_product_id_category_id_unique unique constraint to the table, which contains 52 items. If this statement fails, you will receive an error from the database. Do you want to truncate product_categories table?
+
+error: must be owner of table session
+    at /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Object.query (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/drizzle-kit/bin.cjs:66575:26)
+    at async pgPush (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/drizzle-kit/bin.cjs:70117:13)
+    at async Object.handler (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/drizzle-kit/bin.cjs:79124:9)
+    at async run (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/drizzle-kit/bin.cjs:78381:7) {
+  length: 90,
+  severity: 'ERROR',
+  code: '42501',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'aclchk.c',
+  line: '3793',
+  routine: 'aclcheck_error'
+}
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$
