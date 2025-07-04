@@ -1,0 +1,44 @@
+[TAILING] Tailing last 20 lines for [edahouse] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/err-0.log last 20 lines:
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|edahouse |     at async file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3346:7 {
+0|edahouse |   length: 141,
+0|edahouse |   severity: 'ERROR',
+0|edahouse |   code: '42703',
+0|edahouse |   detail: undefined,
+0|edahouse |   hint: undefined,
+0|edahouse |   position: '163',
+0|edahouse |   internalPosition: undefined,
+0|edahouse |   internalQuery: undefined,
+0|edahouse |   where: undefined,
+0|edahouse |   schema: undefined,
+0|edahouse |   table: undefined,
+0|edahouse |   column: undefined,
+0|edahouse |   dataType: undefined,
+0|edahouse |   constraint: undefined,
+0|edahouse |   file: 'analyze.c',
+0|edahouse |   line: '2515',
+0|edahouse |   routine: 'transformUpdateTargetList'
+0|edahouse | }
+
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/out-0.log last 20 lines:
+0|edahouse | 2025-07-04T13:18:31: 1:18:31 PM [express] GET /api/settings 200 in 60ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 2025-07-04T13:18:31: 1:18:31 PM [express] POST /api/admin/themes/default_theme_1750432574.178085/activate 500 in 56ms :: …
+0|edahouse | 2025-07-04T13:18:41: 1:18:41 PM [express] GET /api/auth/user 200 in 29ms :: {"id":"admin","username":"admin","email":"adm…
+0|edahouse | 2025-07-04T13:18:41: 1:18:41 PM [express] GET /api/settings 200 in 49ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 2025-07-04T13:18:41: 1:18:41 PM [express] GET /api/admin/products 200 in 51ms :: {"data":[{"id":380,"name":"Абжерка","nam…
+0|edahouse | 2025-07-04T13:18:41: 1:18:41 PM [express] GET /api/categories 200 in 56ms :: [{"id":47,"name":"Салаты","name_en":"","name…
+0|edahouse | 2025-07-04T13:18:41: 1:18:41 PM [express] GET /api/admin/themes 200 in 13ms :: [{"id":"default_theme_1750432574.178085","…
+0|edahouse | 2025-07-04T13:18:42: 1:18:42 PM [express] GET /api/admin/users 200 in 16ms :: {"data":[{"id":"manual_1750335401590_mpgm1w…
+0|edahouse | 2025-07-04T13:18:42: 1:18:42 PM [express] GET /api/admin/orders 200 in 35ms :: {"data":[{"id":18,"userId":"admin","status…
+0|edahouse | 2025-07-04T13:19:13: 1:19:13 PM [express] GET /api/auth/user 200 in 33ms :: {"id":"admin","username":"admin","email":"adm…
+0|edahouse | 2025-07-04T13:19:13: 1:19:13 PM [express] GET /api/admin/themes 200 in 33ms :: [{"id":"default_theme_1750432574.178085","…
+0|edahouse | 2025-07-04T13:19:13: 1:19:13 PM [express] GET /api/settings 200 in 43ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 2025-07-04T13:20:55: 1:20:55 PM [express] GET /api/auth/user 200 in 28ms :: {"id":"admin","username":"admin","email":"adm…
+0|edahouse | 2025-07-04T13:20:55: 1:20:55 PM [express] GET /api/settings 200 in 46ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 2025-07-04T13:20:55: 1:20:55 PM [express] GET /api/admin/products 200 in 16ms :: {"data":[{"id":380,"name":"Абжерка","nam…
+0|edahouse | 2025-07-04T13:20:55: 1:20:55 PM [express] GET /api/admin/themes 200 in 48ms :: [{"id":"default_theme_1750432574.178085","…
+0|edahouse | 2025-07-04T13:20:55: 1:20:55 PM [express] GET /api/admin/orders 200 in 60ms :: {"data":[{"id":18,"userId":"admin","status…
+0|edahouse | 2025-07-04T13:23:41: 🌱 Seeding database...
+0|edahouse | 2025-07-04T13:23:41: ✅ Database already contains data, skipping seed
+0|edahouse | 2025-07-04T13:23:41: 1:23:41 PM [express] serving on port 3000
