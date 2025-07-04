@@ -4,6 +4,7 @@ import { useCartStore } from "@/lib/cart";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import type { SupportedLanguage } from '@shared/localization';
+import { getLocalizedImageField } from '@shared/multilingual-helpers';
 import { Button } from "@/components/ui/button";
 import { usePWA } from "@/hooks/usePWA";
 
@@ -89,22 +90,25 @@ export default function Header({ onResetView }: HeaderProps) {
           <div className="flex items-center min-w-0 flex-1">
             <Link href="/" onClick={() => onResetView?.()}>
               <div className="flex items-center cursor-pointer">
-                {storeSettings?.logoUrl ? (
-                  <img 
-                    src={storeSettings.logoUrl} 
-                    alt={getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse"} 
-                    className="h-8 md:h-10 w-auto mr-2 md:mr-3 rtl:mr-0 rtl:ml-2 md:rtl:ml-3 flex-shrink-0"
-                    onError={(e) => {
-                      e.currentTarget.src = "/@assets/Edahouse_sign__source_1750184330403.png";
-                    }}
-                  />
-                ) : (
-                  <img 
-                    src="/@assets/Edahouse_sign__source_1750184330403.png" 
-                    alt="eDAHouse" 
-                    className="h-8 md:h-10 w-auto mr-2 md:mr-3 rtl:mr-0 rtl:ml-2 md:rtl:ml-3 flex-shrink-0"
-                  />
-                )}
+                {(() => {
+                  const logoUrl = getLocalizedImageField(storeSettings, 'logoUrl', currentLanguage as SupportedLanguage);
+                  return logoUrl ? (
+                    <img 
+                      src={logoUrl} 
+                      alt={getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse"} 
+                      className="h-8 md:h-10 w-auto mr-2 md:mr-3 rtl:mr-0 rtl:ml-2 md:rtl:ml-3 flex-shrink-0"
+                      onError={(e) => {
+                        e.currentTarget.src = "/@assets/Edahouse_sign__source_1750184330403.png";
+                      }}
+                    />
+                  ) : (
+                    <img 
+                      src="/@assets/Edahouse_sign__source_1750184330403.png" 
+                      alt="eDAHouse" 
+                      className="h-8 md:h-10 w-auto mr-2 md:mr-3 rtl:mr-0 rtl:ml-2 md:rtl:ml-3 flex-shrink-0"
+                    />
+                  );
+                })()}
                 <h1 className="text-lg md:text-2xl font-poppins font-bold text-primary truncate">
                   {getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse"}
                 </h1>
