@@ -15,7 +15,7 @@
 **Что происходит с БД:**
 ```bash
 # 1. Создается .env с правильным DATABASE_URL
-DATABASE_URL=postgresql://ordis_co_il_usr:33V0R1N5qi81paiA@localhost:5432/edahouse_ord
+DATABASE_URL=postgresql://edahouse_ord:33V0R1N5qi81paiA@localhost:5432/edahouse_ord
 
 # 2. Первый запуск приложения автоматически:
 #    - Создает все таблицы (через Drizzle автомиграции)

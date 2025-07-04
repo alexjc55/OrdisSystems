@@ -107,17 +107,17 @@ curl http://localhost:3000/api/health
 curl -I https://edahouse.ordis.co.il
 
 # Проверить базу данных
-psql -U ordis_co_il_usr -d edahouse_ord -c "SELECT COUNT(*) FROM products;"
+psql -U edahouse_ord -d edahouse_ord -c "SELECT COUNT(*) FROM products;"
 ```
 
 ## 🗄️ Работа с базой данных
 
 ```bash
 # Подключение к БД
-psql -U ordis_co_il_usr -d edahouse_ord
+psql -U edahouse_ord -d edahouse_ord
 
 # Резервная копия БД
-pg_dump -U ordis_co_il_usr edahouse_ord > backup_$(date +%Y%m%d).sql
+pg_dump -U edahouse_ord edahouse_ord > backup_$(date +%Y%m%d).sql
 
 # Проверить схему БД (безопасное обновление)
 cd www/edahouse.ordis.co.il && npm run db:push

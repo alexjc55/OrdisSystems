@@ -54,7 +54,7 @@ if [ -f ".env" ]; then
     
     # Add PostgreSQL configuration if not present
     if ! grep -q "DATABASE_URL=postgresql://" .env; then
-        echo "DATABASE_URL=postgresql://ordis_co_il_usr:33V0R1N5qi81paiA@localhost:5432/edahouse_ord" >> .env
+        echo "DATABASE_URL=postgresql://edahouse_ord:33V0R1N5qi81paiA@localhost:5432/edahouse_ord" >> .env
     fi
     
     print_status "Database configuration updated for PostgreSQL"
