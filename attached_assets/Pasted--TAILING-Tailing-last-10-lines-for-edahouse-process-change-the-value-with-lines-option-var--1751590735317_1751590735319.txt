@@ -1,0 +1,45 @@
+[TAILING] Tailing last 10 lines for [edahouse] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-out.log last 10 lines:
+0|edahouse | 🌱 Seeding database...
+0|edahouse | ✅ Database already contains data, skipping seed
+0|edahouse | 🌱 Seeding database...
+0|edahouse | ✅ Database already contains data, skipping seed
+0|edahouse | 🌱 Seeding database...
+0|edahouse | ✅ Database already contains data, skipping seed
+0|edahouse | 🌱 Seeding database...
+0|edahouse | ✅ Database already contains data, skipping seed
+0|edahouse | 🌱 Seeding database...
+0|edahouse | ✅ Database already contains data, skipping seed
+
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-error.log last 10 lines:
+0|edahouse |     throw new Error(
+0|edahouse |           ^
+0|edahouse |
+0|edahouse |
+0|edahouse | Error: Could not find the build directory: /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/server/public, make sure to build the client first
+0|edahouse |     at serveStatic (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/server/vite.ts:66:11)
+0|edahouse |     at <anonymous> (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/server/index.ts:65:5)
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|edahouse |
+0|edahouse | Node.js v18.20.6
+
+0|edahouse  | 🌱 Seeding database...
+0|edahouse  | ✅ Database already contains data, skipping seed
+0|edahouse  | /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/server/vite.ts:66
+0|edahouse  |     throw new Error(
+0|edahouse  |           ^
+0|edahouse  | Error: Could not find the build directory: /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/server/public, make sure to build the client first
+0|edahouse  |     at serveStatic (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/server/vite.ts:66:11)
+0|edahouse  |     at <anonymous> (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/server/index.ts:65:5)
+0|edahouse  |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|edahouse  | Node.js v18.20.6
+0|edahouse  | 🌱 Seeding database...
+0|edahouse  | ✅ Database already contains data, skipping seed
+0|edahouse  | /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/server/vite.ts:66
+0|edahouse  |     throw new Error(
+0|edahouse  |           ^
+0|edahouse  | Error: Could not find the build directory: /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/server/public, make sure to build the client first
+0|edahouse  |     at serveStatic (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/server/vite.ts:66:11)
+0|edahouse  |     at <anonymous> (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/server/index.ts:65:5)
+0|edahouse  |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|edahouse  | Node.js v18.20.6
