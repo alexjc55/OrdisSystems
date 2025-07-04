@@ -1,0 +1,55 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Найти и исправить проблемную строку в dist/index.js
+sed -i 's/import\.meta\.dirname/__dirname/g' dist/index.js
+
+# Если __dirname недоступна в ESM, заменим на process.cwd()
+sed -i 's/__dirname/process.cwd()/g' dist/index.js
+
+# Или лучше заменим на правильный fileURLToPath
+grep -n "import.meta.dirname" dist/index.js
+sed -i 's/import\.meta\.dirname/path.dirname(fileURLToPath(import.meta.url))/g' dist/index.js
+
+# Проверим что изменилось в проблемной области
+sed -n '3650,3660p' dist/index.js
+
+# Перезапустить приложение
+pm2 restart edahouse
+sleep 3
+
+# Проверить логи
+pm2 logs edahouse --lines 5
+
+# Проверить работает ли теперь
+curl -s http://localhost:3000/api/health || echo "Still not working"
+      )
+    ] : []
+  ],
+  resolve: {
+    alias: {
+      "@": path2.resolve(process.cwd(), "client", "src"),
+      "@shared": path2.resolve(process.cwd(), "shared"),
+      "@assets": path2.resolve(process.cwd(), "attached_assets")
+    }
+  },
+  root: path2.resolve(process.cwd(), "client"),
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬─────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name        │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼─────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ edahouse    │ default     │ 1.0.0   │ cluster │ 318471   │ 0s     │ 3    │ online    │ 0%       │ 41.6mb   │ ord… │ disabled │
+└────┴─────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[TAILING] Tailing last 5 lines for [edahouse] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/out-0.log last 5 lines:
+0|edahouse |     address: '::1',
+0|edahouse |     port: 443
+0|edahouse |   },
+0|edahouse |   [Symbol(kMessage)]: 'connect ECONNREFUSED ::1:443'
+0|edahouse | }
+
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/err-0.log last 5 lines:
+0|edahouse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|edahouse | Error: Could not find the build directory: /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/public, make sure to build the client first
+0|edahouse |     at serveStatic (file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3730:11)
+0|edahouse |     at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:4262:5
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
