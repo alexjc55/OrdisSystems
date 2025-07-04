@@ -1130,7 +1130,9 @@ export default function Profile() {
                 </Card>
 
                 {/* Customer Notes */}
-                {selectedOrder.customerNotes && !selectedOrder.customerNotes.includes('[DISCOUNTS:') && (
+                {selectedOrder.customerNotes && 
+                 !selectedOrder.customerNotes.includes('[DISCOUNTS:') && 
+                 !selectedOrder.customerNotes.includes('[ORDER_DATA:') && (
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-sm">{t('profile.orderComments')}</CardTitle>
