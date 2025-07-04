@@ -8,18 +8,17 @@
 
 ```bash
 # Подключитесь к серверу
-ssh root@your-server-ip
+ssh ordis_co_il_usr@your-server-ip
 
 # Скачайте проект
-git clone https://github.com/yourusername/edahouse.git /var/www/edahouse.ordis.co.il
-cd /var/www/edahouse.ordis.co.il
+git clone https://github.com/alexjc55/Ordis.git /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
+cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
 
 # Запустите автоматическую установку
 ./deploy/install-on-vps.sh
 
-# Настройте пароль базы данных
-nano .env
-# Измените: DATABASE_URL=postgresql://edahouse_user:YOUR_PASSWORD@localhost:5432/edahouse_ord
+# Настройте пароль базы данных (уже настроено)
+# DATABASE_URL=postgresql://ordis_co_il_usr:33V0R1N5qi81paiA@localhost:5432/edahouse_ord
 
 # Перезапустите приложение
 pm2 restart edahouse
@@ -38,7 +37,7 @@ pm2 restart edahouse
 ### 3️⃣ Обновление проекта
 
 ```bash
-cd /var/www/edahouse.ordis.co.il
+cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
 
 # Простое обновление
 ./deploy/update-project.sh
@@ -192,10 +191,10 @@ tail -f /var/log/nginx/error.log
 ### Восстановление
 ```bash
 # База данных
-psql -U edahouse_user -d edahouse_ord < /var/backups/edahouse/backup-YYYYMMDD_HHMMSS.sql
+psql -U ordis_co_il_usr -d edahouse_ord < /var/backups/edahouse/backup-YYYYMMDD_HHMMSS.sql
 
 # Файлы
-cd /var/www/edahouse.ordis.co.il
+cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
 tar -xzf /var/backups/edahouse/backup-YYYYMMDD_HHMMSS.tar.gz
 ```
 
@@ -204,7 +203,7 @@ tar -xzf /var/backups/edahouse/backup-YYYYMMDD_HHMMSS.tar.gz
 ### Добавление сайта
 1. Откройте FastPanel
 2. Добавьте новый сайт: `edahouse.ordis.co.il`
-3. Корневая папка: `/var/www/edahouse.ordis.co.il`
+3. Корневая папка: `/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il`
 4. Включите SSL сертификат
 
 ### Proxy настройка
@@ -219,7 +218,7 @@ FastPanel автоматически настроит проксирование
 | Процесс-менеджер | PM2 |
 | Веб-сервер | Nginx |
 | SSL | Let's Encrypt |
-| Пользователь БД | edahouse_user |
+| Пользователь БД | ordis_co_il_usr |
 | База данных | edahouse_ord |
 
 ## 🚨 Критические файлы
@@ -243,7 +242,7 @@ pm2 stop edahouse
 pm2 start edahouse
 
 # Сброс базы данных
-psql -U edahouse_user -d edahouse_ord -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+psql -U ordis_co_il_usr -d edahouse_ord -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
 npm run db:push
 ```
 

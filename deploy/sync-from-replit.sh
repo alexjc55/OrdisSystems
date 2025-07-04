@@ -9,8 +9,8 @@ echo "🔄 Syncing from Replit to VPS"
 echo "============================="
 
 # Configuration
-PROJECT_DIR="/var/www/edahouse.ordis.co.il"
-GITHUB_REPO="https://github.com/yourusername/edahouse.git"
+PROJECT_DIR="/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il"
+GITHUB_REPO="https://github.com/alexjc55/Ordis.git"
 
 # Colors
 RED='\033[0;31m'

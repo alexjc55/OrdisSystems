@@ -8,7 +8,7 @@ set -e
 echo "🔍 eDAHouse Installation Validation"
 echo "==================================="
 
-PROJECT_DIR="/var/www/edahouse.ordis.co.il"
+PROJECT_DIR="/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il"
 EXPECTED_PORT="3000"
 
 # Colors

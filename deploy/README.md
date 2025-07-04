@@ -11,9 +11,9 @@ ssh root@your-server-ip
 
 ### 2. Загрузка проекта
 ```bash
-# Скачайте проект с GitHub или перенесите файлы
-git clone https://github.com/yourusername/edahouse.git /var/www/edahouse.ordis.co.il
-cd /var/www/edahouse.ordis.co.il
+# Скачайте проект с GitHub
+git clone https://github.com/alexjc55/Ordis.git /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
+cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
 ```
 
 ### 3. Запуск установки
@@ -27,11 +27,8 @@ chmod +x deploy/install-on-vps.sh
 
 ### 4. Настройка базы данных
 ```bash
-# Отредактируйте файл .env
-nano .env
-
-# Установите правильный пароль для базы данных
-DATABASE_URL=postgresql://edahouse_user:YOUR_REAL_PASSWORD@localhost:5432/edahouse_ord
+# Пароль базы данных уже настроен автоматически
+# DATABASE_URL=postgresql://ordis_co_il_usr:33V0R1N5qi81paiA@localhost:5432/edahouse_ord
 ```
 
 ### 5. Перезапуск приложения
@@ -43,13 +40,13 @@ pm2 restart edahouse
 
 ### Простое обновление
 ```bash
-cd /var/www/edahouse.ordis.co.il
+cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
 ./deploy/update-project.sh
 ```
 
 ### Обновление с исправлением проблем
 ```bash
-cd /var/www/edahouse.ordis.co.il
+cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
 ./deploy/fix-environment.sh
 ./deploy/update-project.sh
 ```
@@ -58,7 +55,7 @@ cd /var/www/edahouse.ordis.co.il
 
 ### Если что-то пошло не так
 ```bash
-cd /var/www/edahouse.ordis.co.il
+cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
 ./deploy/fix-environment.sh
 ```
 
@@ -97,13 +94,13 @@ pm2 logs edahouse --lines 50
 ### Управление базой данных
 ```bash
 # Подключение к базе
-psql -U edahouse_user -d edahouse_ord
+psql -U ordis_co_il_usr -d edahouse_ord
 
 # Создание резервной копии
-pg_dump -U edahouse_user edahouse_ord > backup.sql
+pg_dump -U ordis_co_il_usr edahouse_ord > backup.sql
 
 # Восстановление из резервной копии
-psql -U edahouse_user -d edahouse_ord < backup.sql
+psql -U ordis_co_il_usr -d edahouse_ord < backup.sql
 ```
 
 ## 🛠️ Настройка FastPanel
@@ -127,7 +124,7 @@ systemctl reload nginx
 ## 📁 Структура файлов
 
 ```
-/var/www/edahouse.ordis.co.il/
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/
 ├── deploy/                 # Скрипты развертывания
 │   ├── install-on-vps.sh   # Установка
 │   ├── update-project.sh   # Обновление

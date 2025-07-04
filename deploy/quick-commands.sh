@@ -3,7 +3,7 @@
 # eDAHouse Quick Commands Script
 # Helpful shortcuts for common operations
 
-PROJECT_DIR="/var/www/edahouse.ordis.co.il"
+PROJECT_DIR="/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il"
 
 # Colors
 GREEN='\033[0;32m'
@@ -54,7 +54,7 @@ case "$1" in
         echo -e "${GREEN}=== Creating Backup ===${NC}"
         cd $PROJECT_DIR
         BACKUP_NAME="manual-backup-$(date +%Y%m%d_%H%M%S)"
-        pg_dump -U edahouse_user edahouse_ord > "/var/backups/edahouse/$BACKUP_NAME.sql"
+        pg_dump -U ordis_co_il_usr edahouse_ord > "/var/backups/edahouse/$BACKUP_NAME.sql"
         tar -czf "/var/backups/edahouse/$BACKUP_NAME.tar.gz" --exclude=node_modules .
         echo "Backup created: $BACKUP_NAME"
         ;;
@@ -73,7 +73,7 @@ case "$1" in
     
     "db")
         echo -e "${GREEN}=== Database Connection Test ===${NC}"
-        psql -U edahouse_user -d edahouse_ord -c "SELECT 'Database connection OK' as status;"
+        psql -U ordis_co_il_usr -d edahouse_ord -c "SELECT 'Database connection OK' as status;"
         ;;
     
     *)

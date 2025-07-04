@@ -10,9 +10,11 @@ echo "=================================="
 
 # Configuration
 PROJECT_NAME="edahouse"
-PROJECT_DIR="/var/www/edahouse.ordis.co.il"
+PROJECT_DIR="/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il"
 DB_NAME="edahouse_ord"
-DB_USER="edahouse_user"
+DB_USER="ordis_co_il_usr"
+DB_PASSWORD="33V0R1N5qi81paiA"
+GITHUB_REPO="https://github.com/alexjc55/Ordis.git"
 NODE_VERSION="18"
 PORT="3000"
 
@@ -70,7 +72,7 @@ fi
 # Step 4: Create database and user
 print_status "Setting up database..."
 sudo -u postgres psql -c "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
-sudo -u postgres psql -c "CREATE USER IF NOT EXISTS ${DB_USER} WITH ENCRYPTED PASSWORD 'strong_password_here';"
+sudo -u postgres psql -c "CREATE USER IF NOT EXISTS ${DB_USER} WITH ENCRYPTED PASSWORD '${DB_PASSWORD}';"
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_NAME} TO ${DB_USER};"
 
 # Step 5: Create project directory
@@ -85,7 +87,7 @@ if [ -d ".git" ]; then
     git pull origin main
 else
     print_status "Cloning repository..."
-    git clone https://github.com/yourusername/edahouse.git .
+    git clone ${GITHUB_REPO} .
 fi
 
 # Step 7: Install dependencies
@@ -100,7 +102,7 @@ NODE_ENV=production
 PORT=${PORT}
 
 # Database Configuration
-DATABASE_URL=postgresql://${DB_USER}:strong_password_here@localhost:5432/${DB_NAME}
+DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}
 
 # Session Configuration
 SESSION_SECRET=$(openssl rand -base64 32)

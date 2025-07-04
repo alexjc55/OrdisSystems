@@ -10,8 +10,10 @@ echo "================================="
 
 # Configuration
 PROJECT_NAME="edahouse"
-PROJECT_DIR="/var/www/edahouse.ordis.co.il"
+PROJECT_DIR="/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il"
 BACKUP_DIR="/var/backups/edahouse"
+DB_NAME="edahouse_ord"
+DB_USER="ordis_co_il_usr"
 PORT="3000"
 
 # Colors for output
@@ -49,7 +51,7 @@ BACKUP_PATH="$BACKUP_DIR/$BACKUP_NAME"
 
 # Backup database
 print_status "Backing up database..."
-pg_dump -U edahouse_user -h localhost edahouse_ord > "$BACKUP_PATH.sql"
+pg_dump -U ${DB_USER} -h localhost ${DB_NAME} > "$BACKUP_PATH.sql"
 
 # Backup files
 print_status "Backing up files..."

@@ -8,7 +8,7 @@ set -e
 echo "🔧 eDAHouse Environment Fix Script"
 echo "=================================="
 
-PROJECT_DIR="/var/www/edahouse.ordis.co.il"
+PROJECT_DIR="/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il"
 cd $PROJECT_DIR
 
 # Colors for output
@@ -54,7 +54,7 @@ if [ -f ".env" ]; then
     
     # Add PostgreSQL configuration if not present
     if ! grep -q "DATABASE_URL=postgresql://" .env; then
-        echo "DATABASE_URL=postgresql://edahouse_user:strong_password_here@localhost:5432/edahouse_ord" >> .env
+        echo "DATABASE_URL=postgresql://ordis_co_il_usr:33V0R1N5qi81paiA@localhost:5432/edahouse_ord" >> .env
     fi
     
     print_status "Database configuration updated for PostgreSQL"
@@ -179,7 +179,7 @@ module.exports = {
     name: 'edahouse',
     script: 'tsx',
     args: 'server/index.ts',
-    cwd: '/var/www/edahouse.ordis.co.il',
+    cwd: '/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il',
     instances: 1,
     exec_mode: 'fork',
     env: {
