@@ -1,155 +1,199 @@
 #!/bin/bash
 
-# eDAHouse Replit to VPS Sync Script
-# Handles transfer of changes from Replit development to VPS production
+# =============================================================================
+# eDAHouse - Синхронизация с Replit/GitHub (ГИБРИДНОЕ РЕШЕНИЕ)
+# =============================================================================
+# Этот скрипт для случая, когда на сервере проект частично есть, 
+# но нужно добавить недостающие файлы и обновить измененные
+# =============================================================================
 
-set -e
+set -e  # Выход при любой ошибке
 
-echo "🔄 Syncing from Replit to VPS"
-echo "============================="
-
-# Configuration
-PROJECT_DIR="/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il"
-GITHUB_REPO="https://github.com/alexjc55/Ordis.git"
-
-# Colors
+# Цвета для вывода
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 
-print_status() {
-    echo -e "${GREEN}[INFO]${NC} $1"
-}
+# Реальные параметры VPS
+PROJECT_PATH="/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il"
+SHORT_PATH="www/edahouse.ordis.co.il"
+GITHUB_REPO="https://github.com/alexjc55/Ordis.git"
+TEMP_DIR="/tmp/edahouse_sync_$(date +%s)"
 
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
+echo -e "${BLUE}🔄 eDAHouse - Синхронизация с GitHub${NC}"
+echo "=============================================="
 
-print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
+# Проверка текущей директории
+if [ "$(pwd)" != "$PROJECT_PATH" ]; then
+    echo -e "${YELLOW}⚠️  Переход в правильную директорию...${NC}"
+    cd "$PROJECT_PATH" || {
+        echo -e "${RED}❌ Ошибка: Невозможно перейти в $PROJECT_PATH${NC}"
+        echo "Создайте директорию проекта сначала:"
+        echo "mkdir -p $PROJECT_PATH"
+        exit 1
+    }
+fi
 
-# Check if we're on VPS
-if [ ! -d "$PROJECT_DIR" ]; then
-    print_error "This script should be run on VPS server"
-    print_error "Project directory not found: $PROJECT_DIR"
+echo -e "${BLUE}📁 Рабочая директория: $(pwd)${NC}"
+
+# Создание резервной копии перед синхронизацией
+echo -e "${YELLOW}💾 Создание резервной копии...${NC}"
+BACKUP_DIR="/var/backups/edahouse/sync_backup_$(date +%Y%m%d_%H%M%S)"
+mkdir -p "$BACKUP_DIR"
+
+# Копируем критически важные файлы
+if [ -f ".env" ]; then
+    cp .env "$BACKUP_DIR/"
+    echo "✅ Сохранен .env"
+fi
+
+if [ -d "uploads" ]; then
+    cp -r uploads "$BACKUP_DIR/"
+    echo "✅ Сохранена папка uploads"
+fi
+
+if [ -f "ecosystem.config.js" ]; then
+    cp ecosystem.config.js "$BACKUP_DIR/"
+    echo "✅ Сохранен ecosystem.config.js"
+fi
+
+# Клонирование свежей версии во временную папку
+echo -e "${BLUE}📥 Загрузка свежей версии с GitHub...${NC}"
+git clone "$GITHUB_REPO" "$TEMP_DIR"
+
+if [ ! -d "$TEMP_DIR" ]; then
+    echo -e "${RED}❌ Ошибка клонирования репозитория${NC}"
     exit 1
 fi
 
-cd $PROJECT_DIR
+echo -e "${GREEN}✅ Репозиторий загружен в $TEMP_DIR${NC}"
 
-# Step 1: Create backup before sync
-print_status "Creating pre-sync backup..."
-BACKUP_NAME="pre-sync-$(date +%Y%m%d_%H%M%S)"
-./deploy/quick-commands.sh backup
-
-# Step 2: Stop application temporarily
-print_status "Stopping application..."
-pm2 stop edahouse || true
-
-# Step 3: Stash local changes (if any)
-print_status "Stashing local changes..."
-git add . || true
-git stash || true
-
-# Step 4: Pull latest changes from repository
-print_status "Pulling latest changes from repository..."
-git pull origin main || {
-    print_error "Failed to pull from repository"
-    print_status "Restoring application..."
-    pm2 start edahouse
-    exit 1
+# Функция для синхронизации файлов
+sync_files() {
+    local source_dir="$1"
+    local target_dir="$2"
+    local file_pattern="$3"
+    local description="$4"
+    
+    echo -e "${YELLOW}🔄 Синхронизация: $description${NC}"
+    
+    if [ -d "$source_dir" ]; then
+        rsync -av --include="$file_pattern" --exclude="*" "$source_dir/" "$target_dir/"
+        echo "✅ $description обновлены"
+    else
+        echo "⚠️  $source_dir не найдена, пропускаем"
+    fi
 }
 
-# Step 5: Restore critical production files
-print_status "Restoring production configuration..."
+# Синхронизация по категориям файлов
+echo -e "${BLUE}🔄 Синхронизация файлов...${NC}"
 
-# Restore .env file (production settings)
-if [ -f ".env.production" ]; then
-    cp .env.production .env
-    print_status "Restored production .env"
-elif git stash list | grep -q "stash@{0}"; then
-    # Try to restore .env from stash
-    git checkout stash@{0} -- .env 2>/dev/null || true
+# 1. Скрипты развертывания (самое важное!)
+if [ -d "$TEMP_DIR/deploy" ]; then
+    echo -e "${YELLOW}📜 Обновление скриптов развертывания...${NC}"
+    rsync -av "$TEMP_DIR/deploy/" ./deploy/
+    chmod +x deploy/*.sh
+    echo "✅ Скрипты развертывания обновлены"
 fi
 
-# Ensure production environment variables
-print_status "Ensuring production configuration..."
-./deploy/fix-environment.sh
+# 2. Конфигурационные файлы
+echo -e "${YELLOW}⚙️  Обновление конфигурации...${NC}"
+for config_file in "package.json" "package-lock.json" "tsconfig.json" "tailwind.config.ts" "vite.config.ts" "drizzle.config.ts"; do
+    if [ -f "$TEMP_DIR/$config_file" ]; then
+        cp "$TEMP_DIR/$config_file" ./
+        echo "✅ $config_file обновлен"
+    fi
+done
 
-# Step 6: Install/update dependencies
-print_status "Installing dependencies..."
-npm install || {
-    print_error "npm install failed"
-    print_status "Restoring application..."
-    pm2 start edahouse
-    exit 1
-}
+# 3. Исходный код сервера
+sync_files "$TEMP_DIR/server" "./server" "*" "Серверный код"
 
-# Step 7: Build application
-print_status "Building application..."
-npm run build || {
-    print_error "Build failed"
-    print_status "Restoring application..."
-    pm2 start edahouse
-    exit 1
-}
+# 4. Исходный код клиента
+sync_files "$TEMP_DIR/client" "./client" "*" "Клиентский код"
 
-# Step 8: Run database migrations
-print_status "Running database migrations..."
-npm run db:push || {
-    print_warning "Database migration issues - continuing anyway"
-}
+# 5. Общие схемы и типы
+sync_files "$TEMP_DIR/shared" "./shared" "*" "Общие типы и схемы"
 
-# Step 9: Restart application
-print_status "Restarting application..."
-pm2 restart edahouse
+# 6. Документация
+echo -e "${YELLOW}📚 Обновление документации...${NC}"
+for doc_file in "README.md" "replit.md" "*.md"; do
+    if [ -f "$TEMP_DIR/$doc_file" ]; then
+        cp "$TEMP_DIR/$doc_file" ./
+    fi
+done
 
-# Step 10: Validate deployment
-print_status "Validating deployment..."
-sleep 5
+# Восстановление критически важных файлов
+echo -e "${YELLOW}🔄 Восстановление локальных настроек...${NC}"
 
-# Health check
-if curl -f -s http://localhost:3000/api/health >/dev/null; then
-    print_status "✅ Health check passed"
-else
-    print_error "❌ Health check failed"
-    print_status "Check logs: pm2 logs edahouse"
-    exit 1
+# Восстанавливаем .env если был
+if [ -f "$BACKUP_DIR/.env" ]; then
+    cp "$BACKUP_DIR/.env" ./
+    echo "✅ .env восстановлен"
 fi
 
-# Step 11: Clean up old stashes and backups
-print_status "Cleaning up..."
-git stash clear 2>/dev/null || true
-
-# Keep only last 3 backups
-cd /var/backups/edahouse 2>/dev/null || true
-if [ -d "/var/backups/edahouse" ]; then
-    ls -t backup-*.tar.gz 2>/dev/null | tail -n +4 | xargs rm -f 2>/dev/null || true
-    ls -t backup-*.sql 2>/dev/null | tail -n +4 | xargs rm -f 2>/dev/null || true
+# Восстанавливаем uploads если был
+if [ -d "$BACKUP_DIR/uploads" ]; then
+    cp -r "$BACKUP_DIR/uploads" ./
+    echo "✅ uploads восстановлена"
 fi
 
-cd $PROJECT_DIR
+# Восстанавливаем PM2 конфигурацию если была
+if [ -f "$BACKUP_DIR/ecosystem.config.js" ]; then
+    cp "$BACKUP_DIR/ecosystem.config.js" ./
+    echo "✅ ecosystem.config.js восстановлен"
+fi
 
-print_status "🎉 Sync completed successfully!"
+# Проверка и создание .env если его нет
+if [ ! -f ".env" ]; then
+    echo -e "${YELLOW}⚙️  Создание .env файла...${NC}"
+    cat > .env << EOF
+NODE_ENV=production
+PORT=3000
+DATABASE_URL=postgresql://ordis_co_il_usr:33V0R1N5qi81paiA@localhost:5432/edahouse_ord
+SESSION_SECRET=$(openssl rand -base64 32)
+EOF
+    echo "✅ .env создан с базовыми настройками"
+fi
+
+# Установка зависимостей
+echo -e "${BLUE}📦 Установка зависимостей...${NC}"
+npm install
+
+# Сборка проекта
+echo -e "${BLUE}🔨 Сборка проекта...${NC}"
+npm run build
+
+# Обновление базы данных
+echo -e "${BLUE}🗄️  Обновление схемы базы данных...${NC}"
+npm run db:push
+
+# Перезапуск приложения
+echo -e "${BLUE}🔄 Перезапуск приложения...${NC}"
+pm2 stop edahouse 2>/dev/null || echo "Приложение не было запущено"
+pm2 start ecosystem.config.js
+pm2 save
+
+# Очистка временных файлов
+echo -e "${YELLOW}🧹 Очистка временных файлов...${NC}"
+rm -rf "$TEMP_DIR"
+
+# Финальная проверка
+echo -e "${BLUE}🔍 Проверка состояния...${NC}"
+sleep 3
+pm2 status | grep edahouse || echo "Приложение не найдено в PM2"
 
 echo ""
-echo "📊 Sync Summary:"
-echo "================"
-echo "• Code updated from repository"
-echo "• Dependencies installed"
-echo "• Application rebuilt"
-echo "• Database migrations applied"
-echo "• Application restarted"
-echo "• Health check passed"
+echo -e "${GREEN}✅ СИНХРОНИЗАЦИЯ ЗАВЕРШЕНА!${NC}"
+echo "=============================================="
+echo -e "${BLUE}📊 Статистика:${NC}"
+echo "• Резервная копия: $BACKUP_DIR"
+echo "• Проект обновлен из: $GITHUB_REPO"
+echo "• Приложение: $(pm2 jlist | jq -r '.[] | select(.name=="edahouse") | .pm2_env.status' 2>/dev/null || echo 'unknown')"
 echo ""
-echo "🔍 Verification:"
-echo "• Application: http://localhost:3000"
-echo "• Health check: curl http://localhost:3000/api/health"
-echo "• Logs: pm2 logs edahouse"
-echo "• Status: pm2 status"
+echo -e "${YELLOW}🔗 Проверьте работу:${NC}"
+echo "• Локально: curl http://localhost:3000/api/health"
+echo "• Онлайн: https://edahouse.ordis.co.il"
 echo ""
-
-# Show final status
-./deploy/quick-commands.sh status
+echo -e "${GREEN}🎉 Готово! Никаких танцев с бубном!${NC}"

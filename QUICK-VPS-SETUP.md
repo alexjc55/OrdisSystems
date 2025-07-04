@@ -11,23 +11,36 @@ GitHub:    https://github.com/alexjc55/Ordis.git
 Порт:      3000
 ```
 
-## ⚡ Установка за 3 команды
+## ⚡ Сценарий 1: Новая установка (за 3 команды)
 
 ```bash
 # 1. Скачать проект
-git clone https://github.com/alexjc55/Ordis.git /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
+git clone https://github.com/alexjc55/Ordis.git www/edahouse.ordis.co.il
 
 # 2. Перейти в папку
-cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
+cd www/edahouse.ordis.co.il
 
 # 3. Установить автоматически
 ./deploy/install-on-vps.sh
 ```
 
-## 🔄 Обновление за 1 команду
+## 🔄 Сценарий 2: Обновление (скрипты есть)
 
 ```bash
-cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il && ./deploy/update-project.sh
+cd www/edahouse.ordis.co.il && ./deploy/update-project.sh
+```
+
+## 🔀 Сценарий 3: Гибридная синхронизация (проект есть, скриптов нет)
+
+```bash
+# Перейти в папку проекта
+cd www/edahouse.ordis.co.il
+
+# Вариант A: Прямое скачивание
+curl -sSL https://raw.githubusercontent.com/alexjc55/Ordis/main/deploy/sync-from-replit.sh | bash
+
+# Вариант B: Через git
+git fetch origin && git checkout origin/main -- deploy/ && chmod +x deploy/*.sh && ./deploy/sync-from-replit.sh
 ```
 
 ## 🛠️ Быстрые команды

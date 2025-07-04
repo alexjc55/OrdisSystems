@@ -11,8 +11,8 @@
 ssh ordis_co_il_usr@your-server-ip
 
 # Скачайте проект
-git clone https://github.com/alexjc55/Ordis.git /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
-cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
+git clone https://github.com/alexjc55/Ordis.git www/edahouse.ordis.co.il
+cd www/edahouse.ordis.co.il
 
 # Запустите автоматическую установку
 ./deploy/install-on-vps.sh
@@ -37,13 +37,30 @@ pm2 restart edahouse
 ### 3️⃣ Обновление проекта
 
 ```bash
-cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
+cd www/edahouse.ordis.co.il
 
-# Простое обновление
+# Простое обновление (если скрипты уже есть)
 ./deploy/update-project.sh
 
 # Обновление с исправлением проблем
 ./deploy/fix-environment.sh && ./deploy/update-project.sh
+```
+
+### 4️⃣ Гибридная синхронизация (проект есть, скриптов нет)
+
+```bash
+# Если проект частично есть, но скрипты развертывания отсутствуют
+cd www/edahouse.ordis.co.il
+
+# Вариант 1: Прямое скачивание и запуск
+curl -sSL https://raw.githubusercontent.com/alexjc55/Ordis/main/deploy/sync-from-replit.sh | bash
+
+# Вариант 2: Через git (если есть .git папка)
+git remote add origin https://github.com/alexjc55/Ordis.git 2>/dev/null || true
+git fetch origin
+git checkout origin/main -- deploy/
+chmod +x deploy/*.sh
+./deploy/sync-from-replit.sh
 ```
 
 ## 🛠️ Быстрые команды

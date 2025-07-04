@@ -12,8 +12,8 @@ ssh root@your-server-ip
 ### 2. Загрузка проекта
 ```bash
 # Скачайте проект с GitHub
-git clone https://github.com/alexjc55/Ordis.git /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
-cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
+git clone https://github.com/alexjc55/Ordis.git www/edahouse.ordis.co.il
+cd www/edahouse.ordis.co.il
 ```
 
 ### 3. Запуск установки
@@ -40,13 +40,13 @@ pm2 restart edahouse
 
 ### Простое обновление
 ```bash
-cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
+cd www/edahouse.ordis.co.il
 ./deploy/update-project.sh
 ```
 
 ### Обновление с исправлением проблем
 ```bash
-cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
+cd www/edahouse.ordis.co.il
 ./deploy/fix-environment.sh
 ./deploy/update-project.sh
 ```
@@ -55,7 +55,7 @@ cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
 
 ### Если что-то пошло не так
 ```bash
-cd /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il
+cd www/edahouse.ordis.co.il
 ./deploy/fix-environment.sh
 ```
 
@@ -124,11 +124,11 @@ systemctl reload nginx
 ## 📁 Структура файлов
 
 ```
-/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/
+www/edahouse.ordis.co.il/
 ├── deploy/                 # Скрипты развертывания
 │   ├── install-on-vps.sh   # Установка
 │   ├── update-project.sh   # Обновление
-│   └── fix-environment.sh  # Исправление проблем
+│   └── sync-from-replit.sh # Гибридная синхронизация
 ├── .env                    # Настройки окружения
 ├── ecosystem.config.js     # Конфигурация PM2
 ├── logs/                   # Логи приложения
