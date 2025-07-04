@@ -40,16 +40,19 @@ function clearCachePattern(pattern: string) {
 const scryptAsync = promisify(scrypt);
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Add cache control headers to prevent caching (except for favicon)
+  // Add cache control headers only for API routes (not static files)
   app.use((req, res, next) => {
-    // Skip cache control for favicon endpoint
-    if (req.path === '/api/favicon') {
+    // Skip cache control for static files (uploads, favicon)
+    if (req.path.startsWith('/uploads/') || req.path === '/api/favicon') {
       return next();
     }
     
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
+    // Only apply no-cache to API and HTML routes
+    if (req.path.startsWith('/api/') || req.path === '/' || req.path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
     next();
   });
 
@@ -113,11 +116,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Serve uploaded images
-  app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+  // Serve uploaded images with caching
+  app.use('/uploads', express.static(path.join(process.cwd(), 'uploads'), {
+    maxAge: '1h', // Cache images for 1 hour
+    etag: true,
+    lastModified: true
+  }));
 
-  // Disable caching for development
-  app.use((req, res, next) => {
+  // Disable caching only for API routes (not static files)
+  app.use('/api', (req, res, next) => {
     res.set({
       'Cache-Control': 'no-cache, no-store, must-revalidate',
       'Pragma': 'no-cache',
