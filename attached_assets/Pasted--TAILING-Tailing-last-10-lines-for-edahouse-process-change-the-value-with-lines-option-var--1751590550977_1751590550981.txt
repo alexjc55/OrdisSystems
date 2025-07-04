@@ -1,0 +1,59 @@
+[TAILING] Tailing last 10 lines for [edahouse] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-out.log last 10 lines:
+0|edahouse | 2025-07-04T03:34:20: GET /api/auth/user 200 in 32ms
+0|edahouse | 2025-07-04T03:34:20: GET /api/categories 200 in 36ms
+0|edahouse | 2025-07-04T03:34:20: GET /api/products 200 in 43ms
+0|edahouse | 2025-07-04T03:35:22: GET /api/auth/user 200 in 26ms
+0|edahouse | 2025-07-04T03:35:22: GET /api/products 200 in 35ms
+0|edahouse | 2025-07-04T03:35:22: GET /api/categories 200 in 35ms
+0|edahouse | 2025-07-04T03:41:45: GET /api/products 200 in 43ms
+0|edahouse | 2025-07-04T03:41:45: GET /api/auth/user 200 in 49ms
+0|edahouse | 2025-07-04T03:41:45: GET /api/settings 200 in 42ms
+0|edahouse | 2025-07-04T03:41:45: GET /api/categories 200 in 50ms
+
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-error.log last 10 lines:
+0|edahouse |     at Object.resolve (node:path:1115:7)
+0|edahouse |     at <anonymous> (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/vite.config.ts:21:17)
+0|edahouse |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|edahouse |     at async ModuleLoader.import (node:internal/modules/esm/loader:337:24)
+0|edahouse |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|edahouse |     at async handleMainPromise (node:internal/modules/run_main:106:12) {
+0|edahouse |   code: 'ERR_INVALID_ARG_TYPE'
+0|edahouse | }
+0|edahouse |
+0|edahouse | Node.js v18.20.6
+
+0|edahouse  | node:internal/errors:496
+0|edahouse  |     ErrorCaptureStackTrace(err);
+0|edahouse  |     ^
+0|edahouse  | TypeError [ERR_INVALID_ARG_TYPE]: The "paths[0]" argument must be of type string. Received undefined
+0|edahouse  |     at __node_internal_captureLargerStackTrace (node:internal/errors:496:5)
+0|edahouse  |     at new NodeError (node:internal/errors:405:5)
+0|edahouse  |     at validateString (node:internal/validators:162:11)
+0|edahouse  |     at Object.resolve (node:path:1115:7)
+0|edahouse  |     at <anonymous> (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/vite.config.ts:21:17)
+0|edahouse  |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|edahouse  |     at async ModuleLoader.import (node:internal/modules/esm/loader:337:24)
+0|edahouse  |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|edahouse  |     at async handleMainPromise (node:internal/modules/run_main:106:12) {
+0|edahouse  |   code: 'ERR_INVALID_ARG_TYPE'
+0|edahouse  | }
+0|edahouse  | Node.js v18.20.6
+0|edahouse  | node:internal/errors:496
+0|edahouse  |     ErrorCaptureStackTrace(err);
+0|edahouse  |     ^
+0|edahouse  | TypeError [ERR_INVALID_ARG_TYPE]: The "paths[0]" argument must be of type string. Received undefined
+0|edahouse  |     at __node_internal_captureLargerStackTrace (node:internal/errors:496:5)
+0|edahouse  |     at new NodeError (node:internal/errors:405:5)
+0|edahouse  |     at validateString (node:internal/validators:162:11)
+0|edahouse  |     at Object.resolve (node:path:1115:7)
+0|edahouse  |     at <anonymous> (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/vite.config.ts:21:17)
+0|edahouse  |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|edahouse  |     at async ModuleLoader.import (node:internal/modules/esm/loader:337:24)
+0|edahouse  |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|edahouse  |     at async handleMainPromise (node:internal/modules/run_main:106:12) {
+0|edahouse  |   code: 'ERR_INVALID_ARG_TYPE'
+0|edahouse  | }
+0|edahouse  | Node.js v18.20.6
+^C
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ ^C
