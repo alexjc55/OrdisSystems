@@ -132,7 +132,7 @@ button:focus,
   
   /* Full-width footer override */
   .full-width-footer {
-    position: relative !important;
+    position: absolute;
     left: 50% !important;
     right: 50% !important;
     margin-left: -50vw !important;
