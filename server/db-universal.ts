@@ -4,6 +4,10 @@ import * as schema from "@shared/schema";
 
 let db: any;
 
+// Debug logging for environment variables
+console.log("🔍 Environment check - USE_NEON:", process.env.USE_NEON);
+console.log("🔍 Environment check - DATABASE_URL exists:", !!process.env.DATABASE_URL);
+
 if (process.env.USE_NEON === 'true') {
   // Neon Database (Replit environment)
   console.log("🔄 Initializing Neon Database connection...");
