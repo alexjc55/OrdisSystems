@@ -2011,6 +2011,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         return res.status(403).json({ message: 'Admin access required' });
       }
 
+      const db = await getDB();
       const subscriptionsCount = await db
         .select({ count: sql`count(*)`.mapWith(Number) })
         .from(pushSubscriptions);
@@ -2032,6 +2033,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         return res.status(403).json({ message: 'Admin access required' });
       }
 
+      const db = await getDB();
       const notifications = await db
         .select()
         .from(marketingNotifications)
