@@ -1,4 +1,4 @@
-import { getDB } from "./db-universal";
+import { getDB } from "./db";
 import { categories, products, users } from "@shared/schema";
 
 export async function seedDatabase() {

@@ -1,5 +1,5 @@
 import webpush from 'web-push';
-import { db } from './db';
+import { getDB } from './db';
 import { pushSubscriptions } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
