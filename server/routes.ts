@@ -1952,6 +1952,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       }
 
       // Save marketing notification to database
+      const db = await getDB();
       const [notification] = await db.insert(marketingNotifications).values({
         title,
         message,

@@ -31,6 +31,7 @@ export class PushNotificationService {
   // Отправить уведомление конкретному пользователю
   static async sendToUser(userId: string, notification: PushNotification) {
     try {
+      const db = await getDB();
       const subscriptions = await db
         .select()
         .from(pushSubscriptions)
