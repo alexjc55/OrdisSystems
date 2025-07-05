@@ -1,10 +1,11 @@
-import { db } from "./db";
+import { getDB } from "./db-universal";
 import { categories, products, users } from "@shared/schema";
 
 export async function seedDatabase() {
   console.log("🌱 Seeding database...");
 
   // Check if data already exists
+  const db = await getDB();
   const existingProducts = await db.select().from(products).limit(1);
   const existingCategories = await db.select().from(categories).limit(1);
   

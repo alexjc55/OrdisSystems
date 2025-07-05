@@ -1,35 +1,79 @@
-// Универсальное подключение к базе данных для Replit (Neon) и VPS (PostgreSQL)
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
 
 let db: any;
-let pool: any;
 
-// Определяем тип базы данных по URL
-const isDevelopment = process.env.NODE_ENV === 'development';
-const isNeonDatabase = process.env.DATABASE_URL?.includes('neon.tech');
-
-if (isNeonDatabase) {
-  // Для Neon (Replit)
-  const { Pool, neonConfig } = await import('@neondatabase/serverless');
-  const { drizzle } = await import('drizzle-orm/neon-serverless');
-  const ws = await import('ws');
+if (process.env.USE_NEON === 'true') {
+  // Neon Database (Replit environment)
+  console.log("🔄 Initializing Neon Database connection...");
   
-  neonConfig.webSocketConstructor = ws.default;
-  pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  db = drizzle({ client: pool, schema });
+  const initNeonDB = async () => {
+    try {
+      const { Pool, neonConfig } = await import('@neondatabase/serverless');
+      
+      // Configure WebSocket for Neon
+      try {
+        const ws = await import("ws");
+        neonConfig.webSocketConstructor = ws.default;
+        console.log("✅ WebSocket configured for Neon Database");
+      } catch (wsError) {
+        console.warn("⚠️  WebSocket module not available");
+      }
+      
+      const pool = new Pool({ 
+        connectionString: process.env.DATABASE_URL 
+      });
+      
+      db = drizzle(pool, { schema });
+      console.log("✅ Neon Database initialized");
+      
+    } catch (error) {
+      console.error("❌ Failed to initialize Neon Database:", error);
+      throw error;
+    }
+  };
+  
+  // Initialize asynchronously
+  initNeonDB();
+  
 } else {
-  // Для обычного PostgreSQL (VPS)
-  const pg = await import('pg');
-  const { drizzle } = await import('drizzle-orm/node-postgres');
+  // Standard PostgreSQL (VPS environment)
+  console.log("🔄 Initializing PostgreSQL connection...");
   
-  pool = new pg.default.Pool({ connectionString: process.env.DATABASE_URL });
-  db = drizzle({ client: pool, schema });
+  const initPostgresDB = async () => {
+    try {
+      const { Pool } = await import('pg');
+      
+      const pool = new Pool({
+        host: process.env.PGHOST,
+        port: Number(process.env.PGPORT),
+        user: process.env.PGUSER,
+        password: process.env.PGPASSWORD,
+        database: process.env.PGDATABASE,
+      });
+      
+      db = drizzlePg(pool, { schema });
+      console.log("✅ PostgreSQL Database initialized");
+      
+    } catch (error) {
+      console.error("❌ Failed to initialize PostgreSQL:", error);
+      throw error;
+    }
+  };
+  
+  // Initialize asynchronously
+  initPostgresDB();
 }
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
-}
+// Export a promise that resolves when db is ready
+export const getDB = async () => {
+  // Wait for db to be initialized
+  while (!db) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  return db;
+};
 
-export { db, pool };
+// For backward compatibility - will be available after initialization
+export { db };
