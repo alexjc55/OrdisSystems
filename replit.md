@@ -131,6 +131,27 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 5, 2025: FIXED VPS COMPATIBILITY WITH CONDITIONAL WEBSOCKET CONFIGURATION
+  - CRITICAL VPS FIX: Resolved WebSocket configuration issues for VPS deployment compatibility
+    - Added conditional WebSocket import in server/db.ts using USE_NEON environment variable
+    - WebSocket module now only loads when USE_NEON=true (Replit/Neon Database)
+    - Prevents WebSocket connection errors on VPS with regular PostgreSQL
+  - ENVIRONMENT CONFIGURATION: Enhanced environment variable management
+    - .env: USE_NEON=true for current Replit deployment with Neon Database
+    - .env.vps: Template configuration for VPS deployment with USE_NEON=false
+    - .env.example: Updated with new USE_NEON variable documentation
+  - DATABASE COMPATIBILITY: Fixed import.meta.dirname compatibility issues
+    - Created server/path-utils.ts with Node.js version fallback functions
+    - Added vite.config.vps.ts for VPS-compatible build configuration
+    - Comprehensive VPS_COMPATIBILITY_REPORT.md with deployment guidelines
+  - DYNAMIC IMPORT SOLUTION: Implemented proper conditional WebSocket loading
+    - Uses dynamic import("ws") only when USE_NEON=true
+    - Graceful fallback with error handling for missing WebSocket module
+    - Console logging for clear deployment debugging
+  - PRODUCTION READY: Application now works correctly on both Replit and VPS
+    - Replit: Full WebSocket support with Neon Database
+    - VPS: Standard PostgreSQL connection without WebSocket requirements
+    - Zero configuration conflicts between deployment environments
 - July 4, 2025: UI IMPROVEMENTS AND MOBILE FIXES DEPLOYED TO PRODUCTION
   - MODAL BUTTON ALIGNMENT FIX: Fixed product status modal buttons alignment on mobile devices
     - Changed AlertDialogFooter from horizontal flex-row to vertical flex-col sm:flex-row layout
