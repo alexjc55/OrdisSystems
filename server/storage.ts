@@ -1503,12 +1503,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteTheme(id: string): Promise<void> {
-    const db = await getDB();
     await db.delete(themes).where(eq(themes.id, id));
   }
 
   async activateTheme(id: string): Promise<Theme> {
-    const db = await getDB();
     return await db.transaction(async (tx) => {
       // Deactivate all themes
       await tx
