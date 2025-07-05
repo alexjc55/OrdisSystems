@@ -40,19 +40,44 @@ server.listen({ port, host: "0.0.0.0" });
 - Различные пути к проекту
 - Права доступа к файлам
 
-### 4. **База данных**
+### 4. **База данных и WebSocket соединения**
 
-**Replit:** Neon PostgreSQL (serverless)
-**VPS:** Обычный PostgreSQL
+**Replit:** Neon PostgreSQL (serverless) с WebSocket
+**VPS:** Обычный PostgreSQL без WebSocket
 
 **Потенциальные проблемы:**
+- WebSocket соединения не поддерживаются обычным PostgreSQL
 - Различия в строках подключения
 - SSL настройки
 - Пулы соединений
 
+**КРИТИЧЕСКАЯ ПРОБЛЕМА:** В логах VPS видны ошибки WebSocket:
+```
+Error fetching store settings: ErrorEvent {
+  [Symbol(kTarget)]: WebSocket {
+    _readyState: 3,  // CLOSED
+    _closeCode: 1006  // ABNORMAL_CLOSURE
+```
+
 ## ✅ Созданные решения
 
-### 1. **Безопасная замена для import.meta.dirname**
+### 1. **Исправление WebSocket конфигурации**
+
+**Обновлен** `server/db.ts` с условной проверкой:
+```typescript
+// Only configure WebSocket for Neon Database (Replit environment)
+// On VPS with regular PostgreSQL, this should be disabled
+if (process.env.USE_NEON === "true") {
+  neonConfig.webSocketConstructor = ws;
+}
+```
+
+**Добавлены переменные окружения:**
+- `.env`: `USE_NEON=false` (для текущего развертывания)
+- `.env.vps`: Шаблон конфигурации для VPS
+- `.env.example`: Обновлен с новой переменной
+
+### 2. **Безопасная замена для import.meta.dirname**
 
 Создан файл `server/path-utils.ts` с fallback функциями:
 ```typescript
@@ -81,15 +106,22 @@ export function getCurrentDir(importMetaUrl: string): string {
    node --version  # Должно быть >= 20.11
    ```
 
-2. **Если Node.js < 20.11:**
-   - Обновить Node.js до 20.11+
-   - ИЛИ заменить все `import.meta.dirname` на fallback
-
-3. **Настроить переменные окружения:**
+2. **Настроить переменные окружения для VPS:**
    ```bash
+   # Скопировать .env.vps в .env
+   cp .env.vps .env
+   
+   # Обязательно установить:
+   USE_NEON=false
+   DATABASE_URL=postgresql://user:password@localhost:5432/database
    PORT=3000
-   DATABASE_URL=postgresql://...
    NODE_ENV=production
+   ```
+
+3. **Для Replit развертывания:**
+   ```bash
+   USE_NEON=true
+   DATABASE_URL=postgresql://neondb_owner:...@ep-....neon.tech/neondb?sslmode=require
    ```
 
 4. **Настроить Nginx reverse proxy:**

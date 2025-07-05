@@ -3,7 +3,11 @@ import { drizzle } from 'drizzle-orm/neon-serverless';
 import ws from "ws";
 import * as schema from "@shared/schema";
 
-neonConfig.webSocketConstructor = ws;
+// Only configure WebSocket for Neon Database (Replit environment)
+// On VPS with regular PostgreSQL, this should be disabled
+if (process.env.USE_NEON === "true") {
+  neonConfig.webSocketConstructor = ws;
+}
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
