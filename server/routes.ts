@@ -1899,6 +1899,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       }
 
       // Create test notification record
+      const db = await getDB();
       const [notification] = await db.insert(marketingNotifications).values({
         title,
         message,
