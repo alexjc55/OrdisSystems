@@ -1833,6 +1833,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       }
 
       // Check if subscription already exists for this user
+      const db = await getDB();
       const existingSubscription = await db
         .select()
         .from(pushSubscriptions)
