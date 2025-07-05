@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест Push Уведомлений</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #45a049; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>🔔 Тест Push Уведомлений</h1>
+    
+    <div id="status" class="status info">
+        Загрузка...
+    </div>
+    
+    <div id="controls">
+        <button onclick="checkSupport()">Проверить поддержку</button>
+        <button onclick="requestPermission()">Запросить разрешение</button>
+        <button onclick="subscribe()">Подписаться</button>
+        <button onclick="testNotification()">Тест уведомления</button>
+        <button onclick="unsubscribe()">Отписаться</button>
+    </div>
+    
+    <div id="log" style="margin-top: 20px; padding: 10px; background: #f5f5f5; border-radius: 4px;">
+        <h3>Лог:</h3>
+        <div id="logContent"></div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logContent = document.getElementById('logContent');
+            const time = new Date().toLocaleTimeString();
+            logContent.innerHTML += `<div>[${time}] ${message}</div>`;
+            console.log(message);
+        }
+
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.textContent = message;
+        }
+
+        async function checkSupport() {
+            log('Проверка поддержки push уведомлений...');
+            
+            if (!('serviceWorker' in navigator)) {
+                updateStatus('Service Worker не поддерживается', 'error');
+                log('❌ Service Worker не поддерживается');
+                return false;
+            }
+            
+            if (!('PushManager' in window)) {
+                updateStatus('Push уведомления не поддерживаются', 'error');
+                log('❌ Push уведомления не поддерживаются');
+                return false;
+            }
+            
+            updateStatus('Push уведомления поддерживаются', 'success');
+            log('✅ Push уведомления поддерживаются');
+            
+            // Проверим текущее разрешение
+            const permission = Notification.permission;
+            log(`Текущее разрешение: ${permission}`);
+            
+            return true;
+        }
+
+        async function requestPermission() {
+            log('Запрос разрешения на уведомления...');
+            
+            const permission = await Notification.requestPermission();
+            log(`Результат запроса разрешения: ${permission}`);
+            
+            if (permission === 'granted') {
+                updateStatus('Разрешение получено', 'success');
+                log('✅ Разрешение на уведомления получено');
+            } else {
+                updateStatus('Разрешение отклонено', 'error');
+                log('❌ Разрешение на уведомления отклонено');
+            }
+            
+            return permission === 'granted';
+        }
+
+        async function subscribe() {
+            try {
+                log('Начинаем подписку на push уведомления...');
+                
+                // Регистрируем Service Worker
+                const registration = await navigator.serviceWorker.register('/sw.js');
+                log('✅ Service Worker зарегистрирован');
+                
+                // Получаем VAPID ключ с сервера
+                const vapidResponse = await fetch('/api/push/vapid-key');
+                const { publicKey } = await vapidResponse.json();
+                log(`Получен VAPID ключ: ${publicKey.substring(0, 20)}...`);
+                
+                // Подписываемся на push уведомления
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: publicKey
+                });
+                
+                log('✅ Подписка на push уведомления создана');
+                
+                // Отправляем подписку на сервер
+                const response = await fetch('/api/push/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(subscription.toJSON())
+                });
+                
+                if (response.ok) {
+                    updateStatus('Подписка успешно сохранена', 'success');
+                    log('✅ Подписка сохранена на сервере');
+                } else {
+                    const error = await response.text();
+                    updateStatus('Ошибка сохранения подписки', 'error');
+                    log(`❌ Ошибка сохранения подписки: ${error}`);
+                }
+                
+            } catch (error) {
+                updateStatus('Ошибка подписки', 'error');
+                log(`❌ Ошибка подписки: ${error.message}`);
+                console.error(error);
+            }
+        }
+
+        async function testNotification() {
+            try {
+                log('Отправка тестового уведомления...');
+                
+                const response = await fetch('/api/admin/push/test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: '🧪 Тест',
+                        message: 'Это тестовое push уведомление'
+                    })
+                });
+                
+                if (response.ok) {
+                    updateStatus('Тестовое уведомление отправлено', 'success');
+                    log('✅ Тестовое уведомление отправлено');
+                } else {
+                    const error = await response.text();
+                    updateStatus('Ошибка отправки уведомления', 'error');
+                    log(`❌ Ошибка отправки: ${error}`);
+                }
+                
+            } catch (error) {
+                updateStatus('Ошибка отправки', 'error');
+                log(`❌ Ошибка: ${error.message}`);
+            }
+        }
+
+        async function unsubscribe() {
+            try {
+                log('Отписка от push уведомлений...');
+                
+                const registration = await navigator.serviceWorker.getRegistration('/sw.js');
+                if (registration) {
+                    const subscription = await registration.pushManager.getSubscription();
+                    if (subscription) {
+                        await subscription.unsubscribe();
+                        updateStatus('Отписка выполнена', 'success');
+                        log('✅ Отписка от push уведомлений выполнена');
+                    } else {
+                        log('⚠️ Активная подписка не найдена');
+                    }
+                }
+                
+            } catch (error) {
+                updateStatus('Ошибка отписки', 'error');
+                log(`❌ Ошибка отписки: ${error.message}`);
+            }
+        }
+
+        // Автоматическая проверка при загрузке
+        window.addEventListener('load', async () => {
+            await checkSupport();
+        });
+    </script>
+</body>
+</html>
