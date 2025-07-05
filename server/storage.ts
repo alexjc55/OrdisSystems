@@ -32,7 +32,7 @@ import {
   type Theme,
   type InsertTheme,
 } from "@shared/schema";
-import { getDB } from "./db-universal";
+import { db } from "./db";
 import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
 
