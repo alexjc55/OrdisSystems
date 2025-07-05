@@ -366,7 +366,9 @@
       "deleteError": "Error deleting user",
       "passwordSetError": "Error setting password"
     },
-    "deleteUser": "Delete User"
+    "deleteUser": "Delete User",
+    "updated": "User updated",
+    "updateSuccess": "User successfully updated"
   },
   "storeSettings": {
     "basicInfo": "Basic Information",

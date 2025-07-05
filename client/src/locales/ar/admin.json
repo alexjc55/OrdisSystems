@@ -466,7 +466,9 @@
       "deleteError": "خطأ في حذف المستخدم",
       "passwordSetError": "خطأ في تعيين كلمة المرور"
     },
-    "deleteUser": "حذف المستخدم"
+    "deleteUser": "حذف المستخدم",
+    "updated": "تم تحديث المستخدم",
+    "updateSuccess": "تم تحديث المستخدم بنجاح"
   },
   "settings": {
     "basicInfo": "المعلومات الأساسية",

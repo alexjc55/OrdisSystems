@@ -800,7 +800,9 @@
       "deleteError": "שגיאה במחיקת המשתמש",
       "passwordSetError": "שגיאה בהגדרת הסיסמה"
     },
-    "deleteUser": "מחק משתמש"
+    "deleteUser": "מחק משתמש",
+    "updated": "המשתמש עודכן",
+    "updateSuccess": "המשתמש עודכן בהצלחה"
   },
   "orders": {
     "title": "הזמנות",

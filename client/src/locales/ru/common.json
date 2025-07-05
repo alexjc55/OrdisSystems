@@ -258,7 +258,7 @@
     "lastName": "الاسم الأخير",
     "phone": "رقم الهاتف",
     "forgotPassword": "نسيت كلمة المرور؟",
-    "logout": "تسجيل الخروج"
+    "logout": "Выйти"
   },
   "navigation": {
     "home": "Главная",
