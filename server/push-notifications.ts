@@ -267,6 +267,7 @@ export class PushNotificationService {
     notificationId: number;
   }) {
     try {
+      const db = await getDB();
       const subscriptions = await db.select().from(pushSubscriptions);
       console.log(`📡 Attempting to send marketing notification to ${subscriptions.length} subscriptions`);
 

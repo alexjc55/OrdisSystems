@@ -43,7 +43,7 @@ export async function seedDatabase() {
   ];
 
   try {
-    await db.insert(users).values(testUsers);
+    const db = await getDB(); await db.insert(users).values(testUsers);
     console.log(`✅ Created ${testUsers.length} test users`);
   } catch (error) {
     console.log("Test users may already exist, skipping...");
