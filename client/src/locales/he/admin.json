@@ -31,7 +31,9 @@
     "reset": "איפוס",
     "confirm": "אשר",
     "apply": "החל",
-    "error": "שגיאה"
+    "error": "שגיאה",
+    "updated": "עודכן",
+    "updateSuccess": "עודכן בהצלחה"
   },
   "themes": {
     "title": "ניהול עיצובים",
@@ -791,6 +793,8 @@
     "searchPlaceholder": "חיפוש משתמשים...",
     "role": "תפקיד",
     "permissions": "הרשאות",
+    "noUsers": "לא נמצאו משתמשים",
+    "addFirstUser": "הוסף את המשתמש הראשון",
     "notifications": {
       "roleUpdateError": "שגיאה בעדכון התפקיד",
       "deleteError": "שגיאה במחיקת המשתמש",

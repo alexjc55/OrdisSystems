@@ -42,7 +42,9 @@
     "error": "Error",
     "createCategory": "Create Category",
     "saveCategory": "Save Category",
-    "cancelCategory": "Cancel"
+    "cancelCategory": "Cancel",
+    "updated": "Updated",
+    "updateSuccess": "Successfully updated"
   },
   "common": {
     "loading": "Loading...",
@@ -357,6 +359,8 @@
     "searchPlaceholder": "Search users...",
     "role": "Role",
     "permissions": "Permissions",
+    "noUsers": "No users found",
+    "addFirstUser": "Add first user",
     "notifications": {
       "roleUpdateError": "Error updating role",
       "deleteError": "Error deleting user",

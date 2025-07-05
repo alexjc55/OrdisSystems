@@ -22,7 +22,9 @@
     "add": "إضافة",
     "update": "تحديث",
     "create": "إنشاء",
-    "apply": "تطبيق"
+    "apply": "تطبيق",
+    "updated": "تم التحديث",
+    "updateSuccess": "تم التحديث بنجاح"
   },
   "themes": {
     "title": "إدارة القوالب",
@@ -457,6 +459,8 @@
     "role": "الدور",
     "permissions": "الصلاحيات",
     "searchPlaceholder": "البحث في المستخدمين...",
+    "noUsers": "لم يتم العثور على مستخدمين",
+    "addFirstUser": "أضف أول مستخدم",
     "notifications": {
       "roleUpdateError": "خطأ في تحديث الدور",
       "deleteError": "خطأ في حذف المستخدم",

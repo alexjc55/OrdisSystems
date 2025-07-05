@@ -34,7 +34,9 @@
     "error": "Ошибка",
     "createCategory": "Создать категорию",
     "saveCategory": "Сохранить категорию",
-    "cancelCategory": "Отменить"
+    "cancelCategory": "Отменить",
+    "updated": "Обновлено",
+    "updateSuccess": "Успешно обновлено"
   },
   "themes": {
     "title": "Управление темами",
@@ -632,6 +634,8 @@
     "searchPlaceholder": "Поиск пользователей...",
     "role": "Роль",
     "permissions": "Права доступа",
+    "noUsers": "Пользователи не найдены",
+    "addFirstUser": "Добавьте первого пользователя",
     "notifications": {
       "roleUpdateError": "Ошибка при обновлении роли",
       "deleteError": "Ошибка при удалении пользователя",
