@@ -131,6 +131,21 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- July 5, 2025: FIXED VPS DATABASE SCHEMA COMPATIBILITY ISSUE
+  - CRITICAL VPS BUG FIX: Resolved "column logo_url_en of relation store_settings does not exist" error
+    - Root cause: VPS database missing multilingual logo/banner fields required by theme system
+    - Created comprehensive migration script (migrations/add-multilingual-logo-fields.sql)
+    - Added 12 multilingual image fields: logo_url_*, banner_image_url_*, cart_banner_image_*, pwa_icon_*
+    - Created automated fix script (scripts/fix-vps-database.sh) for easy VPS deployment
+    - Generated detailed instructions (VPS-DATABASE-MIGRATION-FIX.md) for manual migration
+  - DATABASE SCHEMA SYNCHRONIZATION: Ensured compatibility between Replit and VPS environments
+    - Verified local database contains all required multilingual fields
+    - Migration uses IF NOT EXISTS clauses for safe execution
+    - Added validation queries to confirm successful migration
+  - DEPLOYMENT READINESS: VPS servers can now be updated to support theme management
+    - Simple execution: Run fix script on VPS to add missing database fields
+    - No data loss: Migration only adds new columns with default values
+    - Backward compatibility: Existing data remains intact during schema updates
 - July 5, 2025: IMPLEMENTED UNIVERSAL DATABASE SYSTEM WITH CONDITIONAL IMPORTS
   - REVOLUTIONARY DATABASE ARCHITECTURE: Complete overhaul of database connection system
     - Created server/db-universal.ts with conditional database import strategy
