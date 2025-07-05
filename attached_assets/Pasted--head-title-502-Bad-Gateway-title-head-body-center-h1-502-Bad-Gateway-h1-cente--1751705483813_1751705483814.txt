@@ -1,0 +1,88 @@
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></cente✅ ИСПРАВЛЕНИЕ ЗАВЕРШЕНО
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ ^C
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ curl -s https://edahouse.ordis.co.il/api/health
+<html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.28.0</center>
+</body>
+</html>
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ ^C
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$ # Проверим, работает ли приложение на порту 5000
+curl -s http://localhost:5000/api/health
+
+# Проверим логи PM2
+pm2 logs edahouse --lines 10 --nostream
+
+# Найдем и обновим FastPanel конфигурацию
+echo "🔍 Поиск конфигурации Nginx..."
+sudo find /etc/nginx -name "*edahouse*" -type f -exec ls -la {} \;
+
+# Посмотрим содержимое конфигурации
+FASTPANEL_CONFIG=$(sudo find /etc/nginx -name "*edahouse*" -type f | grep -v disabled | head -1)
+if [ -n "$FASTPANEL_CONFIG" ]; then
+    echo "Найден активный конфиг: $FASTPANEL_CONFIG"
+    sudo cat "$FASTPANEL_CONFIG" | grep -A5 -B5 proxy_pass
+else
+    echo "Ищем в sites-enabled:"
+    sudo find /etc/nginx/sites-enabled -name "*edahouse*" -type f -exec cat {} \;
+fi
+
+# Обновим порт в конфигурации
+echo "🔧 Обновление порта в Nginx..."
+sudo find /etc/nginx -name "*edahouse*" -type f -not -path "*.disabled" -exec sed -i 's/proxy_pass.*:3000/proxy_pass http:\/\/127.0.0.1:5000/g' {} \;
+
+# Проверим и перезагрузим Nginx
+sudo nginx -t && sudo systemctl reload nginx
+
+# Проверим результат
+echo "✅ Проверка после обновления:"
+sleep 5
+curl -s https://edahouse.ordis.co.il/api/health
+[TAILING] Tailing last 10 lines for [edahouse] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/out-0.log last 10 lines:
+0|edahouse | 2025-07-05T02:27:21: 2:27:21 AM [express] GET /api/settings 500 in 13ms :: {"message":"Failed to fetch store settings"}
+0|edahouse | 2025-07-05T02:27:21: 2:27:21 AM [express] GET /api/products 500 in 12ms :: {"message":"Failed to fetch products"}
+0|edahouse | 2025-07-05T02:27:21: 2:27:21 AM [express] GET /api/categories 500 in 11ms :: {"message":"Failed to fetch categories"}
+0|edahouse | 2025-07-05T02:27:21: 2:27:21 AM [express] GET /api/favicon 301 in 11ms
+0|edahouse | 2025-07-05T02:27:26: 2:27:26 AM [express] GET /api/auth/user 401 in 2ms :: {"message":"Unauthorized"}
+0|edahouse | 2025-07-05T02:27:26: 2:27:26 AM [express] GET /api/settings 500 in 8ms :: {"message":"Failed to fetch store settings"}
+0|edahouse | 2025-07-05T02:27:26: 2:27:26 AM [express] GET /api/products 500 in 6ms :: {"message":"Failed to fetch products"}
+0|edahouse | 2025-07-05T02:27:26: 2:27:26 AM [express] GET /api/categories 500 in 6ms :: {"message":"Failed to fetch categories"}
+0|edahouse | 2025-07-05T02:27:26: 2:27:26 AM [express] GET /api/favicon 301 in 15ms
+0|edahouse | 2025-07-05T02:27:26: 2:27:26 AM [express] GET /api/favicon 301 in 11ms
+
+/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/logs/err-0.log last 10 lines:
+0|edahouse |     at async importModuleDynamicallyWrapper (node:internal/vm/module:432:15)
+0|edahouse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|edahouse | file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/drizzle-zod/index.mjs:2
+0|edahouse | import { isTable, getTableColumns, getViewSelectedFields, is, Column, SQL, isView } from 'drizzle-orm';
+0|edahouse |                                    ^^^^^^^^^^^^^^^^^^^^^
+0|edahouse | SyntaxError: The requested module 'drizzle-orm' does not provide an export named 'getViewSelectedFields'
+0|edahouse |     at ModuleJob._instantiate (node:internal/modules/esm/module_job:123:21)
+0|edahouse |     at async ModuleJob.run (node:internal/modules/esm/module_job:191:5)
+0|edahouse |     at async ModuleLoader.import (node:internal/modules/esm/loader:337:24)
+0|edahouse |     at async importModuleDynamicallyWrapper (node:internal/vm/module:432:15)
+
+🔍 Поиск конфигурации Nginx...
+-rw-r--r-- 1 root root 0 Jul  4 04:06 /etc/nginx/fastpanel2-sites/ordis_co_il_usr/edahouse.ordis.co.il.includes
+-rw-r--r-- 1 root root 727 Jul  5 11:37 /etc/nginx/sites-available/edahouse.ordis.co.il.disabled
+-rw-r--r-- 1 root root 1862 Jul  5 11:47 /etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf
+-rw-r--r-- 1 root root 1862 Jul  5 01:52 /etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup2
+-rw-r--r-- 1 root root 1862 Jul  3 02:04 /etc/nginx/fastpanel2-available/ordis_co_il_usr/edahouse.ordis.co.il.conf.backup
+Найден активный конфиг: /etc/nginx/fastpanel2-sites/ordis_co_il_usr/edahouse.ordis.co.il.includes
+🔧 Обновление порта в Nginx...
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+✅ Проверка после обновления:
+<html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.28.0</center>
+</body>
+</html>
+ordis_co_il_usr@vxaorzmkzo:~/www/edahouse.ordis.co.il$
