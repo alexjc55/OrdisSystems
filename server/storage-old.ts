@@ -238,41 +238,29 @@ export class DatabaseStorage implements IStorage {
   // Category operations
   async getCategories(includeInactive = false): Promise<CategoryWithCount[]> {
     const db = await getDB();
-    
-    // Get basic categories first - simplified query to avoid Drizzle ORM parsing issues
-    let categoriesData;
-    if (includeInactive) {
-      categoriesData = await db
-        .select()
-        .from(categories)
-        .orderBy(categories.sortOrder, categories.name);
-    } else {
-      categoriesData = await db
-        .select()
-        .from(categories)
-        .where(eq(categories.isActive, true))
-        .orderBy(categories.sortOrder, categories.name);
+    const query = db
+      .select({
+        id: categories.id,
+        name: categories.name,
+        name_en: categories.name_en,
+        name_he: categories.name_he,
+        name_ar: categories.name_ar,
+        icon: categories.icon,
+        sortOrder: categories.sortOrder,
+        isActive: categories.isActive,
+        productCount: count(products.id)
+      })
+      .from(categories)
+      .leftJoin(productCategories, eq(categories.id, productCategories.categoryId))
+      .leftJoin(products, and(eq(productCategories.productId, products.id), eq(products.isActive, true)))
+      .groupBy(categories.id, categories.name, categories.name_en, categories.name_he, categories.name_ar, categories.icon, categories.sortOrder, categories.isActive)
+      .orderBy(categories.sortOrder, categories.name);
+
+    if (!includeInactive) {
+      query.where(eq(categories.isActive, true));
     }
 
-    // Add product count for each category
-    const categoriesWithCount = [];
-    for (const category of categoriesData) {
-      const [productCount] = await db
-        .select({ count: count() })
-        .from(productCategories)
-        .innerJoin(products, eq(productCategories.productId, products.id))
-        .where(and(
-          eq(productCategories.categoryId, category.id),
-          eq(products.isActive, true)
-        ));
-
-      categoriesWithCount.push({
-        ...category,
-        productCount: productCount?.count || 0
-      });
-    }
-
-    return categoriesWithCount;
+    return await query;
   }
 
   async getCategoryById(id: number): Promise<Category | undefined> {
@@ -326,8 +314,9 @@ export class DatabaseStorage implements IStorage {
         description_he: products.description_he,
         description_ar: products.description_ar,
         price: products.price,
-        imageUrl: products.imageUrl,
+        image: products.image,
         unit: products.unit,
+        weight: products.weight,
         isActive: products.isActive,
         availabilityStatus: products.availabilityStatus,
         categoryIds: sql<number[]>`array_agg(${productCategories.categoryId})`.as('categoryIds'),
@@ -339,7 +328,7 @@ export class DatabaseStorage implements IStorage {
               'name_en', ${categories.name_en},
               'name_he', ${categories.name_he},
               'name_ar', ${categories.name_ar},
-              'icon', ${categories.icon},
+              'image', ${categories.image},
               'sortOrder', ${categories.sortOrder},
               'isActive', ${categories.isActive}
             )
@@ -382,8 +371,9 @@ export class DatabaseStorage implements IStorage {
         description_he: products.description_he,
         description_ar: products.description_ar,
         price: products.price,
-        imageUrl: products.imageUrl,
+        image: products.image,
         unit: products.unit,
+        weight: products.weight,
         isActive: products.isActive,
         availabilityStatus: products.availabilityStatus,
         categoryIds: sql<number[]>`array_agg(${productCategories.categoryId})`.as('categoryIds'),
@@ -395,7 +385,7 @@ export class DatabaseStorage implements IStorage {
               'name_en', ${categories.name_en},
               'name_he', ${categories.name_he},
               'name_ar', ${categories.name_ar},
-              'icon', ${categories.icon},
+              'image', ${categories.image},
               'sortOrder', ${categories.sortOrder},
               'isActive', ${categories.isActive}
             )
@@ -484,8 +474,9 @@ export class DatabaseStorage implements IStorage {
         description_he: products.description_he,
         description_ar: products.description_ar,
         price: products.price,
-        imageUrl: products.imageUrl,
+        image: products.image,
         unit: products.unit,
+        weight: products.weight,
         isActive: products.isActive,
         availabilityStatus: products.availabilityStatus,
         categoryIds: sql<number[]>`array_agg(${productCategories.categoryId})`.as('categoryIds'),
@@ -497,7 +488,7 @@ export class DatabaseStorage implements IStorage {
               'name_en', ${categories.name_en},
               'name_he', ${categories.name_he},
               'name_ar', ${categories.name_ar},
-              'icon', ${categories.icon},
+              'image', ${categories.image},
               'sortOrder', ${categories.sortOrder},
               'isActive', ${categories.isActive}
             )
@@ -586,8 +577,9 @@ export class DatabaseStorage implements IStorage {
         description_he: products.description_he,
         description_ar: products.description_ar,
         price: products.price,
-        imageUrl: products.imageUrl,
+        image: products.image,
         unit: products.unit,
+        weight: products.weight,
         isActive: products.isActive,
         availabilityStatus: products.availabilityStatus,
         categoryIds: sql<number[]>`array_agg(${productCategories.categoryId})`.as('categoryIds'),
@@ -599,7 +591,7 @@ export class DatabaseStorage implements IStorage {
               'name_en', ${categories.name_en},
               'name_he', ${categories.name_he},
               'name_ar', ${categories.name_ar},
-              'icon', ${categories.icon},
+              'image', ${categories.image},
               'sortOrder', ${categories.sortOrder},
               'isActive', ${categories.isActive}
             )
@@ -646,9 +638,11 @@ export class DatabaseStorage implements IStorage {
         paymentMethod: orders.paymentMethod,
         deliveryDate: orders.deliveryDate,
         deliveryTime: orders.deliveryTime,
-        customerNotes: orders.customerNotes,
+        customerName: orders.customerName,
+        customerEmail: orders.customerEmail,
         customerPhone: orders.customerPhone,
         deliveryAddress: orders.deliveryAddress,
+        notes: orders.notes,
         cancellationReason: orders.cancellationReason,
         createdAt: orders.createdAt,
         updatedAt: orders.updatedAt,
@@ -658,9 +652,12 @@ export class DatabaseStorage implements IStorage {
               'id', ${orderItems.id},
               'orderId', ${orderItems.orderId},
               'productId', ${orderItems.productId},
+              'productName', ${orderItems.productName},
+              'productPrice', ${orderItems.productPrice},
               'quantity', ${orderItems.quantity},
-              'pricePerKg', ${orderItems.pricePerKg},
-              'totalPrice', ${orderItems.totalPrice}
+              'unit', ${orderItems.unit},
+              'totalPrice', ${orderItems.totalPrice},
+              'discountAmount', ${orderItems.discountAmount}
             )
           )
         `.as('items')
@@ -697,9 +694,11 @@ export class DatabaseStorage implements IStorage {
         paymentMethod: orders.paymentMethod,
         deliveryDate: orders.deliveryDate,
         deliveryTime: orders.deliveryTime,
-        customerNotes: orders.customerNotes,
+        customerName: orders.customerName,
+        customerEmail: orders.customerEmail,
         customerPhone: orders.customerPhone,
         deliveryAddress: orders.deliveryAddress,
+        notes: orders.notes,
         cancellationReason: orders.cancellationReason,
         createdAt: orders.createdAt,
         updatedAt: orders.updatedAt,
@@ -709,9 +708,12 @@ export class DatabaseStorage implements IStorage {
               'id', ${orderItems.id},
               'orderId', ${orderItems.orderId},
               'productId', ${orderItems.productId},
+              'productName', ${orderItems.productName},
+              'productPrice', ${orderItems.productPrice},
               'quantity', ${orderItems.quantity},
-              'pricePerKg', ${orderItems.pricePerKg},
-              'totalPrice', ${orderItems.totalPrice}
+              'unit', ${orderItems.unit},
+              'totalPrice', ${orderItems.totalPrice},
+              'discountAmount', ${orderItems.discountAmount}
             )
           )
         `.as('items')
@@ -725,6 +727,8 @@ export class DatabaseStorage implements IStorage {
     if (search) {
       conditions.push(
         or(
+          like(orders.customerName, `%${search}%`),
+          like(orders.customerEmail, `%${search}%`),
           like(orders.customerPhone, `%${search}%`),
           sql`${orders.id}::text LIKE ${`%${search}%`}`
         )
@@ -783,9 +787,11 @@ export class DatabaseStorage implements IStorage {
         paymentMethod: orders.paymentMethod,
         deliveryDate: orders.deliveryDate,
         deliveryTime: orders.deliveryTime,
-        customerNotes: orders.customerNotes,
+        customerName: orders.customerName,
+        customerEmail: orders.customerEmail,
         customerPhone: orders.customerPhone,
         deliveryAddress: orders.deliveryAddress,
+        notes: orders.notes,
         cancellationReason: orders.cancellationReason,
         createdAt: orders.createdAt,
         updatedAt: orders.updatedAt,
@@ -795,9 +801,12 @@ export class DatabaseStorage implements IStorage {
               'id', ${orderItems.id},
               'orderId', ${orderItems.orderId},
               'productId', ${orderItems.productId},
+              'productName', ${orderItems.productName},
+              'productPrice', ${orderItems.productPrice},
               'quantity', ${orderItems.quantity},
-              'pricePerKg', ${orderItems.pricePerKg},
-              'totalPrice', ${orderItems.totalPrice}
+              'unit', ${orderItems.unit},
+              'totalPrice', ${orderItems.totalPrice},
+              'discountAmount', ${orderItems.discountAmount}
             )
           )
         `.as('items')
@@ -818,7 +827,7 @@ export class DatabaseStorage implements IStorage {
 
   async createOrder(order: InsertOrder, items: InsertOrderItem[]): Promise<Order> {
     const db = await getDB();
-    return await db.transaction(async (tx: any) => {
+    return await db.transaction(async (tx) => {
       const [newOrder] = await tx.insert(orders).values(order).returning();
       
       const orderItemsWithOrderId = items.map(item => ({
@@ -852,7 +861,7 @@ export class DatabaseStorage implements IStorage {
 
   async updateOrderItems(orderId: number, items: any[]): Promise<void> {
     const db = await getDB();
-    await db.transaction(async (tx: any) => {
+    await db.transaction(async (tx) => {
       // Delete existing items
       await tx.delete(orderItems).where(eq(orderItems.orderId, orderId));
       
@@ -1114,7 +1123,7 @@ export class DatabaseStorage implements IStorage {
 
   async activateTheme(id: string): Promise<Theme> {
     const db = await getDB();
-    return await db.transaction(async (tx: any) => {
+    return await db.transaction(async (tx) => {
       // Deactivate all themes
       await tx.update(themes).set({ isActive: false });
       
