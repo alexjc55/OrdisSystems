@@ -60,6 +60,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/health", async (req, res) => {
     try {
       // Check database connection
+      const db = await getDB();
       await db.execute(sql`SELECT 1`);
       
       // Check if uploads directory exists
@@ -1649,6 +1650,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       const theme = await storage.activateTheme(id);
       
       // Sync the active theme's headerStyle and banner button settings with store settings via SQL
+      const db = await getDB();
       if (theme.headerStyle) {
         await db.execute(sql.raw(`UPDATE store_settings SET header_style = '${theme.headerStyle}' WHERE id = 1`));
       }
