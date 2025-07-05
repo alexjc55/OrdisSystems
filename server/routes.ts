@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { getDB } from "./db-universal";
+import { getDB } from "./db";
 import { setupAuth, isAuthenticated } from "./auth";
 import bcrypt from "bcryptjs";
 import { insertCategorySchema, insertProductSchema, insertOrderSchema, insertStoreSettingsSchema, updateStoreSettingsSchema, insertThemeSchema, updateThemeSchema, pushSubscriptions, marketingNotifications } from "@shared/schema";
@@ -1619,6 +1619,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         
         // Execute the update if there are fields to update
         if (updateFields.length > 0) {
+          const db = await getDB();
           await db.execute(sql.raw(`UPDATE store_settings SET ${updateFields.join(', ')} WHERE id = 1`));
           // Add cache invalidation header to force refresh of store settings
           res.set('X-Settings-Updated', 'true');
