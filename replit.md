@@ -131,6 +131,22 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- January 6, 2025: ✅ COMPLETED CRITICAL CHECKOUT VALIDATION AND TRANSLATION CLEANUP
+  - CHECKOUT VALIDATION FIX: Fixed missing validation for future-order products in registration flow
+    - Added validateDeliveryDateForFutureOrders() call in registerAndOrderMutation
+    - Previously only guest and authenticated user flows had validation
+    - Registration + order flow now properly validates delivery dates for tomorrow items
+    - All three checkout flows now consistently validate future-order restrictions
+  - TRANSLATION MESSAGE IMPROVEMENTS: Enhanced error messages for better user experience
+    - Changed "завтра" to "другой день" (tomorrow → another day) in all 4 languages
+    - Updated futureOrderSolution translation key across RU/EN/HE/AR language files
+    - Error messages now suggest changing date to "another day" instead of specifically "tomorrow"
+    - More flexible and user-friendly delivery date guidance
+  - RUSSIAN LANGUAGE FILE CLEANUP: Removed all Arabic text corruption from ru/common.json
+    - Fixed 20+ translation keys that contained Arabic text instead of Russian
+    - Restored proper Russian translations for checkout, auth, and general interface elements
+    - Complete translation integrity restored for Russian language interface
+    - All language files now contain only appropriate language content
 - July 6, 2025: ✅ COMPLETED TRANSLATION FIXES AND REMOTE SERVER DATABASE MIGRATION PREPARATION
   - TRANSLATION SYSTEM FIXES: Resolved all remaining translation key display issues
     - Fixed profile page logout button: Removed corrupted Arabic text from Russian "logout" translation
