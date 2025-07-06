@@ -56,6 +56,7 @@ import { insertStoreSettingsSchema, type StoreSettings, type CategoryWithCount }
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
 import { PushNotificationsPanel } from "@/components/PushNotificationsPanel";
+import OrderModal from "@/components/OrderModal";
 import {
   DndContext,
   closestCenter,
@@ -2304,6 +2305,11 @@ export default function AdminDashboard() {
     setIsOrderFormOpen(false);
     setEditingOrder(null);
   };
+
+  // Add effect to monitor state changes
+  useEffect(() => {
+    console.log('🔍 Modal state changed:', { isOrderFormOpen, editingOrder: editingOrder?.id });
+  }, [isOrderFormOpen, editingOrder]);
   
   // Kanban scroll container ref
   const kanbanRef = useRef<HTMLDivElement>(null);
@@ -4149,8 +4155,10 @@ export default function AdminDashboard() {
                                       <span>#{order.id}</span>
                                       <button
                                         onClick={() => {
+                                          console.log('🚀 Opening modal for order:', order.id);
                                           setEditingOrder(order);
                                           setIsOrderFormOpen(true);
+                                          console.log('🚀 Modal states set - order:', order.id, 'open: true');
                                         }}
                                         className="inline-flex items-center justify-center h-10 w-10 sm:h-8 sm:w-8 rounded-md bg-primary hover:bg-primary text-white border-2 border-orange-600 shadow-md transition-colors"
                                         title={adminT('orders.viewDetails')}
@@ -4824,57 +4832,14 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
 
-            {/* Order Details/Edit Dialog */}
-{isOrderFormOpen && (
-              <div 
-                className="fixed inset-0 z-50 flex items-center justify-center"
-                style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-                onClick={(e) => {
-                  if (e.target === e.currentTarget) {
-                    console.log('🔥 Backdrop clicked - closing modal');
-                    closeOrderModal();
-                  }
-                }}
-              >
-                <div 
-                  className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-y-auto w-full mx-4"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="p-6">
-                    <div className="border-b pb-4 mb-4 flex justify-between items-center">
-                      <div>
-                        <h2 className="text-lg font-semibold">
-                          {editingOrder ? `${adminT('orders.order')} #${editingOrder.id}` : adminT('orders.newOrder')}
-                        </h2>
-                        <p className="text-sm text-gray-600">
-                          {editingOrder ? adminT('orders.editOrderDescription') : adminT('orders.createOrderDescription')}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => {
-                          console.log('🔥 X button clicked - closing modal');
-                          closeOrderModal();
-                        }}
-                        className="text-gray-500 hover:text-gray-700 text-xl font-bold w-8 h-8 flex items-center justify-center"
-                      >
-                        ×
-                      </button>
-                    </div>
-                    
-                    {editingOrder && (
-                      <OrderEditForm 
-                        order={editingOrder}
-                        onClose={closeOrderModal}
-                        onSave={closeOrderModal}
-                        searchPlaceholder={adminT('common.searchProducts')}
-                        adminT={adminT}
-                        isRTL={isRTL}
-                      />
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Order Modal - Isolated Component */}
+            <OrderModal
+              isOpen={isOrderFormOpen}
+              order={editingOrder}
+              onClose={closeOrderModal}
+              adminT={adminT}
+              isRTL={isRTL}
+            />
           </TabsContent>
           )}
 
