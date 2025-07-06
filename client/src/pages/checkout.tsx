@@ -381,6 +381,13 @@ export default function Checkout() {
         }
       }
 
+      // Validate delivery date for future order products before creating order
+      const deliveryDateStr = selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "";
+      const validation = validateDeliveryDateForFutureOrders(deliveryDateStr);
+      if (!validation.valid) {
+        throw new Error(validation.message);
+      }
+
       // Then create the order with user ID
       const subtotal = getTotalPrice();
       const deliveryFeeAmount = calculateDeliveryFee(
