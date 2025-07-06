@@ -2980,13 +2980,7 @@ export default function AdminDashboard() {
       const response = await apiRequest('PUT', '/api/settings', cleanedData);
       console.log("Settings response:", response);
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Settings save error:", errorText);
-        throw new Error(`Failed to save settings: ${response.status} ${response.statusText}`);
-      }
-      
-      return await response.json();
+      return response;
     },
     onSuccess: (newData) => {
       // Update cache with the new data returned from the server

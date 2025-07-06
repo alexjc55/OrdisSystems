@@ -1,0 +1,24 @@
+Saving store settings: 
+Object { storeName: "eDAHouse", welcomeTitle: "О нашей еде", storeDescription: "Заказывай свежие блюда на развес — от повседневных обедов до праздничных угощений. Быстро, удобно и по-домашнему вкусно. Попробуй!", logoUrl: "/uploads/images/image-1751756174833-500216572.png", bannerImage: "/uploads/images/image-1750201280286-954389557.jpg", contactPhone: "+972-50-123-4567", contactEmail: "info@edahouse.com", address: "", workingHours: {…}, deliveryInfo: "Доставка осуществляется ежедневно с 9:00 до 21:00. Минимальная сумма заказа для доставки - 500 рублей.", … }
+admin-dashboard.tsx:2962:15
+Cleaned data: 
+Object { storeName: "eDAHouse", welcomeTitle: "О нашей еде", storeDescription: "Заказывай свежие блюда на развес — от повседневных обедов до праздничных угощений. Быстро, удобно и по-домашнему вкусно. Попробуй!", logoUrl: "/uploads/images/image-1751756174833-500216572.png", bannerImage: "/uploads/images/image-1750201280286-954389557.jpg", contactPhone: "+972-50-123-4567", contactEmail: "info@edahouse.com", address: "", workingHours: {…}, deliveryInfo: "Доставка осуществляется ежедневно с 9:00 до 21:00. Минимальная сумма заказа для доставки - 500 рублей.", … }
+admin-dashboard.tsx:2978:15
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+Settings response: 
+Object { id: 1, storeName: "eDAHouse", welcomeTitle: "О нашей еде", storeDescription: "Заказывай свежие блюда на развес — от повседневных обедов до праздничных угощений. Быстро, удобно и по-домашнему вкусно. Попробуй!", logoUrl: "/uploads/images/image-1751756174833-500216572.png", bannerImage: "/uploads/images/image-1750201280286-954389557.jpg", contactPhone: "+972-50-123-4567", contactEmail: "info@edahouse.com", address: "", workingHours: {…}, … }
+admin-dashboard.tsx:2981:15
+Store settings update error: TypeError: response.text is not a function
+    mutationFn admin-dashboard.tsx:2984
+    fn mutation.ts:170
+    run retryer.ts:153
+    start retryer.ts:218
+    execute mutation.ts:208
+    mutate mutationObserver.ts:125
+    mutate useMutation.ts:52
+    onSubmit admin-dashboard.tsx:5217
+    onSubmit admin-dashboard.tsx:6923
+    handleSubmit createFormControl.ts:1247
+    React 15
