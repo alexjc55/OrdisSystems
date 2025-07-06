@@ -112,7 +112,7 @@
     "subtotal": "Subtotal",
     "orderDiscount": "Order Discount",
     "orderComments": "Order Comments",
-    "email": "البريد الإلكتروني"
+    "email": "Email"
   },
   "language": "Language",
   "chooseLanguage": "Choose Language",
@@ -310,10 +310,10 @@
     "view": "View",
     "remove": "Remove",
     "search": "Search",
-    "previous": "السابق",
-    "continue": "متابعة",
-    "loading": "جاري التحميل...",
-    "retry": "إعادة المحاولة"
+    "previous": "Previous",
+    "continue": "Continue",
+    "loading": "Loading...",
+    "retry": "Retry"
   },
   "forms": {
     "required": "Required field",
@@ -354,14 +354,14 @@
     "cancelled": "Cancelled",
     "available": "Available",
     "unavailable": "Unavailable",
-    "active": "نشط",
-    "inactive": "غير نشط",
-    "enabled": "مفعل",
-    "disabled": "معطل",
-    "inStock": "متوفر",
-    "outOfStock": "غير متوفر",
-    "approved": "موافق عليه",
-    "rejected": "مرفوض"
+    "active": "Active",
+    "inactive": "Inactive",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "approved": "Approved",
+    "rejected": "Rejected"
   },
   "messages": {
     "noData": "No data",
@@ -371,14 +371,14 @@
     "operationCompleted": "Operation completed",
     "confirmDelete": "Are you sure you want to delete?",
     "unsavedChanges": "You have unsaved changes",
-    "success": "نجح",
-    "error": "خطأ",
-    "warning": "تحذير",
-    "info": "معلومات",
-    "loading": "جاري التحميل...",
-    "tryAgain": "حاول مرة أخرى",
-    "somethingWentWrong": "حدث خطأ ما",
-    "pleaseWait": "يرجى الانتظار"
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Information",
+    "loading": "Loading...",
+    "tryAgain": "Try Again",
+    "somethingWentWrong": "Something went wrong",
+    "pleaseWait": "Please wait"
   },
   "validation": {
     "firstNameMinLength": "First name must be at least 2 characters",
@@ -392,10 +392,10 @@
     "deliveryDateRequired": "Select delivery date",
     "deliveryTimeRequired": "Select delivery time",
     "paymentMethodRequired": "Select payment method",
-    "required": "هذا الحقل مطلوب",
-    "email": "يرجى إدخال بريد إلكتروني صحيح",
-    "minLength": "يجب أن يكون {{min}} أحرف على الأقل",
-    "maxLength": "لا يجب أن يتجاوز {{max}} حرف"
+    "required": "This field is required",
+    "email": "Please enter a valid email",
+    "minLength": "Must be at least {{min}} characters",
+    "maxLength": "Must not exceed {{max}} characters"
   },
   "errors": {
     "general": "An error occurred",
