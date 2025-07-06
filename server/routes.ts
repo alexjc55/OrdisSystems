@@ -814,7 +814,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       const orderItems = items.map((item: any) => ({
         productId: item.productId,
         quantity: item.quantity.toString(),
-        pricePerKg: item.pricePerUnit.toString(),
+        pricePerKg: item.pricePerKg.toString(),
         totalPrice: item.totalPrice.toString(),
         orderId: 0
       }));
