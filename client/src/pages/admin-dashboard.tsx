@@ -56,7 +56,6 @@ import { insertStoreSettingsSchema, type StoreSettings, type CategoryWithCount }
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
 import { PushNotificationsPanel } from "@/components/PushNotificationsPanel";
-import OrderModal from "@/components/OrderModal";
 import {
   DndContext,
   closestCenter,
@@ -650,22 +649,8 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
   );
 }
 
-// OrderEditForm component  
-function OrderEditForm({ 
-  order, 
-  onClose, 
-  onSave, 
-  searchPlaceholder, 
-  adminT, 
-  isRTL 
-}: { 
-  order: any, 
-  onClose: () => void, 
-  onSave: () => void, 
-  searchPlaceholder: string, 
-  adminT: (key: string) => string, 
-  isRTL: boolean 
-}) {
+// OrderEditForm component
+function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRTL }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { i18n } = useTranslation();
@@ -765,7 +750,6 @@ function OrderEditForm({
       return await apiRequest("PATCH", `/api/orders/${order.id}`, data);
     },
     onSuccess: () => {
-      console.log('✅ Order update successful - calling onSave to close modal');
       toast({
         title: adminT('orders.updated'),
         description: adminT('orders.updateSuccess'),
@@ -1873,17 +1857,11 @@ function OrderEditForm({
 
       {/* Actions */}
       <div className="flex justify-center gap-3 pt-4 border-t">
-        <Button variant="outline" onClick={() => {
-          console.log('Cancel button clicked - closing modal');
-          onClose();
-        }}>
+        <Button variant="outline" onClick={onClose}>
           {adminT('actions.cancel')}
         </Button>
         <Button 
-          onClick={() => {
-            console.log('Save button clicked - saving order');
-            handleSave();
-          }}
+          onClick={handleSave}
           disabled={updateOrderMutation.isPending}
           variant="success"
         >
@@ -2298,18 +2276,6 @@ export default function AdminDashboard() {
   const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
   const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<any>(null);
-  
-  // Manual close function - only way to close modal
-  const closeOrderModal = () => {
-    console.log('🔥 Manual close triggered');
-    setIsOrderFormOpen(false);
-    setEditingOrder(null);
-  };
-
-  // Add effect to monitor state changes
-  useEffect(() => {
-    console.log('🔍 Modal state changed:', { isOrderFormOpen, editingOrder: editingOrder?.id });
-  }, [isOrderFormOpen, editingOrder]);
   
   // Kanban scroll container ref
   const kanbanRef = useRef<HTMLDivElement>(null);
@@ -4155,10 +4121,8 @@ export default function AdminDashboard() {
                                       <span>#{order.id}</span>
                                       <button
                                         onClick={() => {
-                                          console.log('🚀 Opening modal for order:', order.id);
                                           setEditingOrder(order);
                                           setIsOrderFormOpen(true);
-                                          console.log('🚀 Modal states set - order:', order.id, 'open: true');
                                         }}
                                         className="inline-flex items-center justify-center h-10 w-10 sm:h-8 sm:w-8 rounded-md bg-primary hover:bg-primary text-white border-2 border-orange-600 shadow-md transition-colors"
                                         title={adminT('orders.viewDetails')}
@@ -4832,14 +4796,37 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
 
-            {/* Order Modal - Isolated Component */}
-            <OrderModal
-              isOpen={isOrderFormOpen}
-              order={editingOrder}
-              onClose={closeOrderModal}
-              adminT={adminT}
-              isRTL={isRTL}
-            />
+            {/* Order Details/Edit Dialog */}
+            <Dialog open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen}>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-lg font-semibold">
+                    {editingOrder ? `${adminT('orders.order')} #${editingOrder.id}` : adminT('orders.newOrder')}
+                  </DialogTitle>
+                  <DialogDescription>
+                    {editingOrder ? adminT('orders.editOrderDescription') : adminT('orders.createOrderDescription')}
+                  </DialogDescription>
+                </DialogHeader>
+                
+                {editingOrder && (
+                  <OrderEditForm 
+                    order={editingOrder}
+                    onClose={() => {
+                      setIsOrderFormOpen(false);
+                      setEditingOrder(null);
+                    }}
+                    onSave={() => {
+                      setIsOrderFormOpen(false);
+                      setEditingOrder(null);
+                      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
+                    }}
+                    searchPlaceholder={adminT('common.searchProducts')}
+                    adminT={adminT}
+                    isRTL={isRTL}
+                  />
+                )}
+              </DialogContent>
+            </Dialog>
           </TabsContent>
           )}
 
