@@ -21,7 +21,11 @@ import { getLocalizedField, type SupportedLanguage } from "@shared/localization"
 import { X, Plus, Minus, Trash2, CreditCard, Clock, MapPin, Phone, User } from "lucide-react";
 
 // Calculate delivery fee based on order total and free delivery threshold
-const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number) => {
+const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number | null) => {
+  // If no free delivery threshold is set, always charge delivery fee
+  if (!freeDeliveryFrom || freeDeliveryFrom <= 0) {
+    return deliveryFee;
+  }
   return orderTotal >= freeDeliveryFrom ? 0 : deliveryFee;
 };
 
@@ -102,7 +106,7 @@ export default function CartOverlay() {
   const deliveryFeeAmount = calculateDeliveryFee(
     subtotal, 
     parseFloat(storeSettings?.deliveryFee || "15.00"), 
-    parseFloat(storeSettings?.freeDeliveryFrom || "50.00")
+    storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null
   );
   const total = subtotal + deliveryFeeAmount;
 

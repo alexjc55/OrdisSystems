@@ -308,7 +308,7 @@ export default function Checkout() {
       const deliveryFeeAmount = calculateDeliveryFee(
         subtotal, 
         parseFloat(storeSettings?.deliveryFee || "15.00"), 
-        parseFloat(storeSettings?.freeDeliveryFrom || "50.00")
+        storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null
       );
       const total = subtotal + deliveryFeeAmount;
 
@@ -386,7 +386,7 @@ export default function Checkout() {
       const deliveryFeeAmount = calculateDeliveryFee(
         subtotal, 
         parseFloat(storeSettings?.deliveryFee || "15.00"), 
-        parseFloat(storeSettings?.freeDeliveryFrom || "50.00")
+        storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null
       );
       const total = subtotal + deliveryFeeAmount;
 
@@ -462,7 +462,7 @@ export default function Checkout() {
       const deliveryFeeAmount = calculateDeliveryFee(
         subtotal, 
         parseFloat(storeSettings?.deliveryFee || "15.00"), 
-        parseFloat(storeSettings?.freeDeliveryFrom || "50.00")
+        storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null
       );
       const total = subtotal + deliveryFeeAmount;
 

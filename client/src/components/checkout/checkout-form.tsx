@@ -128,9 +128,10 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
   };
 
   const totalAmount = getTotalPrice();
-  const deliveryFeeAmount = totalAmount >= parseFloat(storeSettings?.freeDeliveryFrom || "50") 
-    ? 0 
-    : parseFloat(storeSettings?.deliveryFee || "15");
+  const freeDeliveryThreshold = storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null;
+  const deliveryFeeAmount = (!freeDeliveryThreshold || freeDeliveryThreshold <= 0 || totalAmount < freeDeliveryThreshold)
+    ? parseFloat(storeSettings?.deliveryFee || "15")
+    : 0;
   const finalTotal = totalAmount + deliveryFeeAmount;
 
   const handleSubmit = () => {
