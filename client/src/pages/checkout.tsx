@@ -199,7 +199,7 @@ export default function Checkout() {
     if (!deliveryDate) {
       return {
         valid: false,
-        message: "В вашем заказе есть товары доступные для заказа на другой день. Необходимо обязательно указать желаемый день и время доставки."
+        message: tCommon('checkout.futureOrderProblem') + '. ' + tCommon('checkout.futureOrderSolution')
       };
     }
     
@@ -207,9 +207,13 @@ export default function Checkout() {
     const futureProducts = getFutureOrderProducts();
     
     if (deliveryDate === today) {
+      const productNames = futureProducts.map(item => 
+        getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')
+      ).join(', ');
+      
       return {
         valid: false,
-        message: `Товары для будущих заказов: ${futureProducts.map(item => getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')).join(', ')}`
+        message: `${tCommon('checkout.futureOrderProblem')}.\n\n${tCommon('checkout.futureOrderSolution')}\n\n${productNames}`
       };
     }
     
