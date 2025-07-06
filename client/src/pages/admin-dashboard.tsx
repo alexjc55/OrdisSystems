@@ -11,7 +11,7 @@
  * Последнее обновление: исправлены переводы ролей пользователей
  */
 
-import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -424,7 +424,7 @@ function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { 
   );
 }
 
-function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
+const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-yellow-100 text-yellow-800';
@@ -469,10 +469,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
   return (
     <Card 
       className="cursor-pointer hover:shadow-md transition-shadow bg-white"
-      onClick={() => {
-        console.log('OrderCard clicked, order:', order.id);
-        onEdit(order);
-      }}
+      onClick={() => onEdit(order)}
     >
       <CardContent className="p-3">
         <div className="space-y-2">
@@ -659,7 +656,7 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
       </CardContent>
     </Card>
   );
-}
+});
 
 // OrderEditForm component
 function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRTL }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
@@ -684,7 +681,9 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     queryFn: async () => {
       const response = await apiRequest('GET', '/api/settings');
       return await response.json();
-    }
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
   // Generate time slots based on store working hours for this component
@@ -2199,7 +2198,9 @@ export default function AdminDashboard() {
 
   // Data queries with pagination  
   const { data: storeSettings, isLoading: storeSettingsLoading } = useQuery<StoreSettings>({
-    queryKey: ["/api/settings"]
+    queryKey: ["/api/settings"],
+    staleTime: 5 * 60 * 1000, // 5 minutes - cache settings for 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
   });
 
   // Stable permissions reference to prevent tab switching during mutations
@@ -2289,15 +2290,11 @@ export default function AdminDashboard() {
   const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<any>(null);
 
-  // Debug function for order editing
+  // Order editing handler
   const handleOrderEdit = useCallback((order: any) => {
-    console.log('handleOrderEdit called for order:', order.id);
-    console.log('Current activeTab before edit:', activeTab);
-    console.log('Current URL:', window.location.href);
     setEditingOrder(order);
     setIsOrderFormOpen(true);
-    console.log('Order form opened, activeTab should remain:', activeTab);
-  }, [activeTab]);
+  }, []);
   
   // Kanban scroll container ref
   const kanbanRef = useRef<HTMLDivElement>(null);
@@ -6147,6 +6144,8 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   const { data: settings } = useQuery({
     queryKey: ['/api/settings'],
     enabled: open, // Only fetch when dialog is open
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
   
   // Define available language tabs based on enabled languages

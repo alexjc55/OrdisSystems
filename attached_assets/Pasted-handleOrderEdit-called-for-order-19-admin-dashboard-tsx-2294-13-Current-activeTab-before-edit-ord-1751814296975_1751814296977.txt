@@ -1,0 +1,49 @@
+handleOrderEdit called for order: 19 admin-dashboard.tsx:2294:13
+Current activeTab before edit: orders admin-dashboard.tsx:2295:13
+Current URL: https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/admin?tab=orders admin-dashboard.tsx:2296:13
+Order form opened, activeTab should remain: orders admin-dashboard.tsx:2299:13
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+No order metadata found in notes admin-dashboard.tsx:829:13
+Order customerNotes: null admin-dashboard.tsx:834:11
+Saved order data: 
+Object { orderDiscount: null, itemDiscounts: null, manualPriceOverride: null }
+admin-dashboard.tsx:835:11
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+No order metadata found in notes admin-dashboard.tsx:829:13
+Order customerNotes: null admin-dashboard.tsx:834:11
+Saved order data: 
+Object { orderDiscount: null, itemDiscounts: null, manualPriceOverride: null }
+admin-dashboard.tsx:835:11
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+Service Worker registered successfully: 
+ServiceWorkerRegistration { installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: "https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/", updateViaCache: "imports", onupdatefound: null, pushManager: PushManager, cookies: CookieStoreManager }
+usePWA.ts:43:19
+Service Worker registered successfully: 
+ServiceWorkerRegistration { installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: "https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/", updateViaCache: "imports", onupdatefound: null, pushManager: PushManager, cookies: CookieStoreManager }
+usePWA.ts:43:19
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+Service Worker registered successfully: 
+ServiceWorkerRegistration { installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: "https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/", updateViaCache: "imports", onupdatefound: null, pushManager: PushManager, cookies: CookieStoreManager }
+usePWA.ts:43:19
+Service Worker registered successfully: 
+ServiceWorkerRegistration { installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: "https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/", updateViaCache: "imports", onupdatefound: null, pushManager: PushManager, cookies: CookieStoreManager }
