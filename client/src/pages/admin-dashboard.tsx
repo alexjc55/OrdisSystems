@@ -469,7 +469,10 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
   return (
     <Card 
       className="cursor-pointer hover:shadow-md transition-shadow bg-white"
-      onClick={() => onEdit(order)}
+      onClick={() => {
+        console.log('OrderCard clicked, order:', order.id);
+        onEdit(order);
+      }}
     >
       <CardContent className="p-3">
         <div className="space-y-2">
@@ -2285,6 +2288,16 @@ export default function AdminDashboard() {
   const [ordersViewMode, setOrdersViewMode] = useState<"table" | "kanban">("table");
   const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<any>(null);
+
+  // Debug function for order editing
+  const handleOrderEdit = useCallback((order: any) => {
+    console.log('handleOrderEdit called for order:', order.id);
+    console.log('Current activeTab before edit:', activeTab);
+    console.log('Current URL:', window.location.href);
+    setEditingOrder(order);
+    setIsOrderFormOpen(true);
+    console.log('Order form opened, activeTab should remain:', activeTab);
+  }, [activeTab]);
   
   // Kanban scroll container ref
   const kanbanRef = useRef<HTMLDivElement>(null);
@@ -4129,10 +4142,7 @@ export default function AdminDashboard() {
                                     <div className="flex flex-col items-center gap-1">
                                       <span>#{order.id}</span>
                                       <button
-                                        onClick={() => {
-                                          setEditingOrder(order);
-                                          setIsOrderFormOpen(true);
-                                        }}
+                                        onClick={() => handleOrderEdit(order)}
                                         className="inline-flex items-center justify-center h-10 w-10 sm:h-8 sm:w-8 rounded-md bg-primary hover:bg-primary text-white border-2 border-orange-600 shadow-md transition-colors"
                                         title={adminT('orders.viewDetails')}
                                       >
@@ -4491,10 +4501,7 @@ export default function AdminDashboard() {
                                 <DraggableOrderCard 
                                   key={order.id} 
                                   order={order} 
-                                  onEdit={(order) => {
-                                    setEditingOrder(order);
-                                    setIsOrderFormOpen(true);
-                                  }} 
+                                  onEdit={handleOrderEdit}
                                   onStatusChange={updateOrderStatusMutation.mutate} 
                                   onCancelOrder={handleOrderCancellation} 
                                 />
@@ -4526,10 +4533,7 @@ export default function AdminDashboard() {
                                 <DraggableOrderCard 
                                   key={order.id} 
                                   order={order} 
-                                  onEdit={(order) => {
-                                    setEditingOrder(order);
-                                    setIsOrderFormOpen(true);
-                                  }} 
+                                  onEdit={handleOrderEdit}
                                   onStatusChange={updateOrderStatusMutation.mutate} 
                                   onCancelOrder={handleOrderCancellation} 
                                 />
@@ -4561,10 +4565,7 @@ export default function AdminDashboard() {
                                 <DraggableOrderCard 
                                   key={order.id} 
                                   order={order} 
-                                  onEdit={(order) => {
-                                    setEditingOrder(order);
-                                    setIsOrderFormOpen(true);
-                                  }} 
+                                  onEdit={handleOrderEdit}
                                   onStatusChange={updateOrderStatusMutation.mutate} 
                                   onCancelOrder={handleOrderCancellation} 
                                 />
@@ -4596,10 +4597,7 @@ export default function AdminDashboard() {
                                 <DraggableOrderCard 
                                   key={order.id} 
                                   order={order} 
-                                  onEdit={(order) => {
-                                    setEditingOrder(order);
-                                    setIsOrderFormOpen(true);
-                                  }} 
+                                  onEdit={handleOrderEdit}
                                   onStatusChange={updateOrderStatusMutation.mutate} 
                                   onCancelOrder={handleOrderCancellation} 
                                 />
@@ -4632,10 +4630,7 @@ export default function AdminDashboard() {
                                   <DraggableOrderCard 
                                     key={order.id} 
                                     order={order} 
-                                    onEdit={(order) => {
-                                      setEditingOrder(order);
-                                      setIsOrderFormOpen(true);
-                                    }} 
+                                    onEdit={handleOrderEdit}
                                     onStatusChange={updateOrderStatusMutation.mutate} 
                                     onCancelOrder={handleOrderCancellation} 
                                   />
@@ -4666,10 +4661,7 @@ export default function AdminDashboard() {
                                   <DraggableOrderCard 
                                     key={order.id} 
                                     order={order} 
-                                    onEdit={(order) => {
-                                      setEditingOrder(order);
-                                      setIsOrderFormOpen(true);
-                                    }} 
+                                    onEdit={handleOrderEdit}
                                     onStatusChange={updateOrderStatusMutation.mutate} 
                                     onCancelOrder={handleOrderCancellation} 
                                   />
