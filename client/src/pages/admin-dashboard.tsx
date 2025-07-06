@@ -467,7 +467,10 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
   };
 
   return (
-    <Card className="cursor-pointer hover:shadow-md transition-shadow bg-white">
+    <Card 
+      className="cursor-pointer hover:shadow-md transition-shadow bg-white"
+      onClick={() => onEdit(order)}
+    >
       <CardContent className="p-3">
         <div className="space-y-2">
           {/* Order Header */}
@@ -492,7 +495,10 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
             {order.customerPhone && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="text-blue-600 text-xs hover:text-blue-800 flex items-center gap-1 cursor-pointer">
+                  <button 
+                    className="text-blue-600 text-xs hover:text-blue-800 flex items-center gap-1 cursor-pointer"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Phone className="h-3 w-3" />
                     {order.customerPhone}
                   </button>
@@ -630,7 +636,10 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
                 }
               }}
             >
-              <SelectTrigger className="w-32 h-8 text-xs">
+              <SelectTrigger 
+                className="w-32 h-8 text-xs"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
