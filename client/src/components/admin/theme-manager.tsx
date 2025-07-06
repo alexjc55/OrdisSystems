@@ -456,8 +456,10 @@ export default function ThemeManager() {
 
   const updateThemeMutation = useMutation({
     mutationFn: async ({ id, ...themeData }: Partial<ThemeData> & { id: string }) => {
+      console.log("Updating theme with data:", themeData);
       const res = await apiRequest("PUT", `/api/admin/themes/${id}`, themeData);
-      return await res.json();
+      console.log("Theme update response:", res);
+      return res; // apiRequest уже возвращает parsed JSON
     },
     onSuccess: (updatedTheme) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/themes"] });
@@ -617,10 +619,11 @@ export default function ThemeManager() {
         description: adminT("themes.updateSuccess"),
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Theme update error:", error);
       toast({
         title: adminT("themes.error"),
-        description: adminT("themes.updateError"),
+        description: error?.message || adminT("themes.updateError"),
         variant: "destructive",
       });
     },
