@@ -3995,7 +3995,7 @@ export default function AdminDashboard() {
                         items={(categories as any[]).map((cat: any) => cat.id)}
                         strategy={verticalListSortingStrategy}
                       >
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                           {(categories as any[] || []).map((category: any) => (
                             <SortableCategoryItem
                               key={category.id}
