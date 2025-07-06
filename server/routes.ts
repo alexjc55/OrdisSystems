@@ -1562,20 +1562,20 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         
         // Sync banner button settings
         if (themeData.bannerButtonText !== undefined) {
-          updateFields.push(`banner_button_text = '${themeData.bannerButtonText || 'Смотреть каталог'}'`);
+          updateFields.push(`banner_button_text = '${(themeData.bannerButtonText || 'Смотреть каталог').replace(/'/g, "''")}'`);
         }
         if (themeData.bannerButtonLink !== undefined) {
-          updateFields.push(`banner_button_link = '${themeData.bannerButtonLink || '#categories'}'`);
+          updateFields.push(`banner_button_link = '${(themeData.bannerButtonLink || '#categories').replace(/'/g, "''")}'`);
         }
         
         // Sync modern style info blocks settings
         if (themeData.headerStyle === 'modern' || theme.headerStyle === 'modern') {
-          if (themeData.modernBlock1Icon !== undefined) updateFields.push(`modern_block1_icon = '${themeData.modernBlock1Icon || ''}'`);
-          if (themeData.modernBlock1Text !== undefined) updateFields.push(`modern_block1_text = '${themeData.modernBlock1Text || ''}'`);
-          if (themeData.modernBlock2Icon !== undefined) updateFields.push(`modern_block2_icon = '${themeData.modernBlock2Icon || ''}'`);
-          if (themeData.modernBlock2Text !== undefined) updateFields.push(`modern_block2_text = '${themeData.modernBlock2Text || ''}'`);
-          if (themeData.modernBlock3Icon !== undefined) updateFields.push(`modern_block3_icon = '${themeData.modernBlock3Icon || ''}'`);
-          if (themeData.modernBlock3Text !== undefined) updateFields.push(`modern_block3_text = '${themeData.modernBlock3Text || ''}'`);
+          if (themeData.modernBlock1Icon !== undefined) updateFields.push(`modern_block1_icon = '${(themeData.modernBlock1Icon || '').replace(/'/g, "''")}'`);
+          if (themeData.modernBlock1Text !== undefined) updateFields.push(`modern_block1_text = '${(themeData.modernBlock1Text || '').replace(/'/g, "''")}'`);
+          if (themeData.modernBlock2Icon !== undefined) updateFields.push(`modern_block2_icon = '${(themeData.modernBlock2Icon || '').replace(/'/g, "''")}'`);
+          if (themeData.modernBlock2Text !== undefined) updateFields.push(`modern_block2_text = '${(themeData.modernBlock2Text || '').replace(/'/g, "''")}'`);
+          if (themeData.modernBlock3Icon !== undefined) updateFields.push(`modern_block3_icon = '${(themeData.modernBlock3Icon || '').replace(/'/g, "''")}'`);
+          if (themeData.modernBlock3Text !== undefined) updateFields.push(`modern_block3_text = '${(themeData.modernBlock3Text || '').replace(/'/g, "''")}'`);
         }
         
         // Sync logo and banner images (CRITICAL FOR DISPLAY) - including multilingual versions
@@ -1595,8 +1595,8 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         // Sync cart banner settings
         if (themeData.showCartBanner !== undefined) updateFields.push(`show_cart_banner = ${themeData.showCartBanner}`);
         if (themeData.cartBannerType !== undefined) updateFields.push(`cart_banner_type = '${themeData.cartBannerType || 'text'}'`);
-        if (themeData.cartBannerImage !== undefined) updateFields.push(`cart_banner_image = '${themeData.cartBannerImage || ''}'`);
-        if (themeData.cartBannerText !== undefined) updateFields.push(`cart_banner_text = '${themeData.cartBannerText || ''}'`);
+        if (themeData.cartBannerImage !== undefined) updateFields.push(`cart_banner_image = '${(themeData.cartBannerImage || '').replace(/'/g, "''")}'`);
+        if (themeData.cartBannerText !== undefined) updateFields.push(`cart_banner_text = '${(themeData.cartBannerText || '').replace(/'/g, "''")}'`);
         if (themeData.cartBannerBgColor !== undefined) updateFields.push(`cart_banner_bg_color = '${themeData.cartBannerBgColor || '#f97316'}'`);
         if (themeData.cartBannerTextColor !== undefined) updateFields.push(`cart_banner_text_color = '${themeData.cartBannerTextColor || '#ffffff'}'`);
         
@@ -1615,13 +1615,15 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         if (themeData.showSpecialOffers !== undefined) updateFields.push(`show_special_offers = ${themeData.showSpecialOffers}`);
         if (themeData.showCategoryMenu !== undefined) updateFields.push(`show_category_menu = ${themeData.showCategoryMenu}`);
         if (themeData.showWhatsAppChat !== undefined) updateFields.push(`show_whatsapp_chat = ${themeData.showWhatsAppChat}`);
-        if (themeData.whatsappPhone !== undefined) updateFields.push(`whatsapp_phone_number = '${themeData.whatsappPhone || ''}'`);
-        if (themeData.whatsappMessage !== undefined) updateFields.push(`whatsapp_default_message = '${themeData.whatsappMessage || 'Здравствуйте! У меня есть вопрос по заказу.'}'`);
+        if (themeData.whatsappPhone !== undefined) updateFields.push(`whatsapp_phone_number = '${(themeData.whatsappPhone || '').replace(/'/g, "''")}'`);
+        if (themeData.whatsappMessage !== undefined) updateFields.push(`whatsapp_default_message = '${(themeData.whatsappMessage || 'Здравствуйте! У меня есть вопрос по заказу.').replace(/'/g, "''")}'`);
         
         // Execute the update if there are fields to update
         if (updateFields.length > 0) {
           const db = await getDB();
-          await db.execute(sql.raw(`UPDATE store_settings SET ${updateFields.join(', ')} WHERE id = 1`));
+          const sqlQuery = `UPDATE store_settings SET ${updateFields.join(', ')} WHERE id = 1`;
+          console.log("Executing SQL query:", sqlQuery);
+          await db.execute(sql.raw(sqlQuery));
           // Add cache invalidation header to force refresh of store settings
           res.set('X-Settings-Updated', 'true');
         }
