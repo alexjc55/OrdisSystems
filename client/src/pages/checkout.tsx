@@ -408,8 +408,7 @@ export default function Checkout() {
         status: "pending"
       };
       
-      const orderRes = await apiRequest("POST", "/api/orders", orderData);
-      return await orderRes.json();
+      return await apiRequest("POST", "/api/orders", orderData);
     },
     onSuccess: (order) => {
       clearCart();
