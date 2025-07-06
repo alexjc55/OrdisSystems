@@ -1658,7 +1658,7 @@ export default function ThemeManager() {
 
               <div className="flex justify-end gap-2 mt-6">
                 <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                  {adminT("cancel")}
+                  {adminT("cancelButton")}
                 </Button>
                 <Button type="submit" className="btn-primary" disabled={createThemeMutation.isPending}>
                   <Save className="h-4 w-4 mr-2" />
@@ -1773,7 +1773,7 @@ export default function ThemeManager() {
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>{adminT("cancel")}</AlertDialogCancel>
+                        <AlertDialogCancel>{adminT("cancelButton")}</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => deleteThemeMutation.mutate(theme.id)}
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -2409,7 +2409,7 @@ export default function ThemeManager() {
               
               <div className="flex justify-end gap-2 mt-6">
                 <Button type="button" variant="outline" onClick={() => setEditingTheme(null)}>
-                  {adminT('themes.cancelButton')}
+                  {adminT('cancelButton')}
                 </Button>
                 <Button type="submit" className="btn-primary">
                   {adminT('themes.saveChangesButton')}
