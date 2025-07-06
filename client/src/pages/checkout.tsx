@@ -353,7 +353,7 @@ export default function Checkout() {
   const registerAndOrderMutation = useMutation({
     mutationFn: async (data: RegistrationData) => {
       // First register the user
-      const registerRes = await apiRequest("POST", "/api/register", {
+      const newUser = await apiRequest("POST", "/api/register", {
         username: data.email, // Use email as username for checkout registration
         firstName: data.firstName,
         lastName: data.lastName,
@@ -361,13 +361,6 @@ export default function Checkout() {
         phone: data.phone,
         password: data.password,
       });
-      
-      if (!registerRes.ok) {
-        throw new Error(tCommon('auth.registerError'));
-      }
-
-      // Get the created user data
-      const newUser = await registerRes.json();
 
       // Save the delivery address for the new user
       if (data.address && data.address.trim()) {
@@ -438,8 +431,7 @@ export default function Checkout() {
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: AuthData) => {
-      const res = await apiRequest("POST", "/api/login", credentials);
-      return await res.json();
+      return await apiRequest("POST", "/api/login", credentials);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });

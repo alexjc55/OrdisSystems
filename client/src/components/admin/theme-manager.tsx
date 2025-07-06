@@ -628,8 +628,7 @@ export default function ThemeManager() {
 
   const activateThemeMutation = useMutation({
     mutationFn: async (themeId: string) => {
-      const res = await apiRequest("POST", `/api/admin/themes/${themeId}/activate`);
-      return await res.json();
+      return await apiRequest("POST", `/api/admin/themes/${themeId}/activate`);
     },
     onSuccess: (activatedTheme) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/themes"] });

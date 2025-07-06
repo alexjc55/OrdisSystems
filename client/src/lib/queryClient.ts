@@ -19,7 +19,7 @@ export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
-): Promise<Response> {
+): Promise<any> {
   const res = await fetch(url, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
@@ -27,8 +27,20 @@ export async function apiRequest(
     credentials: "include",
   });
 
-  await throwIfResNotOk(res);
-  return res;
+  if (!res.ok) {
+    try {
+      const errorData = await res.json();
+      const error = new Error(errorData.message || res.statusText);
+      // Preserve error data for specific error handling
+      Object.assign(error, errorData);
+      throw error;
+    } catch (parseError) {
+      const text = (await res.text()) || res.statusText;
+      throw new Error(`${res.status}: ${text}`);
+    }
+  }
+
+  return await res.json();
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
