@@ -649,8 +649,22 @@ function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: an
   );
 }
 
-// OrderEditForm component
-function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRTL }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
+// OrderEditForm component  
+function OrderEditForm({ 
+  order, 
+  onClose, 
+  onSave, 
+  searchPlaceholder, 
+  adminT, 
+  isRTL 
+}: { 
+  order: any, 
+  onClose: () => void, 
+  onSave: () => void, 
+  searchPlaceholder: string, 
+  adminT: (key: string) => string, 
+  isRTL: boolean 
+}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { i18n } = useTranslation();
@@ -745,26 +759,19 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     }
   };
 
-  const [hasUserInitiatedSave, setHasUserInitiatedSave] = useState(false);
-  
   const updateOrderMutation = useMutation({
     mutationFn: async (data: any) => {
       return await apiRequest("PATCH", `/api/orders/${order.id}`, data);
     },
     onSuccess: () => {
-      // Only close modal if user actually initiated the save action
-      if (hasUserInitiatedSave) {
-        toast({
-          title: adminT('orders.updated'),
-          description: adminT('orders.updateSuccess'),
-        });
-        queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
-        onSave();
-        setHasUserInitiatedSave(false);
-      }
+      toast({
+        title: adminT('orders.updated'),
+        description: adminT('orders.updateSuccess'),
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
+      onSave();
     },
     onError: (error: any) => {
-      setHasUserInitiatedSave(false);
       toast({
         title: adminT('actions.error'),
         description: error.message || adminT('orders.updateError'),
@@ -1090,9 +1097,6 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     
     console.log('Saving order with metadata:', orderMetadata);
     console.log('Notes with metadata:', notesWithMetadata);
-    
-    // Set flag to indicate user initiated save action
-    setHasUserInitiatedSave(true);
     
     updateOrderMutation.mutate({
       ...editedOrder,
@@ -4807,7 +4811,13 @@ export default function AdminDashboard() {
             </Card>
 
             {/* Order Details/Edit Dialog */}
-            <Dialog open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen}>
+            <Dialog open={isOrderFormOpen} onOpenChange={(open) => {
+              // Prevent automatic closing - only allow manual close via buttons
+              if (!open) {
+                return;
+              }
+              setIsOrderFormOpen(open);
+            }}>
               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="text-lg font-semibold">
