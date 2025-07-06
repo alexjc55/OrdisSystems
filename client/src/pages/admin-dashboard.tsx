@@ -2959,6 +2959,8 @@ export default function AdminDashboard() {
   // Store settings mutation
   const updateStoreSettingsMutation = useMutation({
     mutationFn: async (settingsData: any) => {
+      console.log("Saving store settings:", settingsData);
+      
       // Clean up empty numeric fields to prevent database errors
       const cleanedData = { ...settingsData };
       
@@ -2973,7 +2975,17 @@ export default function AdminDashboard() {
         cleanedData.minimumOrderAmount = null;
       }
       
+      console.log("Cleaned data:", cleanedData);
+      
       const response = await apiRequest('PUT', '/api/settings', cleanedData);
+      console.log("Settings response:", response);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Settings save error:", errorText);
+        throw new Error(`Failed to save settings: ${response.status} ${response.statusText}`);
+      }
+      
       return await response.json();
     },
     onSuccess: (newData) => {
