@@ -1,0 +1,29 @@
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+Service Worker registered successfully: 
+ServiceWorkerRegistration { installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: "https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/", updateViaCache: "imports", onupdatefound: null, pushManager: PushManager, cookies: CookieStoreManager }
+usePWA.ts:43:19
+Service Worker registered successfully: 
+ServiceWorkerRegistration { installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: "https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/", updateViaCache: "imports", onupdatefound: null, pushManager: PushManager, cookies: CookieStoreManager }
+usePWA.ts:43:19
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }
+header.tsx:95:27
+Service Worker registered successfully: 
+ServiceWorkerRegistration { installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: "https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/", updateViaCache: "imports", onupdatefound: null, pushManager: PushManager, cookies: CookieStoreManager }
+usePWA.ts:43:19
+Service Worker registered successfully: 
+ServiceWorkerRegistration { installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: "https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/", updateViaCache: "imports", onupdatefound: null, pushManager: PushManager, cookies: CookieStoreManager }
+usePWA.ts:43:19
+Header logoUrl debug: 
+Object { logoUrl: "/uploads/images/image-1751756174833-500216572.png", storeSettings: "/uploads/images/image-1751756174833-500216572.png", currentLanguage: "ru" }

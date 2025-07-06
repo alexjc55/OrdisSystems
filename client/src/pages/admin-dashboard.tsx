@@ -764,6 +764,7 @@ function OrderEditForm({
       return await apiRequest("PATCH", `/api/orders/${order.id}`, data);
     },
     onSuccess: () => {
+      console.log('Order update successful - calling onSave to close modal');
       toast({
         title: adminT('orders.updated'),
         description: adminT('orders.updateSuccess'),
@@ -1871,11 +1872,17 @@ function OrderEditForm({
 
       {/* Actions */}
       <div className="flex justify-center gap-3 pt-4 border-t">
-        <Button variant="outline" onClick={onClose}>
+        <Button variant="outline" onClick={() => {
+          console.log('Cancel button clicked - closing modal');
+          onClose();
+        }}>
           {adminT('actions.cancel')}
         </Button>
         <Button 
-          onClick={handleSave}
+          onClick={() => {
+            console.log('Save button clicked - saving order');
+            handleSave();
+          }}
           disabled={updateOrderMutation.isPending}
           variant="success"
         >
@@ -4811,13 +4818,19 @@ export default function AdminDashboard() {
             </Card>
 
             {/* Order Details/Edit Dialog */}
-            <Dialog open={isOrderFormOpen} onOpenChange={(open) => {
-              // Prevent automatic closing - only allow manual close via buttons
-              if (!open) {
-                return;
-              }
-              setIsOrderFormOpen(open);
-            }}>
+            <Dialog 
+              open={isOrderFormOpen} 
+              onOpenChange={(open) => {
+                // Completely prevent automatic closing
+                console.log('Dialog onOpenChange called with:', open, 'current state:', isOrderFormOpen);
+                if (!open) {
+                  console.log('Blocked automatic close attempt');
+                  return;
+                }
+                setIsOrderFormOpen(open);
+              }}
+              modal={true}
+            >
               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="text-lg font-semibold">
