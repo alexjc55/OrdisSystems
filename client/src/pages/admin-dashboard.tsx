@@ -764,7 +764,7 @@ function OrderEditForm({
       return await apiRequest("PATCH", `/api/orders/${order.id}`, data);
     },
     onSuccess: () => {
-      console.log('Order update successful - calling onSave to close modal');
+      console.log('✅ Order update successful - calling onSave to close modal');
       toast({
         title: adminT('orders.updated'),
         description: adminT('orders.updateSuccess'),
