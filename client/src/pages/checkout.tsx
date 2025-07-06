@@ -316,7 +316,7 @@ export default function Checkout() {
         items: items.map(item => ({
           productId: item.product.id,
           quantity: item.quantity.toString(),
-          pricePerKg: item.product.price,
+          pricePerKg: item.product.pricePerKg || item.product.price,
           totalPrice: item.totalPrice.toString()
         })),
         totalAmount: total.toString(),
@@ -401,7 +401,7 @@ export default function Checkout() {
         items: items.map(item => ({
           productId: item.product.id,
           quantity: item.quantity.toString(),
-          pricePerKg: item.product.price,
+          pricePerKg: item.product.pricePerKg || item.product.price,
           totalPrice: item.totalPrice.toString()
         })),
         totalAmount: total.toString(),
@@ -479,7 +479,7 @@ export default function Checkout() {
         items: items.map(item => ({
           productId: item.product.id,
           quantity: item.quantity.toString(),
-          pricePerKg: item.product.price,
+          pricePerKg: item.product.pricePerKg || item.product.price,
           totalPrice: item.totalPrice.toString()
         })),
         totalAmount: total.toString(),
