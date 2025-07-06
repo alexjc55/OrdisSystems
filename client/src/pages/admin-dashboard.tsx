@@ -745,19 +745,26 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     }
   };
 
+  const [hasUserInitiatedSave, setHasUserInitiatedSave] = useState(false);
+  
   const updateOrderMutation = useMutation({
     mutationFn: async (data: any) => {
       return await apiRequest("PATCH", `/api/orders/${order.id}`, data);
     },
     onSuccess: () => {
-      toast({
-        title: adminT('orders.updated'),
-        description: adminT('orders.updateSuccess'),
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
-      onSave();
+      // Only close modal if user actually initiated the save action
+      if (hasUserInitiatedSave) {
+        toast({
+          title: adminT('orders.updated'),
+          description: adminT('orders.updateSuccess'),
+        });
+        queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
+        onSave();
+        setHasUserInitiatedSave(false);
+      }
     },
     onError: (error: any) => {
+      setHasUserInitiatedSave(false);
       toast({
         title: adminT('actions.error'),
         description: error.message || adminT('orders.updateError'),
@@ -1083,6 +1090,9 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     
     console.log('Saving order with metadata:', orderMetadata);
     console.log('Notes with metadata:', notesWithMetadata);
+    
+    // Set flag to indicate user initiated save action
+    setHasUserInitiatedSave(true);
     
     updateOrderMutation.mutate({
       ...editedOrder,
