@@ -4825,39 +4825,56 @@ export default function AdminDashboard() {
             </Card>
 
             {/* Order Details/Edit Dialog */}
-            <Dialog 
-              open={isOrderFormOpen} 
-              onOpenChange={(open) => {
-                console.log('Dialog onOpenChange called with:', open);
-                // Completely prevent automatic closing
-                if (!open) {
-                  console.log('❌ Blocked automatic close attempt');
-                  return false;
-                }
-              }}
-            >
-              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="text-lg font-semibold">
-                    {editingOrder ? `${adminT('orders.order')} #${editingOrder.id}` : adminT('orders.newOrder')}
-                  </DialogTitle>
-                  <DialogDescription>
-                    {editingOrder ? adminT('orders.editOrderDescription') : adminT('orders.createOrderDescription')}
-                  </DialogDescription>
-                </DialogHeader>
-                
-                {editingOrder && (
-                  <OrderEditForm 
-                    order={editingOrder}
-                    onClose={closeOrderModal}
-                    onSave={closeOrderModal}
-                    searchPlaceholder={adminT('common.searchProducts')}
-                    adminT={adminT}
-                    isRTL={isRTL}
-                  />
-                )}
-              </DialogContent>
-            </Dialog>
+{isOrderFormOpen && (
+              <div 
+                className="fixed inset-0 z-50 flex items-center justify-center"
+                style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+                onClick={(e) => {
+                  if (e.target === e.currentTarget) {
+                    console.log('🔥 Backdrop clicked - closing modal');
+                    closeOrderModal();
+                  }
+                }}
+              >
+                <div 
+                  className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-y-auto w-full mx-4"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="p-6">
+                    <div className="border-b pb-4 mb-4 flex justify-between items-center">
+                      <div>
+                        <h2 className="text-lg font-semibold">
+                          {editingOrder ? `${adminT('orders.order')} #${editingOrder.id}` : adminT('orders.newOrder')}
+                        </h2>
+                        <p className="text-sm text-gray-600">
+                          {editingOrder ? adminT('orders.editOrderDescription') : adminT('orders.createOrderDescription')}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          console.log('🔥 X button clicked - closing modal');
+                          closeOrderModal();
+                        }}
+                        className="text-gray-500 hover:text-gray-700 text-xl font-bold w-8 h-8 flex items-center justify-center"
+                      >
+                        ×
+                      </button>
+                    </div>
+                    
+                    {editingOrder && (
+                      <OrderEditForm 
+                        order={editingOrder}
+                        onClose={closeOrderModal}
+                        onSave={closeOrderModal}
+                        searchPlaceholder={adminT('common.searchProducts')}
+                        adminT={adminT}
+                        isRTL={isRTL}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </TabsContent>
           )}
 
