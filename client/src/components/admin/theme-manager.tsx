@@ -1658,7 +1658,8 @@ export default function ThemeManager() {
 
               <div className="flex justify-end gap-2 mt-6">
                 <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                  {adminT("cancel")}
+                  {console.log("Cancel button translation:", adminT("cancel"), "Language:", i18n.language)}
+                  {adminT("cancel") || "Отмена"}
                 </Button>
                 <Button type="submit" className="btn-primary" disabled={createThemeMutation.isPending}>
                   <Save className="h-4 w-4 mr-2" />
