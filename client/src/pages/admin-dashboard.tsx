@@ -1022,7 +1022,39 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   };
 
   const calculateSubtotal = () => {
-    return editedOrderItems.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
+    return editedOrderItems.reduce((sum: number, item: any, index: number) => {
+      const quantity = parseFloat(item.quantity) || 0;
+      const unitPrice = parseFloat(item.pricePerUnit || item.pricePerKg || 0);
+      
+      // Calculate base price based on product unit (same logic as updateItemQuantity)
+      let basePrice;
+      const unit = item.product?.unit;
+      
+      if (item.product?.pricePerKg && (unit === 'gram' || unit === '100gram')) {
+        // If price is per kg but quantity is in grams, convert to kg for calculation
+        basePrice = (quantity / 1000) * unitPrice;
+      } else if (unit === '100g' || unit === '100ml' || unit === '100gram') {
+        // For 100g/100ml products, price is per 100 units, quantity is in actual units (grams/ml)
+        basePrice = unitPrice * (quantity / 100);
+      } else {
+        // For piece and kg products, direct multiplication
+        basePrice = quantity * unitPrice;
+      }
+      
+      // Apply item-level discount if exists
+      const discount = itemDiscounts[index];
+      let finalPrice = basePrice;
+      
+      if (discount) {
+        if (discount.type === 'percentage') {
+          finalPrice = basePrice * (1 - discount.value / 100);
+        } else {
+          finalPrice = Math.max(0, basePrice - discount.value);
+        }
+      }
+      
+      return sum + finalPrice;
+    }, 0);
   };
 
   const calculateOrderDiscount = (subtotal: number) => {
@@ -1704,7 +1736,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 {parseFloat(order.deliveryFee || "0") === 0 ? (
                   <span className="text-green-600 font-medium">{adminT('common.free')}</span>
                 ) : (
-                  formatCurrency(order.deliveryFee || "0")
+                  formatCurrency(parseFloat(order.deliveryFee || "0"))
                 )}
               </span>
             </div>
