@@ -2298,6 +2298,13 @@ export default function AdminDashboard() {
   const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<any>(null);
   
+  // Manual close function - only way to close modal
+  const closeOrderModal = () => {
+    console.log('🔥 Manual close triggered');
+    setIsOrderFormOpen(false);
+    setEditingOrder(null);
+  };
+  
   // Kanban scroll container ref
   const kanbanRef = useRef<HTMLDivElement>(null);
   
@@ -4821,15 +4828,13 @@ export default function AdminDashboard() {
             <Dialog 
               open={isOrderFormOpen} 
               onOpenChange={(open) => {
+                console.log('Dialog onOpenChange called with:', open);
                 // Completely prevent automatic closing
-                console.log('Dialog onOpenChange called with:', open, 'current state:', isOrderFormOpen);
                 if (!open) {
-                  console.log('Blocked automatic close attempt');
-                  return;
+                  console.log('❌ Blocked automatic close attempt');
+                  return false;
                 }
-                setIsOrderFormOpen(open);
               }}
-              modal={true}
             >
               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
@@ -4844,15 +4849,8 @@ export default function AdminDashboard() {
                 {editingOrder && (
                   <OrderEditForm 
                     order={editingOrder}
-                    onClose={() => {
-                      setIsOrderFormOpen(false);
-                      setEditingOrder(null);
-                    }}
-                    onSave={() => {
-                      setIsOrderFormOpen(false);
-                      setEditingOrder(null);
-                      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
-                    }}
+                    onClose={closeOrderModal}
+                    onSave={closeOrderModal}
                     searchPlaceholder={adminT('common.searchProducts')}
                     adminT={adminT}
                     isRTL={isRTL}
