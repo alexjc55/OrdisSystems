@@ -224,7 +224,7 @@ export default function CartOverlay() {
 
     const orderData = {
       totalAmount: total.toFixed(2),
-      deliveryFee: deliveryFeeAmount.toFixed(2),
+
       customerNotes: customerNotes.trim() || null,
       deliveryAddress: deliveryAddress.trim(),
       customerPhone: customerPhone.trim(),

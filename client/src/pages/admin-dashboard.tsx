@@ -4351,8 +4351,23 @@ export default function AdminDashboard() {
                                         );
                                       }
                                       
-                                      // Show detailed breakdown for orders with delivery fee
-                                      const deliveryFee = parseFloat(order.deliveryFee || "0");
+                                      // Calculate delivery fee dynamically based on current store settings
+                                      const calculateOrderDeliveryFee = (orderItems: any[]) => {
+                                        if (!orderItems || orderItems.length === 0) return 0;
+                                        
+                                        const subtotal = orderItems.reduce((sum, item) => sum + parseFloat(item.totalPrice), 0);
+                                        const deliveryFee = parseFloat(storeSettings?.deliveryFee || "15.00");
+                                        const freeDeliveryThreshold = (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") 
+                                          ? parseFloat(storeSettings.freeDeliveryFrom) 
+                                          : null;
+                                        
+                                        if (!freeDeliveryThreshold || isNaN(freeDeliveryThreshold) || freeDeliveryThreshold <= 0) {
+                                          return deliveryFee;
+                                        }
+                                        return subtotal >= freeDeliveryThreshold ? 0 : deliveryFee;
+                                      };
+                                      
+                                      const deliveryFee = calculateOrderDeliveryFee(order.items || []);
                                       const subtotal = parseFloat(order.totalAmount) - deliveryFee;
                                       
                                       if (deliveryFee > 0) {
@@ -4369,7 +4384,7 @@ export default function AdminDashboard() {
                                             </div>
                                           </div>
                                         );
-                                      } else if (deliveryFee === 0 && order.deliveryFee !== undefined) {
+                                      } else if (deliveryFee === 0) {
                                         return (
                                           <div className="space-y-1">
                                             <div className="text-sm text-gray-600">

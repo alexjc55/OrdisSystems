@@ -320,7 +320,6 @@ export default function Checkout() {
           totalPrice: item.totalPrice.toString()
         })),
         totalAmount: total.toString(),
-        deliveryFee: deliveryFeeAmount.toString(),
         guestInfo: {
           ...data,
           deliveryDate,
@@ -398,7 +397,6 @@ export default function Checkout() {
           totalPrice: item.totalPrice.toString()
         })),
         totalAmount: total.toString(),
-        deliveryFee: deliveryFeeAmount.toString(),
         userId: newUser.id, // Link order to the newly created user
         deliveryAddress: data.address,
         deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
@@ -474,7 +472,6 @@ export default function Checkout() {
           totalPrice: item.totalPrice.toString()
         })),
         totalAmount: total.toString(),
-        deliveryFee: deliveryFeeAmount.toString(),
         deliveryAddress: formData.address,
         customerPhone: formData.phone,
         deliveryDate,
