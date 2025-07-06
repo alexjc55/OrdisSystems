@@ -40,7 +40,16 @@ export async function apiRequest(
     }
   }
 
-  return await res.json();
+  // Check if response has content before trying to parse JSON
+  const contentType = res.headers.get('content-type');
+  const hasContent = contentType && contentType.includes('application/json');
+  
+  if (hasContent) {
+    return await res.json();
+  } else {
+    // For responses like 200 OK without JSON content (e.g., logout)
+    return {};
+  }
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
