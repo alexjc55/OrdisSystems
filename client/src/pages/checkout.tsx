@@ -42,8 +42,8 @@ const getDateLocale = (language: string) => {
 
 // Calculate delivery fee based on order total and free delivery threshold
 const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number | null) => {
-  // If no free delivery threshold is set, always charge delivery fee
-  if (!freeDeliveryFrom || freeDeliveryFrom <= 0) {
+  // If no free delivery threshold is set or it's empty/invalid, always charge delivery fee
+  if (!freeDeliveryFrom || isNaN(freeDeliveryFrom) || freeDeliveryFrom <= 0) {
     return deliveryFee;
   }
   return orderTotal >= freeDeliveryFrom ? 0 : deliveryFee;
@@ -308,7 +308,7 @@ export default function Checkout() {
       const deliveryFeeAmount = calculateDeliveryFee(
         subtotal, 
         parseFloat(storeSettings?.deliveryFee || "15.00"), 
-        storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null
+        (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") ? parseFloat(storeSettings.freeDeliveryFrom) : null
       );
       const total = subtotal + deliveryFeeAmount;
 
@@ -386,7 +386,7 @@ export default function Checkout() {
       const deliveryFeeAmount = calculateDeliveryFee(
         subtotal, 
         parseFloat(storeSettings?.deliveryFee || "15.00"), 
-        storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null
+        (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") ? parseFloat(storeSettings.freeDeliveryFrom) : null
       );
       const total = subtotal + deliveryFeeAmount;
 
@@ -462,7 +462,7 @@ export default function Checkout() {
       const deliveryFeeAmount = calculateDeliveryFee(
         subtotal, 
         parseFloat(storeSettings?.deliveryFee || "15.00"), 
-        storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null
+        (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") ? parseFloat(storeSettings.freeDeliveryFrom) : null
       );
       const total = subtotal + deliveryFeeAmount;
 
@@ -596,7 +596,7 @@ export default function Checkout() {
               <Separator />
               {(() => {
                 const subtotal = getTotalPrice();
-                const freeDeliveryThreshold = storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null;
+                const freeDeliveryThreshold = (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") ? parseFloat(storeSettings.freeDeliveryFrom) : null;
                 const deliveryFeeAmount = calculateDeliveryFee(
                   subtotal, 
                   parseFloat(storeSettings?.deliveryFee || "15.00"), 

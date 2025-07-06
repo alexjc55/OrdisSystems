@@ -1067,6 +1067,21 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     }
   };
 
+  // Calculate correct delivery fee based on store settings and order subtotal
+  const calculateCorrectDeliveryFee = () => {
+    const subtotal = calculateSubtotal();
+    const deliveryFee = parseFloat(storeSettings?.deliveryFee || "15.00");
+    const freeDeliveryThreshold = (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") 
+      ? parseFloat(storeSettings.freeDeliveryFrom) 
+      : null;
+    
+    // If no free delivery threshold is set or it's empty/invalid, always charge delivery fee
+    if (!freeDeliveryThreshold || isNaN(freeDeliveryThreshold) || freeDeliveryThreshold <= 0) {
+      return deliveryFee;
+    }
+    return subtotal >= freeDeliveryThreshold ? 0 : deliveryFee;
+  };
+
   const calculateFinalTotal = () => {
     let subtotal;
     
@@ -1079,7 +1094,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
       subtotal = subtotal - discount;
     }
     
-    const deliveryFee = parseFloat(order.deliveryFee || "0");
+    const deliveryFee = calculateCorrectDeliveryFee();
     return subtotal + deliveryFee;
   };
 
@@ -1733,11 +1748,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             <div className="flex justify-between">
               <span>{adminT('orders.deliveryFee')}:</span>
               <span>
-                {parseFloat(order.deliveryFee || "0") === 0 ? (
-                  <span className="text-green-600 font-medium">{adminT('common.free')}</span>
-                ) : (
-                  formatCurrency(parseFloat(order.deliveryFee || "0"))
-                )}
+                {(() => {
+                  const correctDeliveryFee = calculateCorrectDeliveryFee();
+                  return correctDeliveryFee === 0 ? (
+                    <span className="text-green-600 font-medium">{adminT('common.free')}</span>
+                  ) : (
+                    formatCurrency(correctDeliveryFee)
+                  );
+                })()}
               </span>
             </div>
             
