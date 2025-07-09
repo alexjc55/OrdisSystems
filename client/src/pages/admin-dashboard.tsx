@@ -289,7 +289,7 @@ const productSchema = z.object({
   description: z.string().optional(),
   categoryIds: z.array(z.number()).min(1, "Выберите хотя бы одну категорию"),
   price: z.string().min(1),
-  unit: z.enum(["100g", "100ml", "piece", "kg"]).default("100g"),
+  unit: z.enum(["100g", "100ml", "piece", "portion", "kg"]).default("100g"),
   imageUrl: z.string().optional(),
   isAvailable: z.boolean().default(true),
   availabilityStatus: z.enum(["available", "out_of_stock_today", "completely_unavailable"]).default("available"),
