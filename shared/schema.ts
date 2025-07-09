@@ -509,7 +509,7 @@ export const insertProductSchema = createInsertSchema(products).omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  unit: z.enum(["100g", "100ml", "piece", "kg"]).default("100g"),
+  unit: z.enum(["100g", "100ml", "piece", "portion", "kg"]).default("100g"),
   discountType: z.enum(["percentage", "fixed"]).nullable().optional(),
   discountValue: z.string().nullable().optional(),
   categoryIds: z.array(z.number()).optional(), // Array of category IDs for many-to-many
