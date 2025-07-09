@@ -55,6 +55,7 @@ export function getUnitShortLabel(unit: ProductUnit, t?: (key: string, fallback?
       "100g": t('units.per100g', '100г'),
       "100ml": t('units.per100ml', '100мл'),
       "piece": t('units.piece', 'шт'),
+      "portion": t('units.portionShort', 'порц.'),
       "kg": t('units.kg', 'кг')
     };
     return labels[unit];
@@ -65,6 +66,7 @@ export function getUnitShortLabel(unit: ProductUnit, t?: (key: string, fallback?
     "100g": "100г",
     "100ml": "100мл",
     "piece": "шт",
+    "portion": "порц.",
     "kg": "кг"
   };
   return labels[unit];
@@ -117,7 +119,7 @@ export function formatQuantity(quantity: number | string, unit: ProductUnit, t?:
     case "piece":
       return `${Math.round(quantityNum)} ${t ? t('units.piece') : 'шт'}`;
     case "portion":
-      return `${Math.round(quantityNum)} ${t ? t('units.portion') : 'порция'}`;
+      return `${Math.round(quantityNum)} ${t ? t('units.portionShort') : 'порц.'}`;
     case "kg":
       return `${Math.round(quantityNum)} ${t ? t('units.kg') : 'кг'}`;
     default:

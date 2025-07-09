@@ -105,6 +105,7 @@
     "units": {
       "piece": "pcs",
       "portion": "portion",
+      "portionShort": "pcs",
       "kg": "kg",
       "g": "g",
       "ml": "ml",

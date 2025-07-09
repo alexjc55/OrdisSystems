@@ -290,6 +290,7 @@
     "units": {
       "piece": "قطعة",
       "portion": "حصة",
+      "portionShort": "حصة",
       "kg": "كيلو",
       "g": "جرام",
       "ml": "مل",

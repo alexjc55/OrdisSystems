@@ -328,6 +328,7 @@
     "units": {
       "piece": "шт",
       "portion": "порция",
+      "portionShort": "порц.",
       "kg": "кг",
       "g": "г",
       "ml": "мл",

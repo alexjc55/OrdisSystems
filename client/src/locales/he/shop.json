@@ -238,6 +238,7 @@
   "units": {
     "piece": "יח׳",
     "portion": "מנה",
+    "portionShort": "מנה",
     "kg": "ק״ג",
     "per100g": "ל-100 גרם",
     "per100ml": "100 מ״ל",

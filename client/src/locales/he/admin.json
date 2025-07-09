@@ -563,6 +563,7 @@
     "units": {
       "piece": "יח",
       "portion": "מנה",
+      "portionShort": "מנה",
       "kg": "ק\"ג",
       "g": "גר",
       "ml": "מ\"ל",

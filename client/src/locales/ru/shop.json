@@ -139,6 +139,7 @@
   "units": {
     "piece": "шт",
     "portion": "порция",
+    "portionShort": "порц.",
     "kg": "кг",
     "per100g": "за 100г",
     "per100ml": "100мл",
