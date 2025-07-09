@@ -896,6 +896,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     const qty = Math.round(quantity);
     switch (unit) {
       case 'piece': return `${qty} ${adminT('products.units.piece')}`;
+      case 'portion': return `${qty} ${adminT('products.units.portion')}`;
       case 'kg': return `${qty} ${adminT('products.units.kg')}`;
       case '100g': return `${qty} ${adminT('products.units.g')}`;
       case '100ml': return `${qty} ${adminT('products.units.ml')}`;
@@ -1959,6 +1960,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
   function getUnitDisplay(unit: string) {
     switch (unit) {
       case 'piece': return adminT('products.units.piece');
+      case 'portion': return adminT('products.units.portion');
       case 'kg': return adminT('products.units.kg');
       case '100g': return adminT('products.units.per100g');
       case '100ml': return adminT('products.units.per100ml');
@@ -1984,6 +1986,7 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
       // Fallback based on unit name
       switch (product.unit) {
         case 'piece':
+        case 'portion':
           setQuantity(1);
           break;
         case 'gram':
@@ -3236,6 +3239,7 @@ export default function AdminDashboard() {
   function getUnitDisplay(unit: string) {
     switch (unit) {
       case 'piece': return adminT('products.units.piece');
+      case 'portion': return adminT('products.units.portion');
       case 'kg': return adminT('products.units.kg');
       case '100g': return adminT('products.units.per100g');
       case '100ml': return adminT('products.units.per100ml');
@@ -6013,6 +6017,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                         <SelectItem value="100g" className="text-sm">{adminT('products.units.100g')}</SelectItem>
                         <SelectItem value="100ml" className="text-sm">{adminT('products.units.100ml')}</SelectItem>
                         <SelectItem value="piece" className="text-sm">{adminT('products.units.piece')}</SelectItem>
+                        <SelectItem value="portion" className="text-sm">{adminT('products.units.portion')}</SelectItem>
                         <SelectItem value="kg" className="text-sm">{adminT('products.units.kg')}</SelectItem>
                       </SelectContent>
                     </Select>

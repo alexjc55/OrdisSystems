@@ -85,7 +85,7 @@ export const products = pgTable("products", {
   description_he: text("description_he"),
   description_ar: text("description_ar"),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
-  unit: varchar("unit", { length: 20 }).default("100g").notNull(), // "100g", "100ml", "piece", "kg"
+  unit: varchar("unit", { length: 20 }).default("100g").notNull(), // "100g", "100ml", "piece", "kg", "portion"
   pricePerKg: decimal("price_per_kg", { precision: 10, scale: 2 }).notNull(), // For backward compatibility
   imageUrl: varchar("image_url", { length: 500 }),
   imageUrl_en: varchar("image_url_en", { length: 500 }),

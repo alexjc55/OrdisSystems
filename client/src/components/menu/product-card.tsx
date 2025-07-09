@@ -40,6 +40,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   const getDefaultQuantity = () => {
     switch (unit) {
       case "piece": return 1;
+      case "portion": return 1;
       case "kg": return 1.0;
       case "100g":
       case "100ml": return 100; // 100 grams by default
@@ -255,6 +256,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">
               {unit === "piece" ? t('product.quantity') + ':' : 
+               unit === "portion" ? t('product.quantity') + ':' :
                unit === "kg" ? t('product.weight') + ':' : 
                unit === "100g" || unit === "100ml" ? t('product.grams') + ':' : t('product.quantity') + ':'}
             </span>
@@ -264,11 +266,11 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 variant="outline"
                 className="h-10 w-10 md:h-8 md:w-8 p-0 border-gray-300"
                 onClick={() => {
-                  const step = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1;
+                  const step = unit === "piece" || unit === "portion" ? 1 : unit === "kg" ? 0.1 : 1;
                   const currentQuantity = selectedQuantity || getDefaultQuantity();
                   handleQuantityChange(currentQuantity - step);
                 }}
-                disabled={(selectedQuantity || getDefaultQuantity()) <= (unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1)}
+                disabled={(selectedQuantity || getDefaultQuantity()) <= (unit === "piece" || unit === "portion" ? 1 : unit === "kg" ? 0.1 : 1)}
               >
                 <Minus className="h-2 w-2" />
               </Button>
@@ -288,14 +290,14 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                   }
                 }}
                 className="w-20 md:w-16 text-center text-sm h-10 md:h-8 border-gray-300"
-                placeholder={unit === "piece" ? "1" : unit === "kg" ? "1" : "100"}
+                placeholder={unit === "piece" || unit === "portion" ? "1" : unit === "kg" ? "1" : "100"}
               />
               <Button
                 size="sm"
                 variant="outline"
                 className="h-10 w-10 md:h-8 md:w-8 p-0 border-gray-300"
                 onClick={() => {
-                  const step = unit === "piece" ? 1 : unit === "kg" ? 0.1 : 1;
+                  const step = unit === "piece" || unit === "portion" ? 1 : unit === "kg" ? 0.1 : 1;
                   const currentQuantity = selectedQuantity || getDefaultQuantity();
                   handleQuantityChange(currentQuantity + step);
                 }}

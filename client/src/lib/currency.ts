@@ -1,4 +1,4 @@
-export type ProductUnit = "100g" | "100ml" | "piece" | "kg";
+export type ProductUnit = "100g" | "100ml" | "piece" | "kg" | "portion";
 
 export function formatCurrency(amount: number | string, locale?: string): string {
   const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
@@ -32,6 +32,7 @@ export function getUnitLabel(unit: ProductUnit, t?: (key: string, fallback?: str
       "100g": t('units.per100g'),
       "100ml": t('units.per100ml'), 
       "piece": `${t('units.per')} ${t('units.piece')}`,
+      "portion": `${t('units.per')} ${t('units.portion')}`,
       "kg": `${t('units.per')} ${t('units.kg')}`
     };
     return labels[unit];
@@ -42,6 +43,7 @@ export function getUnitLabel(unit: ProductUnit, t?: (key: string, fallback?: str
     "100g": "за 100г",
     "100ml": "за 100мл", 
     "piece": "за штуку",
+    "portion": "за порцию",
     "kg": "за кг"
   };
   return labels[unit];
@@ -114,6 +116,8 @@ export function formatQuantity(quantity: number | string, unit: ProductUnit, t?:
       return `${Math.round(quantityNum)} ${t ? t('units.ml') : 'мл'}`;
     case "piece":
       return `${Math.round(quantityNum)} ${t ? t('units.piece') : 'шт'}`;
+    case "portion":
+      return `${Math.round(quantityNum)} ${t ? t('units.portion') : 'порция'}`;
     case "kg":
       return `${Math.round(quantityNum)} ${t ? t('units.kg') : 'кг'}`;
     default:

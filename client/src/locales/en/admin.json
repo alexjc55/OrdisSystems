@@ -104,11 +104,14 @@
     "allCategories": "All categories",
     "units": {
       "piece": "pcs",
+      "portion": "portion",
       "kg": "kg",
       "g": "g",
       "ml": "ml",
       "100g": "per 100g",
-      "100ml": "per 100ml"
+      "100ml": "per 100ml",
+      "per100g": "per 100g",
+      "per100ml": "per 100ml"
     },
     "dialog": {
       "addTitle": "Add Product",
