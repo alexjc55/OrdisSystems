@@ -1956,7 +1956,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 
 // Add Item Dialog Component
 function AddItemDialog({ onClose, onAdd, currentOrderItems, searchPlaceholder, adminT, isRTL }: { onClose: () => void, onAdd: (product: any, quantity: number) => void, currentOrderItems: any[], searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation('common');
   
   function getUnitDisplay(unit: string) {
     switch (unit) {
@@ -2068,7 +2068,7 @@ function AddItemDialog({ onClose, onAdd, currentOrderItems, searchPlaceholder, a
             ))
           ) : (
             <div className="p-4 text-center text-gray-500">
-              {searchQuery ? adminT('common.noSearchResults') : adminT('orders.allProductsInOrder')}
+              {searchQuery ? t('messages.noSearchResults') : adminT('orders.allProductsInOrder')}
             </div>
           )}
         </div>

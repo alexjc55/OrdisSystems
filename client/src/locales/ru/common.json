@@ -366,6 +366,7 @@
   "messages": {
     "noData": "Нет данных",
     "noResults": "Результаты не найдены",
+    "noSearchResults": "По вашему запросу ничего не найдено",
     "loginRequired": "Требуется авторизация",
     "accessDenied": "Доступ запрещён",
     "operationCompleted": "Операция выполнена",
