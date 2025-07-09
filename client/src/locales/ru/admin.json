@@ -574,6 +574,7 @@
     "notesPlaceholder": "Дополнительные заметки к заказу...",
     "orderInformation": "Информация о заказе",
     "save": "Сохранить",
+    "allProductsInOrder": "Все доступные товары уже добавлены в заказ",
     "notifications": {
       "statusUpdated": "Статус обновлен",
       "statusUpdatedDesc": "Статус заказа успешно обновлен"

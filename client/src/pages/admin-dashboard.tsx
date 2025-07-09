@@ -1918,6 +1918,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
         <AddItemDialog 
           onClose={() => setShowAddItem(false)}
           onAdd={addItem}
+          currentOrderItems={editedOrderItems}
           searchPlaceholder={searchPlaceholder}
           adminT={adminT}
           isRTL={isRTL}
@@ -1954,7 +1955,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
 }
 
 // Add Item Dialog Component
-function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { onClose: () => void, onAdd: (product: any, quantity: number) => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
+function AddItemDialog({ onClose, onAdd, currentOrderItems, searchPlaceholder, adminT, isRTL }: { onClose: () => void, onAdd: (product: any, quantity: number) => void, currentOrderItems: any[], searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
   const { i18n } = useTranslation();
   
   function getUnitDisplay(unit: string) {
@@ -1976,11 +1977,11 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
     console.log('Selected product unit:', product.unit, 'price per unit:', product.pricePerKg || product.pricePerPiece);
     
     // Set default quantity based on unit and pricing structure
-    if (product.pricePerKg && product.unit !== 'piece') {
-      // If price is per kg, default to 100g
+    if (product.pricePerKg && product.unit !== 'piece' && product.unit !== 'portion') {
+      // If price is per kg, default to 100g (but not for piece or portion units)
       setQuantity(100);
-    } else if (product.unit === 'piece' || product.pricePerPiece) {
-      // If it's per piece, default to 1
+    } else if (product.unit === 'piece' || product.unit === 'portion' || product.pricePerPiece) {
+      // If it's per piece or portion, default to 1
       setQuantity(1);
     } else {
       // Fallback based on unit name
@@ -2008,9 +2009,21 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
 
   const { data: productsResponse } = useQuery({
     queryKey: ["/api/products"],
-    select: (data: any) => data?.filter((product: any) => 
-      getLocalizedField(product, 'name', i18n.language as SupportedLanguage).toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    select: (data: any) => {
+      // Get IDs of products already in the order
+      const existingProductIds = currentOrderItems.map((item: any) => item.productId);
+      
+      return data?.filter((product: any) => {
+        // Filter by search query
+        const matchesSearch = getLocalizedField(product, 'name', i18n.language as SupportedLanguage)
+          .toLowerCase().includes(searchQuery.toLowerCase());
+        
+        // Filter out products already in the order
+        const notInOrder = !existingProductIds.includes(product.id);
+        
+        return matchesSearch && notInOrder;
+      });
+    }
   });
 
   const handleAdd = () => {
@@ -2038,20 +2051,26 @@ function AddItemDialog({ onClose, onAdd, searchPlaceholder, adminT, isRTL }: { o
 
         {/* Product List */}
         <div className="mb-4 max-h-60 overflow-y-auto border rounded">
-          {productsResponse?.map((product: any) => (
-            <div
-              key={product.id}
-              className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${
-                selectedProduct?.id === product.id ? 'bg-blue-50' : ''
-              }`}
-              onClick={() => handleProductSelect(product)}
-            >
-              <div className="font-medium">{getLocalizedField(product, 'name', i18n.language as SupportedLanguage)}</div>
-              <div className="text-sm text-gray-500">
-                {formatCurrency(product.price || product.pricePerKg)} {adminT('products.per')} {getUnitDisplay(product.unit)}
+          {productsResponse && productsResponse.length > 0 ? (
+            productsResponse.map((product: any) => (
+              <div
+                key={product.id}
+                className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${
+                  selectedProduct?.id === product.id ? 'bg-blue-50' : ''
+                }`}
+                onClick={() => handleProductSelect(product)}
+              >
+                <div className="font-medium">{getLocalizedField(product, 'name', i18n.language as SupportedLanguage)}</div>
+                <div className="text-sm text-gray-500">
+                  {formatCurrency(product.price || product.pricePerKg)} {adminT('products.per')} {getUnitDisplay(product.unit)}
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="p-4 text-center text-gray-500">
+              {searchQuery ? adminT('common.noSearchResults') : adminT('orders.allProductsInOrder')}
             </div>
-          ))}
+          )}
         </div>
 
         {/* Quantity */}
