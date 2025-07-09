@@ -37,8 +37,8 @@ export default function CartSidebar() {
     } else {
       // Adjust increment based on unit type
       let adjustedQuantity = newQuantity;
-      if (unit === "piece") {
-        adjustedQuantity = Math.round(newQuantity); // Whole numbers for pieces
+      if (unit === "piece" || unit === "portion") {
+        adjustedQuantity = Math.round(newQuantity); // Whole numbers for pieces and portions
       } else if (unit === "kg") {
         adjustedQuantity = Number(newQuantity.toFixed(1)); // 0.1 kg increments
       } else {
@@ -51,6 +51,7 @@ export default function CartSidebar() {
   const getIncrementValue = (unit: ProductUnit) => {
     switch (unit) {
       case "piece":
+      case "portion":
         return 1;
       case "kg":
         return 0.1;
@@ -221,18 +222,17 @@ export default function CartSidebar() {
                                 </Button>
                               </div>
                               <div className="text-xs text-gray-500">
-                                {(item.product?.unit || "100g") === "piece" ? t('units.piece') : 
-                                 (item.product?.unit || "100g") === "kg" ? t('units.kg') : 
-                                 (item.product?.unit || "100g") === "100g" ? t('units.per100g') : t('units.per100ml')}
+                                {formatQuantity(item.quantity, (item.product?.unit || "100g") as ProductUnit, t)}
                               </div>
                             </div>
                             
                             <div className="text-right">
                               <div className="text-xs text-gray-500">
-                                {formatCurrency(item.product.price)} {t('units.per')} {(() => {
+                                {formatCurrency(item.product.price)} {(() => {
                                   switch (item.product.unit) {
-                                    case 'piece': return t('units.piece');
-                                    case 'kg': return t('units.kg');
+                                    case 'piece': return `${t('units.per')} ${t('units.piece')}`;
+                                    case 'portion': return `${t('units.per')} ${t('units.portion')}`;
+                                    case 'kg': return `${t('units.per')} ${t('units.kg')}`;
                                     case '100g': return t('units.per100g');
                                     case '100ml': return t('units.per100ml');
                                     default: return item.product.unit;

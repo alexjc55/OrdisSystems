@@ -86,6 +86,7 @@ export function calculateTotal(price: number | string, quantity: number | string
       total = priceNum * (quantityNum / 100);
       break;
     case "piece":
+    case "portion":
       total = priceNum * quantityNum;
       break;
     case "kg":
