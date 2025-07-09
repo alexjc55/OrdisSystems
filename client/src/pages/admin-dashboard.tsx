@@ -6403,7 +6403,10 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                     const commonIcons = [
                       "🥗", "🍖", "🐟", "🥩", "🥕", "🍎", "🍞", "🥛", 
                       "🍽️", "🥘", "🍱", "🥙", "🧀", "🍯", "🥜", "🍲",
-                      "🍰", "🥧", "🍚", "🌮", "🍕", "🍝", "🥪", "🌯"
+                      "🍰", "🥧", "🍚", "🌮", "🍕", "🍝", "🥪", "🌯",
+                      "🥫", "🧄", "🫒", "🌶️", "🥒", "🍅", "🥑", "🥬",
+                      "🍄", "🌰", "🥔", "🍠", "🫘", "🧊", "🍳", "🥓",
+                      "🌭", "🥨", "🧈", "🥤", "☕", "🍵", "🧃", "🍷"
                     ];
                     
                     return (
@@ -6422,7 +6425,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                           {/* Icon grid selector */}
                           <div>
                             <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.popularIcons')}:</div>
-                            <div className="grid grid-cols-8 gap-2">
+                            <div className="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-12 gap-2">
                               {commonIcons.map((icon) => (
                                 <Button
                                   key={icon}
