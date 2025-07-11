@@ -629,8 +629,11 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
             <Select
               value={order.status}
               onValueChange={(newStatus) => {
+                // Prevent automatic close when cancelling
                 if (newStatus === 'cancelled') {
-                  onCancelOrder(order.id);
+                  setTimeout(() => {
+                    onCancelOrder(order.id);
+                  }, 100); // Small delay to let Select close properly first
                 } else {
                   onStatusChange({ orderId: order.id, status: newStatus });
                 }
@@ -4315,7 +4318,9 @@ export default function AdminDashboard() {
                                       value={order.status}
                                       onValueChange={(newStatus) => {
                                         if (newStatus === 'cancelled') {
-                                          handleOrderCancellation(order.id);
+                                          setTimeout(() => {
+                                            handleOrderCancellation(order.id);
+                                          }, 100); // Small delay to let Select close properly first
                                         } else {
                                           updateOrderStatusMutation.mutate({ orderId: order.id, status: newStatus });
                                         }

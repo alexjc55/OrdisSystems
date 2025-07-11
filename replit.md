@@ -131,6 +131,16 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- January 11, 2025: ✅ CRITICAL ADMIN DASHBOARD BUG FIXES COMPLETED
+  - CANCELLATION DIALOG FIX: Resolved order cancellation dialog disappearing immediately after selecting "cancelled" status
+    - Added setTimeout delays to prevent Radix UI Select from interfering with dialog opening
+    - Fixed mutation callback to properly close dialog only after successful status update
+    - Applied fix to both kanban view and table view Select components
+    - Cancellation dialog now stays open properly for reason selection
+  - EMAIL LABEL UPDATES: Shortened all Russian email field labels from "Электронная почта" to "Эл. почта"
+    - Updated shop.json, common.json, and admin.json translation files
+    - All email fields now display compact "Эл. почта" label throughout interface
+    - Improved mobile layout with shorter field labels
 - January 9, 2025: ✅ COMPREHENSIVE DATABASE MIGRATION SYSTEM WITH COMPLETE FEATURE UPDATES
   - UNIVERSAL MIGRATION CREATION: Developed comprehensive migration covering all recent system improvements
     - Category icon system: Enhanced from 48 to 80+ specialized food category icons
