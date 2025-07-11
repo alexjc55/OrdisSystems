@@ -1353,12 +1353,19 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       const { id } = req.params;
       const { forceDelete } = req.query;
       
+      console.log('DELETE /api/admin/users/:id called with:', { id, forceDelete, currentUser: user.id });
+      
       // Prevent deleting yourself
       if (id === user.id) {
         return res.status(400).json({ message: "Cannot delete your own account" });
       }
 
       await storage.deleteUser(id, forceDelete === 'true');
+      console.log('User deleted successfully:', id);
+      
+      // Clear users cache when user is deleted
+      clearCachePattern('admin-users');
+      
       res.status(204).send();
     } catch (error) {
       console.error("Error deleting user:", error);

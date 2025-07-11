@@ -2490,14 +2490,17 @@ export default function AdminDashboard() {
   const [userToDelete, setUserToDelete] = useState<any>(null);
   
   const handleDeleteUser = (user: any) => {
+    console.log('handleDeleteUser called with user:', user);
     setUserToDelete(user);
     setIsUserDeletionDialogOpen(true);
   };
   
   const handleConfirmDeleteUser = async (userId: string, forceDelete: boolean) => {
+    console.log('handleConfirmDeleteUser called with userId:', userId, 'forceDelete:', forceDelete);
     try {
       const queryParams = forceDelete ? '?forceDelete=true' : '';
-      await apiRequest('DELETE', `/api/admin/users/${userId}${queryParams}`);
+      const response = await apiRequest('DELETE', `/api/admin/users/${userId}${queryParams}`);
+      console.log('Delete response:', response);
       toast({
         title: adminT('users.deleted'),
         description: adminT('users.deleteSuccess'),
@@ -2506,6 +2509,7 @@ export default function AdminDashboard() {
       setIsUserDeletionDialogOpen(false);
       setUserToDelete(null);
     } catch (error: any) {
+      console.error('Delete user error:', error);
       toast({
         title: adminT('actions.error'),
         description: error.message || adminT('users.deleteError'),
@@ -7953,6 +7957,7 @@ function UserDeletionDialog({ open, onClose, user, onConfirm }: {
 
   const handleConfirm = () => {
     if (user) {
+      console.log('UserDeletionDialog handleConfirm with user.id:', user.id);
       onConfirm(user.id, true); // Force delete with all related data
       onClose();
     }
