@@ -8246,7 +8246,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                         <AlertDialogCancel>{adminT('actions.cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => {
-                            onDelete(user.id);
+                            onDelete(user);
                             onClose();
                           }}
                           className="bg-red-600 hover:bg-red-700"
