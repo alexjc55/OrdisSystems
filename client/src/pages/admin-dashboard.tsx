@@ -3025,12 +3025,18 @@ export default function AdminDashboard() {
         : { status };
       return await apiRequest("PUT", `/api/orders/${orderId}/status`, payload);
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       toast({
         title: adminT('orders.notifications.statusUpdated'),
         description: adminT('orders.notifications.statusUpdatedDesc'),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
+      
+      // Close cancellation dialog only after successful status update
+      if (variables.status === 'cancelled') {
+        setIsCancellationDialogOpen(false);
+        setOrderToCancel(null);
+      }
     },
     onError: (error: any) => {
       toast({
@@ -5544,6 +5550,7 @@ export default function AdminDashboard() {
               status: 'cancelled',
               cancellationReason: reason
             });
+            // Dialog will be closed automatically in onSuccess callback
           }
         }}
         cancellationReasons={(storeSettings?.cancellationReasons as string[]) || ["Клиент отменил", "Товар отсутствует", "Технические проблемы", "Другое"]}
@@ -7822,7 +7829,7 @@ function CancellationReasonDialog({
   const handleConfirm = () => {
     if (selectedReason) {
       onConfirm(selectedReason);
-      onClose();
+      // Dialog will be closed automatically after successful mutation
     }
   };
 
