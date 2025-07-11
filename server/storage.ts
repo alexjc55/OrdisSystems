@@ -1359,11 +1359,49 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async deleteUser(id: string): Promise<void> {
-    // First delete all user addresses to avoid foreign key constraint violation
+  async checkUserDeletionImpact(id: string): Promise<{ hasOrders: boolean; orderCount: number; hasAddresses: boolean; addressCount: number }> {
+    // Check for related orders
+    const [orderCountResult] = await db
+      .select({ count: count() })
+      .from(orders)
+      .where(eq(orders.userId, id));
+    
+    // Check for related addresses
+    const [addressCountResult] = await db
+      .select({ count: count() })
+      .from(userAddresses)
+      .where(eq(userAddresses.userId, id));
+    
+    return {
+      hasOrders: orderCountResult.count > 0,
+      orderCount: orderCountResult.count,
+      hasAddresses: addressCountResult.count > 0,
+      addressCount: addressCountResult.count
+    };
+  }
+
+  async deleteUser(id: string, forceDelete: boolean = false): Promise<void> {
+    if (!forceDelete) {
+      // Check if user has related data before deletion
+      const impact = await this.checkUserDeletionImpact(id);
+      if (impact.hasOrders || impact.hasAddresses) {
+        throw new Error(`User has ${impact.orderCount} orders and ${impact.addressCount} addresses. Use forceDelete to proceed.`);
+      }
+    }
+    
+    // Delete all related data in correct order
+    // 1. Delete order items first (they reference orders)
+    await db.delete(orderItems).where(
+      sql`order_id IN (SELECT id FROM orders WHERE user_id = ${id})`
+    );
+    
+    // 2. Delete orders
+    await db.delete(orders).where(eq(orders.userId, id));
+    
+    // 3. Delete user addresses
     await db.delete(userAddresses).where(eq(userAddresses.userId, id));
     
-    // Then delete the user
+    // 4. Finally delete the user
     await db.delete(users).where(eq(users.id, id));
   }
 

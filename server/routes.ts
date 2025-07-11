@@ -1323,6 +1323,24 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
+  // Check user deletion impact
+  app.get('/api/admin/users/:id/deletion-impact', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user;
+      
+      if (!user || (user.role !== "admin" && user.role !== "worker")) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const { id } = req.params;
+      const impact = await storage.checkUserDeletionImpact(id);
+      res.json(impact);
+    } catch (error) {
+      console.error("Error checking user deletion impact:", error);
+      res.status(500).json({ message: "Failed to check deletion impact" });
+    }
+  });
+
   // Admin-only route to delete a user
   app.delete('/api/admin/users/:id', isAuthenticated, async (req: any, res) => {
     try {
@@ -1333,13 +1351,14 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       }
 
       const { id } = req.params;
+      const { forceDelete } = req.query;
       
       // Prevent deleting yourself
       if (id === user.id) {
         return res.status(400).json({ message: "Cannot delete your own account" });
       }
 
-      await storage.deleteUser(id);
+      await storage.deleteUser(id, forceDelete === 'true');
       res.status(204).send();
     } catch (error) {
       console.error("Error deleting user:", error);

@@ -2486,23 +2486,31 @@ export default function AdminDashboard() {
   // User management state
   const [isUserFormOpen, setIsUserFormOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
+  const [isUserDeletionDialogOpen, setIsUserDeletionDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<any>(null);
   
-  const handleDeleteUser = async (userId: string) => {
-    if (window.confirm(adminT('users.deleteConfirm'))) {
-      try {
-        await apiRequest('DELETE', `/api/admin/users/${userId}`);
-        toast({
-          title: adminT('users.deleted'),
-          description: adminT('users.deleteSuccess'),
-        });
-        queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
-      } catch (error: any) {
-        toast({
-          title: adminT('actions.error'),
-          description: error.message || adminT('users.deleteError'),
-          variant: "destructive",
-        });
-      }
+  const handleDeleteUser = (user: any) => {
+    setUserToDelete(user);
+    setIsUserDeletionDialogOpen(true);
+  };
+  
+  const handleConfirmDeleteUser = async (userId: string, forceDelete: boolean) => {
+    try {
+      const queryParams = forceDelete ? '?forceDelete=true' : '';
+      await apiRequest('DELETE', `/api/admin/users/${userId}${queryParams}`);
+      toast({
+        title: adminT('users.deleted'),
+        description: adminT('users.deleteSuccess'),
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      setIsUserDeletionDialogOpen(false);
+      setUserToDelete(null);
+    } catch (error: any) {
+      toast({
+        title: adminT('actions.error'),
+        description: error.message || adminT('users.deleteError'),
+        variant: "destructive",
+      });
     }
   };
   const [usersRoleFilter, setUsersRoleFilter] = useState("all");
@@ -5036,6 +5044,7 @@ export default function AdminDashboard() {
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.phone')}</TableHead>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.orders')}</TableHead>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.totalAmount')}</TableHead>
+                            <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.actions')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -5097,6 +5106,17 @@ export default function AdminDashboard() {
                                 <span className="text-sm text-gray-900 font-normal">
                                   {formatCurrency(user.totalOrderAmount || 0)}
                                 </span>
+                              </TableCell>
+                              <TableCell className="px-3 py-3 text-sm rtl-cell">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleDeleteUser(user)}
+                                  className="h-8 w-8 p-0 text-red-600 hover:text-red-800 hover:bg-red-50"
+                                  title={adminT('actions.delete')}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
                               </TableCell>
                             </TableRow>
                           ))}
@@ -5537,7 +5557,18 @@ export default function AdminDashboard() {
             createUserMutation.mutate(data);
           }
         }}
-        onDelete={(userId: string) => deleteUserMutation.mutate(userId)}
+        onDelete={handleDeleteUser}
+      />
+
+      {/* User Deletion Dialog */}
+      <UserDeletionDialog
+        open={isUserDeletionDialogOpen}
+        onClose={() => {
+          setIsUserDeletionDialogOpen(false);
+          setUserToDelete(null);
+        }}
+        user={userToDelete}
+        onConfirm={handleConfirmDeleteUser}
       />
 
       {/* Cancellation Reason Dialog */}
@@ -7881,6 +7912,106 @@ function CancellationReasonDialog({
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+// User Deletion Confirmation Dialog Component
+function UserDeletionDialog({ open, onClose, user, onConfirm }: {
+  open: boolean;
+  onClose: () => void;
+  user: any;
+  onConfirm: (userId: string, forceDelete: boolean) => void;
+}) {
+  const { t: adminT } = useAdminTranslation();
+  const [isChecking, setIsChecking] = useState(false);
+  const [deletionImpact, setDeletionImpact] = useState<{
+    hasOrders: boolean;
+    orderCount: number;
+    hasAddresses: boolean;
+    addressCount: number;
+  } | null>(null);
+
+  // Check deletion impact when dialog opens
+  useEffect(() => {
+    if (open && user) {
+      setIsChecking(true);
+      setDeletionImpact(null);
+      
+      fetch(`/api/admin/users/${user.id}/deletion-impact`)
+        .then(res => res.json())
+        .then(data => {
+          setDeletionImpact(data);
+        })
+        .catch(error => {
+          console.error('Error checking deletion impact:', error);
+        })
+        .finally(() => {
+          setIsChecking(false);
+        });
+    }
+  }, [open, user]);
+
+  const handleConfirm = () => {
+    if (user) {
+      onConfirm(user.id, true); // Force delete with all related data
+      onClose();
+    }
+  };
+
+  return (
+    <AlertDialog open={open} onOpenChange={onClose}>
+      <AlertDialogContent className="max-w-md">
+        <AlertDialogHeader>
+          <AlertDialogTitle className="text-red-600">
+            {deletionImpact?.hasOrders || deletionImpact?.hasAddresses 
+              ? adminT('userDeletion.deleteUserWithData')
+              : adminT('userDeletion.deleteUser')
+            }
+          </AlertDialogTitle>
+          <AlertDialogDescription className="space-y-3">
+            {isChecking ? (
+              <div className="flex items-center gap-2">
+                <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-blue-600 rounded-full"></div>
+                {adminT('userDeletion.checkingData')}
+              </div>
+            ) : deletionImpact ? (
+              <>
+                {deletionImpact.hasOrders || deletionImpact.hasAddresses ? (
+                  <>
+                    <p>{adminT('userDeletion.userHasRelatedData')}</p>
+                    <ul className="list-disc pl-5 space-y-1">
+                      {deletionImpact.hasOrders && (
+                        <li>{adminT('userDeletion.ordersCount', { count: deletionImpact.orderCount })}</li>
+                      )}
+                      {deletionImpact.hasAddresses && (
+                        <li>{adminT('userDeletion.addressesCount', { count: deletionImpact.addressCount })}</li>
+                      )}
+                    </ul>
+                    <p className="text-red-600 font-medium">
+                      {adminT('userDeletion.deleteWarning')}
+                    </p>
+                  </>
+                ) : (
+                  <p>{adminT('userDeletion.deleteUserConfirm')}</p>
+                )}
+              </>
+            ) : null}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+          <AlertDialogCancel onClick={onClose} className="w-full sm:w-auto">
+            {adminT('userDeletion.cancelDeletion')}
+          </AlertDialogCancel>
+          <AlertDialogAction 
+            onClick={handleConfirm}
+            disabled={isChecking}
+            className="w-full sm:w-auto bg-red-600 hover:bg-red-700"
+          >
+            {adminT('userDeletion.confirmDeletion')}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 

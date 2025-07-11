@@ -217,6 +217,18 @@
     "textBanner": "Текст",
     "imageBanner": "Изображение"
   },
+  "userDeletion": {
+    "deleteUser": "Удалить пользователя",
+    "deleteUserConfirm": "Вы уверены, что хотите удалить этого пользователя?",
+    "deleteUserWithData": "Удаление пользователя с данными",
+    "userHasRelatedData": "У этого пользователя есть связанные данные:",
+    "ordersCount": "Заказов: {{count}}",
+    "addressesCount": "Адресов: {{count}}",
+    "deleteWarning": "При удалении пользователя будут также удалены все его заказы и адреса. Это действие необратимо.",
+    "confirmDeletion": "Подтвердить удаление",
+    "cancelDeletion": "Отменить",
+    "checkingData": "Проверка связанных данных..."
+  },
   "colorLabels": {
     "primaryColor": "Основной цвет",
     "primaryTextColor": "Цвет текста кнопок",
