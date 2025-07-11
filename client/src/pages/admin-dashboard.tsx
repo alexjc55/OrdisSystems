@@ -7944,6 +7944,7 @@ function UserDeletionDialog({ open, onClose, user, onConfirm }: {
       fetch(`/api/admin/users/${user.id}/deletion-impact`)
         .then(res => res.json())
         .then(data => {
+          console.log('Deletion impact data:', data);
           setDeletionImpact(data);
         })
         .catch(error => {
@@ -7986,10 +7987,10 @@ function UserDeletionDialog({ open, onClose, user, onConfirm }: {
                     <p>{adminT('userDeletion.userHasRelatedData')}</p>
                     <ul className="list-disc pl-5 space-y-1">
                       {deletionImpact.hasOrders && (
-                        <li>{adminT('userDeletion.ordersCount', { count: deletionImpact.orderCount })}</li>
+                        <li>🛒 Заказов: {deletionImpact.orderCount} (будут удалены)</li>
                       )}
                       {deletionImpact.hasAddresses && (
-                        <li>{adminT('userDeletion.addressesCount', { count: deletionImpact.addressCount })}</li>
+                        <li>📍 Адресов: {deletionImpact.addressCount} (будут удалены)</li>
                       )}
                     </ul>
                     <p className="text-red-600 font-medium">
