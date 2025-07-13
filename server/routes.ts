@@ -1564,33 +1564,6 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
-  app.post('/api/admin/themes', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
-      
-      if (!user || user.role !== 'admin') {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
-      const themeData = insertThemeSchema.parse(req.body);
-      
-      // Generate ID if not provided
-      if (!themeData.id) {
-        themeData.id = `custom_theme_${Date.now()}`;
-      }
-      
-      const theme = await storage.createTheme(themeData);
-      res.status(201).json(theme);
-    } catch (error) {
-      console.error("Error creating theme:", error);
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to create theme" });
-    }
-  });
-
   app.put('/api/admin/themes/:id', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.id;
@@ -1864,7 +1837,13 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         return res.status(403).json({ message: "Admin access required" });
       }
 
-      const themeData = insertThemeSchema.parse(req.body);
+      // Add default values for missing WhatsApp fields
+      const bodyWithDefaults = {
+        ...req.body,
+        whatsappPhone: req.body.whatsappPhone || "",
+        whatsappMessage: req.body.whatsappMessage || "Здравствуйте! У меня есть вопрос по заказу."
+      };
+      const themeData = insertThemeSchema.parse(bodyWithDefaults);
       
       // Generate ID if not provided
       if (!themeData.id) {
