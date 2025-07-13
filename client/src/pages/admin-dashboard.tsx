@@ -3474,7 +3474,7 @@ export default function AdminDashboard() {
                     </SelectItem>
                   )}
                   {hasPermission("canViewSettings") && (
-                    <SelectItem value="store" className="py-3">
+                    <SelectItem value="store-settings" className="py-3">
                       <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         {!isRTL && <Settings className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.settings')}</span>
@@ -3538,7 +3538,7 @@ export default function AdminDashboard() {
                     </TabsTrigger>
                   )}
                   {hasPermission("canViewSettings") && (
-                    <TabsTrigger value="store" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.settings')}>
+                    <TabsTrigger value="store-settings" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.settings')}>
                       <Settings className="w-4 h-4 ml-1" />
                       <span className="admin-tab-text">{adminT('tabs.settings')}</span>
                     </TabsTrigger>
@@ -3596,7 +3596,7 @@ export default function AdminDashboard() {
                     </TabsTrigger>
                   )}
                   {hasPermission("canViewSettings") && (
-                    <TabsTrigger value="store" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.settings')}>
+                    <TabsTrigger value="store-settings" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.settings')}>
                       <Settings className="w-4 h-4 mr-1" />
                       <span className="admin-tab-text">{adminT('tabs.settings')}</span>
                     </TabsTrigger>
@@ -5374,37 +5374,6 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             </TabsContent>
-          )}
-
-          {/* Store Management */}
-          {hasPermission("canViewSettings") && (
-            <TabsContent value="store" className="space-y-4 sm:space-y-6">
-              <div className="grid gap-6">
-                {/* Basic Store Information */}
-                <Card>
-                  <CardHeader>
-                    <div className={isRTL ? 'text-right' : 'text-left'}>
-                      <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
-                        <Store className="h-4 w-4 sm:h-5 sm:w-5" />
-                        {adminT('storeSettings.title')}
-                      </CardTitle>
-                      <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        {adminT('storeSettings.description')}
-                      </CardDescription>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                  <StoreSettingsForm
-                    storeSettings={storeSettings}
-                    onSubmit={(data) => updateStoreSettingsMutation.mutate(data)}
-                    isLoading={updateStoreSettingsMutation.isPending}
-                  />
-                </CardContent>
-              </Card>
-
-
-            </div>
-          </TabsContent>
           )}
 
           {/* Push Notifications Management */}
