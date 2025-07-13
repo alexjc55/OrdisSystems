@@ -6,6 +6,7 @@ import { RefreshCw, AlertTriangle } from 'lucide-react';
 export function CacheBuster() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   useEffect(() => {
     // Check for Service Worker updates
@@ -60,12 +61,40 @@ export function CacheBuster() {
       console.log('🔍 [CacheBuster] Checking for updates:', {
         lastAppHash,
         currentAppHash,
-        buildTime: data.buildTime
+        buildTime: data.buildTime,
+        initialLoad
       });
       
-      if (lastAppHash && lastAppHash !== currentAppHash) {
+      // При первой загрузке просто сохраняем хеш, не показываем уведомление
+      if (initialLoad) {
+        console.log('🔄 [CacheBuster] Initial load, storing hash');
+        setInitialLoad(false);
+        if (!lastAppHash) {
+          localStorage.setItem('app_hash', currentAppHash);
+          localStorage.setItem('app_version', data.version);
+          localStorage.setItem('build_time', data.buildTime);
+        }
+        return;
+      }
+      
+      // Проверяем недавнее обновление
+      const lastUpdate = localStorage.getItem('last_update');
+      const recentlyUpdated = lastUpdate && (Date.now() - parseInt(lastUpdate)) < 120000; // 2 минуты
+      
+      // Проверяем, было ли уведомление пропущено для этого хеша
+      const updateSkipped = localStorage.getItem('update_skipped');
+      const skippedRecently = updateSkipped && (Date.now() - parseInt(updateSkipped)) < 300000; // 5 минут
+      
+      if (lastAppHash && lastAppHash !== currentAppHash && !recentlyUpdated && !skippedRecently) {
         console.log('🆕 [CacheBuster] New version detected!');
         setUpdateAvailable(true);
+      } else {
+        if (recentlyUpdated) {
+          console.log('🔄 [CacheBuster] Recently updated, skipping notification');
+        }
+        if (skippedRecently) {
+          console.log('⏭️ [CacheBuster] Update was recently skipped, not showing again');
+        }
       }
       
       // Store current hash
@@ -81,6 +110,11 @@ export function CacheBuster() {
     setIsUpdating(true);
     
     try {
+      // Получаем текущий хеш перед очисткой
+      const response = await fetch('/api/version?' + Date.now());
+      const data = await response.json();
+      const currentAppHash = data.appHash;
+      
       // 1. Clear all browser caches
       if ('caches' in window) {
         const cacheNames = await caches.keys();
@@ -103,9 +137,15 @@ export function CacheBuster() {
         );
       }
 
-      // 3. Clear localStorage and sessionStorage
+      // 3. Clear localStorage and sessionStorage but preserve current hash
       localStorage.clear();
       sessionStorage.clear();
+      
+      // Сохраняем текущий хеш чтобы избежать повторных уведомлений
+      localStorage.setItem('app_hash', currentAppHash);
+      localStorage.setItem('app_version', data.version);
+      localStorage.setItem('build_time', data.buildTime);
+      localStorage.setItem('last_update', Date.now().toString());
 
       // 4. Force reload with cache bypass
       window.location.reload();
@@ -121,7 +161,9 @@ export function CacheBuster() {
 
   const skipUpdate = () => {
     setUpdateAvailable(false);
+    // Помечаем что пользователь пропустил обновление
     localStorage.setItem('update_skipped', Date.now().toString());
+    console.log('⏭️ [CacheBuster] User skipped update');
   };
 
   if (!updateAvailable) {
