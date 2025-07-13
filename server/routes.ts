@@ -601,6 +601,14 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
 
       const rawData = req.body;
       
+      console.log('=== Product Creation Debug ===');
+      console.log('Raw request body:', JSON.stringify(rawData, null, 2));
+      console.log('Required fields check:');
+      console.log('- name:', rawData.name, typeof rawData.name);
+      console.log('- price:', rawData.price, typeof rawData.price);
+      console.log('- pricePerKg:', rawData.pricePerKg, typeof rawData.pricePerKg);
+      console.log('- categoryIds:', rawData.categoryIds, Array.isArray(rawData.categoryIds));
+      
       // Handle empty discount values - convert empty strings to null
       if (rawData.discountValue === "") {
         rawData.discountValue = null;
