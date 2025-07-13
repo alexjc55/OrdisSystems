@@ -131,6 +131,17 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- January 13, 2025: ✅ COMPLETED USER MANAGEMENT AND THEME CREATION BUG FIXES
+  - USER CREATION FIX: Added missing username field to user creation form with full multilingual support
+    - Added username field to UserFormDialog schema, form UI, and validation
+    - Added username translations in all 4 languages (RU/EN/HE/AR)
+    - Added user notification translations: users.created, users.createSuccess, users.createError
+    - Fixed registration flow using email as username to prevent conflicts
+  - THEME CREATION FIX: Resolved Zod validation error requiring WhatsApp fields
+    - Modified baseThemeSchema to make whatsappPhone and whatsappMessage optional
+    - Fixed "Body has already been consumed" error in theme creation
+    - WhatsApp fields now properly optional when creating new themes
+    - Category deletion functionality restored with proper error handling
 - January 11, 2025: ✅ CRITICAL ADMIN DASHBOARD BUG FIXES COMPLETED
   - CANCELLATION DIALOG FIX: Resolved order cancellation dialog disappearing immediately after selecting "cancelled" status
     - Added setTimeout delays to prevent Radix UI Select from interfering with dialog opening

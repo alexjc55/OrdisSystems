@@ -554,6 +554,10 @@ export const insertUserAddressSchema = createInsertSchema(userAddresses).omit({
 const baseThemeSchema = createInsertSchema(themes).omit({
   createdAt: true,
   updatedAt: true,
+}).extend({
+  // Make WhatsApp fields optional in base schema
+  whatsappPhone: z.string().nullable().optional(),
+  whatsappMessage: z.string().nullable().optional(),
 });
 
 export const insertThemeSchema = z.object({
