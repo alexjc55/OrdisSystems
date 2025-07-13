@@ -131,6 +131,15 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- January 13, 2025: ✅ CRITICAL PORT CONFIGURATION FIX FOR VPS DEPLOYMENT
+  - PROBLEM RESOLVED: Fixed hardcoded port 5000 in server/index.ts causing VPS deployment conflicts
+  - SOLUTION IMPLEMENTED: Changed to use environment variable PORT with fallback
+    - Before: `const port = 5000;` (hardcoded)
+    - After: `const port = parseInt(process.env.PORT || "5000", 10);` (configurable)
+  - DEPLOYMENT FLEXIBILITY: Each environment now uses appropriate port
+    - Replit: PORT=5000 (unchanged behavior)
+    - VPS: PORT=3000 (configurable via .env.vps)
+  - PRODUCTION READY: VPS servers can now properly use configured ports without code conflicts
 - January 13, 2025: ✅ COMPLETED USER MANAGEMENT AND THEME CREATION BUG FIXES
   - USER CREATION FIX: Added missing username field to user creation form with full multilingual support
     - Added username field to UserFormDialog schema, form UI, and validation
