@@ -34,7 +34,11 @@
     "apply": "החל",
     "error": "שגיאה",
     "updated": "עודכן",
-    "updateSuccess": "עודכן בהצלחה"
+    "updateSuccess": "עודכן בהצלחה",
+    "creating": "יוצר...",
+    "loading": "טוען...",
+    "deleteConfirmation": "האם אתה בטוח שברצונך למחוק את הנושא הזה?",
+    "deleteForever": "מחק לצמיתות"
   },
   "themes": {
     "title": "ניהול עיצובים",
@@ -236,9 +240,13 @@
     "tomorrowColor": "כפתור 'מחר'",
     "tomorrowDarkColor": "כפתור 'מחר' (ריחוף)",
     "outOfStockColor": "כפתור 'אזל המלאי'",
-    "workingHoursIconColor": "שעות פעילות",
-    "contactsIconColor": "צור קשר",
-    "paymentDeliveryIconColor": "תשלום ומשלוח"
+    "workingHoursIconColor": "אייקון שעות פעילות",
+    "contactsIconColor": "אייקון צור קשר",
+    "paymentDeliveryIconColor": "אייקון תשלום ומשלוח",
+    "whiteColor": "לבן",
+    "gray100Color": "אפור 100 (רקע)",
+    "gray700Color": "אפור 700 (טקסט)",
+    "gray900Color": "אפור 900 (כותרות)"
   },
   "statusLabels": {
     "mainStatusColors": "צבעי סטטוס עיקריים",

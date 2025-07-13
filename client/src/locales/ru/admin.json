@@ -36,7 +36,11 @@
     "saveCategory": "Сохранить категорию",
     "cancelCategory": "Отменить",
     "updated": "Обновлено",
-    "updateSuccess": "Успешно обновлено"
+    "updateSuccess": "Успешно обновлено",
+    "creating": "Создание...",
+    "loading": "Загрузка...",
+    "deleteConfirmation": "Вы уверены, что хотите удалить эту тему?",
+    "deleteForever": "Удалить навсегда"
   },
   "themes": {
     "title": "Управление темами",
@@ -241,13 +245,26 @@
     "tomorrowColor": "Кнопка 'Завтра'",
     "tomorrowDarkColor": "Кнопка 'Завтра' (при наведении)",
     "outOfStockColor": "Кнопка 'Закончилось'",
-    "workingHoursColor": "Рабочие часы",
-    "contactsColor": "Контакты",
-    "paymentDeliveryColor": "Оплата и доставка",
+    "workingHoursIconColor": "Иконка часов работы",
+    "contactsIconColor": "Иконка контактов", 
+    "paymentDeliveryIconColor": "Иконка оплаты и доставки",
     "whiteColor": "Белый",
     "gray100Color": "Серый 100 (фон)",
     "gray700Color": "Серый 700 (текст)",
     "gray900Color": "Серый 900 (заголовки)"
+  },
+  "statusLabels": {
+    "mainStatusColors": "Основные цвета статусов",
+    "iconColors": "Цвета иконок",
+    "iconColorsDescription": "Цвета для иконок в интерфейсе",
+    "specialButtonsDescription": "Специальные кнопки для товаров"
+  },
+  "neutralLabels": {
+    "mainNeutralColors": "Основные нейтральные цвета",
+    "white": "Белый",
+    "gray100": "Серый 100 (фон)",
+    "gray700": "Серый 700 (текст)",
+    "gray900": "Серый 900 (заголовки)"
   },
   "common": {
     "loading": "Загрузка...",

@@ -24,7 +24,11 @@
     "create": "إنشاء",
     "apply": "تطبيق",
     "updated": "تم التحديث",
-    "updateSuccess": "تم التحديث بنجاح"
+    "updateSuccess": "تم التحديث بنجاح",
+    "creating": "إنشاء...",
+    "loading": "تحميل...",
+    "deleteConfirmation": "هل أنت متأكد من أنك تريد حذف هذا التصميم؟",
+    "deleteForever": "حذف نهائياً"
   },
   "themes": {
     "title": "إدارة القوالب",
@@ -219,13 +223,26 @@
     "tomorrowColor": "زر 'غداً'",
     "tomorrowDarkColor": "زر 'غداً' (عند التمرير)",
     "outOfStockColor": "زر 'نفد المخزون'",
-    "workingHoursColor": "ساعات العمل",
-    "contactsColor": "جهات الاتصال",
-    "paymentDeliveryColor": "الدفع والتوصيل",
+    "workingHoursIconColor": "أيقونة ساعات العمل",
+    "contactsIconColor": "أيقونة جهات الاتصال",
+    "paymentDeliveryIconColor": "أيقونة الدفع والتوصيل",
     "whiteColor": "أبيض",
     "gray100Color": "رمادي 100 (خلفية)",
     "gray700Color": "رمادي 700 (نص)",
     "gray900Color": "رمادي 900 (عناوين)"
+  },
+  "statusLabels": {
+    "mainStatusColors": "ألوان الحالة الرئيسية",
+    "iconColors": "ألوان الأيقونات",
+    "iconColorsDescription": "ألوان أيقونات الواجهة",
+    "specialButtonsDescription": "أزرار خاصة للمنتجات"
+  },
+  "neutralLabels": {
+    "mainNeutralColors": "الألوان المحايدة الرئيسية",
+    "white": "أبيض",
+    "gray100": "رمادي 100 (خلفية)",
+    "gray700": "رمادي 700 (نص)",
+    "gray900": "رمادي 900 (عناوين)"
   },
   "common": {
     "loading": "جارٍ التحميل...",

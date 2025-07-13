@@ -45,7 +45,11 @@
     "saveCategory": "Save Category",
     "cancelCategory": "Cancel",
     "updated": "Updated",
-    "updateSuccess": "Successfully updated"
+    "updateSuccess": "Successfully updated",
+    "creating": "Creating...",
+    "loading": "Loading...",
+    "deleteConfirmation": "Are you sure you want to delete this theme?",
+    "deleteForever": "Delete Forever"
   },
   "common": {
     "loading": "Loading...",
@@ -681,13 +685,26 @@
     "tomorrowColor": "Tomorrow Button",
     "tomorrowDarkColor": "Tomorrow Button (Hover)",
     "outOfStockColor": "Out of Stock Button",
-    "workingHoursColor": "Working Hours",
-    "contactsColor": "Contacts",
-    "paymentDeliveryColor": "Payment & Delivery",
+    "workingHoursIconColor": "Working Hours Icon",
+    "contactsIconColor": "Contacts Icon",
+    "paymentDeliveryIconColor": "Payment & Delivery Icon",
     "whiteColor": "White",
     "gray100Color": "Gray 100 (Background)",
     "gray700Color": "Gray 700 (Text)",
     "gray900Color": "Gray 900 (Headings)"
+  },
+  "statusLabels": {
+    "mainStatusColors": "Main Status Colors",
+    "iconColors": "Icon Colors",
+    "iconColorsDescription": "Colors for interface icons",
+    "specialButtonsDescription": "Special buttons for products"
+  },
+  "neutralLabels": {
+    "mainNeutralColors": "Main Neutral Colors",
+    "white": "White",
+    "gray100": "Gray 100 (Background)",
+    "gray700": "Gray 700 (Text)",
+    "gray900": "Gray 900 (Headings)"
   },
   "orderDiscount": {
     "title": "Order Discount",
