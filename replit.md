@@ -131,6 +131,31 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- January 13, 2025: ✅ COMPREHENSIVE CACHE BUSTING SOLUTION IMPLEMENTED
+  - PROBLEM RESOLVED: Fixed user caching issues preventing updates visibility after deployments
+  - SOLUTION COMPONENTS: 
+    - Updated Service Worker with dynamic cache versioning (BUILD_TIMESTAMP system)
+    - Added CacheBuster component with automatic update detection and manual refresh
+    - Integrated AdminCacheBuster in admin panel for forced cache clearing
+    - Enhanced Service Worker with install/activate events for automatic old cache cleanup
+    - Added message handling for forced updates and cache invalidation
+  - CACHE MANAGEMENT SYSTEM:
+    - Dynamic cache names: `edahouse-v${VERSION}-${TIMESTAMP}` instead of static versions
+    - Automatic cleanup of old caches during Service Worker updates
+    - Force update mechanism with complete cache clearing
+    - Version detection and update notifications for users
+  - USER EXPERIENCE IMPROVEMENTS:
+    - Update notification bar appears when new version available
+    - "Обновить приложение" button for users to manually trigger updates
+    - Admin cache management section in system settings
+    - Cache busting query parameters for critical resources
+  - TECHNICAL IMPLEMENTATION:
+    - Service Worker versioning: 20250113-1905 (update for each deployment)
+    - Cache invalidation on SW install/activate events
+    - Message passing between SW and main application
+    - localStorage version tracking and comparison
+  - DEPLOYMENT PROCESS: Admins update BUILD_TIMESTAMP in sw.js for each deployment
+  - DOCUMENTATION: Created CACHE_BUSTING_SOLUTIONS.md with comprehensive cache management strategies
 - January 13, 2025: ✅ CRITICAL PORT CONFIGURATION FIX FOR VPS DEPLOYMENT
   - PROBLEM RESOLVED: Fixed hardcoded port 5000 in server/index.ts causing VPS deployment conflicts
   - SOLUTION IMPLEMENTED: Changed to use environment variable PORT with fallback

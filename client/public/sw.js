@@ -1,6 +1,9 @@
-const CACHE_NAME = 'edahouse-v1.0.0';
-const STATIC_CACHE = 'edahouse-static-v1.0.0';
-const DYNAMIC_CACHE = 'edahouse-dynamic-v1.0.0';
+// Dynamic cache names with timestamp to force updates
+const APP_VERSION = '1.0.0';
+const BUILD_TIMESTAMP = '20250113-1905'; // Update this for each deployment
+const CACHE_NAME = `edahouse-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
+const STATIC_CACHE = `edahouse-static-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
+const DYNAMIC_CACHE = `edahouse-dynamic-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 
 // Static assets to cache
 const STATIC_ASSETS = [
@@ -10,12 +13,102 @@ const STATIC_ASSETS = [
   '/icons/icon-512x512.png'
 ];
 
-// API endpoints to cache
+// API endpoints to cache with TTL
 const API_CACHE_PATTERNS = [
   '/api/settings',
   '/api/categories',
   '/api/products'
 ];
+
+// Cache TTL in milliseconds (5 minutes for API data)
+const API_CACHE_TTL = 5 * 60 * 1000;
+
+// Install event - clean up old caches
+self.addEventListener('install', function(event) {
+  console.log('🔧 [SW] Installing new service worker with cache:', CACHE_NAME);
+  
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          // Delete old caches that don't match current version
+          if (cacheName.startsWith('edahouse-') && cacheName !== CACHE_NAME && 
+              cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
+            console.log('🗑️ [SW] Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => {
+      console.log('✅ [SW] New service worker installed and old caches cleaned');
+      return self.skipWaiting(); // Force activation
+    })
+  );
+});
+
+// Activate event
+self.addEventListener('activate', function(event) {
+  console.log('🚀 [SW] Activating new service worker');
+  
+  event.waitUntil(
+    Promise.all([
+      // Clean up old caches again
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            if (cacheName.startsWith('edahouse-') && 
+                cacheName !== CACHE_NAME && 
+                cacheName !== STATIC_CACHE && 
+                cacheName !== DYNAMIC_CACHE) {
+              console.log('🗑️ [SW] Deleting old cache on activate:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      }),
+      // Take control of all clients immediately
+      self.clients.claim()
+    ]).then(() => {
+      console.log('✅ [SW] Service worker activated and controlling all clients');
+      
+      // Notify all clients about the update
+      return self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({
+            type: 'NEW_VERSION_AVAILABLE',
+            version: CACHE_NAME,
+            timestamp: Date.now()
+          });
+        });
+      });
+    })
+  );
+});
+
+// Message handler for forced updates
+self.addEventListener('message', function(event) {
+  if (event.data && event.data.type === 'FORCE_UPDATE') {
+    console.log('💥 [SW] Force update requested, clearing all caches');
+    
+    event.waitUntil(
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            console.log('🗑️ [SW] Force deleting cache:', cacheName);
+            return caches.delete(cacheName);
+          })
+        );
+      }).then(() => {
+        console.log('✅ [SW] All caches cleared, reloading clients');
+        return self.clients.matchAll();
+      }).then(clients => {
+        clients.forEach(client => {
+          client.postMessage({ type: 'CACHE_CLEARED' });
+        });
+      })
+    );
+  }
+});
 
 // Push notification event handlers
 self.addEventListener('push', function(event) {

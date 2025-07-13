@@ -14,6 +14,7 @@ import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import PWAStatusBar from "@/components/PWAStatusBar";
 import PushNotificationRequest from "@/components/PushNotificationRequest";
 import NotificationModal from "@/components/NotificationModal";
+import { CacheBuster } from "@/components/cache-buster";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
@@ -269,6 +270,9 @@ function Router() {
       
       {/* PWA Status Bar */}
       <PWAStatusBar />
+      
+      {/* Cache Buster - App Update Notification */}
+      <CacheBuster />
       
       {/* PWA Install Prompt */}
       <PWAInstallPrompt />

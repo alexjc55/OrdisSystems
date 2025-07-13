@@ -56,6 +56,7 @@ import { insertStoreSettingsSchema, type StoreSettings, type CategoryWithCount }
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
 import { PushNotificationsPanel } from "@/components/PushNotificationsPanel";
+import { AdminCacheBuster } from "@/components/cache-buster";
 import {
   DndContext,
   closestCenter,
@@ -5318,6 +5319,20 @@ export default function AdminDashboard() {
                   </div>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Cache Management Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Управление кешем</h3>
+                  <p className="text-sm text-gray-600">
+                    Очистка кеша приложения для принудительного обновления пользователей
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <AdminCacheBuster />
+                    <p className="text-xs text-gray-500">
+                      Используйте при добавлении новых функций или исправлении ошибок
+                    </p>
+                  </div>
+                </div>
+                
                 {/* Worker Permissions Section */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium">{adminT('systemSettings.workerPermissions')}</h3>

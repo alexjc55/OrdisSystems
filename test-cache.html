@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест системы кеширования - eDAHouse</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .section {
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #e1e1e1;
+        }
+        button {
+            background: #f97316;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #ea580c;
+        }
+        .result {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+        }
+        .error {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            color: #dc2626;
+        }
+        .success {
+            background: #f0fdf4;
+            border: 1px solid #22c55e;
+            color: #16a34a;
+        }
+        .info {
+            background: #fffbeb;
+            border: 1px solid #f59e0b;
+            color: #d97706;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        #cacheInfo {
+            font-family: monospace;
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Тест системы управления кешем eDAHouse</h1>
+    
+    <div class="section">
+        <h2>📊 Информация о текущем кеше</h2>
+        <button onclick="checkCacheInfo()">Проверить состояние кеша</button>
+        <div id="cacheInfo"></div>
+    </div>
+
+    <div class="section">
+        <h2>🔄 Service Worker Management</h2>
+        <button onclick="checkServiceWorker()">Проверить Service Worker</button>
+        <button onclick="updateServiceWorker()">Обновить Service Worker</button>
+        <button onclick="unregisterServiceWorker()">Удалить Service Worker</button>
+        <div id="swResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="section">
+        <h2>🗑️ Очистка кешей</h2>
+        <button onclick="clearAllCaches()">Очистить все кеши</button>
+        <button onclick="clearOnlyOldCaches()">Очистить только старые кеши</button>
+        <button onclick="clearBrowserCache()">Очистить кеш браузера</button>
+        <div id="clearResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="section">
+        <h2>📱 Тест уведомлений об обновлениях</h2>
+        <button onclick="simulateUpdateNotification()">Симулировать уведомление об обновлении</button>
+        <button onclick="triggerCacheBuster()">Показать CacheBuster</button>
+        <div id="notificationResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="section">
+        <h2>🌐 Тест загрузки данных</h2>
+        <button onclick="testDataLoading()">Загрузить данные API</button>
+        <button onclick="testWithCacheBusting()">Загрузить с cache-busting</button>
+        <div id="dataResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="section">
+        <h2>🔧 Инструкции для пользователей</h2>
+        <div class="info">
+            <h3>Для решения проблем с кешированием:</h3>
+            <ol>
+                <li><strong>Автоматически:</strong> Ждите уведомления об обновлении в верхней части сайта</li>
+                <li><strong>Вручную (Desktop):</strong> Нажмите Ctrl+F5 или Cmd+Shift+R</li>
+                <li><strong>Вручную (Mobile):</strong> Очистите кеш браузера или используйте режим инкогнито</li>
+                <li><strong>PWA:</strong> Удалите и переустановите приложение с рабочего стола</li>
+                <li><strong>Радикально:</strong> Используйте кнопку "Очистить кеш" в админ-панели</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Utility functions
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = message;
+            element.className = `result ${type}`;
+            element.style.display = 'block';
+        }
+
+        // Check current cache state
+        async function checkCacheInfo() {
+            const info = document.getElementById('cacheInfo');
+            let output = '=== ИНФОРМАЦИЯ О КЕШЕ ===\n\n';
+
+            try {
+                // Check Service Worker
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    output += `Service Worker зарегистрирован: ${registrations.length > 0 ? 'ДА' : 'НЕТ'}\n`;
+                    
+                    if (registrations.length > 0) {
+                        output += `Количество регистраций: ${registrations.length}\n`;
+                        registrations.forEach((reg, index) => {
+                            output += `  Регистрация ${index + 1}: ${reg.scope}\n`;
+                            output += `    Активный: ${reg.active ? 'ДА' : 'НЕТ'}\n`;
+                            output += `    Ожидает: ${reg.waiting ? 'ДА' : 'НЕТ'}\n`;
+                            output += `    Устанавливается: ${reg.installing ? 'ДА' : 'НЕТ'}\n`;
+                        });
+                    }
+                } else {
+                    output += 'Service Worker не поддерживается\n';
+                }
+
+                output += '\n';
+
+                // Check caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    output += `Количество кешей: ${cacheNames.length}\n`;
+                    
+                    for (const cacheName of cacheNames) {
+                        const cache = await caches.open(cacheName);
+                        const keys = await cache.keys();
+                        output += `  ${cacheName}: ${keys.length} элементов\n`;
+                    }
+                } else {
+                    output += 'Cache API не поддерживается\n';
+                }
+
+                output += '\n';
+
+                // Check localStorage
+                output += `LocalStorage элементов: ${localStorage.length}\n`;
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    output += `  ${key}\n`;
+                }
+
+                output += '\n';
+
+                // App version info
+                const appVersion = localStorage.getItem('app_version') || 'не установлена';
+                output += `Версия приложения: ${appVersion}\n`;
+                
+                // Last update check
+                const lastSkipped = localStorage.getItem('update_skipped');
+                if (lastSkipped) {
+                    const date = new Date(parseInt(lastSkipped));
+                    output += `Последний пропуск обновления: ${date.toLocaleString()}\n`;
+                }
+
+            } catch (error) {
+                output += `ОШИБКА: ${error.message}\n`;
+            }
+
+            info.textContent = output;
+        }
+
+        // Service Worker functions
+        async function checkServiceWorker() {
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    const message = registrations.length > 0 
+                        ? `✅ Service Worker активен (${registrations.length} регистраций)`
+                        : '❌ Service Worker не зарегистрирован';
+                    showResult('swResult', message, registrations.length > 0 ? 'success' : 'error');
+                } else {
+                    showResult('swResult', '❌ Service Worker не поддерживается', 'error');
+                }
+            } catch (error) {
+                showResult('swResult', `❌ Ошибка: ${error.message}`, 'error');
+            }
+        }
+
+        async function updateServiceWorker() {
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    let updated = 0;
+                    
+                    for (const registration of registrations) {
+                        await registration.update();
+                        updated++;
+                    }
+                    
+                    showResult('swResult', `✅ Обновлено регистраций: ${updated}`, 'success');
+                } else {
+                    showResult('swResult', '❌ Service Worker не поддерживается', 'error');
+                }
+            } catch (error) {
+                showResult('swResult', `❌ Ошибка обновления: ${error.message}`, 'error');
+            }
+        }
+
+        async function unregisterServiceWorker() {
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    let unregistered = 0;
+                    
+                    for (const registration of registrations) {
+                        await registration.unregister();
+                        unregistered++;
+                    }
+                    
+                    showResult('swResult', `✅ Удалено регистраций: ${unregistered}`, 'success');
+                } else {
+                    showResult('swResult', '❌ Service Worker не поддерживается', 'error');
+                }
+            } catch (error) {
+                showResult('swResult', `❌ Ошибка удаления: ${error.message}`, 'error');
+            }
+        }
+
+        // Cache clearing functions
+        async function clearAllCaches() {
+            try {
+                let cleared = 0;
+                
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    
+                    for (const cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        cleared++;
+                    }
+                }
+                
+                // Clear storage
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                showResult('clearResult', `✅ Очищено кешей: ${cleared}. LocalStorage и SessionStorage очищены.`, 'success');
+            } catch (error) {
+                showResult('clearResult', `❌ Ошибка очистки: ${error.message}`, 'error');
+            }
+        }
+
+        async function clearOnlyOldCaches() {
+            try {
+                let cleared = 0;
+                
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    const currentTimestamp = '20250113-1905';
+                    
+                    for (const cacheName of cacheNames) {
+                        if (cacheName.startsWith('edahouse-') && !cacheName.includes(currentTimestamp)) {
+                            await caches.delete(cacheName);
+                            cleared++;
+                        }
+                    }
+                }
+                
+                showResult('clearResult', `✅ Очищено старых кешей: ${cleared}`, 'success');
+            } catch (error) {
+                showResult('clearResult', `❌ Ошибка очистки старых кешей: ${error.message}`, 'error');
+            }
+        }
+
+        async function clearBrowserCache() {
+            try {
+                // Force reload with cache bypass
+                showResult('clearResult', `🔄 Принудительная перезагрузка с очисткой кеша...`, 'info');
+                
+                setTimeout(() => {
+                    window.location.href = window.location.href + '?cache_bust=' + Date.now();
+                }, 1000);
+            } catch (error) {
+                showResult('clearResult', `❌ Ошибка: ${error.message}`, 'error');
+            }
+        }
+
+        // Notification functions
+        function simulateUpdateNotification() {
+            try {
+                // Simulate SW message
+                if ('serviceWorker' in navigator) {
+                    window.postMessage({
+                        type: 'NEW_VERSION_AVAILABLE',
+                        version: 'edahouse-v1.0.0-test',
+                        timestamp: Date.now()
+                    }, '*');
+                    
+                    showResult('notificationResult', '✅ Уведомление об обновлении отправлено', 'success');
+                } else {
+                    showResult('notificationResult', '❌ Service Worker не поддерживается', 'error');
+                }
+            } catch (error) {
+                showResult('notificationResult', `❌ Ошибка: ${error.message}`, 'error');
+            }
+        }
+
+        function triggerCacheBuster() {
+            try {
+                // Set flag to trigger CacheBuster component
+                localStorage.setItem('force_cache_update', 'true');
+                localStorage.setItem('app_version', '1.0.0-old');
+                
+                showResult('notificationResult', '✅ CacheBuster активирован. Перезагрузите главную страницу.', 'success');
+            } catch (error) {
+                showResult('notificationResult', `❌ Ошибка: ${error.message}`, 'error');
+            }
+        }
+
+        // Data loading functions
+        async function testDataLoading() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                showResult('dataResult', `✅ Данные загружены: ${JSON.stringify(data, null, 2)}`, 'success');
+            } catch (error) {
+                showResult('dataResult', `❌ Ошибка загрузки: ${error.message}`, 'error');
+            }
+        }
+
+        async function testWithCacheBusting() {
+            try {
+                const cacheBustParam = Date.now();
+                const response = await fetch(`/api/health?_cb=${cacheBustParam}`);
+                const data = await response.json();
+                
+                showResult('dataResult', `✅ Данные загружены с cache-busting: ${JSON.stringify(data, null, 2)}`, 'success');
+            } catch (error) {
+                showResult('dataResult', `❌ Ошибка загрузки с cache-busting: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-load cache info on page load
+        window.addEventListener('load', () => {
+            checkCacheInfo();
+        });
+    </script>
+</body>
+</html>
