@@ -463,6 +463,9 @@
     "role": "الدور",
     "permissions": "الصلاحيات",
     "searchPlaceholder": "البحث في المستخدمين...",
+    "created": "تم إنشاء المستخدم",
+    "createSuccess": "تم إضافة المستخدم بنجاح إلى النظام",
+    "createError": "خطأ في إنشاء المستخدم",
     "noUsers": "لم يتم العثور على مستخدمين",
     "addFirstUser": "أضف أول مستخدم",
     "notifications": {
