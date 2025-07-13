@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
-import { useCommonTranslation } from '@/hooks/use-translation';
+import { useCommonTranslation } from '@/hooks/use-language';
 
 // Cache Buster Component - Forces app updates and clears all caches
 export function CacheBuster() {
