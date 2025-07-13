@@ -290,7 +290,8 @@ import {
   Type,
   Smartphone,
   Bell,
-  Image
+  Image,
+  Loader2
 } from "lucide-react";
 
 // Validation schemas
