@@ -40,24 +40,20 @@ export function usePWA() {
             scope: '/'
           });
           
-          console.log('Service Worker registered successfully:', registration);
-          
           // Check for updates
           registration.addEventListener('updatefound', () => {
             const newWorker = registration.installing;
             if (newWorker) {
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // New update available
-                  console.log('New app version available');
-                  // You can show a notification to the user here
+                  // New update available - handled by CacheBuster component
                 }
               });
             }
           });
           
         } catch (error) {
-          console.error('Service Worker registration failed:', error);
+          // Service Worker registration failed - continue without PWA features
         }
       }
     };
@@ -127,7 +123,6 @@ export function usePWA() {
       
       return false;
     } catch (error) {
-      console.error('Error installing PWA:', error);
       return false;
     }
   };

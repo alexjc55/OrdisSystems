@@ -78,16 +78,8 @@ export function CacheBuster() {
       const lastAppHash = localStorage.getItem('app_hash');
       const currentAppHash = data.appHash;
       
-      console.log('🔍 [CacheBuster] Checking for updates:', {
-        lastAppHash,
-        currentAppHash,
-        buildTime: data.buildTime,
-        initialLoad
-      });
-      
       // При первой загрузке просто сохраняем хеш, не показываем уведомление
       if (initialLoad) {
-        console.log('🔄 [CacheBuster] Initial load, storing hash');
         setInitialLoad(false);
         if (!lastAppHash) {
           localStorage.setItem('app_hash', currentAppHash);

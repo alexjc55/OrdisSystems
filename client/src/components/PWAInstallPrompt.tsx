@@ -42,10 +42,7 @@ export default function PWAInstallPrompt() {
       
       // Don't show if already installed
       if (!checkStandalone()) {
-        console.log('PWA: beforeinstallprompt event received, showing install prompt');
         setShowPrompt(true);
-      } else {
-        console.log('PWA: App already installed, not showing prompt');
       }
     };
 
@@ -54,10 +51,6 @@ export default function PWAInstallPrompt() {
       setIsInstalled(true);
       setShowPrompt(false);
       setDeferredPrompt(null);
-      console.log('PWA was installed');
-      
-      // Push notifications are handled by separate PushNotificationRequest component
-      console.log('PWA installed successfully');
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -65,26 +58,12 @@ export default function PWAInstallPrompt() {
 
     // For iOS, show install prompt after some time if not standalone
     if (checkIOS() && !checkStandalone()) {
-      console.log('PWA: iOS device detected, showing install prompt');
       setTimeout(() => {
         setShowPrompt(true);
-      }, 3000); // Show after 3 seconds for testing
+      }, 3000);
     }
     
-    // For testing - add global function to force show prompt
-    (window as any).showPWAPrompt = () => {
-      console.log('PWA: Forcing PWA prompt to show');
-      setShowPrompt(true);
-    };
-    
-    // For testing - add global function to clear PWA cache
-    (window as any).clearPWACache = () => {
-      console.log('PWA: Clearing PWA cache');
-      localStorage.removeItem('pwa-dismissed');
-      localStorage.removeItem('ios-prompt-shown');
-      setShowPrompt(false);
-      setTimeout(() => setShowPrompt(true), 1000);
-    };
+
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);

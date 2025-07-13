@@ -15,12 +15,9 @@ export function useSEO(seoData: SEOData) {
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    console.log('SEO Hook called with data:', seoData);
-    
     // Update document title
     if (seoData.title) {
       document.title = seoData.title;
-      console.log('Updated title to:', seoData.title);
     }
 
     // Update meta description
@@ -51,8 +48,6 @@ export function useSEO(seoData: SEOData) {
 
 function updateMetaTag(attribute: string, value: string, content?: string) {
   if (!content) return;
-
-  console.log(`Updating meta tag: ${attribute}="${value}" content="${content}"`);
   
   let tag = document.querySelector(`meta[${attribute}="${value}"]`);
   
@@ -60,11 +55,9 @@ function updateMetaTag(attribute: string, value: string, content?: string) {
     tag = document.createElement('meta');
     tag.setAttribute(attribute, value);
     document.head.appendChild(tag);
-    console.log(`Created new meta tag: ${attribute}="${value}"`);
   }
   
   tag.setAttribute('content', content);
-  console.log(`Updated meta tag content to: ${content}`);
 }
 
 function updateLinkTag(rel: string, href: string) {

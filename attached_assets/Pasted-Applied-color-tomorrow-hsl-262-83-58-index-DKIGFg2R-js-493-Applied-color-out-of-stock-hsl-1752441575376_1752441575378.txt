@@ -1,0 +1,94 @@
+Applied --color-tomorrow: hsl(262, 83%, 58%)
+index-DKIGFg2R.js:493 Applied --color-out-of-stock: hsl(0, 84%, 60%)
+index-DKIGFg2R.js:483 Header logoUrl debug: {logoUrl: '', storeSettings: undefined, currentLanguage: 'ru'}
+index-DKIGFg2R.js:483 SEO Hook called with data: {title: 'eDAHouse', description: 'Система доставки готовой еды с многоязычной поддержкой', keywords: 'edahouse', ogTitle: 'eDAHouse', ogDescription: 'Система доставки готовой еды с многоязычной поддержкой', …}
+index-DKIGFg2R.js:483 Updated title to: eDAHouse
+index-DKIGFg2R.js:483 Updating meta tag: name="description" content="Система доставки готовой еды с многоязычной поддержкой"
+index-DKIGFg2R.js:483 Updated meta tag content to: Система доставки готовой еды с многоязычной поддержкой
+index-DKIGFg2R.js:483 Updating meta tag: name="keywords" content="edahouse"
+index-DKIGFg2R.js:483 Updated meta tag content to: edahouse
+index-DKIGFg2R.js:483 Updating meta tag: property="og:title" content="eDAHouse"
+index-DKIGFg2R.js:483 Updated meta tag content to: eDAHouse
+index-DKIGFg2R.js:483 Updating meta tag: property="og:description" content="Система доставки готовой еды с многоязычной поддержкой"
+index-DKIGFg2R.js:483 Updated meta tag content to: Система доставки готовой еды с многоязычной поддержкой
+index-DKIGFg2R.js:483 Updating meta tag: name="twitter:title" content="eDAHouse"
+index-DKIGFg2R.js:483 Updated meta tag content to: eDAHouse
+index-DKIGFg2R.js:483 Updating meta tag: name="twitter:description" content="Система доставки готовой еды с многоязычной поддержкой"
+index-DKIGFg2R.js:483 Updated meta tag content to: Система доставки готовой еды с многоязычной поддержкой
+index-DKIGFg2R.js:502 👂 Service Worker message listener added
+index-DKIGFg2R.js:502 🧪 Test functions added: window.testNotificationModal(), window.testServiceWorkerMessage()
+index-DKIGFg2R.js:443 Service Worker registered successfully: ServiceWorkerRegistration {installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: 'https://edahouse.ordis.co.il/', …}
+index-DKIGFg2R.js:443 Service Worker registered successfully: ServiceWorkerRegistration {installing: null, waiting: null, active: ServiceWorker, navigationPreload: NavigationPreloadManager, scope: 'https://edahouse.ordis.co.il/', …}
+index-DKIGFg2R.js:483 Header logoUrl debug: {logoUrl: '', storeSettings: undefined, currentLanguage: 'ru'}
+index-DKIGFg2R.js:483 SEO Hook called with data: {title: 'eDAHouse', description: 'Система доставки готовой еды с многоязычной поддержкой', keywords: 'edahouse', ogTitle: 'eDAHouse', ogDescription: 'Система доставки готовой еды с многоязычной поддержкой', …}
+index-DKIGFg2R.js:483 Updated title to: eDAHouse
+index-DKIGFg2R.js:483 Updating meta tag: name="description" content="Система доставки готовой еды с многоязычной поддержкой"
+index-DKIGFg2R.js:483 Updated meta tag content to: Система доставки готовой еды с многоязычной поддержкой
+index-DKIGFg2R.js:483 Updating meta tag: name="keywords" content="edahouse"
+index-DKIGFg2R.js:483 Updated meta tag content to: edahouse
+index-DKIGFg2R.js:483 Updating meta tag: property="og:title" content="eDAHouse"
+index-DKIGFg2R.js:483 Updated meta tag content to: eDAHouse
+index-DKIGFg2R.js:483 Updating meta tag: property="og:description" content="Система доставки готовой еды с многоязычной поддержкой"
+index-DKIGFg2R.js:483 Updated meta tag content to: Система доставки готовой еды с многоязычной поддержкой
+index-DKIGFg2R.js:483 Updating meta tag: name="twitter:title" content="eDAHouse"
+index-DKIGFg2R.js:483 Updated meta tag content to: eDAHouse
+index-DKIGFg2R.js:483 Updating meta tag: name="twitter:description" content="Система доставки готовой еды с многоязычной поддержкой"
+index-DKIGFg2R.js:483 Updated meta tag content to: Система доставки готовой еды с многоязычной поддержкой
+index-DKIGFg2R.js:443  GET https://edahouse.ordis.co.il/api/auth/user 401 (Unauthorized)
+queryFn @ index-DKIGFg2R.js:443
+o @ index-DKIGFg2R.js:48
+g @ index-DKIGFg2R.js:48
+start @ index-DKIGFg2R.js:48
+fetch @ index-DKIGFg2R.js:48
+zd @ index-DKIGFg2R.js:48
+onSubscribe @ index-DKIGFg2R.js:48
+subscribe @ index-DKIGFg2R.js:48
+(anonymous) @ index-DKIGFg2R.js:48
+LT @ index-DKIGFg2R.js:38
+Ep @ index-DKIGFg2R.js:40
+pc @ index-DKIGFg2R.js:40
+B1 @ index-DKIGFg2R.js:40
+ji @ index-DKIGFg2R.js:38
+k5 @ index-DKIGFg2R.js:40
+Oi @ index-DKIGFg2R.js:40
+hD @ index-DKIGFg2R.js:40
+j @ index-DKIGFg2R.js:25
+U @ index-DKIGFg2R.js:25Understand this error
+index-DKIGFg2R.js:483 Header logoUrl debug: {logoUrl: '', storeSettings: undefined, currentLanguage: 'ru'}
+index-DKIGFg2R.js:483 SEO Hook called with data: {title: 'eDAHouse', description: 'Система доставки готовой еды с многоязычной поддержкой', keywords: 'edahouse', ogTitle: 'eDAHouse', ogDescription: 'Система доставки готовой еды с многоязычной поддержкой', …}
+index-DKIGFg2R.js:483 Updated title to: eDAHouse
+index-DKIGFg2R.js:483 Updating meta tag: name="description" content="Система доставки готовой еды с многоязычной поддержкой"
+index-DKIGFg2R.js:483 Updated meta tag content to: Система доставки готовой еды с многоязычной поддержкой
+index-DKIGFg2R.js:483 Updating meta tag: name="keywords" content="edahouse"
+index-DKIGFg2R.js:483 Updated meta tag content to: edahouse
+index-DKIGFg2R.js:483 Updating meta tag: property="og:title" content="eDAHouse"
+index-DKIGFg2R.js:483 Updated meta tag content to: eDAHouse
+index-DKIGFg2R.js:483 Updating meta tag: property="og:description" content="Система доставки готовой еды с многоязычной поддержкой"
+index-DKIGFg2R.js:483 Updated meta tag content to: Система доставки готовой еды с многоязычной поддержкой
+index-DKIGFg2R.js:483 Updating meta tag: name="twitter:title" content="eDAHouse"
+index-DKIGFg2R.js:483 Updated meta tag content to: eDAHouse
+index-DKIGFg2R.js:483 Updating meta tag: name="twitter:description" content="Система доставки готовой еды с многоязычной поддержкой"
+index-DKIGFg2R.js:483 Updated meta tag content to: Система доставки готовой еды с многоязычной поддержкой
+index-DKIGFg2R.js:443 🔍 [CacheBuster] Checking for updates: {lastAppHash: null, currentAppHash: '41d261ef', buildTime: '2025-07-13T21:17:26.941Z', initialLoad: true}
+index-DKIGFg2R.js:443 🔄 [CacheBuster] Initial load, storing hash
+index-DKIGFg2R.js:483 Header logoUrl debug: {logoUrl: '/uploads/images/image-1751756014164-624617605.png', storeSettings: '/uploads/images/image-1751756014164-624617605.png', currentLanguage: 'ru'}
+index-DKIGFg2R.js:483 SEO Hook called with data: {title: 'eDAHouse - О нашей еде', description: 'Система доставки готовой еды с многоязычной поддержкой', keywords: 'edahouse', ogTitle: 'eDAHouse - О нашей еде', ogDescription: 'Система доставки готовой еды с многоязычной поддержкой', …}
+index-DKIGFg2R.js:483 Updated title to: eDAHouse - О нашей еде
+index-DKIGFg2R.js:483 Updating meta tag: name="description" content="Система доставки готовой еды с многоязычной поддержкой"
+index-DKIGFg2R.js:483 Updated meta tag content to: Система доставки готовой еды с многоязычной поддержкой
+index-DKIGFg2R.js:483 Updating meta tag: name="keywords" content="edahouse"
+index-DKIGFg2R.js:483 Updated meta tag content to: edahouse
+index-DKIGFg2R.js:483 Updating meta tag: property="og:title" content="eDAHouse - О нашей еде"
+index-DKIGFg2R.js:483 Updated meta tag content to: eDAHouse - О нашей еде
+index-DKIGFg2R.js:483 Updating meta tag: property="og:description" content="Система доставки готовой еды с многоязычной поддержкой"
+index-DKIGFg2R.js:483 Updated meta tag content to: Система доставки готовой еды с многоязычной поддержкой
+index-DKIGFg2R.js:483 Updating meta tag: name="twitter:title" content="eDAHouse - О нашей еде"
+index-DKIGFg2R.js:483 Updated meta tag content to: eDAHouse - О нашей еде
+index-DKIGFg2R.js:483 Updating meta tag: name="twitter:description" content="Система доставки готовой еды с многоязычной поддержкой"
+index-DKIGFg2R.js:483 Updated meta tag content to: Система доставки готовой еды с многоязычной поддержкой
+general.js:205 [LaunchDarkly] LaunchDarkly client initialized
+index-DKIGFg2R.js:443 PWA: beforeinstallprompt event received, showing install prompt
+index-DKIGFg2R.js:483 Header logoUrl debug: {logoUrl: '/uploads/images/image-1751756014164-624617605.png', storeSettings: '/uploads/images/image-1751756014164-624617605.png', currentLanguage: 'ru'}
+edahouse.ordis.co.il/:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-DKIGFg2R.js:443 🔍 [CacheBuster] Checking for updates: {lastAppHash: '41d261ef', currentAppHash: '41d261ef', buildTime: '2025-07-13T21:17:56.942Z', initialLoad: true}
+index-DKIGFg2R.js:443 🔄 [CacheBuster] Initial load, storing hash

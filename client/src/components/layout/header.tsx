@@ -92,7 +92,6 @@ export default function Header({ onResetView }: HeaderProps) {
               <div className="flex items-center cursor-pointer">
                 {(() => {
                   const logoUrl = getLocalizedImageField(storeSettings, 'logoUrl', currentLanguage as SupportedLanguage);
-                  console.log('Header logoUrl debug:', { logoUrl, storeSettings: storeSettings?.logoUrl, currentLanguage });
                   
                   // Use the logoUrl only if it's a valid non-empty string
                   const validLogoUrl = logoUrl && logoUrl.trim() !== '' ? logoUrl : null;
@@ -103,7 +102,6 @@ export default function Header({ onResetView }: HeaderProps) {
                       alt={getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse"} 
                       className="h-8 md:h-10 w-auto mr-2 md:mr-3 rtl:mr-0 rtl:ml-2 md:rtl:ml-3 flex-shrink-0"
                       onError={(e) => {
-                        console.log('Logo failed to load:', validLogoUrl);
                         e.currentTarget.style.display = 'none';
                       }}
                     />

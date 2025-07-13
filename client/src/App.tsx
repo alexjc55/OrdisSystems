@@ -133,7 +133,7 @@ function Router() {
     if (notificationData) {
       try {
         const notification = JSON.parse(decodeURIComponent(notificationData));
-        console.log('🔗 [App] Found notification data in URL:', notification);
+
         
         setNotificationModal({
           isOpen: true,
@@ -188,11 +188,11 @@ function Router() {
     
     if (navigator.serviceWorker) {
       navigator.serviceWorker.addEventListener('message', handleMessage);
-      console.log('👂 Service Worker message listener added');
+
       
       // Add global test function for debugging
       (window as any).testNotificationModal = (title: string = 'Тест', message: string = 'Тестовое сообщение', type: 'marketing' | 'order-status' | 'cart-reminder' = 'marketing') => {
-        console.log('🧪 Testing notification modal manually');
+
         setNotificationModal({
           isOpen: true,
           title,
@@ -203,7 +203,7 @@ function Router() {
       
       // Тестовая функция для симуляции Service Worker сообщения
       (window as any).testServiceWorkerMessage = () => {
-        console.log('🧪 Testing Service Worker message simulation');
+
         handleMessage({
           data: {
             type: 'notification-click',
@@ -218,28 +218,28 @@ function Router() {
       
       // Тестовая функция для PWA push уведомлений
       (window as any).testPWANotification = async () => {
-        console.log('🧪 Testing PWA notification via Service Worker');
+
         try {
           const registration = await navigator.serviceWorker.ready;
           registration.active?.postMessage({ 
             type: 'test-pwa-notification' 
           });
-          console.log('✅ PWA notification test message sent to Service Worker');
+
         } catch (error) {
-          console.error('❌ PWA notification test failed:', error);
+
         }
       };
       
-      console.log('🧪 Test functions added: window.testNotificationModal(), window.testServiceWorkerMessage()');
+
     } else {
-      console.log('❌ Service Worker not available');
+
     }
     
     return () => {
       window.removeEventListener('message', handleMessage);
       if (navigator.serviceWorker) {
         navigator.serviceWorker.removeEventListener('message', handleMessage);
-        console.log('🔇 Service Worker message listener removed');
+
       }
       delete (window as any).testNotificationModal;
       delete (window as any).testServiceWorkerMessage;
