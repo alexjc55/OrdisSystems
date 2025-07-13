@@ -601,14 +601,6 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
 
       const rawData = req.body;
       
-      console.log('=== Product Creation Debug ===');
-      console.log('Raw request body:', JSON.stringify(rawData, null, 2));
-      console.log('Required fields check:');
-      console.log('- name:', rawData.name, typeof rawData.name);
-      console.log('- price:', rawData.price, typeof rawData.price);
-      console.log('- pricePerKg:', rawData.pricePerKg, typeof rawData.pricePerKg);
-      console.log('- categoryIds:', rawData.categoryIds, Array.isArray(rawData.categoryIds));
-      
       // Handle empty discount values - convert empty strings to null
       if (rawData.discountValue === "") {
         rawData.discountValue = null;
@@ -749,6 +741,45 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     } catch (error) {
       console.error("Error updating product availability:", error);
       res.status(500).json({ message: "Failed to update product availability" });
+    }
+  });
+
+  app.delete('/api/products/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user || (user.role !== 'admin' && user.role !== 'worker')) {
+        return res.status(403).json({ message: "Insufficient permissions" });
+      }
+
+      const id = parseInt(req.params.id);
+      
+      console.log(`=== Product Deletion Debug ===`);
+      console.log(`Attempting to delete product with ID: ${id}`);
+      
+      // Check if product exists
+      const existingProduct = await storage.getProductById(id);
+      if (!existingProduct) {
+        console.log(`Product with ID ${id} not found`);
+        return res.status(404).json({ message: "Product not found" });
+      }
+      
+      console.log(`Found product: ${existingProduct.name}`);
+      
+      // Delete the product
+      await storage.deleteProduct(id);
+      
+      console.log(`Successfully deleted product with ID: ${id}`);
+      
+      // Clear products cache
+      clearCachePattern('admin-products');
+      clearCachePattern('products');
+      
+      res.json({ message: "Product deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      res.status(500).json({ message: "Failed to delete product" });
     }
   });
 

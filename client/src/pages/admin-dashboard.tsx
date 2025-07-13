@@ -2748,24 +2748,13 @@ export default function AdminDashboard() {
   // Product mutations
   const createProductMutation = useMutation({
     mutationFn: async (productData: any) => {
-      console.log('=== Frontend Product Creation Debug ===');
-      console.log('productData received:', JSON.stringify(productData, null, 2));
-      console.log('Required fields check:');
-      console.log('- name:', productData.name, typeof productData.name);
-      console.log('- price:', productData.price, typeof productData.price);
-      console.log('- pricePerKg:', productData.pricePerKg, typeof productData.pricePerKg);
-      console.log('- categoryIds:', productData.categoryIds, Array.isArray(productData.categoryIds));
-      
-      // Convert to JSON instead of FormData for debugging
+      // Ensure required fields are present
       const jsonData = {
         ...productData,
-        // Ensure required fields are present
         name: productData.name || '',
         price: productData.price || '',
         pricePerKg: productData.price || productData.pricePerKg || '', // Use price as pricePerKg
       };
-      
-      console.log('Final JSON data being sent:', JSON.stringify(jsonData, null, 2));
       
       const response = await fetch('/api/products', {
         method: 'POST',
@@ -2776,7 +2765,6 @@ export default function AdminDashboard() {
       });
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Server response error:', errorText);
         throw new Error(`Failed to create product: ${errorText}`);
       }
       return await response.json();
