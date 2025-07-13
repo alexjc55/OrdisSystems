@@ -219,7 +219,15 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
         {/* Right container - Icon */}
         <div className="flex-shrink-0 flex items-center">
           <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
-            {category.icon || '📦'}
+            {category.icon && category.icon.startsWith('/uploads/') ? (
+              <img 
+                src={category.icon} 
+                alt="Category icon" 
+                className="w-12 h-12 object-cover rounded"
+              />
+            ) : (
+              category.icon || '📦'
+            )}
           </div>
         </div>
       </div>
@@ -6021,8 +6029,17 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                             }}
                             className="rounded border-gray-300"
                           />
-                          <label htmlFor={`category-${category.id}`} className="text-sm cursor-pointer flex-1">
-                            {category.icon} {getLocalizedField(category, "name", i18n.language as SupportedLanguage)}
+                          <label htmlFor={`category-${category.id}`} className="text-sm cursor-pointer flex-1 flex items-center gap-2">
+                            {category.icon && category.icon.startsWith('/uploads/') ? (
+                              <img 
+                                src={category.icon} 
+                                alt="Category icon" 
+                                className="w-4 h-4 object-cover rounded"
+                              />
+                            ) : (
+                              <span>{category.icon}</span>
+                            )}
+                            {getLocalizedField(category, "name", i18n.language as SupportedLanguage)}
                           </label>
                         </div>
                       ))}
@@ -6480,7 +6497,15 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                         <div className="space-y-3">
                           {/* Current selected icon display */}
                           <div className={`flex items-center gap-3 p-3 border rounded-lg bg-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                            <span className="text-2xl">{field.value}</span>
+                            {field.value && field.value.startsWith('/uploads/') ? (
+                              <img 
+                                src={field.value} 
+                                alt="Category icon" 
+                                className="w-8 h-8 object-cover rounded"
+                              />
+                            ) : (
+                              <span className="text-2xl">{field.value}</span>
+                            )}
                             <div className="flex-1">
                               <div className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.selectedIcon')}</div>
                               <div className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.clickToSelect')}</div>
