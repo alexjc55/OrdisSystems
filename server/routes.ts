@@ -14,6 +14,7 @@ import fs from "fs";
 import express from "express";
 import { scrypt, randomBytes, createHash } from "crypto";
 import { promisify } from "util";
+import sharp from "sharp";
 
 // Simple in-memory cache for admin data
 const adminCache = new Map<string, { data: any; expiry: number }>();
@@ -38,6 +39,46 @@ function clearCachePattern(pattern: string) {
 }
 
 const scryptAsync = promisify(scrypt);
+
+// Image optimization function
+async function optimizeImage(inputPath: string, outputPath: string, quality: number = 80, maxWidth: number = 800): Promise<void> {
+  try {
+    await sharp(inputPath)
+      .resize(maxWidth, null, { 
+        withoutEnlargement: true,
+        fit: 'inside'
+      })
+      .jpeg({ 
+        quality: quality,
+        progressive: true 
+      })
+      .toFile(outputPath);
+  } catch (error) {
+    console.error('Image optimization failed:', error);
+    // If optimization fails, copy original file
+    fs.copyFileSync(inputPath, outputPath);
+  }
+}
+
+// Generate thumbnail
+async function generateThumbnail(inputPath: string, outputPath: string, size: number = 200): Promise<void> {
+  try {
+    await sharp(inputPath)
+      .resize(size, size, {
+        fit: 'cover',
+        position: 'center'
+      })
+      .jpeg({ 
+        quality: 70,
+        progressive: true 
+      })
+      .toFile(outputPath);
+  } catch (error) {
+    console.error('Thumbnail generation failed:', error);
+    // If thumbnail generation fails, copy original file
+    fs.copyFileSync(inputPath, outputPath);
+  }
+}
 
 // Generate app hash based on main files for cache busting
 async function generateAppHash(): Promise<string> {
@@ -140,11 +181,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Ensure uploads directory exists
+  // Ensure uploads directories exist
   const uploadsDir = path.join(process.cwd(), 'uploads', 'images');
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-  }
+  const optimizedDir = path.join(process.cwd(), 'uploads', 'optimized');
+  const thumbnailsDir = path.join(process.cwd(), 'uploads', 'thumbnails');
+  
+  [uploadsDir, optimizedDir, thumbnailsDir].forEach(dir => {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  });
 
   // Configure multer for file uploads
   const storage_multer = multer.diskStorage({
@@ -160,7 +206,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const upload = multer({ 
     storage: storage_multer,
     limits: {
-      fileSize: 5 * 1024 * 1024 // 5MB limit
+      fileSize: 10 * 1024 * 1024 // 10MB limit (increased because we'll optimize)
     },
     fileFilter: function (req, file, cb) {
       if (file.mimetype.startsWith('image/')) {
@@ -170,6 +216,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     }
   });
+
+  // Image optimization middleware
+  async function processUploadedImage(req: any, res: any, next: any) {
+    if (!req.file) {
+      return next();
+    }
+
+    try {
+      const originalPath = req.file.path;
+      const filename = req.file.filename;
+      const nameWithoutExt = path.parse(filename).name;
+      
+      // Generate optimized versions
+      const optimizedPath = path.join(optimizedDir, `${nameWithoutExt}.jpg`);
+      const thumbnailPath = path.join(thumbnailsDir, `${nameWithoutExt}.jpg`);
+      
+      // Create optimized version (800px max width, 80% quality)
+      await optimizeImage(originalPath, optimizedPath, 80, 800);
+      
+      // Create thumbnail (200px x 200px, 70% quality)
+      await generateThumbnail(originalPath, thumbnailPath, 200);
+      
+      // Get file sizes for comparison
+      const originalSize = fs.statSync(originalPath).size;
+      const optimizedSize = fs.statSync(optimizedPath).size;
+      const thumbnailSize = fs.statSync(thumbnailPath).size;
+      
+      console.log(`📸 Image optimized: ${filename}`);
+      console.log(`   Original: ${(originalSize / 1024).toFixed(1)}KB`);
+      console.log(`   Optimized: ${(optimizedSize / 1024).toFixed(1)}KB (${((1 - optimizedSize/originalSize) * 100).toFixed(1)}% smaller)`);
+      console.log(`   Thumbnail: ${(thumbnailSize / 1024).toFixed(1)}KB`);
+      
+      // Update req.file with optimized path info
+      req.file.optimizedPath = `/uploads/optimized/${nameWithoutExt}.jpg`;
+      req.file.thumbnailPath = `/uploads/thumbnails/${nameWithoutExt}.jpg`;
+      req.file.originalPath = req.file.path;
+      
+      next();
+    } catch (error) {
+      console.error('Image processing failed:', error);
+      // Continue with original file if optimization fails
+      next();
+    }
+  }
 
   // Serve uploaded images with caching
   app.use('/uploads', express.static(path.join(process.cwd(), 'uploads'), {
@@ -324,8 +414,8 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
-  // Upload endpoint
-  app.post('/api/upload', isAuthenticated, upload.single('image'), async (req: any, res) => {
+  // Upload endpoint with automatic image optimization
+  app.post('/api/upload', isAuthenticated, upload.single('image'), processUploadedImage, async (req: any, res) => {
     try {
       const userId = req.user.id;
       const user = await storage.getUser(userId);
@@ -338,8 +428,16 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         return res.status(400).json({ message: "No file uploaded" });
       }
 
-      const imageUrl = `/uploads/images/${req.file.filename}`;
-      res.json({ imageUrl });
+      // Return optimized image URL instead of original
+      const imageUrl = req.file.optimizedPath || `/uploads/images/${req.file.filename}`;
+      const thumbnailUrl = req.file.thumbnailPath || imageUrl;
+      
+      res.json({ 
+        imageUrl,
+        thumbnailUrl,
+        originalUrl: `/uploads/images/${req.file.filename}`,
+        message: "Image uploaded and optimized successfully"
+      });
     } catch (error) {
       console.error("Error uploading file:", error);
       res.status(500).json({ message: "Failed to upload file" });
