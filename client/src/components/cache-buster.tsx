@@ -231,16 +231,33 @@ export function AdminCacheBuster() {
 
       // Update Service Worker cache version
       if ('serviceWorker' in navigator) {
-        const registration = await navigator.serviceWorker.ready;
-        registration.postMessage({ type: 'FORCE_UPDATE' });
+        try {
+          const registration = await navigator.serviceWorker.getRegistration();
+          if (registration && registration.active) {
+            // Check if postMessage method exists on active worker
+            if (typeof registration.active.postMessage === 'function') {
+              registration.active.postMessage({ type: 'FORCE_UPDATE' });
+            }
+          }
+        } catch (swError) {
+          console.warn('Service Worker message failed:', swError);
+          // Continue with cache clearing even if SW fails
+        }
       }
+
+      // Clear localStorage related to cache
+      localStorage.removeItem('app_hash');
+      localStorage.removeItem('app_version');
+      localStorage.removeItem('build_time');
+      localStorage.removeItem('last_update');
+      localStorage.removeItem('update_skipped');
 
       alert('Кеш очищен! Приложение будет перезагружено.');
       window.location.reload();
       
     } catch (error) {
       console.error('Cache clear failed:', error);
-      alert('Ошибка очистки кеша: ' + error.message);
+      alert('Ошибка очистки кеша: ' + (error instanceof Error ? error.message : 'Неизвестная ошибка'));
     } finally {
       setIsClearing(false);
     }
