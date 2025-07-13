@@ -414,6 +414,83 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
+  // Batch optimize existing images
+  app.post('/api/admin/optimize-images', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: "Только администраторы могут оптимизировать изображения" });
+      }
+
+      const imagesDir = path.join(process.cwd(), 'uploads', 'images');
+      const optimizedDir = path.join(process.cwd(), 'uploads', 'optimized');
+      const thumbnailsDir = path.join(process.cwd(), 'uploads', 'thumbnails');
+
+      // Получаем все изображения
+      if (!fs.existsSync(imagesDir)) {
+        return res.json({ message: "Папка изображений не найдена", processed: 0, errors: 0 });
+      }
+
+      const files = fs.readdirSync(imagesDir).filter(file => 
+        /\.(jpg|jpeg|png|gif|webp)$/i.test(file)
+      );
+
+      let processed = 0;
+      let errors = 0;
+      let totalSavings = 0;
+
+      console.log(`🔄 Начинаем оптимизацию ${files.length} изображений...`);
+
+      for (const file of files) {
+        try {
+          const originalPath = path.join(imagesDir, file);
+          const nameWithoutExt = path.parse(file).name;
+          const optimizedPath = path.join(optimizedDir, `${nameWithoutExt}.jpg`);
+          const thumbnailPath = path.join(thumbnailsDir, `${nameWithoutExt}.jpg`);
+
+          // Пропускаем если уже оптимизировано
+          if (fs.existsSync(optimizedPath) && fs.existsSync(thumbnailPath)) {
+            continue;
+          }
+
+          const originalSize = fs.statSync(originalPath).size;
+
+          // Создаем оптимизированную версию
+          await optimizeImage(originalPath, optimizedPath, 80, 800);
+          
+          // Создаем миниатюру
+          await generateThumbnail(originalPath, thumbnailPath, 200);
+
+          const optimizedSize = fs.statSync(optimizedPath).size;
+          const savings = originalSize - optimizedSize;
+          totalSavings += savings;
+
+          console.log(`✅ ${file}: ${(originalSize/1024).toFixed(1)}KB → ${(optimizedSize/1024).toFixed(1)}KB (${((savings/originalSize)*100).toFixed(1)}% экономии)`);
+          
+          processed++;
+        } catch (error) {
+          console.error(`❌ Ошибка обработки ${file}:`, error);
+          errors++;
+        }
+      }
+
+      res.json({
+        message: `Оптимизация завершена`,
+        processed,
+        errors,
+        totalFiles: files.length,
+        totalSavingsKB: Math.round(totalSavings / 1024),
+        totalSavingsMB: (totalSavings / (1024 * 1024)).toFixed(2)
+      });
+
+    } catch (error) {
+      console.error("Ошибка массовой оптимизации:", error);
+      res.status(500).json({ message: "Ошибка при оптимизации изображений" });
+    }
+  });
+
   // Upload endpoint with automatic image optimization
   app.post('/api/upload', isAuthenticated, upload.single('image'), processUploadedImage, async (req: any, res) => {
     try {

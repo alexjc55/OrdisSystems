@@ -32,9 +32,21 @@
         <button onclick="login()">Войти</button>
     </div>
 
+    <div class="upload-area">
+        <button onclick="optimizeAllImages()" id="optimizeAllBtn">
+            🔄 Оптимизировать все загруженные изображения
+        </button>
+        <p>Создает оптимизированные версии и миниатюры для всех изображений в папке uploads/images</p>
+    </div>
+
     <div id="results" class="results">
         <h2>📊 Результаты оптимизации</h2>
         <div id="imageResults"></div>
+    </div>
+    
+    <div id="bulkResults" class="results">
+        <h2>🔄 Результаты массовой оптимизации</h2>
+        <div id="bulkImageResults"></div>
     </div>
 
     <script>
@@ -160,6 +172,70 @@
             resultsDiv.style.display = 'block';
             
             console.log('📊 Результаты загрузки:', result);
+        }
+
+        async function optimizeAllImages() {
+            if (!isAuthenticated) {
+                alert('❌ Сначала выполните авторизацию');
+                return;
+            }
+
+            const optimizeAllBtn = document.getElementById('optimizeAllBtn');
+            optimizeAllBtn.disabled = true;
+            optimizeAllBtn.textContent = '🔄 Оптимизация в процессе...';
+
+            try {
+                const startTime = Date.now();
+                
+                const response = await fetch('/api/admin/optimize-images', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const processTime = Date.now() - startTime;
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showBulkResults(result, processTime);
+                } else {
+                    const error = await response.json();
+                    alert(`❌ Ошибка массовой оптимизации: ${error.message}`);
+                }
+            } catch (error) {
+                alert(`❌ Ошибка: ${error.message}`);
+            } finally {
+                optimizeAllBtn.disabled = false;
+                optimizeAllBtn.textContent = '🔄 Оптимизировать все загруженные изображения';
+            }
+        }
+
+        function showBulkResults(result, processTime) {
+            const bulkResultsDiv = document.getElementById('bulkResults');
+            const bulkImageResults = document.getElementById('bulkImageResults');
+            
+            bulkImageResults.innerHTML = `
+                <div class="stats">
+                    <h3>⏱️ Время обработки: ${(processTime / 1000).toFixed(1)} секунд</h3>
+                </div>
+                
+                <div class="stats">
+                    <h3>📊 Статистика обработки</h3>
+                    <p><strong>Всего файлов:</strong> ${result.totalFiles}</p>
+                    <p><strong>Обработано:</strong> ${result.processed}</p>
+                    <p><strong>Ошибок:</strong> ${result.errors}</p>
+                    <p><strong>Пропущено:</strong> ${result.totalFiles - result.processed - result.errors} (уже оптимизированы)</p>
+                </div>
+
+                <div class="stats">
+                    <h3>💾 Экономия места</h3>
+                    <p><strong>Экономия:</strong> ${result.totalSavingsMB} MB (${result.totalSavingsKB} KB)</p>
+                    <p><strong>Сообщение:</strong> ${result.message}</p>
+                </div>
+            `;
+            
+            bulkResultsDiv.style.display = 'block';
+            
+            console.log('📊 Результаты массовой оптимизации:', result);
         }
     </script>
 </body>
