@@ -137,6 +137,7 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
   - NAVIGATION FIX: Corrected admin dashboard tab navigation from 'store' to 'store-settings'
   - CATEGORY NAVIGATION: Added smooth scroll-to-top when selecting categories
   - UPDATE NOTIFICATION FIX: Fixed persistent update notifications after refresh by improving hash tracking
+  - TRANSLATION COVERAGE: Added complete translations for update panel in all 4 languages (RU/EN/HE/AR)
   - SYNTAX REPAIR: Fixed broken admin-dashboard.tsx file structure after failed edits
   - IMPORT RESOLUTION: Added missing Loader2 import from lucide-react for loading animations
   - SYSTEM SETTINGS ACCESS: Admin can now properly access cache management and image optimization in store-settings tab

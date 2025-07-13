@@ -558,5 +558,11 @@
     "install": "تثبيت",
     "gotIt": "فهمت",
     "later": "لاحقاً"
+  },
+  "updatePanel": {
+    "available": "تحديث التطبيق متاح",
+    "later": "لاحقاً",
+    "update": "تحديث",
+    "updating": "جاري التحديث..."
   }
 }

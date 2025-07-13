@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
+import { useCommonTranslation } from '@/hooks/use-translation';
 
 // Cache Buster Component - Forces app updates and clears all caches
 export function CacheBuster() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
+  const { t } = useCommonTranslation();
 
   useEffect(() => {
     // Check for Service Worker updates
@@ -190,7 +192,7 @@ export function CacheBuster() {
         <div className="flex items-center gap-2">
           <AlertTriangle className="h-5 w-5" />
           <span className="font-medium">
-            Доступно обновление приложения
+            {t('updatePanel.available')}
           </span>
         </div>
         
@@ -201,7 +203,7 @@ export function CacheBuster() {
             onClick={skipUpdate}
             className="text-white hover:bg-orange-600"
           >
-            Позже
+            {t('updatePanel.later')}
           </Button>
           
           <Button
@@ -214,12 +216,12 @@ export function CacheBuster() {
             {isUpdating ? (
               <>
                 <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
-                Обновление...
+                {t('updatePanel.updating')}
               </>
             ) : (
               <>
                 <RefreshCw className="h-4 w-4 mr-1" />
-                Обновить
+                {t('updatePanel.update')}
               </>
             )}
           </Button>

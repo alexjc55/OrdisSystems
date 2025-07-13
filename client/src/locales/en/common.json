@@ -527,5 +527,11 @@
     "uploaded": "Uploaded",
     "uploadSuccess": "Image uploaded successfully",
     "uploadFailed": "Failed to upload image"
+  },
+  "updatePanel": {
+    "available": "App update available",
+    "later": "Later",
+    "update": "Update",
+    "updating": "Updating..."
   }
 }
