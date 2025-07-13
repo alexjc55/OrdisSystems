@@ -560,7 +560,10 @@
     "phoneLabel": "الهاتف",
     "phonePlaceholder": "أدخل رقم الهاتف",
     "roleLabel": "الدور",
-    "rolePlaceholder": "اختر الدور"
+    "rolePlaceholder": "اختر الدور",
+    "usernameLabel": "اسم المستخدم",
+    "usernamePlaceholder": "أدخل اسم المستخدم",
+    "usernameRequired": "اسم المستخدم مطلوب"
   },
   "table": {
     "name": "الاسم",

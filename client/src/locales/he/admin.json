@@ -1051,7 +1051,10 @@
     "phoneLabel": "טלפון",
     "phonePlaceholder": "הכנס מספר טלפון",
     "roleLabel": "תפקיד",
-    "rolePlaceholder": "בחר תפקיד"
+    "rolePlaceholder": "בחר תפקיד",
+    "usernameLabel": "שם משתמש",
+    "usernamePlaceholder": "הכנס שם משתמש",
+    "usernameRequired": "שם משתמש נדרש"
   },
   "table": {
     "name": "שם",

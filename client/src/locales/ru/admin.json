@@ -711,6 +711,9 @@
     "phoneLabel": "Телефон",
     "phonePlaceholder": "Введите номер телефона",
     "roleLabel": "Роль",
+    "usernameLabel": "Имя пользователя",
+    "usernamePlaceholder": "Введите имя пользователя",
+    "usernameRequired": "Имя пользователя обязательно",
     "rolePlaceholder": "Выберите роль"
   },
   "table": {

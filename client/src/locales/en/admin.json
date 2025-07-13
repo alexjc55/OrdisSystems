@@ -817,7 +817,10 @@
     "phoneLabel": "Phone",
     "phonePlaceholder": "Enter phone number",
     "roleLabel": "Role",
-    "rolePlaceholder": "Select role"
+    "rolePlaceholder": "Select role",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "Enter username",
+    "usernameRequired": "Username is required"
   },
   "table": {
     "name": "Name",

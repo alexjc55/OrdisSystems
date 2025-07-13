@@ -2940,33 +2940,12 @@ export default function AdminDashboard() {
 
   const deleteCategoryMutation = useMutation({
     mutationFn: async (categoryId: number) => {
-      console.log(`=== Category Deletion Debug ===`);
-      console.log(`Attempting to delete category with ID: ${categoryId}`);
-      
-      const response = await fetch(`/api/categories/${categoryId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      console.log(`Delete response status: ${response.status}`);
-      console.log(`Delete response ok: ${response.ok}`);
-      
+      const response = await apiRequest('DELETE', `/api/categories/${categoryId}`, {});
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Delete error response:', errorText);
-        try {
-          const errorData = JSON.parse(errorText);
-          throw errorData;
-        } catch (e) {
-          throw new Error(`Failed to delete category: ${errorText}`);
-        }
+        const errorData = await response.json();
+        throw errorData;
       }
-      
-      const result = await response.json();
-      console.log(`Delete success result:`, result);
-      return result;
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
@@ -8069,6 +8048,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
 
   const userSchema = z.object({
+    username: z.string().min(1, adminT('dialog.usernameRequired')),
     email: z.string().email(adminT('dialog.emailError')),
     firstName: z.string().min(1, adminT('dialog.firstNameRequired')),
     lastName: z.string().min(1, adminT('dialog.lastNameRequired')),
@@ -8082,6 +8062,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
   const form = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
     defaultValues: {
+      username: "",
       email: "",
       firstName: "",
       lastName: "",
@@ -8096,6 +8077,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
     if (open) {
       if (user) {
         form.reset({
+          username: user.username || "",
           email: user.email || "",
           firstName: user.firstName || "",
           lastName: user.lastName || "",
@@ -8105,6 +8087,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
         });
       } else {
         form.reset({
+          username: "",
           email: "",
           firstName: "",
           lastName: "",
@@ -8133,6 +8116,25 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className={`space-y-4 ${isRTL ? 'rtl' : 'ltr'}`}>
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('dialog.usernameLabel')} *</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder={adminT('dialog.usernamePlaceholder')}
+                      {...field}
+                      className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                      dir={isRTL ? 'rtl' : 'ltr'}
+                    />
+                  </FormControl>
+                  <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="email"
