@@ -2940,12 +2940,33 @@ export default function AdminDashboard() {
 
   const deleteCategoryMutation = useMutation({
     mutationFn: async (categoryId: number) => {
-      const response = await apiRequest('DELETE', `/api/categories/${categoryId}`, {});
+      console.log(`=== Category Deletion Debug ===`);
+      console.log(`Attempting to delete category with ID: ${categoryId}`);
+      
+      const response = await fetch(`/api/categories/${categoryId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      console.log(`Delete response status: ${response.status}`);
+      console.log(`Delete response ok: ${response.ok}`);
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        throw errorData;
+        const errorText = await response.text();
+        console.error('Delete error response:', errorText);
+        try {
+          const errorData = JSON.parse(errorText);
+          throw errorData;
+        } catch (e) {
+          throw new Error(`Failed to delete category: ${errorText}`);
+        }
       }
-      return response.json();
+      
+      const result = await response.json();
+      console.log(`Delete success result:`, result);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
