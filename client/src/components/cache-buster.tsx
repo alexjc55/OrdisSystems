@@ -8,7 +8,25 @@ export function CacheBuster() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
-  const { t } = useCommonTranslation();
+  
+  // Safe translation hook with error handling
+  let t: (key: string) => string;
+  try {
+    const { t: translationFunc } = useCommonTranslation();
+    t = translationFunc;
+  } catch (error) {
+    console.error('Translation hook error:', error);
+    // Fallback translation function
+    t = (key: string) => {
+      const fallbackTexts: Record<string, string> = {
+        'updatePanel.available': 'Доступно обновление приложения',
+        'updatePanel.later': 'Позже',
+        'updatePanel.update': 'Обновить',
+        'updatePanel.updating': 'Обновление...'
+      };
+      return fallbackTexts[key] || key;
+    };
+  }
 
   useEffect(() => {
     // Check for Service Worker updates
