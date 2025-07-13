@@ -289,7 +289,8 @@ import {
   Globe,
   Type,
   Smartphone,
-  Bell
+  Bell,
+  Image
 } from "lucide-react";
 
 // Validation schemas
@@ -5405,7 +5406,7 @@ export default function AdminDashboard() {
                         </>
                       ) : (
                         <>
-                          <ImageIcon className="h-4 w-4" />
+                          <Image className="h-4 w-4" />
                           Оптимизировать все изображения
                         </>
                       )}
