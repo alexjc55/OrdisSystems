@@ -131,6 +131,14 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- January 13, 2025: ✅ ADMIN DASHBOARD UI REORGANIZATION COMPLETED
+  - PROBLEM RESOLVED: Settings cache clearing and image optimization incorrectly placed in "Access Rights" section
+  - UI RESTRUCTURE: Created separate "System Settings" section with proper organization:
+    - **System Settings**: Cache management and image optimization (performance-related)
+    - **Worker Permissions**: Access rights management for worker accounts
+  - IMPROVED ORGANIZATION: Clear separation between technical system settings and user permission management
+  - USER EXPERIENCE: More logical navigation structure for admin interface
+  - TECHNICAL DETAILS: Maintained all functionality while improving section organization
 - January 13, 2025: ✅ COMPREHENSIVE CACHE BUSTING SOLUTION IMPLEMENTED
   - PROBLEM RESOLVED: Fixed user caching issues preventing updates visibility after deployments
   - SOLUTION COMPONENTS: 

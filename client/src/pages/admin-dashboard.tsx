@@ -5347,76 +5347,94 @@ export default function AdminDashboard() {
           {/* Settings Management */}
           {hasPermission("canManageSettings") && (
             <TabsContent value="settings" className="space-y-4 sm:space-y-6">
+              {/* System Management Section */}
               <Card>
                 <CardHeader>
                   <div className={isRTL ? 'text-right' : 'text-left'}>
                     <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                       <Settings className="h-5 w-5" />
+                      Системные настройки
+                    </CardTitle>
+                    <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                      Управление производительностью и оптимизацией системы
+                    </CardDescription>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Cache Management Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Управление кешем</h3>
+                    <p className="text-sm text-gray-600">
+                      Очистка кеша приложения для принудительного обновления пользователей
+                    </p>
+                    <div className="flex items-center gap-4">
+                      <AdminCacheBuster />
+                      <p className="text-xs text-gray-500">
+                        Используйте при добавлении новых функций или исправлении ошибок
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Image Optimization Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">📸 Оптимизация изображений</h3>
+                    <p className="text-sm text-gray-600">
+                      Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки
+                    </p>
+                    
+                    {optimizationResults && (
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 className="text-sm font-medium text-green-800 mb-2">Результаты последней оптимизации:</h4>
+                        <div className="text-sm text-green-700 space-y-1">
+                          <p>• Обработано: {optimizationResults.processed} из {optimizationResults.totalFiles} изображений</p>
+                          <p>• Ошибок: {optimizationResults.errors}</p>
+                          <p>• Экономия места: {optimizationResults.totalSavingsMB} MB ({optimizationResults.totalSavingsKB} KB)</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center gap-4">
+                      <Button
+                        onClick={() => optimizeImagesMutation.mutate()}
+                        disabled={isOptimizingImages}
+                        variant="outline"
+                        className="flex items-center gap-2"
+                      >
+                        {isOptimizingImages ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Оптимизация...
+                          </>
+                        ) : (
+                          <>
+                            <Image className="h-4 w-4" />
+                            Оптимизировать все изображения
+                          </>
+                        )}
+                      </Button>
+                      <div className="text-xs text-gray-500 max-w-sm">
+                        Создает сжатые версии (800px) и миниатюры (200px) для всех загруженных изображений.
+                        Экономия места: 50-80% от исходного размера.
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Worker Permissions Section */}
+              <Card>
+                <CardHeader>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                      <UserCheck className="h-5 w-5" />
                       {adminT('systemSettings.title')}
                     </CardTitle>
                     <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                       {adminT('systemSettings.description')}
                     </CardDescription>
                   </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Cache Management Section */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Управление кешем</h3>
-                  <p className="text-sm text-gray-600">
-                    Очистка кеша приложения для принудительного обновления пользователей
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <AdminCacheBuster />
-                    <p className="text-xs text-gray-500">
-                      Используйте при добавлении новых функций или исправлении ошибок
-                    </p>
-                  </div>
-                </div>
-
-                {/* Image Optimization Section */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">📸 Оптимизация изображений</h3>
-                  <p className="text-sm text-gray-600">
-                    Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки
-                  </p>
-                  
-                  {optimizationResults && (
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <h4 className="text-sm font-medium text-green-800 mb-2">Результаты последней оптимизации:</h4>
-                      <div className="text-sm text-green-700 space-y-1">
-                        <p>• Обработано: {optimizationResults.processed} из {optimizationResults.totalFiles} изображений</p>
-                        <p>• Ошибок: {optimizationResults.errors}</p>
-                        <p>• Экономия места: {optimizationResults.totalSavingsMB} MB ({optimizationResults.totalSavingsKB} KB)</p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="flex items-center gap-4">
-                    <Button
-                      onClick={() => optimizeImagesMutation.mutate()}
-                      disabled={isOptimizingImages}
-                      variant="outline"
-                      className="flex items-center gap-2"
-                    >
-                      {isOptimizingImages ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Оптимизация...
-                        </>
-                      ) : (
-                        <>
-                          <Image className="h-4 w-4" />
-                          Оптимизировать все изображения
-                        </>
-                      )}
-                    </Button>
-                    <div className="text-xs text-gray-500 max-w-sm">
-                      Создает сжатые версии (800px) и миниатюры (200px) для всех загруженных изображений.
-                      Экономия места: 50-80% от исходного размера.
-                    </div>
-                  </div>
-                </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
                 
                 {/* Worker Permissions Section */}
                 <div className="space-y-4">
