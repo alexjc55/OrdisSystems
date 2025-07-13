@@ -12,7 +12,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import express from "express";
-import { scrypt, randomBytes } from "crypto";
+import { scrypt, randomBytes, createHash } from "crypto";
 import { promisify } from "util";
 
 // Simple in-memory cache for admin data
@@ -38,6 +38,34 @@ function clearCachePattern(pattern: string) {
 }
 
 const scryptAsync = promisify(scrypt);
+
+// Generate app hash based on main files for cache busting
+async function generateAppHash(): Promise<string> {
+  try {
+    const hash = createHash('md5');
+    const filesToCheck = [
+      'package.json',
+      'client/src/App.tsx',
+      'client/src/main.tsx',
+      'client/public/sw.js',
+      'server/index.ts',
+      'server/routes.ts'
+    ];
+    
+    for (const file of filesToCheck) {
+      const fullPath = path.join(process.cwd(), file);
+      if (fs.existsSync(fullPath)) {
+        const stats = fs.statSync(fullPath);
+        hash.update(`${file}:${stats.mtime.getTime()}`);
+      }
+    }
+    
+    return hash.digest('hex').substring(0, 8);
+  } catch (error) {
+    console.error('Error generating app hash:', error);
+    return Date.now().toString().substring(-8);
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Add cache control headers only for API routes (not static files)
@@ -67,6 +95,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const uploadsDir = path.join(process.cwd(), 'uploads');
       const uploadsExists = fs.existsSync(uploadsDir);
       
+      // Generate app hash based on main files
+      const appHash = await generateAppHash();
+      
       res.json({
         status: "healthy",
         timestamp: new Date().toISOString(),
@@ -74,7 +105,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         environment: process.env.NODE_ENV || "development",
         database: "connected",
         uploads: uploadsExists ? "available" : "missing",
-        uptime: process.uptime()
+        uptime: process.uptime(),
+        appHash: appHash, // For cache busting
+        buildTime: process.env.BUILD_TIME || new Date().toISOString()
       });
     } catch (error) {
       console.error('Health check failed:', error);
@@ -82,6 +115,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status: "unhealthy",
         timestamp: new Date().toISOString(),
         error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // App version endpoint for cache busting
+  app.get("/api/version", async (req, res) => {
+    try {
+      const appHash = await generateAppHash();
+      const buildTime = process.env.BUILD_TIME || new Date().toISOString();
+      
+      res.json({
+        version: process.env.npm_package_version || "1.0.0",
+        appHash: appHash,
+        buildTime: buildTime,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Version check failed:', error);
+      res.status(500).json({
+        error: "Failed to get version info",
+        timestamp: new Date().toISOString()
       });
     }
   });

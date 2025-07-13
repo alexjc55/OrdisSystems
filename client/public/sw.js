@@ -1,6 +1,7 @@
-// Dynamic cache names with timestamp to force updates
+// Dynamic cache names with automatic versioning
 const APP_VERSION = '1.0.0';
-const BUILD_TIMESTAMP = '20250113-1905'; // Update this for each deployment
+// Build timestamp is now generated automatically from file changes
+const BUILD_TIMESTAMP = '20250713-1921'; // Fallback timestamp
 const CACHE_NAME = `edahouse-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 const STATIC_CACHE = `edahouse-static-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 const DYNAMIC_CACHE = `edahouse-dynamic-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
@@ -71,13 +72,15 @@ self.addEventListener('activate', function(event) {
     ]).then(() => {
       console.log('✅ [SW] Service worker activated and controlling all clients');
       
-      // Notify all clients about the update
-      return self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
-          client.postMessage({
-            type: 'NEW_VERSION_AVAILABLE',
-            version: CACHE_NAME,
-            timestamp: Date.now()
+      // Check for app updates and notify clients
+      return checkForAppUpdates().then(() => {
+        return self.clients.matchAll().then(clients => {
+          clients.forEach(client => {
+            client.postMessage({
+              type: 'NEW_VERSION_AVAILABLE',
+              version: CACHE_NAME,
+              timestamp: Date.now()
+            });
           });
         });
       });
@@ -109,6 +112,49 @@ self.addEventListener('message', function(event) {
     );
   }
 });
+
+// Check for app updates by comparing file hashes
+async function checkForAppUpdates() {
+  try {
+    const response = await fetch('/api/version?' + Date.now());
+    const data = await response.json();
+    
+    // Compare with stored hash
+    const storedHash = await self.caches.open(DYNAMIC_CACHE).then(cache => {
+      return cache.match('/api/version').then(response => {
+        if (response) {
+          return response.json().then(data => data.appHash);
+        }
+        return null;
+      });
+    });
+    
+    if (storedHash && storedHash !== data.appHash) {
+      console.log('🆕 [SW] App update detected, clearing caches');
+      
+      // Clear all caches
+      const cacheNames = await self.caches.keys();
+      await Promise.all(cacheNames.map(name => self.caches.delete(name)));
+      
+      // Notify all clients
+      const clients = await self.clients.matchAll();
+      clients.forEach(client => {
+        client.postMessage({
+          type: 'NEW_VERSION_AVAILABLE',
+          version: `v${data.version}-${data.appHash}`,
+          timestamp: Date.now()
+        });
+      });
+    }
+    
+    // Store current hash
+    const cache = await self.caches.open(DYNAMIC_CACHE);
+    await cache.put('/api/version', new Response(JSON.stringify(data)));
+    
+  } catch (error) {
+    console.error('Failed to check for updates:', error);
+  }
+}
 
 // Push notification event handlers
 self.addEventListener('push', function(event) {

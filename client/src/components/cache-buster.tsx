@@ -40,23 +40,38 @@ export function CacheBuster() {
 
     // Force cache check on mount
     checkForUpdates();
+
+    // Check for updates every 30 seconds
+    const interval = setInterval(checkForUpdates, 30000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const checkForUpdates = async () => {
     try {
-      // Check if there's a new version by comparing timestamps
-      const response = await fetch('/api/health?' + Date.now());
+      // Check if there's a new version by comparing app hash
+      const response = await fetch('/api/version?' + Date.now());
       const data = await response.json();
       
-      // Simple version check - can be enhanced
-      const lastVersion = localStorage.getItem('app_version');
-      const currentVersion = data.version || '1.0.0';
+      // Check app hash for file changes
+      const lastAppHash = localStorage.getItem('app_hash');
+      const currentAppHash = data.appHash;
       
-      if (lastVersion && lastVersion !== currentVersion) {
+      console.log('🔍 [CacheBuster] Checking for updates:', {
+        lastAppHash,
+        currentAppHash,
+        buildTime: data.buildTime
+      });
+      
+      if (lastAppHash && lastAppHash !== currentAppHash) {
+        console.log('🆕 [CacheBuster] New version detected!');
         setUpdateAvailable(true);
       }
       
-      localStorage.setItem('app_version', currentVersion);
+      // Store current hash
+      localStorage.setItem('app_hash', currentAppHash);
+      localStorage.setItem('app_version', data.version);
+      localStorage.setItem('build_time', data.buildTime);
     } catch (error) {
       console.log('Version check failed:', error);
     }
