@@ -341,6 +341,9 @@ export default function Home() {
     setSelectedCategoryId(categoryId);
     // Don't clear search query when switching categories
     
+    // Прокрутка к началу страницы при выборе категории
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     // Navigate to appropriate URL
     if (categoryId === 0) {
       navigate('/all-products');
@@ -356,6 +359,8 @@ export default function Home() {
     setSearchQuery("");
     setCategoryFilter("all");
     setDiscountFilter("all");
+    // Прокрутка к началу страницы при сбросе вида
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate('/');
   }, [navigate]);
 
