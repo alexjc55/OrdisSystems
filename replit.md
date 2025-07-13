@@ -131,9 +131,12 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
-- January 13, 2025: ✅ CRITICAL ADMIN DASHBOARD FIXES COMPLETED
+- January 13, 2025: ✅ CRITICAL ADMIN DASHBOARD AND CACHE FIXES COMPLETED
   - PROBLEM RESOLVED: Fixed "Loader2 is not defined" error in image optimization system
+  - CACHE CLEARING FIX: Fixed "registration.postMessage is not a function" error in cache management
   - NAVIGATION FIX: Corrected admin dashboard tab navigation from 'store' to 'store-settings'
+  - CATEGORY NAVIGATION: Added smooth scroll-to-top when selecting categories
+  - UPDATE NOTIFICATION FIX: Fixed persistent update notifications after refresh by improving hash tracking
   - SYNTAX REPAIR: Fixed broken admin-dashboard.tsx file structure after failed edits
   - IMPORT RESOLUTION: Added missing Loader2 import from lucide-react for loading animations
   - SYSTEM SETTINGS ACCESS: Admin can now properly access cache management and image optimization in store-settings tab

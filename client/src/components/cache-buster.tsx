@@ -79,21 +79,29 @@ export function CacheBuster() {
       
       // Проверяем недавнее обновление
       const lastUpdate = localStorage.getItem('last_update');
-      const recentlyUpdated = lastUpdate && (Date.now() - parseInt(lastUpdate)) < 120000; // 2 минуты
+      const recentlyUpdated = lastUpdate && (Date.now() - parseInt(lastUpdate)) < 300000; // 5 минут
       
       // Проверяем, было ли уведомление пропущено для этого хеша
       const updateSkipped = localStorage.getItem('update_skipped');
-      const skippedRecently = updateSkipped && (Date.now() - parseInt(updateSkipped)) < 300000; // 5 минут
+      const skippedRecently = updateSkipped && (Date.now() - parseInt(updateSkipped)) < 600000; // 10 минут
       
-      if (lastAppHash && lastAppHash !== currentAppHash && !recentlyUpdated && !skippedRecently) {
+      // Проверяем последний обработанный хеш
+      const lastProcessedHash = localStorage.getItem('last_processed_hash');
+      const alreadyProcessed = lastProcessedHash === currentAppHash;
+      
+      if (lastAppHash && lastAppHash !== currentAppHash && !recentlyUpdated && !skippedRecently && !alreadyProcessed) {
         console.log('🆕 [CacheBuster] New version detected!');
         setUpdateAvailable(true);
+        // Не помечаем как обработанный здесь - только после действия пользователя
       } else {
         if (recentlyUpdated) {
           console.log('🔄 [CacheBuster] Recently updated, skipping notification');
         }
         if (skippedRecently) {
           console.log('⏭️ [CacheBuster] Update was recently skipped, not showing again');
+        }
+        if (alreadyProcessed) {
+          console.log('✅ [CacheBuster] Hash already processed, skipping notification');
         }
       }
       
@@ -146,6 +154,7 @@ export function CacheBuster() {
       localStorage.setItem('app_version', data.version);
       localStorage.setItem('build_time', data.buildTime);
       localStorage.setItem('last_update', Date.now().toString());
+      localStorage.setItem('last_processed_hash', currentAppHash);
 
       // 4. Force reload with cache bypass
       window.location.reload();
@@ -163,6 +172,11 @@ export function CacheBuster() {
     setUpdateAvailable(false);
     // Помечаем что пользователь пропустил обновление
     localStorage.setItem('update_skipped', Date.now().toString());
+    // Помечаем текущий хеш как обработанный
+    const currentAppHash = localStorage.getItem('app_hash');
+    if (currentAppHash) {
+      localStorage.setItem('last_processed_hash', currentAppHash);
+    }
     console.log('⏭️ [CacheBuster] User skipped update');
   };
 
