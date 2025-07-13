@@ -427,8 +427,7 @@ export default function ThemeManager() {
 
   const createThemeMutation = useMutation({
     mutationFn: async (themeData: Omit<ThemeData, "id" | "isActive">) => {
-      const res = await apiRequest("POST", "/api/admin/themes", themeData);
-      return await res.json();
+      return await apiRequest("POST", "/api/admin/themes", themeData);
     },
     onSuccess: (newTheme) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/themes"] });
