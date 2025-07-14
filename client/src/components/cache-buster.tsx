@@ -152,9 +152,11 @@ export function CacheBuster() {
   };
 
   const forceUpdate = async () => {
-    setIsUpdating(true);
-    
     try {
+      // Сразу скрываем уведомление и отмечаем состояние
+      setUpdateAvailable(false);
+      setIsUpdating(true);
+      
       // Получаем текущий хеш перед очисткой
       const response = await fetch('/api/version?' + Date.now());
       const data = await response.json();
@@ -166,9 +168,7 @@ export function CacheBuster() {
       localStorage.setItem('app_hash', currentAppHash);
       localStorage.setItem('app_version', data.version);
       localStorage.setItem('build_time', data.buildTime);
-      
-      // Скрываем уведомление сразу после начала обновления
-      setUpdateAvailable(false);
+      setCurrentSessionHash(currentAppHash);
       
       // 1. Clear all browser caches
       if ('caches' in window) {
@@ -210,15 +210,19 @@ export function CacheBuster() {
         }
       });
 
-      // 4. Force reload with cache bypass
-      window.location.reload();
+      // 4. Force reload with small delay for UI update
+      setTimeout(() => {
+        window.location.reload();
+      }, 200);
       
     } catch (error) {
-      console.error('Update failed:', error);
+      console.error('❌ [CacheBuster] Update failed:', error);
       setIsUpdating(false);
       
-      // Fallback: simple reload
-      window.location.href = window.location.href + '?bust=' + Date.now();
+      // Fallback: simple reload with delay
+      setTimeout(() => {
+        window.location.href = window.location.href + '?bust=' + Date.now();
+      }, 200);
     }
   };
 
@@ -240,44 +244,46 @@ export function CacheBuster() {
   }
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-orange-500 text-white p-3 shadow-lg">
-      <div className="max-w-4xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5" />
-          <span className="font-medium">
-            {t('updatePanel.available')}
-          </span>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={skipUpdate}
-            className="text-white hover:bg-orange-600"
-          >
-            {t('updatePanel.later')}
-          </Button>
+    <div className="fixed top-0 left-0 right-0 z-50 bg-orange-500 text-white shadow-lg">
+      <div className="p-3 max-w-4xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+            <span className="text-sm font-medium leading-tight">
+              {t('updatePanel.available')}
+            </span>
+          </div>
           
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={forceUpdate}
-            disabled={isUpdating}
-            className="bg-white text-orange-500 hover:bg-gray-100"
-          >
-            {isUpdating ? (
-              <>
-                <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
-                {t('updatePanel.updating')}
-              </>
-            ) : (
-              <>
-                <RefreshCw className="h-4 w-4 mr-1" />
-                {t('updatePanel.update')}
-              </>
-            )}
-          </Button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={skipUpdate}
+              className="text-white hover:bg-orange-600 text-xs px-3 py-1 h-7"
+            >
+              {t('updatePanel.later')}
+            </Button>
+            
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={forceUpdate}
+              disabled={isUpdating}
+              className="bg-white text-orange-500 hover:bg-gray-100 text-xs px-3 py-1 h-7"
+            >
+              {isUpdating ? (
+                <>
+                  <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                  {t('updatePanel.updating')}
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-3 w-3 mr-1" />
+                  {t('updatePanel.update')}
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Диагностика iOS кеша - eDAHouse</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        .status.success { background: #d4edda; border: 1px solid #c3e6cb; }
+        .status.warning { background: #fff3cd; border: 1px solid #ffeaa7; }
+        .status.error { background: #f8d7da; border: 1px solid #f5c6cb; }
+        button {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #0056b3; }
+        button.danger { background: #DC3545; }
+        button.danger:hover { background: #c82333; }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Диагностика кеша iOS - eDAHouse</h1>
+    
+    <div class="card">
+        <h2>📱 Информация об устройстве</h2>
+        <div id="deviceInfo"></div>
+    </div>
+
+    <div class="card">
+        <h2>🔄 Статус Service Worker</h2>
+        <div id="swStatus"></div>
+        <button onclick="checkServiceWorker()">🔍 Проверить SW</button>
+        <button onclick="unregisterSW()" class="danger">🗑️ Удалить SW</button>
+    </div>
+
+    <div class="card">
+        <h2>💾 Состояние кеша</h2>
+        <div id="cacheStatus"></div>
+        <div class="grid">
+            <button onclick="checkCaches()">📋 Список кешей</button>
+            <button onclick="clearAllCaches()" class="danger">🧹 Очистить все</button>
+            <button onclick="checkStorage()">📊 Проверить хранилище</button>
+            <button onclick="clearStorage()" class="danger">🗑️ Очистить хранилище</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🌐 Проверка API</h2>
+        <div id="apiStatus"></div>
+        <div class="grid">
+            <button onclick="testAPI()">🧪 Тест API</button>
+            <button onclick="testVersionAPI()">📱 Тест /api/version</button>
+            <button onclick="testSettingsAPI()">⚙️ Тест /api/settings</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🔄 Действия по устранению проблем</h2>
+        <div class="grid">
+            <button onclick="performIOSCacheFix()" class="danger">🚨 iOS: Полная очистка</button>
+            <button onclick="forceReload()">🔄 Принудительная перезагрузка</button>
+            <button onclick="resetApp()" class="danger">🆘 Сброс приложения</button>
+        </div>
+        <div class="status warning">
+            <strong>⚠️ Внимание:</strong> "iOS: Полная очистка" выполнит агрессивную очистку всех кешей и перезагрузит приложение.
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📝 Журнал операций</h2>
+        <button onclick="clearLog()">🧹 Очистить журнал</button>
+        <div id="log" class="log"></div>
+    </div>
+
+    <script>
+        let logMessages = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const formattedMessage = `[${timestamp}] ${message}`;
+            logMessages.push(formattedMessage);
+            
+            console.log(formattedMessage);
+            document.getElementById('log').textContent = logMessages.join('\n');
+            document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
+        }
+
+        function clearLog() {
+            logMessages = [];
+            document.getElementById('log').textContent = '';
+        }
+
+        function updateDeviceInfo() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+            const isWebApp = window.navigator.standalone === true;
+            
+            document.getElementById('deviceInfo').innerHTML = `
+                <div class="status ${isIOS ? 'warning' : 'success'}">
+                    <strong>Устройство:</strong> ${isIOS ? 'iOS устройство' : 'Не iOS'}<br>
+                    <strong>User Agent:</strong> <code>${navigator.userAgent}</code><br>
+                    <strong>PWA режим:</strong> ${isStandalone || isWebApp ? 'Да' : 'Нет'}<br>
+                    <strong>Standalone:</strong> ${isWebApp ? 'Да' : 'Нет'}<br>
+                    <strong>Display mode:</strong> ${isStandalone ? 'Standalone' : 'Browser'}
+                </div>
+            `;
+            
+            log(`Устройство: ${isIOS ? 'iOS' : 'Other'}, PWA: ${isStandalone || isWebApp}`);
+        }
+
+        async function checkServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    const ready = await navigator.serviceWorker.ready;
+                    
+                    let status = '';
+                    if (registration) {
+                        status = `
+                            <div class="status success">
+                                <strong>Service Worker:</strong> Зарегистрирован<br>
+                                <strong>Scope:</strong> <code>${registration.scope}</code><br>
+                                <strong>State:</strong> ${registration.active ? registration.active.state : 'Нет активного'}<br>
+                                <strong>Script URL:</strong> <code>${registration.active ? registration.active.scriptURL : 'Н/Д'}</code>
+                            </div>
+                        `;
+                        log('Service Worker найден и активен');
+                    } else {
+                        status = '<div class="status error">Service Worker не зарегистрирован</div>';
+                        log('Service Worker не найден');
+                    }
+                    
+                    document.getElementById('swStatus').innerHTML = status;
+                } catch (error) {
+                    const errorMsg = `Ошибка проверки SW: ${error.message}`;
+                    document.getElementById('swStatus').innerHTML = `<div class="status error">${errorMsg}</div>`;
+                    log(errorMsg, 'error');
+                }
+            } else {
+                const msg = 'Service Worker не поддерживается';
+                document.getElementById('swStatus').innerHTML = `<div class="status error">${msg}</div>`;
+                log(msg, 'error');
+            }
+        }
+
+        async function unregisterSW() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        log(`SW удален: ${registration.scope}`);
+                    }
+                    document.getElementById('swStatus').innerHTML = '<div class="status success">Все Service Workers удалены</div>';
+                } catch (error) {
+                    log(`Ошибка удаления SW: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        async function checkCaches() {
+            if ('caches' in window) {
+                try {
+                    const cacheNames = await caches.keys();
+                    let status = `<strong>Найдено кешей:</strong> ${cacheNames.length}<br>`;
+                    
+                    for (const cacheName of cacheNames) {
+                        const cache = await caches.open(cacheName);
+                        const keys = await cache.keys();
+                        status += `<code>${cacheName}</code> (${keys.length} файлов)<br>`;
+                    }
+                    
+                    document.getElementById('cacheStatus').innerHTML = `<div class="status info">${status}</div>`;
+                    log(`Найдено ${cacheNames.length} кешей`);
+                } catch (error) {
+                    log(`Ошибка проверки кешей: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        async function clearAllCaches() {
+            if ('caches' in window) {
+                try {
+                    const cacheNames = await caches.keys();
+                    let cleared = 0;
+                    
+                    for (const cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        cleared++;
+                        log(`Кеш удален: ${cacheName}`);
+                    }
+                    
+                    document.getElementById('cacheStatus').innerHTML = `<div class="status success">Удалено ${cleared} кешей</div>`;
+                    log(`Все кеши очищены (${cleared})`);
+                } catch (error) {
+                    log(`Ошибка очистки кешей: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        function checkStorage() {
+            const localStorage_size = JSON.stringify(localStorage).length;
+            const sessionStorage_size = JSON.stringify(sessionStorage).length;
+            
+            let status = `
+                <strong>localStorage:</strong> ${localStorage_size} байт (${Object.keys(localStorage).length} ключей)<br>
+                <strong>sessionStorage:</strong> ${sessionStorage_size} байт (${Object.keys(sessionStorage).length} ключей)<br><br>
+                <strong>localStorage содержимое:</strong><br>
+            `;
+            
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    status += `<code>${key}</code>: ${localStorage.getItem(key)}<br>`;
+                }
+            }
+            
+            document.getElementById('cacheStatus').innerHTML = `<div class="status info">${status}</div>`;
+            log(`localStorage: ${Object.keys(localStorage).length} ключей, sessionStorage: ${Object.keys(sessionStorage).length} ключей`);
+        }
+
+        function clearStorage() {
+            const localCount = Object.keys(localStorage).length;
+            const sessionCount = Object.keys(sessionStorage).length;
+            
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            document.getElementById('cacheStatus').innerHTML = '<div class="status success">Все хранилища очищены</div>';
+            log(`Очищено: localStorage (${localCount}), sessionStorage (${sessionCount})`);
+        }
+
+        async function testAPI() {
+            const endpoints = ['/api/version', '/api/settings', '/api/categories'];
+            let results = '<strong>Результаты тестирования API:</strong><br>';
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const start = Date.now();
+                    const response = await fetch(endpoint + '?' + Date.now());
+                    const time = Date.now() - start;
+                    const status = response.ok ? 'success' : 'error';
+                    results += `<span class="status ${status}">${endpoint}: ${response.status} (${time}ms)</span><br>`;
+                    log(`API ${endpoint}: ${response.status} за ${time}ms`);
+                } catch (error) {
+                    results += `<span class="status error">${endpoint}: Ошибка - ${error.message}</span><br>`;
+                    log(`API ${endpoint}: Ошибка - ${error.message}`, 'error');
+                }
+            }
+            
+            document.getElementById('apiStatus').innerHTML = results;
+        }
+
+        async function testVersionAPI() {
+            try {
+                const response = await fetch('/api/version?' + Date.now());
+                const data = await response.json();
+                
+                document.getElementById('apiStatus').innerHTML = `
+                    <div class="status success">
+                        <strong>/api/version:</strong> OK<br>
+                        <strong>Version:</strong> ${data.version}<br>
+                        <strong>App Hash:</strong> ${data.appHash}<br>
+                        <strong>Build Time:</strong> ${data.buildTime}
+                    </div>
+                `;
+                log(`Version API: v${data.version}, hash=${data.appHash}`);
+            } catch (error) {
+                document.getElementById('apiStatus').innerHTML = `<div class="status error">Ошибка version API: ${error.message}</div>`;
+                log(`Version API ошибка: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSettingsAPI() {
+            try {
+                const response = await fetch('/api/settings?' + Date.now());
+                const data = await response.json();
+                
+                document.getElementById('apiStatus').innerHTML = `
+                    <div class="status success">
+                        <strong>/api/settings:</strong> OK<br>
+                        <strong>Store Name:</strong> ${data.storeName || 'Не указано'}<br>
+                        <strong>Settings ID:</strong> ${data.id}
+                    </div>
+                `;
+                log(`Settings API: store=${data.storeName || 'N/A'}`);
+            } catch (error) {
+                document.getElementById('apiStatus').innerHTML = `<div class="status error">Ошибка settings API: ${error.message}</div>`;
+                log(`Settings API ошибка: ${error.message}`, 'error');
+            }
+        }
+
+        async function performIOSCacheFix() {
+            log('🚨 Начинаем iOS-специфичную очистку кешей...', 'warning');
+            
+            try {
+                // 1. Очистка всех кешей
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(cacheNames.map(name => caches.delete(name)));
+                    log(`✅ Удалено ${cacheNames.length} кешей`);
+                }
+
+                // 2. Удаление Service Worker
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    await Promise.all(registrations.map(reg => reg.unregister()));
+                    log(`✅ Удалено ${registrations.length} Service Workers`);
+                }
+
+                // 3. Очистка хранилищ но с сохранением важных данных
+                const preserveKeys = ['last_update', 'last_processed_hash', 'app_hash', 'app_version', 'build_time'];
+                const preserved = {};
+                preserveKeys.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        preserved[key] = localStorage.getItem(key);
+                    }
+                });
+
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Восстанавливаем важные данные
+                Object.entries(preserved).forEach(([key, value]) => {
+                    localStorage.setItem(key, value);
+                });
+                log(`✅ Хранилища очищены, восстановлено ${Object.keys(preserved).length} ключей`);
+
+                // 4. Очистка IndexedDB для iOS
+                if ('indexedDB' in window) {
+                    try {
+                        const databases = await indexedDB.databases();
+                        await Promise.all(databases.map(db => {
+                            if (db.name) {
+                                return new Promise((resolve, reject) => {
+                                    const deleteReq = indexedDB.deleteDatabase(db.name);
+                                    deleteReq.onsuccess = () => resolve();
+                                    deleteReq.onerror = () => reject(deleteReq.error);
+                                });
+                            }
+                        }));
+                        log(`✅ IndexedDB очищен`);
+                    } catch (error) {
+                        log(`⚠️ IndexedDB: ${error.message}`, 'warning');
+                    }
+                }
+
+                log('🔄 Выполняем агрессивную перезагрузку для iOS...', 'warning');
+                
+                // 5. iOS-специфичная перезагрузка
+                setTimeout(() => {
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                    if (isIOS) {
+                        const newUrl = window.location.href.split('?')[0] + '?ios_cache_fix=' + Date.now() + '&debug=true';
+                        window.location.replace(newUrl);
+                    } else {
+                        window.location.reload(true);
+                    }
+                }, 1000);
+
+            } catch (error) {
+                log(`❌ Ошибка iOS-очистки: ${error.message}`, 'error');
+            }
+        }
+
+        function forceReload() {
+            log('🔄 Принудительная перезагрузка...', 'warning');
+            window.location.href = window.location.href + '?force_reload=' + Date.now();
+        }
+
+        function resetApp() {
+            log('🆘 Полный сброс приложения...', 'warning');
+            
+            // Очистка всего
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Удаление всех кешей и SW асинхронно
+            Promise.all([
+                caches.keys().then(names => Promise.all(names.map(name => caches.delete(name)))),
+                navigator.serviceWorker.getRegistrations().then(regs => Promise.all(regs.map(reg => reg.unregister())))
+            ]).finally(() => {
+                // Переход на главную страницу с полной очисткой
+                window.location.href = '/?reset=' + Date.now();
+            });
+        }
+
+        // Инициализация при загрузке страницы
+        window.addEventListener('load', function() {
+            log('🔧 Инициализация диагностики iOS кеша');
+            updateDeviceInfo();
+            checkServiceWorker();
+            checkCaches();
+            checkStorage();
+            
+            // Проверяем, не были ли мы перенаправлены после iOS-фикса
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('ios_cache_fix')) {
+                log('✅ Страница загружена после iOS cache fix', 'success');
+                document.body.style.background = '#d4edda';
+                setTimeout(() => {
+                    document.body.style.background = '#f5f5f5';
+                }, 3000);
+            }
+            if (urlParams.get('reset')) {
+                log('✅ Приложение сброшено', 'success');
+            }
+        });
+    </script>
+</body>
+</html>

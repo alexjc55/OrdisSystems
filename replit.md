@@ -131,6 +131,39 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- January 14, 2025: ✅ COMPREHENSIVE iOS CACHE BUSTER AND UI NOTIFICATION FIXES
+  - PROBLEM RESOLVED: Fixed iPhone white screen issues requiring app deletion/reinstall
+  - UI IMPROVEMENTS: Completely redesigned update notification layout for mobile devices
+    - Changed from flex-row to flex-col sm:flex-row for responsive stacking
+    - Reduced icon and text sizes: h-4 w-4 icons, text-sm for better mobile fit
+    - Compact button styling: text-xs px-3 py-1 h-7 for minimal height impact
+    - Fixed text overflow and excessive height stretching on mobile screens
+  - NOTIFICATION BEHAVIOR FIX: Update notifications now disappear immediately after clicking "Update"
+    - Modified forceUpdate() to call setUpdateAvailable(false) before setIsUpdating(true)
+    - Added setCurrentSessionHash() to prevent notification reappearance
+    - Implemented 200ms delay before reload for proper UI state update
+  - iOS-SPECIFIC CACHE CLEARING: Enhanced iOS Cache Buster with aggressive cache management
+    - Added iOS-specific URL replacement with cache busting parameters
+    - Implemented window.location.replace() instead of reload() for iOS
+    - Enhanced Service Worker with shorter cache TTL for iOS (2 min vs 5 min)
+    - Added comprehensive iOS cache clearing: caches, localStorage, sessionStorage, IndexedDB
+  - DIAGNOSTIC TOOLS: Created debug-ios-cache.html for comprehensive iOS troubleshooting
+    - Complete cache and Service Worker diagnostics
+    - Device detection and PWA mode verification
+    - API endpoint testing with performance metrics
+    - iOS-specific cache fix button for user self-service
+    - Real-time logging system for debugging cache issues
+  - SERVICE WORKER UPDATES: Enhanced SW version 20250114-1315 with iOS optimizations
+    - Added iOS device detection and platform-specific cache management
+    - More aggressive cache invalidation for iOS devices
+    - Improved skipWaiting() behavior for iOS cache clearing
+  - TECHNICAL IMPLEMENTATION:
+    - CacheBuster: Responsive layout, immediate notification hiding, session-based tracking
+    - IOSCacheBuster: Unified UI design, aggressive iOS cache clearing, URL replacement
+    - Service Worker: iOS detection, shorter cache TTL, enhanced activation
+    - Debug page: Complete diagnostic suite for iOS cache troubleshooting
+  - USER EXPERIENCE: iPhone users can now update app without deletion/reinstall
+  - MOBILE OPTIMIZATION: Update notifications no longer cause layout issues on small screens
 - January 14, 2025: ✅ CRITICAL FIX: COMPLETELY RESOLVED PERSISTENT UPDATE NOTIFICATIONS
   - PROBLEM SOLVED: Update notifications were reappearing despite user actions due to Service Worker conflicts
   - ROOT CAUSE IDENTIFIED: Service Worker was independently sending NEW_VERSION_AVAILABLE messages to all clients

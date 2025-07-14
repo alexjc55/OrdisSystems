@@ -92,9 +92,11 @@ export function IOSCacheBuster() {
   }, [isIOS]);
 
   const performIOSCacheClear = async () => {
-    setIsUpdating(true);
-    
     try {
+      // Сразу скрываем уведомление
+      setUpdateAvailable(false);
+      setIsUpdating(true);
+      
       // Получаем текущий хеш и сохраняем состояние обновления
       const response = await fetch('/api/version?' + Date.now());
       const data = await response.json();
@@ -105,9 +107,7 @@ export function IOSCacheBuster() {
       localStorage.setItem('last_processed_hash', currentAppHash);
       localStorage.setItem('app-version', data.version);
       localStorage.setItem('app-hash', currentAppHash);
-      
-      // Скрываем уведомление сразу
-      setUpdateAvailable(false);
+      setCurrentSessionHash(currentAppHash);
       
       // 1. Clear all browser caches
       if ('caches' in window) {
@@ -160,12 +160,24 @@ export function IOSCacheBuster() {
         );
       }
 
-      // 5. Force reload with cache bypass
-      window.location.reload();
+      // 5. iOS-specific: более агрессивная перезагрузка для преодоления кеша
+      if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
+        // Для iOS: полная замена URL с timestamp и форсированная перезагрузка
+        const newUrl = window.location.href.split('?')[0] + '?ios_cache_bust=' + Date.now() + '&v=' + currentAppHash;
+        window.location.replace(newUrl);
+      } else {
+        // Стандартная перезагрузка для других устройств
+        window.location.reload();
+      }
       
     } catch (error) {
-      // Fallback: just reload
-      window.location.reload();
+      // Fallback: агрессивная перезагрузка для iOS
+      if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
+        const newUrl = window.location.href.split('?')[0] + '?fallback_cache_bust=' + Date.now();
+        window.location.replace(newUrl);
+      } else {
+        window.location.reload();
+      }
     }
   };
 
@@ -195,41 +207,53 @@ export function IOSCacheBuster() {
   }
 
   return (
-    <div className="fixed top-4 left-4 right-4 z-50 bg-orange-500 text-white p-4 rounded-lg shadow-lg">
-      <div className="flex items-center gap-3">
-        {isIOS ? <Smartphone className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />}
-        <div className="flex-1">
-          <p className="font-medium">
-            {isIOS ? t('updatePanel.iosIssue') : t('updatePanel.available')}
-          </p>
-          {isIOS && (
-            <p className="text-sm opacity-90 mt-1">
-              Для получения последней версии нажмите "Принудительно очистить кеш"
-            </p>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setUpdateAvailable(false)}
-            className="border-white/20 text-white hover:bg-white/10"
-          >
-            {t('updatePanel.later')}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleUpdate}
-            disabled={isUpdating}
-            className="border-white/20 text-white hover:bg-white/10"
-          >
-            {isUpdating ? (
-              <RefreshCw className="h-4 w-4 animate-spin" />
-            ) : (
-              isIOS ? t('updatePanel.forceClear') : t('updatePanel.update')
-            )}
-          </Button>
+    <div className="fixed top-0 left-0 right-0 z-50 bg-red-500 text-white shadow-lg">
+      <div className="p-3 max-w-4xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-2">
+            {isIOS ? <Smartphone className="h-4 w-4 flex-shrink-0" /> : <AlertTriangle className="h-4 w-4 flex-shrink-0" />}
+            <div>
+              <span className="text-sm font-medium leading-tight">
+                {isIOS ? t('iosIssue') : t('updatePanel.available')}
+              </span>
+              {isIOS && (
+                <div className="text-xs opacity-90 leading-tight mt-1">
+                  {t('iosUpdateMessage')}
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setUpdateAvailable(false)}
+              className="text-white hover:bg-red-600 text-xs px-3 py-1 h-7"
+            >
+              {t('updatePanel.later')}
+            </Button>
+            
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleUpdate}
+              disabled={isUpdating}
+              className="bg-white text-red-500 hover:bg-gray-100 text-xs px-3 py-1 h-7"
+            >
+              {isUpdating ? (
+                <>
+                  <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                  {t('updatePanel.updating')}
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-3 w-3 mr-1" />
+                  {isIOS ? t('forceClear') : t('updatePanel.update')}
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

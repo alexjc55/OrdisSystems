@@ -1,7 +1,7 @@
 // Dynamic cache names with automatic versioning
 const APP_VERSION = '1.0.0';
 // Build timestamp is now generated automatically from file changes
-const BUILD_TIMESTAMP = '20250713-1921'; // Fallback timestamp
+const BUILD_TIMESTAMP = '20250114-1315'; // Updated for iOS cache fixes
 const CACHE_NAME = `edahouse-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 const STATIC_CACHE = `edahouse-static-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 const DYNAMIC_CACHE = `edahouse-dynamic-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
@@ -21,8 +21,11 @@ const API_CACHE_PATTERNS = [
   '/api/products'
 ];
 
-// Cache TTL in milliseconds (5 minutes for API data)
-const API_CACHE_TTL = 5 * 60 * 1000;
+// iOS-specific cache management
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+// More aggressive cache invalidation for iOS
+const API_CACHE_TTL = isIOS ? 2 * 60 * 1000 : 5 * 60 * 1000; // 2 min for iOS, 5 min for others
 
 // Install event - clean up old caches with iOS-specific handling
 self.addEventListener('install', function(event) {
@@ -38,7 +41,8 @@ self.addEventListener('install', function(event) {
         })
       );
     }).then(() => {
-      // Force activation immediately - important for iOS
+      // Force activation immediately - critical for iOS cache issues
+      console.log('🔥 [SW] Force skipping waiting - iOS cache clearing');
       return self.skipWaiting();
     })
   );
