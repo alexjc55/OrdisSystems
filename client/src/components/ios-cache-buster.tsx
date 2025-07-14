@@ -164,7 +164,8 @@ export function IOSCacheBuster() {
       // 5. iOS-specific: более агрессивная перезагрузка для преодоления кеша
       if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
         // Для iOS: полная замена URL с timestamp и форсированная перезагрузка
-        const newUrl = window.location.href.split('?')[0] + '?ios_cache_bust=' + Date.now() + '&v=' + currentAppHash;
+        const currentHash = Date.now().toString();
+        const newUrl = window.location.href.split('?')[0] + '?ios_cache_bust=' + currentHash + '&v=' + currentHash;
         window.location.replace(newUrl);
       } else {
         // Стандартная перезагрузка для других устройств
@@ -187,29 +188,43 @@ export function IOSCacheBuster() {
     setUpdateAvailable(false);
     setIsUpdating(true);
     
-    // Save current session hash to prevent notification reappearance
-    if (currentAppHash) {
-      localStorage.setItem('currentSessionHash', currentAppHash);
-    }
-    
-    // Small delay to let UI update
-    setTimeout(async () => {
-      if (isIOS) {
-        await performIOSCacheClear();
-      } else {
-        // Standard update process
-        if ('serviceWorker' in navigator) {
-          const registration = await navigator.serviceWorker.ready;
-          if (registration.waiting) {
-            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-          }
-        }
-        
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
+    try {
+      // Get current app hash
+      const response = await fetch('/api/version?' + Date.now());
+      const data = await response.json();
+      const currentAppHash = data.appHash;
+      
+      // Save current session hash to prevent notification reappearance
+      if (currentAppHash) {
+        localStorage.setItem('currentSessionHash', currentAppHash);
       }
-    }, 200);
+      
+      // Small delay to let UI update
+      setTimeout(async () => {
+        if (isIOS) {
+          await performIOSCacheClear();
+        } else {
+          // Standard update process
+          if ('serviceWorker' in navigator) {
+            const registration = await navigator.serviceWorker.ready;
+            if (registration.waiting) {
+              registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+          }
+          
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        }
+      }, 200);
+      
+    } catch (error) {
+      console.error('Update failed:', error);
+      // Fallback: simple reload
+      setTimeout(() => {
+        window.location.reload();
+      }, 200);
+    }
   };
 
   // Only show on iOS or when update is available
