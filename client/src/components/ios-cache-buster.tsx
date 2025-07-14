@@ -183,23 +183,33 @@ export function IOSCacheBuster() {
   };
 
   const handleUpdate = async () => {
-    if (isIOS) {
-      await performIOSCacheClear();
-    } else {
-      // Standard update process
-      setIsUpdating(true);
-      
-      if ('serviceWorker' in navigator) {
-        const registration = await navigator.serviceWorker.ready;
-        if (registration.waiting) {
-          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        }
-      }
-      
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+    // Hide notification immediately
+    setUpdateAvailable(false);
+    setIsUpdating(true);
+    
+    // Save current session hash to prevent notification reappearance
+    if (currentAppHash) {
+      localStorage.setItem('currentSessionHash', currentAppHash);
     }
+    
+    // Small delay to let UI update
+    setTimeout(async () => {
+      if (isIOS) {
+        await performIOSCacheClear();
+      } else {
+        // Standard update process
+        if ('serviceWorker' in navigator) {
+          const registration = await navigator.serviceWorker.ready;
+          if (registration.waiting) {
+            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
+        }
+        
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
+    }, 200);
   };
 
   // Only show on iOS or when update is available

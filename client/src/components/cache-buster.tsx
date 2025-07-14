@@ -152,76 +152,94 @@ export function CacheBuster() {
   };
 
   const forceUpdate = async () => {
+    // Hide notification immediately
+    setUpdateAvailable(false);
+    setIsUpdating(true);
+    
     try {
-      // Сразу скрываем уведомление и отмечаем состояние
-      setUpdateAvailable(false);
-      setIsUpdating(true);
-      
-      // Получаем текущий хеш перед очисткой
+      // Save current session hash to prevent notification reappearance
       const response = await fetch('/api/version?' + Date.now());
       const data = await response.json();
       const currentAppHash = data.appHash;
       
-      // Сохраняем информацию об обновлении ПЕРЕД очисткой
-      localStorage.setItem('last_update', Date.now().toString());
-      localStorage.setItem('last_processed_hash', currentAppHash);
-      localStorage.setItem('app_hash', currentAppHash);
-      localStorage.setItem('app_version', data.version);
-      localStorage.setItem('build_time', data.buildTime);
-      setCurrentSessionHash(currentAppHash);
-      
-      // 1. Clear all browser caches
-      if ('caches' in window) {
-        const cacheNames = await caches.keys();
-        await Promise.all(
-          cacheNames.map(cacheName => {
-            return caches.delete(cacheName);
-          })
-        );
+      if (currentAppHash) {
+        localStorage.setItem('currentSessionHash', currentAppHash);
+        setCurrentSessionHash(currentAppHash);
       }
-
-      // 2. Unregister Service Worker
-      if ('serviceWorker' in navigator) {
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(
-          registrations.map(registration => {
-            console.log('Unregistering SW:', registration);
-            return registration.unregister();
-          })
-        );
-      }
-
-      // 3. Clear localStorage and sessionStorage but preserve important data
-      const preserveData = {
-        last_update: localStorage.getItem('last_update'),
-        last_processed_hash: localStorage.getItem('last_processed_hash'),
-        app_hash: localStorage.getItem('app_hash'),
-        app_version: localStorage.getItem('app_version'),
-        build_time: localStorage.getItem('build_time')
-      };
       
-      localStorage.clear();
-      sessionStorage.clear();
-      
-      // Восстанавливаем важные данные
-      Object.entries(preserveData).forEach(([key, value]) => {
-        if (value) {
-          localStorage.setItem(key, value);
+      // Small delay to let UI update
+      setTimeout(async () => {
+        try {
+          // Сохраняем информацию об обновлении ПЕРЕД очисткой
+          localStorage.setItem('last_update', Date.now().toString());
+          localStorage.setItem('last_processed_hash', currentAppHash);
+          localStorage.setItem('app_hash', currentAppHash);
+          localStorage.setItem('app_version', data.version);
+          localStorage.setItem('build_time', data.buildTime);
+          
+          // 1. Clear all browser caches
+          if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(
+              cacheNames.map(cacheName => {
+                return caches.delete(cacheName);
+              })
+            );
+          }
+
+          // 2. Unregister Service Worker
+          if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(
+              registrations.map(registration => {
+                console.log('Unregistering SW:', registration);
+                return registration.unregister();
+              })
+            );
+          }
+
+          // 3. Clear localStorage and sessionStorage but preserve important data
+          const preserveData = {
+            last_update: localStorage.getItem('last_update'),
+            last_processed_hash: localStorage.getItem('last_processed_hash'),
+            app_hash: localStorage.getItem('app_hash'),
+            app_version: localStorage.getItem('app_version'),
+            build_time: localStorage.getItem('build_time')
+          };
+          
+          localStorage.clear();
+          sessionStorage.clear();
+          
+          // Восстанавливаем важные данные
+          Object.entries(preserveData).forEach(([key, value]) => {
+            if (value) {
+              localStorage.setItem(key, value);
+            }
+          });
+
+          // 4. Force reload with small delay for UI update
+          setTimeout(() => {
+            window.location.reload();
+          }, 200);
+          
+        } catch (error) {
+          console.error('❌ [CacheBuster] Update failed:', error);
+          setIsUpdating(false);
+          
+          // Fallback: simple reload with delay
+          setTimeout(() => {
+            window.location.href = window.location.href + '?bust=' + Date.now();
+          }, 200);
         }
-      });
-
-      // 4. Force reload with small delay for UI update
-      setTimeout(() => {
-        window.location.reload();
       }, 200);
       
     } catch (error) {
-      console.error('❌ [CacheBuster] Update failed:', error);
+      console.error('❌ [CacheBuster] Initial update failed:', error);
       setIsUpdating(false);
       
-      // Fallback: simple reload with delay
+      // Fallback: simple reload
       setTimeout(() => {
-        window.location.href = window.location.href + '?bust=' + Date.now();
+        window.location.reload();
       }, 200);
     }
   };
