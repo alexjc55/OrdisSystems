@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cache Debug Info</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        .info { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+        .key { font-weight: bold; }
+        .value { color: #0066cc; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Cache Buster Debug Information</h1>
+    
+    <button onclick="showInfo()">Показать состояние</button>
+    <button onclick="clearData()">Очистить данные</button>
+    <button onclick="simulateUpdate()">Симулировать обновление</button>
+    
+    <div id="output"></div>
+    
+    <script>
+        function showInfo() {
+            const output = document.getElementById('output');
+            const now = Date.now();
+            
+            // Получаем данные из localStorage
+            const data = {
+                app_hash: localStorage.getItem('app_hash'),
+                app_version: localStorage.getItem('app_version'),
+                last_update: localStorage.getItem('last_update'),
+                last_processed_hash: localStorage.getItem('last_processed_hash'),
+                update_skipped: localStorage.getItem('update_skipped'),
+                build_time: localStorage.getItem('build_time')
+            };
+            
+            // Рассчитываем времена
+            const lastUpdate = data.last_update ? new Date(parseInt(data.last_update)) : null;
+            const updateSkipped = data.update_skipped ? new Date(parseInt(data.update_skipped)) : null;
+            
+            const recentlyUpdated = data.last_update && (now - parseInt(data.last_update)) < 300000;
+            const skippedRecently = data.update_skipped && (now - parseInt(data.update_skipped)) < 600000;
+            
+            output.innerHTML = `
+                <div class="info">
+                    <div><span class="key">App Hash:</span> <span class="value">${data.app_hash || 'не установлен'}</span></div>
+                    <div><span class="key">Version:</span> <span class="value">${data.app_version || 'не установлен'}</span></div>
+                    <div><span class="key">Last Update:</span> <span class="value">${lastUpdate ? lastUpdate.toLocaleString() : 'никогда'}</span></div>
+                    <div><span class="key">Last Processed Hash:</span> <span class="value">${data.last_processed_hash || 'не установлен'}</span></div>
+                    <div><span class="key">Update Skipped:</span> <span class="value">${updateSkipped ? updateSkipped.toLocaleString() : 'никогда'}</span></div>
+                    <div><span class="key">Recently Updated:</span> <span class="value">${recentlyUpdated ? 'ДА (< 5 мин)' : 'НЕТ'}</span></div>
+                    <div><span class="key">Skipped Recently:</span> <span class="value">${skippedRecently ? 'ДА (< 10 мин)' : 'НЕТ'}</span></div>
+                </div>
+            `;
+            
+            // Получаем текущий хеш с сервера
+            fetch('/api/version?' + Date.now())
+                .then(r => r.json())
+                .then(serverData => {
+                    output.innerHTML += `
+                        <div class="info">
+                            <h3>Данные с сервера:</h3>
+                            <div><span class="key">Server Hash:</span> <span class="value">${serverData.appHash}</span></div>
+                            <div><span class="key">Server Version:</span> <span class="value">${serverData.version}</span></div>
+                            <div><span class="key">Build Time:</span> <span class="value">${new Date(serverData.buildTime).toLocaleString()}</span></div>
+                            <div><span class="key">Hash Match:</span> <span class="value">${data.app_hash === serverData.appHash ? 'ДА' : 'НЕТ'}</span></div>
+                        </div>
+                    `;
+                });
+        }
+        
+        function clearData() {
+            localStorage.removeItem('app_hash');
+            localStorage.removeItem('app_version');
+            localStorage.removeItem('last_update');
+            localStorage.removeItem('last_processed_hash');
+            localStorage.removeItem('update_skipped');
+            localStorage.removeItem('build_time');
+            alert('Данные очищены');
+            showInfo();
+        }
+        
+        function simulateUpdate() {
+            const now = Date.now();
+            localStorage.setItem('last_update', now.toString());
+            localStorage.setItem('last_processed_hash', 'test_hash_' + now);
+            alert('Обновление симулировано');
+            showInfo();
+        }
+        
+        // Автоматически показываем информацию при загрузке
+        window.onload = showInfo;
+    </script>
+</body>
+</html>

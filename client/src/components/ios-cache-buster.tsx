@@ -8,6 +8,7 @@ export function IOSCacheBuster() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const [currentSessionHash, setCurrentSessionHash] = useState<string | null>(null);
   
   // Safe translation hook with error handling
   let t: (key: string) => string;
@@ -59,11 +60,18 @@ export function IOSCacheBuster() {
         const lastProcessedHash = localStorage.getItem('last_processed_hash');
         const alreadyProcessed = lastProcessedHash === data.appHash;
         
-        if ((data.version !== currentVersion || data.appHash !== currentHash) && 
-            !recentlyUpdated && !alreadyProcessed) {
+        const shouldShowNotification = (data.version !== currentVersion || data.appHash !== currentHash) && 
+                                       !recentlyUpdated && 
+                                       !alreadyProcessed &&
+                                       currentSessionHash !== data.appHash;
+
+        const shouldHideNotification = updateAvailable && 
+                                     (recentlyUpdated || alreadyProcessed || currentSessionHash === data.appHash);
+        
+        if (shouldShowNotification) {
           setUpdateAvailable(true);
-        } else if (updateAvailable && (recentlyUpdated || alreadyProcessed)) {
-          // Скрываем уведомление если оно уже было обработано
+          setCurrentSessionHash(data.appHash);
+        } else if (shouldHideNotification) {
           setUpdateAvailable(false);
         }
       } catch (error) {

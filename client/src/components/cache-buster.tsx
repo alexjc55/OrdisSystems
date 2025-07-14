@@ -3,11 +3,12 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
 import { useCommonTranslation } from '@/hooks/use-language';
 
-// Cache Buster Component - Forces app updates and clears all caches with proper state management
+// Cache Buster Component - Forces app updates and clears all caches with proper state management (test update trigger v2)
 export function CacheBuster() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
+  const [currentSessionHash, setCurrentSessionHash] = useState<string | null>(null);
   
   // Safe translation hook with error handling
   let t: (key: string) => string;
@@ -107,15 +108,37 @@ export function CacheBuster() {
       const lastProcessedHash = localStorage.getItem('last_processed_hash');
       const alreadyProcessed = lastProcessedHash === currentAppHash;
       
-      if (lastAppHash && lastAppHash !== currentAppHash && !recentlyUpdated && !skippedRecently && !alreadyProcessed) {
-        console.log('🆕 [CacheBuster] New version detected!');
+      // Детальное логирование для отладки
+      console.log('🔍 [CacheBuster] Debug info:', {
+        lastAppHash,
+        currentAppHash,
+        hashesChanged: lastAppHash !== currentAppHash,
+        recentlyUpdated,
+        skippedRecently,
+        alreadyProcessed,
+        updateAvailable,
+        lastUpdate: lastUpdate ? new Date(parseInt(lastUpdate)).toLocaleTimeString() : 'none',
+        updateSkipped: updateSkipped ? new Date(parseInt(updateSkipped)).toLocaleTimeString() : 'none'
+      });
+      
+      // ОСНОВНАЯ ЛОГИКА: строгая проверка состояния
+      const shouldShowNotification = lastAppHash && 
+                                   lastAppHash !== currentAppHash && 
+                                   !recentlyUpdated && 
+                                   !skippedRecently && 
+                                   !alreadyProcessed &&
+                                   currentSessionHash !== currentAppHash;
+
+      const shouldHideNotification = updateAvailable && 
+                                   (recentlyUpdated || skippedRecently || alreadyProcessed || currentSessionHash === currentAppHash);
+      
+      if (shouldShowNotification) {
+        console.log('🆕 [CacheBuster] New version detected! Showing notification');
         setUpdateAvailable(true);
-        // Не помечаем как обработанный здесь - только после действия пользователя
-      } else {
-        // Если уведомление было показано, но пользователь не действовал, скрываем его
-        if (updateAvailable && (recentlyUpdated || skippedRecently || alreadyProcessed)) {
-          setUpdateAvailable(false);
-        }
+        setCurrentSessionHash(currentAppHash); // Запоминаем хеш этой сессии
+      } else if (shouldHideNotification) {
+        console.log('🚫 [CacheBuster] Hiding notification - already processed/skipped/updated');
+        setUpdateAvailable(false);
       }
       
       // Store current hash
@@ -167,16 +190,24 @@ export function CacheBuster() {
         );
       }
 
-      // 3. Clear localStorage and sessionStorage but preserve current hash
+      // 3. Clear localStorage and sessionStorage but preserve important data
+      const preserveData = {
+        last_update: localStorage.getItem('last_update'),
+        last_processed_hash: localStorage.getItem('last_processed_hash'),
+        app_hash: localStorage.getItem('app_hash'),
+        app_version: localStorage.getItem('app_version'),
+        build_time: localStorage.getItem('build_time')
+      };
+      
       localStorage.clear();
       sessionStorage.clear();
       
-      // Сохраняем текущий хеш чтобы избежать повторных уведомлений
-      localStorage.setItem('app_hash', currentAppHash);
-      localStorage.setItem('app_version', data.version);
-      localStorage.setItem('build_time', data.buildTime);
-      localStorage.setItem('last_update', Date.now().toString());
-      localStorage.setItem('last_processed_hash', currentAppHash);
+      // Восстанавливаем важные данные
+      Object.entries(preserveData).forEach(([key, value]) => {
+        if (value) {
+          localStorage.setItem(key, value);
+        }
+      });
 
       // 4. Force reload with cache bypass
       window.location.reload();
@@ -198,6 +229,7 @@ export function CacheBuster() {
     const currentAppHash = localStorage.getItem('app_hash');
     if (currentAppHash) {
       localStorage.setItem('last_processed_hash', currentAppHash);
+      setCurrentSessionHash(currentAppHash); // Запоминаем в состоянии компонента
     }
     console.log('⏭️ [CacheBuster] User skipped update');
   };

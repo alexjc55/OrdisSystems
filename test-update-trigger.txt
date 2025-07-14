@@ -1,0 +1,2 @@
+Test file to trigger app hash update - version 2
+This will change the app hash to test update notifications
