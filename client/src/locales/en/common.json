@@ -535,5 +535,8 @@
     "updating": "Updating...",
     "iosIssue": "On iPhone cache may persist longer",
     "forceClear": "Force clear cache"
-  }
+  },
+  "iosIssue": "On iPhone cache may persist longer",
+  "iosUpdateMessage": "To get the latest version, tap \"Force clear cache\"",
+  "forceClear": "Force clear cache"
 }
