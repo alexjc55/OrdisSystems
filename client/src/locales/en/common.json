@@ -533,10 +533,10 @@
     "later": "Later",
     "update": "Update",
     "updating": "Updating...",
-    "iosIssue": "On iPhone cache may persist longer",
-    "forceClear": "Force clear cache"
+    "iosIssue": "New app version available",
+    "forceClear": "Update App"
   },
-  "iosIssue": "On iPhone cache may persist longer",
-  "iosUpdateMessage": "To get the latest version, tap \"Force clear cache\"",
-  "forceClear": "Force clear cache"
+  "iosIssue": "New app version available",
+  "iosUpdateMessage": "To get the latest updates, tap \"Update App\"",
+  "forceClear": "Update App"
 }

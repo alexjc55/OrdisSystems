@@ -19,8 +19,9 @@ export function IOSCacheBuster() {
     t = (key: string) => {
       const fallbackTexts: Record<string, string> = {
         'updatePanel.available': 'Доступно обновление приложения',
-        'updatePanel.iosIssue': 'На iPhone кеш может сохраняться дольше',
-        'updatePanel.forceClear': 'Принудительно очистить кеш',
+        'iosIssue': 'Доступна новая версия приложения',
+        'iosUpdateMessage': 'Для получения обновлений нажмите "Обновить приложение"',
+        'forceClear': 'Обновить приложение',
         'updatePanel.later': 'Позже',
         'updatePanel.update': 'Обновить',
         'updatePanel.updating': 'Обновление...'
