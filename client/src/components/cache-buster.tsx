@@ -5,10 +5,7 @@ import { useCommonTranslation } from '@/hooks/use-language';
 
 // Cache Buster Component - Forces app updates and clears all caches with proper state management (FINAL SW-INDEPENDENT VERSION)
 export function CacheBuster() {
-  const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
-  const [currentSessionHash, setCurrentSessionHash] = useState<string | null>(null);
   
   // Safe translation hook with error handling
   let t: (key: string) => string;
@@ -70,6 +67,42 @@ export function CacheBuster() {
     return () => clearInterval(interval);
   }, []);
 
+  // Автоматическое обновление без уведомлений
+  const performAutoUpdate = (currentAppHash: string, data: any) => {
+    console.log('🤖 [CacheBuster] Performing automatic update silently...');
+    
+    try {
+      // Сохраняем информацию об обновлении
+      const timestamp = Date.now().toString();
+      localStorage.setItem('last_update', timestamp);
+      localStorage.setItem('last_processed_hash', currentAppHash);
+      localStorage.setItem('app_hash', currentAppHash);
+      localStorage.setItem('app_version', data.version);
+      localStorage.setItem('build_time', data.buildTime);
+      
+      // Помечаем как навсегда обработанный
+      const processedHashes = JSON.parse(localStorage.getItem('processed_hashes') || '[]');
+      if (!processedHashes.includes(currentAppHash)) {
+        processedHashes.push(currentAppHash);
+        localStorage.setItem('processed_hashes', JSON.stringify(processedHashes));
+      }
+      
+      console.log('✅ [CacheBuster] Auto-update completed, reloading page...');
+      
+      // Небольшая задержка для завершения логирования, затем перезагрузка
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+      
+    } catch (error) {
+      console.error('❌ [CacheBuster] Auto-update failed:', error);
+      // При ошибке все равно перезагружаем
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    }
+  };
+
   const checkForUpdates = async () => {
     try {
       // Check if there's a new version by comparing app hash
@@ -128,24 +161,19 @@ export function CacheBuster() {
         recentlyUpdated,
         skippedRecently,
         alreadyProcessed,
-        updateAvailable,
-        currentSessionHash,
+
         lastUpdate: lastUpdate ? new Date(parseInt(lastUpdate)).toLocaleTimeString() : 'none',
         updateSkipped: updateSkipped ? new Date(parseInt(updateSkipped)).toLocaleTimeString() : 'none',
         localStorage_currentSessionHash: localStorage.getItem('currentSessionHash')
       });
       
-      // УПРОЩЕННАЯ ЛОГИКА: показываем уведомление только если хеш изменился И не было недавнего обновления
+      // АВТОМАТИЧЕСКОЕ ОБНОВЛЕНИЕ: если хеш изменился, обновляем автоматически без уведомлений
       const hashChanged = lastAppHash && lastAppHash !== currentAppHash;
-      const shouldShowNotification = hashChanged && !recentlyUpdated && !alreadyProcessed;
-      const shouldHideNotification = updateAvailable && (recentlyUpdated || alreadyProcessed);
+      const shouldAutoUpdate = hashChanged && !recentlyUpdated && !alreadyProcessed;
       
-      if (shouldShowNotification) {
-        console.log('🆕 [CacheBuster] New version detected! Showing notification');
-        setUpdateAvailable(true);
-      } else if (shouldHideNotification) {
-        console.log('🚫 [CacheBuster] Hiding notification - already processed/updated');
-        setUpdateAvailable(false);
+      if (shouldAutoUpdate) {
+        console.log('🔄 [CacheBuster] New version detected! Auto-updating...');
+        performAutoUpdate(currentAppHash, data);
       }
       
       // Store current hash
@@ -157,112 +185,10 @@ export function CacheBuster() {
     }
   };
 
-  const forceUpdate = async () => {
-    console.log('🔄 [CacheBuster] Force update started');
-    
-    try {
-      // Получаем текущий хеш для сохранения
-      const response = await fetch('/api/version?' + Date.now());
-      const data = await response.json();
-      const currentAppHash = data.appHash;
-      
-      // СРАЗУ СОХРАНЯЕМ ДАННЫЕ - чтобы после перезагрузки уведомление не показывалось
-      const timestamp = Date.now().toString();
-      localStorage.setItem('last_update', timestamp);
-      localStorage.setItem('last_processed_hash', currentAppHash);
-      localStorage.setItem('app_hash', currentAppHash);
-      localStorage.setItem('app_version', data.version);
-      localStorage.setItem('build_time', data.buildTime);
-      
-      // КАРДИНАЛЬНО: помечаем этот хеш как "навсегда обработанный"
-      localStorage.setItem('processed_hashes', JSON.stringify([currentAppHash]));
-      
-      console.log('✅ [CacheBuster] Hash marked as permanently processed:', currentAppHash);
-      
-      // НЕМЕДЛЕННО скрываем уведомление
-      setUpdateAvailable(false);
-      setIsUpdating(true);
-      
-      // Короткая задержка для UI, затем перезагрузка
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
-      
-    } catch (error) {
-      console.error('❌ [CacheBuster] Update failed:', error);
-      // Даже при ошибке скрываем уведомление
-      setUpdateAvailable(false);
-      setIsUpdating(false);
-      
-      // Fallback: простая перезагрузка
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
-    }
-  };
+  // Функции ручного обновления больше не нужны - все происходит автоматически
 
-  const skipUpdate = () => {
-    setUpdateAvailable(false);
-    // Помечаем что пользователь пропустил обновление
-    localStorage.setItem('update_skipped', Date.now().toString());
-    // Помечаем текущий хеш как обработанный
-    const currentAppHash = localStorage.getItem('app_hash');
-    if (currentAppHash) {
-      localStorage.setItem('last_processed_hash', currentAppHash);
-      setCurrentSessionHash(currentAppHash); // Запоминаем в состоянии компонента
-    }
-    console.log('⏭️ [CacheBuster] User skipped update');
-  };
-
-  if (!updateAvailable) {
-    return null;
-  }
-
-  return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-orange-500 text-white shadow-lg">
-      <div className="p-3 max-w-4xl mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 flex-shrink-0" />
-            <span className="text-sm font-medium leading-tight">
-              {t('updatePanel.available')}
-            </span>
-          </div>
-          
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={skipUpdate}
-              className="text-white hover:bg-orange-600 text-xs px-3 py-1 h-7"
-            >
-              {t('updatePanel.later')}
-            </Button>
-            
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={forceUpdate}
-              disabled={isUpdating}
-              className="bg-white text-orange-500 hover:bg-gray-100 text-xs px-3 py-1 h-7"
-            >
-              {isUpdating ? (
-                <>
-                  <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-                  {t('updatePanel.updating')}
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="h-3 w-3 mr-1" />
-                  {t('updatePanel.update')}
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  // Больше нет UI - все обновления происходят автоматически
+  return null;
 }
 
 // Admin component for forcing cache clear
