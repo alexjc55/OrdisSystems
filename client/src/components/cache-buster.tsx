@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
 import { useCommonTranslation } from '@/hooks/use-language';
 
-// Cache Buster Component - Forces app updates and clears all caches with proper state management (test update trigger v2)
+// Cache Buster Component - Forces app updates and clears all caches with proper state management (FINAL SW-INDEPENDENT VERSION)
 export function CacheBuster() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -39,23 +39,24 @@ export function CacheBuster() {
           if (newWorker) {
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // New version available
-                setUpdateAvailable(true);
+                // SW detected new version, but don't auto-show - let checkForUpdates handle it
+                console.log('📦 [CacheBuster] SW updatefound detected, using own logic');
               }
             });
           }
         });
 
-        // Check for waiting service worker
+        // Check for waiting service worker - but don't auto-show
         if (registration.waiting) {
-          setUpdateAvailable(true);
+          console.log('📦 [CacheBuster] SW waiting detected, using own logic');
         }
       });
 
       // Listen for messages from Service Worker
       navigator.serviceWorker.addEventListener('message', event => {
         if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') {
-          setUpdateAvailable(true);
+          // НЕ показываем уведомление автоматически от SW - дадим checkForUpdates самому решать
+          console.log('📦 [CacheBuster] SW notified about new version, but using own logic');
         }
       });
     }

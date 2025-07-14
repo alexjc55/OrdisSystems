@@ -64,28 +64,31 @@ self.addEventListener('activate', function(event) {
       // Take control of all clients immediately - critical for iOS
       self.clients.claim()
     ]).then(() => {
-      // Notify all clients about new version - important for iOS cache busting
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
-          client.postMessage({
-            type: 'NEW_VERSION_AVAILABLE',
-            version: APP_VERSION,
-            timestamp: BUILD_TIMESTAMP
-          });
-        });
+      // Don't notify clients automatically - let them detect updates themselves
+      console.log('✅ [SW] New version available, but not auto-notifying clients');
+      // self.clients.matchAll().then(clients => {
+      //   clients.forEach(client => {
+      //     client.postMessage({
+      //       type: 'NEW_VERSION_AVAILABLE',
+      //       version: APP_VERSION,
+      //       timestamp: BUILD_TIMESTAMP
+      //     });
+      //   });
       });
       
-      // Check for app updates and notify clients
+      // Check for app updates - but don't notify clients automatically
       return checkForAppUpdates().then(() => {
-        return self.clients.matchAll().then(clients => {
-          clients.forEach(client => {
-            client.postMessage({
-              type: 'NEW_VERSION_AVAILABLE',
-              version: CACHE_NAME,
-              timestamp: Date.now()
-            });
-          });
-        });
+        console.log('✅ [SW] App updates checked, clients will detect changes themselves');
+        // Don't auto-notify - let CacheBuster handle update detection
+        // return self.clients.matchAll().then(clients => {
+        //   clients.forEach(client => {
+        //     client.postMessage({
+        //       type: 'NEW_VERSION_AVAILABLE',
+        //       version: CACHE_NAME,
+        //       timestamp: Date.now()
+        //     });
+        //   });
+        // });
       });
     })
   );
@@ -139,15 +142,16 @@ async function checkForAppUpdates() {
       const cacheNames = await self.caches.keys();
       await Promise.all(cacheNames.map(name => self.caches.delete(name)));
       
-      // Notify all clients
-      const clients = await self.clients.matchAll();
-      clients.forEach(client => {
-        client.postMessage({
-          type: 'NEW_VERSION_AVAILABLE',
-          version: `v${data.version}-${data.appHash}`,
-          timestamp: Date.now()
-        });
-      });
+      // Don't notify clients automatically - let them check for updates themselves
+      console.log('✅ [SW] Cache cleared, clients will detect update on next check');
+      // const clients = await self.clients.matchAll();
+      // clients.forEach(client => {
+      //   client.postMessage({
+      //     type: 'NEW_VERSION_AVAILABLE',
+      //     version: `v${data.version}-${data.appHash}`,
+      //     timestamp: Date.now()
+      //   });
+      // });
     }
     
     // Store current hash

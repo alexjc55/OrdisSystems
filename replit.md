@@ -131,6 +131,22 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- January 14, 2025: ✅ CRITICAL FIX: COMPLETELY RESOLVED PERSISTENT UPDATE NOTIFICATIONS
+  - PROBLEM SOLVED: Update notifications were reappearing despite user actions due to Service Worker conflicts
+  - ROOT CAUSE IDENTIFIED: Service Worker was independently sending NEW_VERSION_AVAILABLE messages to all clients
+  - COMPREHENSIVE SOLUTION: Completely decoupled Service Worker notifications from CacheBuster logic
+    - Removed all automatic NEW_VERSION_AVAILABLE messaging from Service Worker
+    - Disabled SW updatefound and activate event auto-notifications  
+    - Enhanced CacheBuster with session-based hash tracking (currentSessionHash state variable)
+    - Added dual-layer protection: localStorage persistence + component state memory
+  - TECHNICAL IMPROVEMENTS:
+    - Service Worker now performs cache management silently without client notifications
+    - CacheBuster operates independently using /api/version polling every 30 seconds
+    - Session memory prevents duplicate notifications for same app hash within session
+    - Enhanced debugging system with comprehensive logging and diagnostic tools
+    - Created debug-cache.html page for troubleshooting cache states
+  - USER EXPERIENCE: Users now see update notifications only once per actual update
+  - PRODUCTION READY: Reliable cache busting system without notification spam
 - January 14, 2025: ✅ COMPREHENSIVE CONSOLE CLEANUP AND iOS CACHE BUSTING SYSTEM IMPLEMENTED
   - CONSOLE CLEANUP: Removed all debug console.log messages from major components for cleaner user experience
     - Cleaned useSEO.ts: Removed meta tag update logging
