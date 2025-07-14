@@ -161,10 +161,11 @@ export function CacheBuster() {
         recentlyUpdated,
         skippedRecently,
         alreadyProcessed,
-
         lastUpdate: lastUpdate ? new Date(parseInt(lastUpdate)).toLocaleTimeString() : 'none',
         updateSkipped: updateSkipped ? new Date(parseInt(updateSkipped)).toLocaleTimeString() : 'none',
-        localStorage_currentSessionHash: localStorage.getItem('currentSessionHash')
+        localStorage_currentSessionHash: localStorage.getItem('currentSessionHash'),
+        isTestHash: currentAppHash.startsWith('test_'),
+        timestamp: new Date().toLocaleTimeString()
       });
       
       // АВТОМАТИЧЕСКОЕ ОБНОВЛЕНИЕ: если хеш изменился, обновляем автоматически без уведомлений

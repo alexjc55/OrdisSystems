@@ -161,15 +161,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // App version endpoint for cache busting
+  let testHash: string | null = null;
+  let testStartTime: number | null = null;
+  
   app.get("/api/version", async (req, res) => {
     try {
       let appHash = await generateAppHash();
       const buildTime = process.env.BUILD_TIME || new Date().toISOString();
       
-      // ТЕСТОВЫЙ РЕЖИМ: Если передан параметр test, изменяем hash для тестирования уведомлений
+      // ТЕСТОВЫЙ РЕЖИМ: Если передан параметр test, генерируем новый hash и запоминаем на 5 минут
       if (req.query.test === 'notification') {
-        appHash = 'test_' + Date.now().toString().slice(-6);
-        console.log('🧪 [Test Mode] Generated new hash for notification test:', appHash);
+        testHash = 'test_' + Date.now().toString().slice(-6);
+        testStartTime = Date.now();
+        console.log('🧪 [Test Mode] Generated new hash for notification test:', testHash);
+        appHash = testHash;
+      } 
+      // Если тестовый режим активен и не истек (5 минут), используем тестовый хеш
+      else if (testHash && testStartTime && (Date.now() - testStartTime) < 300000) {
+        appHash = testHash;
+        console.log('🧪 [Test Mode] Using active test hash:', testHash);
+      }
+      // Если тестовый режим истек, сбрасываем его
+      else if (testHash && testStartTime && (Date.now() - testStartTime) >= 300000) {
+        console.log('🧪 [Test Mode] Test hash expired, returning to normal');
+        testHash = null;
+        testStartTime = null;
       }
       
       res.json({
