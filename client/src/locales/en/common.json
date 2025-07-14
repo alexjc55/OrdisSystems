@@ -532,6 +532,8 @@
     "available": "App update available",
     "later": "Later",
     "update": "Update",
-    "updating": "Updating..."
+    "updating": "Updating...",
+    "iosIssue": "On iPhone cache may persist longer",
+    "forceClear": "Force clear cache"
   }
 }

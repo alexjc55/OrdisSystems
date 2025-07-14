@@ -24,10 +24,8 @@ const API_CACHE_PATTERNS = [
 // Cache TTL in milliseconds (5 minutes for API data)
 const API_CACHE_TTL = 5 * 60 * 1000;
 
-// Install event - clean up old caches
+// Install event - clean up old caches with iOS-specific handling
 self.addEventListener('install', function(event) {
-  console.log('🔧 [SW] Installing new service worker with cache:', CACHE_NAME);
-  
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
@@ -35,25 +33,22 @@ self.addEventListener('install', function(event) {
           // Delete old caches that don't match current version
           if (cacheName.startsWith('edahouse-') && cacheName !== CACHE_NAME && 
               cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-            console.log('🗑️ [SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
     }).then(() => {
-      console.log('✅ [SW] New service worker installed and old caches cleaned');
-      return self.skipWaiting(); // Force activation
+      // Force activation immediately - important for iOS
+      return self.skipWaiting();
     })
   );
 });
 
-// Activate event
+// Activate event with iOS-specific aggressive cache clearing
 self.addEventListener('activate', function(event) {
-  console.log('🚀 [SW] Activating new service worker');
-  
   event.waitUntil(
     Promise.all([
-      // Clean up old caches again
+      // Clean up old caches again - more aggressive for iOS
       caches.keys().then(cacheNames => {
         return Promise.all(
           cacheNames.map(cacheName => {
@@ -61,16 +56,24 @@ self.addEventListener('activate', function(event) {
                 cacheName !== CACHE_NAME && 
                 cacheName !== STATIC_CACHE && 
                 cacheName !== DYNAMIC_CACHE) {
-              console.log('🗑️ [SW] Deleting old cache on activate:', cacheName);
               return caches.delete(cacheName);
             }
           })
         );
       }),
-      // Take control of all clients immediately
+      // Take control of all clients immediately - critical for iOS
       self.clients.claim()
     ]).then(() => {
-      console.log('✅ [SW] Service worker activated and controlling all clients');
+      // Notify all clients about new version - important for iOS cache busting
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({
+            type: 'NEW_VERSION_AVAILABLE',
+            version: APP_VERSION,
+            timestamp: BUILD_TIMESTAMP
+          });
+        });
+      });
       
       // Check for app updates and notify clients
       return checkForAppUpdates().then(() => {
