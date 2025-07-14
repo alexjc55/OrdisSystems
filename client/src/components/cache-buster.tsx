@@ -175,7 +175,6 @@ export function CacheBuster() {
       if (shouldAutoUpdate) {
         console.log('🔄 [CacheBuster] New version detected! Auto-updating...');
         console.log(`🔄 [CacheBuster] Hash changed: ${lastAppHash} → ${currentAppHash}`);
-        alert(`🔄 АВТОМАТИЧЕСКОЕ ОБНОВЛЕНИЕ!\n\nОбнаружен новый хеш: ${currentAppHash}\nСтарый хеш: ${lastAppHash}\n\nПриложение сейчас автоматически обновится!`);
         performAutoUpdate(currentAppHash, data);
       }
       
@@ -213,7 +212,7 @@ export function AdminCacheBuster() {
       const response = await fetch('/api/version?test=notification');
       const data = await response.json();
       
-      alert(`Тест автоматического обновления запущен!\n\nКеш обработанных хешей очищен.\nНовый хеш: ${data.appHash}\n\nПриложение должно автоматически обновиться через ~30 секунд.\n\nСледите за консолью браузера (F12)!`);
+      console.log(`🧪 Тест автоматического обновления запущен! Новый хеш: ${data.appHash}`);
       
     } catch (error) {
       console.error('Test auto-update failed:', error);
