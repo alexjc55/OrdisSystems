@@ -107,7 +107,18 @@ export function CacheBuster() {
       
       // Проверяем последний обработанный хеш
       const lastProcessedHash = localStorage.getItem('last_processed_hash');
-      const alreadyProcessed = lastProcessedHash === currentAppHash;
+      let alreadyProcessed = lastProcessedHash === currentAppHash;
+      
+      // НОВАЯ ЛОГИКА: проверяем навсегда обработанные хеши
+      try {
+        const processedHashes = JSON.parse(localStorage.getItem('processed_hashes') || '[]');
+        if (processedHashes.includes(currentAppHash)) {
+          alreadyProcessed = true;
+          console.log('🚫 [CacheBuster] Hash permanently processed, skipping notification');
+        }
+      } catch (e) {
+        // Ignore parsing errors
+      }
       
       // Детальное логирование для отладки
       console.log('🔍 [CacheBuster] Debug info:', {
@@ -118,8 +129,10 @@ export function CacheBuster() {
         skippedRecently,
         alreadyProcessed,
         updateAvailable,
+        currentSessionHash,
         lastUpdate: lastUpdate ? new Date(parseInt(lastUpdate)).toLocaleTimeString() : 'none',
-        updateSkipped: updateSkipped ? new Date(parseInt(updateSkipped)).toLocaleTimeString() : 'none'
+        updateSkipped: updateSkipped ? new Date(parseInt(updateSkipped)).toLocaleTimeString() : 'none',
+        localStorage_currentSessionHash: localStorage.getItem('currentSessionHash')
       });
       
       // УПРОЩЕННАЯ ЛОГИКА: показываем уведомление только если хеш изменился И не было недавнего обновления
@@ -147,37 +160,38 @@ export function CacheBuster() {
   const forceUpdate = async () => {
     console.log('🔄 [CacheBuster] Force update started');
     
-    // КРИТИЧЕСКИ ВАЖНО: немедленно скрыть уведомление и сохранить состояние
-    setUpdateAvailable(false);
-    setIsUpdating(true);
-    
     try {
-      // Получаем текущий хеш
+      // Получаем текущий хеш для сохранения
       const response = await fetch('/api/version?' + Date.now());
       const data = await response.json();
       const currentAppHash = data.appHash;
       
-      // Сохраняем информацию об обновлении НЕМЕДЛЕННО
+      // СРАЗУ СОХРАНЯЕМ ДАННЫЕ - чтобы после перезагрузки уведомление не показывалось
       const timestamp = Date.now().toString();
       localStorage.setItem('last_update', timestamp);
       localStorage.setItem('last_processed_hash', currentAppHash);
-      localStorage.setItem('currentSessionHash', currentAppHash);
       localStorage.setItem('app_hash', currentAppHash);
       localStorage.setItem('app_version', data.version);
       localStorage.setItem('build_time', data.buildTime);
       
-      // Обновляем состояние компонента
-      setCurrentSessionHash(currentAppHash);
+      // КАРДИНАЛЬНО: помечаем этот хеш как "навсегда обработанный"
+      localStorage.setItem('processed_hashes', JSON.stringify([currentAppHash]));
       
-      console.log('✅ [CacheBuster] Update info saved, starting reload in 200ms');
+      console.log('✅ [CacheBuster] Hash marked as permanently processed:', currentAppHash);
       
-      // Задержка для UI обновления, затем перезагрузка
+      // НЕМЕДЛЕННО скрываем уведомление
+      setUpdateAvailable(false);
+      setIsUpdating(true);
+      
+      // Короткая задержка для UI, затем перезагрузка
       setTimeout(() => {
         window.location.reload();
       }, 200);
       
     } catch (error) {
       console.error('❌ [CacheBuster] Update failed:', error);
+      // Даже при ошибке скрываем уведомление
+      setUpdateAvailable(false);
       setIsUpdating(false);
       
       // Fallback: простая перезагрузка
