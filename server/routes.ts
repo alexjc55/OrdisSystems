@@ -163,8 +163,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // App version endpoint for cache busting
   app.get("/api/version", async (req, res) => {
     try {
-      const appHash = await generateAppHash();
+      let appHash = await generateAppHash();
       const buildTime = process.env.BUILD_TIME || new Date().toISOString();
+      
+      // ТЕСТОВЫЙ РЕЖИМ: Если передан параметр test, изменяем hash для тестирования уведомлений
+      if (req.query.test === 'notification') {
+        appHash = 'test_' + Date.now().toString().slice(-6);
+        console.log('🧪 [Test Mode] Generated new hash for notification test:', appHash);
+      }
       
       res.json({
         version: process.env.npm_package_version || "1.0.0",

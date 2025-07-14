@@ -122,23 +122,16 @@ export function CacheBuster() {
         updateSkipped: updateSkipped ? new Date(parseInt(updateSkipped)).toLocaleTimeString() : 'none'
       });
       
-      // ОСНОВНАЯ ЛОГИКА: строгая проверка состояния
-      const shouldShowNotification = lastAppHash && 
-                                   lastAppHash !== currentAppHash && 
-                                   !recentlyUpdated && 
-                                   !skippedRecently && 
-                                   !alreadyProcessed &&
-                                   currentSessionHash !== currentAppHash;
-
-      const shouldHideNotification = updateAvailable && 
-                                   (recentlyUpdated || skippedRecently || alreadyProcessed || currentSessionHash === currentAppHash);
+      // УПРОЩЕННАЯ ЛОГИКА: показываем уведомление только если хеш изменился И не было недавнего обновления
+      const hashChanged = lastAppHash && lastAppHash !== currentAppHash;
+      const shouldShowNotification = hashChanged && !recentlyUpdated && !alreadyProcessed;
+      const shouldHideNotification = updateAvailable && (recentlyUpdated || alreadyProcessed);
       
       if (shouldShowNotification) {
         console.log('🆕 [CacheBuster] New version detected! Showing notification');
         setUpdateAvailable(true);
-        setCurrentSessionHash(currentAppHash); // Запоминаем хеш этой сессии
       } else if (shouldHideNotification) {
-        console.log('🚫 [CacheBuster] Hiding notification - already processed/skipped/updated');
+        console.log('🚫 [CacheBuster] Hiding notification - already processed/updated');
         setUpdateAvailable(false);
       }
       
@@ -152,92 +145,42 @@ export function CacheBuster() {
   };
 
   const forceUpdate = async () => {
-    // Hide notification immediately
+    console.log('🔄 [CacheBuster] Force update started');
+    
+    // КРИТИЧЕСКИ ВАЖНО: немедленно скрыть уведомление и сохранить состояние
     setUpdateAvailable(false);
     setIsUpdating(true);
     
     try {
-      // Save current session hash to prevent notification reappearance
+      // Получаем текущий хеш
       const response = await fetch('/api/version?' + Date.now());
       const data = await response.json();
       const currentAppHash = data.appHash;
       
-      if (currentAppHash) {
-        localStorage.setItem('currentSessionHash', currentAppHash);
-        setCurrentSessionHash(currentAppHash);
-      }
+      // Сохраняем информацию об обновлении НЕМЕДЛЕННО
+      const timestamp = Date.now().toString();
+      localStorage.setItem('last_update', timestamp);
+      localStorage.setItem('last_processed_hash', currentAppHash);
+      localStorage.setItem('currentSessionHash', currentAppHash);
+      localStorage.setItem('app_hash', currentAppHash);
+      localStorage.setItem('app_version', data.version);
+      localStorage.setItem('build_time', data.buildTime);
       
-      // Small delay to let UI update
-      setTimeout(async () => {
-        try {
-          // Сохраняем информацию об обновлении ПЕРЕД очисткой
-          localStorage.setItem('last_update', Date.now().toString());
-          localStorage.setItem('last_processed_hash', currentAppHash);
-          localStorage.setItem('app_hash', currentAppHash);
-          localStorage.setItem('app_version', data.version);
-          localStorage.setItem('build_time', data.buildTime);
-          
-          // 1. Clear all browser caches
-          if ('caches' in window) {
-            const cacheNames = await caches.keys();
-            await Promise.all(
-              cacheNames.map(cacheName => {
-                return caches.delete(cacheName);
-              })
-            );
-          }
-
-          // 2. Unregister Service Worker
-          if ('serviceWorker' in navigator) {
-            const registrations = await navigator.serviceWorker.getRegistrations();
-            await Promise.all(
-              registrations.map(registration => {
-                console.log('Unregistering SW:', registration);
-                return registration.unregister();
-              })
-            );
-          }
-
-          // 3. Clear localStorage and sessionStorage but preserve important data
-          const preserveData = {
-            last_update: localStorage.getItem('last_update'),
-            last_processed_hash: localStorage.getItem('last_processed_hash'),
-            app_hash: localStorage.getItem('app_hash'),
-            app_version: localStorage.getItem('app_version'),
-            build_time: localStorage.getItem('build_time')
-          };
-          
-          localStorage.clear();
-          sessionStorage.clear();
-          
-          // Восстанавливаем важные данные
-          Object.entries(preserveData).forEach(([key, value]) => {
-            if (value) {
-              localStorage.setItem(key, value);
-            }
-          });
-
-          // 4. Force reload with small delay for UI update
-          setTimeout(() => {
-            window.location.reload();
-          }, 200);
-          
-        } catch (error) {
-          console.error('❌ [CacheBuster] Update failed:', error);
-          setIsUpdating(false);
-          
-          // Fallback: simple reload with delay
-          setTimeout(() => {
-            window.location.href = window.location.href + '?bust=' + Date.now();
-          }, 200);
-        }
+      // Обновляем состояние компонента
+      setCurrentSessionHash(currentAppHash);
+      
+      console.log('✅ [CacheBuster] Update info saved, starting reload in 200ms');
+      
+      // Задержка для UI обновления, затем перезагрузка
+      setTimeout(() => {
+        window.location.reload();
       }, 200);
       
     } catch (error) {
-      console.error('❌ [CacheBuster] Initial update failed:', error);
+      console.error('❌ [CacheBuster] Update failed:', error);
       setIsUpdating(false);
       
-      // Fallback: simple reload
+      // Fallback: простая перезагрузка
       setTimeout(() => {
         window.location.reload();
       }, 200);
