@@ -5,10 +5,7 @@ import { useCommonTranslation } from '@/hooks/use-language';
 
 // iOS-specific cache buster for aggressive cache clearing
 export function IOSCacheBuster() {
-  const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
-  const [currentSessionHash, setCurrentSessionHash] = useState<string | null>(null);
   
   // Safe translation hook with error handling
   let t: (key: string) => string;
@@ -29,6 +26,63 @@ export function IOSCacheBuster() {
       return fallbackTexts[key] || key;
     };
   }
+
+  // Автоматическое обновление для iOS устройств
+  const performIOSAutoUpdate = async (data: any) => {
+    console.log('🍎 [iOS-CacheBuster] Starting aggressive iOS cache clearing...');
+    
+    try {
+      // Сохраняем информацию об обновлении
+      const timestamp = Date.now().toString();
+      localStorage.setItem('last_update', timestamp);
+      localStorage.setItem('last_processed_hash', data.appHash);
+      localStorage.setItem('app-hash', data.appHash);
+      localStorage.setItem('app-version', data.version);
+      localStorage.setItem('build_time', data.buildTime);
+      
+      // Помечаем как навсегда обработанный
+      const processedHashes = JSON.parse(localStorage.getItem('processed_hashes') || '[]');
+      if (!processedHashes.includes(data.appHash)) {
+        processedHashes.push(data.appHash);
+        localStorage.setItem('processed_hashes', JSON.stringify(processedHashes));
+      }
+
+      // iOS-специфичная очистка кеша
+      if ('serviceWorker' in navigator) {
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const registration of registrations) {
+            await registration.unregister();
+          }
+        } catch (e) {
+          console.log('SW cleanup failed:', e);
+        }
+      }
+
+      // Очистка всех кешей
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
+      }
+
+      // Очистка всех хранилищ
+      sessionStorage.clear();
+      
+      console.log('✅ [iOS-CacheBuster] Auto-update completed, reloading...');
+      
+      // Агрессивная перезагрузка для iOS
+      setTimeout(() => {
+        window.location.replace(window.location.href + '?_t=' + Date.now());
+      }, 500);
+      
+    } catch (error) {
+      console.error('❌ [iOS-CacheBuster] Auto-update failed:', error);
+      // При ошибке все равно перезагружаем
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    }
+  };
 
   useEffect(() => {
     // Detect iOS device
@@ -61,25 +115,17 @@ export function IOSCacheBuster() {
         const lastProcessedHash = localStorage.getItem('last_processed_hash');
         const alreadyProcessed = lastProcessedHash === data.appHash;
         
-        const shouldShowNotification = (data.version !== currentVersion || data.appHash !== currentHash) && 
-                                       !recentlyUpdated && 
-                                       !alreadyProcessed &&
-                                       currentSessionHash !== data.appHash;
-
-        const shouldHideNotification = updateAvailable && 
-                                     (recentlyUpdated || alreadyProcessed || currentSessionHash === data.appHash);
+        // АВТОМАТИЧЕСКОЕ ОБНОВЛЕНИЕ для iOS: если версия/хеш изменились, обновляем автоматически
+        const shouldAutoUpdate = (data.version !== currentVersion || data.appHash !== currentHash) && 
+                                 !recentlyUpdated && 
+                                 !alreadyProcessed;
         
-        if (shouldShowNotification) {
-          setUpdateAvailable(true);
-          setCurrentSessionHash(data.appHash);
-        } else if (shouldHideNotification) {
-          setUpdateAvailable(false);
+        if (shouldAutoUpdate) {
+          console.log('🍎 [iOS-CacheBuster] New version detected! Auto-updating iOS device...');
+          performIOSAutoUpdate(data);
         }
       } catch (error) {
-        // If API fails, assume update might be available
-        if (isIOSDevice) {
-          setUpdateAvailable(true);
-        }
+        console.log('🍎 [iOS-CacheBuster] Version check failed:', error);
       }
     };
 
@@ -227,61 +273,6 @@ export function IOSCacheBuster() {
     }
   };
 
-  // Only show on iOS or when update is available
-  if (!updateAvailable && !isIOS) {
-    return null;
-  }
-
-  return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-red-500 text-white shadow-lg">
-      <div className="p-3 max-w-4xl mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-center gap-2">
-            {isIOS ? <Smartphone className="h-4 w-4 flex-shrink-0" /> : <AlertTriangle className="h-4 w-4 flex-shrink-0" />}
-            <div>
-              <span className="text-sm font-medium leading-tight">
-                {isIOS ? t('iosIssue') : t('updatePanel.available')}
-              </span>
-              {isIOS && (
-                <div className="text-xs opacity-90 leading-tight mt-1">
-                  {t('iosUpdateMessage')}
-                </div>
-              )}
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setUpdateAvailable(false)}
-              className="text-white hover:bg-red-600 text-xs px-3 py-1 h-7"
-            >
-              {t('updatePanel.later')}
-            </Button>
-            
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleUpdate}
-              disabled={isUpdating}
-              className="bg-white text-red-500 hover:bg-gray-100 text-xs px-3 py-1 h-7"
-            >
-              {isUpdating ? (
-                <>
-                  <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-                  {t('updatePanel.updating')}
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="h-3 w-3 mr-1" />
-                  {isIOS ? t('forceClear') : t('updatePanel.update')}
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  // iOS Cache Buster теперь работает автоматически без UI
+  return null;
 }
