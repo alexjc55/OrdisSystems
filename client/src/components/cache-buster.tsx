@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
 import { useCommonTranslation } from '@/hooks/use-language';
 
-// Cache Buster Component - Forces app updates and clears all caches
+// Cache Buster Component - Forces app updates and clears all caches with proper state management
 export function CacheBuster() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -71,7 +71,13 @@ export function CacheBuster() {
   const checkForUpdates = async () => {
     try {
       // Check if there's a new version by comparing app hash
-      const response = await fetch('/api/version?' + Date.now());
+      const response = await fetch('/api/version?' + Date.now(), {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
       const data = await response.json();
       
       // Check app hash for file changes
@@ -106,14 +112,9 @@ export function CacheBuster() {
         setUpdateAvailable(true);
         // Не помечаем как обработанный здесь - только после действия пользователя
       } else {
-        if (recentlyUpdated) {
-          console.log('🔄 [CacheBuster] Recently updated, skipping notification');
-        }
-        if (skippedRecently) {
-          console.log('⏭️ [CacheBuster] Update was recently skipped, not showing again');
-        }
-        if (alreadyProcessed) {
-          console.log('✅ [CacheBuster] Hash already processed, skipping notification');
+        // Если уведомление было показано, но пользователь не действовал, скрываем его
+        if (updateAvailable && (recentlyUpdated || skippedRecently || alreadyProcessed)) {
+          setUpdateAvailable(false);
         }
       }
       
@@ -135,12 +136,21 @@ export function CacheBuster() {
       const data = await response.json();
       const currentAppHash = data.appHash;
       
+      // Сохраняем информацию об обновлении ПЕРЕД очисткой
+      localStorage.setItem('last_update', Date.now().toString());
+      localStorage.setItem('last_processed_hash', currentAppHash);
+      localStorage.setItem('app_hash', currentAppHash);
+      localStorage.setItem('app_version', data.version);
+      localStorage.setItem('build_time', data.buildTime);
+      
+      // Скрываем уведомление сразу после начала обновления
+      setUpdateAvailable(false);
+      
       // 1. Clear all browser caches
       if ('caches' in window) {
         const cacheNames = await caches.keys();
         await Promise.all(
           cacheNames.map(cacheName => {
-            console.log('Deleting cache:', cacheName);
             return caches.delete(cacheName);
           })
         );

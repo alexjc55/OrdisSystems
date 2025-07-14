@@ -51,8 +51,20 @@ export function IOSCacheBuster() {
         const currentVersion = localStorage.getItem('app-version') || '0';
         const currentHash = localStorage.getItem('app-hash') || '0';
         
-        if (data.version !== currentVersion || data.appHash !== currentHash) {
+        // Проверяем последнее обновление
+        const lastUpdate = localStorage.getItem('last_update');
+        const recentlyUpdated = lastUpdate && (Date.now() - parseInt(lastUpdate)) < 300000; // 5 минут
+        
+        // Проверяем последний обработанный хеш
+        const lastProcessedHash = localStorage.getItem('last_processed_hash');
+        const alreadyProcessed = lastProcessedHash === data.appHash;
+        
+        if ((data.version !== currentVersion || data.appHash !== currentHash) && 
+            !recentlyUpdated && !alreadyProcessed) {
           setUpdateAvailable(true);
+        } else if (updateAvailable && (recentlyUpdated || alreadyProcessed)) {
+          // Скрываем уведомление если оно уже было обработано
+          setUpdateAvailable(false);
         }
       } catch (error) {
         // If API fails, assume update might be available
@@ -75,6 +87,20 @@ export function IOSCacheBuster() {
     setIsUpdating(true);
     
     try {
+      // Получаем текущий хеш и сохраняем состояние обновления
+      const response = await fetch('/api/version?' + Date.now());
+      const data = await response.json();
+      const currentAppHash = data.appHash;
+      
+      // Сохраняем информацию об обновлении ПЕРЕД очисткой
+      localStorage.setItem('last_update', Date.now().toString());
+      localStorage.setItem('last_processed_hash', currentAppHash);
+      localStorage.setItem('app-version', data.version);
+      localStorage.setItem('app-hash', currentAppHash);
+      
+      // Скрываем уведомление сразу
+      setUpdateAvailable(false);
+      
       // 1. Clear all browser caches
       if ('caches' in window) {
         const cacheNames = await caches.keys();
@@ -83,9 +109,20 @@ export function IOSCacheBuster() {
         );
       }
 
-      // 2. Clear local storage
+      // 2. Clear local storage (after saving current state)
+      const tempUpdate = localStorage.getItem('last_update');
+      const tempHash = localStorage.getItem('last_processed_hash');
+      const tempVersion = localStorage.getItem('app-version');
+      const tempAppHash = localStorage.getItem('app-hash');
+      
       localStorage.clear();
       sessionStorage.clear();
+      
+      // Restore update state
+      if (tempUpdate) localStorage.setItem('last_update', tempUpdate);
+      if (tempHash) localStorage.setItem('last_processed_hash', tempHash);
+      if (tempVersion) localStorage.setItem('app-version', tempVersion);
+      if (tempAppHash) localStorage.setItem('app-hash', tempAppHash);
 
       // 3. Clear IndexedDB
       if ('indexedDB' in window) {
