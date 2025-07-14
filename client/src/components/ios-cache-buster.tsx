@@ -122,6 +122,8 @@ export function IOSCacheBuster() {
         
         if (shouldAutoUpdate) {
           console.log('🍎 [iOS-CacheBuster] New version detected! Auto-updating iOS device...');
+          console.log(`🍎 [iOS-CacheBuster] Version changed: ${currentVersion} → ${data.version}, Hash: ${currentHash} → ${data.appHash}`);
+          alert(`🍎 iOS АВТООБНОВЛЕНИЕ!\n\nВерсия: ${currentVersion} → ${data.version}\nХеш: ${currentHash} → ${data.appHash}\n\nПриложение сейчас автоматически обновится!`);
           performIOSAutoUpdate(data);
         }
       } catch (error) {

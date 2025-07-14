@@ -173,6 +173,8 @@ export function CacheBuster() {
       
       if (shouldAutoUpdate) {
         console.log('🔄 [CacheBuster] New version detected! Auto-updating...');
+        console.log(`🔄 [CacheBuster] Hash changed: ${lastAppHash} → ${currentAppHash}`);
+        alert(`🔄 АВТОМАТИЧЕСКОЕ ОБНОВЛЕНИЕ!\n\nОбнаружен новый хеш: ${currentAppHash}\nСтарый хеш: ${lastAppHash}\n\nПриложение сейчас автоматически обновится!`);
         performAutoUpdate(currentAppHash, data);
       }
       
