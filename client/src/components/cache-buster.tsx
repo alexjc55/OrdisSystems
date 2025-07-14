@@ -202,11 +202,17 @@ export function AdminCacheBuster() {
     setIsTesting(true);
     
     try {
+      // Очищаем кеш обработанных хешей для чистого теста
+      localStorage.removeItem('processed_hashes');
+      localStorage.removeItem('last_processed_hash');
+      localStorage.removeItem('last_update');
+      localStorage.removeItem('update_skipped');
+      
       // Генерируем новый тестовый хеш
       const response = await fetch('/api/version?test=notification');
       const data = await response.json();
       
-      alert(`Тест автоматического обновления запущен!\n\nНовый хеш: ${data.appHash}\n\nПриложение должно автоматически обновиться через ~30 секунд.\n\nНикаких действий от вас не требуется - просто наблюдайте!`);
+      alert(`Тест автоматического обновления запущен!\n\nКеш обработанных хешей очищен.\nНовый хеш: ${data.appHash}\n\nПриложение должно автоматически обновиться через ~30 секунд.\n\nСледите за консолью браузера (F12)!`);
       
     } catch (error) {
       console.error('Test auto-update failed:', error);

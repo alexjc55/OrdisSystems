@@ -106,7 +106,15 @@
         
         async function triggerUpdate() {
             try {
-                log('🧪 Симуляция обновления - генерация нового хеша...', 'warning');
+                log('🧪 Симуляция обновления - очистка кеша и генерация нового хеша...', 'warning');
+                
+                // Очищаем кеш обработанных хешей для чистого теста
+                localStorage.removeItem('processed_hashes');
+                localStorage.removeItem('last_processed_hash');
+                localStorage.removeItem('last_update');
+                localStorage.removeItem('update_skipped');
+                localStorage.removeItem('app_hash');
+                log('🧹 Кеш обработанных хешей очищен', 'info');
                 
                 // Генерируем новый тестовый хеш
                 const response = await fetch('/api/version?test=notification');
@@ -115,11 +123,12 @@
                 log(`✅ Новый тестовый хеш сгенерирован: ${data.appHash}`, 'success');
                 log('⏱️ Ожидание автоматического обновления (через ~30 секунд)...', 'warning');
                 log('👀 Проверьте основное приложение - оно должно автоматически перезагрузиться', 'info');
+                log('🔍 Следите за консолью браузера (F12) для логов обновления', 'info');
                 
                 // Обновляем отображение
                 currentAppHash = data.appHash;
                 document.getElementById('currentHash').textContent = data.appHash;
-                document.getElementById('status').textContent = 'Тестовое обновление запущено';
+                document.getElementById('status').textContent = 'Тестовое обновление запущено (кеш очищен)';
                 
             } catch (error) {
                 log(`❌ Ошибка симуляции: ${error.message}`, 'error');
