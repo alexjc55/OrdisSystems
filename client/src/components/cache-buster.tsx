@@ -194,6 +194,25 @@ export function CacheBuster() {
 // Admin component for forcing cache clear
 export function AdminCacheBuster() {
   const [isClearing, setIsClearing] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
+
+  const testAutoUpdate = async () => {
+    setIsTesting(true);
+    
+    try {
+      // Генерируем новый тестовый хеш
+      const response = await fetch('/api/version?test=notification');
+      const data = await response.json();
+      
+      alert(`Тест автоматического обновления запущен!\n\nНовый хеш: ${data.appHash}\n\nПриложение должно автоматически обновиться через ~30 секунд.\n\nНикаких действий от вас не требуется - просто наблюдайте!`);
+      
+    } catch (error) {
+      console.error('Test auto-update failed:', error);
+      alert('Ошибка запуска теста: ' + (error instanceof Error ? error.message : 'Неизвестная ошибка'));
+    } finally {
+      setIsTesting(false);
+    }
+  };
 
   const clearAllCaches = async () => {
     setIsClearing(true);
@@ -240,24 +259,45 @@ export function AdminCacheBuster() {
   };
 
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={clearAllCaches}
-      disabled={isClearing}
-      className="border-red-300 text-red-600 hover:bg-red-50"
-    >
-      {isClearing ? (
-        <>
-          <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
-          Очистка...
-        </>
-      ) : (
-        <>
-          <RefreshCw className="h-4 w-4 mr-1" />
-          Очистить кеш
-        </>
-      )}
-    </Button>
+    <div className="flex gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={testAutoUpdate}
+        disabled={isTesting}
+        className="border-blue-300 text-blue-600 hover:bg-blue-50"
+      >
+        {isTesting ? (
+          <>
+            <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
+            Тестирование...
+          </>
+        ) : (
+          <>
+            🧪 Тест автообновления
+          </>
+        )}
+      </Button>
+      
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={clearAllCaches}
+        disabled={isClearing}
+        className="border-red-300 text-red-600 hover:bg-red-50"
+      >
+        {isClearing ? (
+          <>
+            <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
+            Очистка...
+          </>
+        ) : (
+          <>
+            <RefreshCw className="h-4 w-4 mr-1" />
+            Очистить кеш
+          </>
+        )}
+      </Button>
+    </div>
   );
 }
