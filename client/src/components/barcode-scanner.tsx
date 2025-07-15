@@ -44,10 +44,19 @@ export function BarcodeScanner({
     if (barcode.length !== 13) return null;
     
     const prefix = barcode.substring(0, 2); // "20"
-    const productCode = barcode.substring(2, 8); // "025874"
-    const weightStr = barcode.substring(8, 13); // "02804"
+    const productCode = barcode.substring(2, 8); // "025874" (позиции 2-7, но substring использует 2-8)
+    const weightStr = barcode.substring(8, 13); // "02804" (позиции 8-12, но substring использует 8-13)
     
-    // Convert weight: 02804 -> 280.4g -> 280g (rounded)
+    console.log('Barcode parsing:', {
+      barcode,
+      prefix,
+      productCode,
+      weightStr,
+      productCodePositions: '2-7 (substring 2-8)',
+      weightPositions: '8-12 (substring 8-13)'
+    });
+    
+    // Convert weight: 02804 -> 280.4g -> 280g (делим на 10 и округляем)
     const weight = Math.round(parseInt(weightStr) / 10);
     
     return {
@@ -92,6 +101,8 @@ export function BarcodeScanner({
     
     const parsed = parseBarcode(barcodeText);
     if (!parsed) {
+      // Закрываем сканер и показываем ошибку
+      onClose();
       toast({
         variant: "destructive",
         title: adminT('barcode.invalidFormat'),
@@ -116,13 +127,13 @@ export function BarcodeScanner({
     });
 
     if (orderItem) {
-      // Update existing item weight
+      // Update existing item weight - закрываем сканер и обновляем
       onUpdateItem(orderItem.productId, weight);
+      onClose();
       toast({
         title: adminT('barcode.weightUpdated'),
         description: `${orderItem.product.name}: ${weight}${adminT('units.g')}`
       });
-      onClose();
       return;
     }
 
@@ -132,6 +143,8 @@ export function BarcodeScanner({
     console.log('All products barcodes:', allProducts.map(p => ({ name: p.name, barcode: p.barcode })));
     
     if (!product) {
+      // Закрываем сканер и показываем ошибку
+      onClose();
       toast({
         variant: "destructive",
         title: adminT('barcode.productNotFound'),
@@ -140,7 +153,8 @@ export function BarcodeScanner({
       return;
     }
 
-    // Product exists but not in order - show confirmation dialog
+    // Product exists but not in order - закрываем сканер и показываем диалог добавления
+    onClose();
     setConfirmDialog({
       isOpen: true,
       product,
@@ -156,8 +170,11 @@ export function BarcodeScanner({
         description: `${confirmDialog.product.name}: ${confirmDialog.weight}${adminT('units.g')}`
       });
       setConfirmDialog({ isOpen: false, product: null, weight: 0 });
-      onClose();
     }
+  };
+
+  const handleCancelAddToOrder = () => {
+    setConfirmDialog({ isOpen: false, product: null, weight: 0 });
   };
 
   const startScanning = async () => {
@@ -414,9 +431,7 @@ export function BarcodeScanner({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => 
-              setConfirmDialog({ isOpen: false, product: null, weight: 0 })
-            }>
+            <AlertDialogCancel onClick={handleCancelAddToOrder}>
               {adminT('actions.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleAddToOrder}>
