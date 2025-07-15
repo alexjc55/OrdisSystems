@@ -2373,7 +2373,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
   // Barcode system routes for Israeli weighing scales
   
   // Get barcode configuration from store settings
-  app.get('/api/barcode/config', isAuthenticated, async (req: any, res) => {
+  app.get('/api/barcode/config', async (req: any, res) => {
     try {
       const storeSettings = await storage.getStoreSettings();
       
