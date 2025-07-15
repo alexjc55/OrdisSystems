@@ -2474,25 +2474,22 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         weightUnit: storeSettings.barcodeWeightUnit || 'g'
       };
 
-      // Validate barcode length - minimum should be length of product code
-      const minLength = config.productCodeEnd;
-      if (barcode.length < minLength) {
+      // Validate barcode length
+      if (barcode.length < Math.max(config.productCodeEnd, config.weightEnd)) {
         return res.status(400).json({ 
-          message: `Barcode too short. Expected at least ${minLength} digits for product code` 
+          message: `Barcode too short. Expected at least ${Math.max(config.productCodeEnd, config.weightEnd)} digits` 
         });
       }
 
       // Extract product code and weight from barcode
       const productCode = barcode.substring(config.productCodeStart - 1, config.productCodeEnd);
+      const weightStr = barcode.substring(config.weightStart - 1, config.weightEnd);
       
-      // Extract weight if barcode is long enough, otherwise default to 100g
-      let weight = 100; // Default weight for testing
-      if (barcode.length >= config.weightEnd) {
-        const weightStr = barcode.substring(config.weightStart - 1, config.weightEnd);
-        const parsedWeight = parseInt(weightStr, 10);
-        if (!isNaN(parsedWeight) && parsedWeight > 0) {
-          weight = parsedWeight;
-        }
+      // Convert weight to number
+      const weight = parseInt(weightStr, 10);
+      
+      if (isNaN(weight)) {
+        return res.status(400).json({ message: 'Invalid weight in barcode' });
       }
 
       // Find product by barcode (product code)

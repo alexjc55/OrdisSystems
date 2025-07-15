@@ -321,12 +321,41 @@ export function BarcodeConfigSection() {
                 testResult.error ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'
               }`}>
                 {testResult.error ? (
-                  <div className="text-red-800">
-                    <strong>Ошибка:</strong> {testResult.error}
+                  <div className="text-red-800 space-y-2">
+                    <div><strong>Ошибка:</strong> {testResult.error}</div>
+                    {testResult.error.includes('too short') && (
+                      <div className="text-sm bg-red-100 p-3 rounded border border-red-300">
+                        <strong>Что делать:</strong>
+                        <ul className="mt-1 ml-4 list-disc">
+                          <li>Проверьте длину штрих-кода - он должен содержать минимум {barcodeConfig?.productCodeEnd} символов</li>
+                          <li>Убедитесь что штрих-код содержит код товара в позициях {barcodeConfig?.productCodeStart}-{barcodeConfig?.productCodeEnd}</li>
+                          <li>Пример правильного формата: для кода "25874" нужен штрих-код минимум из {barcodeConfig?.productCodeEnd} символов</li>
+                        </ul>
+                      </div>
+                    )}
+                    {testResult.error.includes('Product not found') && (
+                      <div className="text-sm bg-red-100 p-3 rounded border border-red-300">
+                        <strong>Что делать:</strong>
+                        <ul className="mt-1 ml-4 list-disc">
+                          <li>Убедитесь что товар с таким штрих-кодом существует в системе</li>
+                          <li>Проверьте поле "Штрих-код" в карточке товара</li>
+                          <li>Код товара должен совпадать с кодом в штрих-коде в позициях {barcodeConfig?.productCodeStart}-{barcodeConfig?.productCodeEnd}</li>
+                        </ul>
+                      </div>
+                    )}
+                    {testResult.error.includes('disabled') && (
+                      <div className="text-sm bg-red-100 p-3 rounded border border-red-300">
+                        <strong>Что делать:</strong>
+                        <ul className="mt-1 ml-4 list-disc">
+                          <li>Включите систему штрих-кодов в настройках выше</li>
+                          <li>Убедитесь что переключатель "Включить систему штрих-кодов" активен</li>
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="text-green-800 space-y-2">
-                    <div><strong>Результат парсинга:</strong></div>
+                    <div><strong>✅ Штрих-код успешно распознан!</strong></div>
                     <div><strong>Товар:</strong> {testResult.product?.name}</div>
                     <div><strong>Код товара:</strong> {testResult.barcode?.productCode}</div>
                     <div><strong>Вес:</strong> {testResult.barcode?.weight} {testResult.barcode?.weightUnit}</div>
@@ -346,6 +375,22 @@ export function BarcodeConfigSection() {
           <div>Статус: {barcodeConfig?.enabled ? '✅ Включено' : '❌ Отключено'}</div>
           <div>Код товара: позиции {barcodeConfig?.productCodeStart}-{barcodeConfig?.productCodeEnd}</div>
           <div>Вес: позиции {barcodeConfig?.weightStart}-{barcodeConfig?.weightEnd} ({barcodeConfig?.weightUnit})</div>
+        </div>
+      </div>
+
+      {/* Help Section */}
+      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <h4 className="font-medium mb-2 text-blue-800">📝 Как работает система штрих-кодов:</h4>
+        <div className="text-sm text-blue-700 space-y-2">
+          <div><strong>Формат штрих-кода:</strong> Позиции символов начинаются с 1</div>
+          <div><strong>Пример:</strong> Для штрих-кода "0258741234" с настройками:</div>
+          <ul className="ml-4 list-disc space-y-1">
+            <li>Код товара (позиции 2-6): "25874"</li>
+            <li>Вес (позиции 7-10): "1234" = 1234г</li>
+          </ul>
+          <div className="bg-blue-100 p-2 rounded border border-blue-300 mt-2">
+            <strong>Важно:</strong> Убедитесь что в карточке товара поле "Штрих-код" содержит тот же код, что и в штрих-коде от весов (в данном примере "25874")
+          </div>
         </div>
       </div>
     </div>
