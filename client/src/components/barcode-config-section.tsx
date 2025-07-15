@@ -119,7 +119,27 @@ export function BarcodeConfigSection() {
   const [testResult, setTestResult] = useState<any>(null);
   
   const testBarcodeMutation = useMutation({
-    mutationFn: (barcode: string) => apiRequest('POST', '/api/barcode/parse', { barcode }),
+    mutationFn: async (barcode: string) => {
+      try {
+        const response = await fetch('/api/barcode/parse', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ barcode }),
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(result.message || 'Ошибка парсинга штрих-кода');
+        }
+        
+        return result;
+      } catch (error: any) {
+        throw new Error(error.message || 'Ошибка парсинга штрих-кода');
+      }
+    },
     onSuccess: (data) => {
       setTestResult(data);
     },
