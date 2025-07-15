@@ -2493,8 +2493,22 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       }
 
       // Find product by barcode (product code)
+      // First try exact match
       const products = await storage.searchProducts(productCode);
-      const product = products.find(p => p.barcode === productCode);
+      let product = products.find(p => p.barcode === productCode);
+      
+      // If not found, try with leading zero
+      if (!product) {
+        const paddedCode = productCode.padStart(6, '0');
+        const paddedProducts = await storage.searchProducts(paddedCode);
+        product = paddedProducts.find(p => p.barcode === paddedCode);
+      }
+      
+      // If still not found, try removing leading zeros from stored barcode
+      if (!product) {
+        const allProducts = await storage.searchProducts('');
+        product = allProducts.find(p => p.barcode && p.barcode.replace(/^0+/, '') === productCode.replace(/^0+/, ''));
+      }
 
       if (!product) {
         return res.status(404).json({ 
