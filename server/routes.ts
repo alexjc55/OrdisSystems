@@ -2382,7 +2382,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       }
 
       const barcodeConfig = {
-        enabled: storeSettings.barcodeEnabled || false,
+        enabled: storeSettings.barcodeSystemEnabled || false,
         productCodeStart: storeSettings.barcodeProductCodeStart || 1,
         productCodeEnd: storeSettings.barcodeProductCodeEnd || 5,
         weightStart: storeSettings.barcodeWeightStart || 6,
@@ -2425,7 +2425,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
 
       // Update store settings with barcode configuration
       const updatedSettings = await storage.updateStoreSettings({
-        barcodeEnabled: enabled,
+        barcodeSystemEnabled: enabled,
         barcodeProductCodeStart: productCodeStart,
         barcodeProductCodeEnd: productCodeEnd,
         barcodeWeightStart: weightStart,
@@ -2436,7 +2436,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       res.json({ 
         message: 'Barcode configuration updated successfully',
         config: {
-          enabled: updatedSettings.barcodeEnabled,
+          enabled: updatedSettings.barcodeSystemEnabled,
           productCodeStart: updatedSettings.barcodeProductCodeStart,
           productCodeEnd: updatedSettings.barcodeProductCodeEnd,
           weightStart: updatedSettings.barcodeWeightStart,
