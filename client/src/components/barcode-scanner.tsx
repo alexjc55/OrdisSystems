@@ -7,6 +7,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useToast } from '@/hooks/use-toast';
 import { useAdminTranslation } from '@/hooks/use-language';
 import { Camera, X, Loader2 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
 
 interface BarcodeScannerProps {
   isOpen: boolean;
@@ -39,32 +41,59 @@ export function BarcodeScanner({
   const [lastScannedBarcode, setLastScannedBarcode] = useState<string>('');
   const [lastScanTime, setLastScanTime] = useState<number>(0);
 
-  // Parse barcode format: 2025874002804 -> product: 025874, weight: 280g
+  // Query for barcode configuration
+  const { data: barcodeConfig } = useQuery({
+    queryKey: ['/api/barcode/config'],
+    queryFn: () => apiRequest('GET', '/api/barcode/config'),
+  });
+
+  // Parse barcode using dynamic configuration
   const parseBarcode = (barcode: string) => {
-    if (barcode.length !== 13) return null;
+    if (!barcodeConfig || !barcodeConfig.enabled) return null;
     
-    const prefix = barcode.substring(0, 2); // "20"
-    // ИСПРАВЛЕНИЕ: код товара "025874" находится в позициях 1-6 
-    const productCode = barcode.substring(1, 7); // "025874" 
-    // Вес находится в последних 5 цифрах (позиции 8-12)
-    const weightStr = barcode.substring(8, 13); // "02804"
+    // Validate barcode length
+    const minLength = Math.max(barcodeConfig.productCodeEnd, barcodeConfig.weightEnd);
+    if (barcode.length < minLength) return null;
     
-    console.log('Barcode parsing CORRECTED:', {
+    // Extract product code using config (пользователь видит позиции 1-based, система использует 0-based)
+    const productCode = barcode.substring(
+      barcodeConfig.productCodeStart - 1, 
+      barcodeConfig.productCodeEnd
+    );
+    
+    // Extract weight using config
+    const weightStr = barcode.substring(
+      barcodeConfig.weightStart - 1, 
+      barcodeConfig.weightEnd
+    );
+    
+    console.log('Barcode parsing with CONFIG:', {
       barcode,
-      prefix,
+      config: {
+        productCodeStart: barcodeConfig.productCodeStart,
+        productCodeEnd: barcodeConfig.productCodeEnd,
+        weightStart: barcodeConfig.weightStart,
+        weightEnd: barcodeConfig.weightEnd,
+        weightUnit: barcodeConfig.weightUnit
+      },
       productCode,
       weightStr,
-      positions: 'Product: chars 1-6, Weight: chars 8-12',
-      verification: 'For 2025874002804: product="025874", weight="02804"'
+      explanation: 'User sees 1-based positions, system uses 0-based'
     });
     
-    // Convert weight: 02804 -> 280.4g -> 280g (делим на 10 и округляем)
-    const weight = Math.round(parseInt(weightStr) / 10);
+    // Convert weight to grams (divide by 10 for Israeli barcode format)
+    const rawWeight = parseInt(weightStr);
+    if (isNaN(rawWeight)) return null;
+    
+    // Israeli barcode format: weight is stored * 10, so divide by 10
+    const weight = Math.round(rawWeight / 10);
+    
+    // Apply weight unit conversion
+    const finalWeight = barcodeConfig.weightUnit === 'kg' ? weight * 1000 : weight;
     
     return {
-      prefix,
       productCode,
-      weight
+      weight: finalWeight
     };
   };
 
