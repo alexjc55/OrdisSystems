@@ -25,7 +25,7 @@ export function BarcodeScanner({
   onAddItem,
   allProducts 
 }: BarcodeScannerProps) {
-  const { adminT } = useAdminTranslation();
+  const { t: adminT } = useAdminTranslation();
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
   const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null);
