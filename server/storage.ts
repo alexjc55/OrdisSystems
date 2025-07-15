@@ -323,6 +323,7 @@ export class DatabaseStorage implements IStorage {
           availabilityStatus: products.availabilityStatus,
           isActive: products.isActive,
           sortOrder: products.sortOrder,
+          barcode: products.barcode,
           createdAt: products.createdAt,
           updatedAt: products.updatedAt,
           isSpecialOffer: products.isSpecialOffer,
@@ -378,6 +379,7 @@ export class DatabaseStorage implements IStorage {
             isActive: row.isActive,
             isAvailable: row.isAvailable,
             sortOrder: row.sortOrder,
+            barcode: row.barcode,
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
             isSpecialOffer: row.isSpecialOffer,
@@ -434,6 +436,7 @@ export class DatabaseStorage implements IStorage {
           availabilityStatus: products.availabilityStatus,
           isActive: products.isActive,
           sortOrder: products.sortOrder,
+          barcode: products.barcode,
           createdAt: products.createdAt,
           updatedAt: products.updatedAt,
           isSpecialOffer: products.isSpecialOffer,
@@ -489,6 +492,7 @@ export class DatabaseStorage implements IStorage {
             isActive: row.isActive,
             isAvailable: row.isAvailable,
             sortOrder: row.sortOrder,
+            barcode: row.barcode,
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
             isSpecialOffer: row.isSpecialOffer,
@@ -829,6 +833,7 @@ export class DatabaseStorage implements IStorage {
           productDiscountType: products.discountType,
           productDiscountValue: products.discountValue,
           productSortOrder: products.sortOrder,
+          productBarcode: products.barcode,
           productCreatedAt: products.createdAt,
           productUpdatedAt: products.updatedAt,
         })
@@ -877,6 +882,7 @@ export class DatabaseStorage implements IStorage {
             discountType: item.productDiscountType,
             discountValue: item.productDiscountValue,
             sortOrder: item.productSortOrder,
+            barcode: item.productBarcode,
             createdAt: item.productCreatedAt,
             updatedAt: item.productUpdatedAt,
           }
@@ -964,6 +970,7 @@ export class DatabaseStorage implements IStorage {
           productDiscountType: products.discountType,
           productDiscountValue: products.discountValue,
           productSortOrder: products.sortOrder,
+          productBarcode: products.barcode,
           productCreatedAt: products.createdAt,
           productUpdatedAt: products.updatedAt,
         })
@@ -1012,6 +1019,7 @@ export class DatabaseStorage implements IStorage {
             discountType: item.productDiscountType,
             discountValue: item.productDiscountValue,
             sortOrder: item.productSortOrder,
+            barcode: item.productBarcode,
             createdAt: item.productCreatedAt,
             updatedAt: item.productUpdatedAt,
           }
@@ -1151,6 +1159,7 @@ export class DatabaseStorage implements IStorage {
           discountType: item.productDiscountType,
           discountValue: item.productDiscountValue,
           sortOrder: item.productSortOrder,
+          barcode: item.productBarcode,
           createdAt: item.productCreatedAt,
           updatedAt: item.productUpdatedAt,
         }

@@ -57,6 +57,7 @@ import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
 import { PushNotificationsPanel } from "@/components/PushNotificationsPanel";
 import { AdminCacheBuster } from "@/components/cache-buster";
+import { BarcodeConfigSection } from "@/components/barcode-config-section";
 import {
   DndContext,
   closestCenter,
@@ -5371,6 +5372,16 @@ export default function AdminDashboard() {
                         Экономия места: 50-80% от исходного размера.
                       </div>
                     </div>
+                  </div>
+
+                  {/* Barcode System Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">🏷️ Система штрих-кодов</h3>
+                    <p className="text-sm text-gray-600">
+                      Настройка сканирования штрих-кодов израильских весов для автоматического добавления товаров в заказы
+                    </p>
+                    
+                    <BarcodeConfigSection />
                   </div>
                 </CardContent>
               </Card>

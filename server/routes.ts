@@ -2370,6 +2370,176 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
+  // Barcode system routes for Israeli weighing scales
+  
+  // Get barcode configuration from store settings
+  app.get('/api/barcode/config', isAuthenticated, async (req: any, res) => {
+    try {
+      const storeSettings = await storage.getStoreSettings();
+      
+      if (!storeSettings) {
+        return res.status(404).json({ message: 'Store settings not found' });
+      }
+
+      const barcodeConfig = {
+        enabled: storeSettings.barcodeEnabled || false,
+        productCodeStart: storeSettings.barcodeProductCodeStart || 1,
+        productCodeEnd: storeSettings.barcodeProductCodeEnd || 5,
+        weightStart: storeSettings.barcodeWeightStart || 6,
+        weightEnd: storeSettings.barcodeWeightEnd || 10,
+        weightUnit: storeSettings.barcodeWeightUnit || 'g'
+      };
+
+      res.json(barcodeConfig);
+    } catch (error) {
+      console.error('Error fetching barcode configuration:', error);
+      res.status(500).json({ message: 'Failed to fetch barcode configuration' });
+    }
+  });
+
+  // Update barcode configuration (admin only)
+  app.put('/api/admin/barcode/config', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const { 
+        enabled, 
+        productCodeStart, 
+        productCodeEnd, 
+        weightStart, 
+        weightEnd, 
+        weightUnit 
+      } = req.body;
+
+      // Validate configuration
+      if (productCodeStart >= productCodeEnd || weightStart >= weightEnd) {
+        return res.status(400).json({ 
+          message: 'Invalid barcode configuration: start positions must be less than end positions' 
+        });
+      }
+
+      // Update store settings with barcode configuration
+      const updatedSettings = await storage.updateStoreSettings({
+        barcodeEnabled: enabled,
+        barcodeProductCodeStart: productCodeStart,
+        barcodeProductCodeEnd: productCodeEnd,
+        barcodeWeightStart: weightStart,
+        barcodeWeightEnd: weightEnd,
+        barcodeWeightUnit: weightUnit
+      });
+
+      res.json({ 
+        message: 'Barcode configuration updated successfully',
+        config: {
+          enabled: updatedSettings.barcodeEnabled,
+          productCodeStart: updatedSettings.barcodeProductCodeStart,
+          productCodeEnd: updatedSettings.barcodeProductCodeEnd,
+          weightStart: updatedSettings.barcodeWeightStart,
+          weightEnd: updatedSettings.barcodeWeightEnd,
+          weightUnit: updatedSettings.barcodeWeightUnit
+        }
+      });
+    } catch (error) {
+      console.error('Error updating barcode configuration:', error);
+      res.status(500).json({ message: 'Failed to update barcode configuration' });
+    }
+  });
+
+  // Parse Israeli weighing scale barcode
+  app.post('/api/barcode/parse', isAuthenticated, async (req: any, res) => {
+    try {
+      const { barcode } = req.body;
+
+      if (!barcode || typeof barcode !== 'string') {
+        return res.status(400).json({ message: 'Valid barcode string is required' });
+      }
+
+      // Get barcode configuration
+      const storeSettings = await storage.getStoreSettings();
+      
+      if (!storeSettings?.barcodeEnabled) {
+        return res.status(400).json({ message: 'Barcode system is disabled' });
+      }
+
+      const config = {
+        productCodeStart: storeSettings.barcodeProductCodeStart || 1,
+        productCodeEnd: storeSettings.barcodeProductCodeEnd || 5,
+        weightStart: storeSettings.barcodeWeightStart || 6,
+        weightEnd: storeSettings.barcodeWeightEnd || 10,
+        weightUnit: storeSettings.barcodeWeightUnit || 'g'
+      };
+
+      // Validate barcode length
+      if (barcode.length < Math.max(config.productCodeEnd, config.weightEnd)) {
+        return res.status(400).json({ 
+          message: `Barcode too short. Expected at least ${Math.max(config.productCodeEnd, config.weightEnd)} digits` 
+        });
+      }
+
+      // Extract product code and weight from barcode
+      const productCode = barcode.substring(config.productCodeStart - 1, config.productCodeEnd);
+      const weightStr = barcode.substring(config.weightStart - 1, config.weightEnd);
+      
+      // Convert weight to number
+      const weight = parseInt(weightStr, 10);
+      
+      if (isNaN(weight)) {
+        return res.status(400).json({ message: 'Invalid weight in barcode' });
+      }
+
+      // Find product by barcode (product code)
+      const products = await storage.searchProducts(productCode);
+      const product = products.find(p => p.barcode === productCode);
+
+      if (!product) {
+        return res.status(404).json({ 
+          message: 'Product not found for barcode',
+          productCode,
+          weight,
+          weightUnit: config.weightUnit
+        });
+      }
+
+      // Calculate price based on weight (convert to kg if needed)
+      let pricePerUnit = product.pricePerKg || product.price;
+      let calculatedWeight = weight;
+
+      // Convert grams to kg if necessary
+      if (config.weightUnit === 'g' && product.unit === 'кг') {
+        calculatedWeight = weight / 1000;
+      }
+
+      const totalPrice = Math.round(pricePerUnit * calculatedWeight * 100) / 100;
+
+      res.json({
+        success: true,
+        product: {
+          id: product.id,
+          name: product.name,
+          barcode: product.barcode,
+          unit: product.unit,
+          price: product.price,
+          pricePerKg: product.pricePerKg
+        },
+        barcode: {
+          raw: barcode,
+          productCode,
+          weight: calculatedWeight,
+          weightUnit: product.unit === 'кг' ? 'кг' : config.weightUnit,
+          totalPrice
+        }
+      });
+    } catch (error) {
+      console.error('Error parsing barcode:', error);
+      res.status(500).json({ message: 'Failed to parse barcode' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -99,6 +99,7 @@ export const products = pgTable("products", {
   discountType: varchar("discount_type", { enum: ["percentage", "fixed"] }),
   discountValue: decimal("discount_value", { precision: 10, scale: 2 }),
   sortOrder: integer("sort_order").default(0),
+  barcode: varchar("barcode", { length: 50 }), // Barcode for the product (not required)
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -278,6 +279,14 @@ export const storeSettings = pgTable("store_settings", {
   pwaDescriptionHe: text("pwa_description_he"), // PWA app description (Hebrew)
   pwaNameAr: varchar("pwa_name_ar", { length: 100 }), // PWA app name (Arabic)
   pwaDescriptionAr: text("pwa_description_ar"), // PWA app description (Arabic)
+  
+  // Barcode system settings
+  barcodeSystemEnabled: boolean("barcode_system_enabled").default(false), // Enable/disable barcode scanning
+  barcodeProductCodeStart: integer("barcode_product_code_start").default(2), // Starting position of product code in barcode
+  barcodeProductCodeEnd: integer("barcode_product_code_end").default(5), // Ending position of product code in barcode
+  barcodeWeightStart: integer("barcode_weight_start").default(6), // Starting position of weight in barcode
+  barcodeWeightEnd: integer("barcode_weight_end").default(10), // Ending position of weight in barcode
+  barcodeWeightUnit: varchar("barcode_weight_unit", { enum: ["grams", "kilograms"] }).default("grams"), // Weight unit in barcode
   
   updatedAt: timestamp("updated_at").defaultNow(),
 });
