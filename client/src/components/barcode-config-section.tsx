@@ -34,7 +34,7 @@ export function BarcodeConfigSection() {
   // Query for current barcode configuration
   const { data: barcodeConfig, isLoading: isLoadingConfig } = useQuery({
     queryKey: ['/api/barcode/config'],
-    queryFn: () => apiRequest('/api/barcode/config').then(res => res.json()),
+    queryFn: () => apiRequest('GET', '/api/barcode/config'),
   });
 
   // Form for barcode configuration
