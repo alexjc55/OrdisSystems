@@ -413,7 +413,7 @@ export function BarcodeScanner({
       codeReaderRef.current = null;
     }
     
-    // Останавливаем видео поток
+    // Агрессивно очищаем видео поток
     if (videoRef.current) {
       try {
         // Останавливаем воспроизведение
@@ -423,17 +423,25 @@ export function BarcodeScanner({
         if (videoRef.current.srcObject) {
           const stream = videoRef.current.srcObject as MediaStream;
           stream.getTracks().forEach(track => {
-            track.stop();
-            addDebugMessage(`🎥 Трек камеры остановлен: ${track.kind}`);
+            if (track.readyState === 'live') {
+              track.stop();
+              addDebugMessage(`🎥 Трек камеры остановлен: ${track.kind}`);
+            }
           });
           videoRef.current.srcObject = null;
         }
         
-        // Очищаем атрибуты видео
+        // Принудительно очищаем все атрибуты видео
         videoRef.current.removeAttribute('src');
+        videoRef.current.currentTime = 0;
         videoRef.current.load();
         
-        addDebugMessage('✅ Видео очищено');
+        // Убираем все стили, которые могут вызывать темный экран
+        videoRef.current.style.opacity = '1';
+        videoRef.current.style.filter = 'none';
+        videoRef.current.style.transform = 'none';
+        
+        addDebugMessage('✅ Видео полностью очищено');
       } catch (error) {
         addDebugMessage('⚠️ Ошибка остановки видео');
       }
@@ -464,7 +472,10 @@ export function BarcodeScanner({
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
-      stopScanning();
+      // Только останавливаем сканирование, не очищаем полностью
+      if (isOpen === false) {
+        stopScanning();
+      }
     };
   }, [isOpen]);
 
@@ -474,38 +485,48 @@ export function BarcodeScanner({
     if (!video) return;
     
     const handleVideoError = (event: Event) => {
-      console.error('Video error:', event);
       const video = event.target as HTMLVideoElement;
       if (video.error) {
-        console.error('Video error details:', {
-          code: video.error.code,
-          message: video.error.message,
-          MEDIA_ERR_ABORTED: video.error.MEDIA_ERR_ABORTED,
-          MEDIA_ERR_NETWORK: video.error.MEDIA_ERR_NETWORK,
-          MEDIA_ERR_DECODE: video.error.MEDIA_ERR_DECODE,
-          MEDIA_ERR_SRC_NOT_SUPPORTED: video.error.MEDIA_ERR_SRC_NOT_SUPPORTED
-        });
+        let errorMsg = 'Ошибка видео: ';
+        switch (video.error.code) {
+          case 1:
+            errorMsg += 'Загрузка прервана';
+            break;
+          case 2:
+            errorMsg += 'Ошибка сети';
+            break;
+          case 3:
+            errorMsg += 'Ошибка декодирования';
+            break;
+          case 4:
+            errorMsg += 'Формат не поддерживается';
+            break;
+          default:
+            errorMsg += 'Неизвестная ошибка';
+        }
+        addDebugMessage(`❌ ${errorMsg}`);
+        setCameraStatus('error');
       }
     };
 
     const handleVideoLoadStart = () => {
-      console.log('Video load started');
+      addDebugMessage('📺 Загрузка видео начата');
     };
 
     const handleVideoLoadedMetadata = () => {
-      console.log('Video metadata loaded');
+      addDebugMessage('📊 Метаданные видео загружены');
     };
 
     const handleVideoCanPlay = () => {
-      console.log('Video can play');
+      addDebugMessage('▶️ Видео готово к воспроизведению');
     };
 
     const handleVideoPlay = () => {
-      console.log('Video play started');
+      addDebugMessage('▶️ Воспроизведение видео началось');
     };
 
     const handleVideoPause = () => {
-      console.log('Video paused');
+      addDebugMessage('⏸️ Воспроизведение видео приостановлено');
     };
 
     video.addEventListener('error', handleVideoError);
@@ -526,8 +547,15 @@ export function BarcodeScanner({
   }, [isOpen]);
 
   const handleClose = () => {
+    addDebugMessage('🔒 Закрытие сканера...');
     stopScanning();
-    onClose();
+    
+    // Дополнительная очистка при закрытии
+    setTimeout(() => {
+      setCameraStatus('idle');
+      setDebugMessages([]);
+      onClose();
+    }, 100);
   };
 
   return (
@@ -550,10 +578,16 @@ export function BarcodeScanner({
                 muted
                 autoPlay
                 controls={false}
-                onError={(e) => console.error('Video element error:', e)}
-                onLoadStart={() => console.log('Video load start')}
-                onCanPlay={() => console.log('Video can play')}
-                onPlaying={() => console.log('Video is playing')}
+                style={{ 
+                  opacity: 1,
+                  filter: 'none',
+                  transform: 'none',
+                  backgroundColor: 'transparent'
+                }}
+                onError={(e) => addDebugMessage('❌ Ошибка video элемента')}
+                onLoadStart={() => addDebugMessage('📺 Загрузка видео начата')}
+                onCanPlay={() => addDebugMessage('▶️ Видео готово к воспроизведению')}
+                onPlaying={() => addDebugMessage('▶️ Видео воспроизводится')}
                 webkit-playsinline="true"
               />
               
@@ -569,6 +603,13 @@ export function BarcodeScanner({
               {isScanning && !isInitializing && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="border-2 border-white w-48 h-24 rounded-lg opacity-50"></div>
+                </div>
+              )}
+              
+              {/* Индикатор активности сканирования */}
+              {cameraStatus === 'granted' && isScanning && !isInitializing && (
+                <div className="absolute top-2 right-2 text-xs bg-green-600 bg-opacity-80 text-white px-2 py-1 rounded">
+                  🔍 Сканирование
                 </div>
               )}
             </div>
