@@ -58,6 +58,7 @@ import ThemeManager from "@/components/admin/theme-manager";
 import { PushNotificationsPanel } from "@/components/PushNotificationsPanel";
 import { AdminCacheBuster } from "@/components/cache-buster";
 import { BarcodeConfigSection } from "@/components/barcode-config-section";
+import { BarcodeScanner } from "@/components/barcode-scanner";
 import {
   DndContext,
   closestCenter,
@@ -640,50 +641,7 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
               <Eye className="h-3 w-3 mr-1" />
               {adminT('orders.orderDetails')}
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="text-xs h-7 flex-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                // Generate barcode for order
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                if (ctx) {
-                  // Simple barcode generation
-                  const barcodeText = `ORDER-${order.id}`;
-                  canvas.width = 300;
-                  canvas.height = 100;
-                  
-                  // White background
-                  ctx.fillStyle = '#ffffff';
-                  ctx.fillRect(0, 0, canvas.width, canvas.height);
-                  
-                  // Black bars (simple representation)
-                  ctx.fillStyle = '#000000';
-                  for (let i = 0; i < barcodeText.length; i++) {
-                    const x = 20 + (i * 15);
-                    const charCode = barcodeText.charCodeAt(i);
-                    const height = 50 + (charCode % 20);
-                    ctx.fillRect(x, 20, 3, height);
-                  }
-                  
-                  // Add text
-                  ctx.font = '14px Arial';
-                  ctx.textAlign = 'center';
-                  ctx.fillText(barcodeText, canvas.width / 2, 90);
-                  
-                  // Create download link
-                  const link = document.createElement('a');
-                  link.download = `order-${order.id}-barcode.png`;
-                  link.href = canvas.toDataURL();
-                  link.click();
-                }
-              }}
-            >
-              <QrCode className="h-3 w-3 mr-1" />
-              {adminT('barcode.download')}
-            </Button>
+
             <Select
               value={order.status}
               onValueChange={(newStatus) => {
@@ -801,6 +759,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   };
   const storeSettings = storeSettingsData;
   const [showAddItem, setShowAddItem] = useState(false);
+  const [showBarcodeScanner, setShowBarcodeScanner] = useState(false);
   const [editedOrderItems, setEditedOrderItems] = useState(order.items || []);
   const [showDiscountDialog, setShowDiscountDialog] = useState<number | null>(null);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
@@ -1205,6 +1164,24 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
     setShowAddItem(false);
   };
 
+  // Get all products for barcode scanner
+  const { data: allProducts = [] } = useQuery({
+    queryKey: ["/api/products"],
+    select: (data: any) => data || []
+  });
+
+  // Handlers for barcode scanner
+  const handleUpdateItemFromBarcode = (productId: number, newWeight: number) => {
+    const itemIndex = editedOrderItems.findIndex((item: any) => item.productId === productId);
+    if (itemIndex !== -1) {
+      updateItemQuantity(itemIndex, newWeight);
+    }
+  };
+
+  const handleAddItemFromBarcode = (product: any, weight: number) => {
+    addItem(product, weight);
+  };
+
   const handleSave = () => {
     const finalTotal = calculateFinalTotal();
     
@@ -1590,14 +1567,24 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             <ShoppingCart className="h-4 w-4 text-green-600" />
             {adminT('orders.orderItems')}
           </h3>
-          <Button 
-            size="sm" 
-            onClick={() => setShowAddItem(true)}
-            className="text-xs bg-primary hover:bg-primary text-white border-primary w-full sm:w-auto"
-          >
-            <Plus className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
-            {adminT('orders.addProduct')}
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Button 
+              size="sm" 
+              onClick={() => setShowAddItem(true)}
+              className="text-xs bg-primary hover:bg-primary text-white border-primary w-full sm:w-auto"
+            >
+              <Plus className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+              {adminT('orders.addProduct')}
+            </Button>
+            <Button 
+              size="sm" 
+              onClick={() => setShowBarcodeScanner(true)}
+              className="text-xs bg-green-600 hover:bg-green-700 text-white border-green-600 w-full sm:w-auto"
+            >
+              <Camera className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+              {adminT('barcode.scanBarcode')}
+            </Button>
+          </div>
         </div>
         {/* Desktop Table View */}
         <div className="hidden md:block border rounded-lg overflow-hidden">
@@ -1997,6 +1984,16 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
           adminT={adminT}
         />
       )}
+
+      {/* Barcode Scanner */}
+      <BarcodeScanner 
+        isOpen={showBarcodeScanner}
+        onClose={() => setShowBarcodeScanner(false)}
+        orderItems={editedOrderItems}
+        onUpdateItem={handleUpdateItemFromBarcode}
+        onAddItem={handleAddItemFromBarcode}
+        allProducts={allProducts}
+      />
 
       {/* Actions */}
       <div className="flex justify-center gap-3 pt-4 border-t">
