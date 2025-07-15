@@ -2544,12 +2544,14 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
           calculatedWeight = weight;
         }
         totalPrice = Math.round(pricePerGram * calculatedWeight * 100) / 100;
-      } else if (product.unit === '100г') {
+      } else if (product.unit === '100г' || product.unit === '100g') {
         // Product is priced per 100g
         const pricePer100g = product.price;
         if (config.weightUnit === 'g') {
           // Convert grams to 100g units
           calculatedWeight = weight / 100;
+          displayWeight = calculatedWeight;
+          displayUnit = product.unit;
         }
         totalPrice = Math.round(pricePer100g * calculatedWeight * 100) / 100;
       } else {
