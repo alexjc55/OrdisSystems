@@ -7,6 +7,8 @@
   "error": "שגיאה",
   "success": "הצליח",
   "close": "סגור",
+  "showPassword": "הצג סיסמה",
+  "hidePassword": "הסתר סיסמה",
   "profile": {
     "title": "הפרופיל שלי",
     "subtitle": "ניהול פרופיל והיסטוריית הזמנות",

@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -349,9 +350,8 @@ export default function AuthPage() {
                   
                   <div className="space-y-2">
                     <Label htmlFor="password">{getAuthText('password')}</Label>
-                    <Input
+                    <PasswordInput
                       id="password"
-                      type="password"
                       {...loginForm.register("password")}
                       placeholder={getAuthText('passwordPlaceholder')}
                     />
@@ -440,9 +440,8 @@ export default function AuthPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="reg-password">{getAuthText('password')}</Label>
-                    <Input
+                    <PasswordInput
                       id="reg-password"
-                      type="password"
                       {...registerForm.register("password")}
                       placeholder={getAuthText('createPasswordPlaceholder')}
                     />
@@ -455,9 +454,8 @@ export default function AuthPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword">{getAuthText('confirmPassword')}</Label>
-                    <Input
+                    <PasswordInput
                       id="confirmPassword"
-                      type="password"
                       {...registerForm.register("confirmPassword")}
                       placeholder={getAuthText('confirmPasswordPlaceholder')}
                     />

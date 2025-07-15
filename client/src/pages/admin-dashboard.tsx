@@ -30,6 +30,7 @@ import Header from "@/components/layout/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8427,8 +8428,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                     {user ? adminT('dialog.newPasswordLabel') : adminT('dialog.passwordLabel')}
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      type="password"
+                    <PasswordInput 
                       placeholder={adminT('dialog.passwordMinLength')}
                       {...field}
                       className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}

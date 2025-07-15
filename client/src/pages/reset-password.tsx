@@ -5,6 +5,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Lock, Check, AlertCircle } from "lucide-react";
 import { Link, useLocation } from "wouter";
@@ -160,9 +161,8 @@ export default function ResetPasswordPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="newPassword">{t('auth.newPassword')}</Label>
-              <Input
+              <PasswordInput
                 id="newPassword"
-                type="password"
                 value={formData.newPassword}
                 onChange={(e) => handleInputChange("newPassword", e.target.value)}
                 className={errors.newPassword ? "border-red-500" : ""}
@@ -175,9 +175,8 @@ export default function ResetPasswordPage() {
 
             <div>
               <Label htmlFor="confirmPassword">{t('auth.confirmNewPassword')}</Label>
-              <Input
+              <PasswordInput
                 id="confirmPassword"
-                type="password"
                 value={formData.confirmPassword}
                 onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                 className={errors.confirmPassword ? "border-red-500" : ""}

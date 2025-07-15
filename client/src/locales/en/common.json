@@ -7,6 +7,8 @@
   "error": "Error",
   "success": "Success",
   "close": "Close",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
   "profile": {
     "title": "My Profile",
     "subtitle": "Profile management and order history",

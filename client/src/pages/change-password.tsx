@@ -6,6 +6,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle, Check, Lock } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -152,9 +153,8 @@ export default function ChangePasswordPage() {
               {user?.password && (
                 <div>
                   <Label htmlFor="currentPassword">{t('auth.currentPassword')} *</Label>
-                  <Input
+                  <PasswordInput
                     id="currentPassword"
-                    type="password"
                     value={formData.currentPassword}
                     onChange={(e) => handleInputChange("currentPassword", e.target.value)}
                     className={errors.currentPassword ? "border-red-500" : ""}
@@ -170,9 +170,8 @@ export default function ChangePasswordPage() {
                 <Label htmlFor="newPassword">
                   {user?.password ? t('auth.newPassword') : t('auth.password')} *
                 </Label>
-                <Input
+                <PasswordInput
                   id="newPassword"
-                  type="password"
                   value={formData.newPassword}
                   onChange={(e) => handleInputChange("newPassword", e.target.value)}
                   className={errors.newPassword ? "border-red-500" : ""}
@@ -187,9 +186,8 @@ export default function ChangePasswordPage() {
                 <Label htmlFor="confirmPassword">
                   {user?.password ? t('auth.confirmNewPassword') : t('auth.confirmPassword')} *
                 </Label>
-                <Input
+                <PasswordInput
                   id="confirmPassword"
-                  type="password"
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                   className={errors.confirmPassword ? "border-red-500" : ""}
