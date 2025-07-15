@@ -84,6 +84,8 @@
     "noCameraFoundDescription": "לא ניתן למצוא מצלמה לסריקה",
     "scannerError": "שגיאת סורק",
     "scannerErrorDescription": "לא ניתן לאתחל את סורק הברקוד",
+    "cameraPermissionDenied": "הגישה למצלמה נדחתה. אנא אשר גישה למצלמה ונסה שוב",
+    "cameraInUse": "המצלמה כבר בשימוש על ידי אפליקציה אחרת",
     "productNotInOrder": "המוצר לא נמצא בהזמנה",
     "productFoundInStore": "המוצר נמצא בחנות",
     "weight": "משקל",

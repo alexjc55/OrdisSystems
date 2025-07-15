@@ -74,6 +74,8 @@
     "noCameraFoundDescription": "لا يمكن العثور على كاميرا للمسح",
     "scannerError": "خطأ في الماسح",
     "scannerErrorDescription": "لا يمكن تشغيل ماسح الباركود",
+    "cameraPermissionDenied": "تم رفض الوصول إلى الكاميرا. يرجى السماح بالوصول إلى الكاميرا والمحاولة مرة أخرى",
+    "cameraInUse": "الكاميرا قيد الاستخدام من قبل تطبيق آخر",
     "productNotInOrder": "المنتج غير موجود في الطلب",
     "productFoundInStore": "المنتج موجود في المتجر",
     "weight": "الوزن",

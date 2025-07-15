@@ -86,6 +86,8 @@
     "noCameraFoundDescription": "Не удалось найти камеру для сканирования",
     "scannerError": "Ошибка сканера",
     "scannerErrorDescription": "Не удалось инициализировать сканер штрих-кодов",
+    "cameraPermissionDenied": "Доступ к камере запрещен. Разрешите доступ к камере и попробуйте снова",
+    "cameraInUse": "Камера уже используется другим приложением",
     "productNotInOrder": "Товар не найден в заказе",
     "productFoundInStore": "Товар найден в магазине",
     "weight": "Вес",

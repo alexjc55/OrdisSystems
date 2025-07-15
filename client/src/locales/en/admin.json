@@ -95,6 +95,8 @@
     "noCameraFoundDescription": "Could not find camera for scanning",
     "scannerError": "Scanner error",
     "scannerErrorDescription": "Could not initialize barcode scanner",
+    "cameraPermissionDenied": "Camera access denied. Please allow camera access and try again",
+    "cameraInUse": "Camera is already in use by another application",
     "productNotInOrder": "Product not found in order",
     "productFoundInStore": "Product found in store",
     "weight": "Weight",

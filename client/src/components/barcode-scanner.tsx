@@ -134,11 +134,24 @@ export function BarcodeScanner({
     try {
       setIsInitializing(true);
       
+      // First, request camera permission explicitly
+      console.log('Requesting camera permission...');
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: 'environment' // Prefer back camera
+        } 
+      });
+      
+      // Stop the stream immediately, we just needed permission
+      stream.getTracks().forEach(track => track.stop());
+      console.log('Camera permission granted');
+      
       if (!codeReaderRef.current) {
         codeReaderRef.current = new BrowserMultiFormatReader();
       }
 
       const videoInputDevices = await codeReaderRef.current.listVideoInputDevices();
+      console.log('Available video devices:', videoInputDevices);
       
       if (videoInputDevices.length === 0) {
         toast({
@@ -154,10 +167,12 @@ export function BarcodeScanner({
       // Use back camera if available
       const backCamera = videoInputDevices.find(device => 
         device.label.toLowerCase().includes('back') || 
-        device.label.toLowerCase().includes('rear')
+        device.label.toLowerCase().includes('rear') ||
+        device.label.toLowerCase().includes('environment')
       );
       
       const selectedDevice = backCamera || videoInputDevices[0];
+      console.log('Selected device:', selectedDevice);
 
       await codeReaderRef.current.decodeFromVideoDevice(
         selectedDevice.deviceId,
@@ -166,14 +181,28 @@ export function BarcodeScanner({
           if (result) {
             handleBarcodeDetected(result);
           }
+          if (error) {
+            console.log('Scanning error (normal):', error);
+          }
         }
       );
     } catch (error) {
       console.error('Error starting barcode scanner:', error);
+      
+      let errorMessage = adminT('barcode.scannerErrorDescription');
+      
+      if (error.name === 'NotAllowedError') {
+        errorMessage = adminT('barcode.cameraPermissionDenied');
+      } else if (error.name === 'NotFoundError') {
+        errorMessage = adminT('barcode.noCameraFoundDescription');
+      } else if (error.name === 'NotReadableError') {
+        errorMessage = adminT('barcode.cameraInUse');
+      }
+      
       toast({
         variant: "destructive",
         title: adminT('barcode.scannerError'),
-        description: adminT('barcode.scannerErrorDescription')
+        description: errorMessage
       });
     } finally {
       setIsInitializing(false);
@@ -189,11 +218,42 @@ export function BarcodeScanner({
 
   useEffect(() => {
     if (isOpen && !isScanning && !isInitializing) {
-      startScanning();
+      // Small delay to ensure video element is ready
+      setTimeout(() => {
+        startScanning();
+      }, 100);
     }
     
     return () => {
       stopScanning();
+    };
+  }, [isOpen]);
+
+  // Add video event listeners for better debugging
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleVideoLoad = () => {
+      console.log('Video loaded, dimensions:', video.videoWidth, 'x', video.videoHeight);
+    };
+
+    const handleVideoError = (error: Event) => {
+      console.error('Video error:', error);
+    };
+
+    const handleVideoPlay = () => {
+      console.log('Video playing');
+    };
+
+    video.addEventListener('loadedmetadata', handleVideoLoad);
+    video.addEventListener('error', handleVideoError);
+    video.addEventListener('play', handleVideoPlay);
+
+    return () => {
+      video.removeEventListener('loadedmetadata', handleVideoLoad);
+      video.removeEventListener('error', handleVideoError);
+      video.removeEventListener('play', handleVideoPlay);
     };
   }, [isOpen]);
 
@@ -220,6 +280,9 @@ export function BarcodeScanner({
                 className="w-full h-full object-cover"
                 playsInline
                 muted
+                autoPlay
+                controls={false}
+                style={{ transform: 'scaleX(-1)' }}
               />
               
               {isInitializing && (
