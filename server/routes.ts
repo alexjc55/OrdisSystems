@@ -2519,16 +2519,43 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         });
       }
 
-      // Calculate price based on weight (convert to kg if needed)
-      let pricePerUnit = product.pricePerKg || product.price;
+      // Calculate price based on weight 
       let calculatedWeight = weight;
+      let displayWeight = weight;
+      let displayUnit = config.weightUnit;
+      let totalPrice = 0;
 
-      // Convert grams to kg if necessary
-      if (config.weightUnit === 'g' && product.unit === 'кг') {
-        calculatedWeight = weight / 1000;
+      // Determine the correct price calculation based on product unit
+      if (product.unit === 'кг') {
+        // Product is priced per kg
+        const pricePerKg = product.pricePerKg || product.price;
+        if (config.weightUnit === 'g') {
+          // Convert grams to kg for calculation
+          calculatedWeight = weight / 1000;
+          displayWeight = calculatedWeight;
+          displayUnit = 'кг';
+        }
+        totalPrice = Math.round(pricePerKg * calculatedWeight * 100) / 100;
+      } else if (product.unit === 'г') {
+        // Product is priced per gram
+        const pricePerGram = product.price;
+        if (config.weightUnit === 'g') {
+          // Weight is already in grams
+          calculatedWeight = weight;
+        }
+        totalPrice = Math.round(pricePerGram * calculatedWeight * 100) / 100;
+      } else if (product.unit === '100г') {
+        // Product is priced per 100g
+        const pricePer100g = product.price;
+        if (config.weightUnit === 'g') {
+          // Convert grams to 100g units
+          calculatedWeight = weight / 100;
+        }
+        totalPrice = Math.round(pricePer100g * calculatedWeight * 100) / 100;
+      } else {
+        // Default case - use price as is
+        totalPrice = Math.round(product.price * calculatedWeight * 100) / 100;
       }
-
-      const totalPrice = Math.round(pricePerUnit * calculatedWeight * 100) / 100;
 
       res.json({
         success: true,
@@ -2543,8 +2570,8 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         barcode: {
           raw: barcode,
           productCode,
-          weight: calculatedWeight,
-          weightUnit: product.unit === 'кг' ? 'кг' : config.weightUnit,
+          weight: displayWeight,
+          weightUnit: displayUnit,
           totalPrice
         }
       });
