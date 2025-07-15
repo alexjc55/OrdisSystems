@@ -303,6 +303,7 @@ const productSchema = z.object({
   price: z.string().min(1),
   unit: z.enum(["100g", "100ml", "piece", "portion", "kg"]).default("100g"),
   imageUrl: z.string().optional(),
+  barcode: z.string().optional(),
   isAvailable: z.boolean().default(true),
   availabilityStatus: z.enum(["available", "out_of_stock_today", "completely_unavailable"]).default("available"),
   isSpecialOffer: z.boolean().default(false),
@@ -5813,6 +5814,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       price: "",
       unit: "100g" as ProductUnit,
       imageUrl: "",
+      barcode: "",
       isAvailable: true,
       availabilityStatus: "available" as const,
       isSpecialOffer: false,
@@ -5851,6 +5853,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           price: initialData.price,
           unit: initialData.unit,
           imageUrl: initialData.imageUrl || "",
+          barcode: initialData.barcode || "",
           isAvailable: initialData.isAvailable ?? true,
           availabilityStatus: initialData.availabilityStatus || "available",
           isSpecialOffer: initialData.isSpecialOffer ?? false,
@@ -5868,6 +5871,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           price: "",
           unit: "100g" as ProductUnit,
           imageUrl: "",
+          barcode: "",
           isAvailable: true,
           availabilityStatus: "available" as const,
           isSpecialOffer: false,
@@ -6233,6 +6237,31 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
                     {adminT('products.dialog.recommendedSize')}
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="barcode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">Штрих-код</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Введите штрих-код товара"
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        handleFieldChange('barcode', e.target.value, false);
+                      }}
+                      className="text-sm"
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs text-gray-500">
+                    Штрих-код для весового оборудования (необязательно)
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
