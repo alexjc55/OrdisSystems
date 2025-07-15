@@ -1580,7 +1580,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             <Button 
               size="sm" 
               onClick={() => setShowBarcodeScanner(true)}
-              className="text-xs bg-blue-600 hover:bg-blue-700 text-white border-blue-600 w-full sm:w-auto"
+              className="text-xs btn-info w-full sm:w-auto"
             >
               <Camera className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
               {adminT('barcode.scanBarcode')}

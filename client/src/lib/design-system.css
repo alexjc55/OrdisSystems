@@ -200,6 +200,42 @@
     stroke-width: 1.5 !important;
   }
 
+  /* Info Button Variant */
+  .btn-info {
+    background-color: var(--color-info) !important;
+    color: white !important;
+    border: none !important;
+  }
+
+  .btn-info * {
+    color: white !important;
+  }
+  
+  .btn-info svg {
+    color: white !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
+  }
+
+  .btn-info:hover {
+    background-color: hsl(221, 83%, 48%) !important;
+    background-image: none !important;
+    box-shadow: var(--shadow-info) !important;
+    color: white !important;
+  }
+
+  .btn-info:hover * {
+    color: white !important;
+  }
+  
+  .btn-info:hover svg {
+    color: white !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
+  }
+
   /* Out of stock overlay styles */
   .out-of-stock-overlay {
     background-color: var(--color-out-of-stock) !important;
