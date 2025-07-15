@@ -2462,7 +2462,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       // Get barcode configuration
       const storeSettings = await storage.getStoreSettings();
       
-      if (!storeSettings?.barcodeEnabled) {
+      if (!storeSettings?.barcodeSystemEnabled) {
         return res.status(400).json({ message: 'Barcode system is disabled' });
       }
 
