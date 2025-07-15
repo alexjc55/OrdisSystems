@@ -2525,18 +2525,31 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       let displayUnit = config.weightUnit;
       let totalPrice = 0;
 
-      // Determine the correct price calculation based on product unit
-      if (product.unit === 'кг') {
+      // Determine the correct price calculation based on product unit (multilingual support)
+      const unitLower = product.unit.toLowerCase();
+      
+      // Debug logging
+      console.log(`Barcode parsing debug:`, {
+        productName: product.name,
+        productUnit: product.unit,
+        unitLower: unitLower,
+        price: product.price,
+        pricePerKg: product.pricePerKg,
+        weight: weight,
+        weightUnit: config.weightUnit
+      });
+      
+      if (unitLower === 'кг' || unitLower === 'kg') {
         // Product is priced per kg
         const pricePerKg = product.pricePerKg || product.price;
         if (config.weightUnit === 'g') {
           // Convert grams to kg for calculation
           calculatedWeight = weight / 1000;
           displayWeight = calculatedWeight;
-          displayUnit = 'кг';
+          displayUnit = product.unit;
         }
         totalPrice = Math.round(pricePerKg * calculatedWeight * 100) / 100;
-      } else if (product.unit === 'г') {
+      } else if (unitLower === 'г' || unitLower === 'g') {
         // Product is priced per gram
         const pricePerGram = product.price;
         if (config.weightUnit === 'g') {
@@ -2544,7 +2557,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
           calculatedWeight = weight;
         }
         totalPrice = Math.round(pricePerGram * calculatedWeight * 100) / 100;
-      } else if (product.unit === '100г' || product.unit === '100g') {
+      } else if (unitLower === '100г' || unitLower === '100g' || unitLower === '100 г' || unitLower === '100 g') {
         // Product is priced per 100g
         const pricePer100g = product.price;
         if (config.weightUnit === 'g') {
@@ -2554,8 +2567,14 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
           displayUnit = product.unit;
         }
         totalPrice = Math.round(pricePer100g * calculatedWeight * 100) / 100;
+      } else if (unitLower.includes('порция') || unitLower.includes('portion') || unitLower.includes('pc') || unitLower.includes('шт')) {
+        // Product is priced per piece/portion - use price as is
+        totalPrice = Math.round(product.price * 100) / 100;
+        calculatedWeight = 1;
+        displayWeight = weight;
+        displayUnit = config.weightUnit;
       } else {
-        // Default case - use price as is
+        // Default case - assume per unit pricing
         totalPrice = Math.round(product.price * calculatedWeight * 100) / 100;
       }
 
