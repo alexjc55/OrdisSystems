@@ -292,7 +292,8 @@ import {
   Smartphone,
   Bell,
   Image,
-  Loader2
+  Loader2,
+  QrCode
 } from "lucide-react";
 
 // Validation schemas
@@ -638,6 +639,50 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
             >
               <Eye className="h-3 w-3 mr-1" />
               {adminT('orders.orderDetails')}
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-xs h-7 flex-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                // Generate barcode for order
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                  // Simple barcode generation
+                  const barcodeText = `ORDER-${order.id}`;
+                  canvas.width = 300;
+                  canvas.height = 100;
+                  
+                  // White background
+                  ctx.fillStyle = '#ffffff';
+                  ctx.fillRect(0, 0, canvas.width, canvas.height);
+                  
+                  // Black bars (simple representation)
+                  ctx.fillStyle = '#000000';
+                  for (let i = 0; i < barcodeText.length; i++) {
+                    const x = 20 + (i * 15);
+                    const charCode = barcodeText.charCodeAt(i);
+                    const height = 50 + (charCode % 20);
+                    ctx.fillRect(x, 20, 3, height);
+                  }
+                  
+                  // Add text
+                  ctx.font = '14px Arial';
+                  ctx.textAlign = 'center';
+                  ctx.fillText(barcodeText, canvas.width / 2, 90);
+                  
+                  // Create download link
+                  const link = document.createElement('a');
+                  link.download = `order-${order.id}-barcode.png`;
+                  link.href = canvas.toDataURL();
+                  link.click();
+                }
+              }}
+            >
+              <QrCode className="h-3 w-3 mr-1" />
+              {adminT('barcode.download')}
             </Button>
             <Select
               value={order.status}
@@ -5309,42 +5354,42 @@ export default function AdminDashboard() {
                   <div className={isRTL ? 'text-right' : 'text-left'}>
                     <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                       <Settings className="h-5 w-5" />
-                      Системные настройки
+                      {adminT('settings.systemSettings')}
                     </CardTitle>
                     <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                      Управление производительностью и оптимизацией системы
+                      {adminT('settings.systemDescription')}
                     </CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Cache Management Section */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Управление кешем</h3>
+                    <h3 className="text-lg font-medium">{adminT('settings.cacheManagement')}</h3>
                     <p className="text-sm text-gray-600">
-                      Очистка кеша приложения для принудительного обновления пользователей
+                      {adminT('settings.cacheDescription')}
                     </p>
                     <div className="flex items-center gap-4">
                       <AdminCacheBuster />
                       <p className="text-xs text-gray-500">
-                        Используйте при добавлении новых функций или исправлении ошибок
+                        {adminT('settings.cacheUsage')}
                       </p>
                     </div>
                   </div>
 
                   {/* Image Optimization Section */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">📸 Оптимизация изображений</h3>
+                    <h3 className="text-lg font-medium">📸 {adminT('settings.imageOptimization')}</h3>
                     <p className="text-sm text-gray-600">
-                      Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки
+                      {adminT('settings.imageOptimizationDescription')}
                     </p>
                     
                     {optimizationResults && (
                       <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                        <h4 className="text-sm font-medium text-green-800 mb-2">Результаты последней оптимизации:</h4>
+                        <h4 className="text-sm font-medium text-green-800 mb-2">{adminT('settings.lastOptimizationResults')}:</h4>
                         <div className="text-sm text-green-700 space-y-1">
-                          <p>• Обработано: {optimizationResults.processed} из {optimizationResults.totalFiles} изображений</p>
-                          <p>• Ошибок: {optimizationResults.errors}</p>
-                          <p>• Экономия места: {optimizationResults.totalSavingsMB} MB ({optimizationResults.totalSavingsKB} KB)</p>
+                          <p>• {adminT('settings.processed')}: {optimizationResults.processed} {adminT('settings.of')} {optimizationResults.totalFiles} {adminT('settings.images')}</p>
+                          <p>• {adminT('settings.errors')}: {optimizationResults.errors}</p>
+                          <p>• {adminT('settings.spaceSavings')}: {optimizationResults.totalSavingsMB} MB ({optimizationResults.totalSavingsKB} KB)</p>
                         </div>
                       </div>
                     )}
@@ -5359,18 +5404,17 @@ export default function AdminDashboard() {
                         {isOptimizingImages ? (
                           <>
                             <Loader2 className="h-4 w-4 animate-spin" />
-                            Оптимизация...
+                            {adminT('settings.optimizing')}...
                           </>
                         ) : (
                           <>
                             <Image className="h-4 w-4" />
-                            Оптимизировать все изображения
+                            {adminT('settings.optimizeAllImages')}
                           </>
                         )}
                       </Button>
                       <div className="text-xs text-gray-500 max-w-sm">
-                        Создает сжатые версии (800px) и миниатюры (200px) для всех загруженных изображений.
-                        Экономия места: 50-80% от исходного размера.
+                        {adminT('settings.optimizationDetails')}
                       </div>
                     </div>
                   </div>
@@ -6248,10 +6292,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               name="barcode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm">Штрих-код</FormLabel>
+                  <FormLabel className="text-sm">{adminT('barcode.field')}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Введите штрих-код товара"
+                      placeholder={adminT('barcode.fieldDescription')}
                       {...field}
                       onChange={(e) => {
                         field.onChange(e.target.value);
@@ -6261,7 +6305,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     />
                   </FormControl>
                   <FormDescription className="text-xs text-gray-500">
-                    Штрих-код для весового оборудования (необязательно)
+                    {adminT('barcode.fieldDescription')}
                   </FormDescription>
                   <FormMessage className="text-xs" />
                 </FormItem>
