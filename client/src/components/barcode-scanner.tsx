@@ -134,62 +134,92 @@ export function BarcodeScanner({
     try {
       setIsInitializing(true);
       
-      // First, request camera permission explicitly
-      console.log('Requesting camera permission...');
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
-          facingMode: 'environment' // Prefer back camera
-        } 
+      // Создаем новый экземпляр сканера для каждого запуска
+      if (codeReaderRef.current) {
+        codeReaderRef.current.reset();
+      }
+      codeReaderRef.current = new BrowserMultiFormatReader();
+      
+      console.log('Starting mobile barcode scanner...');
+      
+      // Сначала попробуем получить список устройств
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        console.log('Available video devices:', videoDevices);
+        
+        if (videoDevices.length === 0) {
+          throw new Error('No video devices found');
+        }
+      } catch (devicesError) {
+        console.log('Could not enumerate devices, proceeding with default camera');
+      }
+      
+      // Используем более простые настройки для мобильных устройств
+      const constraints = {
+        video: {
+          facingMode: 'environment', // Принудительно задняя камера
+          width: { min: 640, ideal: 1280, max: 1920 },
+          height: { min: 480, ideal: 720, max: 1080 }
+        }
+      };
+
+      console.log('Requesting camera access...');
+      let stream;
+      
+      try {
+        // Попробуем получить заднюю камеру
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (backCameraError) {
+        console.log('Back camera failed, trying any camera:', backCameraError);
+        // Если задняя камера не работает, попробуем любую
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 1280 }, height: { ideal: 720 } }
+        });
+      }
+      
+      console.log('Camera stream obtained successfully');
+      
+      // Подключаем поток к видео элементу
+      videoRef.current.srcObject = stream;
+      
+      // Ждем загрузки метаданных видео
+      await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error('Video metadata loading timeout'));
+        }, 5000);
+        
+        videoRef.current!.onloadedmetadata = () => {
+          clearTimeout(timeout);
+          resolve(true);
+        };
       });
       
-      // Stop the stream immediately, we just needed permission
-      stream.getTracks().forEach(track => track.stop());
-      console.log('Camera permission granted');
+      await videoRef.current.play();
+      console.log('Video playback started');
       
-      if (!codeReaderRef.current) {
-        codeReaderRef.current = new BrowserMultiFormatReader();
-      }
-
-      const videoInputDevices = await codeReaderRef.current.listVideoInputDevices();
-      console.log('Available video devices:', videoInputDevices);
-      
-      if (videoInputDevices.length === 0) {
-        toast({
-          variant: "destructive",
-          title: adminT('barcode.noCameraFound'),
-          description: adminT('barcode.noCameraFoundDescription')
-        });
-        return;
-      }
-
       setIsScanning(true);
-      
-      // Use back camera if available
-      const backCamera = videoInputDevices.find(device => 
-        device.label.toLowerCase().includes('back') || 
-        device.label.toLowerCase().includes('rear') ||
-        device.label.toLowerCase().includes('environment')
-      );
-      
-      const selectedDevice = backCamera || videoInputDevices[0];
-      console.log('Selected device:', selectedDevice);
 
-      await codeReaderRef.current.decodeFromVideoDevice(
-        selectedDevice.deviceId,
+      // Начинаем сканирование
+      codeReaderRef.current.decodeFromVideoDevice(
+        undefined, // Используем уже активный поток
         videoRef.current,
         (result, error) => {
           if (result) {
+            console.log('Barcode detected:', result.getText());
             handleBarcodeDetected(result);
           }
-          if (error) {
-            console.log('Scanning error (normal):', error);
+          if (error && error.name !== 'NotFoundException') {
+            console.log('Scanner error:', error.name, error.message);
           }
         }
       );
+      
     } catch (error) {
       console.error('Error starting barcode scanner:', error);
       
       let errorMessage = adminT('barcode.scannerErrorDescription');
+      let errorTitle = adminT('barcode.scannerError');
       
       if (error.name === 'NotAllowedError') {
         errorMessage = adminT('barcode.cameraPermissionDenied');
@@ -197,11 +227,17 @@ export function BarcodeScanner({
         errorMessage = adminT('barcode.noCameraFoundDescription');
       } else if (error.name === 'NotReadableError') {
         errorMessage = adminT('barcode.cameraInUse');
+      } else if (error.name === 'OverconstrainedError') {
+        errorMessage = 'Камера не поддерживает требуемые настройки. Попробуйте другое устройство';
+      } else if (error.name === 'NotSupportedError') {
+        errorMessage = 'Браузер не поддерживает доступ к камере через HTTPS';
+      } else if (error.message && error.message.includes('timeout')) {
+        errorMessage = 'Время ожидания загрузки камеры истекло. Попробуйте еще раз';
       }
       
       toast({
         variant: "destructive",
-        title: adminT('barcode.scannerError'),
+        title: errorTitle,
         description: errorMessage
       });
     } finally {
@@ -210,9 +246,21 @@ export function BarcodeScanner({
   };
 
   const stopScanning = () => {
+    // Останавливаем сканер
     if (codeReaderRef.current) {
       codeReaderRef.current.reset();
     }
+    
+    // Останавливаем видео поток
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => {
+        track.stop();
+        console.log('Camera track stopped');
+      });
+      videoRef.current.srcObject = null;
+    }
+    
     setIsScanning(false);
   };
 
@@ -282,7 +330,7 @@ export function BarcodeScanner({
                 muted
                 autoPlay
                 controls={false}
-                style={{ transform: 'scaleX(-1)' }}
+                webkit-playsinline="true"
               />
               
               {isInitializing && (
