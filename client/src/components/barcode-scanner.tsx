@@ -44,16 +44,18 @@ export function BarcodeScanner({
     if (barcode.length !== 13) return null;
     
     const prefix = barcode.substring(0, 2); // "20"
-    const productCode = barcode.substring(2, 8); // "025874" (позиции 2-7, но substring использует 2-8)
-    const weightStr = barcode.substring(8, 13); // "02804" (позиции 8-12, но substring использует 8-13)
+    // ИСПРАВЛЕНИЕ: код товара "025874" находится в позициях 1-6 
+    const productCode = barcode.substring(1, 7); // "025874" 
+    // Вес находится в последних 5 цифрах (позиции 8-12)
+    const weightStr = barcode.substring(8, 13); // "02804"
     
-    console.log('Barcode parsing:', {
+    console.log('Barcode parsing CORRECTED:', {
       barcode,
       prefix,
       productCode,
       weightStr,
-      productCodePositions: '2-7 (substring 2-8)',
-      weightPositions: '8-12 (substring 8-13)'
+      positions: 'Product: chars 1-6, Weight: chars 8-12',
+      verification: 'For 2025874002804: product="025874", weight="02804"'
     });
     
     // Convert weight: 02804 -> 280.4g -> 280g (делим на 10 и округляем)
@@ -89,13 +91,20 @@ export function BarcodeScanner({
     const barcodeText = result.getText();
     const currentTime = Date.now();
     
-    // Дебаунсинг: игнорируем одинаковые штрих-коды в течение 2 секунд
-    if (barcodeText === lastScannedBarcode && currentTime - lastScanTime < 2000) {
+    // Увеличиваем дебаунсинг до 5 секунд для предотвращения дубликатов
+    if (barcodeText === lastScannedBarcode && currentTime - lastScanTime < 5000) {
+      console.log('Barcode debounced - ignoring duplicate scan:', barcodeText);
       return;
     }
     
     setLastScannedBarcode(barcodeText);
     setLastScanTime(currentTime);
+    
+    // Останавливаем сканирование немедленно после обнаружения штрих-кода
+    if (codeReaderRef.current) {
+      codeReaderRef.current.reset();
+    }
+    setIsScanning(false);
     
     console.log('Processing barcode:', barcodeText);
     
