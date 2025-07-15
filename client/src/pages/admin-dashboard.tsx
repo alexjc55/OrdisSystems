@@ -294,7 +294,8 @@ import {
   Bell,
   Image,
   Loader2,
-  QrCode
+  QrCode,
+  Camera
 } from "lucide-react";
 
 // Validation schemas
