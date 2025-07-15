@@ -36,6 +36,8 @@ export function BarcodeScanner({
     product: any;
     weight: number;
   }>({ isOpen: false, product: null, weight: 0 });
+  const [lastScannedBarcode, setLastScannedBarcode] = useState<string>('');
+  const [lastScanTime, setLastScanTime] = useState<number>(0);
 
   // Parse barcode format: 2025874002804 -> product: 025874, weight: 280g
   const parseBarcode = (barcode: string) => {
@@ -56,16 +58,37 @@ export function BarcodeScanner({
   };
 
   const findProductByBarcode = (productCode: string) => {
-    return allProducts.find(product => 
-      product.barcode === productCode || 
-      product.barcode === `0${productCode}` ||
-      product.barcode === productCode.replace(/^0+/, '')
-    );
+    // Нормализуем код продукта (убираем ведущие нули)
+    const normalizedCode = productCode.replace(/^0+/, '');
+    
+    return allProducts.find(product => {
+      if (!product.barcode) return false;
+      
+      // Нормализуем штрих-код продукта
+      const normalizedProductBarcode = product.barcode.replace(/^0+/, '');
+      
+      // Проверяем различные варианты совпадения
+      return product.barcode === productCode ||
+             product.barcode === `0${productCode}` ||
+             product.barcode === normalizedCode ||
+             normalizedProductBarcode === productCode ||
+             normalizedProductBarcode === normalizedCode;
+    });
   };
 
   const handleBarcodeDetected = (result: Result) => {
     const barcodeText = result.getText();
-    console.log('Barcode detected:', barcodeText);
+    const currentTime = Date.now();
+    
+    // Дебаунсинг: игнорируем одинаковые штрих-коды в течение 2 секунд
+    if (barcodeText === lastScannedBarcode && currentTime - lastScanTime < 2000) {
+      return;
+    }
+    
+    setLastScannedBarcode(barcodeText);
+    setLastScanTime(currentTime);
+    
+    console.log('Processing barcode:', barcodeText);
     
     const parsed = parseBarcode(barcodeText);
     if (!parsed) {
@@ -78,13 +101,19 @@ export function BarcodeScanner({
     }
 
     const { productCode, weight } = parsed;
+    console.log('Parsed product code:', productCode, 'weight:', weight);
     
     // Check if product exists in current order
-    const orderItem = orderItems.find(item => 
-      item.product?.barcode === productCode ||
-      item.product?.barcode === `0${productCode}` ||
-      item.product?.barcode === productCode.replace(/^0+/, '')
-    );
+    const orderItem = orderItems.find(item => {
+      const itemBarcode = item.product?.barcode;
+      if (!itemBarcode) return false;
+      
+      // Проверяем различные варианты кода
+      return itemBarcode === productCode ||
+             itemBarcode === `0${productCode}` ||
+             itemBarcode === productCode.replace(/^0+/, '') ||
+             itemBarcode.replace(/^0+/, '') === productCode.replace(/^0+/, '');
+    });
 
     if (orderItem) {
       // Update existing item weight
@@ -99,11 +128,14 @@ export function BarcodeScanner({
 
     // Check if product exists in store
     const product = findProductByBarcode(productCode);
+    console.log('Product found:', product ? product.name : 'NOT FOUND');
+    console.log('All products barcodes:', allProducts.map(p => ({ name: p.name, barcode: p.barcode })));
+    
     if (!product) {
       toast({
         variant: "destructive",
         title: adminT('barcode.productNotFound'),
-        description: adminT('barcode.productNotFoundDescription')
+        description: `${adminT('barcode.productNotFoundDescription')} (${productCode})`
       });
       return;
     }
@@ -260,6 +292,10 @@ export function BarcodeScanner({
       });
       videoRef.current.srcObject = null;
     }
+    
+    // Сбрасываем состояние дебаунсинга
+    setLastScannedBarcode('');
+    setLastScanTime(0);
     
     setIsScanning(false);
   };
