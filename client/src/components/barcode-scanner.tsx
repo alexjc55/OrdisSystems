@@ -220,6 +220,7 @@ export function BarcodeScanner({
 
     try {
       setIsInitializing(true);
+      console.log('🔍 Starting barcode scanner initialization...');
       
       // Создаем новый экземпляр сканера для каждого запуска
       if (codeReaderRef.current) {
@@ -227,99 +228,96 @@ export function BarcodeScanner({
       }
       codeReaderRef.current = new BrowserMultiFormatReader();
       
-      console.log('Starting mobile barcode scanner...');
-      
-      // Сначала попробуем получить список устройств
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(device => device.kind === 'videoinput');
-        console.log('Available video devices:', videoDevices);
-        
-        if (videoDevices.length === 0) {
-          throw new Error('No video devices found');
-        }
-      } catch (devicesError) {
-        console.log('Could not enumerate devices, proceeding with default camera');
+      // Проверяем доступность камеры
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('getUserMedia not supported in this browser');
       }
       
-      // Используем более простые настройки для мобильных устройств
+      console.log('📱 Requesting camera access...');
+      
+      // Используем простые настройки для максимальной совместимости
       const constraints = {
         video: {
-          facingMode: 'environment', // Принудительно задняя камера
-          width: { min: 640, ideal: 1280, max: 1920 },
-          height: { min: 480, ideal: 720, max: 1080 }
+          facingMode: 'environment', // Задняя камера
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
         }
       };
 
-      console.log('Requesting camera access...');
       let stream;
       
       try {
-        // Попробуем получить заднюю камеру
+        // Сначала пробуем заднюю камеру
         stream = await navigator.mediaDevices.getUserMedia(constraints);
+        console.log('✅ Back camera stream obtained');
       } catch (backCameraError) {
-        console.log('Back camera failed, trying any camera:', backCameraError);
-        // Если задняя камера не работает, попробуем любую
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: { ideal: 1280 }, height: { ideal: 720 } }
-        });
+        console.log('⚠️ Back camera failed, trying any camera:', backCameraError.message);
+        // Если не работает, пробуем любую камеру
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        console.log('✅ Front camera stream obtained');
       }
-      
-      console.log('Camera stream obtained successfully');
       
       // Подключаем поток к видео элементу
       videoRef.current.srcObject = stream;
+      console.log('🎥 Video stream connected to element');
       
-      // Ждем загрузки метаданных видео
+      // Ждем загрузки видео с таймаутом
       await new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
-          reject(new Error('Video metadata loading timeout'));
+          reject(new Error('Video loading timeout (5 seconds)'));
         }, 5000);
         
-        videoRef.current!.onloadedmetadata = () => {
+        const handleMetadata = () => {
           clearTimeout(timeout);
+          console.log('📐 Video metadata loaded:', videoRef.current?.videoWidth, 'x', videoRef.current?.videoHeight);
           resolve(true);
         };
+        
+        videoRef.current!.addEventListener('loadedmetadata', handleMetadata, { once: true });
       });
       
+      // Запускаем воспроизведение видео
       await videoRef.current.play();
-      console.log('Video playback started');
+      console.log('▶️ Video playback started successfully');
       
       setIsScanning(true);
 
-      // Начинаем сканирование
+      // Начинаем сканирование штрих-кодов
+      console.log('🔍 Starting barcode detection...');
       codeReaderRef.current.decodeFromVideoDevice(
         undefined, // Используем уже активный поток
         videoRef.current,
         (result, error) => {
           if (result) {
-            console.log('Barcode detected:', result.getText());
+            console.log('✅ Barcode detected:', result.getText());
             handleBarcodeDetected(result);
           }
           if (error && error.name !== 'NotFoundException') {
-            console.log('Scanner error:', error.name, error.message);
+            console.log('⚠️ Scanner error:', error.name, error.message);
           }
         }
       );
       
-    } catch (error) {
-      console.error('Error starting barcode scanner:', error);
+      console.log('🎯 Scanner fully initialized and ready');
       
-      let errorMessage = adminT('barcode.scannerErrorDescription');
-      let errorTitle = adminT('barcode.scannerError');
+    } catch (error) {
+      console.error('❌ Error starting barcode scanner:', error);
+      
+      let errorMessage = 'Не удалось запустить сканер штрих-кодов';
+      let errorTitle = 'Ошибка сканера';
       
       if (error.name === 'NotAllowedError') {
-        errorMessage = adminT('barcode.cameraPermissionDenied');
+        errorMessage = 'Доступ к камере запрещен. Разрешите доступ к камере и попробуйте снова';
       } else if (error.name === 'NotFoundError') {
-        errorMessage = adminT('barcode.noCameraFoundDescription');
+        errorMessage = 'Камера не найдена на этом устройстве';
       } else if (error.name === 'NotReadableError') {
-        errorMessage = adminT('barcode.cameraInUse');
+        errorMessage = 'Камера занята другим приложением';
       } else if (error.name === 'OverconstrainedError') {
-        errorMessage = 'Камера не поддерживает требуемые настройки. Попробуйте другое устройство';
-      } else if (error.name === 'NotSupportedError') {
-        errorMessage = 'Браузер не поддерживает доступ к камере через HTTPS';
+        errorMessage = 'Камера не поддерживает требуемые настройки';
       } else if (error.message && error.message.includes('timeout')) {
         errorMessage = 'Время ожидания загрузки камеры истекло. Попробуйте еще раз';
+      } else if (error.message && error.message.includes('getUserMedia')) {
+        errorMessage = 'Браузер не поддерживает доступ к камере или требуется HTTPS';
       }
       
       toast({
@@ -372,27 +370,56 @@ export function BarcodeScanner({
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-
-    const handleVideoLoad = () => {
-      console.log('Video loaded, dimensions:', video.videoWidth, 'x', video.videoHeight);
+    
+    const handleVideoError = (event: Event) => {
+      console.error('Video error:', event);
+      const video = event.target as HTMLVideoElement;
+      if (video.error) {
+        console.error('Video error details:', {
+          code: video.error.code,
+          message: video.error.message,
+          MEDIA_ERR_ABORTED: video.error.MEDIA_ERR_ABORTED,
+          MEDIA_ERR_NETWORK: video.error.MEDIA_ERR_NETWORK,
+          MEDIA_ERR_DECODE: video.error.MEDIA_ERR_DECODE,
+          MEDIA_ERR_SRC_NOT_SUPPORTED: video.error.MEDIA_ERR_SRC_NOT_SUPPORTED
+        });
+      }
     };
 
-    const handleVideoError = (error: Event) => {
-      console.error('Video error:', error);
+    const handleVideoLoadStart = () => {
+      console.log('Video load started');
+    };
+
+    const handleVideoLoadedMetadata = () => {
+      console.log('Video metadata loaded');
+    };
+
+    const handleVideoCanPlay = () => {
+      console.log('Video can play');
     };
 
     const handleVideoPlay = () => {
-      console.log('Video playing');
+      console.log('Video play started');
     };
 
-    video.addEventListener('loadedmetadata', handleVideoLoad);
+    const handleVideoPause = () => {
+      console.log('Video paused');
+    };
+
     video.addEventListener('error', handleVideoError);
+    video.addEventListener('loadstart', handleVideoLoadStart);
+    video.addEventListener('loadedmetadata', handleVideoLoadedMetadata);
+    video.addEventListener('canplay', handleVideoCanPlay);
     video.addEventListener('play', handleVideoPlay);
+    video.addEventListener('pause', handleVideoPause);
 
     return () => {
-      video.removeEventListener('loadedmetadata', handleVideoLoad);
       video.removeEventListener('error', handleVideoError);
+      video.removeEventListener('loadstart', handleVideoLoadStart);
+      video.removeEventListener('loadedmetadata', handleVideoLoadedMetadata);
+      video.removeEventListener('canplay', handleVideoCanPlay);
       video.removeEventListener('play', handleVideoPlay);
+      video.removeEventListener('pause', handleVideoPause);
     };
   }, [isOpen]);
 
