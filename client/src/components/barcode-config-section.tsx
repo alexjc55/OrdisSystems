@@ -73,11 +73,7 @@ export function BarcodeConfigSection() {
 
   // Mutation to update barcode configuration
   const updateBarcodeConfigMutation = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/admin/barcode/config', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    }).then(res => res.json()),
+    mutationFn: (data: any) => apiRequest('PUT', '/api/admin/barcode/config', data),
     onSuccess: () => {
       toast({
         title: "Конфигурация штрих-кодов обновлена",
@@ -123,11 +119,7 @@ export function BarcodeConfigSection() {
   const [testResult, setTestResult] = useState<any>(null);
   
   const testBarcodeMutation = useMutation({
-    mutationFn: (barcode: string) => apiRequest('/api/barcode/parse', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ barcode })
-    }).then(res => res.json()),
+    mutationFn: (barcode: string) => apiRequest('POST', '/api/barcode/parse', { barcode }),
     onSuccess: (data) => {
       setTestResult(data);
     },
