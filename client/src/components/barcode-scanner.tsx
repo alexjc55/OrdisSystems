@@ -233,11 +233,34 @@ export function BarcodeScanner({
       setCameraStatus('idle');
       addDebugMessage('🔍 Инициализация сканера...');
       
+      // Добавляем информацию о браузере и устройстве
+      const userAgent = navigator.userAgent;
+      const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+      const isAndroid = /Android/.test(userAgent);
+      const isChrome = /Chrome/.test(userAgent);
+      const isSafari = /Safari/.test(userAgent) && !isChrome;
+      
+      addDebugMessage(`📱 Устройство: ${isIOS ? 'iOS' : isAndroid ? 'Android' : 'Desktop'}`);
+      addDebugMessage(`🌐 Браузер: ${isChrome ? 'Chrome' : isSafari ? 'Safari' : 'Other'}`);
+      addDebugMessage(`🔒 HTTPS: ${window.location.protocol === 'https:' ? 'Да' : 'Нет'}`);
+      
       // Создаем новый экземпляр сканера для каждого запуска
       if (codeReaderRef.current) {
-        codeReaderRef.current.reset();
+        try {
+          codeReaderRef.current.reset();
+        } catch (resetError) {
+          addDebugMessage('⚠️ Ошибка сброса предыдущего сканера');
+        }
       }
+      
+      // Проверяем доступность ZXing
+      if (!BrowserMultiFormatReader) {
+        addDebugMessage('❌ ZXing библиотека не загружена');
+        throw new Error('ZXing library not available');
+      }
+      
       codeReaderRef.current = new BrowserMultiFormatReader();
+      addDebugMessage('✅ ZXing сканер создан');
       
       // Проверяем доступность камеры
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -278,21 +301,38 @@ export function BarcodeScanner({
       // Ждем загрузки видео с таймаутом
       await new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
+          addDebugMessage('⏱️ Таймаут загрузки видео (5 секунд)');
           reject(new Error('Video loading timeout (5 seconds)'));
         }, 5000);
         
         const handleMetadata = () => {
           clearTimeout(timeout);
-          const dimensions = `${videoRef.current?.videoWidth} x ${videoRef.current?.videoHeight}`;
-          addDebugMessage(`📐 Метаданные видео: ${dimensions}`);
+          const width = videoRef.current?.videoWidth || 0;
+          const height = videoRef.current?.videoHeight || 0;
+          addDebugMessage(`📐 Метаданные видео: ${width} x ${height}`);
+          
+          // Дополнительная проверка валидности размеров
+          if (width === 0 || height === 0) {
+            addDebugMessage('⚠️ Недействительные размеры видео');
+            reject(new Error('Invalid video dimensions'));
+            return;
+          }
+          
           resolve(true);
         };
         
         const handleError = (error: Event) => {
           clearTimeout(timeout);
-          addDebugMessage('❌ Ошибка видео элемента');
+          addDebugMessage('❌ Ошибка видео элемента при загрузке');
           reject(error);
         };
+        
+        // Проверим, не загружены ли уже метаданные
+        if (videoRef.current!.readyState >= 1) {
+          addDebugMessage('📊 Метаданные уже загружены');
+          handleMetadata();
+          return;
+        }
         
         videoRef.current!.addEventListener('loadedmetadata', handleMetadata, { once: true });
         videoRef.current!.addEventListener('error', handleError, { once: true });
@@ -302,12 +342,27 @@ export function BarcodeScanner({
       try {
         await videoRef.current.play();
         addDebugMessage('▶️ Воспроизведение видео запущено');
+        
+        // Проверяем состояние видео после запуска
+        const videoState = {
+          paused: videoRef.current.paused,
+          readyState: videoRef.current.readyState,
+          currentTime: videoRef.current.currentTime,
+          duration: videoRef.current.duration
+        };
+        addDebugMessage(`📊 Состояние видео: ${JSON.stringify(videoState)}`);
+        
       } catch (playError) {
-        addDebugMessage('⚠️ Ошибка воспроизведения, повторная попытка...');
+        addDebugMessage(`⚠️ Ошибка воспроизведения: ${playError.message}`);
         // Попробуем еще раз через небольшую задержку
-        await new Promise(resolve => setTimeout(resolve, 100));
-        await videoRef.current.play();
-        addDebugMessage('▶️ Воспроизведение запущено со второй попытки');
+        await new Promise(resolve => setTimeout(resolve, 200));
+        try {
+          await videoRef.current.play();
+          addDebugMessage('▶️ Воспроизведение запущено со второй попытки');
+        } catch (secondError) {
+          addDebugMessage(`❌ Повторная ошибка воспроизведения: ${secondError.message}`);
+          throw secondError;
+        }
       }
       
       setIsScanning(true);
@@ -317,7 +372,16 @@ export function BarcodeScanner({
       
       // Пытаемся использовать видео поток для сканирования
       try {
-        codeReaderRef.current.decodeFromVideoDevice(
+        addDebugMessage('🔍 Инициализация детектора штрих-кодов...');
+        
+        // Проверяем, что видео действительно воспроизводится
+        if (videoRef.current.paused || videoRef.current.readyState < 2) {
+          addDebugMessage('⚠️ Видео не готово, ожидаем...');
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        
+        // Основной метод сканирования
+        await codeReaderRef.current.decodeFromVideoDevice(
           undefined, // Используем уже активный поток
           videoRef.current,
           (result, error) => {
@@ -325,26 +389,32 @@ export function BarcodeScanner({
               addDebugMessage(`✅ Штрих-код обнаружен: ${result.getText()}`);
               handleBarcodeDetected(result);
             }
+            // Не показываем NotFoundException - это нормально
             if (error && error.name !== 'NotFoundException') {
               addDebugMessage(`⚠️ Ошибка сканера: ${error.name}`);
             }
           }
         );
         
-        addDebugMessage('🎯 Сканер полностью инициализирован');
+        addDebugMessage('🎯 Сканер полностью готов к работе');
       } catch (scannerError) {
-        addDebugMessage('⚠️ Ошибка инициализации сканера');
+        addDebugMessage(`⚠️ Ошибка инициализации сканера: ${scannerError.message}`);
         
         // Fallback: используем более простое сканирование
-        addDebugMessage('🔄 Попытка альтернативного метода...');
+        addDebugMessage('🔄 Переход на альтернативный метод сканирования...');
+        
+        let scanTimeoutId: NodeJS.Timeout;
         
         const scanLoop = () => {
-          if (!isScanning || !videoRef.current) return;
+          if (!isScanning || !videoRef.current) {
+            if (scanTimeoutId) clearTimeout(scanTimeoutId);
+            return;
+          }
           
           try {
-            codeReaderRef.current.decodeFromVideoElement(videoRef.current, (result, error) => {
+            codeReaderRef.current?.decodeFromVideoElement(videoRef.current, (result, error) => {
               if (result) {
-                addDebugMessage(`✅ Штрих-код (альтернативный метод): ${result.getText()}`);
+                addDebugMessage(`✅ Штрих-код найден: ${result.getText()}`);
                 handleBarcodeDetected(result);
               }
             });
@@ -353,12 +423,12 @@ export function BarcodeScanner({
           }
           
           // Повторяем сканирование каждые 500ms
-          setTimeout(scanLoop, 500);
+          scanTimeoutId = setTimeout(scanLoop, 500);
         };
         
         // Начинаем альтернативный цикл сканирования
         scanLoop();
-        addDebugMessage('🎯 Альтернативный сканер инициализирован');
+        addDebugMessage('🎯 Альтернативный сканер активирован');
       }
       
     } catch (error) {
