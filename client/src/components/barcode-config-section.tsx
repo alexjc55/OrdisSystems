@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { useAdminTranslation } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -30,6 +31,7 @@ import {
 export function BarcodeConfigSection() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t: adminT } = useAdminTranslation();
   
   // Query for current barcode configuration
   const { data: barcodeConfig, isLoading: isLoadingConfig } = useQuery({
@@ -76,15 +78,15 @@ export function BarcodeConfigSection() {
     mutationFn: (data: any) => apiRequest('PUT', '/api/admin/barcode/config', data),
     onSuccess: () => {
       toast({
-        title: "Конфигурация штрих-кодов обновлена",
-        description: "Настройки системы штрих-кодов успешно сохранены",
+        title: adminT('barcode.configUpdated'),
+        description: adminT('barcode.configUpdateSuccess'),
       });
       queryClient.invalidateQueries({ queryKey: ['/api/barcode/config'] });
     },
     onError: (error: any) => {
       toast({
-        title: "Ошибка обновления",
-        description: error.message || "Не удалось обновить конфигурацию штрих-кодов",
+        title: adminT('barcode.updateError'),
+        description: error.message || adminT('barcode.configUpdateError'),
         variant: "destructive",
       });
     }
@@ -152,7 +154,7 @@ export function BarcodeConfigSection() {
     return (
       <div className="flex items-center justify-center p-8">
         <Loader2 className="h-6 w-6 animate-spin" />
-        <span className="ml-2">Загрузка конфигурации...</span>
+        <span className="ml-2">{adminT('actions.loading')}</span>
       </div>
     );
   }
@@ -172,9 +174,9 @@ export function BarcodeConfigSection() {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Включить систему штрих-кодов</FormLabel>
+                      <FormLabel className="text-base">{adminT('barcode.enabled')}</FormLabel>
                       <FormDescription>
-                        Активировать сканирование штрих-кодов израильских весов
+                        {adminT('barcode.description')}
                       </FormDescription>
                     </div>
                     <FormControl>
@@ -194,7 +196,7 @@ export function BarcodeConfigSection() {
               name="productCodeStart"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Начало кода товара</FormLabel>
+                  <FormLabel>{adminT('barcode.productCodeStart')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -214,7 +216,7 @@ export function BarcodeConfigSection() {
               name="productCodeEnd"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Конец кода товара</FormLabel>
+                  <FormLabel>{adminT('barcode.productCodeEnd')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -235,7 +237,7 @@ export function BarcodeConfigSection() {
               name="weightStart"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Начало веса</FormLabel>
+                  <FormLabel>{adminT('barcode.weightStart')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -255,7 +257,7 @@ export function BarcodeConfigSection() {
               name="weightEnd"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Конец веса</FormLabel>
+                  <FormLabel>{adminT('barcode.weightEnd')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -276,11 +278,11 @@ export function BarcodeConfigSection() {
               name="weightUnit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Единица веса</FormLabel>
+                  <FormLabel>{adminT('barcode.weightUnit')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Выберите единицу" />
+                        <SelectValue placeholder={adminT('barcode.weightUnit')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -302,10 +304,10 @@ export function BarcodeConfigSection() {
             {updateBarcodeConfigMutation.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Сохранение...
+{adminT('actions.saving')}
               </>
             ) : (
-              'Сохранить конфигурацию'
+              adminT('actions.save')
             )}
           </Button>
         </form>
@@ -314,12 +316,12 @@ export function BarcodeConfigSection() {
       {/* Test Section */}
       {barcodeConfig?.enabled && (
         <div className="border-t pt-6">
-          <h4 className="text-lg font-medium mb-4">Тестирование штрих-кода</h4>
+          <h4 className="text-lg font-medium mb-4">{adminT('barcode.testBarcode')}</h4>
           
           <div className="space-y-4">
             <div className="flex gap-2">
               <Input
-                placeholder="Введите штрих-код для тестирования"
+                placeholder={adminT('barcode.testBarcodeDescription')}
                 value={testBarcode}
                 onChange={(e) => setTestBarcode(e.target.value)}
                 className="flex-1"
@@ -331,7 +333,7 @@ export function BarcodeConfigSection() {
                 {testBarcodeMutation.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  'Тест'
+                  adminT('barcode.testBarcodeButton')
                 )}
               </Button>
             </div>
@@ -390,17 +392,17 @@ export function BarcodeConfigSection() {
 
       {/* Configuration Preview */}
       <div className="bg-gray-50 p-4 rounded-lg">
-        <h4 className="font-medium mb-2">Текущая конфигурация:</h4>
+        <h4 className="font-medium mb-2">{adminT('barcode.currentConfig')}:</h4>
         <div className="text-sm text-gray-600 space-y-1">
-          <div>Статус: {barcodeConfig?.enabled ? '✅ Включено' : '❌ Отключено'}</div>
-          <div>Код товара: позиции {barcodeConfig?.productCodeStart}-{barcodeConfig?.productCodeEnd}</div>
-          <div>Вес: позиции {barcodeConfig?.weightStart}-{barcodeConfig?.weightEnd} ({barcodeConfig?.weightUnit})</div>
+          <div>{adminT('barcode.status')}: {barcodeConfig?.enabled ? '✅ Включено' : '❌ Отключено'}</div>
+          <div>{adminT('barcode.productCodePos')} {barcodeConfig?.productCodeStart}-{barcodeConfig?.productCodeEnd}</div>
+          <div>{adminT('barcode.weightPos')} {barcodeConfig?.weightStart}-{barcodeConfig?.weightEnd} ({barcodeConfig?.weightUnit})</div>
         </div>
       </div>
 
       {/* Help Section */}
       <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-        <h4 className="font-medium mb-2 text-blue-800">📝 Как работает система штрих-кодов:</h4>
+        <h4 className="font-medium mb-2 text-blue-800">📝 {adminT('barcode.sampleBarcode')}:</h4>
         <div className="text-sm text-blue-700 space-y-2">
           <div><strong>Формат штрих-кода:</strong> Позиции символов начинаются с 1</div>
           <div><strong>Пример:</strong> Для штрих-кода "0258741234" с настройками:</div>
@@ -409,7 +411,7 @@ export function BarcodeConfigSection() {
             <li>Вес (позиции 7-10): "1234" = 1234г</li>
           </ul>
           <div className="bg-blue-100 p-2 rounded border border-blue-300 mt-2">
-            <strong>Важно:</strong> Убедитесь что в карточке товара поле "Штрих-код" содержит тот же код, что и в штрих-коде от весов (в данном примере "25874")
+            <strong>{adminT('barcode.sampleBarcodeDescription')}</strong>
           </div>
         </div>
       </div>

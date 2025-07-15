@@ -2563,8 +2563,8 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         if (config.weightUnit === 'g') {
           // Convert grams to 100g units
           calculatedWeight = weight / 100;
-          displayWeight = calculatedWeight;
-          displayUnit = product.unit;
+          displayWeight = weight; // Show original weight in grams
+          displayUnit = 'г'; // Show in grams
         }
         totalPrice = Math.round(pricePer100g * calculatedWeight * 100) / 100;
       } else if (unitLower.includes('порция') || unitLower.includes('portion') || unitLower.includes('pc') || unitLower.includes('шт')) {
