@@ -273,32 +273,77 @@ export function BarcodeScanner({
           resolve(true);
         };
         
+        const handleError = (error: Event) => {
+          clearTimeout(timeout);
+          reject(error);
+        };
+        
         videoRef.current!.addEventListener('loadedmetadata', handleMetadata, { once: true });
+        videoRef.current!.addEventListener('error', handleError, { once: true });
       });
       
       // Запускаем воспроизведение видео
-      await videoRef.current.play();
-      console.log('▶️ Video playback started successfully');
+      try {
+        await videoRef.current.play();
+        console.log('▶️ Video playback started successfully');
+      } catch (playError) {
+        console.error('⚠️ Video play error:', playError);
+        // Попробуем еще раз через небольшую задержку
+        await new Promise(resolve => setTimeout(resolve, 100));
+        await videoRef.current.play();
+        console.log('▶️ Video playback started on second attempt');
+      }
       
       setIsScanning(true);
 
       // Начинаем сканирование штрих-кодов
       console.log('🔍 Starting barcode detection...');
-      codeReaderRef.current.decodeFromVideoDevice(
-        undefined, // Используем уже активный поток
-        videoRef.current,
-        (result, error) => {
-          if (result) {
-            console.log('✅ Barcode detected:', result.getText());
-            handleBarcodeDetected(result);
-          }
-          if (error && error.name !== 'NotFoundException') {
-            console.log('⚠️ Scanner error:', error.name, error.message);
-          }
-        }
-      );
       
-      console.log('🎯 Scanner fully initialized and ready');
+      // Пытаемся использовать видео поток для сканирования
+      try {
+        codeReaderRef.current.decodeFromVideoDevice(
+          undefined, // Используем уже активный поток
+          videoRef.current,
+          (result, error) => {
+            if (result) {
+              console.log('✅ Barcode detected:', result.getText());
+              handleBarcodeDetected(result);
+            }
+            if (error && error.name !== 'NotFoundException') {
+              console.log('⚠️ Scanner error:', error.name, error.message);
+            }
+          }
+        );
+        
+        console.log('🎯 Scanner fully initialized and ready');
+      } catch (scannerError) {
+        console.error('⚠️ Scanner initialization error:', scannerError);
+        
+        // Fallback: используем более простое сканирование
+        console.log('🔄 Trying alternative scanning method...');
+        
+        const scanLoop = () => {
+          if (!isScanning || !videoRef.current) return;
+          
+          try {
+            codeReaderRef.current.decodeFromVideoElement(videoRef.current, (result, error) => {
+              if (result) {
+                console.log('✅ Barcode detected (alternative method):', result.getText());
+                handleBarcodeDetected(result);
+              }
+            });
+          } catch (alternativeError) {
+            console.log('⚠️ Alternative scan error:', alternativeError);
+          }
+          
+          // Повторяем сканирование каждые 500ms
+          setTimeout(scanLoop, 500);
+        };
+        
+        // Начинаем альтернативный цикл сканирования
+        scanLoop();
+        console.log('🎯 Alternative scanner initialized');
+      }
       
     } catch (error) {
       console.error('❌ Error starting barcode scanner:', error);
@@ -331,19 +376,43 @@ export function BarcodeScanner({
   };
 
   const stopScanning = () => {
+    console.log('🛑 Stopping barcode scanner...');
+    
     // Останавливаем сканер
     if (codeReaderRef.current) {
-      codeReaderRef.current.reset();
+      try {
+        codeReaderRef.current.reset();
+        console.log('✅ Scanner reset complete');
+      } catch (error) {
+        console.error('⚠️ Error resetting scanner:', error);
+      }
+      codeReaderRef.current = null;
     }
     
     // Останавливаем видео поток
-    if (videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject as MediaStream;
-      stream.getTracks().forEach(track => {
-        track.stop();
-        console.log('Camera track stopped');
-      });
-      videoRef.current.srcObject = null;
+    if (videoRef.current) {
+      try {
+        // Останавливаем воспроизведение
+        videoRef.current.pause();
+        
+        // Останавливаем все треки
+        if (videoRef.current.srcObject) {
+          const stream = videoRef.current.srcObject as MediaStream;
+          stream.getTracks().forEach(track => {
+            track.stop();
+            console.log('🎥 Camera track stopped:', track.kind);
+          });
+          videoRef.current.srcObject = null;
+        }
+        
+        // Очищаем атрибуты видео
+        videoRef.current.removeAttribute('src');
+        videoRef.current.load();
+        
+        console.log('✅ Video cleanup complete');
+      } catch (error) {
+        console.error('⚠️ Error stopping video:', error);
+      }
     }
     
     // Сбрасываем состояние дебаунсинга
@@ -351,17 +420,25 @@ export function BarcodeScanner({
     setLastScanTime(0);
     
     setIsScanning(false);
+    setIsInitializing(false);
+    
+    console.log('✅ Scanner fully stopped');
   };
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
     if (isOpen && !isScanning && !isInitializing) {
       // Small delay to ensure video element is ready
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         startScanning();
       }, 100);
     }
     
     return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
       stopScanning();
     };
   }, [isOpen]);
@@ -440,7 +517,7 @@ export function BarcodeScanner({
           </DialogHeader>
           
           <div className="space-y-4">
-            <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '4/3' }}>
+            <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '4/3', minHeight: '300px' }}>
               <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
@@ -448,6 +525,10 @@ export function BarcodeScanner({
                 muted
                 autoPlay
                 controls={false}
+                onError={(e) => console.error('Video element error:', e)}
+                onLoadStart={() => console.log('Video load start')}
+                onCanPlay={() => console.log('Video can play')}
+                onPlaying={() => console.log('Video is playing')}
                 webkit-playsinline="true"
               />
               
