@@ -40,12 +40,21 @@ export function BarcodeScanner({
   }>({ isOpen: false, product: null, weight: 0 });
   const [lastScannedBarcode, setLastScannedBarcode] = useState<string>('');
   const [lastScanTime, setLastScanTime] = useState<number>(0);
+  const [debugMessages, setDebugMessages] = useState<string[]>([]);
+  const [cameraStatus, setCameraStatus] = useState<'idle' | 'requesting' | 'granted' | 'denied' | 'error'>('idle');
 
   // Query for barcode configuration
   const { data: barcodeConfig } = useQuery({
     queryKey: ['/api/barcode/config'],
     queryFn: () => apiRequest('GET', '/api/barcode/config'),
   });
+
+  // Debug logging function for mobile devices
+  const addDebugMessage = (message: string) => {
+    const timestamp = new Date().toLocaleTimeString();
+    setDebugMessages(prev => [...prev.slice(-4), `${timestamp}: ${message}`]);
+    console.log(message);
+  };
 
   // Parse barcode using dynamic configuration
   const parseBarcode = (barcode: string) => {
@@ -220,7 +229,9 @@ export function BarcodeScanner({
 
     try {
       setIsInitializing(true);
-      console.log('🔍 Starting barcode scanner initialization...');
+      setDebugMessages([]);
+      setCameraStatus('idle');
+      addDebugMessage('🔍 Инициализация сканера...');
       
       // Создаем новый экземпляр сканера для каждого запуска
       if (codeReaderRef.current) {
@@ -233,7 +244,8 @@ export function BarcodeScanner({
         throw new Error('getUserMedia not supported in this browser');
       }
       
-      console.log('📱 Requesting camera access...');
+      addDebugMessage('📱 Запрос доступа к камере...');
+      setCameraStatus('requesting');
       
       // Используем простые настройки для максимальной совместимости
       const constraints = {
@@ -249,17 +261,19 @@ export function BarcodeScanner({
       try {
         // Сначала пробуем заднюю камеру
         stream = await navigator.mediaDevices.getUserMedia(constraints);
-        console.log('✅ Back camera stream obtained');
+        addDebugMessage('✅ Задняя камера получена');
       } catch (backCameraError) {
-        console.log('⚠️ Back camera failed, trying any camera:', backCameraError.message);
+        addDebugMessage('⚠️ Задняя камера не работает, пробуем любую...');
         // Если не работает, пробуем любую камеру
         stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        console.log('✅ Front camera stream obtained');
+        addDebugMessage('✅ Передняя камера получена');
       }
+      
+      setCameraStatus('granted');
       
       // Подключаем поток к видео элементу
       videoRef.current.srcObject = stream;
-      console.log('🎥 Video stream connected to element');
+      addDebugMessage('🎥 Поток подключен к видео элементу');
       
       // Ждем загрузки видео с таймаутом
       await new Promise((resolve, reject) => {
@@ -269,12 +283,14 @@ export function BarcodeScanner({
         
         const handleMetadata = () => {
           clearTimeout(timeout);
-          console.log('📐 Video metadata loaded:', videoRef.current?.videoWidth, 'x', videoRef.current?.videoHeight);
+          const dimensions = `${videoRef.current?.videoWidth} x ${videoRef.current?.videoHeight}`;
+          addDebugMessage(`📐 Метаданные видео: ${dimensions}`);
           resolve(true);
         };
         
         const handleError = (error: Event) => {
           clearTimeout(timeout);
+          addDebugMessage('❌ Ошибка видео элемента');
           reject(error);
         };
         
@@ -285,19 +301,19 @@ export function BarcodeScanner({
       // Запускаем воспроизведение видео
       try {
         await videoRef.current.play();
-        console.log('▶️ Video playback started successfully');
+        addDebugMessage('▶️ Воспроизведение видео запущено');
       } catch (playError) {
-        console.error('⚠️ Video play error:', playError);
+        addDebugMessage('⚠️ Ошибка воспроизведения, повторная попытка...');
         // Попробуем еще раз через небольшую задержку
         await new Promise(resolve => setTimeout(resolve, 100));
         await videoRef.current.play();
-        console.log('▶️ Video playback started on second attempt');
+        addDebugMessage('▶️ Воспроизведение запущено со второй попытки');
       }
       
       setIsScanning(true);
 
       // Начинаем сканирование штрих-кодов
-      console.log('🔍 Starting barcode detection...');
+      addDebugMessage('🔍 Запуск детектора штрих-кодов...');
       
       // Пытаемся использовать видео поток для сканирования
       try {
@@ -306,21 +322,21 @@ export function BarcodeScanner({
           videoRef.current,
           (result, error) => {
             if (result) {
-              console.log('✅ Barcode detected:', result.getText());
+              addDebugMessage(`✅ Штрих-код обнаружен: ${result.getText()}`);
               handleBarcodeDetected(result);
             }
             if (error && error.name !== 'NotFoundException') {
-              console.log('⚠️ Scanner error:', error.name, error.message);
+              addDebugMessage(`⚠️ Ошибка сканера: ${error.name}`);
             }
           }
         );
         
-        console.log('🎯 Scanner fully initialized and ready');
+        addDebugMessage('🎯 Сканер полностью инициализирован');
       } catch (scannerError) {
-        console.error('⚠️ Scanner initialization error:', scannerError);
+        addDebugMessage('⚠️ Ошибка инициализации сканера');
         
         // Fallback: используем более простое сканирование
-        console.log('🔄 Trying alternative scanning method...');
+        addDebugMessage('🔄 Попытка альтернативного метода...');
         
         const scanLoop = () => {
           if (!isScanning || !videoRef.current) return;
@@ -328,12 +344,12 @@ export function BarcodeScanner({
           try {
             codeReaderRef.current.decodeFromVideoElement(videoRef.current, (result, error) => {
               if (result) {
-                console.log('✅ Barcode detected (alternative method):', result.getText());
+                addDebugMessage(`✅ Штрих-код (альтернативный метод): ${result.getText()}`);
                 handleBarcodeDetected(result);
               }
             });
           } catch (alternativeError) {
-            console.log('⚠️ Alternative scan error:', alternativeError);
+            addDebugMessage('⚠️ Ошибка альтернативного сканирования');
           }
           
           // Повторяем сканирование каждые 500ms
@@ -342,27 +358,35 @@ export function BarcodeScanner({
         
         // Начинаем альтернативный цикл сканирования
         scanLoop();
-        console.log('🎯 Alternative scanner initialized');
+        addDebugMessage('🎯 Альтернативный сканер инициализирован');
       }
       
     } catch (error) {
-      console.error('❌ Error starting barcode scanner:', error);
+      setCameraStatus('error');
+      addDebugMessage(`❌ Ошибка сканера: ${error.message}`);
       
       let errorMessage = 'Не удалось запустить сканер штрих-кодов';
       let errorTitle = 'Ошибка сканера';
       
       if (error.name === 'NotAllowedError') {
         errorMessage = 'Доступ к камере запрещен. Разрешите доступ к камере и попробуйте снова';
+        setCameraStatus('denied');
+        addDebugMessage('🚫 Доступ к камере запрещен');
       } else if (error.name === 'NotFoundError') {
         errorMessage = 'Камера не найдена на этом устройстве';
+        addDebugMessage('📵 Камера не найдена');
       } else if (error.name === 'NotReadableError') {
         errorMessage = 'Камера занята другим приложением';
+        addDebugMessage('🔒 Камера занята');
       } else if (error.name === 'OverconstrainedError') {
         errorMessage = 'Камера не поддерживает требуемые настройки';
+        addDebugMessage('⚙️ Настройки камеры не поддерживаются');
       } else if (error.message && error.message.includes('timeout')) {
         errorMessage = 'Время ожидания загрузки камеры истекло. Попробуйте еще раз';
+        addDebugMessage('⏱️ Таймаут загрузки камеры');
       } else if (error.message && error.message.includes('getUserMedia')) {
         errorMessage = 'Браузер не поддерживает доступ к камере или требуется HTTPS';
+        addDebugMessage('🌐 Проблема с браузером/HTTPS');
       }
       
       toast({
@@ -376,15 +400,15 @@ export function BarcodeScanner({
   };
 
   const stopScanning = () => {
-    console.log('🛑 Stopping barcode scanner...');
+    addDebugMessage('🛑 Остановка сканера...');
     
     // Останавливаем сканер
     if (codeReaderRef.current) {
       try {
         codeReaderRef.current.reset();
-        console.log('✅ Scanner reset complete');
+        addDebugMessage('✅ Сканер сброшен');
       } catch (error) {
-        console.error('⚠️ Error resetting scanner:', error);
+        addDebugMessage('⚠️ Ошибка сброса сканера');
       }
       codeReaderRef.current = null;
     }
@@ -400,7 +424,7 @@ export function BarcodeScanner({
           const stream = videoRef.current.srcObject as MediaStream;
           stream.getTracks().forEach(track => {
             track.stop();
-            console.log('🎥 Camera track stopped:', track.kind);
+            addDebugMessage(`🎥 Трек камеры остановлен: ${track.kind}`);
           });
           videoRef.current.srcObject = null;
         }
@@ -409,9 +433,9 @@ export function BarcodeScanner({
         videoRef.current.removeAttribute('src');
         videoRef.current.load();
         
-        console.log('✅ Video cleanup complete');
+        addDebugMessage('✅ Видео очищено');
       } catch (error) {
-        console.error('⚠️ Error stopping video:', error);
+        addDebugMessage('⚠️ Ошибка остановки видео');
       }
     }
     
@@ -421,8 +445,9 @@ export function BarcodeScanner({
     
     setIsScanning(false);
     setIsInitializing(false);
+    setCameraStatus('idle');
     
-    console.log('✅ Scanner fully stopped');
+    addDebugMessage('✅ Сканер полностью остановлен');
   };
 
   useEffect(() => {
@@ -552,7 +577,43 @@ export function BarcodeScanner({
               {adminT('barcode.scanInstructions')}
             </div>
             
+            {/* Панель отладки для мобильных устройств */}
+            {debugMessages.length > 0 && (
+              <div className="bg-gray-50 border rounded-lg p-3 text-xs max-h-32 overflow-y-auto">
+                <div className="font-medium mb-2 text-gray-700">Диагностика:</div>
+                {debugMessages.map((message, index) => (
+                  <div key={index} className="text-gray-600 mb-1">
+                    {message}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Индикатор статуса камеры */}
+            <div className="flex items-center justify-center gap-2 text-sm">
+              <div className={`w-2 h-2 rounded-full ${
+                cameraStatus === 'idle' ? 'bg-gray-400' :
+                cameraStatus === 'requesting' ? 'bg-yellow-400' :
+                cameraStatus === 'granted' ? 'bg-green-400' :
+                cameraStatus === 'denied' ? 'bg-red-400' :
+                'bg-red-400'
+              }`}></div>
+              <span>
+                {cameraStatus === 'idle' ? 'Ожидание' :
+                 cameraStatus === 'requesting' ? 'Запрос доступа к камере...' :
+                 cameraStatus === 'granted' ? 'Камера активна' :
+                 cameraStatus === 'denied' ? 'Доступ запрещен' :
+                 'Ошибка камеры'}
+              </span>
+            </div>
+            
             <div className="flex justify-end gap-2">
+              {(cameraStatus === 'error' || cameraStatus === 'denied') && (
+                <Button variant="outline" onClick={startScanning}>
+                  <Camera className="h-4 w-4 mr-2" />
+                  Повторить
+                </Button>
+              )}
               <Button variant="outline" onClick={handleClose}>
                 <X className="h-4 w-4 mr-2" />
                 {adminT('actions.cancel')}
