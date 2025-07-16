@@ -129,8 +129,11 @@ export function BarcodeScanner({
     const barcodeText = result.getText();
     const currentTime = Date.now();
     
+    addDebugMessage(`🎯 Обработка штрих-кода: ${barcodeText}`);
+    
     // Увеличиваем дебаунсинг до 5 секунд для предотвращения дубликатов
     if (barcodeText === lastScannedBarcode && currentTime - lastScanTime < 5000) {
+      addDebugMessage(`⏳ Дебаунсинг: игнорируем дубликат ${barcodeText}`);
       console.log('Barcode debounced - ignoring duplicate scan:', barcodeText);
       return;
     }
@@ -145,6 +148,7 @@ export function BarcodeScanner({
     
     const parsed = parseBarcode(barcodeText);
     if (!parsed) {
+      addDebugMessage(`❌ Неверный формат штрих-кода: ${barcodeText}`);
       // Закрываем сканер и показываем ошибку
       onClose();
       toast({
@@ -154,11 +158,15 @@ export function BarcodeScanner({
       });
       return;
     }
+    
+    addDebugMessage(`✅ Штрих-код распознан: код=${parsed.productCode}, вес=${parsed.weight}г`);
 
     const { productCode, weight } = parsed;
     console.log('Parsed product code:', productCode, 'weight:', weight);
     
     // Check if product exists in current order
+    addDebugMessage(`🔍 Проверка в заказе: код=${productCode}, товаров=${orderItems.length}`);
+    
     const orderItem = orderItems.find(item => {
       const itemBarcode = item.product?.barcode;
       if (!itemBarcode) return false;
@@ -171,6 +179,7 @@ export function BarcodeScanner({
     });
 
     if (orderItem) {
+      addDebugMessage(`✅ Товар найден в заказе: ${orderItem.product.name}`);
       // Update existing item weight - закрываем сканер и обновляем
       onUpdateItem(orderItem.productId, weight);
       onClose();
@@ -180,6 +189,8 @@ export function BarcodeScanner({
       });
       return;
     }
+    
+    addDebugMessage(`ℹ️ Товар не найден в заказе, ищем в базе...`);
 
     // Check if product exists in store
     const product = findProductByBarcode(productCode);
@@ -187,6 +198,8 @@ export function BarcodeScanner({
     console.log('All products barcodes:', allProducts.map(p => ({ name: p.name, barcode: p.barcode })));
     
     if (!product) {
+      addDebugMessage(`❌ Продукт не найден: код=${productCode}`);
+      addDebugMessage(`📝 Всего продуктов в базе: ${allProducts.length}`);
       // Закрываем сканер и показываем ошибку
       onClose();
       toast({
@@ -196,8 +209,11 @@ export function BarcodeScanner({
       });
       return;
     }
+    
+    addDebugMessage(`✅ Продукт найден: ${product.name}`);
 
     // Product exists but not in order - закрываем сканер и показываем диалог добавления
+    addDebugMessage(`🎯 Показ диалога добавления: ${product.name}, ${weight}г`);
     onClose();
     setConfirmDialog({
       isOpen: true,
@@ -414,9 +430,16 @@ export function BarcodeScanner({
               codeReaderRef.current.decodeFromVideoElement(videoRef.current)
                 .then((result) => {
                   if (result) {
-                    addDebugMessage(`✅ Штрих-код обнаружен: ${result.getText()}`);
+                    const barcodeText = result.getText();
+                    addDebugMessage(`✅ Штрих-код обнаружен: ${barcodeText}`);
+                    addDebugMessage(`🔍 Формат: ${result.getFormat()}`);
                     shouldContinueScanning = false; // Останавливаем цикл
-                    handleBarcodeDetected(result);
+                    
+                    // Добавляем дополнительную диагностику
+                    setTimeout(() => {
+                      addDebugMessage(`🔄 Обработка штрих-кода: ${barcodeText}`);
+                      handleBarcodeDetected(result);
+                    }, 100);
                   }
                 })
                 .catch((error) => {
