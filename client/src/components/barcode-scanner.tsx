@@ -59,11 +59,26 @@ export function BarcodeScanner({
 
   // Parse barcode using dynamic configuration
   const parseBarcode = (barcode: string) => {
-    if (!barcodeConfig || !barcodeConfig.enabled) return null;
+    addDebugMessage(`🔧 parseBarcode: получен ${barcode}`);
+    
+    if (!barcodeConfig) {
+      addDebugMessage(`❌ parseBarcode: нет конфигурации`);
+      return null;
+    }
+    
+    if (!barcodeConfig.enabled) {
+      addDebugMessage(`❌ parseBarcode: конфигурация отключена`);
+      return null;
+    }
     
     // Validate barcode length
     const minLength = Math.max(barcodeConfig.productCodeEnd, barcodeConfig.weightEnd);
-    if (barcode.length < minLength) return null;
+    addDebugMessage(`🔧 parseBarcode: длина ${barcode.length}, минимум ${minLength}`);
+    
+    if (barcode.length < minLength) {
+      addDebugMessage(`❌ parseBarcode: штрих-код слишком короткий`);
+      return null;
+    }
     
     // Extract product code using config (пользователь видит позиции 1-based, система использует 0-based)
     const productCode = barcode.substring(
@@ -131,6 +146,15 @@ export function BarcodeScanner({
     const currentTime = Date.now();
     
     addDebugMessage(`🎯 Обработка штрих-кода: ${barcodeText}`);
+    addDebugMessage(`🔧 Конфигурация: ${barcodeConfig ? 'загружена' : 'НЕ загружена'}`);
+    
+    // Проверяем конфигурацию
+    if (!barcodeConfig) {
+      addDebugMessage(`❌ Конфигурация штрих-кода не загружена`);
+      return;
+    }
+    
+    addDebugMessage(`🔧 Включен: ${barcodeConfig.enabled}`);
     
     // Увеличиваем дебаунсинг до 5 секунд для предотвращения дубликатов
     if (barcodeText === lastScannedBarcode && currentTime - lastScanTime < 5000) {
