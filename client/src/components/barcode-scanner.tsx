@@ -387,14 +387,16 @@ export function BarcodeScanner({
         
         addDebugMessage(`📹 Видео трек: ${videoTrack.label}`);
         
-        // Используем агрессивное сканирование
+        // Используем агрессивное сканирование с локальным управлением
         let scanTimeoutId: NodeJS.Timeout;
         let scanAttempts = 0;
+        let shouldContinueScanning = true;
         
         const aggressiveScanLoop = () => {
-          if (!isScanning || !videoRef.current) {
+          // Проверяем актуальное состояние без замыкания
+          if (!shouldContinueScanning || !videoRef.current || !codeReaderRef.current) {
             if (scanTimeoutId) clearTimeout(scanTimeoutId);
-            addDebugMessage('🛑 Сканирование остановлено');
+            addDebugMessage('🛑 Сканирование остановлено (флаг или нет ресурсов)');
             return;
           }
           
@@ -403,8 +405,8 @@ export function BarcodeScanner({
           try {
             // Проверяем готовность видео
             if (videoRef.current.readyState >= 2 && videoRef.current.videoWidth > 0) {
-              // Показываем прогресс каждые 50 попыток
-              if (scanAttempts % 50 === 0) {
+              // Показываем прогресс каждые 20 попыток для лучшей диагностики
+              if (scanAttempts % 20 === 0) {
                 addDebugMessage(`🔄 Активное сканирование (попытка ${scanAttempts})`);
               }
               
@@ -413,6 +415,7 @@ export function BarcodeScanner({
                 .then((result) => {
                   if (result) {
                     addDebugMessage(`✅ Штрих-код обнаружен: ${result.getText()}`);
+                    shouldContinueScanning = false; // Останавливаем цикл
                     handleBarcodeDetected(result);
                   }
                 })
@@ -421,18 +424,18 @@ export function BarcodeScanner({
                   if (!error.name.includes('NotFoundException') && 
                       !error.name.includes('TypeError') && 
                       !error.message.includes('No MultiFormat Readers')) {
-                    if (scanAttempts % 100 === 0) {
+                    if (scanAttempts % 50 === 0) {
                       addDebugMessage(`⚠️ Ошибка: ${error.name}`);
                     }
                   }
                 });
             } else {
-              if (scanAttempts % 50 === 0) {
+              if (scanAttempts % 20 === 0) {
                 addDebugMessage(`⚠️ Видео не готово: readyState=${videoRef.current.readyState}, width=${videoRef.current.videoWidth}`);
               }
             }
           } catch (error) {
-            if (scanAttempts % 100 === 0) {
+            if (scanAttempts % 50 === 0) {
               addDebugMessage(`❌ Критическая ошибка сканирования: ${error.message}`);
             }
           }
@@ -442,6 +445,7 @@ export function BarcodeScanner({
         };
         
         // Запускаем агрессивный цикл сканирования
+        addDebugMessage('🚀 Запуск цикла агрессивного сканирования...');
         aggressiveScanLoop();
         
         addDebugMessage('🎯 Агрессивный сканер активен - наведите камеру на штрих-код!');
@@ -834,14 +838,18 @@ export function BarcodeScanner({
               </Button>
               
               <Button variant="outline" onClick={() => {
-                addDebugMessage('🚀 Принудительный запуск сканирования');
-                if (!isScanning) {
+                addDebugMessage('🚀 Принудительный сброс и перезапуск');
+                // Принудительно сбрасываем состояние
+                setIsScanning(false);
+                setIsInitializing(false);
+                
+                // Перезапускаем после небольшой задержки
+                setTimeout(() => {
+                  addDebugMessage('🔄 Перезапуск сканирования...');
                   startScanning();
-                } else {
-                  addDebugMessage('⚠️ Сканирование уже активно');
-                }
+                }, 100);
               }}>
-                🔄 Старт
+                🔄 Перезапуск
               </Button>
               <Button variant="outline" onClick={handleClose}>
                 <X className="h-4 w-4 mr-2" />
