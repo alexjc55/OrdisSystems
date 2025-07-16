@@ -405,8 +405,8 @@ export function BarcodeScanner({
           try {
             // Проверяем готовность видео
             if (videoRef.current.readyState >= 2 && videoRef.current.videoWidth > 0) {
-              // Показываем прогресс каждые 25 попыток
-              if (scanAttempts % 25 === 0) {
+              // Показываем прогресс каждые 50 попыток
+              if (scanAttempts % 50 === 0) {
                 addDebugMessage(`🔄 Сканирование активно (попытка ${scanAttempts})`);
               }
               
@@ -750,7 +750,7 @@ export function BarcodeScanner({
           </DialogHeader>
           
           <div className="space-y-3">
-            <div className="relative bg-black rounded-lg overflow-hidden" style={{ height: '200px', width: '100%' }}>
+            <div className="relative bg-black rounded-lg overflow-hidden" style={{ height: '200px', width: '100%', maxWidth: '100%', maxHeight: '200px' }}>
               <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
@@ -761,8 +761,12 @@ export function BarcodeScanner({
                 style={{ 
                   opacity: 1,
                   filter: 'none',
-                  transform: 'none',
-                  backgroundColor: 'transparent'
+                  transform: 'scaleX(-1)',
+                  backgroundColor: 'transparent',
+                  maxWidth: '100%',
+                  maxHeight: '200px',
+                  width: '100%',
+                  height: '200px'
                 }}
                 onError={(e) => addDebugMessage('❌ Ошибка video элемента')}
                 onLoadStart={() => addDebugMessage('📺 Загрузка видео начата')}
@@ -842,6 +846,16 @@ export function BarcodeScanner({
                   Повторить
                 </Button>
               )}
+              <Button variant="outline" onClick={() => {
+                addDebugMessage('🧪 Тест: имитация штрих-кода 2025874002804');
+                const mockResult = {
+                  getText: () => '2025874002804',
+                  getFormat: () => 'EAN_13'
+                };
+                handleBarcodeDetected(mockResult);
+              }}>
+                🧪 Тест
+              </Button>
               <Button variant="outline" onClick={handleClose}>
                 <X className="h-4 w-4 mr-2" />
                 {adminT('actions.cancel')}
