@@ -481,8 +481,12 @@ export function BarcodeScanner({
               
               // Основной метод сканирования с callback
               try {
-                // Встроенная функция callback для исключения проблем с областью видимости
-                codeReaderRef.current.decodeFromVideoElement(videoRef.current, function(result, error) {
+                // Максимальная диагностика callback
+                addDebugMessage(`🔧 Создание callback для ZXing`);
+                
+                const maxDebugCallback = (result, error) => {
+                  addDebugMessage(`🔔 CALLBACK ВЫЗВАН! result: ${!!result}, error: ${!!error}`);
+                  
                   if (result) {
                     const barcodeText = result.getText();
                     addDebugMessage(`✅ Штрих-код обнаружен: ${barcodeText}`);
@@ -495,12 +499,7 @@ export function BarcodeScanner({
                     // Прямой вызов функции обработки
                     try {
                       addDebugMessage(`🚀 Запуск handleBarcodeDetected`);
-                      // Создаем результат для обработки
-                      const processedResult = {
-                        getText: () => barcodeText,
-                        getFormat: () => result.getFormat()
-                      };
-                      handleBarcodeDetected(processedResult as any);
+                      handleBarcodeDetected(result);
                     } catch (handlerError) {
                       addDebugMessage(`❌ Ошибка обработки: ${handlerError.message}`);
                       console.error('Handler error:', handlerError);
@@ -517,7 +516,10 @@ export function BarcodeScanner({
                       }
                     }
                   }
-                });
+                };
+                
+                addDebugMessage(`🔧 Передача callback в ZXing`);
+                codeReaderRef.current.decodeFromVideoElement(videoRef.current, maxDebugCallback);
               } catch (scanError) {
                 if (scanAttempts % 100 === 0) {
                   addDebugMessage(`⚠️ Критическая ошибка: ${scanError.message}`);
