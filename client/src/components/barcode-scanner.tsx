@@ -162,6 +162,8 @@ export function BarcodeScanner({
       return;
     }
     
+    addDebugMessage(`✅ Конфигурация проверена успешно`);
+    
     // Увеличиваем дебаунсинг до 5 секунд для предотвращения дубликатов
     if (barcodeText === lastScannedBarcode && currentTime - lastScanTime < 5000) {
       addDebugMessage(`⏳ Дебаунсинг: игнорируем дубликат ${barcodeText}`);
@@ -169,11 +171,14 @@ export function BarcodeScanner({
       return;
     }
     
+    addDebugMessage(`✅ Дебаунсинг пройден`);
+    
     setLastScannedBarcode(barcodeText);
     setLastScanTime(currentTime);
     
     // Останавливаем сканирование немедленно после обнаружения штрих-кода
     setIsScanning(false);
+    addDebugMessage(`✅ Сканирование остановлено`);
     
     console.log('Processing barcode:', barcodeText);
     addDebugMessage(`🔧 Вызов parseBarcode для: ${barcodeText}`);
@@ -183,6 +188,7 @@ export function BarcodeScanner({
     
     if (!parsed) {
       addDebugMessage(`❌ Неверный формат штрих-кода: ${barcodeText}`);
+      addDebugMessage(`🔧 Закрытие сканера из-за неверного формата`);
       // Закрываем сканер и показываем ошибку
       onClose();
       toast({
@@ -193,9 +199,12 @@ export function BarcodeScanner({
       return;
     }
     
-    addDebugMessage(`✅ Штрих-код распознан: код=${parsed.productCode}, вес=${parsed.weight}г`);
-
+    addDebugMessage(`✅ Штрих-код успешно распарсен`);
+    
+    // Продолжаем выполнение с более подробной диагностикой
     const { productCode, weight } = parsed;
+    addDebugMessage(`📊 Извлечено: код=${productCode}, вес=${weight}г`);
+    
     console.log('Parsed product code:', productCode, 'weight:', weight);
     
     // Check if product exists in current order
