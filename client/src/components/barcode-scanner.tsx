@@ -420,7 +420,7 @@ export function BarcodeScanner({
         let scanAttempts = 0;
         let shouldContinueScanning = true;
         
-        const aggressiveScanLoop = async () => {
+        const aggressiveScanLoop = () => {
           // Проверяем актуальное состояние без замыкания
           if (!shouldContinueScanning || !videoRef.current || !codeReaderRef.current) {
             if (scanTimeoutId) clearTimeout(scanTimeoutId);
@@ -442,31 +442,36 @@ export function BarcodeScanner({
                 addDebugMessage(`🔄 Активное сканирование (попытка ${scanAttempts})`);
               }
               
-              // Основной метод сканирования с проверкой
+              // Основной метод сканирования с callback
               try {
-                const result = await codeReaderRef.current.decodeFromVideoElement(videoRef.current);
-                if (result) {
-                  const barcodeText = result.getText();
-                  addDebugMessage(`✅ Штрих-код обнаружен: ${barcodeText}`);
-                  addDebugMessage(`🔍 Формат: ${result.getFormat()}`);
-                  shouldContinueScanning = false; // Останавливаем цикл
-                  
-                  // Добавляем дополнительную диагностику
-                  setTimeout(() => {
-                    addDebugMessage(`🔄 Обработка штрих-кода: ${barcodeText}`);
-                    handleBarcodeDetected(result);
-                  }, 100);
-                }
-              } catch (scanError) {
-                // Показываем только значимые ошибки для диагностики
-                if (scanError.name && 
-                    !scanError.name.includes('NotFoundException') && 
-                    !scanError.name.includes('TypeError') &&
-                    !scanError.message.includes('No MultiFormat Readers') &&
-                    !scanError.message.includes('No code found')) {
-                  if (scanAttempts % 100 === 0) {
-                    addDebugMessage(`⚠️ Ошибка сканирования: ${scanError.name} - ${scanError.message}`);
+                codeReaderRef.current.decodeFromVideoElement(videoRef.current, (result, error) => {
+                  if (result) {
+                    const barcodeText = result.getText();
+                    addDebugMessage(`✅ Штрих-код обнаружен: ${barcodeText}`);
+                    addDebugMessage(`🔍 Формат: ${result.getFormat()}`);
+                    shouldContinueScanning = false; // Останавливаем цикл
+                    
+                    // Добавляем дополнительную диагностику
+                    setTimeout(() => {
+                      addDebugMessage(`🔄 Обработка штрих-кода: ${barcodeText}`);
+                      handleBarcodeDetected(result);
+                    }, 100);
+                  } else if (error) {
+                    // Показываем только значимые ошибки для диагностики
+                    if (error.name && 
+                        !error.name.includes('NotFoundException') && 
+                        !error.name.includes('TypeError') &&
+                        !error.message.includes('No MultiFormat Readers') &&
+                        !error.message.includes('No code found')) {
+                      if (scanAttempts % 100 === 0) {
+                        addDebugMessage(`⚠️ Ошибка сканирования: ${error.name} - ${error.message}`);
+                      }
+                    }
                   }
+                });
+              } catch (scanError) {
+                if (scanAttempts % 100 === 0) {
+                  addDebugMessage(`⚠️ Критическая ошибка: ${scanError.message}`);
                 }
               }
             } else {
