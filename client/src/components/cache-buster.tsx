@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
-import { useCommonTranslation } from '@/hooks/use-language';
+import { useCommonTranslation, useAdminTranslation } from '@/hooks/use-language';
 
 // Cache Buster Component - Forces app updates and clears all caches with proper state management (FINAL SW-INDEPENDENT VERSION)
 export function CacheBuster() {
@@ -197,6 +197,7 @@ export function CacheBuster() {
 export function AdminCacheBuster() {
   const [isClearing, setIsClearing] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
+  const { t: adminT } = useAdminTranslation();
 
   const testAutoUpdate = async () => {
     setIsTesting(true);
@@ -278,11 +279,11 @@ export function AdminCacheBuster() {
         {isTesting ? (
           <>
             <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
-            Тестирование...
+            {adminT('actions.loading')}...
           </>
         ) : (
           <>
-            🧪 Тест автообновления
+            🧪 {adminT('settings.testAutoUpdate')}
           </>
         )}
       </Button>
@@ -297,12 +298,12 @@ export function AdminCacheBuster() {
         {isClearing ? (
           <>
             <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
-            Очистка...
+            {adminT('actions.loading')}...
           </>
         ) : (
           <>
             <RefreshCw className="h-4 w-4 mr-1" />
-            Очистить кеш
+            {adminT('settings.clearCache')}
           </>
         )}
       </Button>

@@ -142,7 +142,19 @@
     "welcomeTitle": "عنوان الترحيب",
     "welcomeTitlePlaceholder": "أدخل عنوان الترحيب",
     "workingHours": "ساعات العمل",
-    "workingHoursDescription": "تحديد أوقات عمل المتجر"
+    "workingHoursDescription": "تحديد أوقات عمل المتجر",
+    "clearCache": "مسح التخزين المؤقت",
+    "testAutoUpdate": "اختبار التحديث التلقائي",
+    "enabled": "مفعل",
+    "disabled": "معطل",
+    "grams": "جرامات",
+    "kilograms": "كيلوجرامات",
+    "barcodeFormat": "تنسيق الباركود",
+    "positionsStartFrom": "مواضع الأحرف تبدأ من 1",
+    "barcodeExample": "مثال: للباركود \"0258741234\" مع الإعدادات:",
+    "productCodePositions": "كود المنتج (المواضع 2-6): \"25874\"",
+    "weightPositions": "الوزن (المواضع 7-10): \"1234\" = 1234 جرام",
+    "currentConfiguration": "التكوين الحالي"
   },
   "themes": {
     "title": "إدارة القوالب",

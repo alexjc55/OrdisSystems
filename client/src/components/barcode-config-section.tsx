@@ -286,8 +286,8 @@ export function BarcodeConfigSection() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="g">Граммы (g)</SelectItem>
-                      <SelectItem value="kg">Килограммы (kg)</SelectItem>
+                      <SelectItem value="g">{adminT('settings.grams')} (g)</SelectItem>
+                      <SelectItem value="kg">{adminT('settings.kilograms')} (kg)</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -392,9 +392,9 @@ export function BarcodeConfigSection() {
 
       {/* Configuration Preview */}
       <div className="bg-gray-50 p-4 rounded-lg">
-        <h4 className="font-medium mb-2">{adminT('barcode.currentConfig')}:</h4>
+        <h4 className="font-medium mb-2">{adminT('settings.currentConfiguration')}:</h4>
         <div className="text-sm text-gray-600 space-y-1">
-          <div>{adminT('barcode.status')}: {barcodeConfig?.enabled ? '✅ Включено' : '❌ Отключено'}</div>
+          <div>{adminT('barcode.status')}: {barcodeConfig?.enabled ? `✅ ${adminT('settings.enabled')}` : `❌ ${adminT('settings.disabled')}`}</div>
           <div>{adminT('barcode.productCodePos')} {barcodeConfig?.productCodeStart}-{barcodeConfig?.productCodeEnd}</div>
           <div>{adminT('barcode.weightPos')} {barcodeConfig?.weightStart}-{barcodeConfig?.weightEnd} ({barcodeConfig?.weightUnit})</div>
         </div>
@@ -404,11 +404,11 @@ export function BarcodeConfigSection() {
       <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
         <h4 className="font-medium mb-2 text-blue-800">📝 {adminT('barcode.sampleBarcode')}:</h4>
         <div className="text-sm text-blue-700 space-y-2">
-          <div><strong>Формат штрих-кода:</strong> Позиции символов начинаются с 1</div>
-          <div><strong>Пример:</strong> Для штрих-кода "0258741234" с настройками:</div>
+          <div><strong>{adminT('settings.barcodeFormat')}:</strong> {adminT('settings.positionsStartFrom')}</div>
+          <div><strong>{adminT('settings.barcodeExample')}</strong></div>
           <ul className="ml-4 list-disc space-y-1">
-            <li>Код товара (позиции 2-6): "25874"</li>
-            <li>Вес (позиции 7-10): "1234" = 1234г</li>
+            <li>{adminT('settings.productCodePositions')}</li>
+            <li>{adminT('settings.weightPositions')}</li>
           </ul>
           <div className="bg-blue-100 p-2 rounded border border-blue-300 mt-2">
             <strong>{adminT('barcode.sampleBarcodeDescription')}</strong>
