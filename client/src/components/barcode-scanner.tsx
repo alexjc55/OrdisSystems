@@ -488,10 +488,15 @@ export function BarcodeScanner({
                     shouldContinueScanning = false; // Останавливаем цикл
                     
                     // Добавляем дополнительную диагностику
-                    setTimeout(() => {
-                      addDebugMessage(`🔄 Обработка штрих-кода: ${barcodeText}`);
+                    addDebugMessage(`🔄 Обработка штрих-кода: ${barcodeText}`);
+                    
+                    // Используем try-catch для диагностики ошибок в handleBarcodeDetected
+                    try {
                       handleBarcodeDetected(result);
-                    }, 100);
+                    } catch (handlerError) {
+                      addDebugMessage(`❌ Ошибка обработки: ${handlerError.message}`);
+                      console.error('Handler error:', handlerError);
+                    }
                   } else if (error) {
                     // Показываем только значимые ошибки для диагностики
                     if (error.name && 
