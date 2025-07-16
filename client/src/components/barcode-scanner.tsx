@@ -599,8 +599,10 @@ export function BarcodeScanner({
     let timeoutId: NodeJS.Timeout;
     
     if (isOpen && !isScanning && !isInitializing) {
+      addDebugMessage('🔄 Автозапуск сканирования...');
       // Small delay to ensure video element is ready
       timeoutId = setTimeout(() => {
+        addDebugMessage('⏰ Запуск сканирования через useEffect');
         startScanning();
       }, 100);
     }
@@ -615,6 +617,18 @@ export function BarcodeScanner({
       }
     };
   }, [isOpen]);
+  
+  // Дополнительный принудительный запуск сканирования
+  useEffect(() => {
+    if (isOpen && !isScanning && !isInitializing && cameraStatus === 'active') {
+      const forceStartTimer = setTimeout(() => {
+        addDebugMessage('🚀 Принудительный запуск сканирования');
+        startScanning();
+      }, 500);
+      
+      return () => clearTimeout(forceStartTimer);
+    }
+  }, [isOpen, cameraStatus]);
 
   // Add video event listeners for better debugging
   useEffect(() => {
@@ -768,22 +782,33 @@ export function BarcodeScanner({
               </div>
             )}
             
-            {/* Индикатор статуса камеры */}
-            <div className="flex items-center justify-center gap-2 text-sm">
-              <div className={`w-2 h-2 rounded-full ${
-                cameraStatus === 'idle' ? 'bg-gray-400' :
-                cameraStatus === 'requesting' ? 'bg-yellow-400' :
-                cameraStatus === 'granted' ? 'bg-green-400' :
-                cameraStatus === 'denied' ? 'bg-red-400' :
-                'bg-red-400'
-              }`}></div>
-              <span>
-                {cameraStatus === 'idle' ? 'Ожидание' :
-                 cameraStatus === 'requesting' ? 'Запрос доступа к камере...' :
-                 cameraStatus === 'granted' ? 'Камера активна' :
-                 cameraStatus === 'denied' ? 'Доступ запрещен' :
-                 'Ошибка камеры'}
-              </span>
+            {/* Индикатор статуса камеры и сканирования */}
+            <div className="flex items-center justify-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${
+                  cameraStatus === 'idle' ? 'bg-gray-400' :
+                  cameraStatus === 'requesting' ? 'bg-yellow-400' :
+                  cameraStatus === 'granted' ? 'bg-green-400' :
+                  cameraStatus === 'denied' ? 'bg-red-400' :
+                  'bg-red-400'
+                }`}></div>
+                <span>
+                  {cameraStatus === 'idle' ? 'Ожидание' :
+                   cameraStatus === 'requesting' ? 'Запрос доступа к камере...' :
+                   cameraStatus === 'granted' ? 'Камера активна' :
+                   cameraStatus === 'denied' ? 'Доступ запрещен' :
+                   'Ошибка камеры'}
+                </span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${
+                  isScanning ? 'bg-blue-500 animate-pulse' : 'bg-gray-400'
+                }`}></div>
+                <span>
+                  {isScanning ? 'Сканирование...' : 'Не сканирует'}
+                </span>
+              </div>
             </div>
             
             <div className="flex justify-end gap-2">
@@ -806,6 +831,17 @@ export function BarcodeScanner({
                 }
               }}>
                 🧪 Тест
+              </Button>
+              
+              <Button variant="outline" onClick={() => {
+                addDebugMessage('🚀 Принудительный запуск сканирования');
+                if (!isScanning) {
+                  startScanning();
+                } else {
+                  addDebugMessage('⚠️ Сканирование уже активно');
+                }
+              }}>
+                🔄 Старт
               </Button>
               <Button variant="outline" onClick={handleClose}>
                 <X className="h-4 w-4 mr-2" />
