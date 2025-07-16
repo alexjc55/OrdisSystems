@@ -494,7 +494,7 @@ export function BarcodeScanner({
                   
                   if (result) {
                     const barcodeText = result.getText();
-                    addDebugMessage(`✅ Штрих-код обнаружен: ${barcodeText}`);
+                    addDebugMessage(`✅ РЕАЛЬНЫЙ штрих-код распознан: ${barcodeText}`);
                     addDebugMessage(`🔍 Формат: ${result.getFormat()}`);
                     shouldContinueScanning = false; // Останавливаем цикл
                     
@@ -510,15 +510,15 @@ export function BarcodeScanner({
                       console.error('Handler error:', handlerError);
                     }
                   } else if (error) {
-                    // Показываем только значимые ошибки для диагностики
-                    if (error.name && 
-                        !error.name.includes('NotFoundException') && 
-                        !error.name.includes('TypeError') &&
-                        !error.message.includes('No MultiFormat Readers') &&
-                        !error.message.includes('No code found')) {
-                      if (scanAttempts % 100 === 0) {
-                        addDebugMessage(`⚠️ Ошибка сканирования: ${error.name} - ${error.message}`);
+                    // Более подробная диагностика ошибок
+                    if (error.name === 'NotFoundException') {
+                      // Это нормальная ошибка - штрих-код не найден в кадре
+                      if (scanAttempts % 200 === 0) {
+                        addDebugMessage(`🔍 Поиск штрих-кода... (попытка ${scanAttempts})`);
                       }
+                    } else {
+                      // Другие ошибки - показываем для диагностики
+                      addDebugMessage(`⚠️ Ошибка ZXing: ${error.name} - ${error.message}`);
                     }
                   }
                 };
