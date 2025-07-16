@@ -146,16 +146,9 @@ export function useAdminTranslation() {
     try {
       const translation = t(key);
       
-      // Add debugging for specific problematic keys
+      // Temporary debugging for translation fix verification
       if (key.startsWith('settings.') && i18n.language === 'he') {
-        console.log('🐛 Admin Translation Debug:', {
-          key,
-          translation,
-          currentLanguage: i18n.language,
-          translationExists: translation !== key,
-          i18nResources: i18n.getResourceBundle('he', 'admin'),
-          settingsSection: i18n.getResourceBundle('he', 'admin')?.settings
-        });
+        console.log('✅ Translation Fixed - Key:', key, '→ Result:', translation !== key ? translation : 'KEY_NOT_FOUND');
       }
       
       // If translation returns the key itself or is empty, use fallback or multilingual fallback

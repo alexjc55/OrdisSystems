@@ -1,0 +1,98 @@
+🐛 Admin Translation Debug: 
+Object { key: "settings.systemSettings", translation: "settings.systemSettings", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "systemSettings", currentLanguage: "he", adminTFunction: "function" }
+admin-dashboard.tsx:5358:33
+🐛 Admin Translation Debug: 
+Object { key: "settings.systemDescription", translation: "settings.systemDescription", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "systemDescription", currentLanguage: "he" }
+admin-dashboard.tsx:5370:33
+🐛 Admin Translation Debug: 
+Object { key: "settings.cacheManagement", translation: "settings.cacheManagement", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "cacheManagement", currentLanguage: "he" }
+admin-dashboard.tsx:5385:31
+🐛 Admin Translation Debug: 
+Object { key: "settings.cacheDescription", translation: "settings.cacheDescription", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "cacheDescription", currentLanguage: "he" }
+admin-dashboard.tsx:5395:33
+🐛 Admin Translation Debug: 
+Object { key: "settings.cacheUsage", translation: "settings.cacheUsage", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+🐛 Admin Translation Debug: 
+Object { key: "settings.imageOptimization", translation: "settings.imageOptimization", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "imageOptimization", currentLanguage: "he" }
+admin-dashboard.tsx:5415:31
+🐛 Admin Translation Debug: 
+Object { key: "settings.imageOptimizationDescription", translation: "settings.imageOptimizationDescription", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "imageOptimizationDescription", currentLanguage: "he" }
+admin-dashboard.tsx:5425:33
+🐛 Admin Translation Debug: 
+Object { key: "settings.optimizeAllImages", translation: "settings.optimizeAllImages", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+🐛 Admin Translation Debug: 
+Object { key: "settings.optimizationDetails", translation: "settings.optimizationDetails", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+🐛 Admin Translation Debug: 
+Object { key: "settings.saveSettings", translation: "שמור הגדרות", currentLanguage: "he", translationExists: true, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+🐛 Admin Translation Debug: 
+Object { key: "settings.systemSettings", translation: "settings.systemSettings", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "systemSettings", currentLanguage: "he", adminTFunction: "function" }
+admin-dashboard.tsx:5358:33
+🐛 Admin Translation Debug: 
+Object { key: "settings.systemDescription", translation: "settings.systemDescription", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "systemDescription", currentLanguage: "he" }
+admin-dashboard.tsx:5370:33
+🐛 Admin Translation Debug: 
+Object { key: "settings.cacheManagement", translation: "settings.cacheManagement", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "cacheManagement", currentLanguage: "he" }
+admin-dashboard.tsx:5385:31
+🐛 Admin Translation Debug: 
+Object { key: "settings.cacheDescription", translation: "settings.cacheDescription", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "cacheDescription", currentLanguage: "he" }
+admin-dashboard.tsx:5395:33
+🐛 Admin Translation Debug: 
+Object { key: "settings.cacheUsage", translation: "settings.cacheUsage", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+🐛 Admin Translation Debug: 
+Object { key: "settings.imageOptimization", translation: "settings.imageOptimization", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "imageOptimization", currentLanguage: "he" }
+admin-dashboard.tsx:5415:31
+🐛 Admin Translation Debug: 
+Object { key: "settings.imageOptimizationDescription", translation: "settings.imageOptimizationDescription", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "imageOptimizationDescription", currentLanguage: "he" }
+admin-dashboard.tsx:5425:33
+🐛 Admin Translation Debug: 
+Object { key: "settings.optimizeAllImages", translation: "settings.optimizeAllImages", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+🐛 Admin Translation Debug: 
+Object { key: "settings.optimizationDetails", translation: "settings.optimizationDetails", currentLanguage: "he", translationExists: false, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+🐛 Admin Translation Debug: 
+Object { key: "settings.saveSettings", translation: "שמור הגדרות", currentLanguage: "he", translationExists: true, i18nResources: {…}, settingsSection: {…} }
+use-language.tsx:151:17
+
+​
