@@ -139,9 +139,6 @@ export function BarcodeScanner({
     setLastScanTime(currentTime);
     
     // Останавливаем сканирование немедленно после обнаружения штрих-кода
-    if (codeReaderRef.current) {
-      codeReaderRef.current.reset();
-    }
     setIsScanning(false);
     
     console.log('Processing barcode:', barcodeText);
@@ -535,12 +532,12 @@ export function BarcodeScanner({
     // Останавливаем сканер
     if (codeReaderRef.current) {
       try {
-        codeReaderRef.current.reset();
-        addDebugMessage('✅ Сканер сброшен');
+        // Просто обнуляем ссылку на сканер
+        codeReaderRef.current = null;
+        addDebugMessage('✅ Сканер остановлен');
       } catch (error) {
-        addDebugMessage('⚠️ Ошибка сброса сканера');
+        addDebugMessage('⚠️ Ошибка остановки сканера');
       }
-      codeReaderRef.current = null;
     }
     
     // Агрессивно очищаем видео поток
