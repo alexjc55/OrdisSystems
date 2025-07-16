@@ -249,6 +249,8 @@ export function BarcodeScanner({
       addDebugMessage(`  - ${p.name}: "${p.barcode}"`);
     });
     
+    addDebugMessage(`🔍 Ищем товар с кодом "${productCode}"`);
+    
     const product = findProductByBarcode(productCode);
     addDebugMessage(`🔍 Результат поиска: ${product ? product.name : 'НЕ НАЙДЕН'}`);
     
@@ -256,16 +258,31 @@ export function BarcodeScanner({
     console.log('All products barcodes:', allProducts.map(p => ({ name: p.name, barcode: p.barcode })));
     
     if (!product) {
-      addDebugMessage(`❌ Продукт не найден: код=${productCode}`);
-      addDebugMessage(`🔧 Вызов onClose() для ошибки`);
-      // Закрываем сканер и показываем ошибку
-      onClose();
-      addDebugMessage(`🔧 Показ toast для ошибки`);
-      toast({
-        variant: "destructive",
-        title: adminT('barcode.productNotFound'),
-        description: `${adminT('barcode.productNotFoundDescription')} (${productCode})`
+      addDebugMessage(`❌ Продукт не найден: код="${productCode}"`);
+      addDebugMessage(`🔧 Поиск с нормализацией: "${productCode.replace(/^0+/, '')}"`);
+      
+      // Попробуем найти товар вручную для диагностики
+      const manualSearch = allProducts.find(p => {
+        if (!p.barcode) return false;
+        addDebugMessage(`  Проверяем: "${p.barcode}" vs "${productCode}"`);
+        return p.barcode === productCode;
       });
+      
+      addDebugMessage(`🔧 Ручной поиск: ${manualSearch ? manualSearch.name : 'НЕ НАЙДЕН'}`);
+      
+      // Временно отключаем toast, чтобы избежать бесконечных сообщений
+      addDebugMessage(`🔧 Вызов onClose() для ошибки`);
+      onClose();
+      
+      // Показываем toast только один раз
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: adminT('barcode.productNotFound'),
+          description: `${adminT('barcode.productNotFoundDescription')} (${productCode})`
+        });
+      }, 100);
+      
       return;
     }
     
