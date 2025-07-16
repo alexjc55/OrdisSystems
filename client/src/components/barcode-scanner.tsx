@@ -390,7 +390,7 @@ export function BarcodeScanner({
         
         addDebugMessage(`📹 Видео трек: ${videoTrack.label}`);
         
-        // Используем более простой метод сканирования
+        // Используем простой метод сканирования
         let scanTimeoutId: NodeJS.Timeout;
         let scanAttempts = 0;
         
@@ -405,12 +405,12 @@ export function BarcodeScanner({
           try {
             // Проверяем готовность видео
             if (videoRef.current.readyState >= 2 && videoRef.current.videoWidth > 0) {
-              // Показываем прогресс каждые 50 попыток
-              if (scanAttempts % 50 === 0) {
+              // Показываем прогресс каждые 100 попыток
+              if (scanAttempts % 100 === 0) {
                 addDebugMessage(`🔄 Сканирование активно (попытка ${scanAttempts})`);
               }
               
-              // Попытка основного метода
+              // Основной метод сканирования
               codeReaderRef.current.decodeFromVideoElement(videoRef.current)
                 .then((result) => {
                   if (result) {
@@ -423,63 +423,13 @@ export function BarcodeScanner({
                   if (!error.name.includes('NotFoundException') && 
                       !error.name.includes('TypeError') && 
                       !error.message.includes('No MultiFormat Readers')) {
-                    addDebugMessage(`⚠️ Ошибка сканера: ${error.name}`);
+                    if (scanAttempts % 200 === 0) {
+                      addDebugMessage(`⚠️ Ошибка сканера: ${error.name}`);
+                    }
                   }
                 });
-              
-              // Дополнительная попытка с canvas
-              try {
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                if (context) {
-                  canvas.width = videoRef.current.videoWidth;
-                  canvas.height = videoRef.current.videoHeight;
-                  context.drawImage(videoRef.current, 0, 0);
-                  
-                  codeReaderRef.current.decodeFromCanvas(canvas)
-                    .then((result) => {
-                      if (result) {
-                        addDebugMessage(`✅ Штрих-код (canvas): ${result.getText()}`);
-                        handleBarcodeDetected(result);
-                      }
-                    })
-                    .catch(() => {
-                      // Игнорируем ошибки canvas
-                    });
-                }
-              } catch (canvasError) {
-                // Игнорируем ошибки canvas
-              }
-              
-              // Попытка с imageData
-              if (scanAttempts % 10 === 0) {
-                try {
-                  const canvas = document.createElement('canvas');
-                  const context = canvas.getContext('2d');
-                  if (context) {
-                    canvas.width = videoRef.current.videoWidth;
-                    canvas.height = videoRef.current.videoHeight;
-                    context.drawImage(videoRef.current, 0, 0);
-                    
-                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                    
-                    codeReaderRef.current.decodeFromImageData(imageData)
-                      .then((result) => {
-                        if (result) {
-                          addDebugMessage(`✅ Штрих-код (imageData): ${result.getText()}`);
-                          handleBarcodeDetected(result);
-                        }
-                      })
-                      .catch(() => {
-                        // Игнорируем ошибки imageData
-                      });
-                  }
-                } catch (imageDataError) {
-                  // Игнорируем ошибки imageData
-                }
-              }
             } else {
-              if (scanAttempts % 50 === 0) {
+              if (scanAttempts % 100 === 0) {
                 addDebugMessage(`⚠️ Видео не готово (состояние: ${videoRef.current.readyState})`);
               }
             }
@@ -487,8 +437,8 @@ export function BarcodeScanner({
             // Игнорируем критические ошибки
           }
           
-          // Продолжаем сканирование очень часто
-          scanTimeoutId = setTimeout(simpleScanLoop, 100);
+          // Продолжаем сканирование
+          scanTimeoutId = setTimeout(simpleScanLoop, 300);
         };
         
         // Запускаем простой цикл сканирования
@@ -741,7 +691,7 @@ export function BarcodeScanner({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="w-[95vw] max-w-[380px] mx-auto p-4">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-sm">
               <Camera className="h-4 w-4" />
@@ -750,30 +700,14 @@ export function BarcodeScanner({
           </DialogHeader>
           
           <div className="space-y-3">
-            <div className="relative bg-black rounded-lg overflow-hidden" style={{ height: '200px', width: '100%', maxWidth: '100%', maxHeight: '200px', position: 'relative' }}>
+            <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '4/3', minHeight: '300px' }}>
               <video
                 ref={videoRef}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="w-full h-full object-cover"
                 playsInline
                 muted
                 autoPlay
                 controls={false}
-                style={{ 
-                  opacity: 1,
-                  filter: 'none',
-                  transform: 'none',
-                  backgroundColor: 'transparent',
-                  maxWidth: '100%',
-                  maxHeight: '200px',
-                  width: '100%',
-                  height: '200px',
-                  objectFit: 'cover',
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0
-                }}
                 onError={(e) => addDebugMessage('❌ Ошибка video элемента')}
                 onLoadStart={() => addDebugMessage('📺 Загрузка видео начата')}
                 onCanPlay={() => addDebugMessage('▶️ Видео готово к воспроизведению')}
@@ -853,12 +787,16 @@ export function BarcodeScanner({
                 </Button>
               )}
               <Button variant="outline" onClick={() => {
-                addDebugMessage('🧪 Тест: имитация штрих-кода 2025874002804');
-                const mockResult = {
-                  getText: () => '2025874002804',
-                  getFormat: () => 'EAN_13'
-                } as any;
-                handleBarcodeDetected(mockResult);
+                try {
+                  addDebugMessage('🧪 Тест: имитация штрих-кода 2025874002804');
+                  const mockResult = {
+                    getText: () => '2025874002804',
+                    getFormat: () => 'EAN_13'
+                  };
+                  handleBarcodeDetected(mockResult as any);
+                } catch (error) {
+                  addDebugMessage(`❌ Ошибка теста: ${error}`);
+                }
               }}>
                 🧪 Тест
               </Button>
