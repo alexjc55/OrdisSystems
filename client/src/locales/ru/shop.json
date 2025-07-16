@@ -55,13 +55,13 @@
     "fri": "Пятница",
     "sat": "Суббота",
     "sun": "Воскресенье",
-    "monday": "Товар",
-    "tuesday": "Товар",
-    "wednesday": "Товар",
-    "thursday": "Товар",
-    "friday": "Товар",
-    "saturday": "Товар",
-    "sunday": "Товар"
+    "monday": "Понедельник",
+    "tuesday": "Вторник", 
+    "wednesday": "Среда",
+    "thursday": "Четверг",
+    "friday": "Пятница",
+    "saturday": "Суббота",
+    "sunday": "Воскресенье"
   },
   "cart": {
     "title": "Корзина",
