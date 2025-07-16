@@ -510,33 +510,44 @@ export function BarcodeScanner({
                 const maxDebugCallback = (result, error) => {
                   addDebugMessage(`🔔 CALLBACK ВЫЗВАН! result: ${!!result}, error: ${!!error}`);
                   
-                  if (result) {
-                    const barcodeText = result.getText();
-                    addDebugMessage(`✅ РЕАЛЬНЫЙ штрих-код распознан: ${barcodeText}`);
-                    addDebugMessage(`🔍 Формат: ${result.getFormat()}`);
-                    shouldContinueScanning = false; // Останавливаем цикл
-                    
-                    // Добавляем дополнительную диагностику
-                    addDebugMessage(`🔄 Обработка штрих-кода: ${barcodeText}`);
-                    
-                    // Прямой вызов функции обработки
+                  // ИСПРАВЛЕНИЕ: Проверяем правильно ли result содержит данные
+                  if (result && !error) {
                     try {
-                      addDebugMessage(`🚀 Запуск handleBarcodeDetected`);
-                      handleBarcodeDetected(result);
-                    } catch (handlerError) {
-                      addDebugMessage(`❌ Ошибка обработки: ${handlerError.message}`);
-                      console.error('Handler error:', handlerError);
+                      const barcodeText = result.getText();
+                      if (barcodeText && barcodeText.length > 0) {
+                        addDebugMessage(`✅ РЕАЛЬНЫЙ штрих-код распознан: ${barcodeText}`);
+                        addDebugMessage(`🔍 Формат: ${result.getFormat()}`);
+                        shouldContinueScanning = false; // Останавливаем цикл
+                        
+                        // Добавляем дополнительную диагностику
+                        addDebugMessage(`🔄 Обработка штрих-кода: ${barcodeText}`);
+                        
+                        // Прямой вызов функции обработки
+                        try {
+                          addDebugMessage(`🚀 Запуск handleBarcodeDetected`);
+                          handleBarcodeDetected(result);
+                        } catch (handlerError) {
+                          addDebugMessage(`❌ Ошибка обработки: ${handlerError.message}`);
+                          console.error('Handler error:', handlerError);
+                        }
+                      } else {
+                        addDebugMessage(`⚠️ Пустой результат от ZXing`);
+                      }
+                    } catch (resultError) {
+                      addDebugMessage(`❌ Ошибка чтения результата: ${resultError.message}`);
                     }
-                  } else if (error) {
+                  } else {
                     // Более подробная диагностика ошибок
-                    if (error.name === 'NotFoundException') {
+                    if (error && error.name === 'NotFoundException') {
                       // Это нормальная ошибка - штрих-код не найден в кадре
                       if (scanAttempts % 200 === 0) {
                         addDebugMessage(`🔍 Поиск штрих-кода... (попытка ${scanAttempts})`);
                       }
-                    } else {
+                    } else if (error) {
                       // Другие ошибки - показываем для диагностики
                       addDebugMessage(`⚠️ Ошибка ZXing: ${error.name} - ${error.message}`);
+                    } else {
+                      addDebugMessage(`⚠️ Результат пустой без ошибки`);
                     }
                   }
                 };
