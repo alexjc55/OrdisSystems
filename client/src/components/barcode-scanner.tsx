@@ -380,21 +380,54 @@ export function BarcodeScanner({
           await new Promise(resolve => setTimeout(resolve, 500));
         }
         
-        // Основной метод сканирования
-        await codeReaderRef.current.decodeFromVideoDevice(
-          undefined, // Используем уже активный поток
-          videoRef.current,
-          (result, error) => {
-            if (result) {
-              addDebugMessage(`✅ Штрих-код обнаружен: ${result.getText()}`);
-              handleBarcodeDetected(result);
-            }
-            // Не показываем NotFoundException - это нормально
-            if (error && error.name !== 'NotFoundException') {
-              addDebugMessage(`⚠️ Ошибка сканера: ${error.name}`);
-            }
+        // Основной метод сканирования через stream
+        const stream = videoRef.current.srcObject as MediaStream;
+        const videoTrack = stream.getVideoTracks()[0];
+        
+        if (!videoTrack) {
+          throw new Error('No video track found');
+        }
+        
+        addDebugMessage(`📹 Видео трек: ${videoTrack.label}`);
+        
+        // Используем более простой метод сканирования
+        let scanTimeoutId: NodeJS.Timeout;
+        
+        const simpleScanLoop = () => {
+          if (!isScanning || !videoRef.current) {
+            if (scanTimeoutId) clearTimeout(scanTimeoutId);
+            return;
           }
-        );
+          
+          try {
+            // Проверяем готовность видео
+            if (videoRef.current.readyState >= 2 && videoRef.current.videoWidth > 0) {
+              codeReaderRef.current.decodeFromVideoElement(videoRef.current)
+                .then((result) => {
+                  if (result) {
+                    addDebugMessage(`✅ Штрих-код обнаружен: ${result.getText()}`);
+                    handleBarcodeDetected(result);
+                  }
+                })
+                .catch((error) => {
+                  // Игнорируем обычные ошибки поиска
+                  if (!error.name.includes('NotFoundException') && 
+                      !error.name.includes('TypeError') && 
+                      !error.message.includes('No MultiFormat Readers')) {
+                    addDebugMessage(`⚠️ Ошибка сканера: ${error.name}`);
+                  }
+                });
+            }
+          } catch (error) {
+            // Игнорируем критические ошибки
+          }
+          
+          // Продолжаем сканирование
+          scanTimeoutId = setTimeout(simpleScanLoop, 800);
+        };
+        
+        // Запускаем простой цикл сканирования
+        simpleScanLoop();
         
         addDebugMessage('🎯 Сканер полностью готов к работе');
       } catch (scannerError) {
@@ -412,18 +445,27 @@ export function BarcodeScanner({
           }
           
           try {
-            codeReaderRef.current?.decodeFromVideoElement(videoRef.current, (result, error) => {
-              if (result) {
-                addDebugMessage(`✅ Штрих-код найден: ${result.getText()}`);
-                handleBarcodeDetected(result);
-              }
-            });
+            // Проверяем, что видео элемент готов
+            if (videoRef.current.readyState >= 2) {
+              codeReaderRef.current?.decodeFromVideoElement(videoRef.current, (result, error) => {
+                if (result) {
+                  addDebugMessage(`✅ Штрих-код найден: ${result.getText()}`);
+                  handleBarcodeDetected(result);
+                }
+                // Игнорируем обычные ошибки поиска
+                if (error && !error.name.includes('NotFoundException') && !error.name.includes('TypeError')) {
+                  addDebugMessage(`⚠️ Ошибка: ${error.name}`);
+                }
+              });
+            } else {
+              addDebugMessage('⚠️ Видео не готово для сканирования');
+            }
           } catch (alternativeError) {
-            addDebugMessage('⚠️ Ошибка альтернативного сканирования');
+            addDebugMessage(`⚠️ Ошибка альтернативного сканирования: ${alternativeError.message}`);
           }
           
-          // Повторяем сканирование каждые 500ms
-          scanTimeoutId = setTimeout(scanLoop, 500);
+          // Повторяем сканирование каждые 1000ms (менее агрессивно)
+          scanTimeoutId = setTimeout(scanLoop, 1000);
         };
         
         // Начинаем альтернативный цикл сканирования
@@ -471,6 +513,9 @@ export function BarcodeScanner({
 
   const stopScanning = () => {
     addDebugMessage('🛑 Остановка сканера...');
+    
+    // Сначала останавливаем состояние сканирования
+    setIsScanning(false);
     
     // Останавливаем сканер
     if (codeReaderRef.current) {
