@@ -516,7 +516,20 @@ export function BarcodeScanner({
                       const barcodeText = result.getText();
                       if (barcodeText && barcodeText.length > 0) {
                         addDebugMessage(`✅ РЕАЛЬНЫЙ штрих-код распознан: ${barcodeText}`);
-                        addDebugMessage(`🔍 Формат: ${result.getFormat()}`);
+                        
+                        // Безопасно получаем формат
+                        let format = 'неизвестный';
+                        try {
+                          if (result.getFormat && typeof result.getFormat === 'function') {
+                            format = result.getFormat();
+                          } else if (result.getBarcodeFormat && typeof result.getBarcodeFormat === 'function') {
+                            format = result.getBarcodeFormat();
+                          }
+                        } catch (formatError) {
+                          addDebugMessage(`⚠️ Не удалось получить формат: ${formatError.message}`);
+                        }
+                        
+                        addDebugMessage(`🔍 Формат: ${format}`);
                         shouldContinueScanning = false; // Останавливаем цикл
                         
                         // Добавляем дополнительную диагностику
