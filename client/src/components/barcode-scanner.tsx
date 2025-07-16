@@ -273,23 +273,19 @@ export function BarcodeScanner({
         throw new Error('ZXing library not available');
       }
       
-      codeReaderRef.current = new BrowserMultiFormatReader();
-      
-      // Настройки для улучшения распознавания
-      const hints = new Map();
-      hints.set(DecodeHintType.POSSIBLE_FORMATS, [
-        BarcodeFormat.EAN_13,
-        BarcodeFormat.EAN_8,
-        BarcodeFormat.CODE_128,
-        BarcodeFormat.CODE_39,
-        BarcodeFormat.UPC_A,
-        BarcodeFormat.UPC_E
-      ]);
-      hints.set(DecodeHintType.TRY_HARDER, true);
-      hints.set(DecodeHintType.ASSUME_GS1, true);
-      
-      codeReaderRef.current.setHints(hints);
-      addDebugMessage('✅ ZXing сканер создан с оптимизированными настройками');
+      try {
+        codeReaderRef.current = new BrowserMultiFormatReader();
+        addDebugMessage('✅ ZXing сканер создан');
+        
+        // Проверяем наличие необходимых методов
+        if (!codeReaderRef.current.decodeFromVideoElement) {
+          throw new Error('decodeFromVideoElement method not available');
+        }
+        addDebugMessage('✅ Методы сканера проверены');
+      } catch (readerError) {
+        addDebugMessage(`❌ Ошибка создания сканера: ${readerError.message}`);
+        throw readerError;
+      }
       
       // Проверяем доступность камеры
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -299,15 +295,12 @@ export function BarcodeScanner({
       addDebugMessage('📱 Запрос доступа к камере...');
       setCameraStatus('requesting');
       
-      // Используем улучшенные настройки для лучшего распознавания
+      // Используем простые настройки для максимальной совместимости
       const constraints = {
         video: {
           facingMode: 'environment', // Задняя камера
-          width: { ideal: 1920, min: 640 },
-          height: { ideal: 1080, min: 480 },
-          frameRate: { ideal: 30, min: 15 },
-          focusMode: 'continuous',
-          exposureMode: 'continuous'
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
         }
       };
 
@@ -427,7 +420,7 @@ export function BarcodeScanner({
         let scanAttempts = 0;
         let shouldContinueScanning = true;
         
-        const aggressiveScanLoop = () => {
+        const aggressiveScanLoop = async () => {
           // Проверяем актуальное состояние без замыкания
           if (!shouldContinueScanning || !videoRef.current || !codeReaderRef.current) {
             if (scanTimeoutId) clearTimeout(scanTimeoutId);
@@ -438,65 +431,49 @@ export function BarcodeScanner({
           scanAttempts++;
           
           try {
-            // Проверяем готовность видео
-            if (videoRef.current.readyState >= 2 && videoRef.current.videoWidth > 0) {
+            // Проверяем готовность видео и наличие сканера
+            if (videoRef.current && 
+                videoRef.current.readyState >= 2 && 
+                videoRef.current.videoWidth > 0 && 
+                codeReaderRef.current) {
+              
               // Показываем прогресс каждые 20 попыток для лучшей диагностики
               if (scanAttempts % 20 === 0) {
                 addDebugMessage(`🔄 Активное сканирование (попытка ${scanAttempts})`);
               }
               
-              // Пробуем два метода сканирования для лучшей надежности
-              const tryVideoScan = () => {
-                return codeReaderRef.current.decodeFromVideoElement(videoRef.current);
-              };
-              
-              const tryCanvasScan = () => {
-                if (canvasRef.current && videoRef.current) {
-                  const canvas = canvasRef.current;
-                  const ctx = canvas.getContext('2d');
-                  if (ctx) {
-                    canvas.width = videoRef.current.videoWidth;
-                    canvas.height = videoRef.current.videoHeight;
-                    ctx.drawImage(videoRef.current, 0, 0);
-                    
-                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    return codeReaderRef.current.decodeFromImageData(imageData);
+              // Основной метод сканирования с проверкой
+              try {
+                const result = await codeReaderRef.current.decodeFromVideoElement(videoRef.current);
+                if (result) {
+                  const barcodeText = result.getText();
+                  addDebugMessage(`✅ Штрих-код обнаружен: ${barcodeText}`);
+                  addDebugMessage(`🔍 Формат: ${result.getFormat()}`);
+                  shouldContinueScanning = false; // Останавливаем цикл
+                  
+                  // Добавляем дополнительную диагностику
+                  setTimeout(() => {
+                    addDebugMessage(`🔄 Обработка штрих-кода: ${barcodeText}`);
+                    handleBarcodeDetected(result);
+                  }, 100);
+                }
+              } catch (scanError) {
+                // Показываем только значимые ошибки для диагностики
+                if (scanError.name && 
+                    !scanError.name.includes('NotFoundException') && 
+                    !scanError.name.includes('TypeError') &&
+                    !scanError.message.includes('No MultiFormat Readers') &&
+                    !scanError.message.includes('No code found')) {
+                  if (scanAttempts % 100 === 0) {
+                    addDebugMessage(`⚠️ Ошибка сканирования: ${scanError.name} - ${scanError.message}`);
                   }
                 }
-                return Promise.reject(new Error('Canvas not available'));
-              };
-              
-              // Основной метод сканирования - пробуем оба подхода
-              Promise.race([tryVideoScan(), tryCanvasScan()])
-                .then((result) => {
-                  if (result) {
-                    const barcodeText = result.getText();
-                    addDebugMessage(`✅ Штрих-код обнаружен: ${barcodeText}`);
-                    addDebugMessage(`🔍 Формат: ${result.getFormat()}`);
-                    shouldContinueScanning = false; // Останавливаем цикл
-                    
-                    // Добавляем дополнительную диагностику
-                    setTimeout(() => {
-                      addDebugMessage(`🔄 Обработка штрих-кода: ${barcodeText}`);
-                      handleBarcodeDetected(result);
-                    }, 100);
-                  }
-                })
-                .catch((error) => {
-                  // Показываем только значимые ошибки для диагностики
-                  if (error.name && 
-                      !error.name.includes('NotFoundException') && 
-                      !error.name.includes('TypeError') &&
-                      !error.message.includes('No MultiFormat Readers') &&
-                      !error.message.includes('No code found')) {
-                    if (scanAttempts % 100 === 0) {
-                      addDebugMessage(`⚠️ Ошибка сканирования: ${error.name} - ${error.message}`);
-                    }
-                  }
-                });
+              }
             } else {
               if (scanAttempts % 20 === 0) {
-                addDebugMessage(`⚠️ Видео не готово: readyState=${videoRef.current.readyState}, width=${videoRef.current.videoWidth}`);
+                const readyState = videoRef.current?.readyState || 'no video';
+                const width = videoRef.current?.videoWidth || 'no width';
+                addDebugMessage(`⚠️ Видео не готово: readyState=${readyState}, width=${width}`);
               }
             }
           } catch (error) {
