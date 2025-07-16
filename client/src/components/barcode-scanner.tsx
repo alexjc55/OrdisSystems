@@ -157,6 +157,11 @@ export function BarcodeScanner({
     
     addDebugMessage(`🔧 Включен: ${barcodeConfig.enabled}`);
     
+    if (!barcodeConfig.enabled) {
+      addDebugMessage(`❌ Система штрих-кодов отключена в конфигурации`);
+      return;
+    }
+    
     // Увеличиваем дебаунсинг до 5 секунд для предотвращения дубликатов
     if (barcodeText === lastScannedBarcode && currentTime - lastScanTime < 5000) {
       addDebugMessage(`⏳ Дебаунсинг: игнорируем дубликат ${barcodeText}`);
