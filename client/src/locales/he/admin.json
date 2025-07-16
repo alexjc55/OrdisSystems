@@ -91,7 +91,9 @@
     "weight": "משקל",
     "addToOrderQuestion": "להוסיף את המוצר הזה להזמנה?",
     "addToOrder": "הוסף להזמנה",
-    "scanBarcode": "סרוק ברקוד"
+    "scanBarcode": "סרוק ברקוד",
+    "pointCameraInstruction": "כוון את המצלמה לברקוד",
+    "retry": "נסה שוב"
   },
   "settings": {
     "systemSettings": "הגדרות מערכת",

@@ -93,7 +93,9 @@
     "weight": "Вес",
     "addToOrderQuestion": "Добавить этот товар в заказ?",
     "addToOrder": "Добавить в заказ",
-    "scanBarcode": "Сканировать штрих-код"
+    "scanBarcode": "Сканировать штрих-код",
+    "pointCameraInstruction": "Наведите камеру на штрих-код",
+    "retry": "Повторить"
   },
   "settings": {
     "systemSettings": "Системные настройки",

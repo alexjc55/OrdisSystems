@@ -81,7 +81,9 @@
     "weight": "الوزن",
     "addToOrderQuestion": "إضافة هذا المنتج إلى الطلب؟",
     "addToOrder": "أضف إلى الطلب",
-    "scanBarcode": "مسح الباركود"
+    "scanBarcode": "مسح الباركود",
+    "pointCameraInstruction": "وجه الكاميرا نحو الباركود",
+    "retry": "أعد المحاولة"
   },
   "settings": {
     "systemSettings": "إعدادات النظام",

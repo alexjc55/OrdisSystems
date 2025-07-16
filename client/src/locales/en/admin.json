@@ -102,7 +102,9 @@
     "weight": "Weight",
     "addToOrderQuestion": "Add this product to order?",
     "addToOrder": "Add to order",
-    "scanBarcode": "Scan barcode"
+    "scanBarcode": "Scan barcode",
+    "pointCameraInstruction": "Point camera at barcode",
+    "retry": "Retry"
   },
   "settings": {
     "systemSettings": "System Settings",
