@@ -5353,19 +5353,52 @@ export default function AdminDashboard() {
                   <div className={isRTL ? 'text-right' : 'text-left'}>
                     <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                       <Settings className="h-5 w-5" />
-                      {adminT('settings.systemSettings')}
+                      {(() => {
+                        const systemSettingsText = adminT('settings.systemSettings');
+                        console.log('Admin Dashboard - systemSettings translation:', {
+                          key: 'settings.systemSettings',
+                          result: systemSettingsText,
+                          currentLanguage: i18n.language,
+                          adminTFunction: typeof adminT
+                        });
+                        return systemSettingsText;
+                      })()}
                     </CardTitle>
                     <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                      {adminT('settings.systemDescription')}
+                      {(() => {
+                        const systemDescriptionText = adminT('settings.systemDescription');
+                        console.log('Admin Dashboard - systemDescription translation:', {
+                          key: 'settings.systemDescription',
+                          result: systemDescriptionText,
+                          currentLanguage: i18n.language
+                        });
+                        return systemDescriptionText;
+                      })()}
                     </CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Cache Management Section */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">{adminT('settings.cacheManagement')}</h3>
+                    <h3 className="text-lg font-medium">{(() => {
+                      const cacheManagementText = adminT('settings.cacheManagement');
+                      console.log('Admin Dashboard - cacheManagement translation:', {
+                        key: 'settings.cacheManagement',
+                        result: cacheManagementText,
+                        currentLanguage: i18n.language
+                      });
+                      return cacheManagementText;
+                    })()}</h3>
                     <p className="text-sm text-gray-600">
-                      {adminT('settings.cacheDescription')}
+                      {(() => {
+                        const cacheDescriptionText = adminT('settings.cacheDescription');
+                        console.log('Admin Dashboard - cacheDescription translation:', {
+                          key: 'settings.cacheDescription',
+                          result: cacheDescriptionText,
+                          currentLanguage: i18n.language
+                        });
+                        return cacheDescriptionText;
+                      })()}
                     </p>
                     <div className="flex items-center gap-4">
                       <AdminCacheBuster />
@@ -5377,9 +5410,25 @@ export default function AdminDashboard() {
 
                   {/* Image Optimization Section */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">📸 {adminT('settings.imageOptimization')}</h3>
+                    <h3 className="text-lg font-medium">📸 {(() => {
+                      const imageOptimizationText = adminT('settings.imageOptimization');
+                      console.log('Admin Dashboard - imageOptimization translation:', {
+                        key: 'settings.imageOptimization',
+                        result: imageOptimizationText,
+                        currentLanguage: i18n.language
+                      });
+                      return imageOptimizationText;
+                    })()}</h3>
                     <p className="text-sm text-gray-600">
-                      {adminT('settings.imageOptimizationDescription')}
+                      {(() => {
+                        const imageOptimizationDescriptionText = adminT('settings.imageOptimizationDescription');
+                        console.log('Admin Dashboard - imageOptimizationDescription translation:', {
+                          key: 'settings.imageOptimizationDescription',
+                          result: imageOptimizationDescriptionText,
+                          currentLanguage: i18n.language
+                        });
+                        return imageOptimizationDescriptionText;
+                      })()}
                     </p>
                     
                     {optimizationResults && (
