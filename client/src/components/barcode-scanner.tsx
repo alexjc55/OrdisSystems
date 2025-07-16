@@ -179,7 +179,11 @@ export function BarcodeScanner({
     const product = findProductByBarcode(productCode);
     
     if (!product) {
+      // Сначала останавливаем сканирование
+      setIsScanning(false);
+      // Закрываем сканер
       onClose();
+      // Показываем уведомление об ошибке
       setTimeout(() => {
         toast({
           variant: "destructive",
@@ -206,8 +210,9 @@ export function BarcodeScanner({
         title: adminT('barcode.productAdded'),
         description: `${confirmDialog.product.name}: ${confirmDialog.weight}${adminT('units.g')}`
       });
-      setConfirmDialog({ isOpen: false, product: null, weight: 0 });
     }
+    // Всегда закрываем диалог
+    setConfirmDialog({ isOpen: false, product: null, weight: 0 });
   };
 
   const handleCancelAddToOrder = () => {
@@ -616,9 +621,14 @@ export function BarcodeScanner({
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={confirmDialog.isOpen} onOpenChange={(open) => 
-        setConfirmDialog(prev => ({ ...prev, isOpen: open }))
-      }>
+      <AlertDialog 
+        open={confirmDialog.isOpen} 
+        onOpenChange={(open) => {
+          if (!open) {
+            setConfirmDialog({ isOpen: false, product: null, weight: 0 });
+          }
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{adminT('barcode.productNotInOrder')}</AlertDialogTitle>
