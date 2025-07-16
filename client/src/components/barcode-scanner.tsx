@@ -392,6 +392,7 @@ export function BarcodeScanner({
         
         // Используем более простой метод сканирования
         let scanTimeoutId: NodeJS.Timeout;
+        let scanAttempts = 0;
         
         const simpleScanLoop = () => {
           if (!isScanning || !videoRef.current) {
@@ -399,9 +400,16 @@ export function BarcodeScanner({
             return;
           }
           
+          scanAttempts++;
+          
           try {
             // Проверяем готовность видео
             if (videoRef.current.readyState >= 2 && videoRef.current.videoWidth > 0) {
+              // Показываем прогресс каждые 25 попыток
+              if (scanAttempts % 25 === 0) {
+                addDebugMessage(`🔄 Сканирование активно (попытка ${scanAttempts})`);
+              }
+              
               codeReaderRef.current.decodeFromVideoElement(videoRef.current)
                 .then((result) => {
                   if (result) {
@@ -417,19 +425,23 @@ export function BarcodeScanner({
                     addDebugMessage(`⚠️ Ошибка сканера: ${error.name}`);
                   }
                 });
+            } else {
+              if (scanAttempts % 50 === 0) {
+                addDebugMessage(`⚠️ Видео не готово (состояние: ${videoRef.current.readyState})`);
+              }
             }
           } catch (error) {
             // Игнорируем критические ошибки
           }
           
-          // Продолжаем сканирование
-          scanTimeoutId = setTimeout(simpleScanLoop, 800);
+          // Продолжаем сканирование более часто
+          scanTimeoutId = setTimeout(simpleScanLoop, 200);
         };
         
         // Запускаем простой цикл сканирования
         simpleScanLoop();
         
-        addDebugMessage('🎯 Сканер полностью готов к работе');
+        addDebugMessage('🎯 Сканер активен - наведите камеру на штрих-код!');
       } catch (scannerError) {
         addDebugMessage(`⚠️ Ошибка инициализации сканера: ${scannerError.message}`);
         
@@ -676,16 +688,16 @@ export function BarcodeScanner({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="max-w-sm w-full mx-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Camera className="h-5 w-5" />
+            <DialogTitle className="flex items-center gap-2 text-sm">
+              <Camera className="h-4 w-4" />
               {adminT('barcode.scanTitle')}
             </DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-4">
-            <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '4/3', minHeight: '300px' }}>
+          <div className="space-y-3">
+            <div className="relative bg-black rounded-lg overflow-hidden" style={{ height: '250px', width: '100%' }}>
               <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
@@ -723,8 +735,15 @@ export function BarcodeScanner({
               
               {/* Индикатор активности сканирования */}
               {cameraStatus === 'granted' && isScanning && !isInitializing && (
-                <div className="absolute top-2 right-2 text-xs bg-green-600 bg-opacity-80 text-white px-2 py-1 rounded">
-                  🔍 Сканирование
+                <div className="absolute top-2 right-2 text-xs bg-green-600 bg-opacity-80 text-white px-2 py-1 rounded animate-pulse">
+                  🔍 Активно
+                </div>
+              )}
+              
+              {/* Инструкция по использованию */}
+              {cameraStatus === 'granted' && isScanning && !isInitializing && (
+                <div className="absolute bottom-2 left-2 right-2 text-xs bg-black bg-opacity-70 text-white px-2 py-1 rounded text-center">
+                  Наведите камеру на штрих-код
                 </div>
               )}
             </div>
