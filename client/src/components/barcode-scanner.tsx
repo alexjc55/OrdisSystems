@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BrowserMultiFormatReader } from '@zxing/browser';
-import { Result } from '@zxing/library';
+import { Result, BarcodeFormat, DecodeHintType } from '@zxing/library';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -30,6 +30,7 @@ export function BarcodeScanner({
   const { t: adminT } = useAdminTranslation();
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
@@ -273,7 +274,22 @@ export function BarcodeScanner({
       }
       
       codeReaderRef.current = new BrowserMultiFormatReader();
-      addDebugMessage('✅ ZXing сканер создан');
+      
+      // Настройки для улучшения распознавания
+      const hints = new Map();
+      hints.set(DecodeHintType.POSSIBLE_FORMATS, [
+        BarcodeFormat.EAN_13,
+        BarcodeFormat.EAN_8,
+        BarcodeFormat.CODE_128,
+        BarcodeFormat.CODE_39,
+        BarcodeFormat.UPC_A,
+        BarcodeFormat.UPC_E
+      ]);
+      hints.set(DecodeHintType.TRY_HARDER, true);
+      hints.set(DecodeHintType.ASSUME_GS1, true);
+      
+      codeReaderRef.current.setHints(hints);
+      addDebugMessage('✅ ZXing сканер создан с оптимизированными настройками');
       
       // Проверяем доступность камеры
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -283,12 +299,15 @@ export function BarcodeScanner({
       addDebugMessage('📱 Запрос доступа к камере...');
       setCameraStatus('requesting');
       
-      // Используем простые настройки для максимальной совместимости
+      // Используем улучшенные настройки для лучшего распознавания
       const constraints = {
         video: {
           facingMode: 'environment', // Задняя камера
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
+          width: { ideal: 1920, min: 640 },
+          height: { ideal: 1080, min: 480 },
+          frameRate: { ideal: 30, min: 15 },
+          focusMode: 'continuous',
+          exposureMode: 'continuous'
         }
       };
 
@@ -426,8 +445,29 @@ export function BarcodeScanner({
                 addDebugMessage(`🔄 Активное сканирование (попытка ${scanAttempts})`);
               }
               
-              // Основной метод сканирования
-              codeReaderRef.current.decodeFromVideoElement(videoRef.current)
+              // Пробуем два метода сканирования для лучшей надежности
+              const tryVideoScan = () => {
+                return codeReaderRef.current.decodeFromVideoElement(videoRef.current);
+              };
+              
+              const tryCanvasScan = () => {
+                if (canvasRef.current && videoRef.current) {
+                  const canvas = canvasRef.current;
+                  const ctx = canvas.getContext('2d');
+                  if (ctx) {
+                    canvas.width = videoRef.current.videoWidth;
+                    canvas.height = videoRef.current.videoHeight;
+                    ctx.drawImage(videoRef.current, 0, 0);
+                    
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    return codeReaderRef.current.decodeFromImageData(imageData);
+                  }
+                }
+                return Promise.reject(new Error('Canvas not available'));
+              };
+              
+              // Основной метод сканирования - пробуем оба подхода
+              Promise.race([tryVideoScan(), tryCanvasScan()])
                 .then((result) => {
                   if (result) {
                     const barcodeText = result.getText();
@@ -443,12 +483,14 @@ export function BarcodeScanner({
                   }
                 })
                 .catch((error) => {
-                  // Показываем некоторые ошибки для диагностики
-                  if (!error.name.includes('NotFoundException') && 
-                      !error.name.includes('TypeError') && 
-                      !error.message.includes('No MultiFormat Readers')) {
-                    if (scanAttempts % 50 === 0) {
-                      addDebugMessage(`⚠️ Ошибка: ${error.name}`);
+                  // Показываем только значимые ошибки для диагностики
+                  if (error.name && 
+                      !error.name.includes('NotFoundException') && 
+                      !error.name.includes('TypeError') &&
+                      !error.message.includes('No MultiFormat Readers') &&
+                      !error.message.includes('No code found')) {
+                    if (scanAttempts % 100 === 0) {
+                      addDebugMessage(`⚠️ Ошибка сканирования: ${error.name} - ${error.message}`);
                     }
                   }
                 });
@@ -463,8 +505,8 @@ export function BarcodeScanner({
             }
           }
           
-          // Более частое сканирование
-          scanTimeoutId = setTimeout(aggressiveScanLoop, 100);
+          // Более частое сканирование - каждые 50ms для лучшей отзывчивости
+          scanTimeoutId = setTimeout(aggressiveScanLoop, 50);
         };
         
         // Запускаем агрессивный цикл сканирования
@@ -761,6 +803,12 @@ export function BarcodeScanner({
                 onCanPlay={() => addDebugMessage('▶️ Видео готово к воспроизведению')}
                 onPlaying={() => addDebugMessage('▶️ Видео воспроизводится')}
                 webkit-playsinline="true"
+              />
+              
+              <canvas
+                ref={canvasRef}
+                className="hidden"
+                style={{ display: 'none' }}
               />
               
               {isInitializing && (
