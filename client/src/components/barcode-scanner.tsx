@@ -481,7 +481,8 @@ export function BarcodeScanner({
               
               // Основной метод сканирования с callback
               try {
-                codeReaderRef.current.decodeFromVideoElement(videoRef.current, (result, error) => {
+                // Создаем callback функцию заранее для стабильной привязки
+                const barcodeCallback = (result, error) => {
                   if (result) {
                     const barcodeText = result.getText();
                     addDebugMessage(`✅ Штрих-код обнаружен: ${barcodeText}`);
@@ -511,7 +512,9 @@ export function BarcodeScanner({
                       }
                     }
                   }
-                });
+                };
+                
+                codeReaderRef.current.decodeFromVideoElement(videoRef.current, barcodeCallback);
               } catch (scanError) {
                 if (scanAttempts % 100 === 0) {
                   addDebugMessage(`⚠️ Критическая ошибка: ${scanError.message}`);
@@ -556,7 +559,8 @@ export function BarcodeScanner({
           try {
             // Проверяем, что видео элемент готов
             if (videoRef.current.readyState >= 2) {
-              codeReaderRef.current?.decodeFromVideoElement(videoRef.current, (result, error) => {
+              // Создаем callback функцию заранее для стабильной привязки
+              const fallbackCallback = (result, error) => {
                 if (result) {
                   addDebugMessage(`✅ Штрих-код найден: ${result.getText()}`);
                   handleBarcodeDetected(result);
@@ -565,7 +569,9 @@ export function BarcodeScanner({
                 if (error && !error.name.includes('NotFoundException') && !error.name.includes('TypeError')) {
                   addDebugMessage(`⚠️ Ошибка: ${error.name}`);
                 }
-              });
+              };
+              
+              codeReaderRef.current?.decodeFromVideoElement(videoRef.current, fallbackCallback);
             } else {
               addDebugMessage('⚠️ Видео не готово для сканирования');
             }
