@@ -242,7 +242,16 @@ export function BarcodeScanner({
     addDebugMessage(`🔍 Ищем продукт с кодом: ${productCode}`);
     addDebugMessage(`📝 Всего продуктов в базе: ${allProducts.length}`);
     
+    // Показываем все штрих-коды для диагностики
+    const productsWithBarcodes = allProducts.filter(p => p.barcode);
+    addDebugMessage(`📊 Товары со штрих-кодами: ${productsWithBarcodes.length}`);
+    productsWithBarcodes.forEach(p => {
+      addDebugMessage(`  - ${p.name}: "${p.barcode}"`);
+    });
+    
     const product = findProductByBarcode(productCode);
+    addDebugMessage(`🔍 Результат поиска: ${product ? product.name : 'НЕ НАЙДЕН'}`);
+    
     console.log('Product found:', product ? product.name : 'NOT FOUND');
     console.log('All products barcodes:', allProducts.map(p => ({ name: p.name, barcode: p.barcode })));
     
