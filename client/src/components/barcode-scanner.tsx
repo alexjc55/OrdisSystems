@@ -741,7 +741,7 @@ export function BarcodeScanner({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="w-[90vw] max-w-[350px] mx-auto">
+        <DialogContent className="w-[95vw] max-w-[380px] mx-auto p-4">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-sm">
               <Camera className="h-4 w-4" />
@@ -750,10 +750,10 @@ export function BarcodeScanner({
           </DialogHeader>
           
           <div className="space-y-3">
-            <div className="relative bg-black rounded-lg overflow-hidden" style={{ height: '200px', width: '100%', maxWidth: '100%', maxHeight: '200px' }}>
+            <div className="relative bg-black rounded-lg overflow-hidden" style={{ height: '200px', width: '100%', maxWidth: '100%', maxHeight: '200px', position: 'relative' }}>
               <video
                 ref={videoRef}
-                className="w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover"
                 playsInline
                 muted
                 autoPlay
@@ -761,12 +761,18 @@ export function BarcodeScanner({
                 style={{ 
                   opacity: 1,
                   filter: 'none',
-                  transform: 'scaleX(-1)',
+                  transform: 'none',
                   backgroundColor: 'transparent',
                   maxWidth: '100%',
                   maxHeight: '200px',
                   width: '100%',
-                  height: '200px'
+                  height: '200px',
+                  objectFit: 'cover',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0
                 }}
                 onError={(e) => addDebugMessage('❌ Ошибка video элемента')}
                 onLoadStart={() => addDebugMessage('📺 Загрузка видео начата')}
@@ -851,7 +857,7 @@ export function BarcodeScanner({
                 const mockResult = {
                   getText: () => '2025874002804',
                   getFormat: () => 'EAN_13'
-                };
+                } as any;
                 handleBarcodeDetected(mockResult);
               }}>
                 🧪 Тест
