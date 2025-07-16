@@ -82,12 +82,12 @@ export function BarcodeScanner({
     
 
     
-    // Convert weight to grams (divide by 10 for Israeli barcode format)
+    // Convert weight to number (Israeli barcode format: direct weight in grams)
     const rawWeight = parseInt(weightStr);
     if (isNaN(rawWeight)) return null;
     
-    // Israeli barcode format: weight is stored * 10, so divide by 10
-    const weight = Math.round(rawWeight / 10);
+    // Israeli barcode format: weight is stored as-is in grams
+    const weight = rawWeight;
     
     // Apply weight unit conversion
     const finalWeight = barcodeConfig.weightUnit === 'kg' ? weight * 1000 : weight;

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест парсинга штрих-кодов</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-container { background: #f5f5f5; padding: 20px; margin: 10px 0; border-radius: 8px; }
+        .result { background: #e8f5e8; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .error { background: #ffe8e8; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; }
+        input { padding: 8px; margin: 5px; width: 200px; border: 1px solid #ddd; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Тест парсинга штрих-кодов</h1>
+    
+    <div class="test-container">
+        <h3>Тест парсинга штрих-кода</h3>
+        <input type="text" id="testBarcode" placeholder="Введите штрих-код" value="2025874002385">
+        <button onclick="testBarcode()">Тестировать</button>
+        <div id="parseResult"></div>
+    </div>
+
+    <div class="test-container">
+        <h3>Примеры штрих-кодов для тестирования:</h3>
+        <ul>
+            <li><button onclick="testSpecificBarcode('2025874002385')">2025874002385</button> - должен показать 2385г</li>
+            <li><button onclick="testSpecificBarcode('2025874002805')">2025874002805</button> - должен показать 2805г</li>
+            <li><button onclick="testSpecificBarcode('2025874001234')">2025874001234</button> - должен показать 1234г</li>
+        </ul>
+    </div>
+
+    <script>
+        // Симуляция конфигурации штрих-кода (как в системе)
+        const barcodeConfig = {
+            enabled: true,
+            productCodeStart: 2,    // позиция 2
+            productCodeEnd: 7,      // позиция 7 (включительно в UI, НЕ включительно в substring)
+            weightStart: 8,         // позиция 8
+            weightEnd: 13,          // позиция 13 (включительно в UI, НЕ включительно в substring)  
+            weightUnit: 'g'
+        };
+
+        function parseBarcode(barcode) {
+            if (!barcodeConfig.enabled) {
+                return { error: 'Система штрих-кодов отключена' };
+            }
+            
+            // Проверяем длину
+            const minLength = Math.max(barcodeConfig.productCodeEnd, barcodeConfig.weightEnd);
+            if (barcode.length < minLength) {
+                return { error: `Штрих-код слишком короткий. Нужно минимум ${minLength} символов, получено ${barcode.length}` };
+            }
+            
+            // Извлекаем код продукта (позиции 1-based в UI, 0-based в коде)
+            const productCode = barcode.substring(
+                barcodeConfig.productCodeStart - 1, 
+                barcodeConfig.productCodeEnd
+            );
+            
+            // Извлекаем вес (позиции 1-based в UI, 0-based в коде)
+            const weightStr = barcode.substring(
+                barcodeConfig.weightStart - 1, 
+                barcodeConfig.weightEnd
+            );
+            
+            // Конвертируем вес в число
+            const weight = parseInt(weightStr);
+            if (isNaN(weight)) {
+                return { error: `Неправильный формат веса: "${weightStr}"` };
+            }
+            
+            return {
+                barcode: barcode,
+                productCode: productCode,
+                weightStr: weightStr,
+                weight: weight,
+                weightUnit: barcodeConfig.weightUnit,
+                config: barcodeConfig
+            };
+        }
+
+        function testBarcode() {
+            const barcode = document.getElementById('testBarcode').value;
+            const result = parseBarcode(barcode);
+            
+            const resultDiv = document.getElementById('parseResult');
+            
+            if (result.error) {
+                resultDiv.innerHTML = `<div class="error"><strong>Ошибка:</strong> ${result.error}</div>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="result">
+                        <h4>✅ Результат парсинга:</h4>
+                        <p><strong>Штрих-код:</strong> ${result.barcode}</p>
+                        <p><strong>Код продукта (позиции ${result.config.productCodeStart}-${result.config.productCodeEnd}):</strong> "${result.productCode}"</p>
+                        <p><strong>Вес-строка (позиции ${result.config.weightStart}-${result.config.weightEnd}):</strong> "${result.weightStr}"</p>
+                        <p><strong>Вес:</strong> ${result.weight} ${result.weightUnit}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function testSpecificBarcode(barcode) {
+            document.getElementById('testBarcode').value = barcode;
+            testBarcode();
+        }
+
+        // Автоматический тест при загрузке
+        window.onload = function() {
+            testBarcode();
+        }
+    </script>
+</body>
+</html>

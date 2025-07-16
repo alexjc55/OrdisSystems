@@ -2485,7 +2485,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       const productCode = barcode.substring(config.productCodeStart - 1, config.productCodeEnd);
       const weightStr = barcode.substring(config.weightStart - 1, config.weightEnd);
       
-      // Convert weight to number
+      // Convert weight to number (Israeli barcode format: weight in grams as-is)
       const weight = parseInt(weightStr, 10);
       
       if (isNaN(weight)) {
