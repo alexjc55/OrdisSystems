@@ -146,8 +146,11 @@ export function BarcodeScanner({
     setIsScanning(false);
     
     console.log('Processing barcode:', barcodeText);
+    addDebugMessage(`🔧 Вызов parseBarcode для: ${barcodeText}`);
     
     const parsed = parseBarcode(barcodeText);
+    addDebugMessage(`🔧 Результат parseBarcode: ${parsed ? JSON.stringify(parsed) : 'null'}`);
+    
     if (!parsed) {
       addDebugMessage(`❌ Неверный формат штрих-кода: ${barcodeText}`);
       // Закрываем сканер и показываем ошибку
@@ -181,9 +184,12 @@ export function BarcodeScanner({
 
     if (orderItem) {
       addDebugMessage(`✅ Товар найден в заказе: ${orderItem.product.name}`);
+      addDebugMessage(`🔧 Вызов onUpdateItem(${orderItem.productId}, ${weight})`);
       // Update existing item weight - закрываем сканер и обновляем
       onUpdateItem(orderItem.productId, weight);
+      addDebugMessage(`🔧 Вызов onClose()`);
       onClose();
+      addDebugMessage(`🔧 Показ toast для обновления веса`);
       toast({
         title: adminT('barcode.weightUpdated'),
         description: `${orderItem.product.name}: ${weight}${adminT('units.g')}`
@@ -194,15 +200,19 @@ export function BarcodeScanner({
     addDebugMessage(`ℹ️ Товар не найден в заказе, ищем в базе...`);
 
     // Check if product exists in store
+    addDebugMessage(`🔍 Ищем продукт с кодом: ${productCode}`);
+    addDebugMessage(`📝 Всего продуктов в базе: ${allProducts.length}`);
+    
     const product = findProductByBarcode(productCode);
     console.log('Product found:', product ? product.name : 'NOT FOUND');
     console.log('All products barcodes:', allProducts.map(p => ({ name: p.name, barcode: p.barcode })));
     
     if (!product) {
       addDebugMessage(`❌ Продукт не найден: код=${productCode}`);
-      addDebugMessage(`📝 Всего продуктов в базе: ${allProducts.length}`);
+      addDebugMessage(`🔧 Вызов onClose() для ошибки`);
       // Закрываем сканер и показываем ошибку
       onClose();
+      addDebugMessage(`🔧 Показ toast для ошибки`);
       toast({
         variant: "destructive",
         title: adminT('barcode.productNotFound'),
@@ -215,7 +225,9 @@ export function BarcodeScanner({
 
     // Product exists but not in order - закрываем сканер и показываем диалог добавления
     addDebugMessage(`🎯 Показ диалога добавления: ${product.name}, ${weight}г`);
+    addDebugMessage(`🔧 Вызов onClose()`);
     onClose();
+    addDebugMessage(`🔧 Открытие диалога подтверждения`);
     setConfirmDialog({
       isOpen: true,
       product,
