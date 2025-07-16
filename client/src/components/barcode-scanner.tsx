@@ -387,13 +387,14 @@ export function BarcodeScanner({
         
         addDebugMessage(`📹 Видео трек: ${videoTrack.label}`);
         
-        // Используем простой метод сканирования
+        // Используем агрессивное сканирование
         let scanTimeoutId: NodeJS.Timeout;
         let scanAttempts = 0;
         
-        const simpleScanLoop = () => {
+        const aggressiveScanLoop = () => {
           if (!isScanning || !videoRef.current) {
             if (scanTimeoutId) clearTimeout(scanTimeoutId);
+            addDebugMessage('🛑 Сканирование остановлено');
             return;
           }
           
@@ -402,9 +403,9 @@ export function BarcodeScanner({
           try {
             // Проверяем готовность видео
             if (videoRef.current.readyState >= 2 && videoRef.current.videoWidth > 0) {
-              // Показываем прогресс каждые 100 попыток
-              if (scanAttempts % 100 === 0) {
-                addDebugMessage(`🔄 Сканирование активно (попытка ${scanAttempts})`);
+              // Показываем прогресс каждые 50 попыток
+              if (scanAttempts % 50 === 0) {
+                addDebugMessage(`🔄 Активное сканирование (попытка ${scanAttempts})`);
               }
               
               // Основной метод сканирования
@@ -416,32 +417,34 @@ export function BarcodeScanner({
                   }
                 })
                 .catch((error) => {
-                  // Игнорируем обычные ошибки поиска
+                  // Показываем некоторые ошибки для диагностики
                   if (!error.name.includes('NotFoundException') && 
                       !error.name.includes('TypeError') && 
                       !error.message.includes('No MultiFormat Readers')) {
-                    if (scanAttempts % 200 === 0) {
-                      addDebugMessage(`⚠️ Ошибка сканера: ${error.name}`);
+                    if (scanAttempts % 100 === 0) {
+                      addDebugMessage(`⚠️ Ошибка: ${error.name}`);
                     }
                   }
                 });
             } else {
-              if (scanAttempts % 100 === 0) {
-                addDebugMessage(`⚠️ Видео не готово (состояние: ${videoRef.current.readyState})`);
+              if (scanAttempts % 50 === 0) {
+                addDebugMessage(`⚠️ Видео не готово: readyState=${videoRef.current.readyState}, width=${videoRef.current.videoWidth}`);
               }
             }
           } catch (error) {
-            // Игнорируем критические ошибки
+            if (scanAttempts % 100 === 0) {
+              addDebugMessage(`❌ Критическая ошибка сканирования: ${error.message}`);
+            }
           }
           
-          // Продолжаем сканирование
-          scanTimeoutId = setTimeout(simpleScanLoop, 300);
+          // Более частое сканирование
+          scanTimeoutId = setTimeout(aggressiveScanLoop, 100);
         };
         
-        // Запускаем простой цикл сканирования
-        simpleScanLoop();
+        // Запускаем агрессивный цикл сканирования
+        aggressiveScanLoop();
         
-        addDebugMessage('🎯 Сканер активен - наведите камеру на штрих-код!');
+        addDebugMessage('🎯 Агрессивный сканер активен - наведите камеру на штрих-код!');
       } catch (scannerError) {
         addDebugMessage(`⚠️ Ошибка инициализации сканера: ${scannerError.message}`);
         
@@ -483,6 +486,13 @@ export function BarcodeScanner({
         // Начинаем альтернативный цикл сканирования
         scanLoop();
         addDebugMessage('🎯 Альтернативный сканер активирован');
+        
+        // Добавляем диагностику видео
+        setTimeout(() => {
+          if (videoRef.current) {
+            addDebugMessage(`📊 Видео статус: ${videoRef.current.readyState}, размер: ${videoRef.current.videoWidth}x${videoRef.current.videoHeight}`);
+          }
+        }, 1000);
       }
       
     } catch (error) {
