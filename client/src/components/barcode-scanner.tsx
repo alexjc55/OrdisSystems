@@ -142,10 +142,11 @@ export function BarcodeScanner({
   };
 
   const handleBarcodeDetected = (result: Result) => {
+    console.log('=== handleBarcodeDetected START ===');
     const barcodeText = result.getText();
     const currentTime = Date.now();
     
-    addDebugMessage(`🎯 Обработка штрих-кода: ${barcodeText}`);
+    addDebugMessage(`🎯 НАЧАЛО: handleBarcodeDetected(${barcodeText})`);
     addDebugMessage(`🔧 Конфигурация: ${barcodeConfig ? 'загружена' : 'НЕ загружена'}`);
     
     // Проверяем конфигурацию
@@ -492,6 +493,7 @@ export function BarcodeScanner({
                     
                     // Используем try-catch для диагностики ошибок в handleBarcodeDetected
                     try {
+                      addDebugMessage(`🚀 Запуск handleBarcodeDetected`);
                       handleBarcodeDetected(result);
                     } catch (handlerError) {
                       addDebugMessage(`❌ Ошибка обработки: ${handlerError.message}`);
