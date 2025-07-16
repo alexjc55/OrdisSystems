@@ -410,6 +410,7 @@ export function BarcodeScanner({
                 addDebugMessage(`🔄 Сканирование активно (попытка ${scanAttempts})`);
               }
               
+              // Попытка основного метода
               codeReaderRef.current.decodeFromVideoElement(videoRef.current)
                 .then((result) => {
                   if (result) {
@@ -425,6 +426,58 @@ export function BarcodeScanner({
                     addDebugMessage(`⚠️ Ошибка сканера: ${error.name}`);
                   }
                 });
+              
+              // Дополнительная попытка с canvas
+              try {
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                if (context) {
+                  canvas.width = videoRef.current.videoWidth;
+                  canvas.height = videoRef.current.videoHeight;
+                  context.drawImage(videoRef.current, 0, 0);
+                  
+                  codeReaderRef.current.decodeFromCanvas(canvas)
+                    .then((result) => {
+                      if (result) {
+                        addDebugMessage(`✅ Штрих-код (canvas): ${result.getText()}`);
+                        handleBarcodeDetected(result);
+                      }
+                    })
+                    .catch(() => {
+                      // Игнорируем ошибки canvas
+                    });
+                }
+              } catch (canvasError) {
+                // Игнорируем ошибки canvas
+              }
+              
+              // Попытка с imageData
+              if (scanAttempts % 10 === 0) {
+                try {
+                  const canvas = document.createElement('canvas');
+                  const context = canvas.getContext('2d');
+                  if (context) {
+                    canvas.width = videoRef.current.videoWidth;
+                    canvas.height = videoRef.current.videoHeight;
+                    context.drawImage(videoRef.current, 0, 0);
+                    
+                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    
+                    codeReaderRef.current.decodeFromImageData(imageData)
+                      .then((result) => {
+                        if (result) {
+                          addDebugMessage(`✅ Штрих-код (imageData): ${result.getText()}`);
+                          handleBarcodeDetected(result);
+                        }
+                      })
+                      .catch(() => {
+                        // Игнорируем ошибки imageData
+                      });
+                  }
+                } catch (imageDataError) {
+                  // Игнорируем ошибки imageData
+                }
+              }
             } else {
               if (scanAttempts % 50 === 0) {
                 addDebugMessage(`⚠️ Видео не готово (состояние: ${videoRef.current.readyState})`);
@@ -434,8 +487,8 @@ export function BarcodeScanner({
             // Игнорируем критические ошибки
           }
           
-          // Продолжаем сканирование более часто
-          scanTimeoutId = setTimeout(simpleScanLoop, 200);
+          // Продолжаем сканирование очень часто
+          scanTimeoutId = setTimeout(simpleScanLoop, 100);
         };
         
         // Запускаем простой цикл сканирования
@@ -688,7 +741,7 @@ export function BarcodeScanner({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="max-w-sm w-full mx-auto">
+        <DialogContent className="w-[90vw] max-w-[350px] mx-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-sm">
               <Camera className="h-4 w-4" />
@@ -697,7 +750,7 @@ export function BarcodeScanner({
           </DialogHeader>
           
           <div className="space-y-3">
-            <div className="relative bg-black rounded-lg overflow-hidden" style={{ height: '250px', width: '100%' }}>
+            <div className="relative bg-black rounded-lg overflow-hidden" style={{ height: '200px', width: '100%' }}>
               <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
