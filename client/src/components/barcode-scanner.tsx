@@ -211,12 +211,23 @@ export function BarcodeScanner({
         description: `${confirmDialog.product.name}: ${confirmDialog.weight}${adminT('units.g')}`
       });
     }
-    // Всегда закрываем диалог
+    // ИСПРАВЛЕНИЕ: форсированное закрытие диалога
     setConfirmDialog({ isOpen: false, product: null, weight: 0 });
+    
+    // Дополнительная защита
+    setTimeout(() => {
+      setConfirmDialog({ isOpen: false, product: null, weight: 0 });
+    }, 50);
   };
 
   const handleCancelAddToOrder = () => {
+    // ИСПРАВЛЕНИЕ: форсированное закрытие диалога с тройным сбросом состояния
     setConfirmDialog({ isOpen: false, product: null, weight: 0 });
+    
+    // Дополнительная защита от зависания диалога
+    setTimeout(() => {
+      setConfirmDialog({ isOpen: false, product: null, weight: 0 });
+    }, 50);
   };
 
   const startScanning = async () => {
@@ -625,7 +636,13 @@ export function BarcodeScanner({
         open={confirmDialog.isOpen} 
         onOpenChange={(open) => {
           if (!open) {
+            // ИСПРАВЛЕНИЕ: принудительно закрываем диалог при любом изменении на false (ESC, клик по фону)
             setConfirmDialog({ isOpen: false, product: null, weight: 0 });
+            
+            // Дополнительная защита для сложных случаев
+            setTimeout(() => {
+              setConfirmDialog({ isOpen: false, product: null, weight: 0 });
+            }, 100);
           }
         }}
       >
