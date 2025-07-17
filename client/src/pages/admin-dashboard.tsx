@@ -2341,7 +2341,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoadingTimeout(true);
-    }, 10000); // 10 second timeout
+    }, 30000); // 30 second timeout для Android устройств
     
     return () => clearTimeout(timer);
   }, []);
@@ -3331,6 +3331,13 @@ export default function AdminDashboard() {
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-6"></div>
           <p className="text-gray-600 text-lg mb-2">Загрузка админ панели...</p>
           <p className="text-gray-500 text-sm">Подготовка данных для работы</p>
+          {loadingTimeout && (
+            <div className="mt-4">
+              <Button onClick={() => window.location.reload()} variant="outline">
+                Обновить страницу
+              </Button>
+            </div>
+          )}
           {isWorkerWithoutPermissions && (
             <p className="text-orange-500 text-xs mt-2">Настройка прав доступа...</p>
           )}

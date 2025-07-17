@@ -27,6 +27,17 @@ export function CacheBuster() {
   }
 
   useEffect(() => {
+    // Трекинг активности пользователя для паузы автообновлений
+    const trackUserActivity = () => {
+      localStorage.setItem('last_user_activity', Date.now().toString());
+    };
+    
+    // События активности пользователя
+    const events = ['click', 'keydown', 'scroll', 'touchstart'];
+    events.forEach(event => {
+      document.addEventListener(event, trackUserActivity, { passive: true });
+    });
+
     // Check for Service Worker updates
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.ready.then(registration => {
@@ -64,7 +75,13 @@ export function CacheBuster() {
     // Check for updates every 30 seconds
     const interval = setInterval(checkForUpdates, 30000);
     
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      // Очистка обработчиков событий
+      events.forEach(event => {
+        document.removeEventListener(event, trackUserActivity);
+      });
+    };
   }, []);
 
   // Автоматическое обновление без уведомлений
@@ -105,6 +122,16 @@ export function CacheBuster() {
 
   const checkForUpdates = async () => {
     try {
+      // ПАУЗА АВТООБНОВЛЕНИЙ: если пользователь на странице админки и печатает/кликает
+      const isOnAdminPage = window.location.pathname.includes('/admin');
+      const lastUserActivity = localStorage.getItem('last_user_activity');
+      const recentActivity = lastUserActivity && (Date.now() - parseInt(lastUserActivity)) < 60000; // 1 минута
+      
+      if (isOnAdminPage && recentActivity) {
+        console.log('⏸️ [CacheBuster] Паузa автообновлений - пользователь активен в админке');
+        return;
+      }
+
       // Check if there's a new version by comparing app hash
       const response = await fetch('/api/version?' + Date.now(), {
         cache: 'no-store',
@@ -172,10 +199,17 @@ export function CacheBuster() {
       const hashChanged = lastAppHash && lastAppHash !== currentAppHash;
       const shouldAutoUpdate = hashChanged && !recentlyUpdated && !alreadyProcessed;
       
-      if (shouldAutoUpdate) {
+      // ЗАЩИТА ОТ ЗАЦИКЛИВАНИЯ: не обновляем если находимся на странице загрузки админ-панели
+      const isOnAdminLoadingPage = window.location.pathname.includes('/admin') && 
+                                   (document.body.textContent?.includes('Загрузка админ панели') || 
+                                    document.body.textContent?.includes('Подготовка данных для работы'));
+      
+      if (shouldAutoUpdate && !isOnAdminLoadingPage) {
         console.log('🔄 [CacheBuster] New version detected! Auto-updating...');
         console.log(`🔄 [CacheBuster] Hash changed: ${lastAppHash} → ${currentAppHash}`);
         performAutoUpdate(currentAppHash, data);
+      } else if (shouldAutoUpdate && isOnAdminLoadingPage) {
+        console.log('🛡️ [CacheBuster] Auto-update blocked - admin panel is loading');
       }
       
       // Store current hash

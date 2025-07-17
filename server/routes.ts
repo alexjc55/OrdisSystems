@@ -93,8 +93,7 @@ async function generateAppHash(): Promise<string> {
       'server/routes.ts'
     ];
     
-    // ФОРСИРОВАННОЕ ОБНОВЛЕНИЕ: добавляем текущее время для обновления хеша после загрузки новых файлов
-    hash.update(`force_update:${Date.now()}`);
+    // СТАБИЛИЗАЦИЯ ХЕША: убираем постоянное изменение времени, чтобы избежать зацикливания на мобильных устройствах
     
     for (const file of filesToCheck) {
       const fullPath = path.join(process.cwd(), file);
