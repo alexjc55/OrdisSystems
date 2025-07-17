@@ -13,7 +13,7 @@
 ```bash
 cd /путь/к/проекту
 git pull origin main
-node migrations/run-sql-with-env.js
+node migrations/run-sql-with-env.cjs
 pm2 restart edahouse
 ```
 
@@ -29,7 +29,7 @@ pm2 restart edahouse
 ```bash
 cd /путь/к/проекту
 npm install pg
-node migrations/run-sql-with-env.js
+node migrations/run-sql-with-env.cjs
 pm2 restart edahouse
 ```
 

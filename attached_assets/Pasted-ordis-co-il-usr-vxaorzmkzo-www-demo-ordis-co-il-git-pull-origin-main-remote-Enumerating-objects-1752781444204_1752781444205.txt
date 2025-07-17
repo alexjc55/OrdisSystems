@@ -1,0 +1,37 @@
+ordis_co_il_usr@vxaorzmkzo:~/www/demo.ordis.co.il$ git pull origin main
+remote: Enumerating objects: 17, done.
+remote: Counting objects: 100% (17/17), done.
+remote: Compressing objects: 100% (6/6), done.
+remote: Total 12 (delta 7), reused 11 (delta 6), pack-reused 0 (from 0)
+Unpacking objects: 100% (12/12), 7.02 KiB | 653.00 KiB/s, done.
+From https://github.com/alexjc55/OrdisSystems
+ * branch              main       -> FETCH_HEAD
+   f8126949..310ff55b  main       -> origin/main
+Updating f8126949..310ff55b
+Fast-forward
+ QUICK-SERVER-FIX.md            |  58 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ VPS-QUICK-FIX.md               | 123 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ migrations/run-sql-with-env.js |  81 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ replit.md                      |   6 ++++++
+ scripts/fix-server-database.sh |  16 +++++++++++++++-
+ scripts/setup-server-env.sh    | 113 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 396 insertions(+), 1 deletion(-)
+ create mode 100644 QUICK-SERVER-FIX.md
+ create mode 100644 VPS-QUICK-FIX.md
+ create mode 100755 migrations/run-sql-with-env.js
+ mode change 100755 => 100644 scripts/fix-server-database.sh
+ create mode 100755 scripts/setup-server-env.sh
+ordis_co_il_usr@vxaorzmkzo:~/www/demo.ordis.co.il$ node migrations/run-sql-with-env.js
+file:///var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/migrations/run-sql-with-env.js:6
+const fs = require('fs');
+           ^
+
+ReferenceError: require is not defined in ES module scope, you can use import instead
+This file is being treated as an ES module because it has a '.js' file extension and '/var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+    at file:///var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/migrations/run-sql-with-env.js:6:12
+    at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v20.19.3
+ordis_co_il_usr@vxaorzmkzo:~/www/demo.ordis.co.il$

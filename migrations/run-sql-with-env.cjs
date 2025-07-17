@@ -1,14 +1,10 @@
 #!/usr/bin/env node
 
-// SERVER DATABASE FIX - Node.js версия для выполнения SQL миграции
+// SERVER DATABASE FIX - CommonJS версия для выполнения SQL миграции
 // Использует переменные из .env файла для подключения к базе данных
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const fs = require('fs');
+const path = require('path');
 
 // Загружаем переменные из .env файла
 const loadEnv = () => {
@@ -42,8 +38,7 @@ if (!process.env.DATABASE_URL) {
 console.log('🔗 Подключение к базе данных:', process.env.DATABASE_URL.replace(/:([^:@]*?)@/, ':***@'));
 
 // Подключаемся к базе данных
-import pkg from 'pg';
-const { Pool } = pkg;
+const { Pool } = require('pg');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
