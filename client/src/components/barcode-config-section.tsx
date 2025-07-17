@@ -9,7 +9,7 @@ import { useAdminTranslation } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff, Settings } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -32,6 +32,9 @@ export function BarcodeConfigSection() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { t: adminT } = useAdminTranslation();
+  
+  // State for showing/hiding configuration fields
+  const [isConfigVisible, setIsConfigVisible] = useState(true);
   
   // Query for current barcode configuration
   const { data: barcodeConfig, isLoading: isLoadingConfig } = useQuery({
@@ -161,34 +164,60 @@ export function BarcodeConfigSection() {
 
   return (
     <div className="space-y-6">
-      {/* Configuration Form */}
-      <Form {...barcodeForm}>
-        <form onSubmit={barcodeForm.handleSubmit(onSubmitBarcodeConfig)} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            {/* Enable/Disable Toggle */}
-            <div className="md:col-span-2">
-              <FormField
-                control={barcodeForm.control}
-                name="enabled"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">{adminT('barcode.enabled')}</FormLabel>
-                      <FormDescription>
-                        {adminT('barcode.description')}
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
+      {/* Barcode System Header with Eye Toggle */}
+      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
+        <div className="flex items-center gap-3">
+          <Settings className="h-5 w-5 text-primary" />
+          <div>
+            <h3 className="text-lg font-semibold">{adminT('barcode.title')}</h3>
+            <p className="text-sm text-gray-600">{adminT('barcode.description')}</p>
+          </div>
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsConfigVisible(!isConfigVisible)}
+          className="h-10 w-10 p-0 hover:bg-gray-200"
+          title={isConfigVisible ? adminT('barcode.hideSettings') : adminT('barcode.showSettings')}
+        >
+          {isConfigVisible ? (
+            <Eye className="h-5 w-5 text-primary" />
+          ) : (
+            <EyeOff className="h-5 w-5 text-gray-400" />
+          )}
+        </Button>
+      </div>
+
+      {/* Configuration Form - Only show when visible */}
+      {isConfigVisible && (
+        <Form {...barcodeForm}>
+          <form onSubmit={barcodeForm.handleSubmit(onSubmitBarcodeConfig)} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
+              {/* Enable/Disable Toggle */}
+              <div className="md:col-span-2">
+                <FormField
+                  control={barcodeForm.control}
+                  name="enabled"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">{adminT('barcode.enabled')}</FormLabel>
+                        <FormDescription>
+                          {adminT('barcode.description')}
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
 
             {/* Product Code Range */}
             <FormField
@@ -304,7 +333,7 @@ export function BarcodeConfigSection() {
             {updateBarcodeConfigMutation.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
-{adminT('actions.saving')}
+                {adminT('actions.saving')}
               </>
             ) : (
               adminT('actions.save')
@@ -312,9 +341,10 @@ export function BarcodeConfigSection() {
           </Button>
         </form>
       </Form>
+      )}
 
-      {/* Test Section */}
-      {barcodeConfig?.enabled && (
+      {/* Test Section - Only show when config is visible and enabled */}
+      {isConfigVisible && barcodeConfig?.enabled && (
         <div className="border-t pt-6">
           <h4 className="text-lg font-medium mb-4">{adminT('barcode.testBarcode')}</h4>
           
@@ -390,31 +420,35 @@ export function BarcodeConfigSection() {
         </div>
       )}
 
-      {/* Configuration Preview */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h4 className="font-medium mb-2">{adminT('settings.currentConfiguration')}:</h4>
-        <div className="text-sm text-gray-600 space-y-1">
-          <div>{adminT('barcode.status')}: {barcodeConfig?.enabled ? `✅ ${adminT('settings.enabled')}` : `❌ ${adminT('settings.disabled')}`}</div>
-          <div>{adminT('barcode.productCodePos')} {barcodeConfig?.productCodeStart}-{barcodeConfig?.productCodeEnd}</div>
-          <div>{adminT('barcode.weightPos')} {barcodeConfig?.weightStart}-{barcodeConfig?.weightEnd} ({barcodeConfig?.weightUnit})</div>
-        </div>
-      </div>
-
-      {/* Help Section */}
-      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-        <h4 className="font-medium mb-2 text-blue-800">📝 {adminT('barcode.sampleBarcode')}:</h4>
-        <div className="text-sm text-blue-700 space-y-2">
-          <div><strong>{adminT('settings.barcodeFormat')}:</strong> {adminT('settings.positionsStartFrom')}</div>
-          <div><strong>{adminT('settings.barcodeExample')}</strong></div>
-          <ul className="ml-4 list-disc space-y-1">
-            <li>{adminT('settings.productCodePositions')}</li>
-            <li>{adminT('settings.weightPositions')}</li>
-          </ul>
-          <div className="bg-blue-100 p-2 rounded border border-blue-300 mt-2">
-            <strong>{adminT('barcode.sampleBarcodeDescription')}</strong>
+      {/* Configuration Preview - Only show when config is visible */}
+      {isConfigVisible && (
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-medium mb-2">{adminT('settings.currentConfiguration')}:</h4>
+          <div className="text-sm text-gray-600 space-y-1">
+            <div>{adminT('barcode.status')}: {barcodeConfig?.enabled ? `✅ ${adminT('settings.enabled')}` : `❌ ${adminT('settings.disabled')}`}</div>
+            <div>{adminT('barcode.productCodePos')} {barcodeConfig?.productCodeStart}-{barcodeConfig?.productCodeEnd}</div>
+            <div>{adminT('barcode.weightPos')} {barcodeConfig?.weightStart}-{barcodeConfig?.weightEnd} ({barcodeConfig?.weightUnit})</div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Help Section - Only show when config is visible */}
+      {isConfigVisible && (
+        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+          <h4 className="font-medium mb-2 text-blue-800">📝 {adminT('barcode.sampleBarcode')}:</h4>
+          <div className="text-sm text-blue-700 space-y-2">
+            <div><strong>{adminT('settings.barcodeFormat')}:</strong> {adminT('settings.positionsStartFrom')}</div>
+            <div><strong>{adminT('settings.barcodeExample')}</strong></div>
+            <ul className="ml-4 list-disc space-y-1">
+              <li>{adminT('settings.productCodePositions')}</li>
+              <li>{adminT('settings.weightPositions')}</li>
+            </ul>
+            <div className="bg-blue-100 p-2 rounded border border-blue-300 mt-2">
+              <strong>{adminT('barcode.sampleBarcodeDescription')}</strong>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

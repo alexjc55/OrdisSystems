@@ -103,7 +103,9 @@
     "addToOrder": "Add to order",
     "scanBarcode": "Scan barcode",
     "pointCameraInstruction": "Point camera at barcode",
-    "retry": "Retry"
+    "retry": "Retry",
+    "hideSettings": "Hide settings",
+    "showSettings": "Show settings"
   },
   "settings": {
     "systemSettings": "System Settings",

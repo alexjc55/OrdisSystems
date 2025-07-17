@@ -93,7 +93,9 @@
     "addToOrder": "הוסף להזמנה",
     "scanBarcode": "סרוק ברקוד",
     "pointCameraInstruction": "כוון את המצלמה לברקוד",
-    "retry": "נסה שוב"
+    "retry": "נסה שוב",
+    "hideSettings": "הסתר הגדרות",
+    "showSettings": "הצג הגדרות"
   },
   "settings": {
     "systemSettings": "הגדרות מערכת",

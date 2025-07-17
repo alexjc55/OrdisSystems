@@ -95,7 +95,9 @@
     "addToOrder": "أضف إلى الطلب",
     "scanBarcode": "مسح الباركود",
     "pointCameraInstruction": "وجه الكاميرا نحو الباركود",
-    "retry": "أعد المحاولة"
+    "retry": "أعد المحاولة",
+    "hideSettings": "إخفاء الإعدادات",
+    "showSettings": "إظهار الإعدادات"
   },
   "settings": {
     "systemSettings": "إعدادات النظام",
