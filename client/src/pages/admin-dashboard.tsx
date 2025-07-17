@@ -5475,14 +5475,7 @@ export default function AdminDashboard() {
                   </div>
 
                   {/* Barcode System Section */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">🏷️ {adminT('barcode.title')}</h3>
-                    <p className="text-sm text-gray-600">
-                      {adminT('barcode.description')}
-                    </p>
-                    
-                    <BarcodeConfigSection />
-                  </div>
+                  <BarcodeConfigSection />
                 </CardContent>
               </Card>
             </TabsContent>
