@@ -157,6 +157,12 @@ This is a comprehensive e-commerce food delivery system built with React, Expres
 
 ## Changelog
 
+- January 17, 2025: ✅ VPS СЕРВЕР: СОЗДАНО РЕШЕНИЕ ДЛЯ ПРОБЛЕМЫ DATABASE_URL
+  - ПРОБЛЕМА ВЫЯВЛЕНА: Bash скрипт миграции не загружал переменные из .env файла на VPS сервере
+  - ПОЛЬЗОВАТЕЛЬ ПОДТВЕРДИЛ: .env файл настроен правильно с корректным DATABASE_URL
+  - РЕШЕНИЕ СОЗДАНО: migrations/run-sql-with-env.js - Node.js скрипт с автоматической загрузкой .env
+  - ИНСТРУКЦИИ: QUICK-SERVER-FIX.md с простыми командами для исправления на сервере
+  - РЕЗУЛЬТАТ: Теперь миграция базы данных должна выполниться успешно на VPS сервере
 - January 17, 2025: ✅ СЕРВЕР: СОЗДАНО РЕШЕНИЕ ДЛЯ ОТКАТА ПРОБЛЕМНОЙ МИГРАЦИИ ШТРИХ-КОДОВ
   - ПРОБЛЕМА ДИАГНОСТИРОВАНА: Миграция add-barcode-system.sql добавила избыточные колонки, не соответствующие схеме Drizzle
   - ПРОБЛЕМАТИЧНЫЕ ИЗМЕНЕНИЯ: barcode_en/he/ar в products, scanned_weight в order_items, ненужные таблицы barcode_config/barcode_scan_log
