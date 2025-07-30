@@ -197,7 +197,10 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
       console.log('Response status:', response.status);
       if (!response.ok) throw new Error('Failed to fetch clients');
       const data = await response.json();
-      console.log('Fetched clients data:', data);
+      console.log('Fetched clients data:', JSON.stringify(data, null, 2));
+      console.log('Data type:', typeof data);
+      console.log('Has data property:', !!data?.data);
+      console.log('Data array length:', data?.data?.length || 0);
       return data;
     },
     enabled: dialogOpen, // Only fetch when dialog is open
@@ -275,10 +278,11 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
       return [];
     }
     if (!clients?.data) {
-      console.log('No clients data available, received:', clients);
+      console.log('No clients data available, received:', JSON.stringify(clients, null, 2));
       return [];
     }
     console.log('Total clients:', clients.data.length);
+    console.log('Sample client:', JSON.stringify(clients.data[0], null, 2));
     console.log('Client search:', clientSearch);
     
     const filtered = clients.data.filter((client: any) =>
