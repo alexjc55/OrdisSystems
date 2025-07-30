@@ -1513,9 +1513,15 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       }
       // For guest orders, finalUserId stays null
 
-      // Calculate totals
-      const subtotal = items.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
-      const orderDiscountAmount = discountAmount || 0;
+      // Calculate totals - convert strings to numbers
+      const subtotal = items.reduce((sum: number, item: any) => {
+        const totalPrice = typeof item.totalPrice === 'string' ? parseFloat(item.totalPrice) : item.totalPrice;
+        return sum + (totalPrice || 0);
+      }, 0);
+      
+      const orderDiscountAmount = discountAmount ? 
+        (typeof discountAmount === 'string' ? parseFloat(discountAmount) : discountAmount) : 0;
+        
       const settings = await storage.getStoreSettings();
       
       let deliveryFee = 0;
@@ -1546,15 +1552,15 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
 
       const order = await storage.createOrder(orderData);
 
-      // Create order items
+      // Create order items - convert strings to numbers
       for (const item of items) {
         await storage.createOrderItem({
           orderId: order.id,
-          productId: item.productId,
-          quantity: item.quantity,
-          weight: item.weight || null,
-          unitPrice: item.unitPrice,
-          totalPrice: item.totalPrice
+          productId: typeof item.productId === 'string' ? parseInt(item.productId) : item.productId,
+          quantity: typeof item.quantity === 'string' ? parseFloat(item.quantity) : item.quantity,
+          weight: item.weight ? (typeof item.weight === 'string' ? parseFloat(item.weight) : item.weight) : null,
+          unitPrice: typeof item.unitPrice === 'string' ? parseFloat(item.unitPrice) : item.unitPrice,
+          totalPrice: typeof item.totalPrice === 'string' ? parseFloat(item.totalPrice) : item.totalPrice
         });
       }
 
