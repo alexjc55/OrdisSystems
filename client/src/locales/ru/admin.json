@@ -708,6 +708,8 @@
       "guestOrder": "Гостевой заказ",
       "searchClient": "Поиск клиента...",
       "clientNotFound": "Клиент не найден",
+      "noResults": "Клиенты не найдены",
+      "noClients": "Нет доступных клиентов",
       "selectClient": "Выберите клиента",
       "clientDetails": "Данные клиента",
       "firstName": "Имя",

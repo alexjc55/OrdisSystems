@@ -428,40 +428,61 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                   />
 
                   {form.watch('clientType') === 'existing' && (
-                    <div className="space-y-4">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input
-                          placeholder={adminT('orders.clientSelection.searchClient')}
-                          value={clientSearch}
-                          onChange={(e) => setClientSearch(e.target.value)}
-                          className="pl-10"
-                        />
-                      </div>
-                      
-                      <FormField
-                        control={form.control}
-                        name="clientId"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Select value={field.value?.toString()} onValueChange={(value) => field.onChange(parseInt(value))}>
-                                <SelectTrigger>
-                                  <SelectValue placeholder={adminT('orders.clientSelection.selectClient')} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {filteredClients.map((client: any) => (
-                                    <SelectItem key={client.id} value={client.id.toString()}>
-                                      {client.firstName} {client.lastName} - {client.email}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                    <FormField
+                      control={form.control}
+                      name="clientId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Select value={field.value?.toString()} onValueChange={(value) => field.onChange(parseInt(value))}>
+                              <SelectTrigger>
+                                <SelectValue placeholder={adminT('orders.clientSelection.selectClient')} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <div className="sticky top-0 bg-white border-b p-2">
+                                  <div className="relative">
+                                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
+                                    <Input
+                                      placeholder={adminT('orders.clientSelection.searchClient')}
+                                      value={clientSearch}
+                                      onChange={(e) => setClientSearch(e.target.value)}
+                                      className="pl-8 h-8"
+                                      onClick={(e) => e.stopPropagation()}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="max-h-40 overflow-y-auto">
+                                  {filteredClients.length > 0 ? (
+                                    filteredClients.map((client: any) => (
+                                      <SelectItem key={client.id} value={client.id.toString()}>
+                                        <div className="flex flex-col">
+                                          <span className="font-medium">
+                                            {client.firstName} {client.lastName}
+                                          </span>
+                                          <span className="text-sm text-gray-500">
+                                            {client.email}
+                                          </span>
+                                          {client.phone && (
+                                            <span className="text-xs text-gray-400">
+                                              {client.phone}
+                                            </span>
+                                          )}
+                                        </div>
+                                      </SelectItem>
+                                    ))
+                                  ) : (
+                                    <div className="p-2 text-sm text-gray-500 text-center">
+                                      {clientSearch ? adminT('orders.clientSelection.noResults') : adminT('orders.clientSelection.noClients')}
+                                    </div>
+                                  )}
+                                </div>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   )}
 
                   {form.watch('clientType') === 'new' && (
