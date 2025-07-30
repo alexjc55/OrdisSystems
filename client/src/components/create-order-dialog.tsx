@@ -185,6 +185,9 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
     },
   });
 
+  // Use external isOpen prop if provided, otherwise use internal state
+  const dialogOpen = isOpen !== undefined ? isOpen : open;
+
   // Fetch clients for selection
   const { data: clients, error: clientsError, isLoading: clientsLoading } = useQuery({
     queryKey: ['/api/admin/users'],
@@ -197,7 +200,7 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
       console.log('Fetched clients data:', data);
       return data;
     },
-    enabled: open,
+    enabled: dialogOpen, // Only fetch when dialog is open
   });
 
   // Fetch products for selection
@@ -208,7 +211,7 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
       if (!response.ok) throw new Error('Failed to fetch products');
       return response.json();
     },
-    enabled: open,
+    enabled: dialogOpen,
   });
 
   // Fetch store settings for delivery calculation
@@ -219,7 +222,7 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
       if (!response.ok) throw new Error('Failed to fetch settings');
       return response.json();
     },
-    enabled: open,
+    enabled: dialogOpen,
   });
 
   // Create order mutation
@@ -347,9 +350,6 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
 
   const deliveryDates = generateDeliveryDates();
   const deliveryTimeSlots = generateDeliveryTimeSlots();
-
-  // Use external isOpen prop if provided, otherwise use internal state
-  const dialogOpen = isOpen !== undefined ? isOpen : open;
   const handleOpenChange = (newOpen: boolean) => {
     if (isOpen !== undefined && onClose) {
       if (!newOpen) onClose();
