@@ -728,7 +728,10 @@
       "time": "Время доставки",
       "selectDate": "Выберите дату",
       "selectTime": "Выберите время",
-      "deliveryNotes": "Примечания к доставке"
+      "deliveryNotes": "Примечания к доставке",
+      "savedAddresses": "Сохраненные адреса",
+      "newAddress": "Новый адрес",
+      "orNewAddress": "или введите новый адрес"
     },
     "productSelection": {
       "title": "Добавление товаров",

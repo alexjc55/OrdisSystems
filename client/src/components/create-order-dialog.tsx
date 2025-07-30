@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -32,8 +32,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 
@@ -45,8 +47,15 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, Search, User, MapPin, Calendar, Clock, ShoppingCart, Scan, Trash2, UserPlus, CreditCard, Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
+import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
+import { getPaymentMethodName as getLocalizedPaymentMethodName } from "@shared/multilingual-helpers";
 import { BarcodeScanner } from "./barcode-scanner";
 import { calculateDeliveryFeeFromSettings } from "@/lib/delivery-utils";
+import { format } from 'date-fns';
+import { ru, enUS, he } from 'date-fns/locale';
+import type { UserAddress } from "@shared/schema";
 
 // Types for the order creation flow
 type ClientType = 'existing' | 'new' | 'guest';
@@ -149,17 +158,74 @@ const generateDeliveryDates = (minDeliveryTimeHours: number = 2, maxDeliveryTime
   return dates;
 };
 
-// Utility function to generate delivery time slots
-const generateDeliveryTimeSlots = () => {
-  const slots = [];
-  for (let hour = 9; hour <= 21; hour++) {
-    const timeSlot = `${hour.toString().padStart(2, '0')}:00-${(hour + 1).toString().padStart(2, '0')}:00`;
-    slots.push({
-      value: timeSlot,
-      label: timeSlot
-    });
+// Date and locale helper functions from checkout
+const getDateLocale = (language: string) => {
+  switch (language) {
+    case 'en': return enUS;
+    case 'he': return he;
+    case 'ru':
+    default: return ru;
   }
-  return slots;
+};
+
+// Generate delivery times based on working hours like in checkout
+const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStartDay: string = 'monday') => {
+  if (!workingHours || !selectedDate) return [];
+  
+  const date = new Date(selectedDate + 'T00:00:00');
+  const today = format(new Date(), "yyyy-MM-dd");
+  const isToday = selectedDate === today;
+  const currentHour = new Date().getHours();
+  
+  const dayNames = weekStartDay === 'sunday' 
+    ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+    : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  
+  const dayName = dayNames[date.getDay()];
+  const daySchedule = workingHours[dayName];
+  
+  if (!daySchedule || daySchedule.trim() === '' || 
+      daySchedule.toLowerCase().includes('закрыто') || 
+      daySchedule.toLowerCase().includes('closed') ||
+      daySchedule.toLowerCase().includes('выходной')) {
+    return [{
+      value: 'closed',
+      label: 'Closed' // Will be translated in component
+    }];
+  }
+  
+  // Parse working hours (e.g., "09:00-18:00" or "09:00-14:00, 16:00-20:00")
+  const timeSlots: { value: string; label: string }[] = [];
+  const scheduleRanges = daySchedule.split(',').map((range: string) => range.trim());
+  
+  scheduleRanges.forEach((range: string) => {
+    const [start, end] = range.split('-').map((time: string) => time.trim());
+    if (start && end) {
+      const [startHour, startMin] = start.split(':').map(Number);
+      const [endHour, endMin] = end.split(':').map(Number);
+      
+      // Generate 2-hour intervals
+      for (let hour = startHour; hour < endHour; hour += 2) {
+        const nextHour = Math.min(hour + 2, endHour);
+        
+        // Skip if the interval would be less than 2 hours and we're not at the start
+        if (nextHour - hour < 2 && hour !== startHour) continue;
+        
+        // Skip past time slots if today is selected
+        if (isToday && hour <= currentHour) continue;
+        
+        const timeStr = `${hour.toString().padStart(2, '0')}:00`;
+        const endTimeStr = `${nextHour.toString().padStart(2, '0')}:00`;
+        
+        timeSlots.push({
+          value: timeStr,
+          label: `${timeStr} - ${endTimeStr}`
+        });
+      }
+    }
+  });
+  
+  return timeSlots;
 };
 
 export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess }: CreateOrderDialogProps) {
@@ -171,11 +237,17 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
   const [comboboxOpen, setComboboxOpen] = useState(false);
   const [productSearch, setProductSearch] = useState('');
   const [discount, setDiscount] = useState<{ type: 'percent' | 'fixed'; amount: number; reason: string } | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
   
   const { t } = useTranslation();
   const adminT = (key: string) => t(`admin:${key}`);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { storeSettings } = useStoreSettings();
+  const { currentLanguage } = useLanguage();
+  const dateLocale = getDateLocale(currentLanguage);
 
   const form = useForm<CreateOrderData>({
     resolver: zodResolver(createOrderSchema),
@@ -215,15 +287,22 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
     enabled: dialogOpen,
   });
 
-  // Fetch store settings for delivery calculation
-  const { data: storeSettings } = useQuery({
-    queryKey: ['/api/settings'],
+  // Get payment method name helper
+  const getPaymentMethodName = (method: any) => {
+    return getLocalizedPaymentMethodName(method, currentLanguage as SupportedLanguage);
+  };
+
+  // Fetch user addresses for selected client
+  const { data: userAddresses = [] } = useQuery<UserAddress[]>({
+    queryKey: ["/api/addresses", form.watch('clientId')],
     queryFn: async () => {
-      const response = await fetch('/api/settings');
-      if (!response.ok) throw new Error('Failed to fetch settings');
+      const clientId = form.watch('clientId');
+      if (!clientId) return [];
+      const response = await fetch(`/api/admin/users/${clientId}/addresses`);
+      if (!response.ok) throw new Error('Failed to fetch addresses');
       return response.json();
     },
-    enabled: dialogOpen,
+    enabled: !!form.watch('clientId') && form.watch('clientType') === 'existing',
   });
 
   // Create order mutation
@@ -311,7 +390,23 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
     : 0;
   const total = subtotal - discountAmount + deliveryFee;
 
+  // Generate delivery dates and times based on store settings
+  const deliveryDates = useMemo(() => {
+    const minDeliveryHours = storeSettings?.minDeliveryTimeHours || 2;
+    const maxDeliveryDays = storeSettings?.maxDeliveryTimeDays || 7;
+    return generateDeliveryDates(minDeliveryHours, maxDeliveryDays);
+  }, [storeSettings]);
 
+  const deliveryTimes = useMemo(() => {
+    const selectedDateValue = form.watch('deliveryDate');
+    if (!selectedDateValue || !storeSettings?.workingHours) return [];
+    
+    return generateDeliveryTimes(
+      storeSettings.workingHours,
+      selectedDateValue,
+      storeSettings.weekStartDay
+    );
+  }, [form.watch('deliveryDate'), storeSettings]);
 
   const addProduct = (product: any) => {
     const newItem: OrderItem = {
@@ -348,8 +443,7 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
     createOrderMutation.mutate(orderData);
   };
 
-  const deliveryDates = generateDeliveryDates();
-  const deliveryTimeSlots = generateDeliveryTimeSlots();
+
   const handleOpenChange = (newOpen: boolean) => {
     if (isOpen !== undefined && onClose) {
       if (!newOpen) onClose();
@@ -646,12 +740,58 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* Saved addresses for existing clients */}
+                  {form.watch('clientType') === 'existing' && userAddresses.length > 0 && (
+                    <div className="space-y-3">
+                      <Label>{adminT('orders.deliveryInfo.savedAddresses')}</Label>
+                      <div className="grid gap-2">
+                        {userAddresses.map((address) => (
+                          <Button
+                            key={address.id}
+                            type="button"
+                            variant={selectedAddressId === address.id ? "default" : "outline"}
+                            className="h-auto p-3 text-left justify-start"
+                            onClick={() => {
+                              setSelectedAddressId(address.id);
+                              form.setValue('deliveryAddress', 
+                                `${address.street}, ${address.building}${address.apartment ? `, кв. ${address.apartment}` : ''}, ${address.city}`
+                              );
+                            }}
+                          >
+                            <MapPin className="w-4 h-4 mr-2 shrink-0 mt-0.5" />
+                            <div className="flex flex-col">
+                              <span className="font-medium">
+                                {address.street}, {address.building}
+                                {address.apartment && `, кв. ${address.apartment}`}
+                              </span>
+                              <span className="text-sm opacity-70">
+                                {address.city}
+                              </span>
+                            </div>
+                          </Button>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="h-px bg-border flex-1" />
+                        <span className="text-sm text-muted-foreground px-2">
+                          {adminT('orders.deliveryInfo.orNewAddress')}
+                        </span>
+                        <div className="h-px bg-border flex-1" />
+                      </div>
+                    </div>
+                  )}
+
                   <FormField
                     control={form.control}
                     name="deliveryAddress"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{adminT('orders.deliveryInfo.address')}</FormLabel>
+                        <FormLabel>
+                          {form.watch('clientType') === 'existing' && userAddresses.length > 0
+                            ? adminT('orders.deliveryInfo.newAddress')
+                            : adminT('orders.deliveryInfo.address')
+                          }
+                        </FormLabel>
                         <FormControl>
                           <Textarea
                             {...field}
@@ -701,7 +841,7 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                                 <SelectValue placeholder={adminT('orders.deliveryInfo.selectTime')} />
                               </SelectTrigger>
                               <SelectContent>
-                                {deliveryTimeSlots.map((slot) => (
+                                {deliveryTimes.map((slot) => (
                                   <SelectItem key={slot.value} value={slot.value}>
                                     {slot.label}
                                   </SelectItem>
@@ -740,9 +880,15 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="cash">Наличные</SelectItem>
-                              <SelectItem value="card">Карта курьеру</SelectItem>
-                              <SelectItem value="transfer">Перевод</SelectItem>
+                              {storeSettings?.paymentMethods?.map((method: any) => (
+                                <SelectItem key={method.id} value={method.id}>
+                                  {getPaymentMethodName(method)}
+                                </SelectItem>
+                              )) || [
+                                <SelectItem key="cash" value="cash">Наличные</SelectItem>,
+                                <SelectItem key="card" value="card">Карта курьеру</SelectItem>,
+                                <SelectItem key="transfer" value="transfer">Перевод</SelectItem>
+                              ]}
                             </SelectContent>
                           </Select>
                         </FormControl>
