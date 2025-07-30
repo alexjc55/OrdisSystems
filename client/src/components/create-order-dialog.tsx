@@ -118,6 +118,8 @@ const createOrderSchema = z.object({
 
 interface CreateOrderDialogProps {
   trigger?: React.ReactNode;
+  isOpen?: boolean;
+  onClose?: () => void;
   onSuccess?: () => void;
 }
 
@@ -156,7 +158,7 @@ const generateDeliveryTimeSlots = () => {
   return slots;
 };
 
-export default function CreateOrderDialog({ trigger, onSuccess }: CreateOrderDialogProps) {
+export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess }: CreateOrderDialogProps) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1); // 1: Client, 2: Delivery, 3: Products, 4: Pricing
   const [items, setItems] = useState<OrderItem[]>([]);
@@ -285,47 +287,7 @@ export default function CreateOrderDialog({ trigger, onSuccess }: CreateOrderDia
     : 0;
   const total = subtotal - discountAmount + deliveryFee;
 
-  // Handle barcode scan
-  const handleBarcodeDetected = (barcode: string, weight: number, productCode: string) => {
-    const product = products?.find((p: any) => p.barcode === productCode || p.id.toString() === productCode);
-    
-    if (product) {
-      const newItem: OrderItem = {
-        productId: product.id,
-        productName: product.name,
-        quantity: 1,
-        weight: weight,
-        unitPrice: parseFloat(product.price),
-        totalPrice: parseFloat(product.price),
-        unit: product.unit || 'г',
-      };
 
-      // Check if item already exists and update weight
-      const existingItemIndex = items.findIndex(item => item.productId === product.id);
-      if (existingItemIndex >= 0) {
-        const updatedItems = [...items];
-        updatedItems[existingItemIndex].weight = weight;
-        setItems(updatedItems);
-        toast({
-          title: adminT('barcode.testSuccess'),
-          description: `${product.name} - ${weight}г`,
-        });
-      } else {
-        setItems([...items, newItem]);
-        toast({
-          title: adminT('orders.productSelection.addProduct'),
-          description: `${product.name} - ${weight}г`,
-        });
-      }
-      setIsScannerOpen(false);
-    } else {
-      toast({
-        title: adminT('orders.productSelection.productNotFound'),
-        description: `Код: ${productCode}`,
-        variant: "destructive",
-      });
-    }
-  };
 
   const addProduct = (product: any) => {
     const newItem: OrderItem = {
@@ -365,8 +327,18 @@ export default function CreateOrderDialog({ trigger, onSuccess }: CreateOrderDia
   const deliveryDates = generateDeliveryDates();
   const deliveryTimeSlots = generateDeliveryTimeSlots();
 
+  // Use external isOpen prop if provided, otherwise use internal state
+  const dialogOpen = isOpen !== undefined ? isOpen : open;
+  const handleOpenChange = (newOpen: boolean) => {
+    if (isOpen !== undefined && onClose) {
+      if (!newOpen) onClose();
+    } else {
+      setOpen(newOpen);
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {trigger || (
           <Button className="btn-primary">
@@ -916,7 +888,28 @@ export default function CreateOrderDialog({ trigger, onSuccess }: CreateOrderDia
         <BarcodeScanner
           isOpen={isScannerOpen}
           onClose={() => setIsScannerOpen(false)}
-          onBarcodeDetected={handleBarcodeDetected}
+          orderItems={items}
+          onUpdateItem={(productId: number, newWeight: number) => {
+            const itemIndex = items.findIndex(item => item.productId === productId);
+            if (itemIndex >= 0) {
+              const updatedItems = [...items];
+              updatedItems[itemIndex].weight = newWeight;
+              setItems(updatedItems);
+            }
+          }}
+          onAddItem={(product: any, weight: number) => {
+            const newItem: OrderItem = {
+              productId: product.id,
+              productName: product.name,
+              quantity: 1,
+              weight: weight,
+              unitPrice: parseFloat(product.price),
+              totalPrice: parseFloat(product.price),
+              unit: product.unit || 'г',
+            };
+            setItems([...items, newItem]);
+          }}
+          allProducts={products || []}
         />
       </DialogContent>
     </Dialog>
