@@ -41,21 +41,21 @@
 }
 
 [cmdk-item][data-selected] {
-  background-color: var(--color-accent) !important;
-  color: white !important;
+  background-color: hsl(210 40% 96%) !important;
+  color: hsl(222.2 84% 4.9%) !important;
 }
 
 [cmdk-item][data-selected] * {
-  color: white !important;
+  color: inherit !important;
 }
 
 [cmdk-item]:hover {
-  background-color: var(--color-accent) !important;
-  color: white !important;
+  background-color: hsl(210 40% 96%) !important;
+  color: hsl(222.2 84% 4.9%) !important;
 }
 
 [cmdk-item]:hover * {
-  color: white !important;
+  color: inherit !important;
 }
 
 /* Force yellow status colors */

@@ -494,14 +494,14 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                                               )}
                                             />
                                             <div className="flex flex-col min-w-0 flex-1">
-                                              <span className="font-medium text-foreground">
+                                              <span className="font-medium">
                                                 {client.firstName} {client.lastName}
                                               </span>
-                                              <span className="text-sm text-muted-foreground">
+                                              <span className="text-sm opacity-60">
                                                 {client.email}
                                               </span>
                                               {client.phone && (
-                                                <span className="text-xs text-muted-foreground opacity-70">
+                                                <span className="text-xs opacity-50">
                                                   {client.phone}
                                                 </span>
                                               )}
