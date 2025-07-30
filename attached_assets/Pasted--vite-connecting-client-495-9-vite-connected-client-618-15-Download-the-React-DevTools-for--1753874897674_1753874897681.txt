@@ -1,0 +1,256 @@
+[vite] connecting... client:495:9
+[vite] connected. client:618:15
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools chunk-RPCDYKBN.js:21551:25
+Applied --color-tomorrow: hsl(262, 83%, 58%) theme-system.ts:132:15
+Applied --color-out-of-stock: hsl(0, 84%, 60%) theme-system.ts:132:15
+⏸️ [CacheBuster] Паузa автообновлений - пользователь активен в админке cache-buster.tsx:111:17
+Некорректный URI. Не удалось загрузить медиаресурс . admin
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+No clients data available 16 create-order-dialog.tsx:212:15
+⏸️ [CacheBuster] Паузa автообновлений - пользователь активен в админке cache-buster.tsx:111:17
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+No clients data available 9 create-order-dialog.tsx:212:15
+⏸️ [CacheBuster] Паузa автообновлений - пользователь активен в админке cache-buster.tsx:111:17
+No clients data available 8 create-order-dialog.tsx:212:15
+⏸️ [CacheBuster] Паузa автообновлений - пользователь активен в админке cache-buster.tsx:111:17
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+GET
+https://www.facebook.com/tr/?id=1211785016960429&ev=PageView&dl=https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/admin?tab=users&rl=&if=false&ts=1753874855391&sw=1920&sh=1080&v=2.9.221&r=stable&ec=2&o=4126&fbp=fb.3.1751407426318.791096591718432078&ler=empty&pmd[title]=eDAHouse - Доставка готовой еды на дом | Свежие салаты, горячие блюда, супы&plt=14355&it=1753874753626&coo=false&exp=r0&rqm=GET
+[HTTP/2 200  92ms]
+
+GET
+https://fonts.gstatic.com/s/inter/v19/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa25L7W0I5nvwUgHU.woff2
+[HTTP/3 200  0ms]
+
+POST
+https://www.facebook.com/tr/
+[HTTP/2 200  15ms]
+
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+GET
+https://www.facebook.com/tr/?id=1211785016960429&ev=PageView&dl=https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/admin?tab=orders&rl=&if=false&ts=1753874864728&sw=1920&sh=1080&v=2.9.221&r=stable&ec=4&o=4126&fbp=fb.3.1751407426318.791096591718432078&ler=empty&pmd[title]=eDAHouse - Доставка готовой еды на дом | Свежие салаты, горячие блюда, супы&plt=14355&it=1753874753626&coo=false&exp=r0&rqm=GET
+[HTTP/3 200  15ms]
+
+POST
+https://www.facebook.com/tr/
+[HTTP/3 200  14ms]
+
+POST
+https://www.facebook.com/tr/
+[HTTP/3 200  13ms]
+
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+No clients data available create-order-dialog.tsx:212:15
+No clients data available create-order-dialog.tsx:212:15
+⏸️ [CacheBuster] Паузa автообновлений - пользователь активен в админке cache-buster.tsx:111:17

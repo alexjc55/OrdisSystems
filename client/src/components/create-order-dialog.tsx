@@ -186,12 +186,16 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
   });
 
   // Fetch clients for selection
-  const { data: clients } = useQuery({
+  const { data: clients, error: clientsError, isLoading: clientsLoading } = useQuery({
     queryKey: ['/api/admin/users'],
     queryFn: async () => {
+      console.log('Fetching clients...');
       const response = await fetch('/api/admin/users?limit=100');
+      console.log('Response status:', response.status);
       if (!response.ok) throw new Error('Failed to fetch clients');
-      return response.json();
+      const data = await response.json();
+      console.log('Fetched clients data:', data);
+      return data;
     },
     enabled: open,
   });
@@ -259,8 +263,16 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
 
   // Filter clients based on search
   const filteredClients = useMemo(() => {
+    if (clientsError) {
+      console.error('Clients fetch error:', clientsError);
+      return [];
+    }
+    if (clientsLoading) {
+      console.log('Clients loading...');
+      return [];
+    }
     if (!clients?.data) {
-      console.log('No clients data available');
+      console.log('No clients data available, received:', clients);
       return [];
     }
     console.log('Total clients:', clients.data.length);
@@ -274,7 +286,7 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
     
     console.log('Filtered clients:', filtered.length);
     return filtered;
-  }, [clients, clientSearch]);
+  }, [clients, clientSearch, clientsError, clientsLoading]);
 
   // Filter products based on search
   const filteredProducts = useMemo(() => {
