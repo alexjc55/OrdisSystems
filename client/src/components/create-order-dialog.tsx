@@ -189,7 +189,7 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
   const { data: clients } = useQuery({
     queryKey: ['/api/admin/users'],
     queryFn: async () => {
-      const response = await fetch('/api/admin/users?limit=100&status=customer');
+      const response = await fetch('/api/admin/users?limit=100');
       if (!response.ok) throw new Error('Failed to fetch clients');
       return response.json();
     },
@@ -259,12 +259,21 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
 
   // Filter clients based on search
   const filteredClients = useMemo(() => {
-    if (!clients?.data) return [];
-    return clients.data.filter((client: any) =>
+    if (!clients?.data) {
+      console.log('No clients data available');
+      return [];
+    }
+    console.log('Total clients:', clients.data.length);
+    console.log('Client search:', clientSearch);
+    
+    const filtered = clients.data.filter((client: any) =>
       `${client.firstName} ${client.lastName}`.toLowerCase().includes(clientSearch.toLowerCase()) ||
       client.email.toLowerCase().includes(clientSearch.toLowerCase()) ||
       client.phone?.includes(clientSearch)
     );
+    
+    console.log('Filtered clients:', filtered.length);
+    return filtered;
   }, [clients, clientSearch]);
 
   // Filter products based on search
