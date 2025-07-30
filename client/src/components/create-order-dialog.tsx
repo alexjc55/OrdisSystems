@@ -34,15 +34,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Search, User, MapPin, Calendar, Clock, ShoppingCart, Scan, Trash2, UserPlus, CreditCard, Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Plus, Search, User, MapPin, Calendar, Clock, ShoppingCart, Scan, Trash2, UserPlus, CreditCard } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { BarcodeScanner } from "./barcode-scanner";
 import { calculateDeliveryFeeFromSettings } from "@/lib/delivery-utils";
@@ -431,94 +429,55 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                   />
 
                   {form.watch('clientType') === 'existing' && (
-                    <FormField
-                      control={form.control}
-                      name="clientId"
-                      render={({ field }) => {
-                        const selectedClient = filteredClients.find(client => client.id === field.value);
-                        
-                        return (
-                          <FormItem className="flex flex-col">
+                    <div className="space-y-2">
+                      <Input
+                        placeholder={adminT('orders.clientSelection.searchClient')}
+                        value={clientSearch}
+                        onChange={(e) => setClientSearch(e.target.value)}
+                        className="text-sm"
+                      />
+                      <FormField
+                        control={form.control}
+                        name="clientId"
+                        render={({ field }) => (
+                          <FormItem>
                             <FormControl>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <Button
-                                    variant="outline"
-                                    role="combobox"
-                                    className={cn(
-                                      "w-full justify-between",
-                                      !field.value && "text-muted-foreground"
-                                    )}
-                                  >
-                                    {selectedClient ? (
-                                      <div className="flex flex-col items-start">
-                                        <span className="font-medium">
-                                          {selectedClient.firstName} {selectedClient.lastName}
-                                        </span>
-                                        <span className="text-sm text-gray-500">
-                                          {selectedClient.email}
-                                        </span>
-                                      </div>
-                                    ) : (
-                                      adminT('orders.clientSelection.selectClient')
-                                    )}
-                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-[400px] p-0">
-                                  <Command>
-                                    <CommandInput
-                                      placeholder={adminT('orders.clientSelection.searchClient')}
-                                      value={clientSearch}
-                                      onValueChange={setClientSearch}
-                                    />
-                                    <CommandEmpty>
+                              <Select value={field.value?.toString()} onValueChange={(value) => field.onChange(parseInt(value))}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder={adminT('orders.clientSelection.selectClient')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {filteredClients.length > 0 ? (
+                                    filteredClients.map((client: any) => (
+                                      <SelectItem key={client.id} value={client.id.toString()}>
+                                        <div className="flex flex-col">
+                                          <span className="font-medium">
+                                            {client.firstName} {client.lastName}
+                                          </span>
+                                          <span className="text-sm text-gray-500">
+                                            {client.email}
+                                          </span>
+                                          {client.phone && (
+                                            <span className="text-xs text-gray-400">
+                                              {client.phone}
+                                            </span>
+                                          )}
+                                        </div>
+                                      </SelectItem>
+                                    ))
+                                  ) : (
+                                    <div className="p-2 text-sm text-gray-500 text-center">
                                       {clientSearch ? adminT('orders.clientSelection.noResults') : adminT('orders.clientSelection.noClients')}
-                                    </CommandEmpty>
-                                    <CommandGroup>
-                                      <CommandList>
-                                        {filteredClients.map((client: any) => (
-                                          <CommandItem
-                                            key={client.id}
-                                            value={`${client.firstName} ${client.lastName} ${client.email}`}
-                                            onSelect={() => {
-                                              field.onChange(client.id);
-                                              setClientSearch('');
-                                            }}
-                                            className="cursor-pointer"
-                                          >
-                                            <Check
-                                              className={cn(
-                                                "mr-2 h-4 w-4 shrink-0",
-                                                field.value === client.id ? "opacity-100" : "opacity-0"
-                                              )}
-                                            />
-                                            <div className="flex flex-col min-w-0 flex-1">
-                                              <span className="font-medium">
-                                                {client.firstName} {client.lastName}
-                                              </span>
-                                              <span className="text-sm opacity-60">
-                                                {client.email}
-                                              </span>
-                                              {client.phone && (
-                                                <span className="text-xs opacity-50">
-                                                  {client.phone}
-                                                </span>
-                                              )}
-                                            </div>
-                                          </CommandItem>
-                                        ))}
-                                      </CommandList>
-                                    </CommandGroup>
-                                  </Command>
-                                </PopoverContent>
-                              </Popover>
+                                    </div>
+                                  )}
+                                </SelectContent>
+                              </Select>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
-                        );
-                      }}
-                    />
+                        )}
+                      />
+                    </div>
                   )}
 
                   {form.watch('clientType') === 'new' && (

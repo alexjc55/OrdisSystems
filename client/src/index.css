@@ -35,28 +35,7 @@
   }
 }
 
-/* Command item hover fix */
-[cmdk-item] {
-  cursor: pointer !important;
-}
 
-[cmdk-item][data-selected] {
-  background-color: hsl(210 40% 96%) !important;
-  color: hsl(222.2 84% 4.9%) !important;
-}
-
-[cmdk-item][data-selected] * {
-  color: inherit !important;
-}
-
-[cmdk-item]:hover {
-  background-color: hsl(210 40% 96%) !important;
-  color: hsl(222.2 84% 4.9%) !important;
-}
-
-[cmdk-item]:hover * {
-  color: inherit !important;
-}
 
 /* Force yellow status colors */
 @layer utilities {
