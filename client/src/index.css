@@ -37,6 +37,29 @@
 
 
 
+/* Command component integration with design system */
+[cmdk-item] {
+  cursor: pointer !important;
+}
+
+[cmdk-item][data-selected] {
+  background-color: var(--color-gray-100) !important;
+  color: var(--color-gray-900) !important;
+}
+
+[cmdk-item][data-selected] * {
+  color: inherit !important;
+}
+
+[cmdk-item]:hover {
+  background-color: var(--color-gray-100) !important;
+  color: var(--color-gray-900) !important;
+}
+
+[cmdk-item]:hover * {
+  color: inherit !important;
+}
+
 /* Force yellow status colors */
 @layer utilities {
   .bg-yellow-100 {
