@@ -437,7 +437,7 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                       control={form.control}
                       name="clientId"
                       render={({ field }) => {
-                        const selectedClient = clients.find(client => client.id === field.value);
+                        const selectedClient = filteredClients?.find(client => client.id === field.value);
                         
                         return (
                           <FormItem className="flex flex-col">
@@ -480,7 +480,7 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                                     </CommandEmpty>
                                     <CommandGroup>
                                       <CommandList>
-                                        {filteredClients.map((client: any) => {
+                                        {(filteredClients || []).map((client: any) => {
                                           const searchText = `${client.firstName} ${client.lastName} ${client.email}`.toLowerCase();
                                           
                                           return (
