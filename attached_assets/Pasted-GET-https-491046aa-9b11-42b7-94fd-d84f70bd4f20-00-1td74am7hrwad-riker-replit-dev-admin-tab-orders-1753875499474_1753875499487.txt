@@ -1,0 +1,1442 @@
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/admin?tab=orders
+[HTTP/1.1 200 OK 1107ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@vite/client
+[HTTP/1.1 200 OK 1451ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@react-refresh
+[HTTP/1.1 200 OK 1264ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/main.tsx?v=ZMJBeMZJQh5OmCcX_Nqt_
+[HTTP/1.1 200 OK 292ms]
+
+GET
+https://replit.com/public/js/replit-dev-banner.js
+[HTTP/2 200  82ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=b412a2fd
+[HTTP/1.1 200 OK 281ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-dom_client.js?v=b412a2fd
+[HTTP/1.1 200 OK 838ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/App.tsx?v=ZMJBeMZJQh5OmCcX_Nqt_
+[HTTP/1.1 200 OK 1096ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/index.css?v=ZMJBeMZJQh5OmCcX_Nqt_
+[HTTP/1.1 200 OK 1532ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/lib/i18n.ts?v=ZMJBeMZJQh5OmCcX_Nqt_
+[HTTP/1.1 200 OK 571ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/lib/theme-system.ts?v=ZMJBeMZJQh5OmCcX_Nqt_
+[HTTP/1.1 200 OK 718ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-QCHXOAYK.js?v=b412a2fd
+[HTTP/1.1 200 OK 808ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-WOOG5QLI.js?v=b412a2fd
+[HTTP/1.1 200 OK 579ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=b412a2fd
+[HTTP/1.1 200 OK 849ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/i18next.js?v=b412a2fd
+[HTTP/1.1 200 OK 516ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-i18next.js?v=b412a2fd
+[HTTP/1.1 200 OK 511ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/i18next-browser-languagedetector.js?v=b412a2fd
+[HTTP/1.1 200 OK 555ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/locales/ru/common.json?import
+[HTTP/1.1 200 OK 794ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/locales/ru/shop.json?import
+[HTTP/1.1 200 OK 796ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/locales/ru/admin.json?import
+[HTTP/1.1 200 OK 794ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/locales/en/common.json?import
+[HTTP/1.1 200 OK 825ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/locales/en/shop.json?import
+[HTTP/1.1 200 OK 907ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/locales/en/admin.json?import
+[HTTP/1.1 200 OK 1049ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/locales/he/common.json?import
+[HTTP/1.1 200 OK 1064ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/locales/he/shop.json?import
+[HTTP/1.1 200 OK 1065ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/locales/he/admin.json?import
+[HTTP/1.1 200 OK 1047ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/locales/ar/common.json?import
+[HTTP/1.1 200 OK 1262ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/locales/ar/shop.json?import
+[HTTP/1.1 200 OK 1206ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/locales/ar/admin.json?import
+[HTTP/1.1 200 OK 1334ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/vite/dist/client/env.mjs
+[HTTP/1.1 200 OK 1327ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b412a2fd
+[HTTP/1.1 200 OK 1150ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/lib/queryClient.ts
+[HTTP/1.1 200 OK 1138ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=b412a2fd
+[HTTP/1.1 200 OK 1291ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/toaster.tsx
+[HTTP/1.1 200 OK 1321ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/tooltip.tsx
+[HTTP/1.1 200 OK 1399ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/error-boundary.tsx
+[HTTP/1.1 200 OK 1395ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/hooks/use-auth.tsx
+[HTTP/1.1 200 OK 1408ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/hooks/useStoreSettings.ts
+[HTTP/1.1 200 OK 1404ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/custom-html.tsx
+[HTTP/1.1 200 OK 1552ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/layout/whatsapp-chat.tsx
+[HTTP/1.1 200 OK 1585ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/layout/footer.tsx
+[HTTP/1.1 200 OK 1663ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/language-initializer.tsx
+[HTTP/1.1 200 OK 1659ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/PWAInstallPrompt.tsx
+[HTTP/1.1 200 OK 1676ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/PWAStatusBar.tsx
+[HTTP/1.1 200 OK 1675ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/PushNotificationRequest.tsx
+[HTTP/1.1 200 OK 1817ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/NotificationModal.tsx
+[HTTP/1.1 200 OK 1856ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/cache-buster.tsx
+[HTTP/1.1 200 OK 1950ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ios-cache-buster.tsx
+[HTTP/1.1 200 OK 1950ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react.js?v=b412a2fd
+[HTTP/1.1 200 OK 1952ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/lib/i18n.ts
+[HTTP/1.1 200 OK 1939ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/pages/landing.tsx
+[HTTP/1.1 200 OK 2079ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/pages/home.tsx
+[HTTP/1.1 200 OK 2232ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/pages/admin-dashboard.tsx
+[HTTP/1.1 200 OK 2950ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/pages/profile.tsx
+[HTTP/1.1 200 OK 2549ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/pages/change-password.tsx
+[HTTP/1.1 200 OK 2233ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/pages/forgot-password.tsx
+[HTTP/1.1 200 OK 2231ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/pages/reset-password.tsx
+[HTTP/1.1 200 OK 2359ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/pages/checkout.tsx
+[HTTP/1.1 200 OK 2687ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/pages/auth-page.tsx
+[HTTP/1.1 200 OK 2555ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/pages/not-found.tsx
+[HTTP/1.1 200 OK 2553ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/lib/protected-route.tsx
+[HTTP/1.1 200 OK 2685ms]
+
+[vite] connecting... client:495:9
+GET
+wss://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/?token=nJ-eC3GyXps6
+[HTTP/1.1 101 Switching Protocols 446ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-KBTYAULA.js?v=b412a2fd
+[HTTP/1.1 200 OK 1704ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/hooks/use-toast.ts
+[HTTP/1.1 200 OK 1683ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/toast.tsx
+[HTTP/1.1 200 OK 1683ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b412a2fd
+[HTTP/1.1 200 OK 1625ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/lib/utils.ts
+[HTTP/1.1 200 OK 1624ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/hooks/use-language.tsx
+[HTTP/1.1 200 OK 1849ms]
+
+[vite] connected. client:618:15
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/hooks/useAuth.ts
+[HTTP/1.1 200 OK 1673ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/attached_assets/logo-white_1750456267684.png?import
+[HTTP/1.1 200 OK 1607ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/lucide-react.js?v=b412a2fd
+[HTTP/1.1 200 OK 2266ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/hooks/usePWA.ts
+[HTTP/1.1 200 OK 1648ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/button.tsx
+[HTTP/1.1 200 OK 1738ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/card.tsx
+[HTTP/1.1 200 OK 1429ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/badge.tsx
+[HTTP/1.1 200 OK 1518ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/input.tsx
+[HTTP/1.1 200 OK 1359ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/label.tsx
+[HTTP/1.1 200 OK 1352ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/password-input.tsx
+[HTTP/1.1 200 OK 1408ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/alert.tsx
+[HTTP/1.1 200 OK 1544ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/select.tsx
+[HTTP/1.1 200 OK 1654ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/hooks/use-mobile.tsx
+[HTTP/1.1 200 OK 1656ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/hooks/useSEO.ts
+[HTTP/1.1 200 OK 1637ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/shared/localization.ts
+[HTTP/1.1 200 OK 1696ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/layout/header.tsx
+[HTTP/1.1 200 OK 1835ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/layout/sidebar.tsx
+[HTTP/1.1 200 OK 1915ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/menu/category-nav.tsx
+[HTTP/1.1 200 OK 1923ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/menu/product-card.tsx
+[HTTP/1.1 200 OK 1916ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/cart/cart-sidebar.tsx
+[HTTP/1.1 200 OK 1909ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/layout/header-variants.tsx
+[HTTP/1.1 200 OK 1971ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/SearchInput.tsx
+[HTTP/1.1 200 OK 2062ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/lib/cart.ts
+[HTTP/1.1 200 OK 2187ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/swiper_react.js?v=b412a2fd
+[HTTP/1.1 200 OK 2186ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/swiper_modules.js?v=b412a2fd
+[HTTP/1.1 200 OK 2184ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/swiper/swiper.css
+[HTTP/1.1 200 OK 2184ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/swiper/modules/navigation.css
+[HTTP/1.1 200 OK 2230ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/swiper/modules/pagination.css
+[HTTP/1.1 200 OK 2348ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/tabs.tsx
+[HTTP/1.1 200 OK 2228ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/table.tsx
+[HTTP/1.1 200 OK 2226ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/dialog.tsx
+[HTTP/1.1 200 OK 2236ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/dropdown-menu.tsx
+[HTTP/1.1 200 OK 2204ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/textarea.tsx
+[HTTP/1.1 200 OK 2256ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/switch.tsx
+[HTTP/1.1 200 OK 2384ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/lib/currency.ts
+[HTTP/1.1 200 OK 2465ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/image-upload.tsx
+[HTTP/1.1 200 OK 2483ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/avatar.tsx
+[HTTP/1.1 200 OK 2503ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-hook-form.js?v=b412a2fd
+[HTTP/1.1 200 OK 2503ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@hookform_resolvers_zod.js?v=b412a2fd
+[HTTP/1.1 200 OK 2543ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/zod.js?v=b412a2fd
+[HTTP/1.1 200 OK 2672ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/calendar.tsx
+[HTTP/1.1 200 OK 2635ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/popover.tsx
+[HTTP/1.1 200 OK 2648ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/separator.tsx
+[HTTP/1.1 200 OK 2657ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/shared/multilingual-helpers.ts
+[HTTP/1.1 200 OK 2655ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/date-fns.js?v=b412a2fd
+[HTTP/1.1 200 OK 2710ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/date-fns_locale.js?v=b412a2fd
+[HTTP/1.1 200 OK 2839ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-toast.js?v=b412a2fd
+[HTTP/1.1 200 OK 2644ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/class-variance-authority.js?v=b412a2fd
+[HTTP/1.1 200 OK 2661ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/clsx.js?v=b412a2fd
+[HTTP/1.1 200 OK 2642ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/tailwind-merge.js?v=b412a2fd
+[HTTP/1.1 200 OK 2608ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-ZJGUFWDC.js?v=b412a2fd
+[HTTP/1.1 200 OK 2656ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PBILQIDY.js?v=b412a2fd
+[HTTP/1.1 200 OK 2782ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-26AQ2U4J.js?v=b412a2fd
+[HTTP/1.1 200 OK 2829ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RL3VCQZV.js?v=b412a2fd
+[HTTP/1.1 200 OK 2842ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-OLWLIEH3.js?v=b412a2fd
+[HTTP/1.1 200 OK 2854ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-B5ZPYGAZ.js?v=b412a2fd
+[HTTP/1.1 200 OK 2889ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-WIIJQEXM.js?v=b412a2fd
+[HTTP/1.1 200 OK 2930ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5Q5YC75F.js?v=b412a2fd
+[HTTP/1.1 200 OK 3037ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=b412a2fd
+[HTTP/1.1 200 OK 3091ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6YJROYD.js?v=b412a2fd
+[HTTP/1.1 200 OK 3081ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=b412a2fd
+[HTTP/1.1 200 OK 3093ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/hooks/useTranslationManager.ts
+[HTTP/1.1 200 OK 3138ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/translation-toolbar.tsx
+[HTTP/1.1 200 OK 3170ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/multilingual-store-settings.tsx
+[HTTP/1.1 200 OK 3271ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/alert-dialog.tsx
+[HTTP/1.1 200 OK 3311ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/collapsible.tsx
+[HTTP/1.1 200 OK 3331ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/form.tsx
+[HTTP/1.1 200 OK 3356ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/shared/schema.ts
+[HTTP/1.1 200 OK 3389ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/admin/theme-manager.tsx
+[HTTP/1.1 200 OK 3751ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/PushNotificationsPanel.tsx
+[HTTP/1.1 200 OK 3535ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/barcode-config-section.tsx
+[HTTP/1.1 200 OK 3594ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/barcode-scanner.tsx
+[HTTP/1.1 200 OK 3642ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/create-order-dialog.tsx
+[HTTP/1.1 200 OK 3637ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@dnd-kit_core.js?v=b412a2fd
+[HTTP/1.1 200 OK 3665ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@dnd-kit_sortable.js?v=b412a2fd
+[HTTP/1.1 200 OK 3811ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@dnd-kit_utilities.js?v=b412a2fd
+[HTTP/1.1 200 OK 3881ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-slot.js?v=b412a2fd
+[HTTP/1.1 200 OK 3680ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-label.js?v=b412a2fd
+[HTTP/1.1 200 OK 3461ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-select.js?v=b412a2fd
+[HTTP/1.1 200 OK 3165ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/language-switcher.tsx
+[HTTP/1.1 200 OK 3056ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/ui/scroll-area.tsx
+[HTTP/1.1 200 OK 3029ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/zustand.js?v=b412a2fd
+[HTTP/1.1 200 OK 2781ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/zustand_middleware.js?v=b412a2fd
+[HTTP/1.1 200 OK 2789ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-BQC7YTXJ.js?v=b412a2fd
+[HTTP/1.1 200 OK 2802ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dropdown-menu.js?v=b412a2fd
+[HTTP/1.1 200 OK 2603ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=b412a2fd
+[HTTP/1.1 200 OK 2663ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b412a2fd
+[HTTP/1.1 200 OK 2709ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-switch.js?v=b412a2fd
+[HTTP/1.1 200 OK 2617ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-4BFJKWC4.js?v=b412a2fd
+[HTTP/1.1 200 OK 2528ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-avatar.js?v=b412a2fd
+[HTTP/1.1 200 OK 2535ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-WGQNECLP.js?v=b412a2fd
+[HTTP/1.1 200 OK 2428ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-day-picker.js?v=b412a2fd
+[HTTP/1.1 200 OK 2372ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=b412a2fd
+[HTTP/1.1 200 OK 2430ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-separator.js?v=b412a2fd
+[HTTP/1.1 200 OK 2502ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-O42U6HQT.js?v=b412a2fd
+[HTTP/1.1 200 OK 2474ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-IIGUYIAY.js?v=b412a2fd
+[HTTP/1.1 200 OK 2492ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7RUGVAIV.js?v=b412a2fd
+[HTTP/1.1 200 OK 2868ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-I6MJRFJY.js?v=b412a2fd
+[HTTP/1.1 200 OK 2422ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-U7P2NEEE.js?v=b412a2fd
+[HTTP/1.1 200 OK 2455ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-alert-dialog.js?v=b412a2fd
+[HTTP/1.1 200 OK 1697ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-collapsible.js?v=b412a2fd
+[HTTP/1.1 200 OK 1742ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/drizzle-orm_pg-core.js?v=b412a2fd
+[HTTP/1.1 200 OK 1812ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/drizzle-orm.js?v=b412a2fd
+[HTTP/1.1 200 OK 1776ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/drizzle-zod.js?v=b412a2fd
+[HTTP/1.1 200 OK 1822ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/hooks/usePushNotifications.ts
+[HTTP/1.1 200 OK 1768ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AUXFV7YD.js?v=b412a2fd
+[HTTP/1.1 200 OK 1696ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-UQV5W6QC.js?v=b412a2fd
+[HTTP/1.1 200 OK 1806ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/lib/delivery-utils.ts
+[HTTP/1.1 200 OK 1735ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@zxing_browser.js?v=b412a2fd
+[HTTP/1.1 200 OK 1747ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/lib/theme-system.ts
+[HTTP/1.1 200 OK 1739ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/components/admin/modern-style-settings.tsx
+[HTTP/1.1 200 OK 1785ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-43G6IMPT.js?v=b412a2fd
+[HTTP/1.1 200 OK 1665ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6ZMM2PAV.js?v=b412a2fd
+[HTTP/1.1 200 OK 1749ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-4RO2SXZU.js?v=b412a2fd
+[HTTP/1.1 200 OK 1760ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-XTIJI72C.js?v=b412a2fd
+[HTTP/1.1 200 OK 1792ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-scroll-area.js?v=b412a2fd
+[HTTP/1.1 200 OK 1744ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Y5AGJM5V.js?v=b412a2fd
+[HTTP/1.1 200 OK 1631ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-E3FU32CY.js?v=b412a2fd
+[HTTP/1.1 200 OK 1523ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-KSDPB6MD.js?v=b412a2fd
+[HTTP/1.1 200 OK 827ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-FQZB52Q7.js?v=b412a2fd
+[HTTP/1.1 200 OK 869ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-LN4ZFZXZ.js?v=b412a2fd
+[HTTP/1.1 200 OK 885ms]
+
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools chunk-RPCDYKBN.js:21551:25
+Applied --color-tomorrow: hsl(262, 83%, 58%) theme-system.ts:132:15
+Applied --color-out-of-stock: hsl(0, 84%, 60%) theme-system.ts:132:15
+GET
+https://fonts.gstatic.com/s/inter/v19/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0I5nvwU.woff2
+[HTTP/3 200  80ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/attached_assets/logo-white_1750456267684.png
+[HTTP/1.1 200 OK 254ms]
+
+GET
+https://fonts.gstatic.com/s/inter/v19/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0I5nvwU.woff2
+[HTTP/3 200  40ms]
+
+Некорректный URI. Не удалось загрузить медиаресурс . admin
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+GET
+https://fonts.gstatic.com/s/inter/v19/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa0ZL7W0I5nvwUgHU.woff2
+[HTTP/3 200  0ms]
+
+GET
+https://connect.facebook.net/en_US/fbevents.js
+[HTTP/3 200  0ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/uploads/images/image-1751756174833-500216572.png
+[HTTP/1.1 200 OK 593ms]
+
+GET
+https://fonts.gstatic.com/s/poppins/v23/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2
+[HTTP/3 200  0ms]
+
+GET
+https://fonts.gstatic.com/s/poppins/v23/pxiByp8kv8JHgFVrLGT9Z1xlFQ.woff2
+[HTTP/3 200  0ms]
+
+GET
+https://fonts.gstatic.com/s/inter/v19/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa0ZL7W0I5nvwUgHU.woff2
+[HTTP/3 200  0ms]
+
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/api/favicon
+[HTTP/1.1 301 Moved Permanently 324ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/api/favicon
+[HTTP/1.1 301 Moved Permanently 334ms]
+
+GET
+https://connect.facebook.net/signals/config/1211785016960429?v=2.9.221&r=stable&domain=491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev&hme=6531127cc5702b048f1a4e2975833edefec3a60f8f391fe8ffb9a77b3d2626d1&ex_m=83,143,124,18,117,58,40,118,64,57,131,72,13,82,26,112,103,62,65,111,128,91,133,7,3,4,6,5,2,73,81,134,206,155,52,211,208,209,45,170,25,61,215,214,158,28,51,8,54,77,78,79,84,107,27,24,110,106,105,125,63,127,126,41,108,50,100,12,130,37,197,199,165,21,22,23,15,16,36,33,34,68,74,76,89,116,119,38,90,19,17,94,59,31,121,120,122,113,20,30,49,88,129,29,180,151,86,109,67,98,44,39,96,97,102,48,14,104,95,55,43,46,0,80,132,1,101,11,99,255,195,141,183,176,9,47,75,53,123,56,93,71,70,42,114,69,66,60,92,85,35,115,32,87,10,135
+[HTTP/3 200  0ms]
+
+GET
+https://www.facebook.com/tr/?id=1211785016960429&ev=PageView&dl=https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/admin?tab=orders&rl=&if=false&ts=1753875441374&sw=1920&sh=1080&v=2.9.221&r=stable&ec=0&o=4126&fbp=fb.3.1751407426318.791096591718432078&ler=empty&pmd[title]=eDAHouse - Доставка готовой еды на дом | Свежие салаты, горячие блюда, супы&plt=11967&it=1753875441185&coo=false&exp=r1&rqm=GET
+[HTTP/2 200  125ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/uploads/images/image-1751405575061-196959045.png
+[HTTP/1.1 200 OK 165ms]
+
+GET
+https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/uploads/images/image-1751405575061-196959045.png
+[HTTP/1.1 200 OK 450ms]
+
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+GET
+https://fonts.gstatic.com/s/inter/v19/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0I5nvwU.woff2
+[HTTP/3 200  0ms]
+
+GET
+https://fonts.gstatic.com/s/inter/v19/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa0ZL7W0I5nvwUgHU.woff2
+[HTTP/3 200  0ms]
+
+GET
+https://fonts.gstatic.com/s/inter/v19/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa25L7W0I5nvwUgHU.woff2
+[HTTP/3 200  0ms]
+
+POST
+https://www.facebook.com/tr/
+[HTTP/3 200  30ms]
+
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+Clients loading... create-order-dialog.tsx:225:15
+Fetching clients... create-order-dialog.tsx:151:15
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+GET
+https://fonts.gstatic.com/s/poppins/v23/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2
+[HTTP/3 200  0ms]
+
+Response status: 200 create-order-dialog.tsx:153:15
+Fetched clients data: {
+  "data": [
+    {
+      "id": "manual_1750335030269_29c6n9pl8",
+      "username": "aaawwww@gmail.com",
+      "email": "aaawwww@gmail.com",
+      "firstName": "Asfhjkhgh",
+      "lastName": "Tyhkjgf",
+      "profileImageUrl": null,
+      "phone": "1234567896543",
+      "defaultAddress": null,
+      "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+      "passwordResetToken": null,
+      "passwordResetExpires": null,
+      "role": "customer",
+      "createdAt": "2025-06-19T12:10:30.269Z",
+      "updatedAt": "2025-06-19T12:10:30.269Z",
+      "orderCount": "0",
+      "totalOrderAmount": "0"
+    },
+    {
+      "id": "manual_1750334689091_z1ix5ku2j",
+      "username": "aaasssddd@gggfff.com",
+      "email": "aaasssddd@gggfff.com",
+      "firstName": "Asdfgh",
+      "lastName": "Bhhfffgh",
+      "profileImageUrl": null,
+      "phone": "12345678887",
+      "defaultAddress": null,
+      "password": "fd4b5bf667e21d7c82ecc4bbc9a5c7c649ae5e80d6bfd9dafa92fd8db1008fca1fa77e014094465afbfabac9b6a0b8df505ff26a7246a4c19e786b7a8efa3649.b7944b23a417b4321a3de8b49925c635",
+      "passwordResetToken": null,
+      "passwordResetExpires": null,
+      "role": "customer",
+      "createdAt": "2025-06-19T12:04:49.091Z",
+      "updatedAt": "2025-06-19T12:04:49.091Z",
+      "orderCount": "0",
+      "totalOrderAmount": "0"
+    },
+    {
+      "id": "customer",
+      "username": "customer",
+      "email": "customer@example.com",
+      "firstName": "Клиент",
+      "lastName": "Тестовый",
+      "profileImageUrl": "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
+      "phone": "",
+      "defaultAddress": null,
+      "password": "ef99c17ddf145b2e72dd8fdfba9868ab20dff1fc3208c53b6b0098185f41418ffeb6aa51f74fac827f7a3b738f3302d781b140be09028659ee2699db095d32c2.bd8a4b36aa1ceac142e03240e75f7da8",
+      "passwordResetToken": null,
+      "passwordResetExpires": null,
+      "role": "customer",
+      "createdAt": "2025-06-17T18:18:43.509Z",
+      "updatedAt": "2025-06-19T08:43:46.915Z",
+      "orderCount": "0",
+      "totalOrderAmount": "0"
+    },
+    {
+      "id": "admin",
+      "username": "admin",
+      "email": "admin@restaurant.com",
+      "firstName": "Администратор",
+      "lastName": "Системы",
+      "profileImageUrl": "",
+      "phone": "0528496528",
+      "defaultAddress": null,
+      "password": "57dc1906d8c538edb1bae5f69089c88a2b1ecb4f980fbbe0ef7727a425abca9ff0addbddd31302f386dc53c757c08e1eabee3de795583cdb6743c4215ca35370.6971e6939d9f818b2b502dbd5979bb11",
+      "passwordResetToken": null,
+      "passwordResetExpires": null,
+      "role": "admin",
+      "createdAt": "2025-06-17T18:18:43.509Z",
+      "updatedAt": "2025-07-05T23:46:12.372Z",
+      "orderCount": "6",
+      "totalOrderAmount": "1011.80"
+    },
+    {
+      "id": "worker",
+      "username": "worker",
+      "email": "worker@restaurant.com",
+      "firstName": "Работник",
+      "lastName": "Кухни",
+      "profileImageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+      "phone": "",
+      "defaultAddress": null,
+      "password": "e87eeb2e2ac8324488ec38dc38bd5126aa573502c3122807877adac947d796722fc11ee276f82bd97ba26954220679b17123a2bbd289242bd2351e5f67575a17.34c7f64554171a937feee163e194bac9",
+      "passwordResetToken": null,
+      "passwordResetExpires": null,
+      "role": "worker",
+      "createdAt": "2025-06-17T18:18:43.509Z",
+      "updatedAt": "2025-06-19T08:54:05.950Z",
+      "orderCount": "0",
+      "totalOrderAmount": "0"
+    },
+    {
+      "id": "43948959",
+      "username": "mainadmin",
+      "email": "alexjc55@gmail.com",
+      "firstName": "Alexey",
+      "lastName": "Suzdaltsev",
+      "profileImageUrl": null,
+      "phone": "+972528496528",
+      "defaultAddress": null,
+      "password": null,
+      "passwordResetToken": null,
+      "passwordResetExpires": null,
+      "role": "admin",
+      "createdAt": "2025-06-17T17:26:49.237Z",
+      "updatedAt": "2025-06-19T05:30:38.958Z",
+      "orderCount": "8",
+      "totalOrderAmount": "773.38"
+    }
+  ],
+  "total": 6,
+  "page": 1,
+  "limit": 100,
+  "totalPages": 1
+} create-order-dialog.tsx:156:15
+Data type: object create-order-dialog.tsx:157:15
+Has data property: true create-order-dialog.tsx:158:15
+Data array length: 6 create-order-dialog.tsx:159:15
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: <empty string> create-order-dialog.tsx:234:13
+Filtered clients: 6 create-order-dialog.tsx:238:13
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: т create-order-dialog.tsx:234:13
+Filtered clients: 3 create-order-dialog.tsx:238:13
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: те create-order-dialog.tsx:234:13
+Filtered clients: 2 create-order-dialog.tsx:238:13
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: тес create-order-dialog.tsx:234:13
+Filtered clients: 1 create-order-dialog.tsx:238:13
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: тест create-order-dialog.tsx:234:13
+Filtered clients: 1 create-order-dialog.tsx:238:13
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: тес create-order-dialog.tsx:234:13
+Filtered clients: 1 create-order-dialog.tsx:238:13
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: те create-order-dialog.tsx:234:13
+Filtered clients: 2 create-order-dialog.tsx:238:13
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: т create-order-dialog.tsx:234:13
+Filtered clients: 3 create-order-dialog.tsx:238:13
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: <empty string> create-order-dialog.tsx:234:13
+Filtered clients: 6 create-order-dialog.tsx:238:13
+⏸️ [CacheBuster] Паузa автообновлений - пользователь активен в админке cache-buster.tsx:111:17
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:9690:27
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:9705:25
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:9729:27
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:9742:27
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:9779:29
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:9793:27
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: A create-order-dialog.tsx:234:13
+Filtered clients: 6 create-order-dialog.tsx:238:13
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: Al create-order-dialog.tsx:234:13
+Filtered clients: 1 create-order-dialog.tsx:238:13
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: Ale create-order-dialog.tsx:234:13
+Filtered clients: 1 create-order-dialog.tsx:238:13
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: Alex create-order-dialog.tsx:234:13
+Filtered clients: 1 create-order-dialog.tsx:238:13
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: Alexe create-order-dialog.tsx:234:13
+Filtered clients: 1 create-order-dialog.tsx:238:13
+Total clients: 6 create-order-dialog.tsx:232:13
+Sample client: {
+  "id": "manual_1750335030269_29c6n9pl8",
+  "username": "aaawwww@gmail.com",
+  "email": "aaawwww@gmail.com",
+  "firstName": "Asfhjkhgh",
+  "lastName": "Tyhkjgf",
+  "profileImageUrl": null,
+  "phone": "1234567896543",
+  "defaultAddress": null,
+  "password": "4f04855f71500dab60309b85941272696bdc7801058df84a08252e16f14c2b52cb7faa147d52df4a1abafd09a10b393146ecd21fcda9433b44a41eaf2eb8031d.d9df7a2d12d49e606690cf9d627dadc9",
+  "passwordResetToken": null,
+  "passwordResetExpires": null,
+  "role": "customer",
+  "createdAt": "2025-06-19T12:10:30.269Z",
+  "updatedAt": "2025-06-19T12:10:30.269Z",
+  "orderCount": "0",
+  "totalOrderAmount": "0"
+} create-order-dialog.tsx:233:13
+Client search: Alexey create-order-dialog.tsx:234:13
+Filtered clients: 1 create-order-dialog.tsx:238:13

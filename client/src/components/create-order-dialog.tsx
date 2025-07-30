@@ -192,16 +192,9 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
   const { data: clients, error: clientsError, isLoading: clientsLoading } = useQuery({
     queryKey: ['/api/admin/users'],
     queryFn: async () => {
-      console.log('Fetching clients...');
       const response = await fetch('/api/admin/users?limit=100');
-      console.log('Response status:', response.status);
       if (!response.ok) throw new Error('Failed to fetch clients');
-      const data = await response.json();
-      console.log('Fetched clients data:', JSON.stringify(data, null, 2));
-      console.log('Data type:', typeof data);
-      console.log('Has data property:', !!data?.data);
-      console.log('Data array length:', data?.data?.length || 0);
-      return data;
+      return response.json();
     },
     enabled: dialogOpen, // Only fetch when dialog is open
   });
@@ -267,33 +260,31 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
     setProductSearch('');
   };
 
-  // Filter clients based on search
+  // Filter clients based on search - only show customer role users
   const filteredClients = useMemo(() => {
-    if (clientsError) {
-      console.error('Clients fetch error:', clientsError);
+    if (clientsLoading || !clients?.data) {
       return [];
     }
-    if (clientsLoading) {
-      console.log('Clients loading...');
-      return [];
-    }
-    if (!clients?.data) {
-      console.log('No clients data available, received:', JSON.stringify(clients, null, 2));
-      return [];
-    }
-    console.log('Total clients:', clients.data.length);
-    console.log('Sample client:', JSON.stringify(clients.data[0], null, 2));
-    console.log('Client search:', clientSearch);
     
-    const filtered = clients.data.filter((client: any) =>
-      `${client.firstName} ${client.lastName}`.toLowerCase().includes(clientSearch.toLowerCase()) ||
-      client.email.toLowerCase().includes(clientSearch.toLowerCase()) ||
-      client.phone?.includes(clientSearch)
+    // Filter only customer role users
+    const customerUsers = clients.data.filter((user: any) => 
+      user.role === 'customer'
     );
     
-    console.log('Filtered clients:', filtered.length);
-    return filtered;
-  }, [clients, clientSearch, clientsError, clientsLoading]);
+    if (!clientSearch) {
+      return customerUsers;
+    }
+    
+    const searchTerm = clientSearch.toLowerCase();
+    return customerUsers.filter((client: any) => {
+      return (
+        `${client.firstName || ''} ${client.lastName || ''}`.toLowerCase().includes(searchTerm) ||
+        client.email?.toLowerCase().includes(searchTerm) ||
+        client.username?.toLowerCase().includes(searchTerm) ||
+        client.phone?.includes(clientSearch)
+      );
+    });
+  }, [clients, clientSearch, clientsLoading]);
 
   // Filter products based on search
   const filteredProducts = useMemo(() => {
