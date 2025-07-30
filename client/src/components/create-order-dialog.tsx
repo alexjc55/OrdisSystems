@@ -531,7 +531,7 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                       control={form.control}
                       name="clientId"
                       render={({ field }) => {
-                        const selectedClient = filteredClients?.find(client => client.id === field.value);
+                        const selectedClient = filteredClients?.find((client: any) => client.id === field.value);
                         
                         return (
                           <FormItem className="flex flex-col">
@@ -753,19 +753,16 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                             className="h-auto p-3 text-left justify-start"
                             onClick={() => {
                               setSelectedAddressId(address.id);
-                              form.setValue('deliveryAddress', 
-                                `${address.street}, ${address.building}${address.apartment ? `, кв. ${address.apartment}` : ''}, ${address.city}`
-                              );
+                              form.setValue('deliveryAddress', address.address);
                             }}
                           >
                             <MapPin className="w-4 h-4 mr-2 shrink-0 mt-0.5" />
                             <div className="flex flex-col">
                               <span className="font-medium">
-                                {address.street}, {address.building}
-                                {address.apartment && `, кв. ${address.apartment}`}
+                                {address.label || address.address}
                               </span>
                               <span className="text-sm opacity-70">
-                                {address.city}
+                                {address.address}
                               </span>
                             </div>
                           </Button>
@@ -808,22 +805,54 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                       control={form.control}
                       name="deliveryDate"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="flex flex-col">
                           <FormLabel>{adminT('orders.deliveryInfo.date')}</FormLabel>
-                          <FormControl>
-                            <Select value={field.value} onValueChange={field.onChange}>
-                              <SelectTrigger>
-                                <SelectValue placeholder={adminT('orders.deliveryInfo.selectDate')} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {deliveryDates.map((date) => (
-                                  <SelectItem key={date.value} value={date.value}>
-                                    {date.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
+                          <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  className={cn(
+                                    "w-full pl-3 text-left font-normal",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {selectedDate ? (
+                                    format(selectedDate, "PPP", { locale: dateLocale })
+                                  ) : (
+                                    <span>{adminT('orders.deliveryInfo.selectDate')}</span>
+                                  )}
+                                  <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <CalendarComponent
+                                mode="single"
+                                selected={selectedDate}
+                                onSelect={(date) => {
+                                  setSelectedDate(date);
+                                  if (date) {
+                                    field.onChange(format(date, "yyyy-MM-dd"));
+                                  }
+                                  setDatePickerOpen(false);
+                                }}
+                                disabled={(date) => {
+                                  const minDate = new Date();
+                                  const minDeliveryHours = storeSettings?.minDeliveryTimeHours || 2;
+                                  minDate.setHours(minDate.getHours() + minDeliveryHours);
+                                  
+                                  const maxDate = new Date();
+                                  const maxDeliveryDays = storeSettings?.maxDeliveryTimeDays || 7;
+                                  maxDate.setDate(maxDate.getDate() + maxDeliveryDays);
+                                  
+                                  return date < new Date(minDate.toDateString()) || date > maxDate;
+                                }}
+                                initialFocus
+                                locale={dateLocale}
+                              />
+                            </PopoverContent>
+                          </Popover>
                           <FormMessage />
                         </FormItem>
                       )}
