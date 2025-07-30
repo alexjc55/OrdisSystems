@@ -35,6 +35,29 @@
   }
 }
 
+/* Command item hover fix */
+[cmdk-item] {
+  cursor: pointer !important;
+}
+
+[cmdk-item][data-selected] {
+  background-color: var(--color-accent) !important;
+  color: white !important;
+}
+
+[cmdk-item][data-selected] * {
+  color: white !important;
+}
+
+[cmdk-item]:hover {
+  background-color: var(--color-accent) !important;
+  color: white !important;
+}
+
+[cmdk-item]:hover * {
+  color: white !important;
+}
+
 /* Force yellow status colors */
 @layer utilities {
   .bg-yellow-100 {

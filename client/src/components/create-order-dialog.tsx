@@ -485,22 +485,23 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                                               field.onChange(client.id);
                                               setClientSearch('');
                                             }}
+                                            className="cursor-pointer"
                                           >
                                             <Check
                                               className={cn(
-                                                "mr-2 h-4 w-4",
+                                                "mr-2 h-4 w-4 shrink-0",
                                                 field.value === client.id ? "opacity-100" : "opacity-0"
                                               )}
                                             />
-                                            <div className="flex flex-col">
-                                              <span className="font-medium">
+                                            <div className="flex flex-col min-w-0 flex-1">
+                                              <span className="font-medium text-foreground">
                                                 {client.firstName} {client.lastName}
                                               </span>
-                                              <span className="text-sm text-gray-500">
+                                              <span className="text-sm text-muted-foreground">
                                                 {client.email}
                                               </span>
                                               {client.phone && (
-                                                <span className="text-xs text-gray-400">
+                                                <span className="text-xs text-muted-foreground opacity-70">
                                                   {client.phone}
                                                 </span>
                                               )}
