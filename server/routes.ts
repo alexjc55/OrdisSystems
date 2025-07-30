@@ -1466,6 +1466,114 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
+  // Create order from admin panel
+  app.post('/api/admin/orders', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user || (user.role !== 'admin' && user.role !== 'worker')) {
+        return res.status(403).json({ message: "Insufficient permissions" });
+      }
+
+      const { 
+        clientType, 
+        clientId, 
+        newClientData, 
+        guestData,
+        deliveryAddress,
+        deliveryDate,
+        deliveryTime,
+        deliveryNotes,
+        paymentMethod,
+        items,
+        discountType,
+        discountAmount,
+        discountReason
+      } = req.body;
+
+      let finalUserId = null;
+
+      // Handle client creation/selection
+      if (clientType === 'existing') {
+        finalUserId = clientId;
+      } else if (clientType === 'new') {
+        // Create new user account with bcrypt hashing
+        const hashedPassword = await bcrypt.hash('123456', 10); // Default password
+        const newUser = await storage.createUser({
+          username: newClientData.email,
+          email: newClientData.email,
+          firstName: newClientData.firstName,
+          lastName: newClientData.lastName,
+          phone: newClientData.phone,
+          password: hashedPassword,
+          role: 'customer'
+        });
+        finalUserId = newUser.id;
+      }
+      // For guest orders, finalUserId stays null
+
+      // Calculate totals
+      const subtotal = items.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
+      const orderDiscountAmount = discountAmount || 0;
+      const settings = await storage.getStoreSettings();
+      
+      let deliveryFee = 0;
+      if (settings?.deliveryFee && settings?.freeDeliveryFrom) {
+        const totalAfterDiscount = subtotal - orderDiscountAmount;
+        deliveryFee = totalAfterDiscount >= settings.freeDeliveryFrom ? 0 : settings.deliveryFee;
+      }
+
+      const totalAmount = subtotal - orderDiscountAmount + deliveryFee;
+
+      // Create order
+      const orderData = {
+        userId: finalUserId,
+        guestName: clientType === 'guest' ? `${guestData.firstName} ${guestData.lastName}` : null,
+        guestPhone: clientType === 'guest' ? guestData.phone : null,
+        status: 'pending',
+        totalAmount,
+        deliveryAddress,
+        deliveryDate,
+        deliveryTime,
+        deliveryNotes: deliveryNotes || null,
+        paymentMethod,
+        discountType: discountType || null,
+        discountAmount: orderDiscountAmount || null,
+        discountReason: discountReason || null,
+        createdAt: new Date()
+      };
+
+      const order = await storage.createOrder(orderData);
+
+      // Create order items
+      for (const item of items) {
+        await storage.createOrderItem({
+          orderId: order.id,
+          productId: item.productId,
+          quantity: item.quantity,
+          weight: item.weight || null,
+          unitPrice: item.unitPrice,
+          totalPrice: item.totalPrice
+        });
+      }
+
+      // Clear orders cache
+      clearCachePattern('admin-orders');
+      
+      res.json({ 
+        success: true, 
+        order: { 
+          ...order, 
+          items 
+        } 
+      });
+    } catch (error) {
+      console.error("Error creating admin order:", error);
+      res.status(500).json({ message: "Failed to create order" });
+    }
+  });
+
   // Admin-only route to get orders with pagination
   app.get('/api/admin/orders', isAuthenticated, async (req: any, res) => {
     try {
