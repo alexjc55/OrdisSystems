@@ -126,16 +126,21 @@ export function BarcodeScanner({
       return;
     }
     
-    // Debouncing для предотвращения дубликатов
-    if (barcodeText === lastScannedBarcode && currentTime - lastScanTime < 5000) {
+    // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Остановка сканирования СРАЗУ
+    setIsScanning(false);
+    
+    // Обнуляем сканер для предотвращения повторных вызовов
+    if (codeReaderRef.current) {
+      codeReaderRef.current = null;
+    }
+    
+    // Усиленная защита от дублирования - увеличена до 3 секунд
+    if (barcodeText === lastScannedBarcode && currentTime - lastScanTime < 3000) {
       return;
     }
     
     setLastScannedBarcode(barcodeText);
     setLastScanTime(currentTime);
-    
-    // Останавливаем сканирование
-    setIsScanning(false);
     
     const parsed = parseBarcode(barcodeText);
     
@@ -165,13 +170,17 @@ export function BarcodeScanner({
     });
 
     if (orderItem) {
-      // Обновляем вес существующего товара
+      // ИСПРАВЛЕНИЕ: Одноразовое обновление с защитой от повторов
       onUpdateItem(orderItem.productId, weight);
       onClose();
-      toast({
-        title: adminT('barcode.weightUpdated'),
-        description: `${orderItem.product.name}: ${weight}${adminT('units.g')}`
-      });
+      
+      // Задержка toast для предотвращения дублирования
+      setTimeout(() => {
+        toast({
+          title: adminT('barcode.weightUpdated'),
+          description: `${orderItem.product.name}: ${weight}${adminT('units.g')}`
+        });
+      }, 100);
       return;
     }
     
@@ -196,38 +205,54 @@ export function BarcodeScanner({
 
     // Товар найден, но не в заказе - показываем диалог добавления
     onClose();
-    setConfirmDialog({
-      isOpen: true,
-      product,
-      weight
-    });
+    
+    // ИСПРАВЛЕНИЕ: Задержка для корректного показа диалога
+    setTimeout(() => {
+      setConfirmDialog({
+        isOpen: true,
+        product,
+        weight
+      });
+    }, 150);
   };
 
   const handleAddToOrder = () => {
-    if (confirmDialog.product && confirmDialog.weight > 0) {
-      onAddItem(confirmDialog.product, confirmDialog.weight);
-      toast({
-        title: adminT('barcode.productAdded'),
-        description: `${confirmDialog.product.name}: ${confirmDialog.weight}${adminT('units.g')}`
-      });
-    }
-    // ИСПРАВЛЕНИЕ: форсированное закрытие диалога
+    // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Сначала закрываем диалог, потом добавляем товар
     setConfirmDialog({ isOpen: false, product: null, weight: 0 });
     
-    // Дополнительная защита
+    if (confirmDialog.product && confirmDialog.weight > 0) {
+      onAddItem(confirmDialog.product, confirmDialog.weight);
+      
+      // Задержка toast для предотвращения конфликтов состояния
+      setTimeout(() => {
+        toast({
+          title: adminT('barcode.productAdded'),
+          description: `${confirmDialog.product.name}: ${confirmDialog.weight}${adminT('units.g')}`
+        });
+      }, 100);
+    }
+    
+    // Дополнительная защита через тройное закрытие
     setTimeout(() => {
       setConfirmDialog({ isOpen: false, product: null, weight: 0 });
     }, 50);
+    
+    setTimeout(() => {
+      setConfirmDialog({ isOpen: false, product: null, weight: 0 });
+    }, 200);
   };
 
   const handleCancelAddToOrder = () => {
-    // ИСПРАВЛЕНИЕ: форсированное закрытие диалога с тройным сбросом состояния
+    // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Тройное закрытие диалога с разными интервалами
     setConfirmDialog({ isOpen: false, product: null, weight: 0 });
     
-    // Дополнительная защита от зависания диалога
     setTimeout(() => {
       setConfirmDialog({ isOpen: false, product: null, weight: 0 });
     }, 50);
+    
+    setTimeout(() => {
+      setConfirmDialog({ isOpen: false, product: null, weight: 0 });
+    }, 150);
   };
 
   const startScanning = async () => {
@@ -240,7 +265,8 @@ export function BarcodeScanner({
       // Создаем новый экземпляр сканера
       if (codeReaderRef.current) {
         try {
-          codeReaderRef.current.reset();
+          // Просто обнуляем сканер вместо reset
+          codeReaderRef.current = null;
         } catch (resetError) {
           // Игнорируем ошибку сброса
         }
@@ -368,7 +394,7 @@ export function BarcodeScanner({
             
             // Основной метод сканирования с callback
             try {
-              const callback = (result, error) => {
+              const callback = (result: any, error: any) => {
                 // Проверяем правильно ли result содержит данные
                 if (result && !error) {
                   try {
@@ -405,26 +431,26 @@ export function BarcodeScanner({
       // Запускаем агрессивный цикл сканирования
       aggressiveScanLoop();
       
-      setCameraStatus('active');
+      setCameraStatus('granted');
       
-    } catch (error) {
+    } catch (error: any) {
       setCameraStatus('error');
       
       let errorMessage = 'Не удалось запустить сканер штрих-кодов';
       let errorTitle = 'Ошибка сканера';
       
-      if (error.name === 'NotAllowedError') {
+      if (error?.name === 'NotAllowedError') {
         errorMessage = 'Доступ к камере запрещен. Разрешите доступ к камере и попробуйте снова';
         setCameraStatus('denied');
-      } else if (error.name === 'NotFoundError') {
+      } else if (error?.name === 'NotFoundError') {
         errorMessage = 'Камера не найдена на этом устройстве';
-      } else if (error.name === 'NotReadableError') {
+      } else if (error?.name === 'NotReadableError') {
         errorMessage = 'Камера занята другим приложением';
-      } else if (error.name === 'OverconstrainedError') {
+      } else if (error?.name === 'OverconstrainedError') {
         errorMessage = 'Камера не поддерживает требуемые настройки';
-      } else if (error.message && error.message.includes('timeout')) {
+      } else if (error?.message && error.message.includes('timeout')) {
         errorMessage = 'Время ожидания загрузки камеры истекло. Попробуйте еще раз';
-      } else if (error.message && error.message.includes('getUserMedia')) {
+      } else if (error?.message && error.message.includes('getUserMedia')) {
         errorMessage = 'Браузер не поддерживает доступ к камере или требуется HTTPS';
       }
       
@@ -516,7 +542,7 @@ export function BarcodeScanner({
   
   // Дополнительный принудительный запуск сканирования
   useEffect(() => {
-    if (isOpen && !isScanning && !isInitializing && cameraStatus === 'active') {
+    if (isOpen && !isScanning && !isInitializing && cameraStatus === 'granted') {
       const forceStartTimer = setTimeout(() => {
         startScanning();
       }, 500);
