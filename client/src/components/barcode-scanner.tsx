@@ -434,7 +434,13 @@ export function BarcodeScanner({
             
             // Основной метод сканирования с callback
             try {
+              const currentSessionId = scanningSessionIdRef.current;
               const callback = (result: any, error: any) => {
+                // КРИТИЧЕСКАЯ ПРОВЕРКА: Проверяем актуальность сессии
+                if (scanningSessionIdRef.current !== currentSessionId || shouldStopScanningRef.current) {
+                  return;
+                }
+                
                 // Проверяем правильно ли result содержит данные
                 if (result && !error) {
                   try {
