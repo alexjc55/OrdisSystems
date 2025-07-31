@@ -43,6 +43,8 @@ export function BarcodeScanner({
   const [lastScanTime, setLastScanTime] = useState<number>(0);
   const [cameraStatus, setCameraStatus] = useState<'idle' | 'requesting' | 'granted' | 'denied' | 'error'>('idle');
   const shouldStopScanningRef = useRef<boolean>(false);
+  const scanningSessionIdRef = useRef<string>('');
+  const lastToastMessageRef = useRef<string>('');
 
   // Query for barcode configuration
   const { data: barcodeConfig } = useQuery({
@@ -124,6 +126,12 @@ export function BarcodeScanner({
       return;
     }
     
+    // КРИТИЧЕСКАЯ ПРОВЕРКА: Проверяем актуальность сессии сканирования
+    const currentSessionId = scanningSessionIdRef.current;
+    if (!currentSessionId) {
+      return;
+    }
+    
     const barcodeText = result.getText();
     const currentTime = Date.now();
     
@@ -202,14 +210,21 @@ export function BarcodeScanner({
       // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Полная остановка сканирования и камеры
       stopScanning();
       onClose();
-      // Показываем уведомление об ошибке только один раз
-      setTimeout(() => {
-        toast({
-          variant: "destructive",
-          title: adminT('barcode.productNotFound'),
-          description: `${adminT('barcode.productNotFoundDescription')} (${productCode})`
-        });
-      }, 100);
+      
+      // КРИТИЧЕСКАЯ ЗАЩИТА: Проверяем дублирование toast сообщений
+      const toastKey = `productNotFound_${productCode}`;
+      if (lastToastMessageRef.current !== toastKey) {
+        lastToastMessageRef.current = toastKey;
+        
+        // Показываем уведомление об ошибке только один раз
+        setTimeout(() => {
+          toast({
+            variant: "destructive",
+            title: adminT('barcode.productNotFound'),
+            description: `${adminT('barcode.productNotFoundDescription')} (${productCode})`
+          });
+        }, 100);
+      }
       return;
     }
 
@@ -272,6 +287,8 @@ export function BarcodeScanner({
     try {
       // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Полная очистка всех состояний при запуске
       shouldStopScanningRef.current = false;
+      scanningSessionIdRef.current = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      lastToastMessageRef.current = '';
       setLastScannedBarcode('');
       setLastScanTime(0);
       setConfirmDialog({ isOpen: false, product: null, weight: 0 });
@@ -490,6 +507,7 @@ export function BarcodeScanner({
   const stopScanning = () => {
     // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Глобальная остановка всех процессов сканирования
     shouldStopScanningRef.current = true;
+    scanningSessionIdRef.current = '';
     setIsScanning(false);
     
     // Останавливаем сканер
@@ -549,6 +567,8 @@ export function BarcodeScanner({
     if (isOpen && !isScanning && !isInitializing) {
       // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Очистка всех состояний при открытии
       shouldStopScanningRef.current = false;
+      scanningSessionIdRef.current = '';
+      lastToastMessageRef.current = '';
       setLastScannedBarcode('');
       setLastScanTime(0);
       setConfirmDialog({ isOpen: false, product: null, weight: 0 });
