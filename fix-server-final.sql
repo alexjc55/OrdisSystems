@@ -13,6 +13,16 @@ BEGIN
         RAISE NOTICE 'Поле barcode уже существует в products';
     END IF;
     
+    -- Добавляем enable_admin_order_creation если его нет
+    IF NOT EXISTS (
+        SELECT FROM information_schema.columns 
+        WHERE table_name = 'store_settings' AND column_name = 'enable_admin_order_creation'
+    ) THEN
+        RAISE NOTICE 'Добавляю поле enable_admin_order_creation...';
+        ALTER TABLE store_settings ADD COLUMN enable_admin_order_creation BOOLEAN DEFAULT true;
+        RAISE NOTICE 'Поле enable_admin_order_creation добавлено';
+    END IF;
+    
     -- Проверяем все поля системы штрих-кодов в store_settings
     IF NOT EXISTS (
         SELECT FROM information_schema.columns 
