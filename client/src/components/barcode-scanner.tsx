@@ -42,6 +42,7 @@ export function BarcodeScanner({
   const [lastScannedBarcode, setLastScannedBarcode] = useState<string>('');
   const [lastScanTime, setLastScanTime] = useState<number>(0);
   const [cameraStatus, setCameraStatus] = useState<'idle' | 'requesting' | 'granted' | 'denied' | 'error'>('idle');
+  const shouldStopScanningRef = useRef<boolean>(false);
 
   // Query for barcode configuration
   const { data: barcodeConfig } = useQuery({
@@ -118,6 +119,11 @@ export function BarcodeScanner({
   };
 
   const handleBarcodeDetected = (result: Result) => {
+    // КРИТИЧЕСКАЯ ПРОВЕРКА: Если уже обрабатываем штрих-код, игнорируем
+    if (shouldStopScanningRef.current) {
+      return;
+    }
+    
     const barcodeText = result.getText();
     const currentTime = Date.now();
     
@@ -126,7 +132,8 @@ export function BarcodeScanner({
       return;
     }
     
-    // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Остановка сканирования СРАЗУ
+    // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Мгновенная блокировка повторных вызовов
+    shouldStopScanningRef.current = true;
     setIsScanning(false);
     
     // Обнуляем сканер для предотвращения повторных вызовов
@@ -263,6 +270,8 @@ export function BarcodeScanner({
     if (!videoRef.current) return;
 
     try {
+      // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Сброс флага остановки при запуске
+      shouldStopScanningRef.current = false;
       setIsInitializing(true);
       setCameraStatus('idle');
       
@@ -383,6 +392,13 @@ export function BarcodeScanner({
       let shouldContinueScanning = true;
       
       const aggressiveScanLoop = () => {
+        // КРИТИЧЕСКАЯ ПРОВЕРКА: Если нужно остановить сканирование глобально
+        if (shouldStopScanningRef.current) {
+          shouldContinueScanning = false;
+          if (scanTimeoutId) clearTimeout(scanTimeoutId);
+          return;
+        }
+        
         // Проверяем актуальное состояние без замыкания
         if (!shouldContinueScanning || !videoRef.current || !codeReaderRef.current) {
           if (scanTimeoutId) clearTimeout(scanTimeoutId);
@@ -469,7 +485,8 @@ export function BarcodeScanner({
   };
 
   const stopScanning = () => {
-    // Сначала останавливаем состояние сканирования
+    // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Глобальная остановка всех процессов сканирования
+    shouldStopScanningRef.current = true;
     setIsScanning(false);
     
     // Останавливаем сканер
