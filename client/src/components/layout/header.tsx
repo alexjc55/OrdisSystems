@@ -308,12 +308,17 @@ export default function Header({ onResetView }: HeaderProps) {
               
               {/* Language Switcher */}
               {(() => {
-                const languages: Array<{ code: 'ru' | 'en' | 'he' | 'ar', flag: string, name: string }> = [
+                // ИСПРАВЛЕНИЕ: Используем только включенные языки из настроек магазина
+                const allLanguages: Array<{ code: 'ru' | 'en' | 'he' | 'ar', flag: string, name: string }> = [
                   { code: 'ru', flag: '🇷🇺', name: 'Русский' },
                   { code: 'en', flag: '🇺🇸', name: 'English' },
                   { code: 'he', flag: '🇮🇱', name: 'עברית' },
                   { code: 'ar', flag: '🇸🇦', name: 'العربية' }
                 ];
+                
+                // Фильтруем языки по настройкам магазина
+                const enabledLanguageCodes = storeSettings?.enabledLanguages || ['ru'];
+                const languages = allLanguages.filter(lang => enabledLanguageCodes.includes(lang.code));
                 
                 // Don't show language switcher if only 1 language
                 if (languages.length <= 1) return null;
