@@ -145,13 +145,16 @@ export function BarcodeScanner({
     const parsed = parseBarcode(barcodeText);
     
     if (!parsed) {
-      // Закрываем сканер и показываем ошибку
+      // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Полная остановка сканирования и камеры
+      stopScanning();
       onClose();
-      toast({
-        variant: "destructive",
-        title: adminT('barcode.invalidFormat'),
-        description: adminT('barcode.invalidFormatDescription')
-      });
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: adminT('barcode.invalidFormat'),
+          description: adminT('barcode.invalidFormatDescription')
+        });
+      }, 100);
       return;
     }
     
@@ -170,7 +173,8 @@ export function BarcodeScanner({
     });
 
     if (orderItem) {
-      // ИСПРАВЛЕНИЕ: Одноразовое обновление с защитой от повторов
+      // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Полная остановка сканирования и камеры
+      stopScanning();
       onUpdateItem(orderItem.productId, weight);
       onClose();
       
@@ -188,11 +192,10 @@ export function BarcodeScanner({
     const product = findProductByBarcode(productCode);
     
     if (!product) {
-      // Сначала останавливаем сканирование
-      setIsScanning(false);
-      // Закрываем сканер
+      // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Полная остановка сканирования и камеры
+      stopScanning();
       onClose();
-      // Показываем уведомление об ошибке
+      // Показываем уведомление об ошибке только один раз
       setTimeout(() => {
         toast({
           variant: "destructive",
@@ -204,6 +207,7 @@ export function BarcodeScanner({
     }
 
     // Товар найден, но не в заказе - показываем диалог добавления
+    stopScanning();
     onClose();
     
     // ИСПРАВЛЕНИЕ: Задержка для корректного показа диалога
