@@ -218,6 +218,14 @@ export const storeSettings = pgTable("store_settings", {
   // Admin features toggles
   enableAdminOrderCreation: boolean("enable_admin_order_creation").default(true), // Enable/disable admin order creation feature
   
+  // Barcode system settings
+  barcodeSystemEnabled: boolean("barcode_system_enabled").default(false),
+  barcodeProductCodeStart: integer("barcode_product_code_start").default(2),
+  barcodeProductCodeEnd: integer("barcode_product_code_end").default(5),
+  barcodeWeightStart: integer("barcode_weight_start").default(6),
+  barcodeWeightEnd: integer("barcode_weight_end").default(10),
+  barcodeWeightUnit: varchar("barcode_weight_unit").default("grams"),
+  
   // Russian fields (base language)
   aboutTextRu: text("about_text_ru"),
   bannerButtonTextRu: varchar("banner_button_text_ru", { length: 100 }),
