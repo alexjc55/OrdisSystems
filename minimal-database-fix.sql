@@ -1,5 +1,5 @@
 -- MINIMAL DATABASE FIX - Only most critical missing columns
--- Execute: psql -U edahouse_usr -h localhost -d edahouse -f minimal-database-fix.sql
+-- Execute: psql -U demo_ordis_usr -h localhost -d demo_ordis -f minimal-database-fix.sql
 
 -- Add only the most essential missing columns that cause the /api/settings error
 DO $$
