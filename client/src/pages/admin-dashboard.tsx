@@ -4284,7 +4284,7 @@ export default function AdminDashboard() {
                     onClick={() => setOrdersViewMode("table")}
                     className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "table" ? 'bg-primary text-white hover:bg-primary' : 'hover:bg-gray-200'}`}
                   >
-                    <Grid3X3 className={`h-3 w-3 mr-1 ${ordersViewMode === "table" ? 'text-white' : ''}`} />
+                    <Grid3X3 className={`h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0 ${ordersViewMode === "table" ? 'text-white' : ''}`} />
                     {adminT('common.table')}
                   </Button>
                   <Button
@@ -4293,7 +4293,7 @@ export default function AdminDashboard() {
                     onClick={() => setOrdersViewMode("kanban")}
                     className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "kanban" ? 'bg-primary text-white hover:bg-primary' : 'hover:bg-gray-200'}`}
                   >
-                    <Columns className={`h-3 w-3 mr-1 ${ordersViewMode === "kanban" ? 'text-white' : ''}`} />
+                    <Columns className={`h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0 ${ordersViewMode === "kanban" ? 'text-white' : ''}`} />
                     {adminT('common.kanban')}
                   </Button>
                 </div>
