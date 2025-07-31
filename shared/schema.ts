@@ -209,10 +209,14 @@ export const storeSettings = pgTable("store_settings", {
     canManageUsers: false,
     canViewSettings: false,
     canManageSettings: false,
-    canManageThemes: false
+    canManageThemes: false,
+    canCreateOrders: true
   }),
   defaultLanguage: varchar("default_language", { length: 5 }).default("ru"), // Default site language
   enabledLanguages: jsonb("enabled_languages").default(["ru", "en", "he", "ar"]), // Array of enabled language codes
+  
+  // Admin features toggles
+  enableAdminOrderCreation: boolean("enable_admin_order_creation").default(true), // Enable/disable admin order creation feature
   
   // Russian fields (base language)
   aboutTextRu: text("about_text_ru"),

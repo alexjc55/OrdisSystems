@@ -575,6 +575,8 @@
     "workerPermissionsDescription": "הגדרת הרשאות גישה לעובדים",
     "canManageThemes": "ניהול ערכות עיצוב",
     "canManageThemesDescription": "אפשר לעובד לנהל ערכות עיצוב",
+    "canCreateOrders": "יצירת הזמנות",
+    "canCreateOrdersDescription": "אפשר לעובד ליצור הזמנות חדשות מפאנל הניהול",
     "coreWorkSections": "חלקי עבודה מרכזיים",
     "coreWorkSectionsDescription": "חלקים אלה זמינים תמיד לעובדים למשימות חיוניות",
     "alwaysEnabled": "תמיד מופעל"

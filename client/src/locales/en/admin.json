@@ -1054,6 +1054,8 @@
     "workerPermissionsDescription": "Configure access permissions for employees",
     "canManageThemes": "Manage Themes",
     "canManageThemesDescription": "Allow employee to manage design themes",
+    "canCreateOrders": "Create Orders",
+    "canCreateOrdersDescription": "Allow employee to create new orders from admin panel",
     "coreWorkSections": "Core Work Sections",
     "coreWorkSectionsDescription": "These sections are always available to workers for essential tasks",
     "alwaysEnabled": "always enabled"

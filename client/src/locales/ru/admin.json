@@ -1062,6 +1062,8 @@
     "workerPermissionsDescription": "Настройка прав доступа для сотрудников",
     "canManageThemes": "Управление темами",
     "canManageThemesDescription": "Разрешить сотруднику управлять темами оформления",
+    "canCreateOrders": "Создание заказов",
+    "canCreateOrdersDescription": "Разрешить сотруднику создавать новые заказы из админ-панели",
     "coreWorkSections": "Основные рабочие разделы",
     "coreWorkSectionsDescription": "Эти разделы всегда доступны работникам для выполнения основных задач",
     "alwaysEnabled": "всегда включено"

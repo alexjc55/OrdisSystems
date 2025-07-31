@@ -4300,14 +4300,16 @@ export default function AdminDashboard() {
 
                 {/* Right side - Create Order + Filters */}
                 <div className={`flex gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <Button 
-                    onClick={() => setShowCreateOrderDialog(true)}
-                    className="btn-primary flex items-center gap-2 text-sm px-4 py-2 h-8"
-                    size="sm"
-                  >
-                    <Plus className="h-4 w-4" />
-                    {adminT('orders.createOrder')}
-                  </Button>
+                  {((storeSettings?.workerPermissions as any)?.canCreateOrders !== false) && (
+                    <Button 
+                      onClick={() => setShowCreateOrderDialog(true)}
+                      className="btn-primary flex items-center gap-2 text-sm px-4 py-2 h-8"
+                      size="sm"
+                    >
+                      <Plus className="h-4 w-4" />
+                      {adminT('orders.createOrder')}
+                    </Button>
+                  )}
                   <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
                     <SelectTrigger className="w-40 text-xs h-8">
                       <SelectValue placeholder={adminT('orders.filterOrders')} />
@@ -5688,6 +5690,33 @@ export default function AdminDashboard() {
                           className="h-8 w-8 p-0"
                         >
                           {(storeSettings?.workerPermissions as any)?.canManageThemes ? (
+                            <Eye className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <EyeOff className="h-4 w-4 text-gray-400" />
+                          )}
+                        </Button>
+                      </div>
+                      
+                      {/* Order Creation Toggle */}
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canCreateOrders')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canCreateOrdersDescription')}</p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => 
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canCreateOrders: !((storeSettings?.workerPermissions as any)?.canCreateOrders || false)
+                              }
+                            })
+                          }
+                          className="h-8 w-8 p-0"
+                        >
+                          {(storeSettings?.workerPermissions as any)?.canCreateOrders ? (
                             <Eye className="h-4 w-4 text-green-600" />
                           ) : (
                             <EyeOff className="h-4 w-4 text-gray-400" />

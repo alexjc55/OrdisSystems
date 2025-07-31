@@ -831,6 +831,8 @@
     "workerPermissionsDescription": "تكوين صلاحيات الوصول للموظفين",
     "canManageThemes": "إدارة المواضيع",
     "canManageThemesDescription": "السماح للموظف بإدارة مواضيع التصميم",
+    "canCreateOrders": "إنشاء الطلبات",
+    "canCreateOrdersDescription": "السماح للموظف بإنشاء طلبات جديدة من لوحة الإدارة",
     "coreWorkSections": "أقسام العمل الأساسية",
     "coreWorkSectionsDescription": "المنتجات والفئات والطلبات متاحة دائماً للموظفين",
     "alwaysEnabled": "مفعل دائماً"
