@@ -270,8 +270,11 @@ export function BarcodeScanner({
     if (!videoRef.current) return;
 
     try {
-      // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Сброс флага остановки при запуске
+      // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Полная очистка всех состояний при запуске
       shouldStopScanningRef.current = false;
+      setLastScannedBarcode('');
+      setLastScanTime(0);
+      setConfirmDialog({ isOpen: false, product: null, weight: 0 });
       setIsInitializing(true);
       setCameraStatus('idle');
       
@@ -544,6 +547,12 @@ export function BarcodeScanner({
     let timeoutId: NodeJS.Timeout;
     
     if (isOpen && !isScanning && !isInitializing) {
+      // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Очистка всех состояний при открытии
+      shouldStopScanningRef.current = false;
+      setLastScannedBarcode('');
+      setLastScanTime(0);
+      setConfirmDialog({ isOpen: false, product: null, weight: 0 });
+      
       // Small delay to ensure video element is ready
       timeoutId = setTimeout(() => {
         startScanning();
