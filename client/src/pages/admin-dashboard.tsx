@@ -3461,7 +3461,7 @@ export default function AdminDashboard() {
                           {activeTab === 'categories' && <Layers3 className="w-5 h-5" />}
                           {activeTab === 'orders' && <ShoppingCart className="w-5 h-5" />}
                           {activeTab === 'users' && <Users className="w-5 h-5" />}
-                          {activeTab === 'store' && <Settings className="w-5 h-5" />}
+                          {activeTab === 'store-settings' && <Settings className="w-5 h-5" />}
                           {activeTab === 'notifications' && <Bell className="w-5 h-5" />}
                           {activeTab === 'settings' && <UserCheck className="w-5 h-5" />}
                           {activeTab === 'themes' && <Palette className="w-5 h-5" />}
@@ -3472,7 +3472,7 @@ export default function AdminDashboard() {
                         {activeTab === 'categories' && adminT('tabs.categories')}
                         {activeTab === 'orders' && adminT('tabs.orders')}
                         {activeTab === 'users' && adminT('tabs.users')}
-                        {activeTab === 'store' && adminT('tabs.settings')}
+                        {activeTab === 'store-settings' && adminT('tabs.settings')}
                         {activeTab === 'notifications' && "Push Уведомления"}
                         {activeTab === 'settings' && adminT('tabs.permissions')}
                         {activeTab === 'themes' && adminT('tabs.themes')}
@@ -3483,7 +3483,7 @@ export default function AdminDashboard() {
                           {activeTab === 'categories' && <Layers3 className="w-5 h-5" />}
                           {activeTab === 'orders' && <ShoppingCart className="w-5 h-5" />}
                           {activeTab === 'users' && <Users className="w-5 h-5" />}
-                          {activeTab === 'store' && <Settings className="w-5 h-5" />}
+                          {activeTab === 'store-settings' && <Settings className="w-5 h-5" />}
                           {activeTab === 'notifications' && <Bell className="w-5 h-5" />}
                           {activeTab === 'settings' && <UserCheck className="w-5 h-5" />}
                           {activeTab === 'themes' && <Palette className="w-5 h-5" />}
