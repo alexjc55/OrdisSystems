@@ -292,14 +292,6 @@ export const storeSettings = pgTable("store_settings", {
   pwaNameAr: varchar("pwa_name_ar", { length: 100 }), // PWA app name (Arabic)
   pwaDescriptionAr: text("pwa_description_ar"), // PWA app description (Arabic)
   
-  // Barcode system settings
-  barcodeSystemEnabled: boolean("barcode_system_enabled").default(false), // Enable/disable barcode scanning
-  barcodeProductCodeStart: integer("barcode_product_code_start").default(2), // Starting position of product code in barcode
-  barcodeProductCodeEnd: integer("barcode_product_code_end").default(5), // Ending position of product code in barcode
-  barcodeWeightStart: integer("barcode_weight_start").default(6), // Starting position of weight in barcode
-  barcodeWeightEnd: integer("barcode_weight_end").default(10), // Ending position of weight in barcode
-  barcodeWeightUnit: varchar("barcode_weight_unit", { length: 10 }).default("g"), // Weight unit in barcode (g, kg)
-  
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

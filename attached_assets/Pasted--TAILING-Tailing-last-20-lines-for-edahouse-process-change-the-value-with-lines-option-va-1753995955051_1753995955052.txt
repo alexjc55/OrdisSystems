@@ -1,0 +1,76 @@
+
+[TAILING] Tailing last 20 lines for [edahouse] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-error.log last 20 lines:
+0|edahouse |     at async DatabaseStorage.getStoreSettings (file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:1552:24)
+0|edahouse |     at async file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3241:24 {
+0|edahouse |   length: 129,
+0|edahouse |   severity: 'ERROR',
+0|edahouse |   code: '42703',
+0|edahouse |   detail: undefined,
+0|edahouse |   hint: undefined,
+0|edahouse |   position: '1188',
+0|edahouse |   internalPosition: undefined,
+0|edahouse |   internalQuery: undefined,
+0|edahouse |   where: undefined,
+0|edahouse |   schema: undefined,
+0|edahouse |   table: undefined,
+0|edahouse |   column: undefined,
+0|edahouse |   dataType: undefined,
+0|edahouse |   constraint: undefined,
+0|edahouse |   file: 'parse_relation.c',
+0|edahouse |   line: '3665',
+0|edahouse |   routine: 'errorMissingColumn'
+0|edahouse | }
+
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-out.log last 20 lines:
+0|edahouse | 12:00:54 AM [express] GET /api/favicon 301 in 28ms
+0|edahouse | 12:00:54 AM [express] GET /api/auth/user 200 in 12ms :: {"id":"admin","username":"admin","email":"adm…
+0|edahouse | 12:00:54 AM [express] GET /api/settings 500 in 20ms :: {"message":"Failed to fetch store settings"}
+0|edahouse | 12:00:55 AM [express] GET /api/products 500 in 11ms :: {"message":"Failed to fetch products"}
+0|edahouse | 12:00:55 AM [express] GET /api/categories 200 in 18ms :: [{"id":47,"name":"Салаты","name_en":"","name…
+0|edahouse | 12:00:55 AM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"42517699","buildTi…
+0|edahouse | 12:00:55 AM [express] GET /api/favicon 301 in 9ms
+0|edahouse | 12:00:55 AM [express] GET /api/manifest 500 in 27ms :: {"message":"Failed to generate PWA manifest"}
+0|edahouse | 12:00:55 AM [express] GET /api/favicon 301 in 45ms
+0|edahouse | 12:00:55 AM [express] GET /api/favicon 301 in 8ms
+0|edahouse | 12:00:56 AM [express] GET /api/favicon 301 in 11ms
+0|edahouse | 12:00:56 AM [express] GET /api/favicon 301 in 9ms
+0|edahouse | 12:00:56 AM [express] GET /api/favicon 301 in 11ms
+0|edahouse | 12:00:57 AM [express] GET /api/favicon 301 in 9ms
+0|edahouse | 12:00:57 AM [express] GET /api/favicon 301 in 56ms
+0|edahouse | 12:00:58 AM [express] GET /api/favicon 301 in 23ms
+0|edahouse | 12:00:59 AM [express] GET /api/favicon 301 in 29ms
+0|edahouse | 12:00:59 AM [express] GET /api/favicon 301 in 22ms
+0|edahouse | 12:01:00 AM [express] GET /api/favicon 301 in 30ms
+0|edahouse | 12:01:24 AM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"42517699","buildTi…
+
+0|edahouse  | 🔍 Environment check - USE_NEON: false
+0|edahouse  | 🔍 Environment check - DATABASE_URL exists: true
+0|edahouse  | 🔄 Initializing PostgreSQL connection...
+0|edahouse  | 🌱 Seeding database...
+0|edahouse  | ✅ PostgreSQL Database initialized
+0|edahouse  | Database already seeded or error occurred: error: column "barcode" does not exist
+0|edahouse  |     at /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/pg-pool/index.js:45:11
+0|edahouse  |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|edahouse  |     at async file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/drizzle-orm/node-postgres/session.js:83:22
+0|edahouse  |     at async seedDatabase (file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:4339:28)
+0|edahouse  |     at async file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:4845:5 {
+0|edahouse  |   length: 108,
+0|edahouse  |   severity: 'ERROR',
+0|edahouse  |   code: '42703',
+0|edahouse  |   detail: undefined,
+0|edahouse  |   hint: undefined,
+0|edahouse  |   position: '355',
+0|edahouse  |   internalPosition: undefined,
+0|edahouse  |   internalQuery: undefined,
+0|edahouse  |   where: undefined,
+0|edahouse  |   schema: undefined,
+0|edahouse  |   table: undefined,
+0|edahouse  |   column: undefined,
+0|edahouse  |   dataType: undefined,
+0|edahouse  |   constraint: undefined,
+0|edahouse  |   file: 'parse_relation.c',
+0|edahouse  |   line: '3665',
+0|edahouse  |   routine: 'errorMissingColumn'
+0|edahouse  | }
+0|edahouse  | 12:05:42 AM [express] serving on port 5000
