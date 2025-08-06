@@ -222,7 +222,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                           {t('viewComposition')}
                         </button>
                       </DialogTrigger>
-                      <DialogContent className="sm:max-w-[500px] mx-4">
+                      <DialogContent className="sm:max-w-[500px] mx-4 my-8 max-h-[80vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle className="text-lg">
                             {t('composition')} - {localizedName}
@@ -251,7 +251,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                         {t('viewComposition')}
                       </button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[500px] mx-4">
+                    <DialogContent className="sm:max-w-[500px] mx-4 my-8 max-h-[80vh] overflow-y-auto">
                       <DialogHeader>
                         <DialogTitle className="text-lg">
                           {t('composition')} - {localizedName}
