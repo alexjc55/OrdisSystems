@@ -225,6 +225,51 @@ interface ThemeData {
   // WhatsApp settings
   whatsappPhone?: string;
   whatsappMessage?: string;
+  
+  // Slider settings
+  sliderAutoplay?: boolean;
+  sliderSpeed?: number;
+  sliderEffect?: string;
+  
+  // Slide 1 settings
+  slide1Image?: string;
+  slide1Title?: string;
+  slide1Subtitle?: string;
+  slide1ButtonText?: string;
+  slide1ButtonLink?: string;
+  slide1TextPosition?: string;
+  
+  // Slide 2 settings
+  slide2Image?: string;
+  slide2Title?: string;
+  slide2Subtitle?: string;
+  slide2ButtonText?: string;
+  slide2ButtonLink?: string;
+  slide2TextPosition?: string;
+  
+  // Slide 3 settings
+  slide3Image?: string;
+  slide3Title?: string;
+  slide3Subtitle?: string;
+  slide3ButtonText?: string;
+  slide3ButtonLink?: string;
+  slide3TextPosition?: string;
+  
+  // Slide 4 settings
+  slide4Image?: string;
+  slide4Title?: string;
+  slide4Subtitle?: string;
+  slide4ButtonText?: string;
+  slide4ButtonLink?: string;
+  slide4TextPosition?: string;
+  
+  // Slide 5 settings
+  slide5Image?: string;
+  slide5Title?: string;
+  slide5Subtitle?: string;
+  slide5ButtonText?: string;
+  slide5ButtonLink?: string;
+  slide5TextPosition?: string;
 }
 
 export default function ThemeManager() {
@@ -853,6 +898,39 @@ export default function ThemeManager() {
       infoShadow: formData.get("infoShadow") as string,
       tomorrowShadow: formData.get("tomorrowShadow") as string || "0 4px 14px 0 rgba(147, 51, 234, 0.3)",
       grayShadow: formData.get("grayShadow") as string,
+      sliderAutoplay: formData.get("sliderAutoplay") === "true",
+      sliderSpeed: parseInt(formData.get("sliderSpeed") as string) || 5000,
+      sliderEffect: formData.get("sliderEffect") as string || "fade",
+      slide1Image: formData.get("slide1Image") as string || "",
+      slide1Title: formData.get("slide1Title") as string || "",
+      slide1Subtitle: formData.get("slide1Subtitle") as string || "",
+      slide1ButtonText: formData.get("slide1ButtonText") as string || "",
+      slide1ButtonLink: formData.get("slide1ButtonLink") as string || "",
+      slide1TextPosition: formData.get("slide1TextPosition") as string || "left",
+      slide2Image: formData.get("slide2Image") as string || "",
+      slide2Title: formData.get("slide2Title") as string || "",
+      slide2Subtitle: formData.get("slide2Subtitle") as string || "",
+      slide2ButtonText: formData.get("slide2ButtonText") as string || "",
+      slide2ButtonLink: formData.get("slide2ButtonLink") as string || "",
+      slide2TextPosition: formData.get("slide2TextPosition") as string || "left",
+      slide3Image: formData.get("slide3Image") as string || "",
+      slide3Title: formData.get("slide3Title") as string || "",
+      slide3Subtitle: formData.get("slide3Subtitle") as string || "",
+      slide3ButtonText: formData.get("slide3ButtonText") as string || "",
+      slide3ButtonLink: formData.get("slide3ButtonLink") as string || "",
+      slide3TextPosition: formData.get("slide3TextPosition") as string || "left",
+      slide4Image: formData.get("slide4Image") as string || "",
+      slide4Title: formData.get("slide4Title") as string || "",
+      slide4Subtitle: formData.get("slide4Subtitle") as string || "",
+      slide4ButtonText: formData.get("slide4ButtonText") as string || "",
+      slide4ButtonLink: formData.get("slide4ButtonLink") as string || "",
+      slide4TextPosition: formData.get("slide4TextPosition") as string || "left",
+      slide5Image: formData.get("slide5Image") as string || "",
+      slide5Title: formData.get("slide5Title") as string || "",
+      slide5Subtitle: formData.get("slide5Subtitle") as string || "",
+      slide5ButtonText: formData.get("slide5ButtonText") as string || "",
+      slide5ButtonLink: formData.get("slide5ButtonLink") as string || "",
+      slide5TextPosition: formData.get("slide5TextPosition") as string || "left",
     };
 
     createThemeMutation.mutate(themeData);
@@ -963,6 +1041,39 @@ export default function ThemeManager() {
       infoShadow: formData.get("infoShadow") as string,
       tomorrowShadow: formData.get("tomorrowShadow") as string || "0 4px 14px 0 rgba(147, 51, 234, 0.3)",
       grayShadow: formData.get("grayShadow") as string,
+      sliderAutoplay: formData.get("sliderAutoplay") === "true",
+      sliderSpeed: parseInt(formData.get("sliderSpeed") as string) || 5000,
+      sliderEffect: formData.get("sliderEffect") as string || "fade",
+      slide1Image: formData.get("slide1Image") as string || "",
+      slide1Title: formData.get("slide1Title") as string || "",
+      slide1Subtitle: formData.get("slide1Subtitle") as string || "",
+      slide1ButtonText: formData.get("slide1ButtonText") as string || "",
+      slide1ButtonLink: formData.get("slide1ButtonLink") as string || "",
+      slide1TextPosition: formData.get("slide1TextPosition") as string || "left",
+      slide2Image: formData.get("slide2Image") as string || "",
+      slide2Title: formData.get("slide2Title") as string || "",
+      slide2Subtitle: formData.get("slide2Subtitle") as string || "",
+      slide2ButtonText: formData.get("slide2ButtonText") as string || "",
+      slide2ButtonLink: formData.get("slide2ButtonLink") as string || "",
+      slide2TextPosition: formData.get("slide2TextPosition") as string || "left",
+      slide3Image: formData.get("slide3Image") as string || "",
+      slide3Title: formData.get("slide3Title") as string || "",
+      slide3Subtitle: formData.get("slide3Subtitle") as string || "",
+      slide3ButtonText: formData.get("slide3ButtonText") as string || "",
+      slide3ButtonLink: formData.get("slide3ButtonLink") as string || "",
+      slide3TextPosition: formData.get("slide3TextPosition") as string || "left",
+      slide4Image: formData.get("slide4Image") as string || "",
+      slide4Title: formData.get("slide4Title") as string || "",
+      slide4Subtitle: formData.get("slide4Subtitle") as string || "",
+      slide4ButtonText: formData.get("slide4ButtonText") as string || "",
+      slide4ButtonLink: formData.get("slide4ButtonLink") as string || "",
+      slide4TextPosition: formData.get("slide4TextPosition") as string || "left",
+      slide5Image: formData.get("slide5Image") as string || "",
+      slide5Title: formData.get("slide5Title") as string || "",
+      slide5Subtitle: formData.get("slide5Subtitle") as string || "",
+      slide5ButtonText: formData.get("slide5ButtonText") as string || "",
+      slide5ButtonLink: formData.get("slide5ButtonLink") as string || "",
+      slide5TextPosition: formData.get("slide5TextPosition") as string || "left",
     };
 
     updateThemeMutation.mutate({ id: themeId, ...themeData });
