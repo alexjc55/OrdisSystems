@@ -1,0 +1,36 @@
+ПОЛНОЕ ИСПРАВЛЕНИЕ VPS СЕРВЕРА
+===============================
+
+Ошибки все еще продолжаются. Нужно добавить ВСЕ недостающие колонки.
+
+ВЫПОЛНИТЬ НА VPS СЕРВЕРЕ:
+
+1. Остановить приложение:
+   pm2 stop edahouse
+
+2. Проверить какие колонки отсутствуют:
+   psql -h localhost -U edahouse_usr -d edahouse -c "SELECT column_name FROM information_schema.columns WHERE table_name = 'store_settings' AND (column_name LIKE '%slider%' OR column_name LIKE '%slide%') ORDER BY column_name;"
+
+3. Добавить ВСЕ недостающие колонки одной командой:
+   psql -h localhost -U edahouse_usr -d edahouse -f /path/to/add-all-missing-columns.sql
+
+   ИЛИ выполнить вручную:
+   psql -h localhost -U edahouse_usr -d edahouse << 'EOF'
+   ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slider_speed INTEGER DEFAULT 5000;
+   ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slider_effect VARCHAR(10) DEFAULT 'fade';
+   ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide1_image VARCHAR(500);
+   ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide1_title VARCHAR(255);
+   ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide1_subtitle TEXT;
+   ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide1_button_text VARCHAR(100);
+   ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide1_button_link VARCHAR(500);
+   ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide1_text_position VARCHAR(20) DEFAULT 'left-center';
+   UPDATE store_settings SET slider_speed = 5000, slider_effect = 'fade' WHERE id = 1;
+   EOF
+
+4. Запустить приложение:
+   pm2 start edahouse
+
+5. Проверить что ошибки исчезли:
+   pm2 logs edahouse --lines 10
+
+ПРИЧИНА: Приложение обращается не только к slider_autoplay, но и к другим колонкам слайдера, которые отсутствуют в базе данных VPS.
