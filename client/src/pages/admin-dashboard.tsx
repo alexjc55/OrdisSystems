@@ -3493,79 +3493,97 @@ export default function AdminDashboard() {
                     <ChevronDown className={`w-5 h-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-screen min-w-full max-h-none border-0 rounded-none shadow-lg" align={isRTL ? "end" : "start"} side="bottom" sideOffset={0}>
-                  {hasPermission("canManageProducts") && (
-                    <DropdownMenuItem onClick={() => setActiveTab("products")} className={`py-4 px-6 cursor-pointer ${activeTab === 'products' ? 'bg-primary text-primary-foreground' : 'hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground'}`}>
-                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        {!isRTL && <Package className="w-5 h-5" />}
-                        <span className="text-lg font-medium">{adminT('tabs.products')}</span>
-                        {isRTL && <Package className="w-5 h-5" />}
+                <DropdownMenuContent className="w-screen min-w-full max-h-none border-0 rounded-none shadow-lg p-2" align={isRTL ? "end" : "start"} side="bottom" sideOffset={0}>
+                  <div className="grid grid-cols-2 gap-2">
+                    {hasPermission("canManageProducts") && (
+                      <div 
+                        onClick={() => setActiveTab("products")} 
+                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'products' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                      >
+                        <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
+                          <Package className="w-6 h-6" />
+                          <span className="text-sm font-medium leading-tight">{adminT('tabs.products')}</span>
+                        </div>
                       </div>
-                    </DropdownMenuItem>
-                  )}
-                  {hasPermission("canManageCategories") && (
-                    <DropdownMenuItem onClick={() => setActiveTab("categories")} className={`py-4 px-6 cursor-pointer ${activeTab === 'categories' ? 'bg-primary text-primary-foreground' : 'hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground'}`}>
-                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        {!isRTL && <Layers3 className="w-5 h-5" />}
-                        <span className="text-lg font-medium">{adminT('tabs.categories')}</span>
-                        {isRTL && <Layers3 className="w-5 h-5" />}
+                    )}
+                    {hasPermission("canManageCategories") && (
+                      <div 
+                        onClick={() => setActiveTab("categories")} 
+                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'categories' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                      >
+                        <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
+                          <Layers3 className="w-6 h-6" />
+                          <span className="text-sm font-medium leading-tight">{adminT('tabs.categories')}</span>
+                        </div>
                       </div>
-                    </DropdownMenuItem>
-                  )}
-                  {hasPermission("canManageOrders") && (
-                    <DropdownMenuItem onClick={() => setActiveTab("orders")} className={`py-4 px-6 cursor-pointer ${activeTab === 'orders' ? 'bg-primary text-primary-foreground' : 'hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground'}`}>
-                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        {!isRTL && <ShoppingCart className="w-5 h-5" />}
-                        <span className="text-lg font-medium">{adminT('tabs.orders')}</span>
-                        {isRTL && <ShoppingCart className="w-5 h-5" />}
+                    )}
+                    {hasPermission("canManageOrders") && (
+                      <div 
+                        onClick={() => setActiveTab("orders")} 
+                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'orders' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                      >
+                        <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
+                          <ShoppingCart className="w-6 h-6" />
+                          <span className="text-sm font-medium leading-tight">{adminT('tabs.orders')}</span>
+                        </div>
                       </div>
-                    </DropdownMenuItem>
-                  )}
-                  {hasPermission("canViewUsers") && (
-                    <DropdownMenuItem onClick={() => setActiveTab("users")} className={`py-4 px-6 cursor-pointer ${activeTab === 'users' ? 'bg-primary text-primary-foreground' : 'hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground'}`}>
-                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        {!isRTL && <Users className="w-5 h-5" />}
-                        <span className="text-lg font-medium">{adminT('tabs.users')}</span>
-                        {isRTL && <Users className="w-5 h-5" />}
+                    )}
+                    {hasPermission("canViewUsers") && (
+                      <div 
+                        onClick={() => setActiveTab("users")} 
+                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'users' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                      >
+                        <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
+                          <Users className="w-6 h-6" />
+                          <span className="text-sm font-medium leading-tight">{adminT('tabs.users')}</span>
+                        </div>
                       </div>
-                    </DropdownMenuItem>
-                  )}
-                  {hasPermission("canViewSettings") && (
-                    <DropdownMenuItem onClick={() => setActiveTab("store-settings")} className={`py-4 px-6 cursor-pointer ${activeTab === 'store-settings' ? 'bg-primary text-primary-foreground' : 'hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground'}`}>
-                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        {!isRTL && <Settings className="w-5 h-5" />}
-                        <span className="text-lg font-medium">{adminT('tabs.settings')}</span>
-                        {isRTL && <Settings className="w-5 h-5" />}
+                    )}
+                    {hasPermission("canViewSettings") && (
+                      <div 
+                        onClick={() => setActiveTab("store-settings")} 
+                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'store-settings' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                      >
+                        <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
+                          <Settings className="w-6 h-6" />
+                          <span className="text-sm font-medium leading-tight">{adminT('tabs.settings')}</span>
+                        </div>
                       </div>
-                    </DropdownMenuItem>
-                  )}
-                  {user?.role === 'admin' && (
-                    <DropdownMenuItem onClick={() => setActiveTab("notifications")} className={`py-4 px-6 cursor-pointer ${activeTab === 'notifications' ? 'bg-primary text-primary-foreground' : 'hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground'}`}>
-                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        {!isRTL && <Bell className="w-5 h-5" />}
-                        <span className="text-lg font-medium">Push Уведомления</span>
-                        {isRTL && <Bell className="w-5 h-5" />}
+                    )}
+                    {user?.role === 'admin' && (
+                      <div 
+                        onClick={() => setActiveTab("notifications")} 
+                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'notifications' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                      >
+                        <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
+                          <Bell className="w-6 h-6" />
+                          <span className="text-sm font-medium leading-tight">Push Уведомления</span>
+                        </div>
                       </div>
-                    </DropdownMenuItem>
-                  )}
-                  {hasPermission("canManageSettings") && (
-                    <DropdownMenuItem onClick={() => setActiveTab("settings")} className={`py-4 px-6 cursor-pointer ${activeTab === 'settings' ? 'bg-primary text-primary-foreground' : 'hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground'}`}>
-                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        {!isRTL && <UserCheck className="w-5 h-5" />}
-                        <span className="text-lg font-medium">{adminT('tabs.permissions')}</span>
-                        {isRTL && <UserCheck className="w-5 h-5" />}
+                    )}
+                    {hasPermission("canManageSettings") && (
+                      <div 
+                        onClick={() => setActiveTab("settings")} 
+                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'settings' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                      >
+                        <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
+                          <UserCheck className="w-6 h-6" />
+                          <span className="text-sm font-medium leading-tight">{adminT('tabs.permissions')}</span>
+                        </div>
                       </div>
-                    </DropdownMenuItem>
-                  )}
-                  {(hasPermission("canManageSettings") || hasPermission("canManageThemes")) && (
-                    <DropdownMenuItem onClick={() => setActiveTab("themes")} className={`py-4 px-6 cursor-pointer ${activeTab === 'themes' ? 'bg-primary text-primary-foreground' : 'hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground'}`}>
-                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        {!isRTL && <Palette className="w-5 h-5" />}
-                        <span className="text-lg font-medium">{adminT('tabs.themes')}</span>
-                        {isRTL && <Palette className="w-5 h-5" />}
+                    )}
+                    {(hasPermission("canManageSettings") || hasPermission("canManageThemes")) && (
+                      <div 
+                        onClick={() => setActiveTab("themes")} 
+                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'themes' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                      >
+                        <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
+                          <Palette className="w-6 h-6" />
+                          <span className="text-sm font-medium leading-tight">{adminT('tabs.themes')}</span>
+                        </div>
                       </div>
-                    </DropdownMenuItem>
-                  )}
+                    )}
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
