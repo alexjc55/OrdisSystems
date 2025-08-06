@@ -35,17 +35,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   const localizedDescription = getLocalizedField(product, 'description', currentLanguage as SupportedLanguage, storeSettingsData as any);
   const localizedIngredients = getLocalizedField(product, 'ingredients', currentLanguage as SupportedLanguage, storeSettingsData as any);
   
-  // Debug ingredients
-  if (product.name?.includes('Абжерка')) {
-    console.log('=== Ingredients Debug ===');
-    console.log('Product:', product.name);
-    console.log('Current language:', currentLanguage);
-    console.log('Raw ingredients:', product.ingredients);
-    console.log('Raw ingredients_en:', product.ingredients_en);
-    console.log('Raw ingredients_he:', product.ingredients_he);
-    console.log('Raw ingredients_ar:', product.ingredients_ar);
-    console.log('Localized ingredients:', localizedIngredients);
-  }
+
   
 
   
