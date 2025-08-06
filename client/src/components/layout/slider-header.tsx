@@ -211,13 +211,13 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
               <div className={`relative p-6 rounded-lg backdrop-blur-sm bg-black/30 ${getTextAlignmentClasses(slide.textPosition)}`}>
                 <div className="flex flex-col space-y-4">
                   {slide.title && (
-                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
                       {slide.title}
                     </h1>
                   )}
                   
                   {slide.subtitle && (
-                    <p className="text-lg md:text-xl lg:text-2xl text-white/90 leading-relaxed">
+                    <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl text-white/90 leading-relaxed">
                       {slide.subtitle}
                     </p>
                   )}
