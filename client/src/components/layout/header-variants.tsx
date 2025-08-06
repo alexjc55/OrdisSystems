@@ -84,7 +84,7 @@ function ClassicHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSett
       {storeSettings?.showBannerImage !== false && (
         <div className="relative h-32 sm:h-40 overflow-hidden">
           <img 
-            src={storeSettings.bannerImage || "/api/uploads/Edahouse_sign__source_1750184330403.png"} 
+            src={storeSettings.bannerImageUrl || storeSettings.bannerImage || "/api/uploads/Edahouse_sign__source_1750184330403.png"} 
             alt="Background" 
             className="w-full h-full object-cover"
           />
@@ -248,7 +248,7 @@ function ModernHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSetti
         <div 
           className="absolute inset-0 bg-cover bg-center transform scale-105 w-full h-full"
           style={{
-            backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage}?v=${appHash})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'
+            backgroundImage: storeSettings?.bannerImageUrl ? `url(${storeSettings.bannerImageUrl}?v=${appHash})` : (storeSettings?.bannerImage ? `url(${storeSettings.bannerImage}?v=${appHash})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)')
           }}
         />
         
@@ -310,7 +310,7 @@ function MinimalHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSett
         <div 
           className="absolute inset-0 bg-cover bg-center w-full h-full"
           style={{
-            backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)',
+            backgroundImage: storeSettings?.bannerImageUrl ? `url(${storeSettings.bannerImageUrl})` : (storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'),
             animation: 'float 6s ease-in-out infinite'
           }}
         />
