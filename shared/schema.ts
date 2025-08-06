@@ -235,7 +235,7 @@ export const storeSettings = pgTable("store_settings", {
   slide1Subtitle: text("slide1_subtitle"),
   slide1ButtonText: varchar("slide1_button_text", { length: 100 }),
   slide1ButtonLink: varchar("slide1_button_link", { length: 500 }),
-  slide1TextPosition: varchar("slide1_text_position", { length: 10 }).default("left"), // left, center, right
+  slide1TextPosition: varchar("slide1_text_position", { length: 20 }).default("left-center"), // left-top, left-center, left-bottom, center-top, center-center, center-bottom, right-top, right-center, right-bottom
   
   // Slide 2 settings
   slide2Image: varchar("slide2_image", { length: 500 }),
@@ -243,7 +243,7 @@ export const storeSettings = pgTable("store_settings", {
   slide2Subtitle: text("slide2_subtitle"),
   slide2ButtonText: varchar("slide2_button_text", { length: 100 }),
   slide2ButtonLink: varchar("slide2_button_link", { length: 500 }),
-  slide2TextPosition: varchar("slide2_text_position", { length: 10 }).default("left"),
+  slide2TextPosition: varchar("slide2_text_position", { length: 20 }).default("left-center"),
   
   // Slide 3 settings
   slide3Image: varchar("slide3_image", { length: 500 }),
@@ -251,7 +251,7 @@ export const storeSettings = pgTable("store_settings", {
   slide3Subtitle: text("slide3_subtitle"),
   slide3ButtonText: varchar("slide3_button_text", { length: 100 }),
   slide3ButtonLink: varchar("slide3_button_link", { length: 500 }),
-  slide3TextPosition: varchar("slide3_text_position", { length: 10 }).default("left"),
+  slide3TextPosition: varchar("slide3_text_position", { length: 20 }).default("left-center"),
   
   // Slide 4 settings
   slide4Image: varchar("slide4_image", { length: 500 }),
@@ -259,7 +259,7 @@ export const storeSettings = pgTable("store_settings", {
   slide4Subtitle: text("slide4_subtitle"),
   slide4ButtonText: varchar("slide4_button_text", { length: 100 }),
   slide4ButtonLink: varchar("slide4_button_link", { length: 500 }),
-  slide4TextPosition: varchar("slide4_text_position", { length: 10 }).default("left"),
+  slide4TextPosition: varchar("slide4_text_position", { length: 20 }).default("left-center"),
   
   // Slide 5 settings
   slide5Image: varchar("slide5_image", { length: 500 }),
@@ -267,7 +267,7 @@ export const storeSettings = pgTable("store_settings", {
   slide5Subtitle: text("slide5_subtitle"),
   slide5ButtonText: varchar("slide5_button_text", { length: 100 }),
   slide5ButtonLink: varchar("slide5_button_link", { length: 500 }),
-  slide5TextPosition: varchar("slide5_text_position", { length: 10 }).default("left"),
+  slide5TextPosition: varchar("slide5_text_position", { length: 20 }).default("left-center"),
   barcodeWeightEnd: integer("barcode_weight_end").default(10),
   barcodeWeightUnit: varchar("barcode_weight_unit").default("grams"),
   
