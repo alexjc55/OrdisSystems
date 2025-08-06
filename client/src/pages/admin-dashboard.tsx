@@ -5527,12 +5527,12 @@ export default function AdminDashboard() {
                       </div>
                     )}
                     
-                    <div className="flex items-center gap-4">
+                    <div className="space-y-3">
                       <Button
                         onClick={() => optimizeImagesMutation.mutate()}
                         disabled={isOptimizingImages}
                         variant="outline"
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 w-full sm:w-auto"
                       >
                         {isOptimizingImages ? (
                           <>
@@ -5546,7 +5546,7 @@ export default function AdminDashboard() {
                           </>
                         )}
                       </Button>
-                      <div className="text-xs text-gray-500 max-w-sm">
+                      <div className="text-xs text-gray-500">
                         {adminT('settings.optimizationDetails')}
                       </div>
                     </div>
