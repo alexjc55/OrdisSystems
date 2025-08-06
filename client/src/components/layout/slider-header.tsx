@@ -169,7 +169,8 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
         verticalClass = 'top-8 md:top-16';
         break;
       case 'bottom':
-        verticalClass = 'bottom-8 md:bottom-16';
+        // Add extra bottom padding to account for slide indicators (dots)
+        verticalClass = 'bottom-16 md:bottom-24';
         break;
       default: // center or any legacy value
         verticalClass = 'top-1/2';
@@ -207,32 +208,34 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
             
             {/* Content */}
             <div className={`absolute ${getContentPositionClasses(slide.textPosition)} max-w-lg z-10`}>
-              <div className={`flex flex-col space-y-4 ${getTextAlignmentClasses(slide.textPosition)}`}>
-                {slide.title && (
-                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
-                    {slide.title}
-                  </h1>
-                )}
-                
-                {slide.subtitle && (
-                  <p className="text-lg md:text-xl lg:text-2xl text-white/90 leading-relaxed">
-                    {slide.subtitle}
-                  </p>
-                )}
-                
-                {slide.buttonText && slide.buttonLink && (
-                  <div className="pt-4">
-                    <Button
-                      asChild
-                      size="lg"
-                      className="bg-primary hover:bg-primary-hover text-white px-8 py-3 text-lg font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
-                    >
-                      <a href={slide.buttonLink}>
-                        {slide.buttonText}
-                      </a>
-                    </Button>
-                  </div>
-                )}
+              <div className={`relative p-6 rounded-lg backdrop-blur-sm bg-black/30 ${getTextAlignmentClasses(slide.textPosition)}`}>
+                <div className="flex flex-col space-y-4">
+                  {slide.title && (
+                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                      {slide.title}
+                    </h1>
+                  )}
+                  
+                  {slide.subtitle && (
+                    <p className="text-lg md:text-xl lg:text-2xl text-white/90 leading-relaxed">
+                      {slide.subtitle}
+                    </p>
+                  )}
+                  
+                  {slide.buttonText && slide.buttonLink && (
+                    <div className="pt-4">
+                      <Button
+                        asChild
+                        size="lg"
+                        className="bg-primary hover:bg-primary-hover text-white px-8 py-3 text-lg font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
+                      >
+                        <a href={slide.buttonLink}>
+                          {slide.buttonText}
+                        </a>
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
