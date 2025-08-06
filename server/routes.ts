@@ -1946,10 +1946,22 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       const body = req.body;
       const themeData: any = {};
       
-      // Only include non-null values in the update
+      // URL fields that should allow empty strings (for deletion)
+      const urlFields = [
+        'logoUrl', 'logoUrl_en', 'logoUrl_he', 'logoUrl_ar',
+        'bannerImageUrl', 'bannerImageUrl_en', 'bannerImageUrl_he', 'bannerImageUrl_ar',
+        'cartBannerImage', 'cartBannerImage_en', 'cartBannerImage_he', 'cartBannerImage_ar',
+        'bottomBanner1Url', 'bottomBanner1Url_en', 'bottomBanner1Url_he', 'bottomBanner1Url_ar',
+        'bottomBanner2Url', 'bottomBanner2Url_en', 'bottomBanner2Url_he', 'bottomBanner2Url_ar'
+      ];
+      
+      // Include non-null values and allow empty strings for URL fields
       Object.keys(body).forEach(key => {
-        if (body[key] !== null && body[key] !== undefined && body[key] !== '') {
-          themeData[key] = body[key];
+        if (body[key] !== null && body[key] !== undefined) {
+          // Allow empty strings for URL fields, but not for other fields
+          if (urlFields.includes(key) || body[key] !== '') {
+            themeData[key] = body[key];
+          }
         }
       });
       
