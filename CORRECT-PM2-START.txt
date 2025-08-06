@@ -1,0 +1,27 @@
+ПРАВИЛЬНЫЕ PM2 КОМАНДЫ ДЛЯ VPS
+==============================
+
+ПРОБЛЕМА НАЙДЕНА:
+В файле ecosystem.production.config.cjs процесс называется 'edahouse-production', а не 'edahouse'
+
+ПРАВИЛЬНЫЕ КОМАНДЫ:
+
+1. После миграции базы данных запустить:
+pm2 start ecosystem.production.config.cjs
+
+2. Проверить статус (процесс будет называться 'edahouse-production'):
+pm2 status
+
+3. Смотреть логи правильного процесса:
+pm2 logs edahouse-production --lines 10
+
+4. Если нужно остановить:
+pm2 stop edahouse-production
+
+5. Если нужно перезапустить:
+pm2 restart edahouse-production
+
+ВАЖНО: 
+- Имя процесса в PM2: "edahouse-production" 
+- Команды с именем "edahouse" не будут работать
+- Используйте точное имя из конфигурации
