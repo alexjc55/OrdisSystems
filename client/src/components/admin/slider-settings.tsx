@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -49,6 +50,16 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
   const { t: adminT } = useTranslation('admin');
 
   const slides = [1, 2, 3, 4, 5];
+  
+  // Track image URLs for each slide
+  const [slideImages, setSlideImages] = useState<{[key: number]: string}>(() => {
+    const initialImages: {[key: number]: string} = {};
+    slides.forEach(slideNumber => {
+      const slideImage = defaultValues[`slide${slideNumber}Image` as keyof typeof defaultValues] as string;
+      initialImages[slideNumber] = slideImage || '';
+    });
+    return initialImages;
+  });
 
   return (
     <div className="space-y-6">
@@ -109,7 +120,7 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
         </div>
         
         {slides.map((slideNumber) => {
-          const slideImage = defaultValues[`slide${slideNumber}Image` as keyof typeof defaultValues] as string;
+          const slideImage = slideImages[slideNumber] || '';
           const hasImage = slideImage && slideImage.trim() !== '';
           
           return (
@@ -131,12 +142,17 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
                   {adminT("themes.slideImage")} {slideNumber === 1 && `(${adminT("themes.required")})`}
                 </Label>
                 <ImageUpload
-                  currentImageUrl={slideImage}
-                  onImageChange={(url: string) => {
-                    // Handle image change if needed
+                  value={slideImage}
+                  onChange={(url: string) => {
+                    setSlideImages(prev => ({...prev, [slideNumber]: url}));
+                    // Update the hidden input value
+                    const hiddenInput = document.querySelector(`input[name="slide${slideNumber}Image"]`) as HTMLInputElement;
+                    if (hiddenInput) {
+                      hiddenInput.value = url;
+                    }
                   }}
                 />
-                <input type="hidden" name={`slide${slideNumber}Image`} value={slideImage || ''} />
+                <input type="hidden" name={`slide${slideNumber}Image`} value={slideImage} />
               </div>
               
               {/* Show content fields only if image exists or it's slide 1 */}
