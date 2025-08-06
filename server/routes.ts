@@ -2052,12 +2052,16 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         if (themeData.sliderAutoplay !== undefined) updateFields.push(`slider_autoplay = ${themeData.sliderAutoplay}`);
         if (themeData.sliderSpeed !== undefined) updateFields.push(`slider_speed = ${themeData.sliderSpeed}`);
         if (themeData.sliderEffect !== undefined) updateFields.push(`slider_effect = '${themeData.sliderEffect || 'fade'}'`);
-        if (themeData.slide1Image !== undefined) updateFields.push(`slide1_image = '${(themeData.slide1Image || '').replace(/'/g, "''")}'`);
-        if (themeData.slide1Title !== undefined) updateFields.push(`slide1_title = '${(themeData.slide1Title || '').replace(/'/g, "''")}'`);
-        if (themeData.slide1Subtitle !== undefined) updateFields.push(`slide1_subtitle = '${(themeData.slide1Subtitle || '').replace(/'/g, "''")}'`);
-        if (themeData.slide1ButtonText !== undefined) updateFields.push(`slide1_button_text = '${(themeData.slide1ButtonText || '').replace(/'/g, "''")}'`);
-        if (themeData.slide1ButtonLink !== undefined) updateFields.push(`slide1_button_link = '${(themeData.slide1ButtonLink || '').replace(/'/g, "''")}'`);
-        if (themeData.slide1TextPosition !== undefined) updateFields.push(`slide1_text_position = '${themeData.slide1TextPosition || 'left'}'`);
+        
+        // Sync all 5 slides
+        for (let i = 1; i <= 5; i++) {
+          if (themeData[`slide${i}Image`] !== undefined) updateFields.push(`slide${i}_image = '${(themeData[`slide${i}Image`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}Title`] !== undefined) updateFields.push(`slide${i}_title = '${(themeData[`slide${i}Title`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}Subtitle`] !== undefined) updateFields.push(`slide${i}_subtitle = '${(themeData[`slide${i}Subtitle`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}ButtonText`] !== undefined) updateFields.push(`slide${i}_button_text = '${(themeData[`slide${i}ButtonText`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}ButtonLink`] !== undefined) updateFields.push(`slide${i}_button_link = '${(themeData[`slide${i}ButtonLink`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}TextPosition`] !== undefined) updateFields.push(`slide${i}_text_position = '${themeData[`slide${i}TextPosition`] || 'left'}'`);
+        }
         
         // Execute the update if there are fields to update
         if (updateFields.length > 0) {

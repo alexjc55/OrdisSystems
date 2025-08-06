@@ -52,18 +52,19 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
   const [isPlaying, setIsPlaying] = useState(storeSettings?.sliderAutoplay !== false);
   const intervalRef = useRef<NodeJS.Timeout>();
 
-  // Extract slides data from storeSettings
+  // Extract slides data from storeSettings with proper field mapping
   const slides: SlideData[] = [];
   for (let i = 1; i <= 5; i++) {
-    const slideImage = storeSettings?.[`slide${i}Image`];
+    // Use correct field names from store_settings (with underscore)
+    const slideImage = storeSettings?.[`slide${i}Image`] || storeSettings?.[`slide${i}_image`];
     if (slideImage) {
       slides.push({
         image: slideImage,
-        title: getMultilingualValue(storeSettings, `slide${i}Title`, currentLanguage) || '',
-        subtitle: getMultilingualValue(storeSettings, `slide${i}Subtitle`, currentLanguage) || '',
-        buttonText: getMultilingualValue(storeSettings, `slide${i}ButtonText`, currentLanguage) || '',
-        buttonLink: storeSettings?.[`slide${i}ButtonLink`] || '',
-        textPosition: storeSettings?.[`slide${i}TextPosition`] || 'left'
+        title: storeSettings?.[`slide${i}Title`] || storeSettings?.[`slide${i}_title`] || '',
+        subtitle: storeSettings?.[`slide${i}Subtitle`] || storeSettings?.[`slide${i}_subtitle`] || '',
+        buttonText: storeSettings?.[`slide${i}ButtonText`] || storeSettings?.[`slide${i}_button_text`] || '',
+        buttonLink: storeSettings?.[`slide${i}ButtonLink`] || storeSettings?.[`slide${i}_button_link`] || '',
+        textPosition: storeSettings?.[`slide${i}TextPosition`] || storeSettings?.[`slide${i}_text_position`] || 'left'
       });
     }
   }
