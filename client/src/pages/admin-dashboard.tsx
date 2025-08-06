@@ -3468,13 +3468,13 @@ export default function AdminDashboard() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent 
-                  className="w-screen min-w-full max-h-[60vh] overflow-y-auto border-0 rounded-none p-2 z-50 bg-white relative" 
+                  className="w-screen min-w-full h-screen overflow-y-auto border-0 rounded-none p-2 z-50 bg-white fixed left-0 top-0" 
                   align={isRTL ? "end" : "start"} 
                   side="bottom" 
                   sideOffset={0}
                   style={{
-                    background: 'white',
-                    boxShadow: '0 0 0 100vmax rgba(0, 0, 0, 0.4)'
+                    minHeight: '100vh',
+                    paddingTop: '120px'
                   }}
                 >
                   <div className="w-full" style={{
