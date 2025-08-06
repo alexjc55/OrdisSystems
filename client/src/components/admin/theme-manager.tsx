@@ -603,11 +603,11 @@ export default function ThemeManager() {
         console.log('Applied theme colors to CSS variables');
       }
 
-      // Automatically activate the theme if it's the current active theme
+      // Don't automatically activate theme after save - only apply visual changes if it's already active
       const currentActiveTheme = themes?.find(theme => theme.isActive);
       if (currentActiveTheme && currentActiveTheme.id === updatedTheme.id) {
-        // Trigger theme activation to sync with store settings
-        activateThemeMutation.mutate(updatedTheme.id);
+        // Only sync with store settings without showing activation message
+        queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
       }
       
       // Force refresh of store settings to show logo and banner changes immediately
@@ -902,24 +902,24 @@ export default function ThemeManager() {
       // Cart banner settings
       showCartBanner: editVisualSettings.showCartBanner,
       cartBannerType: formData.get("cartBannerType") as string || "text",
-      cartBannerImage: formData.get("cartBannerImage") as string || themeImages.cartBannerImage,
-      cartBannerImage_en: formData.get("cartBannerImage_en") as string || themeImages.cartBannerImage_en,
-      cartBannerImage_he: formData.get("cartBannerImage_he") as string || themeImages.cartBannerImage_he,
-      cartBannerImage_ar: formData.get("cartBannerImage_ar") as string || themeImages.cartBannerImage_ar,
+      cartBannerImage: formData.get("cartBannerImage") as string || "",
+      cartBannerImage_en: formData.get("cartBannerImage_en") as string || "",
+      cartBannerImage_he: formData.get("cartBannerImage_he") as string || "",
+      cartBannerImage_ar: formData.get("cartBannerImage_ar") as string || "",
       cartBannerText: formData.get("cartBannerText") as string || "",
       cartBannerBgColor: formData.get("cartBannerBgColor") as string || "#f97316",
       cartBannerTextColor: formData.get("cartBannerTextColor") as string || "#ffffff",
       // Bottom banners settings
       showBottomBanners: editVisualSettings.showBottomBanners,
-      bottomBanner1Url: formData.get("bottomBanner1Url") as string || themeImages.bottomBanner1Url,
-      bottomBanner1Url_en: formData.get("bottomBanner1Url_en") as string || themeImages.bottomBanner1Url_en,
-      bottomBanner1Url_he: formData.get("bottomBanner1Url_he") as string || themeImages.bottomBanner1Url_he,
-      bottomBanner1Url_ar: formData.get("bottomBanner1Url_ar") as string || themeImages.bottomBanner1Url_ar,
+      bottomBanner1Url: formData.get("bottomBanner1Url") as string || "",
+      bottomBanner1Url_en: formData.get("bottomBanner1Url_en") as string || "",
+      bottomBanner1Url_he: formData.get("bottomBanner1Url_he") as string || "",
+      bottomBanner1Url_ar: formData.get("bottomBanner1Url_ar") as string || "",
       bottomBanner1Link: formData.get("bottomBanner1Link") as string || "",
-      bottomBanner2Url: formData.get("bottomBanner2Url") as string || themeImages.bottomBanner2Url,
-      bottomBanner2Url_en: formData.get("bottomBanner2Url_en") as string || themeImages.bottomBanner2Url_en,
-      bottomBanner2Url_he: formData.get("bottomBanner2Url_he") as string || themeImages.bottomBanner2Url_he,
-      bottomBanner2Url_ar: formData.get("bottomBanner2Url_ar") as string || themeImages.bottomBanner2Url_ar,
+      bottomBanner2Url: formData.get("bottomBanner2Url") as string || "",
+      bottomBanner2Url_en: formData.get("bottomBanner2Url_en") as string || "",
+      bottomBanner2Url_he: formData.get("bottomBanner2Url_he") as string || "",
+      bottomBanner2Url_ar: formData.get("bottomBanner2Url_ar") as string || "",
       bottomBanner2Link: formData.get("bottomBanner2Link") as string || "",
       modernBlock1Icon: formData.get("modernBlock1Icon") as string || "",
       modernBlock1Text: formData.get("modernBlock1Text") as string || "",
