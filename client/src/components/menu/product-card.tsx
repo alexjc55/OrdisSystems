@@ -213,19 +213,15 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             )}
           </div>
           
-          {/* Composition/Ingredients Button */}
+          {/* Composition/Ingredients Link */}
           {localizedIngredients && (
-            <div className="mb-3">
+            <div className="mb-2">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full text-left justify-start bg-gray-50 hover:bg-gray-100 border-gray-200"
-                  >
-                    <Info className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2" />
+                  <button className="text-xs text-blue-600 hover:text-blue-800 underline flex items-center">
+                    <Info className="h-3 w-3 mr-1 rtl:mr-0 rtl:ml-1" />
                     {t('composition')}
-                  </Button>
+                  </button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px] mx-4">
                   <DialogHeader>
