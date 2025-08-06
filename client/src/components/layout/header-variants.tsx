@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Clock, Phone, MapPin, CreditCard, Truck, Star, Shield, Heart, ChefHat, Zap, Award, Users, ThumbsUp, CheckCircle, Gift, Smile } from 'lucide-react';
 import { getLocalizedField, type SupportedLanguage } from '@shared/localization';
 import { useLanguage } from '@/hooks/use-language';
+import { useState, useEffect } from 'react';
 
 // Import multilingual helper function with fallback to default language
 function getMultilingualValue(
@@ -199,6 +200,41 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
 }
 
 function ModernHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSettings: any, t: any, isRTL: boolean, currentLanguage: string }) {
+  const [appHash, setAppHash] = useState<string>('');
+
+  // Get app hash for cache busting
+  useEffect(() => {
+    const fetchAppHash = async () => {
+      try {
+        const response = await fetch('/api/version');
+        if (response.ok) {
+          const data = await response.json();
+          setAppHash(data.appHash || Date.now().toString());
+        }
+      } catch (error) {
+        console.warn('Failed to fetch app hash, using timestamp');
+        setAppHash(Date.now().toString());
+      }
+    };
+    
+    fetchAppHash();
+    
+    // Listen for theme updates to refresh banner
+    const handleThemeUpdate = () => {
+      fetchAppHash();
+      // Force re-render with new timestamp
+      setTimeout(() => {
+        setAppHash(Date.now().toString());
+      }, 100);
+    };
+    
+    window.addEventListener('themeUpdated', handleThemeUpdate);
+    
+    return () => {
+      window.removeEventListener('themeUpdated', handleThemeUpdate);
+    };
+  }, []);
+
   // Only show header if banner is enabled, otherwise return null
   if (storeSettings?.showBannerImage === false) {
     return null;
@@ -212,7 +248,7 @@ function ModernHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSetti
         <div 
           className="absolute inset-0 bg-cover bg-center transform scale-105 w-full h-full"
           style={{
-            backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'
+            backgroundImage: storeSettings?.bannerImage ? `url(${storeSettings.bannerImage}?v=${appHash})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'
           }}
         />
         

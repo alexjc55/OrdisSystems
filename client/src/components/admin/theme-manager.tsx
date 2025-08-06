@@ -613,6 +613,11 @@ export default function ThemeManager() {
       // Force refresh of store settings to show logo and banner changes immediately
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
       
+      // Notify other components about theme update (especially banner images)
+      window.dispatchEvent(new CustomEvent('themeUpdated', { 
+        detail: { theme: updatedTheme } 
+      }));
+      
       toast({
         title: adminT("themes.success"),
         description: adminT("themes.updateSuccess"),
