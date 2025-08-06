@@ -43,6 +43,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -6362,14 +6363,14 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     {translationManager.getFieldLabel('ingredients', adminT('products.dialog.ingredientsLabel'))}
                   </FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder={adminT('products.dialog.ingredientsPlaceholder')}
-                      className="resize-none text-sm"
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e.target.value);
-                        handleFieldChange('ingredients', e.target.value, true);
+                    <RichTextEditor
+                      value={field.value || ''}
+                      onChange={(value) => {
+                        field.onChange(value);
+                        handleFieldChange('ingredients', value, true);
                       }}
+                      placeholder={adminT('products.dialog.ingredientsPlaceholder')}
+                      className="text-sm"
                     />
                   </FormControl>
                   <FormMessage className="text-xs" />
