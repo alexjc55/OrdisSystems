@@ -1960,7 +1960,8 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       Object.keys(body).forEach(key => {
         if (body[key] !== null && body[key] !== undefined) {
           // Allow empty strings for URL fields, but not for other fields
-          if (urlFields.includes(key) || body[key] !== '') {
+          // Special handling for slider fields - always include them
+          if (urlFields.includes(key) || body[key] !== '' || key.startsWith('slider') || key.startsWith('slide')) {
             themeData[key] = body[key];
           }
         }
