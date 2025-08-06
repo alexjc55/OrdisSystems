@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -60,6 +60,16 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
     });
     return initialImages;
   });
+
+  // Update slide images when defaultValues change
+  useEffect(() => {
+    const updatedImages: {[key: number]: string} = {};
+    slides.forEach(slideNumber => {
+      const slideImage = defaultValues[`slide${slideNumber}Image` as keyof typeof defaultValues] as string;
+      updatedImages[slideNumber] = slideImage || '';
+    });
+    setSlideImages(updatedImages);
+  }, [defaultValues]);
 
   return (
     <div className="space-y-6">
