@@ -207,7 +207,10 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
             <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
             
             {/* Content */}
-            <div className={`absolute ${getContentPositionClasses(slide.textPosition)} max-w-lg z-10`}>
+            <div className={`absolute ${getContentPositionClasses(slide.textPosition)} z-10`} style={{
+              maxWidth: slide.textPosition.includes('center-') ? '600px' : '500px',
+              width: slide.textPosition.includes('center-') ? 'calc(100vw - 2rem)' : 'auto'
+            }}>
               <div className={`relative p-6 rounded-lg backdrop-blur-sm bg-black/30 ${getTextAlignmentClasses(slide.textPosition)}`}>
                 <div className="flex flex-col space-y-4">
                   {slide.title && (
