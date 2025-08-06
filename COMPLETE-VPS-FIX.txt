@@ -1,0 +1,17 @@
+ЗАВЕРШЕНИЕ ИСПРАВЛЕНИЯ VPS СЕРВЕРА
+===================================
+
+Колонка slider_autoplay уже существует в базе данных.
+Осталось выполнить на VPS сервере:
+
+1. Обновить значение в базе данных:
+   psql -h localhost -U edahouse_usr -d edahouse -c "UPDATE store_settings SET slider_autoplay = true WHERE id = 1;"
+
+2. Перезапустить приложение:
+   pm2 restart edahouse
+
+3. Проверить результат:
+   pm2 logs edahouse --lines 5
+   curl http://localhost:3000/api/settings | grep slider
+
+После этих команд ошибки должны полностью исчезнуть!
