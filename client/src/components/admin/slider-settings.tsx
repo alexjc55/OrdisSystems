@@ -155,10 +155,16 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
                 <ImageUpload
                   value={slideImages[slideNumber] || ''}
                   onChange={(url: string) => {
-                    setSlideImages(prev => ({...prev, [slideNumber]: url}));
+                    console.log(`Slide ${slideNumber} image changed to:`, url);
+                    setSlideImages(prev => {
+                      const newState = {...prev, [slideNumber]: url};
+                      console.log('New slideImages state:', newState);
+                      return newState;
+                    });
                     // Update the hidden input value directly
                     if (hiddenInputRefs.current[slideNumber]) {
                       hiddenInputRefs.current[slideNumber]!.value = url;
+                      console.log(`Hidden input ${slideNumber} updated with:`, url);
                     }
                   }}
                 />
