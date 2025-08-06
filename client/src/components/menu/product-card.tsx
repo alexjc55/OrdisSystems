@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { FormattedText } from "@/lib/format-text";
 import { useCartStore } from "@/lib/cart";
 import { useToast } from "@/hooks/use-toast";
 import { formatCurrency, formatWeight, calculateTotal, getUnitLabel, formatQuantity, type ProductUnit } from "@/lib/currency";
@@ -225,13 +226,13 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                       <DialogContent className="max-w-[calc(100vw-32px)] sm:max-w-[500px] mx-auto my-8 max-h-[80vh] overflow-y-auto left-1/2 transform -translate-x-1/2">
                         <DialogHeader>
                           <DialogTitle className="text-lg">
-                            {t('composition')} - {localizedName}
+                            {t('composition')}
                           </DialogTitle>
                         </DialogHeader>
                         <div className="mt-4">
-                          <p className="text-sm text-gray-700 whitespace-pre-line">
-                            {localizedIngredients}
-                          </p>
+                          <div className="text-sm text-gray-700 whitespace-pre-line">
+                            <FormattedText>{localizedIngredients}</FormattedText>
+                          </div>
                         </div>
                       </DialogContent>
                     </Dialog>
@@ -254,13 +255,13 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                     <DialogContent className="max-w-[calc(100vw-32px)] sm:max-w-[500px] mx-auto my-8 max-h-[80vh] overflow-y-auto left-1/2 transform -translate-x-1/2">
                       <DialogHeader>
                         <DialogTitle className="text-lg">
-                          {t('composition')} - {localizedName}
+                          {t('composition')}
                         </DialogTitle>
                       </DialogHeader>
                       <div className="mt-4">
-                        <p className="text-sm text-gray-700 whitespace-pre-line">
-                          {localizedIngredients}
-                        </p>
+                        <div className="text-sm text-gray-700 whitespace-pre-line">
+                          <FormattedText>{localizedIngredients}</FormattedText>
+                        </div>
                       </div>
                     </DialogContent>
                   </Dialog>
