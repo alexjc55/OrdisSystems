@@ -3493,93 +3493,93 @@ export default function AdminDashboard() {
                     <ChevronDown className={`w-5 h-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-screen min-w-full max-h-none border-0 rounded-none shadow-lg p-2" align={isRTL ? "end" : "start"} side="bottom" sideOffset={0}>
-                  <div className="grid grid-cols-2 gap-2">
+                <DropdownMenuContent className="w-screen min-w-full max-h-none border-0 rounded-none shadow-lg p-3" align={isRTL ? "end" : "start"} side="bottom" sideOffset={0}>
+                  <div className="grid grid-cols-2 gap-3 w-full">
                     {hasPermission("canManageProducts") && (
                       <div 
                         onClick={() => setActiveTab("products")} 
-                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'products' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                        className={`p-5 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center ${activeTab === 'products' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                       >
                         <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
-                          <Package className="w-6 h-6" />
-                          <span className="text-sm font-medium leading-tight">{adminT('tabs.products')}</span>
+                          <Package className="w-7 h-7" />
+                          <span className="text-xs font-medium leading-tight text-center">{adminT('tabs.products')}</span>
                         </div>
                       </div>
                     )}
                     {hasPermission("canManageCategories") && (
                       <div 
                         onClick={() => setActiveTab("categories")} 
-                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'categories' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                        className={`p-5 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center ${activeTab === 'categories' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                       >
                         <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
-                          <Layers3 className="w-6 h-6" />
-                          <span className="text-sm font-medium leading-tight">{adminT('tabs.categories')}</span>
+                          <Layers3 className="w-7 h-7" />
+                          <span className="text-xs font-medium leading-tight text-center">{adminT('tabs.categories')}</span>
                         </div>
                       </div>
                     )}
                     {hasPermission("canManageOrders") && (
                       <div 
                         onClick={() => setActiveTab("orders")} 
-                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'orders' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                        className={`p-5 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center ${activeTab === 'orders' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                       >
                         <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
-                          <ShoppingCart className="w-6 h-6" />
-                          <span className="text-sm font-medium leading-tight">{adminT('tabs.orders')}</span>
+                          <ShoppingCart className="w-7 h-7" />
+                          <span className="text-xs font-medium leading-tight text-center">{adminT('tabs.orders')}</span>
                         </div>
                       </div>
                     )}
                     {hasPermission("canViewUsers") && (
                       <div 
                         onClick={() => setActiveTab("users")} 
-                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'users' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                        className={`p-5 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center ${activeTab === 'users' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                       >
                         <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
-                          <Users className="w-6 h-6" />
-                          <span className="text-sm font-medium leading-tight">{adminT('tabs.users')}</span>
+                          <Users className="w-7 h-7" />
+                          <span className="text-xs font-medium leading-tight text-center">{adminT('tabs.users')}</span>
                         </div>
                       </div>
                     )}
                     {hasPermission("canViewSettings") && (
                       <div 
                         onClick={() => setActiveTab("store-settings")} 
-                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'store-settings' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                        className={`p-5 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center ${activeTab === 'store-settings' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                       >
                         <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
-                          <Settings className="w-6 h-6" />
-                          <span className="text-sm font-medium leading-tight">{adminT('tabs.settings')}</span>
+                          <Settings className="w-7 h-7" />
+                          <span className="text-xs font-medium leading-tight text-center">{adminT('tabs.settings')}</span>
                         </div>
                       </div>
                     )}
                     {user?.role === 'admin' && (
                       <div 
                         onClick={() => setActiveTab("notifications")} 
-                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'notifications' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                        className={`p-5 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center ${activeTab === 'notifications' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                       >
                         <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
-                          <Bell className="w-6 h-6" />
-                          <span className="text-sm font-medium leading-tight">Push Уведомления</span>
+                          <Bell className="w-7 h-7" />
+                          <span className="text-xs font-medium leading-tight text-center">Push Уведомления</span>
                         </div>
                       </div>
                     )}
                     {hasPermission("canManageSettings") && (
                       <div 
                         onClick={() => setActiveTab("settings")} 
-                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'settings' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                        className={`p-5 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center ${activeTab === 'settings' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                       >
                         <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
-                          <UserCheck className="w-6 h-6" />
-                          <span className="text-sm font-medium leading-tight">{adminT('tabs.permissions')}</span>
+                          <UserCheck className="w-7 h-7" />
+                          <span className="text-xs font-medium leading-tight text-center">{adminT('tabs.permissions')}</span>
                         </div>
                       </div>
                     )}
                     {(hasPermission("canManageSettings") || hasPermission("canManageThemes")) && (
                       <div 
                         onClick={() => setActiveTab("themes")} 
-                        className={`p-4 rounded-lg cursor-pointer transition-all duration-200 ${activeTab === 'themes' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-100'}`}
+                        className={`p-5 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center ${activeTab === 'themes' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                       >
                         <div className={`flex flex-col items-center gap-2 ${isRTL ? 'text-right' : 'text-center'}`}>
-                          <Palette className="w-6 h-6" />
-                          <span className="text-sm font-medium leading-tight">{adminT('tabs.themes')}</span>
+                          <Palette className="w-7 h-7" />
+                          <span className="text-xs font-medium leading-tight text-center">{adminT('tabs.themes')}</span>
                         </div>
                       </div>
                     )}
