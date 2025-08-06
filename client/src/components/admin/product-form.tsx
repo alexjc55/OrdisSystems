@@ -31,6 +31,7 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
   const productSchema = z.object({
     name: z.string().min(1, adminT('products.nameRequired')),
     description: z.string().optional(),
+    ingredients: z.string().optional(),
     categoryId: z.number().min(1, adminT('products.categoryRequired')),
     pricePerKg: z.string().min(1, adminT('products.priceRequired')).refine(
       (val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0,
@@ -48,6 +49,7 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
     defaultValues: {
       name: "",
       description: "",
+      ingredients: "",
       categoryId: 0,
       pricePerKg: "",
       imageUrl: "",
@@ -134,10 +136,28 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Описание (необязательно)</FormLabel>
+                  <FormLabel>{adminT('products.dialog.descriptionLabel')}</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Краткое описание товара..."
+                      placeholder={adminT('products.dialog.descriptionPlaceholder')}
+                      className="min-h-[80px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="ingredients"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{adminT('products.dialog.compositionLabel')}</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder={adminT('products.dialog.compositionPlaceholder')}
                       className="min-h-[80px]"
                       {...field}
                     />

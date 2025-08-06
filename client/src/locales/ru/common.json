@@ -7,6 +7,8 @@
   "error": "Ошибка",
   "success": "Успех",
   "close": "Закрыть",
+  "ingredients": "Состав",
+  "viewIngredients": "Посмотреть состав",
   "showPassword": "Показать пароль",
   "hidePassword": "Скрыть пароль",
   "profile": {

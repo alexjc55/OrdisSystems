@@ -307,6 +307,7 @@
   "viewCart": "Посмотреть корзину",
   "discount": "Скидка",
   "outOfStockToday": "Нет в наличии сегодня",
+  "composition": "Состав",
   "orderForTomorrow": "Заказать на завтра",
   "buttons": {
     "back": "Назад"

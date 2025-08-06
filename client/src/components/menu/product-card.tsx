@@ -33,6 +33,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   // Get localized product fields
   const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any);
   const localizedDescription = getLocalizedField(product, 'description', currentLanguage as SupportedLanguage, storeSettingsData as any);
+  const localizedIngredients = getLocalizedField(product, 'ingredients', currentLanguage as SupportedLanguage, storeSettingsData as any);
   
 
   
@@ -208,6 +209,18 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
               </p>
             )}
           </div>
+          
+          {/* Composition/Ingredients */}
+          {localizedIngredients && (
+            <div className="mb-3 p-2 bg-gray-50 rounded-lg">
+              <div className="text-sm font-medium text-gray-700 mb-1">
+                {t('composition')}
+              </div>
+              <p className="text-sm text-gray-600 line-clamp-2">
+                {localizedIngredients}
+              </p>
+            </div>
+          )}
           <div className="min-h-[32px] mb-2">
             {product.categories && product.categories.length > 0 && (
               <div className="flex flex-wrap gap-1">

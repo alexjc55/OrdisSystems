@@ -84,6 +84,10 @@ export const products = pgTable("products", {
   description_en: text("description_en"),
   description_he: text("description_he"),
   description_ar: text("description_ar"),
+  ingredients: text("ingredients"), // Ingredients composition (Russian)
+  ingredients_en: text("ingredients_en"),
+  ingredients_he: text("ingredients_he"),
+  ingredients_ar: text("ingredients_ar"),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   unit: varchar("unit", { length: 20 }).default("100g").notNull(), // "100g", "100ml", "piece", "kg", "portion"
   pricePerKg: decimal("price_per_kg", { precision: 10, scale: 2 }).notNull(), // For backward compatibility

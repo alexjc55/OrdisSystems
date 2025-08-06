@@ -941,6 +941,9 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         if ((rawData as any)[`description_${lang}`] !== undefined) {
           multilingualFields[`description_${lang}`] = (rawData as any)[`description_${lang}`];
         }
+        if ((rawData as any)[`ingredients_${lang}`] !== undefined) {
+          multilingualFields[`ingredients_${lang}`] = (rawData as any)[`ingredients_${lang}`];
+        }
         if ((rawData as any)[`imageUrl_${lang}`] !== undefined) {
           multilingualFields[`imageUrl_${lang}`] = (rawData as any)[`imageUrl_${lang}`];
         }

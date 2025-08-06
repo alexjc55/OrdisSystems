@@ -712,6 +712,8 @@
       "namePlaceholder": "הכנס שם מוצר",
       "descriptionLabel": "תיאור המוצר",
       "descriptionPlaceholder": "הכנס תיאור מוצר",
+      "ingredientsLabel": "מרכיבים",
+      "ingredientsPlaceholder": "הכנס מרכיבי המוצר",
       "categoryLabel": "קטגוריה",
       "categoryPlaceholder": "בחר קטגוריה",
       "priceLabel": "מחיר (₪)",

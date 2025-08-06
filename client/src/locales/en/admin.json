@@ -240,6 +240,8 @@
       "namePlaceholder": "Enter product name",
       "descriptionLabel": "Description",
       "descriptionPlaceholder": "Product description",
+      "ingredientsLabel": "Ingredients",
+      "ingredientsPlaceholder": "Enter product ingredients",
       "priceLabel": "Price",
       "pricePlaceholder": "0.00",
       "categoryLabel": "Category",

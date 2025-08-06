@@ -522,6 +522,8 @@
       "namePlaceholder": "Введите название товара",
       "descriptionLabel": "Описание",
       "descriptionPlaceholder": "Описание товара",
+      "ingredientsLabel": "Состав",
+      "ingredientsPlaceholder": "Введите состав продукта",
       "priceLabel": "Цена",
       "pricePlaceholder": "0.00",
       "categoryLabel": "Категория",
