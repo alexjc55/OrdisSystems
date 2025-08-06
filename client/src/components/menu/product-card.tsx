@@ -206,38 +206,62 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             {localizedName}
           </h3>
           <div className="min-h-[48px] mb-2">
-            {localizedDescription && (
+            {localizedDescription ? (
               <p className="text-base text-gray-600 line-clamp-2">
                 {localizedDescription}
+                {localizedIngredients && (
+                  <>
+                    {' '}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center">
+                          <Info className="h-3 w-3 mr-1 rtl:mr-0 rtl:ml-1" />
+                          Смотреть состав
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[500px] mx-4">
+                        <DialogHeader>
+                          <DialogTitle className="text-lg">
+                            {t('composition')} - {localizedName}
+                          </DialogTitle>
+                        </DialogHeader>
+                        <div className="mt-4">
+                          <p className="text-sm text-gray-700 whitespace-pre-line">
+                            {localizedIngredients}
+                          </p>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </>
+                )}
               </p>
+            ) : (
+              localizedIngredients && (
+                <p className="text-base text-gray-400 italic">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center">
+                        <Info className="h-3 w-3 mr-1 rtl:mr-0 rtl:ml-1" />
+                        Смотреть состав
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[500px] mx-4">
+                      <DialogHeader>
+                        <DialogTitle className="text-lg">
+                          {t('composition')} - {localizedName}
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="mt-4">
+                        <p className="text-sm text-gray-700 whitespace-pre-line">
+                          {localizedIngredients}
+                        </p>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </p>
+              )
             )}
           </div>
-          
-          {/* Composition/Ingredients Link */}
-          {localizedIngredients && (
-            <div className="mb-2">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="text-xs text-blue-600 hover:text-blue-800 underline flex items-center">
-                    <Info className="h-3 w-3 mr-1 rtl:mr-0 rtl:ml-1" />
-                    {t('composition')}
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px] mx-4">
-                  <DialogHeader>
-                    <DialogTitle className="text-lg">
-                      {t('composition')} - {localizedName}
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="mt-4">
-                    <p className="text-sm text-gray-700 whitespace-pre-line">
-                      {localizedIngredients}
-                    </p>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-          )}
           <div className="min-h-[32px] mb-2">
             {product.categories && product.categories.length > 0 && (
               <div className="flex flex-wrap gap-1">
