@@ -193,7 +193,7 @@ export const storeSettings = pgTable("store_settings", {
   authPageFeature3: varchar("auth_page_feature3", { length: 255 }).default("Широкий выбор блюд на любой вкус"),
   showCartBanner: boolean("show_cart_banner").default(false), // Enable/disable cart banner
   cartBannerType: varchar("cart_banner_type", { enum: ["image", "text"] }).default("text"), // Banner type
-  headerStyle: varchar("header_style", { enum: ["classic", "modern", "minimal"] }).default("classic"), // Header design style
+  headerStyle: varchar("header_style", { enum: ["classic", "modern", "minimal", "slider"] }).default("classic"), // Header design style
   bannerButtonText: varchar("banner_button_text", { length: 100 }).default("Смотреть каталог"), // Banner button text
   bannerButtonLink: varchar("banner_button_link", { length: 500 }).default("#categories"), // Banner button link
   bannerImageUrl: varchar("banner_image_url", { length: 500 }), // Main banner image URL
@@ -223,6 +223,51 @@ export const storeSettings = pgTable("store_settings", {
   barcodeProductCodeStart: integer("barcode_product_code_start").default(2),
   barcodeProductCodeEnd: integer("barcode_product_code_end").default(5),
   barcodeWeightStart: integer("barcode_weight_start").default(6),
+  
+  // Slider header settings
+  sliderAutoplay: boolean("slider_autoplay").default(true),
+  sliderSpeed: integer("slider_speed").default(5000),
+  sliderEffect: varchar("slider_effect", { length: 10 }).default("fade"), // fade or slide
+  
+  // Slide 1 settings
+  slide1Image: varchar("slide1_image", { length: 500 }),
+  slide1Title: varchar("slide1_title", { length: 255 }),
+  slide1Subtitle: text("slide1_subtitle"),
+  slide1ButtonText: varchar("slide1_button_text", { length: 100 }),
+  slide1ButtonLink: varchar("slide1_button_link", { length: 500 }),
+  slide1TextPosition: varchar("slide1_text_position", { length: 10 }).default("left"), // left, center, right
+  
+  // Slide 2 settings
+  slide2Image: varchar("slide2_image", { length: 500 }),
+  slide2Title: varchar("slide2_title", { length: 255 }),
+  slide2Subtitle: text("slide2_subtitle"),
+  slide2ButtonText: varchar("slide2_button_text", { length: 100 }),
+  slide2ButtonLink: varchar("slide2_button_link", { length: 500 }),
+  slide2TextPosition: varchar("slide2_text_position", { length: 10 }).default("left"),
+  
+  // Slide 3 settings
+  slide3Image: varchar("slide3_image", { length: 500 }),
+  slide3Title: varchar("slide3_title", { length: 255 }),
+  slide3Subtitle: text("slide3_subtitle"),
+  slide3ButtonText: varchar("slide3_button_text", { length: 100 }),
+  slide3ButtonLink: varchar("slide3_button_link", { length: 500 }),
+  slide3TextPosition: varchar("slide3_text_position", { length: 10 }).default("left"),
+  
+  // Slide 4 settings
+  slide4Image: varchar("slide4_image", { length: 500 }),
+  slide4Title: varchar("slide4_title", { length: 255 }),
+  slide4Subtitle: text("slide4_subtitle"),
+  slide4ButtonText: varchar("slide4_button_text", { length: 100 }),
+  slide4ButtonLink: varchar("slide4_button_link", { length: 500 }),
+  slide4TextPosition: varchar("slide4_text_position", { length: 10 }).default("left"),
+  
+  // Slide 5 settings
+  slide5Image: varchar("slide5_image", { length: 500 }),
+  slide5Title: varchar("slide5_title", { length: 255 }),
+  slide5Subtitle: text("slide5_subtitle"),
+  slide5ButtonText: varchar("slide5_button_text", { length: 100 }),
+  slide5ButtonLink: varchar("slide5_button_link", { length: 500 }),
+  slide5TextPosition: varchar("slide5_text_position", { length: 10 }).default("left"),
   barcodeWeightEnd: integer("barcode_weight_end").default(10),
   barcodeWeightUnit: varchar("barcode_weight_unit").default("grams"),
   
@@ -274,6 +319,7 @@ export const storeSettings = pgTable("store_settings", {
   contactPhoneEn: varchar("contact_phone_en", { length: 50 }),
   contactEmailEn: varchar("contact_email_en", { length: 255 }),
   addressEn: text("address_en"),
+  
   modernBlock1Icon: varchar("modern_block1_icon", { length: 50 }), // Icon name for first modern block
   modernBlock1Text: varchar("modern_block1_text", { length: 255 }), // Text for first modern block
   modernBlock2Icon: varchar("modern_block2_icon", { length: 50 }), // Icon name for second modern block

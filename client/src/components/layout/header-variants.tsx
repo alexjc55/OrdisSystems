@@ -3,6 +3,7 @@ import { Clock, Phone, MapPin, CreditCard, Truck, Star, Shield, Heart, ChefHat, 
 import { getLocalizedField, type SupportedLanguage } from '@shared/localization';
 import { useLanguage } from '@/hooks/use-language';
 import { useState, useEffect } from 'react';
+import { SliderHeader } from './slider-header';
 
 // Import multilingual helper function with fallback to default language
 function getMultilingualValue(
@@ -48,7 +49,7 @@ const getIconComponent = (iconName: string) => {
 
 interface HeaderVariantProps {
   storeSettings: any;
-  style: 'classic' | 'modern' | 'minimal';
+  style: 'classic' | 'modern' | 'minimal' | 'slider';
 }
 
 export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
@@ -71,6 +72,10 @@ export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
 
   if (style === 'minimal') {
     return <MinimalHeader storeSettings={storeSettings} t={t} isRTL={isRTL} currentLanguage={currentLanguage} />;
+  }
+
+  if (style === 'slider') {
+    return <SliderHeader storeSettings={storeSettings} t={t} isRTL={isRTL} currentLanguage={currentLanguage} />;
   }
 
   // Default classic style (current implementation)

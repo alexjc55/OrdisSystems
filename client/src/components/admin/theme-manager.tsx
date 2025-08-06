@@ -15,6 +15,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw, Info, Briefcase, AlertCircle, Layers, Upload, EyeOff } from "lucide-react";
 import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
 import { ModernStyleSettings } from "./modern-style-settings";
+import { SliderSettings } from "./slider-settings";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useTranslation } from 'react-i18next';
 
@@ -1216,17 +1217,22 @@ export default function ThemeManager() {
                         onChange={(e) => {
                           const headerControls = document.getElementById('headerControlsCreate');
                           const modernControls = document.getElementById('modernControlsCreate');
+                          const sliderControls = document.getElementById('sliderControlsCreate');
                           if (headerControls) {
                             headerControls.style.display = e.target.value === 'minimal' ? 'block' : 'none';
                           }
                           if (modernControls) {
                             modernControls.style.display = e.target.value === 'modern' ? 'block' : 'none';
                           }
+                          if (sliderControls) {
+                            sliderControls.style.display = e.target.value === 'slider' ? 'block' : 'none';
+                          }
                         }}
                       >
                         <option value="classic">{adminT("themes.classic")}</option>
                         <option value="modern">{adminT("themes.modern")}</option>
                         <option value="minimal">{adminT("themes.minimal")}</option>
+                        <option value="slider">{adminT("themes.slider")}</option>
                       </select>
                       <div className="text-sm text-gray-500">
                         {adminT("themes.headerStyleDescription")}
@@ -1271,6 +1277,10 @@ export default function ThemeManager() {
                     </div>
                     
                     <ModernStyleSettings id="modernControlsCreate" />
+                    
+                    <div id="sliderControlsCreate" className="space-y-4" style={{ display: 'none' }}>
+                      <SliderSettings id="Create" />
+                    </div>
                   </div>
                 </TabsContent>
 
@@ -1952,17 +1962,22 @@ export default function ThemeManager() {
                         onChange={(e) => {
                           const headerControls = document.getElementById('headerControlsEdit');
                           const modernControls = document.getElementById('modernControlsEdit');
+                          const sliderControls = document.getElementById('sliderControlsEdit');
                           if (headerControls) {
                             headerControls.style.display = e.target.value === 'minimal' ? 'block' : 'none';
                           }
                           if (modernControls) {
                             modernControls.style.display = e.target.value === 'modern' ? 'block' : 'none';
                           }
+                          if (sliderControls) {
+                            sliderControls.style.display = e.target.value === 'slider' ? 'block' : 'none';
+                          }
                         }}
                       >
                         <option value="classic">{adminT("themes.classic")}</option>
                         <option value="modern">{adminT("themes.modern")}</option>
                         <option value="minimal">{adminT("themes.minimal")}</option>
+                        <option value="slider">{adminT("themes.slider")}</option>
                       </select>
                       <div className="text-sm text-gray-500">
                         {adminT("themes.headerStyleImpact")}
@@ -2016,6 +2031,47 @@ export default function ThemeManager() {
                           modernBlock2Text: editingTheme.modernBlock2Text,
                           modernBlock3Icon: editingTheme.modernBlock3Icon,
                           modernBlock3Text: editingTheme.modernBlock3Text,
+                        }}
+                      />
+                    </div>
+                    
+                    <div id="sliderControlsEdit" className="space-y-4" style={{ display: editingTheme.headerStyle === 'slider' ? 'block' : 'none' }}>
+                      <SliderSettings 
+                        id="Edit" 
+                        defaultValues={{
+                          sliderAutoplay: editingTheme.sliderAutoplay,
+                          sliderSpeed: editingTheme.sliderSpeed,
+                          sliderEffect: editingTheme.sliderEffect,
+                          slide1Image: editingTheme.slide1Image,
+                          slide1Title: editingTheme.slide1Title,
+                          slide1Subtitle: editingTheme.slide1Subtitle,
+                          slide1ButtonText: editingTheme.slide1ButtonText,
+                          slide1ButtonLink: editingTheme.slide1ButtonLink,
+                          slide1TextPosition: editingTheme.slide1TextPosition,
+                          slide2Image: editingTheme.slide2Image,
+                          slide2Title: editingTheme.slide2Title,
+                          slide2Subtitle: editingTheme.slide2Subtitle,
+                          slide2ButtonText: editingTheme.slide2ButtonText,
+                          slide2ButtonLink: editingTheme.slide2ButtonLink,
+                          slide2TextPosition: editingTheme.slide2TextPosition,
+                          slide3Image: editingTheme.slide3Image,
+                          slide3Title: editingTheme.slide3Title,
+                          slide3Subtitle: editingTheme.slide3Subtitle,
+                          slide3ButtonText: editingTheme.slide3ButtonText,
+                          slide3ButtonLink: editingTheme.slide3ButtonLink,
+                          slide3TextPosition: editingTheme.slide3TextPosition,
+                          slide4Image: editingTheme.slide4Image,
+                          slide4Title: editingTheme.slide4Title,
+                          slide4Subtitle: editingTheme.slide4Subtitle,
+                          slide4ButtonText: editingTheme.slide4ButtonText,
+                          slide4ButtonLink: editingTheme.slide4ButtonLink,
+                          slide4TextPosition: editingTheme.slide4TextPosition,
+                          slide5Image: editingTheme.slide5Image,
+                          slide5Title: editingTheme.slide5Title,
+                          slide5Subtitle: editingTheme.slide5Subtitle,
+                          slide5ButtonText: editingTheme.slide5ButtonText,
+                          slide5ButtonLink: editingTheme.slide5ButtonLink,
+                          slide5TextPosition: editingTheme.slide5TextPosition,
                         }}
                       />
                     </div>
