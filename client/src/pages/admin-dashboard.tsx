@@ -3451,9 +3451,9 @@ export default function AdminDashboard() {
           <div>
             {/* Mobile Dropdown Menu */}
             <div className="block sm:hidden mb-4">
-              <Select value={activeTab} onValueChange={setActiveTab}>
-                <SelectTrigger className="w-full bg-white border-gray-200 h-12">
-                  <SelectValue>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="w-full bg-white border-gray-200 h-12 justify-between hover:bg-gray-50">
                     <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       {!isRTL && (
                         <>
@@ -3490,83 +3490,84 @@ export default function AdminDashboard() {
                         </>
                       )}
                     </div>
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
+                    <ChevronDown className={`w-5 h-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-full min-w-[300px] max-h-none" align={isRTL ? "end" : "start"} side="bottom">
                   {hasPermission("canManageProducts") && (
-                    <SelectItem value="products" className="py-3">
-                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <DropdownMenuItem onClick={() => setActiveTab("products")} className="py-3 px-4">
+                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                         {!isRTL && <Package className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.products')}</span>
                         {isRTL && <Package className="w-5 h-5" />}
                       </div>
-                    </SelectItem>
+                    </DropdownMenuItem>
                   )}
                   {hasPermission("canManageCategories") && (
-                    <SelectItem value="categories" className="py-3">
-                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <DropdownMenuItem onClick={() => setActiveTab("categories")} className="py-3 px-4">
+                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                         {!isRTL && <Layers3 className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.categories')}</span>
                         {isRTL && <Layers3 className="w-5 h-5" />}
                       </div>
-                    </SelectItem>
+                    </DropdownMenuItem>
                   )}
                   {hasPermission("canManageOrders") && (
-                    <SelectItem value="orders" className="py-3">
-                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <DropdownMenuItem onClick={() => setActiveTab("orders")} className="py-3 px-4">
+                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                         {!isRTL && <ShoppingCart className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.orders')}</span>
                         {isRTL && <ShoppingCart className="w-5 h-5" />}
                       </div>
-                    </SelectItem>
+                    </DropdownMenuItem>
                   )}
                   {hasPermission("canViewUsers") && (
-                    <SelectItem value="users" className="py-3">
-                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <DropdownMenuItem onClick={() => setActiveTab("users")} className="py-3 px-4">
+                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                         {!isRTL && <Users className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.users')}</span>
                         {isRTL && <Users className="w-5 h-5" />}
                       </div>
-                    </SelectItem>
+                    </DropdownMenuItem>
                   )}
                   {hasPermission("canViewSettings") && (
-                    <SelectItem value="store-settings" className="py-3">
-                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <DropdownMenuItem onClick={() => setActiveTab("store-settings")} className="py-3 px-4">
+                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                         {!isRTL && <Settings className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.settings')}</span>
                         {isRTL && <Settings className="w-5 h-5" />}
                       </div>
-                    </SelectItem>
+                    </DropdownMenuItem>
                   )}
                   {user?.role === 'admin' && (
-                    <SelectItem value="notifications" className="py-3">
-                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <DropdownMenuItem onClick={() => setActiveTab("notifications")} className="py-3 px-4">
+                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                         {!isRTL && <Bell className="w-5 h-5" />}
                         <span className="text-lg">Push Уведомления</span>
                         {isRTL && <Bell className="w-5 h-5" />}
                       </div>
-                    </SelectItem>
+                    </DropdownMenuItem>
                   )}
                   {hasPermission("canManageSettings") && (
-                    <SelectItem value="settings" className="py-3">
-                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <DropdownMenuItem onClick={() => setActiveTab("settings")} className="py-3 px-4">
+                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                         {!isRTL && <UserCheck className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.permissions')}</span>
                         {isRTL && <UserCheck className="w-5 h-5" />}
                       </div>
-                    </SelectItem>
+                    </DropdownMenuItem>
                   )}
                   {(hasPermission("canManageSettings") || hasPermission("canManageThemes")) && (
-                    <SelectItem value="themes" className="py-3">
-                      <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <DropdownMenuItem onClick={() => setActiveTab("themes")} className="py-3 px-4">
+                      <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                         {!isRTL && <Palette className="w-5 h-5" />}
                         <span className="text-lg">{adminT('tabs.themes')}</span>
                         {isRTL && <Palette className="w-5 h-5" />}
                       </div>
-                    </SelectItem>
+                    </DropdownMenuItem>
                   )}
-                </SelectContent>
-              </Select>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             
             {/* Desktop Tabs - hidden on mobile screens */}
