@@ -214,9 +214,12 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                     {' '}
                     <Dialog>
                       <DialogTrigger asChild>
-                        <button className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center focus:outline-none">
+                        <button 
+                          className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center focus:outline-none focus-visible:outline-none"
+                          onBlur={(e) => e.target.blur()}
+                        >
                           <Info className="h-3 w-3 mr-1 rtl:mr-0 rtl:ml-1" />
-                          Смотреть состав
+                          {t('viewComposition')}
                         </button>
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-[500px] mx-4">
@@ -240,9 +243,12 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 <p className="text-base text-gray-400 italic">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <button className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center focus:outline-none">
+                      <button 
+                        className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center focus:outline-none focus-visible:outline-none"
+                        onBlur={(e) => e.target.blur()}
+                      >
                         <Info className="h-3 w-3 mr-1 rtl:mr-0 rtl:ml-1" />
-                        Смотреть состав
+                        {t('viewComposition')}
                       </button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[500px] mx-4">
