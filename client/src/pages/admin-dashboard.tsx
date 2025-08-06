@@ -3451,7 +3451,7 @@ export default function AdminDashboard() {
           <div>
             {/* Mobile Dropdown Menu */}
             <div className="block sm:hidden mb-4">
-              <DropdownMenu>
+              <DropdownMenu modal={true}>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="w-full bg-white border-gray-200 h-12 justify-between hover:bg-gray-50">
                     <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -3490,12 +3490,13 @@ export default function AdminDashboard() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent 
-                  className="w-screen min-w-full max-h-[60vh] overflow-y-auto border-0 rounded-none shadow-lg p-2 z-50 bg-white/95 backdrop-blur-sm" 
+                  className="w-screen min-w-full max-h-[60vh] overflow-y-auto border-0 rounded-none p-2 z-50 bg-white relative" 
                   align={isRTL ? "end" : "start"} 
                   side="bottom" 
                   sideOffset={0}
                   style={{
-                    boxShadow: '0 0 0 100vmax rgba(0, 0, 0, 0.3)'
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.15), 0 0 0 100vmax rgba(0,0,0,0.4)',
+                    clipPath: 'inset(0px -100vmax -100vmax -100vmax)'
                   }}
                 >
                   <div className="w-full" style={{
@@ -5421,11 +5422,32 @@ export default function AdminDashboard() {
           {/* Store Settings */}
           {hasPermission("canManageSettings") && (
             <TabsContent value="store-settings" className="space-y-4 sm:space-y-6">
-              <StoreSettingsForm 
-                storeSettings={storeSettings} 
-                onSubmit={(data) => updateStoreSettingsMutation.mutate(data)}
-                isLoading={updateStoreSettingsMutation.isPending}
-              />
+              <Card>
+                <CardHeader>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                      <Settings className="h-5 w-5" />
+                      {currentLanguage === 'ru' && 'Настройки магазина'}
+                      {currentLanguage === 'en' && 'Store Settings'}
+                      {currentLanguage === 'he' && 'הגדרות חנות'}
+                      {currentLanguage === 'ar' && 'إعدادات المتجر'}
+                    </CardTitle>
+                    <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {currentLanguage === 'ru' && 'Управление основными настройками магазина, контактной информацией и внешним видом'}
+                      {currentLanguage === 'en' && 'Manage basic store settings, contact information and appearance'}
+                      {currentLanguage === 'he' && 'ניהול הגדרות בסיסיות של החנות, מידע ליצירת קשר ומראה חיצוני'}
+                      {currentLanguage === 'ar' && 'إدارة إعدادات المتجر الأساسية ومعلومات الاتصال والمظهر'}
+                    </CardDescription>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <StoreSettingsForm 
+                    storeSettings={storeSettings} 
+                    onSubmit={(data) => updateStoreSettingsMutation.mutate(data)}
+                    isLoading={updateStoreSettingsMutation.isPending}
+                  />
+                </CardContent>
+              </Card>
               
               {/* System Management Section */}
               <Card>
