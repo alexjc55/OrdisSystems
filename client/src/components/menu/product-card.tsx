@@ -214,7 +214,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                     {' '}
                     <Dialog>
                       <DialogTrigger asChild>
-                        <button className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center">
+                        <button className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center focus:outline-none">
                           <Info className="h-3 w-3 mr-1 rtl:mr-0 rtl:ml-1" />
                           Смотреть состав
                         </button>
@@ -240,7 +240,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 <p className="text-base text-gray-400 italic">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <button className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center">
+                      <button className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center focus:outline-none">
                         <Info className="h-3 w-3 mr-1 rtl:mr-0 rtl:ml-1" />
                         Смотреть состав
                       </button>
