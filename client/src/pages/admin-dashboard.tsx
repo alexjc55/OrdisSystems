@@ -3723,20 +3723,33 @@ export default function AdminDashboard() {
                   </div>
                   <div className={`flex flex-col gap-3 lg:flex-shrink-0 ${isRTL ? 'sm:flex-row-reverse' : 'sm:flex-row'}`}>
                     <div className="relative min-w-[180px]">
-                      <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
+                      <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'} z-10 pointer-events-none`} />
                       <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
-                        <SelectTrigger className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
+                        <SelectTrigger className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'} bg-white border-2 border-gray-200 hover:border-primary/50 transition-colors duration-200 shadow-sm hover:shadow-md`}>
                           <SelectValue placeholder={adminT('products.allCategories')} />
+                          <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isRTL ? 'mr-1' : 'ml-1'}`} />
                         </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">{adminT('products.allCategories')}</SelectItem>
+                        <SelectContent className="bg-white border border-gray-200 shadow-xl rounded-lg max-h-[300px] overflow-y-auto z-50 min-w-[200px]">
+                          <SelectItem 
+                            value="all" 
+                            className="text-gray-900 hover:bg-primary/10 hover:text-primary cursor-pointer px-3 py-2 text-sm font-medium"
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg">🏪</span>
+                              {adminT('products.allCategories')}
+                            </div>
+                          </SelectItem>
                           {(categories as any[] || []).map((category: any) => (
                             <SelectItem 
                               key={category.id}
-                                          title={getLocalizedField(category, 'name', i18n.language as SupportedLanguage)} 
+                              title={getLocalizedField(category, 'name', i18n.language as SupportedLanguage)} 
                               value={category.id.toString()}
+                              className="text-gray-900 hover:bg-primary/10 hover:text-primary cursor-pointer px-3 py-2 text-sm"
                             >
-                              {getLocalizedField(category, 'name', i18n.language as SupportedLanguage)}
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg">{category.icon || '📦'}</span>
+                                {getLocalizedField(category, 'name', i18n.language as SupportedLanguage)}
+                              </div>
                             </SelectItem>
                           ))}
                         </SelectContent>
