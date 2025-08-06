@@ -61,6 +61,16 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
     return initialImages;
   });
 
+  // Update slideImages when defaultValues change
+  React.useEffect(() => {
+    const newImages: {[key: number]: string} = {};
+    slides.forEach(slideNumber => {
+      const slideImage = defaultValues[`slide${slideNumber}Image` as keyof typeof defaultValues] as string;
+      newImages[slideNumber] = slideImage || '';
+    });
+    setSlideImages(newImages);
+  }, [defaultValues]);
+
   return (
     <div className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
