@@ -9,7 +9,7 @@ import { useAdminTranslation } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -180,10 +180,20 @@ export function BarcodeConfigSection() {
                       </FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => field.onChange(!field.value)}
+                        className={`h-8 w-8 p-0 rounded-lg transition-all duration-200 ${
+                          field.value 
+                            ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 border border-emerald-200' 
+                            : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50 border border-gray-200'
+                        }`}
+                        title={field.value ? adminT('barcode.disable') : adminT('barcode.enable')}
+                      >
+                        {field.value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                      </Button>
                     </FormControl>
                   </FormItem>
                 )}
