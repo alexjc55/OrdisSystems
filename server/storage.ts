@@ -1542,29 +1542,40 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateTheme(id: string, theme: Partial<InsertTheme>): Promise<Theme> {
-    console.log("Storage updateTheme called with theme data:", theme);
-    console.log("Slider fields in theme:", {
-      slide1Image: theme.slide1Image,
-      slide1Title: theme.slide1Title,
-      sliderAutoplay: theme.sliderAutoplay,
-      sliderSpeed: theme.sliderSpeed,
-      sliderEffect: theme.sliderEffect
+    // Use raw SQL for slider fields to bypass Drizzle schema issues
+    const setFields = [];
+    const values = [];
+    let paramIndex = 1;
+    
+    Object.keys(theme).forEach(key => {
+      if (theme[key] !== undefined) {
+        setFields.push(`${key} = $${paramIndex}`);
+        values.push(theme[key]);
+        paramIndex++;
+      }
     });
     
+    // Always update updatedAt
+    setFields.push(`updated_at = $${paramIndex}`);
+    values.push(new Date());
+    
+    if (setFields.length > 1) { // More than just updatedAt
+      const query = `UPDATE themes SET ${setFields.join(', ')} WHERE id = $${paramIndex + 1} RETURNING *`;
+      values.push(id);
+      
+      console.log("Executing raw SQL update:", query);
+      console.log("With values:", values);
+      
+      const result = await db.execute(sql`${sql.raw(query)}`.mapWith(...values));
+      return result[0] as Theme;
+    }
+    
+    // Fallback to original Drizzle method if no fields to update
     const [updatedTheme] = await db
       .update(themes)
-      .set({
-        ...theme,
-        updatedAt: new Date(),
-      })
+      .set({ updatedAt: new Date() })
       .where(eq(themes.id, id))
       .returning();
-    
-    console.log("Theme updated successfully, returning:", {
-      id: updatedTheme.id,
-      slide1Image: updatedTheme.slide1Image,
-      slide1Title: updatedTheme.slide1Title
-    });
     
     return updatedTheme;
   }
