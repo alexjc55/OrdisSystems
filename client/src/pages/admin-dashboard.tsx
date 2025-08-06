@@ -305,6 +305,7 @@ import {
 const productSchema = z.object({
   name: z.string().optional(),  // Allow empty for translation languages
   description: z.string().optional(),
+  ingredients: z.string().optional(),
   categoryIds: z.array(z.number()).min(1, "Выберите хотя бы одну категорию"),
   price: z.string().min(1),
   unit: z.enum(["100g", "100ml", "piece", "portion", "kg"]).default("100g"),
@@ -6026,7 +6027,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   const { i18n } = useTranslation();
   const translationManager = useTranslationManager({
     defaultLanguage: 'ru',
-    baseFields: ['name', 'description']
+    baseFields: ['name', 'description', 'ingredients']
   });
   
   const [formData, setFormData] = useState<any>({});
@@ -6036,6 +6037,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     defaultValues: {
       name: "",
       description: "",
+      ingredients: "",
       categoryIds: [],
       price: "",
       unit: "100g" as ProductUnit,
@@ -6071,10 +6073,12 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
         // Set form values based on current language
         const nameValue = translationManager.getFieldValue(initialData, 'name');
         const descriptionValue = translationManager.getFieldValue(initialData, 'description');
+        const ingredientsValue = translationManager.getFieldValue(initialData, 'ingredients');
         
         form.reset({
           name: nameValue,
           description: descriptionValue,
+          ingredients: ingredientsValue,
           categoryIds: initialData.categoryIds,
           price: initialData.price,
           unit: initialData.unit,
@@ -6093,6 +6097,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
         form.reset({
           name: "",
           description: "",
+          ingredients: "",
           categoryIds: [],
           price: "",
           unit: "100g" as ProductUnit,
@@ -6176,8 +6181,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     // Get values from default language fields
     const defaultName = formData.name || '';
     const defaultDescription = formData.description || '';
+    const defaultIngredients = formData.ingredients || '';
     
-    if (!defaultName && !defaultDescription) {
+    if (!defaultName && !defaultDescription && !defaultIngredients) {
       toast({
         title: 'Нет данных для копирования',
         description: 'Заполните поля на русском языке сначала',
@@ -6189,11 +6195,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     // Update formData with copied values FIRST
     const targetNameField = `name_${translationManager.currentLanguage}`;
     const targetDescField = `description_${translationManager.currentLanguage}`;
+    const targetIngredientsField = `ingredients_${translationManager.currentLanguage}`;
     
     const updatedFormData = {
       ...formData,
       [targetNameField]: defaultName,
-      [targetDescField]: defaultDescription
+      [targetDescField]: defaultDescription,
+      [targetIngredientsField]: defaultIngredients
     };
     
     setFormData(updatedFormData);
@@ -6205,10 +6213,14 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     if (defaultDescription) {
       form.setValue('description', defaultDescription);
     }
+    if (defaultIngredients) {
+      form.setValue('ingredients', defaultIngredients);
+    }
 
     let copiedCount = 0;
     if (defaultName) copiedCount++;
     if (defaultDescription) copiedCount++;
+    if (defaultIngredients) copiedCount++;
 
     toast({
       title: adminT('translation.copySuccess'),
@@ -6221,6 +6233,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     if (clearedCount > 0) {
       form.setValue('name', '');
       form.setValue('description', '');
+      form.setValue('ingredients', '');
       
       toast({
         title: adminT('translation.clearSuccess'),
@@ -6284,7 +6297,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           currentLanguage={translationManager.currentLanguage}
           defaultLanguage={translationManager.defaultLanguage}
           formData={formData}
-          baseFields={['name', 'description']}
+          baseFields={['name', 'description', 'ingredients']}
           onCopyAllFields={handleCopyAllFields}
           onClearAllFields={handleClearAllFields}
         />
@@ -6332,6 +6345,30 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       onChange={(e) => {
                         field.onChange(e.target.value);
                         handleFieldChange('description', e.target.value, true);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="ingredients"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">
+                    {translationManager.getFieldLabel('ingredients', adminT('products.dialog.ingredientsLabel'))}
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder={adminT('products.dialog.ingredientsPlaceholder')}
+                      className="resize-none text-sm"
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        handleFieldChange('ingredients', e.target.value, true);
                       }}
                     />
                   </FormControl>
