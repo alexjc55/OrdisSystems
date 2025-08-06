@@ -153,7 +153,7 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
                   {adminT("themes.slideImage")} {slideNumber === 1 && `(${adminT("themes.required")})`}
                 </Label>
                 <ImageUpload
-                  value={slideImage}
+                  value={slideImages[slideNumber] || ''}
                   onChange={(url: string) => {
                     setSlideImages(prev => ({...prev, [slideNumber]: url}));
                     // Update the hidden input value directly
