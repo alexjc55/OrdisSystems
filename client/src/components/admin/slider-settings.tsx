@@ -162,7 +162,7 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
                     }
                   }}
                 />
-                <input type="hidden" name={`slide${slideNumber}Image`} value={slideImage} />
+                <input type="hidden" name={`slide${slideNumber}Image`} defaultValue={slideImage} />
               </div>
               
               {/* Show content fields only if image exists or it's slide 1 */}
