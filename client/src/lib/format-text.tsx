@@ -7,67 +7,91 @@ import React from 'react';
 export function formatText(text: string): React.ReactNode {
   if (!text) return null;
   
-  // Разбиваем текст на части с учетом форматирования
+  // Обрабатываем текст построчно для сохранения переносов
+  const lines = text.split('\n');
+  
+  return (
+    <>
+      {lines.map((line, lineIndex) => (
+        <React.Fragment key={lineIndex}>
+          {lineIndex > 0 && <br />}
+          {formatLine(line)}
+        </React.Fragment>
+      ))}
+    </>
+  );
+}
+
+function formatLine(line: string): React.ReactNode {
+  if (!line) return '';
+  
   const parts: React.ReactNode[] = [];
-  let currentIndex = 0;
-  let key = 0;
+  let currentText = line;
+  let keyCounter = 0;
   
-  // Паттерны для разных типов форматирования (в порядке приоритета)
-  const patterns = [
-    { regex: /\*\*(.*?)\*\*/g, render: (match: string, content: string) => <strong key={key++}>{content}</strong> },
-    { regex: /<u>(.*?)<\/u>/g, render: (match: string, content: string) => <u key={key++}>{content}</u> },
-    { regex: /\*(.*?)\*/g, render: (match: string, content: string) => <em key={key++}>{content}</em> }
-  ];
-  
-  // Находим все совпадения для всех паттернов
-  const allMatches: Array<{
-    index: number;
-    length: number;
-    element: React.ReactNode;
-  }> = [];
-  
-  patterns.forEach(pattern => {
-    let match;
-    while ((match = pattern.regex.exec(text)) !== null) {
-      allMatches.push({
-        index: match.index,
-        length: match[0].length,
-        element: pattern.render(match[0], match[1])
-      });
+  // Обрабатываем форматирование последовательно
+  while (currentText.length > 0) {
+    // Ищем ближайший паттерн форматирования
+    const boldMatch = currentText.match(/\*\*(.*?)\*\*/);
+    const underlineMatch = currentText.match(/<u>(.*?)<\/u>/);
+    const italicMatch = currentText.match(/\*([^*]+?)\*/);
+    
+    // Определяем какой паттерн встречается раньше
+    let earliestMatch = null;
+    let earliestIndex = Infinity;
+    let type = '';
+    
+    if (boldMatch && boldMatch.index !== undefined && boldMatch.index < earliestIndex) {
+      earliestMatch = boldMatch;
+      earliestIndex = boldMatch.index;
+      type = 'bold';
     }
-  });
-  
-  // Сортируем совпадения по позиции
-  allMatches.sort((a, b) => a.index - b.index);
-  
-  // Строим результирующий массив элементов
-  allMatches.forEach(match => {
-    // Добавляем обычный текст перед форматированным
-    if (currentIndex < match.index) {
-      const normalText = text.substring(currentIndex, match.index);
-      if (normalText) {
-        parts.push(normalText);
+    
+    if (underlineMatch && underlineMatch.index !== undefined && underlineMatch.index < earliestIndex) {
+      earliestMatch = underlineMatch;
+      earliestIndex = underlineMatch.index;
+      type = 'underline';
+    }
+    
+    if (italicMatch && italicMatch.index !== undefined && italicMatch.index < earliestIndex) {
+      // Проверяем что это не часть ** паттерна
+      const beforeChar = italicMatch.index > 0 ? currentText[italicMatch.index - 1] : '';
+      const afterChar = currentText[italicMatch.index + italicMatch[0].length] || '';
+      
+      if (beforeChar !== '*' && afterChar !== '*') {
+        earliestMatch = italicMatch;
+        earliestIndex = italicMatch.index;
+        type = 'italic';
       }
     }
     
-    // Добавляем форматированный элемент
-    parts.push(match.element);
-    
-    // Обновляем текущую позицию
-    currentIndex = match.index + match.length;
-  });
-  
-  // Добавляем оставшийся текст
-  if (currentIndex < text.length) {
-    const remainingText = text.substring(currentIndex);
-    if (remainingText) {
-      parts.push(remainingText);
+    if (earliestMatch) {
+      // Добавляем текст до форматирования
+      if (earliestIndex > 0) {
+        parts.push(currentText.substring(0, earliestIndex));
+      }
+      
+      // Добавляем форматированный элемент
+      const content = earliestMatch[1];
+      switch (type) {
+        case 'bold':
+          parts.push(<strong key={keyCounter++}>{content}</strong>);
+          break;
+        case 'underline':
+          parts.push(<u key={keyCounter++}>{content}</u>);
+          break;
+        case 'italic':
+          parts.push(<em key={keyCounter++}>{content}</em>);
+          break;
+      }
+      
+      // Продолжаем с оставшимся текстом
+      currentText = currentText.substring(earliestIndex + earliestMatch[0].length);
+    } else {
+      // Нет больше форматирования, добавляем оставшийся текст
+      parts.push(currentText);
+      break;
     }
-  }
-  
-  // Если нет форматирования, возвращаем исходный текст
-  if (parts.length === 0) {
-    return text;
   }
   
   return <>{parts}</>;
