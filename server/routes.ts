@@ -2048,6 +2048,17 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         if (themeData.whatsappPhone !== undefined) updateFields.push(`whatsapp_phone_number = '${(themeData.whatsappPhone || '').replace(/'/g, "''")}'`);
         if (themeData.whatsappMessage !== undefined) updateFields.push(`whatsapp_default_message = '${(themeData.whatsappMessage || 'Здравствуйте! У меня есть вопрос по заказу.').replace(/'/g, "''")}'`);
         
+        // Sync slider settings to store_settings
+        if (themeData.sliderAutoplay !== undefined) updateFields.push(`slider_autoplay = ${themeData.sliderAutoplay}`);
+        if (themeData.sliderSpeed !== undefined) updateFields.push(`slider_speed = ${themeData.sliderSpeed}`);
+        if (themeData.sliderEffect !== undefined) updateFields.push(`slider_effect = '${themeData.sliderEffect || 'fade'}'`);
+        if (themeData.slide1Image !== undefined) updateFields.push(`slide1_image = '${(themeData.slide1Image || '').replace(/'/g, "''")}'`);
+        if (themeData.slide1Title !== undefined) updateFields.push(`slide1_title = '${(themeData.slide1Title || '').replace(/'/g, "''")}'`);
+        if (themeData.slide1Subtitle !== undefined) updateFields.push(`slide1_subtitle = '${(themeData.slide1Subtitle || '').replace(/'/g, "''")}'`);
+        if (themeData.slide1ButtonText !== undefined) updateFields.push(`slide1_button_text = '${(themeData.slide1ButtonText || '').replace(/'/g, "''")}'`);
+        if (themeData.slide1ButtonLink !== undefined) updateFields.push(`slide1_button_link = '${(themeData.slide1ButtonLink || '').replace(/'/g, "''")}'`);
+        if (themeData.slide1TextPosition !== undefined) updateFields.push(`slide1_text_position = '${themeData.slide1TextPosition || 'left'}'`);
+        
         // Execute the update if there are fields to update
         if (updateFields.length > 0) {
           const db = await getDB();
