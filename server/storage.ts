@@ -580,7 +580,7 @@ export class DatabaseStorage implements IStorage {
         .select({ productId: productCategories.productId })
         .from(productCategories)
         .where(eq(productCategories.categoryId, categoryId));
-      productIdsForCategory = categoryProducts.map(p => p.productId);
+      productIdsForCategory = categoryProducts.map((p: any) => p.productId);
       
       if (productIdsForCategory.length > 0) {
         conditions.push(inArray(products.id, productIdsForCategory));
@@ -626,7 +626,7 @@ export class DatabaseStorage implements IStorage {
       .offset(offset);
 
     // Get all categories for all products in one query
-    const productIds = productsData.map(p => p.id);
+    const productIds = productsData.map((p: any) => p.id);
     const productCategoriesData = productIds.length > 0 ? await db
       .select({
         productId: productCategories.productId,
@@ -651,7 +651,7 @@ export class DatabaseStorage implements IStorage {
 
     // Group categories by product ID
     const categoriesByProduct = new Map();
-    productCategoriesData.forEach(cat => {
+    productCategoriesData.forEach((cat: any) => {
       if (!categoriesByProduct.has(cat.productId)) {
         categoriesByProduct.set(cat.productId, []);
       }
@@ -660,7 +660,7 @@ export class DatabaseStorage implements IStorage {
     });
 
     // Combine products with their categories
-    const data: ProductWithCategories[] = productsData.map(product => ({
+    const data: ProductWithCategories[] = productsData.map((product: any) => ({
       ...product,
       categories: categoriesByProduct.get(product.id) || []
     }));
@@ -691,7 +691,7 @@ export class DatabaseStorage implements IStorage {
 
     return {
       ...product,
-      categories: productCats.map(pc => pc.categories)
+      categories: productCats.map((pc: any) => pc.categories)
     };
   }
 
@@ -797,7 +797,7 @@ export class DatabaseStorage implements IStorage {
       
       result.push({
         ...product,
-        categories: productCats.map(pc => pc.categories)
+        categories: productCats.map((pc: any) => pc.categories)
       });
     }
     
@@ -865,7 +865,7 @@ export class DatabaseStorage implements IStorage {
 
       result.push({
         ...order,
-        items: itemsData.map(item => ({
+        items: itemsData.map((item: any) => ({
           id: item.id,
           orderId: item.orderId,
           productId: item.productId,
@@ -1002,7 +1002,7 @@ export class DatabaseStorage implements IStorage {
 
       ordersData.push({
         ...order,
-        items: itemsData.map(item => ({
+        items: itemsData.map((item: any) => ({
           id: item.id,
           orderId: item.orderId,
           productId: item.productId,
@@ -1142,7 +1142,7 @@ export class DatabaseStorage implements IStorage {
 
     return {
       ...order,
-      items: itemsData.map(item => ({
+      items: itemsData.map((item: any) => ({
         id: item.id,
         orderId: item.orderId,
         productId: item.productId,
@@ -1185,7 +1185,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createOrder(order: InsertOrder, items: InsertOrderItem[]): Promise<Order> {
-    return await db.transaction(async (tx) => {
+    return await db.transaction(async (tx: any) => {
       const [newOrder] = await tx
         .insert(orders)
         .values(order)
@@ -1221,7 +1221,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateOrderItems(orderId: number, items: any[]): Promise<void> {
-    return await db.transaction(async (tx) => {
+    return await db.transaction(async (tx: any) => {
       // Delete existing order items
       await tx.delete(orderItems).where(eq(orderItems.orderId, orderId));
       
@@ -1581,7 +1581,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async activateTheme(id: string): Promise<Theme> {
-    return await db.transaction(async (tx) => {
+    return await db.transaction(async (tx: any) => {
       // Deactivate all themes
       await tx
         .update(themes)
