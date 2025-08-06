@@ -3489,7 +3489,15 @@ export default function AdminDashboard() {
                     <ChevronDown className={`w-5 h-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-screen min-w-full max-h-[60vh] overflow-y-auto border-0 rounded-none shadow-lg p-2" align={isRTL ? "end" : "start"} side="bottom" sideOffset={0}>
+                <DropdownMenuContent 
+                  className="w-screen min-w-full max-h-[60vh] overflow-y-auto border-0 rounded-none shadow-lg p-2 z-50 bg-white/95 backdrop-blur-sm" 
+                  align={isRTL ? "end" : "start"} 
+                  side="bottom" 
+                  sideOffset={0}
+                  style={{
+                    boxShadow: '0 0 0 100vmax rgba(0, 0, 0, 0.3)'
+                  }}
+                >
                   <div className="w-full" style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
@@ -3503,7 +3511,7 @@ export default function AdminDashboard() {
                           setActiveTab("products");
                           document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}));
                         }} 
-                        className={`p-2 rounded-lg cursor-pointer transition-all duration-200 min-h-[60px] flex items-center justify-center w-full ${activeTab === 'products' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
+                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center w-full ${activeTab === 'products' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                         style={{minWidth: '0', overflow: 'hidden'}}
                       >
                         <div className={`flex flex-col items-center gap-1 ${isRTL ? 'text-right' : 'text-center'} w-full`}>
@@ -3518,7 +3526,7 @@ export default function AdminDashboard() {
                           setActiveTab("categories");
                           document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}));
                         }} 
-                        className={`p-2 rounded-lg cursor-pointer transition-all duration-200 min-h-[60px] flex items-center justify-center w-full ${activeTab === 'categories' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
+                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center w-full ${activeTab === 'categories' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                         style={{minWidth: '0', overflow: 'hidden'}}
                       >
                         <div className={`flex flex-col items-center gap-1 ${isRTL ? 'text-right' : 'text-center'} w-full`}>
@@ -3533,7 +3541,7 @@ export default function AdminDashboard() {
                           setActiveTab("orders");
                           document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}));
                         }} 
-                        className={`p-2 rounded-lg cursor-pointer transition-all duration-200 min-h-[60px] flex items-center justify-center w-full ${activeTab === 'orders' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
+                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center w-full ${activeTab === 'orders' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                         style={{minWidth: '0', overflow: 'hidden'}}
                       >
                         <div className={`flex flex-col items-center gap-1 ${isRTL ? 'text-right' : 'text-center'} w-full`}>
@@ -3548,7 +3556,7 @@ export default function AdminDashboard() {
                           setActiveTab("users");
                           document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}));
                         }} 
-                        className={`p-2 rounded-lg cursor-pointer transition-all duration-200 min-h-[60px] flex items-center justify-center w-full ${activeTab === 'users' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
+                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center w-full ${activeTab === 'users' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                         style={{minWidth: '0', overflow: 'hidden'}}
                       >
                         <div className={`flex flex-col items-center gap-1 ${isRTL ? 'text-right' : 'text-center'} w-full`}>
@@ -3563,7 +3571,7 @@ export default function AdminDashboard() {
                           setActiveTab("store-settings");
                           document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}));
                         }} 
-                        className={`p-2 rounded-lg cursor-pointer transition-all duration-200 min-h-[60px] flex items-center justify-center w-full ${activeTab === 'store-settings' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
+                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center w-full ${activeTab === 'store-settings' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                         style={{minWidth: '0', overflow: 'hidden'}}
                       >
                         <div className={`flex flex-col items-center gap-1 ${isRTL ? 'text-right' : 'text-center'} w-full`}>
@@ -3578,7 +3586,7 @@ export default function AdminDashboard() {
                           setActiveTab("notifications");
                           document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}));
                         }} 
-                        className={`p-2 rounded-lg cursor-pointer transition-all duration-200 min-h-[60px] flex items-center justify-center w-full ${activeTab === 'notifications' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
+                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center w-full ${activeTab === 'notifications' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                         style={{minWidth: '0', overflow: 'hidden'}}
                       >
                         <div className={`flex flex-col items-center gap-1 ${isRTL ? 'text-right' : 'text-center'} w-full`}>
@@ -3593,7 +3601,7 @@ export default function AdminDashboard() {
                           setActiveTab("settings");
                           document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}));
                         }} 
-                        className={`p-2 rounded-lg cursor-pointer transition-all duration-200 min-h-[60px] flex items-center justify-center w-full ${activeTab === 'settings' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
+                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center w-full ${activeTab === 'settings' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                         style={{minWidth: '0', overflow: 'hidden'}}
                       >
                         <div className={`flex flex-col items-center gap-1 ${isRTL ? 'text-right' : 'text-center'} w-full`}>
@@ -3608,7 +3616,7 @@ export default function AdminDashboard() {
                           setActiveTab("themes");
                           document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}));
                         }} 
-                        className={`p-2 rounded-lg cursor-pointer transition-all duration-200 min-h-[60px] flex items-center justify-center w-full ${activeTab === 'themes' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
+                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center w-full ${activeTab === 'themes' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
                         style={{minWidth: '0', overflow: 'hidden'}}
                       >
                         <div className={`flex flex-col items-center gap-1 ${isRTL ? 'text-right' : 'text-center'} w-full`}>
@@ -5583,10 +5591,16 @@ export default function AdminDashboard() {
                   <div className={isRTL ? 'text-right' : 'text-left'}>
                     <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                       <UserCheck className="h-5 w-5" />
-                      Права доступа работников
+                      {currentLanguage === 'ru' && 'Права доступа работников'}
+                      {currentLanguage === 'en' && 'Worker Access Rights'}
+                      {currentLanguage === 'he' && 'הרשאות גישה לעובדים'}
+                      {currentLanguage === 'ar' && 'صلاحيات الوصول للعمال'}
                     </CardTitle>
                     <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                      Управление доступом работников к различным разделам системы
+                      {currentLanguage === 'ru' && 'Управление доступом работников к различным разделам системы'}
+                      {currentLanguage === 'en' && 'Manage worker access to different system sections'}
+                      {currentLanguage === 'he' && 'ניהול גישת עובדים לחלקים שונים של המערכת'}
+                      {currentLanguage === 'ar' && 'إدارة وصول العمال إلى أقسام النظام المختلفة'}
                     </CardDescription>
                   </div>
                 </CardHeader>
