@@ -3,10 +3,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useCartStore } from "@/lib/cart";
 import { useToast } from "@/hooks/use-toast";
 import { formatCurrency, formatWeight, calculateTotal, getUnitLabel, formatQuantity, type ProductUnit } from "@/lib/currency";
-import { ShoppingCart, Plus, Minus, Eye, Star, Clock, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Eye, Star, Clock, CheckCircle2, XCircle, AlertCircle, Info } from "lucide-react";
 import type { ProductWithCategories } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
@@ -212,15 +213,33 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             )}
           </div>
           
-          {/* Composition/Ingredients */}
+          {/* Composition/Ingredients Button */}
           {localizedIngredients && (
-            <div className="mb-3 p-2 bg-gray-50 rounded-lg">
-              <div className="text-sm font-medium text-gray-700 mb-1">
-                {t('composition')}
-              </div>
-              <p className="text-sm text-gray-600 line-clamp-2">
-                {localizedIngredients}
-              </p>
+            <div className="mb-3">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full text-left justify-start bg-gray-50 hover:bg-gray-100 border-gray-200"
+                  >
+                    <Info className="h-4 w-4 mr-2 rtl:mr-0 rtl:ml-2" />
+                    {t('composition')}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[500px] mx-4">
+                  <DialogHeader>
+                    <DialogTitle className="text-lg">
+                      {t('composition')} - {localizedName}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="mt-4">
+                    <p className="text-sm text-gray-700 whitespace-pre-line">
+                      {localizedIngredients}
+                    </p>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           )}
           <div className="min-h-[32px] mb-2">
