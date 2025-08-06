@@ -297,7 +297,8 @@ import {
   Image,
   Loader2,
   QrCode,
-  Camera
+  Camera,
+  Menu
 } from "lucide-react";
 
 // Validation schemas
