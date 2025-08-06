@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -50,7 +50,6 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
   const { t: adminT } = useTranslation('admin');
 
   const slides = [1, 2, 3, 4, 5];
-  const hiddenInputRefs = useRef<{[key: number]: HTMLInputElement | null}>({});
   
   // Track image URLs for each slide
   const [slideImages, setSlideImages] = useState<{[key: number]: string}>(() => {
@@ -61,16 +60,6 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
     });
     return initialImages;
   });
-
-  // Update slide images when defaultValues change
-  useEffect(() => {
-    const updatedImages: {[key: number]: string} = {};
-    slides.forEach(slideNumber => {
-      const slideImage = defaultValues[`slide${slideNumber}Image` as keyof typeof defaultValues] as string;
-      updatedImages[slideNumber] = slideImage || '';
-    });
-    setSlideImages(updatedImages);
-  }, [defaultValues]);
 
   return (
     <div className="space-y-6">
@@ -153,27 +142,17 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
                   {adminT("themes.slideImage")} {slideNumber === 1 && `(${adminT("themes.required")})`}
                 </Label>
                 <ImageUpload
-                  value={slideImages[slideNumber] || ''}
+                  value={slideImage}
                   onChange={(url: string) => {
-                    console.log(`Slide ${slideNumber} image changed to:`, url);
-                    setSlideImages(prev => {
-                      const newState = {...prev, [slideNumber]: url};
-                      console.log('New slideImages state:', newState);
-                      return newState;
-                    });
-                    // Update the hidden input value directly
-                    if (hiddenInputRefs.current[slideNumber]) {
-                      hiddenInputRefs.current[slideNumber]!.value = url;
-                      console.log(`Hidden input ${slideNumber} updated with:`, url);
+                    setSlideImages(prev => ({...prev, [slideNumber]: url}));
+                    // Update the hidden input value
+                    const hiddenInput = document.querySelector(`input[name="slide${slideNumber}Image"]`) as HTMLInputElement;
+                    if (hiddenInput) {
+                      hiddenInput.value = url;
                     }
                   }}
                 />
-                <input 
-                  ref={(el) => { hiddenInputRefs.current[slideNumber] = el; }}
-                  type="hidden" 
-                  name={`slide${slideNumber}Image`} 
-                  defaultValue={slideImages[slideNumber] || ''} 
-                />
+                <input type="hidden" name={`slide${slideNumber}Image`} value={slideImage} />
               </div>
               
               {/* Show content fields only if image exists or it's slide 1 */}

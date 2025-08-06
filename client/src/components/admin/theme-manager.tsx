@@ -2148,7 +2148,6 @@ export default function ThemeManager() {
                     
                     <div id="sliderControlsEdit" className="space-y-4" style={{ display: editingTheme.headerStyle === 'slider' ? 'block' : 'none' }}>
                       <SliderSettings 
-                        key={`slider-edit-${editingTheme.id}`}
                         id="Edit" 
                         defaultValues={{
                           sliderAutoplay: editingTheme.sliderAutoplay,
