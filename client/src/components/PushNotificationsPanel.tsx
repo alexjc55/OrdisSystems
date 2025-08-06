@@ -116,7 +116,7 @@ export function PushNotificationsPanel() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center gap-4">
+            <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Settings className="h-4 w-4" />
                 <span className="text-sm">
@@ -124,16 +124,18 @@ export function PushNotificationsPanel() {
                 </span>
               </div>
               
-              {!isSubscribed && (
-                <Button onClick={subscribe} size="sm">
-                  {t('pushNotifications.subscribe')}
+              <div className="flex flex-col sm:flex-row gap-2">
+                {!isSubscribed && (
+                  <Button onClick={subscribe} size="sm" className="w-full sm:w-auto">
+                    {t('pushNotifications.subscribe')}
+                  </Button>
+                )}
+                
+                <Button onClick={handleTestNotification} variant="outline" size="sm" className="w-full sm:w-auto">
+                  <TestTube className="h-4 w-4 mr-2" />
+                  {t('pushNotifications.test')}
                 </Button>
-              )}
-              
-              <Button onClick={handleTestNotification} variant="outline" size="sm">
-                <TestTube className="h-4 w-4 mr-2" />
-                {t('pushNotifications.test')}
-              </Button>
+              </div>
             </div>
             
             {/* Debug info */}

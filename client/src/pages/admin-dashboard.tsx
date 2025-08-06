@@ -5485,7 +5485,7 @@ export default function AdminDashboard() {
                         return cacheDescriptionText;
                       })()}
                     </p>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                       <AdminCacheBuster />
                       <p className="text-xs text-gray-500">
                         {adminT('settings.cacheUsage')}
