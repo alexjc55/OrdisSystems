@@ -154,10 +154,10 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
               name="ingredients"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{adminT('products.dialog.compositionLabel')}</FormLabel>
+                  <FormLabel>{adminT('products.dialog.ingredientsLabel')}</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder={adminT('products.dialog.compositionPlaceholder')}
+                      placeholder={adminT('products.dialog.ingredientsPlaceholder')}
                       className="min-h-[80px]"
                       {...field}
                     />
