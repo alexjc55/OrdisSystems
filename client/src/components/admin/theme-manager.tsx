@@ -510,7 +510,10 @@ export default function ThemeManager() {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/themes"] });
       // Invalidate store settings to refresh header style for all users
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
-      setEditingTheme(null);
+      // Update editing theme with the latest data from server
+      if (editingTheme && editingTheme.id === updatedTheme.id) {
+        setEditingTheme(updatedTheme);
+      }
       
       // Apply theme immediately if it's the active theme
       if (updatedTheme.isActive) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -61,14 +61,14 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
     return initialImages;
   });
 
-  // Update slideImages when defaultValues change
-  React.useEffect(() => {
-    const newImages: {[key: number]: string} = {};
+  // Update slideImages when defaultValues change (important for edit mode)
+  useEffect(() => {
+    const updatedImages: {[key: number]: string} = {};
     slides.forEach(slideNumber => {
       const slideImage = defaultValues[`slide${slideNumber}Image` as keyof typeof defaultValues] as string;
-      newImages[slideNumber] = slideImage || '';
+      updatedImages[slideNumber] = slideImage || '';
     });
-    setSlideImages(newImages);
+    setSlideImages(updatedImages);
   }, [defaultValues]);
 
   return (
@@ -162,7 +162,7 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
                     }
                   }}
                 />
-                <input type="hidden" name={`slide${slideNumber}Image`} defaultValue={slideImage} />
+                <input type="hidden" name={`slide${slideNumber}Image`} value={slideImage} />
               </div>
               
               {/* Show content fields only if image exists or it's slide 1 */}
