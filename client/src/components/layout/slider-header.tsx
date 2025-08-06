@@ -44,7 +44,7 @@ interface SlideData {
   subtitle: string;
   buttonText: string;
   buttonLink: string;
-  textPosition: 'left' | 'center' | 'right';
+  textPosition: 'left-top' | 'left-center' | 'left-bottom' | 'center-top' | 'center-center' | 'center-bottom' | 'right-top' | 'right-center' | 'right-bottom' | 'left' | 'center' | 'right';
 }
 
 export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: SliderHeaderProps) {
@@ -64,7 +64,7 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
         subtitle: storeSettings?.[`slide${i}Subtitle`] || storeSettings?.[`slide${i}_subtitle`] || '',
         buttonText: storeSettings?.[`slide${i}ButtonText`] || storeSettings?.[`slide${i}_button_text`] || '',
         buttonLink: storeSettings?.[`slide${i}ButtonLink`] || storeSettings?.[`slide${i}_button_link`] || '',
-        textPosition: storeSettings?.[`slide${i}TextPosition`] || storeSettings?.[`slide${i}_text_position`] || 'left'
+        textPosition: storeSettings?.[`slide${i}TextPosition`] || storeSettings?.[`slide${i}_text_position`] || 'left-center'
       });
     }
   }
@@ -117,25 +117,66 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
   };
 
   const getTextAlignmentClasses = (position: string) => {
-    switch (position) {
+    // Handle combined position format (horizontal-vertical)
+    const [horizontal] = position.split('-');
+    
+    switch (horizontal) {
       case 'center':
         return 'text-center items-center justify-center';
       case 'right':
         return `text-right items-end ${isRTL ? 'justify-start' : 'justify-end'}`;
-      default:
+      default: // left or any legacy value
         return `text-left items-start ${isRTL ? 'justify-end' : 'justify-start'}`;
     }
   };
 
   const getContentPositionClasses = (position: string) => {
-    switch (position) {
-      case 'center':
-        return 'left-1/2 transform -translate-x-1/2';
-      case 'right':
-        return isRTL ? 'left-4 md:left-12' : 'right-4 md:right-12';
-      default:
-        return isRTL ? 'right-4 md:right-12' : 'left-4 md:left-12';
+    // Handle combined position format (horizontal-vertical)
+    const [horizontal, vertical] = position.split('-');
+    
+    // Determine if we need transforms
+    const needsHorizontalTransform = horizontal === 'center';
+    const needsVerticalTransform = !vertical || vertical === 'center';
+    
+    // Build transform class if needed
+    let transformClass = '';
+    if (needsHorizontalTransform && needsVerticalTransform) {
+      transformClass = 'transform -translate-x-1/2 -translate-y-1/2';
+    } else if (needsHorizontalTransform) {
+      transformClass = 'transform -translate-x-1/2';
+    } else if (needsVerticalTransform) {
+      transformClass = 'transform -translate-y-1/2';
     }
+    
+    // Get horizontal positioning
+    let horizontalClass = '';
+    switch (horizontal) {
+      case 'center':
+        horizontalClass = 'left-1/2';
+        break;
+      case 'right':
+        horizontalClass = isRTL ? 'left-4 md:left-12' : 'right-4 md:right-12';
+        break;
+      default: // left or any legacy value
+        horizontalClass = isRTL ? 'right-4 md:right-12' : 'left-4 md:left-12';
+        break;
+    }
+    
+    // Get vertical positioning
+    let verticalClass = '';
+    switch (vertical) {
+      case 'top':
+        verticalClass = 'top-8 md:top-16';
+        break;
+      case 'bottom':
+        verticalClass = 'bottom-8 md:bottom-16';
+        break;
+      default: // center or any legacy value
+        verticalClass = 'top-1/2';
+        break;
+    }
+    
+    return `${horizontalClass} ${verticalClass} ${transformClass}`.trim();
   };
 
   const effectClass = storeSettings?.sliderEffect === 'slide' ? 'transform transition-transform duration-500 ease-in-out' : 'transition-opacity duration-500 ease-in-out';
@@ -165,7 +206,7 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
             <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
             
             {/* Content */}
-            <div className={`absolute top-1/2 transform -translate-y-1/2 ${getContentPositionClasses(slide.textPosition)} max-w-lg z-10`}>
+            <div className={`absolute ${getContentPositionClasses(slide.textPosition)} max-w-lg z-10`}>
               <div className={`flex flex-col space-y-4 ${getTextAlignmentClasses(slide.textPosition)}`}>
                 {slide.title && (
                   <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">

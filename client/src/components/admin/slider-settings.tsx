@@ -176,12 +176,18 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
                       <select
                         name={`slide${slideNumber}TextPosition`}
                         id={`slide${slideNumber}TextPosition${id}`}
-                        defaultValue={defaultValues[`slide${slideNumber}TextPosition` as keyof typeof defaultValues] as string || "left"}
+                        defaultValue={defaultValues[`slide${slideNumber}TextPosition` as keyof typeof defaultValues] as string || "left-center"}
                         className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                       >
-                        <option value="left">{adminT("themes.textLeft")}</option>
-                        <option value="center">{adminT("themes.textCenter")}</option>
-                        <option value="right">{adminT("themes.textRight")}</option>
+                        <option value="left-top">{adminT("themes.textLeftTop")}</option>
+                        <option value="left-center">{adminT("themes.textLeftCenter")}</option>
+                        <option value="left-bottom">{adminT("themes.textLeftBottom")}</option>
+                        <option value="center-top">{adminT("themes.textCenterTop")}</option>
+                        <option value="center-center">{adminT("themes.textCenterCenter")}</option>
+                        <option value="center-bottom">{adminT("themes.textCenterBottom")}</option>
+                        <option value="right-top">{adminT("themes.textRightTop")}</option>
+                        <option value="right-center">{adminT("themes.textRightCenter")}</option>
+                        <option value="right-bottom">{adminT("themes.textRightBottom")}</option>
                       </select>
                     </div>
                   </div>
