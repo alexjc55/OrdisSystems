@@ -43,6 +43,8 @@
   "categoriesCount": "{{count}} categories",
   "allProducts": "All Products",
   "allCategories": "All Categories",
+  "composition": "Composition",
+  "viewComposition": "View composition",
   "filterByCategory": "Filter by Category",
   "filterByDiscount": "Filter by Discount",
   "onlyDiscounted": "Only Discounted",

@@ -395,6 +395,8 @@
   "noSearchResults": "لا توجد نتائج للبحث",
   "categoriesCount": "{{count}} فئات",
   "allCategories": "جميع الفئات",
+  "composition": "التركيب",
+  "viewComposition": "عرض التركيب",
   "filterByCategory": "فلترة حسب الفئة",
   "filterByDiscount": "فلترة حسب الخصم",
   "onlyDiscounted": "المخفضة فقط",

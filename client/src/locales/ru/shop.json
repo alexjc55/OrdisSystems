@@ -43,6 +43,8 @@
   "categoriesCount": "{{count}} категорий",
   "allProducts": "Все товары",
   "allCategories": "Все категории",
+  "composition": "Состав",
+  "viewComposition": "Смотреть состав",
   "filterByCategory": "Фильтр по категории",
   "filterByDiscount": "Фильтр по скидке",
   "onlyDiscounted": "Только со скидкой",
