@@ -3451,40 +3451,17 @@ export default function AdminDashboard() {
           <div>
             {/* Mobile Dropdown Menu */}
             <div className="block sm:hidden mb-4">
-              <DropdownMenu modal={true}>
+              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="w-full bg-white border-gray-200 h-12 justify-between hover:bg-gray-50">
                     <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                      {!isRTL && (
-                        <>
-                          {activeTab === 'products' && <Package className="w-5 h-5" />}
-                          {activeTab === 'categories' && <Layers3 className="w-5 h-5" />}
-                          {activeTab === 'orders' && <ShoppingCart className="w-5 h-5" />}
-                          {activeTab === 'users' && <Users className="w-5 h-5" />}
-                          {activeTab === 'store-settings' && <Settings className="w-5 h-5" />}
-                          {activeTab === 'notifications' && <Bell className="w-5 h-5" />}
-                          {activeTab === 'settings' && <UserCheck className="w-5 h-5" />}
-                          {activeTab === 'themes' && <Palette className="w-5 h-5" />}
-                        </>
-                      )}
+                      <Menu className="w-5 h-5 text-gray-600" />
                       <span className="text-lg font-medium">
-                        {currentLanguage === 'ru' && 'Меню разделов'}
-                        {currentLanguage === 'en' && 'Sections Menu'}
-                        {currentLanguage === 'he' && 'תפריט מקטעים'}
-                        {currentLanguage === 'ar' && 'قائمة الأقسام'}
+                        {currentLanguage === 'ru' && 'Разделы меню'}
+                        {currentLanguage === 'en' && 'Menu Sections'}
+                        {currentLanguage === 'he' && 'חלקי התפריט'}
+                        {currentLanguage === 'ar' && 'أقسام القائمة'}
                       </span>
-                      {isRTL && (
-                        <>
-                          {activeTab === 'products' && <Package className="w-5 h-5" />}
-                          {activeTab === 'categories' && <Layers3 className="w-5 h-5" />}
-                          {activeTab === 'orders' && <ShoppingCart className="w-5 h-5" />}
-                          {activeTab === 'users' && <Users className="w-5 h-5" />}
-                          {activeTab === 'store-settings' && <Settings className="w-5 h-5" />}
-                          {activeTab === 'notifications' && <Bell className="w-5 h-5" />}
-                          {activeTab === 'settings' && <UserCheck className="w-5 h-5" />}
-                          {activeTab === 'themes' && <Palette className="w-5 h-5" />}
-                        </>
-                      )}
                     </div>
                     <ChevronDown className={`w-5 h-5 text-gray-500 ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
                   </Button>
@@ -3495,8 +3472,8 @@ export default function AdminDashboard() {
                   side="bottom" 
                   sideOffset={0}
                   style={{
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.15), 0 0 0 100vmax rgba(0,0,0,0.4)',
-                    clipPath: 'inset(0px -100vmax -100vmax -100vmax)'
+                    background: 'white',
+                    boxShadow: '0 0 0 100vmax rgba(0, 0, 0, 0.4)'
                   }}
                 >
                   <div className="w-full" style={{
@@ -3592,7 +3569,12 @@ export default function AdminDashboard() {
                       >
                         <div className={`flex flex-col items-center gap-1 ${isRTL ? 'text-right' : 'text-center'} w-full`}>
                           <Bell className="w-5 h-5 flex-shrink-0" />
-                          <span className="text-xs font-medium leading-tight text-center truncate w-full">Push Уведомления</span>
+                          <span className="text-xs font-medium leading-tight text-center truncate w-full">
+                            {currentLanguage === 'ru' && 'Push Уведомления'}
+                            {currentLanguage === 'en' && 'Push Notifications'}
+                            {currentLanguage === 'he' && 'התראות Push'}
+                            {currentLanguage === 'ar' && 'إشعارات Push'}
+                          </span>
                         </div>
                       </div>
                     )}
