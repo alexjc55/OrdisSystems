@@ -1542,6 +1542,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateTheme(id: string, theme: Partial<InsertTheme>): Promise<Theme> {
+    console.log("Storage updateTheme called with theme data:", theme);
+    console.log("Slider fields in theme:", {
+      slide1Image: theme.slide1Image,
+      slide1Title: theme.slide1Title,
+      sliderAutoplay: theme.sliderAutoplay,
+      sliderSpeed: theme.sliderSpeed,
+      sliderEffect: theme.sliderEffect
+    });
+    
     const [updatedTheme] = await db
       .update(themes)
       .set({
@@ -1550,6 +1559,13 @@ export class DatabaseStorage implements IStorage {
       })
       .where(eq(themes.id, id))
       .returning();
+    
+    console.log("Theme updated successfully, returning:", {
+      id: updatedTheme.id,
+      slide1Image: updatedTheme.slide1Image,
+      slide1Title: updatedTheme.slide1Title
+    });
+    
     return updatedTheme;
   }
 
