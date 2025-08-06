@@ -471,6 +471,10 @@ export default function ThemeManager() {
     queryKey: ["/api/admin/themes"],
   });
 
+  const { data: storeSettings } = useQuery({
+    queryKey: ["/api/settings"],
+  });
+
   const createThemeMutation = useMutation({
     mutationFn: async (themeData: Omit<ThemeData, "id" | "isActive">) => {
       return await apiRequest("POST", "/api/admin/themes", themeData);
@@ -2150,39 +2154,39 @@ export default function ThemeManager() {
                       <SliderSettings 
                         id="Edit" 
                         defaultValues={{
-                          sliderAutoplay: editingTheme.sliderAutoplay,
-                          sliderSpeed: editingTheme.sliderSpeed,
-                          sliderEffect: editingTheme.sliderEffect,
-                          slide1Image: editingTheme.slide1Image,
-                          slide1Title: editingTheme.slide1Title,
-                          slide1Subtitle: editingTheme.slide1Subtitle,
-                          slide1ButtonText: editingTheme.slide1ButtonText,
-                          slide1ButtonLink: editingTheme.slide1ButtonLink,
-                          slide1TextPosition: editingTheme.slide1TextPosition,
-                          slide2Image: editingTheme.slide2Image,
-                          slide2Title: editingTheme.slide2Title,
-                          slide2Subtitle: editingTheme.slide2Subtitle,
-                          slide2ButtonText: editingTheme.slide2ButtonText,
-                          slide2ButtonLink: editingTheme.slide2ButtonLink,
-                          slide2TextPosition: editingTheme.slide2TextPosition,
-                          slide3Image: editingTheme.slide3Image,
-                          slide3Title: editingTheme.slide3Title,
-                          slide3Subtitle: editingTheme.slide3Subtitle,
-                          slide3ButtonText: editingTheme.slide3ButtonText,
-                          slide3ButtonLink: editingTheme.slide3ButtonLink,
-                          slide3TextPosition: editingTheme.slide3TextPosition,
-                          slide4Image: editingTheme.slide4Image,
-                          slide4Title: editingTheme.slide4Title,
-                          slide4Subtitle: editingTheme.slide4Subtitle,
-                          slide4ButtonText: editingTheme.slide4ButtonText,
-                          slide4ButtonLink: editingTheme.slide4ButtonLink,
-                          slide4TextPosition: editingTheme.slide4TextPosition,
-                          slide5Image: editingTheme.slide5Image,
-                          slide5Title: editingTheme.slide5Title,
-                          slide5Subtitle: editingTheme.slide5Subtitle,
-                          slide5ButtonText: editingTheme.slide5ButtonText,
-                          slide5ButtonLink: editingTheme.slide5ButtonLink,
-                          slide5TextPosition: editingTheme.slide5TextPosition,
+                          sliderAutoplay: storeSettings?.sliderAutoplay ?? editingTheme.sliderAutoplay,
+                          sliderSpeed: storeSettings?.sliderSpeed ?? editingTheme.sliderSpeed,
+                          sliderEffect: storeSettings?.sliderEffect ?? editingTheme.sliderEffect,
+                          slide1Image: storeSettings?.slide1Image ?? editingTheme.slide1Image,
+                          slide1Title: storeSettings?.slide1Title ?? editingTheme.slide1Title,
+                          slide1Subtitle: storeSettings?.slide1Subtitle ?? editingTheme.slide1Subtitle,
+                          slide1ButtonText: storeSettings?.slide1ButtonText ?? editingTheme.slide1ButtonText,
+                          slide1ButtonLink: storeSettings?.slide1ButtonLink ?? editingTheme.slide1ButtonLink,
+                          slide1TextPosition: storeSettings?.slide1TextPosition ?? editingTheme.slide1TextPosition,
+                          slide2Image: storeSettings?.slide2Image ?? editingTheme.slide2Image,
+                          slide2Title: storeSettings?.slide2Title ?? editingTheme.slide2Title,
+                          slide2Subtitle: storeSettings?.slide2Subtitle ?? editingTheme.slide2Subtitle,
+                          slide2ButtonText: storeSettings?.slide2ButtonText ?? editingTheme.slide2ButtonText,
+                          slide2ButtonLink: storeSettings?.slide2ButtonLink ?? editingTheme.slide2ButtonLink,
+                          slide2TextPosition: storeSettings?.slide2TextPosition ?? editingTheme.slide2TextPosition,
+                          slide3Image: storeSettings?.slide3Image ?? editingTheme.slide3Image,
+                          slide3Title: storeSettings?.slide3Title ?? editingTheme.slide3Title,
+                          slide3Subtitle: storeSettings?.slide3Subtitle ?? editingTheme.slide3Subtitle,
+                          slide3ButtonText: storeSettings?.slide3ButtonText ?? editingTheme.slide3ButtonText,
+                          slide3ButtonLink: storeSettings?.slide3ButtonLink ?? editingTheme.slide3ButtonLink,
+                          slide3TextPosition: storeSettings?.slide3TextPosition ?? editingTheme.slide3TextPosition,
+                          slide4Image: storeSettings?.slide4Image ?? editingTheme.slide4Image,
+                          slide4Title: storeSettings?.slide4Title ?? editingTheme.slide4Title,
+                          slide4Subtitle: storeSettings?.slide4Subtitle ?? editingTheme.slide4Subtitle,
+                          slide4ButtonText: storeSettings?.slide4ButtonText ?? editingTheme.slide4ButtonText,
+                          slide4ButtonLink: storeSettings?.slide4ButtonLink ?? editingTheme.slide4ButtonLink,
+                          slide4TextPosition: storeSettings?.slide4TextPosition ?? editingTheme.slide4TextPosition,
+                          slide5Image: storeSettings?.slide5Image ?? editingTheme.slide5Image,
+                          slide5Title: storeSettings?.slide5Title ?? editingTheme.slide5Title,
+                          slide5Subtitle: storeSettings?.slide5Subtitle ?? editingTheme.slide5Subtitle,
+                          slide5ButtonText: storeSettings?.slide5ButtonText ?? editingTheme.slide5ButtonText,
+                          slide5ButtonLink: storeSettings?.slide5ButtonLink ?? editingTheme.slide5ButtonLink,
+                          slide5TextPosition: storeSettings?.slide5TextPosition ?? editingTheme.slide5TextPosition,
                         }}
                       />
                     </div>
