@@ -1967,6 +1967,17 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       });
       
       console.log("Theme update data:", themeData);
+      console.log("Slider data in request:", {
+        sliderAutoplay: body.sliderAutoplay,
+        sliderSpeed: body.sliderSpeed,
+        sliderEffect: body.sliderEffect,
+        slide1Image: body.slide1Image,
+        slide1Title: body.slide1Title,
+        slide2Image: body.slide2Image,
+        slide3Image: body.slide3Image,
+        slide4Image: body.slide4Image,
+        slide5Image: body.slide5Image
+      });
       const theme = await storage.updateTheme(id, themeData);
       
       // If this is the active theme, sync all settings with store settings via SQL
