@@ -1507,18 +1507,25 @@ export class DatabaseStorage implements IStorage {
 
   // Theme management methods
   async getThemes(): Promise<Theme[]> {
-    const result = await db.execute(sql`SELECT * FROM themes ORDER BY created_at`);
-    return result.rows as Theme[];
+    return await db.select().from(themes).orderBy(themes.createdAt);
   }
 
   async getActiveTheme(): Promise<Theme | undefined> {
-    const result = await db.execute(sql`SELECT * FROM themes WHERE is_active = true LIMIT 1`);
-    return result.rows[0] as Theme | undefined;
+    const [activeTheme] = await db
+      .select()
+      .from(themes)
+      .where(eq(themes.isActive, true))
+      .limit(1);
+    return activeTheme;
   }
 
   async getThemeById(id: string): Promise<Theme | undefined> {
-    const result = await db.execute(sql`SELECT * FROM themes WHERE id = ${id} LIMIT 1`);
-    return result.rows[0] as Theme | undefined;
+    const [theme] = await db
+      .select()
+      .from(themes)
+      .where(eq(themes.id, id))
+      .limit(1);
+    return theme;
   }
 
   async createTheme(theme: InsertTheme): Promise<Theme> {
