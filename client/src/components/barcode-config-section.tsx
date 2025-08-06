@@ -172,8 +172,8 @@ export function BarcodeConfigSection() {
                 control={barcodeForm.control}
                 name="enabled"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-lg border p-4 space-y-3 sm:space-y-0">
-                    <div className="space-y-0.5 flex-1">
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 gap-6">
+                    <div className="space-y-0.5 flex-1 pr-4">
                       <FormLabel className="text-base">{adminT('barcode.enabled')}</FormLabel>
                       <FormDescription>
                         {adminT('barcode.description')}
@@ -185,7 +185,7 @@ export function BarcodeConfigSection() {
                         variant="ghost"
                         size="default"
                         onClick={() => field.onChange(!field.value)}
-                        className={`h-12 w-12 p-0 rounded-lg transition-all duration-200 ml-0 sm:ml-4 self-start sm:self-auto ${
+                        className={`h-12 w-12 p-0 rounded-lg transition-all duration-200 flex-shrink-0 ${
                           field.value 
                             ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 border-2 border-emerald-300 shadow-sm' 
                             : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50 border-2 border-gray-300 shadow-sm'
