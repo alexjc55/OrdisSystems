@@ -215,15 +215,14 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                     <Dialog>
                       <DialogTrigger asChild>
                         <button 
-                          className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center focus:outline-none focus-visible:outline-none active:outline-none"
+                          className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center no-focus-outline"
                           onBlur={(e) => e.target.blur()}
-                          style={{ outline: 'none', boxShadow: 'none' }}
                         >
                           <Info className="h-3 w-3 mr-1 rtl:mr-0 rtl:ml-1" />
                           {t('viewComposition')}
                         </button>
                       </DialogTrigger>
-                      <DialogContent className="max-w-[calc(100vw-32px)] sm:max-w-[500px] mx-4 my-8 max-h-[80vh] overflow-y-auto w-full">
+                      <DialogContent className="max-w-[calc(100vw-32px)] sm:max-w-[500px] mx-auto my-8 max-h-[80vh] overflow-y-auto left-1/2 transform -translate-x-1/2">
                         <DialogHeader>
                           <DialogTitle className="text-lg">
                             {t('composition')} - {localizedName}
@@ -245,15 +244,14 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                   <Dialog>
                     <DialogTrigger asChild>
                       <button 
-                        className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center focus:outline-none focus-visible:outline-none active:outline-none"
+                        className="text-xs text-blue-600 hover:text-blue-800 underline inline-flex items-center no-focus-outline"
                         onBlur={(e) => e.target.blur()}
-                        style={{ outline: 'none', boxShadow: 'none' }}
                       >
                         <Info className="h-3 w-3 mr-1 rtl:mr-0 rtl:ml-1" />
                         {t('viewComposition')}
                       </button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-[calc(100vw-32px)] sm:max-w-[500px] mx-4 my-8 max-h-[80vh] overflow-y-auto w-full">
+                    <DialogContent className="max-w-[calc(100vw-32px)] sm:max-w-[500px] mx-auto my-8 max-h-[80vh] overflow-y-auto left-1/2 transform -translate-x-1/2">
                       <DialogHeader>
                         <DialogTitle className="text-lg">
                           {t('composition')} - {localizedName}

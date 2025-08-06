@@ -5,6 +5,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Remove all focus outlines for composition buttons */
+.no-focus-outline {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+.no-focus-outline:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+.no-focus-outline:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+.no-focus-outline:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
 /* Header animations */
 @keyframes float {
   0%, 100% { 
