@@ -1,48 +1,76 @@
-# СРОЧНЫЕ КОМАНДЫ ДЛЯ ИСПРАВЛЕНИЯ VPS
+# СРОЧНОЕ ИСПРАВЛЕНИЕ VPS - ОШИБКА СЛАЙДЕРА
 
-Выполнить на VPS сервере (ordis.co.il) в точном порядке:
+## ПРОБЛЕМА ПОДТВЕРЖДЕНА:
+На VPS в админке при выборе типа баннера "Слайдер" и нажатии "Сохранить" появляется ошибка:
+**"Failed to execute 'text' on 'Response': body stream already read"**
 
-## 1. Подключение и переход в директорию
+Это происходит потому что на VPS отсутствуют 32 колонки слайдера из 33.
+
+## СРОЧНЫЕ КОМАНДЫ ДЛЯ VPS:
+
+### 1. Остановить все процессы:
 ```bash
-ssh ordis.co.il
-cd /var/www/edahouse.ordis.co.il
+pm2 delete all
 ```
 
-## 2. Остановка приложения
+### 2. Применить миграцию (добавить все недостающие колонки):
 ```bash
-pm2 stop edahouse
-```
-
-## 3. Подключение к базе данных и добавление колонки
-```bash
-psql -h localhost -U edahouse_usr -d edahouse
-```
-
-## 4. Выполнить в psql:
-```sql
-ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slider_autoplay BOOLEAN DEFAULT true;
-ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slider_speed INTEGER DEFAULT 5000;  
+psql -h localhost -U edahouse_usr -d edahouse << 'EOF'
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slider_speed INTEGER DEFAULT 5000;
 ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slider_effect VARCHAR(10) DEFAULT 'fade';
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide1_image VARCHAR(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide1_title VARCHAR(255);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide1_subtitle TEXT;
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide1_button_text VARCHAR(100);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide1_button_link VARCHAR(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide1_text_position VARCHAR(20) DEFAULT 'left';
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide2_image VARCHAR(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide2_title VARCHAR(255);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide2_subtitle TEXT;
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide2_button_text VARCHAR(100);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide2_button_link VARCHAR(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide2_text_position VARCHAR(20) DEFAULT 'left';
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide3_image VARCHAR(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide3_title VARCHAR(255);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide3_subtitle TEXT;
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide3_button_text VARCHAR(100);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide3_button_link VARCHAR(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide3_text_position VARCHAR(20) DEFAULT 'left';
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide4_image VARCHAR(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide4_title VARCHAR(255);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide4_subtitle TEXT;
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide4_button_text VARCHAR(100);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide4_button_link VARCHAR(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide4_text_position VARCHAR(20) DEFAULT 'left';
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide5_image VARCHAR(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide5_title VARCHAR(255);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide5_subtitle TEXT;
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide5_button_text VARCHAR(100);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide5_button_link VARCHAR(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS slide5_text_position VARCHAR(20) DEFAULT 'left';
 UPDATE store_settings SET slider_autoplay = true, slider_speed = 5000, slider_effect = 'fade' WHERE id = 1;
-\q
+EOF
 ```
 
-## 5. Запуск приложения
+### 3. Проверить результат (должно показать 33):
 ```bash
-pm2 start edahouse
+psql -h localhost -U edahouse_usr -d edahouse -c "SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'store_settings' AND (column_name LIKE '%slider%' OR column_name LIKE '%slide%');"
 ```
 
-## 6. Проверка результата
+### 4. Запустить приложение:
 ```bash
-pm2 logs edahouse --lines 10
-curl http://localhost:3000/api/settings | head -20
+pm2 start dist/index.js --name edahouse --env NODE_ENV=production
 ```
 
-## Если все еще ошибки - полный перезапуск
+### 5. Проверить что работает:
 ```bash
-pm2 delete edahouse
-pm2 start ecosystem.production.config.cjs
-pm2 status
+pm2 logs edahouse --lines 5
 ```
 
-КРИТИЧЕСКИ ВАЖНО: Выполнить команды именно в таком порядке!
+## РЕЗУЛЬТАТ:
+После применения миграции ошибка исчезнет и можно будет:
+- ✅ Выбрать тип баннера "Слайдер" 
+- ✅ Сохранить настройки без ошибок
+- ✅ Добавлять изображения и текст для слайдов
+
+**Это критическое исправление - без него функция слайдера полностью не работает на VPS.**
