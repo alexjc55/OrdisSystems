@@ -211,11 +211,15 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
           transition: 'transform 0.6s ease-in-out, opacity 0.3s ease-in-out'
         };
       case 'cube':
+        const cubeRotation = position * -90;
+        const cubeTranslateX = position * 100;
         return {
-          transform: `translateX(${position * 100}%) rotateY(${position * -90}deg)`,
+          transform: `translateX(${cubeTranslateX}%) rotateY(${cubeRotation}deg)`,
           opacity: Math.abs(position) <= 1 ? 1 : 0,
-          transition: 'transform 0.7s ease-in-out, opacity 0.35s ease-in-out',
-          transformOrigin: position > 0 ? 'left center' : 'right center'
+          transition: 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transformOrigin: position > 0 ? 'left center' : position < 0 ? 'right center' : 'center center',
+          zIndex: isActive ? 10 : 10 - Math.abs(position),
+          transformStyle: 'preserve-3d'
         };
       case 'coverflow':
         const angle = position * 45;
@@ -234,7 +238,7 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
     }
   };
 
-  const containerStyle = storeSettings?.sliderEffect === 'coverflow' ? {
+  const containerStyle = (storeSettings?.sliderEffect === 'coverflow' || storeSettings?.sliderEffect === 'cube') ? {
     perspective: '1000px',
     perspectiveOrigin: 'center center'
   } : {};
