@@ -180,20 +180,74 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
     return `${horizontalClass} ${verticalClass} ${transformClass}`.trim();
   };
 
-  const effectClass = storeSettings?.sliderEffect === 'slide' ? 'transform transition-transform duration-500 ease-in-out' : 'transition-opacity duration-500 ease-in-out';
+  // Enhanced transition effect system
+  const getSlideTransform = (slideIndex: number, effect: string) => {
+    const isActive = slideIndex === currentSlide;
+    const position = slideIndex - currentSlide;
+    
+    switch (effect) {
+      case 'slide':
+        return {
+          transform: `translateX(${position * 100}%)`,
+          opacity: 1,
+          transition: 'transform 0.5s ease-in-out'
+        };
+      case 'slideVertical':
+        return {
+          transform: `translateY(${position * 100}%)`,
+          opacity: 1,
+          transition: 'transform 0.5s ease-in-out'
+        };
+      case 'zoom':
+        return {
+          transform: isActive ? 'scale(1)' : position > 0 ? 'scale(1.1)' : 'scale(0.9)',
+          opacity: isActive ? 1 : 0,
+          transition: 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out'
+        };
+      case 'flip':
+        return {
+          transform: isActive ? 'rotateY(0deg)' : position > 0 ? 'rotateY(90deg)' : 'rotateY(-90deg)',
+          opacity: isActive ? 1 : 0,
+          transition: 'transform 0.6s ease-in-out, opacity 0.3s ease-in-out'
+        };
+      case 'cube':
+        return {
+          transform: `translateX(${position * 100}%) rotateY(${position * -90}deg)`,
+          opacity: Math.abs(position) <= 1 ? 1 : 0,
+          transition: 'transform 0.7s ease-in-out, opacity 0.35s ease-in-out',
+          transformOrigin: position > 0 ? 'left center' : 'right center'
+        };
+      case 'coverflow':
+        const angle = position * 45;
+        const translateZ = Math.abs(position) * -200;
+        return {
+          transform: `translateX(${position * 70}%) rotateY(${angle}deg) translateZ(${translateZ}px)`,
+          opacity: Math.abs(position) <= 2 ? 1 - Math.abs(position) * 0.3 : 0,
+          transition: 'transform 0.6s ease-in-out, opacity 0.6s ease-in-out',
+          zIndex: isActive ? 10 : 10 - Math.abs(position)
+        };
+      default: // fade
+        return {
+          opacity: isActive ? 1 : 0,
+          transition: 'opacity 0.5s ease-in-out'
+        };
+    }
+  };
+
+  const containerStyle = storeSettings?.sliderEffect === 'coverflow' ? {
+    perspective: '1000px',
+    perspectiveOrigin: 'center center'
+  } : {};
 
   return (
-    <div className="relative h-[60vh] md:h-[80vh] overflow-hidden">
+    <div className="relative h-[60vh] md:h-[80vh] overflow-hidden" style={containerStyle}>
       {/* Slides Container */}
       <div className="relative w-full h-full">
         {slides.map((slide, index) => (
           <div
             key={index}
-            className={`absolute inset-0 w-full h-full ${effectClass} ${
-              storeSettings?.sliderEffect === 'slide'
-                ? `translate-x-[${(index - currentSlide) * 100}%]`
-                : index === currentSlide ? 'opacity-100' : 'opacity-0'
-            }`}
+            className="absolute inset-0 w-full h-full"
+            style={getSlideTransform(index, storeSettings?.sliderEffect || 'fade')}
           >
             {/* Background Image */}
             <div
