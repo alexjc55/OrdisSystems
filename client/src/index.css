@@ -1682,4 +1682,29 @@ html[lang="ar"] * {
   direction: inherit;
 }
 
+/* Slider navigation arrows - hide on mobile */
+.slider-nav-arrow {
+  display: none !important;
+}
+
+/* Show navigation arrows only on desktop (768px and up) */
+@media (min-width: 768px) {
+  .slider-nav-arrow {
+    display: flex !important;
+  }
+}
+
+/* Mobile specific override - force hide all slider navigation arrows */
+@media (max-width: 767px) {
+  .slider-nav-arrow,
+  button.slider-nav-arrow,
+  .slider-nav-arrow:hover,
+  .slider-nav-arrow:focus,
+  .slider-nav-arrow:active {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+}
+
 /* Cache bust: 1751412738 */
