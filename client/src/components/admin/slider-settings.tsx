@@ -110,7 +110,7 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
               <option value="slideVertical">{adminT("themes.slideVerticalEffect")}</option>
               <option value="zoom">{adminT("themes.zoomEffect")}</option>
               <option value="flip">{adminT("themes.flipEffect")}</option>
-              <option value="cube">{adminT("themes.cubeEffect")}</option>
+              <option value="pixelFade">{adminT("themes.pixelFadeEffect")}</option>
               <option value="coverflow">{adminT("themes.coverflowEffect")}</option>
             </select>
           </div>

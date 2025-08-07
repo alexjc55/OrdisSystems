@@ -313,7 +313,7 @@
     "slideVerticalEffect": "Vertical Slide",
     "zoomEffect": "Zoom Effect",
     "flipEffect": "Flip Effect",
-    "cubeEffect": "Cube Effect",
+    "pixelFadeEffect": "Pixel Fade",
     "coverflowEffect": "Coverflow Effect",
     "discountApplied": "Discount applied",
     "removeDiscount": "Remove discount",

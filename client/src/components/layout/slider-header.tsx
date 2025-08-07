@@ -210,16 +210,21 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
           opacity: isActive ? 1 : 0,
           transition: 'transform 0.6s ease-in-out, opacity 0.3s ease-in-out'
         };
-      case 'cube':
-        const cubeRotation = position * -90;
-        const cubeTranslateX = position * 100;
+      case 'pixelFade':
+        const tileSize = 20; // размер плитки в пикселях
+        const animationProgress = isActive ? 1 : 0;
+        const maskImage = isActive 
+          ? `radial-gradient(circle at center, black 100%, transparent 100%)`
+          : `radial-gradient(circle at center, transparent 100%, transparent 100%)`;
+        
         return {
-          transform: `translateX(${cubeTranslateX}%) rotateY(${cubeRotation}deg)`,
-          opacity: Math.abs(position) <= 1 ? 1 : 0,
-          transition: 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-          transformOrigin: position > 0 ? 'left center' : position < 0 ? 'right center' : 'center center',
-          zIndex: isActive ? 10 : 10 - Math.abs(position),
-          transformStyle: 'preserve-3d'
+          opacity: isActive ? 1 : 0,
+          transform: isActive ? 'scale(1)' : `scale(${1 + Math.abs(position) * 0.1})`,
+          transition: 'all 1s cubic-bezier(0.4, 0, 0.2, 1)',
+          mask: maskImage,
+          WebkitMask: maskImage,
+          filter: isActive ? 'brightness(1)' : 'brightness(0.7)',
+          zIndex: isActive ? 10 : 1
         };
       case 'coverflow':
         const angle = position * 45;
@@ -238,7 +243,7 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
     }
   };
 
-  const containerStyle = (storeSettings?.sliderEffect === 'coverflow' || storeSettings?.sliderEffect === 'cube') ? {
+  const containerStyle = storeSettings?.sliderEffect === 'coverflow' ? {
     perspective: '1000px',
     perspectiveOrigin: 'center center'
   } : {};
