@@ -211,21 +211,22 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
           transition: 'transform 0.6s ease-in-out, opacity 0.3s ease-in-out'
         };
       case 'pixelFade':
-        const tileSize = 20; // размер плитки в пикселях
-        const animationProgress = isActive ? 1 : 0;
-        const maskImage = isActive 
-          ? `radial-gradient(circle at center, black 100%, transparent 100%)`
-          : `radial-gradient(circle at center, transparent 100%, transparent 100%)`;
-        
-        return {
-          opacity: isActive ? 1 : 0,
-          transform: isActive ? 'scale(1)' : `scale(${1 + Math.abs(position) * 0.1})`,
-          transition: 'all 1s cubic-bezier(0.4, 0, 0.2, 1)',
-          mask: maskImage,
-          WebkitMask: maskImage,
-          filter: isActive ? 'brightness(1)' : 'brightness(0.7)',
-          zIndex: isActive ? 10 : 1
-        };
+        if (isActive) {
+          return {
+            opacity: 1,
+            transform: 'scale(1)',
+            transition: 'opacity 0.8s ease-in-out',
+            animation: 'pixelFadeIn 1.2s ease-out forwards',
+            zIndex: 10
+          };
+        } else {
+          return {
+            opacity: 0,
+            transform: 'scale(1)',
+            transition: 'opacity 0.3s ease-in-out',
+            zIndex: 1
+          };
+        }
       case 'coverflow':
         const angle = position * 45;
         const translateZ = Math.abs(position) * -200;
