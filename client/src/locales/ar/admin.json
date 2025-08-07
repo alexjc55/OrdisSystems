@@ -308,7 +308,7 @@
     "slideVerticalEffect": "الانزلاق العمودي",
     "zoomEffect": "تأثير التكبير",
     "flipEffect": "تأثير القلب",
-
+    "slideScaleEffect": "الانزلاق مع التكبير",
     "coverflowEffect": "تأثير المعرض",
     "enabled": "مفعل",
     "disabled": "معطل",

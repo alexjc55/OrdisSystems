@@ -210,6 +210,31 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
           opacity: isActive ? 1 : 0,
           transition: 'transform 0.6s ease-in-out, opacity 0.3s ease-in-out'
         };
+      case 'slideScale':
+        if (isActive) {
+          return {
+            transform: 'translateX(0%) scale(1)',
+            opacity: 1,
+            transition: 'transform 0.6s ease-in-out, opacity 0.6s ease-in-out',
+            zIndex: 10
+          };
+        } else if (position < 0) {
+          // Previous slide - scale down and move left
+          return {
+            transform: `translateX(-20%) scale(0.7)`,
+            opacity: 0.6,
+            transition: 'transform 0.6s ease-in-out, opacity 0.6s ease-in-out',
+            zIndex: 1
+          };
+        } else {
+          // Next slide - stay off screen to the right
+          return {
+            transform: `translateX(100%) scale(1)`,
+            opacity: 0,
+            transition: 'transform 0.6s ease-in-out, opacity 0.6s ease-in-out',
+            zIndex: 1
+          };
+        }
       case 'coverflow':
         const angle = position * 45;
         const translateZ = Math.abs(position) * -200;

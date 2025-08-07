@@ -292,7 +292,7 @@
     "slideVerticalEffect": "החלקה אנכית",
     "zoomEffect": "אפקט זום",
     "flipEffect": "אפקט היפוך",
-
+    "slideScaleEffect": "החלקה עם שינוי גודל",
     "coverflowEffect": "אפקט גלריה",
     "enabled": "מופעל",
     "disabled": "מבוטל",
