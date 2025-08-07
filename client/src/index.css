@@ -1744,6 +1744,7 @@ html[lang="ar"] .slider-container .space-x-reverse > :not([hidden]) ~ :not([hidd
   -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50% !important;
 }
 
 /* Ensure proper positioning for mobile devices */
@@ -1759,6 +1760,7 @@ html[lang="ar"] .slider-container .space-x-reverse > :not([hidden]) ~ :not([hidd
     max-height: 3.5rem;
     padding: 0.75rem;
     box-sizing: border-box;
+    border-radius: 50% !important;
   }
   
   .whatsapp-button svg {
@@ -1773,6 +1775,7 @@ html[lang="ar"] .slider-container .space-x-reverse > :not([hidden]) ~ :not([hidd
   .whatsapp-button {
     width: 4rem !important; /* 64px */
     height: 4rem !important; /* 64px */
+    border-radius: 50% !important;
   }
   
   .whatsapp-button svg {
