@@ -210,23 +210,6 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
           opacity: isActive ? 1 : 0,
           transition: 'transform 0.6s ease-in-out, opacity 0.3s ease-in-out'
         };
-      case 'pixelFade':
-        if (isActive) {
-          return {
-            opacity: 1,
-            transform: 'scale(1)',
-            transition: 'opacity 0.8s ease-in-out',
-            animation: 'pixelFadeIn 1.2s ease-out forwards',
-            zIndex: 10
-          };
-        } else {
-          return {
-            opacity: 0,
-            transform: 'scale(1)',
-            transition: 'opacity 0.3s ease-in-out',
-            zIndex: 1
-          };
-        }
       case 'coverflow':
         const angle = position * 45;
         const translateZ = Math.abs(position) * -200;
