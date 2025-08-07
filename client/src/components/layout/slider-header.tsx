@@ -384,7 +384,9 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
           </button>
 
           {/* Slide Indicators */}
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+          <div className={`absolute bottom-6 left-1/2 transform -translate-x-1/2 flex z-20 ${
+            isRTL ? 'space-x-reverse space-x-3' : 'space-x-3'
+          }`}>
             {slides.map((_, index) => (
               <button
                 key={index}

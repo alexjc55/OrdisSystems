@@ -1725,4 +1725,17 @@ html[lang="ar"] * {
   }
 }
 
+/* Enhanced spacing for slider indicators in RTL */
+html[lang="he"] .slider-container .space-x-3 > :not([hidden]) ~ :not([hidden]),
+html[lang="ar"] .slider-container .space-x-3 > :not([hidden]) ~ :not([hidden]) {
+  margin-left: 0.875rem !important; /* 14px instead of 12px */
+  margin-right: 0 !important;
+}
+
+html[lang="he"] .slider-container .space-x-reverse > :not([hidden]) ~ :not([hidden]),
+html[lang="ar"] .slider-container .space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+  margin-right: 0.875rem !important; /* 14px instead of 12px */
+  margin-left: 0 !important;
+}
+
 /* Cache bust: 1751412738 */
