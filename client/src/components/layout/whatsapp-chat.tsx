@@ -27,12 +27,12 @@ export function WhatsAppChat() {
   return (
     <button
       onClick={handleWhatsAppClick}
-      className="whatsapp-button fixed bottom-6 z-50 bg-green-500 hover:bg-green-600 text-white shadow-lg transition-all duration-300 hover:scale-110 flex items-center justify-center"
+      className="whatsapp-button fixed bottom-6 right-6 w-14 h-14 md:w-16 md:h-16 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center"
       aria-label={t('whatsapp.writeMessage')}
       title={t('whatsapp.writeMessage')}
     >
       <svg 
-        className="h-8 w-8" 
+        className="h-8 w-8 md:h-10 md:w-10" 
         viewBox="0 0 24 24" 
         fill="currentColor"
       >

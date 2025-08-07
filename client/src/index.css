@@ -1738,4 +1738,61 @@ html[lang="ar"] .slider-container .space-x-reverse > :not([hidden]) ~ :not([hidd
   margin-left: 0 !important;
 }
 
+/* WhatsApp button enhancements for mobile */
+.whatsapp-button {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Ensure proper positioning for mobile devices */
+@media (max-width: 767px) {
+  .whatsapp-button {
+    bottom: 1.5rem !important;
+    right: 1.5rem !important;
+    width: 3.5rem !important; /* 56px */
+    height: 3.5rem !important; /* 56px */
+    min-width: 3.5rem;
+    min-height: 3.5rem;
+    max-width: 3.5rem;
+    max-height: 3.5rem;
+    padding: 0.75rem;
+    box-sizing: border-box;
+  }
+  
+  .whatsapp-button svg {
+    width: 2rem !important; /* 32px */
+    height: 2rem !important; /* 32px */
+    flex-shrink: 0;
+  }
+}
+
+/* Desktop enhancements */
+@media (min-width: 768px) {
+  .whatsapp-button {
+    width: 4rem !important; /* 64px */
+    height: 4rem !important; /* 64px */
+  }
+  
+  .whatsapp-button svg {
+    width: 2.5rem !important; /* 40px */
+    height: 2.5rem !important; /* 40px */
+  }
+}
+
+/* RTL positioning for WhatsApp button */
+html[lang="he"] .whatsapp-button,
+html[lang="ar"] .whatsapp-button {
+  right: auto !important;
+  left: 1.5rem !important;
+}
+
+@media (min-width: 768px) {
+  html[lang="he"] .whatsapp-button,
+  html[lang="ar"] .whatsapp-button {
+    left: 1.5rem !important;
+  }
+}
+
 /* Cache bust: 1751412738 */
