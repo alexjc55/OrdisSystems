@@ -51,6 +51,10 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(storeSettings?.sliderAutoplay !== false);
   const intervalRef = useRef<NodeJS.Timeout>();
+  
+  // Touch/swipe support for mobile
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   // Extract slides data from storeSettings with proper field mapping
   const slides: SlideData[] = [];
@@ -114,6 +118,42 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
 
   const togglePlayPause = () => {
     setIsPlaying(!isPlaying);
+  };
+
+  // Touch event handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && slides.length > 1) {
+      // In RTL, left swipe should go to previous slide
+      if (isRTL) {
+        prevSlide();
+      } else {
+        nextSlide();
+      }
+    }
+    
+    if (isRightSwipe && slides.length > 1) {
+      // In RTL, right swipe should go to next slide
+      if (isRTL) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
   };
 
   const getTextAlignmentClasses = (position: string) => {
@@ -258,7 +298,13 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
   } : {};
 
   return (
-    <div className="relative h-[60vh] md:h-[80vh] overflow-hidden" style={containerStyle}>
+    <div 
+      className="slider-container relative h-[60vh] md:h-[80vh] overflow-hidden select-none" 
+      style={containerStyle}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Slides Container */}
       <div className="relative w-full h-full">
         {slides.map((slide, index) => (

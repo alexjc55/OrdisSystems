@@ -1707,4 +1707,22 @@ html[lang="ar"] * {
   }
 }
 
+/* Touch and swipe enhancements for mobile slider */
+.slider-container {
+  touch-action: pan-y pinch-zoom;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scrolling for touch devices */
+@media (pointer: coarse) {
+  .slider-container {
+    scroll-behavior: smooth;
+  }
+}
+
 /* Cache bust: 1751412738 */
