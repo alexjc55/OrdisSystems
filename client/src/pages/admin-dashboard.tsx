@@ -3093,17 +3093,7 @@ export default function AdminDashboard() {
   // Store settings mutation
   const updateStoreSettingsMutation = useMutation({
     mutationFn: async (settingsData: any) => {
-      console.log("=== CLIENT SIDE DEBUG ===");
       console.log("Saving store settings:", settingsData);
-      
-      // DEBUG: Log multilingual fields specifically
-      console.log("Multilingual fields being sent:");
-      Object.keys(settingsData).filter(key => 
-        key.includes('deliveryInfo') || key.includes('paymentInfo')
-      ).forEach(key => {
-        console.log(`  ${key}: "${settingsData[key]}"`);
-      });
-      
       // Clean up empty numeric fields to prevent database errors
       const cleanedData = { ...settingsData };
       
