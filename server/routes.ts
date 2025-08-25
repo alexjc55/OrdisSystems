@@ -2053,9 +2053,9 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         if (themeData.showWhatsAppChat !== undefined) updateFields.push(`show_whatsapp_chat = ${themeData.showWhatsAppChat}`);
         if (themeData.whatsappPhone !== undefined) updateFields.push(`whatsapp_phone_number = '${(themeData.whatsappPhone || '').replace(/'/g, "''")}'`);
         if (themeData.whatsappMessage !== undefined) updateFields.push(`whatsapp_default_message = '${(themeData.whatsappMessage || 'Здравствуйте! У меня есть вопрос по заказу.').replace(/'/g, "''")}'`);
-        if (themeData.whatsappMessageEn !== undefined) updateFields.push(`whatsapp_message_en = '${(themeData.whatsappMessageEn || '').replace(/'/g, "''")}'`);
-        if (themeData.whatsappMessageHe !== undefined) updateFields.push(`whatsapp_message_he = '${(themeData.whatsappMessageHe || '').replace(/'/g, "''")}'`);
-        if (themeData.whatsappMessageAr !== undefined) updateFields.push(`whatsapp_message_ar = '${(themeData.whatsappMessageAr || '').replace(/'/g, "''")}'`);
+        if (themeData.whatsappMessageEn !== undefined) updateFields.push(`whatsapp_default_message_en = '${(themeData.whatsappMessageEn || '').replace(/'/g, "''")}'`);
+        if (themeData.whatsappMessageHe !== undefined) updateFields.push(`whatsapp_default_message_he = '${(themeData.whatsappMessageHe || '').replace(/'/g, "''")}'`);
+        if (themeData.whatsappMessageAr !== undefined) updateFields.push(`whatsapp_default_message_ar = '${(themeData.whatsappMessageAr || '').replace(/'/g, "''")}'`);
         
         // Check if there are any meaningful slider updates (not just empty defaults)
         const hasSliderContent = () => {
@@ -2196,9 +2196,9 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         `show_whatsapp_chat = ${theme.showWhatsAppChat ?? true}`,
         `whatsapp_phone_number = '${theme.whatsappPhone || ''}'`,
         `whatsapp_default_message = '${theme.whatsappMessage || 'Здравствуйте! У меня есть вопрос по заказу.'}'`,
-        `whatsapp_message_en = '${theme.whatsappMessageEn || ''}'`,
-        `whatsapp_message_he = '${theme.whatsappMessageHe || ''}'`,
-        `whatsapp_message_ar = '${theme.whatsappMessageAr || ''}'`
+        `whatsapp_default_message_en = '${theme.whatsappMessageEn || ''}'`,
+        `whatsapp_default_message_he = '${theme.whatsappMessageHe || ''}'`,
+        `whatsapp_default_message_ar = '${theme.whatsappMessageAr || ''}'`
       ];
       await db.execute(sql.raw(`UPDATE store_settings SET ${visualFields.join(', ')} WHERE id = 1`));
       
