@@ -17,6 +17,7 @@ import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
 import { ModernStyleSettings } from "./modern-style-settings";
 import { SliderSettings } from "./slider-settings";
 import { createMultilingualUpdate } from "@/components/ui/multilingual-store-settings";
+import { type SupportedLanguage } from "@shared/localization";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useTranslation } from 'react-i18next';
 
@@ -275,6 +276,24 @@ interface ThemeData {
 
 export default function ThemeManager() {
   const { t: adminT, i18n } = useTranslation('admin');
+  
+  // Helper function for multilingual FormData updates
+  function createMultilingualFormDataUpdate(formData: FormData, baseField: string) {
+    const result: Record<string, any> = {};
+    
+    // Base field (Russian)
+    result[baseField] = formData.get(baseField) as string || "";
+    
+    // Language-specific fields
+    const languages: SupportedLanguage[] = ['en', 'he', 'ar'];
+    languages.forEach(lang => {
+      const capitalizedLang = lang.charAt(0).toUpperCase() + lang.slice(1);
+      const langField = `${baseField}${capitalizedLang}`;
+      result[langField] = formData.get(langField) as string || "";
+    });
+    
+    return result;
+  }
   
   // Helper function to get multilingual theme name with fallback
   const getThemeName = (theme: ThemeData) => {
@@ -907,33 +926,33 @@ export default function ThemeManager() {
       sliderSpeed: parseInt(formData.get("sliderSpeed") as string) || 5000,
       sliderEffect: formData.get("sliderEffect") as string || "fade",
       slide1Image: formData.get("slide1Image") as string || "",
-      ...createMultilingualUpdate(formData, "slide1Title"),
-      ...createMultilingualUpdate(formData, "slide1Subtitle"),
-      ...createMultilingualUpdate(formData, "slide1ButtonText"),
+      ...createMultilingualFormDataUpdate(formData, "slide1Title"),
+      ...createMultilingualFormDataUpdate(formData, "slide1Subtitle"),
+      ...createMultilingualFormDataUpdate(formData, "slide1ButtonText"),
       slide1ButtonLink: formData.get("slide1ButtonLink") as string || "",
       slide1TextPosition: formData.get("slide1TextPosition") as string || "left",
       slide2Image: formData.get("slide2Image") as string || "",
-      ...createMultilingualUpdate(formData, "slide2Title"),
-      ...createMultilingualUpdate(formData, "slide2Subtitle"),
-      ...createMultilingualUpdate(formData, "slide2ButtonText"),
+      ...createMultilingualFormDataUpdate(formData, "slide2Title"),
+      ...createMultilingualFormDataUpdate(formData, "slide2Subtitle"),
+      ...createMultilingualFormDataUpdate(formData, "slide2ButtonText"),
       slide2ButtonLink: formData.get("slide2ButtonLink") as string || "",
       slide2TextPosition: formData.get("slide2TextPosition") as string || "left",
       slide3Image: formData.get("slide3Image") as string || "",
-      ...createMultilingualUpdate(formData, "slide3Title"),
-      ...createMultilingualUpdate(formData, "slide3Subtitle"),
-      ...createMultilingualUpdate(formData, "slide3ButtonText"),
+      ...createMultilingualFormDataUpdate(formData, "slide3Title"),
+      ...createMultilingualFormDataUpdate(formData, "slide3Subtitle"),
+      ...createMultilingualFormDataUpdate(formData, "slide3ButtonText"),
       slide3ButtonLink: formData.get("slide3ButtonLink") as string || "",
       slide3TextPosition: formData.get("slide3TextPosition") as string || "left",
       slide4Image: formData.get("slide4Image") as string || "",
-      ...createMultilingualUpdate(formData, "slide4Title"),
-      ...createMultilingualUpdate(formData, "slide4Subtitle"),
-      ...createMultilingualUpdate(formData, "slide4ButtonText"),
+      ...createMultilingualFormDataUpdate(formData, "slide4Title"),
+      ...createMultilingualFormDataUpdate(formData, "slide4Subtitle"),
+      ...createMultilingualFormDataUpdate(formData, "slide4ButtonText"),
       slide4ButtonLink: formData.get("slide4ButtonLink") as string || "",
       slide4TextPosition: formData.get("slide4TextPosition") as string || "left",
       slide5Image: formData.get("slide5Image") as string || "",
-      ...createMultilingualUpdate(formData, "slide5Title"),
-      ...createMultilingualUpdate(formData, "slide5Subtitle"),
-      ...createMultilingualUpdate(formData, "slide5ButtonText"),
+      ...createMultilingualFormDataUpdate(formData, "slide5Title"),
+      ...createMultilingualFormDataUpdate(formData, "slide5Subtitle"),
+      ...createMultilingualFormDataUpdate(formData, "slide5ButtonText"),
       slide5ButtonLink: formData.get("slide5ButtonLink") as string || "",
       slide5TextPosition: formData.get("slide5TextPosition") as string || "left",
     };
@@ -1050,33 +1069,33 @@ export default function ThemeManager() {
       sliderSpeed: parseInt(formData.get("sliderSpeed") as string) || 5000,
       sliderEffect: formData.get("sliderEffect") as string || "fade",
       slide1Image: formData.get("slide1Image") as string || "",
-      ...createMultilingualUpdate(formData, "slide1Title"),
-      ...createMultilingualUpdate(formData, "slide1Subtitle"),
-      ...createMultilingualUpdate(formData, "slide1ButtonText"),
+      ...createMultilingualFormDataUpdate(formData, "slide1Title"),
+      ...createMultilingualFormDataUpdate(formData, "slide1Subtitle"),
+      ...createMultilingualFormDataUpdate(formData, "slide1ButtonText"),
       slide1ButtonLink: formData.get("slide1ButtonLink") as string || "",
       slide1TextPosition: formData.get("slide1TextPosition") as string || "left",
       slide2Image: formData.get("slide2Image") as string || "",
-      ...createMultilingualUpdate(formData, "slide2Title"),
-      ...createMultilingualUpdate(formData, "slide2Subtitle"),
-      ...createMultilingualUpdate(formData, "slide2ButtonText"),
+      ...createMultilingualFormDataUpdate(formData, "slide2Title"),
+      ...createMultilingualFormDataUpdate(formData, "slide2Subtitle"),
+      ...createMultilingualFormDataUpdate(formData, "slide2ButtonText"),
       slide2ButtonLink: formData.get("slide2ButtonLink") as string || "",
       slide2TextPosition: formData.get("slide2TextPosition") as string || "left",
       slide3Image: formData.get("slide3Image") as string || "",
-      ...createMultilingualUpdate(formData, "slide3Title"),
-      ...createMultilingualUpdate(formData, "slide3Subtitle"),
-      ...createMultilingualUpdate(formData, "slide3ButtonText"),
+      ...createMultilingualFormDataUpdate(formData, "slide3Title"),
+      ...createMultilingualFormDataUpdate(formData, "slide3Subtitle"),
+      ...createMultilingualFormDataUpdate(formData, "slide3ButtonText"),
       slide3ButtonLink: formData.get("slide3ButtonLink") as string || "",
       slide3TextPosition: formData.get("slide3TextPosition") as string || "left",
       slide4Image: formData.get("slide4Image") as string || "",
-      ...createMultilingualUpdate(formData, "slide4Title"),
-      ...createMultilingualUpdate(formData, "slide4Subtitle"),
-      ...createMultilingualUpdate(formData, "slide4ButtonText"),
+      ...createMultilingualFormDataUpdate(formData, "slide4Title"),
+      ...createMultilingualFormDataUpdate(formData, "slide4Subtitle"),
+      ...createMultilingualFormDataUpdate(formData, "slide4ButtonText"),
       slide4ButtonLink: formData.get("slide4ButtonLink") as string || "",
       slide4TextPosition: formData.get("slide4TextPosition") as string || "left",
       slide5Image: formData.get("slide5Image") as string || "",
-      ...createMultilingualUpdate(formData, "slide5Title"),
-      ...createMultilingualUpdate(formData, "slide5Subtitle"),
-      ...createMultilingualUpdate(formData, "slide5ButtonText"),
+      ...createMultilingualFormDataUpdate(formData, "slide5Title"),
+      ...createMultilingualFormDataUpdate(formData, "slide5Subtitle"),
+      ...createMultilingualFormDataUpdate(formData, "slide5ButtonText"),
       slide5ButtonLink: formData.get("slide5ButtonLink") as string || "",
       slide5TextPosition: formData.get("slide5TextPosition") as string || "left",
     };
@@ -2164,30 +2183,84 @@ export default function ThemeManager() {
                           slide1ButtonText: storeSettings?.slide1ButtonText ?? editingTheme.slide1ButtonText,
                           slide1ButtonLink: storeSettings?.slide1ButtonLink ?? editingTheme.slide1ButtonLink,
                           slide1TextPosition: storeSettings?.slide1TextPosition ?? editingTheme.slide1TextPosition,
+                          // Slide 1 translations
+                          slide1TitleEn: storeSettings?.slide1TitleEn ?? editingTheme.slide1TitleEn ?? "",
+                          slide1SubtitleEn: storeSettings?.slide1SubtitleEn ?? editingTheme.slide1SubtitleEn ?? "",
+                          slide1ButtonTextEn: storeSettings?.slide1ButtonTextEn ?? editingTheme.slide1ButtonTextEn ?? "",
+                          slide1TitleHe: storeSettings?.slide1TitleHe ?? editingTheme.slide1TitleHe ?? "",
+                          slide1SubtitleHe: storeSettings?.slide1SubtitleHe ?? editingTheme.slide1SubtitleHe ?? "",
+                          slide1ButtonTextHe: storeSettings?.slide1ButtonTextHe ?? editingTheme.slide1ButtonTextHe ?? "",
+                          slide1TitleAr: storeSettings?.slide1TitleAr ?? editingTheme.slide1TitleAr ?? "",
+                          slide1SubtitleAr: storeSettings?.slide1SubtitleAr ?? editingTheme.slide1SubtitleAr ?? "",
+                          slide1ButtonTextAr: storeSettings?.slide1ButtonTextAr ?? editingTheme.slide1ButtonTextAr ?? "",
+                          
                           slide2Image: storeSettings?.slide2Image ?? editingTheme.slide2Image,
                           slide2Title: storeSettings?.slide2Title ?? editingTheme.slide2Title,
                           slide2Subtitle: storeSettings?.slide2Subtitle ?? editingTheme.slide2Subtitle,
                           slide2ButtonText: storeSettings?.slide2ButtonText ?? editingTheme.slide2ButtonText,
                           slide2ButtonLink: storeSettings?.slide2ButtonLink ?? editingTheme.slide2ButtonLink,
                           slide2TextPosition: storeSettings?.slide2TextPosition ?? editingTheme.slide2TextPosition,
+                          // Slide 2 translations
+                          slide2TitleEn: storeSettings?.slide2TitleEn ?? editingTheme.slide2TitleEn ?? "",
+                          slide2SubtitleEn: storeSettings?.slide2SubtitleEn ?? editingTheme.slide2SubtitleEn ?? "",
+                          slide2ButtonTextEn: storeSettings?.slide2ButtonTextEn ?? editingTheme.slide2ButtonTextEn ?? "",
+                          slide2TitleHe: storeSettings?.slide2TitleHe ?? editingTheme.slide2TitleHe ?? "",
+                          slide2SubtitleHe: storeSettings?.slide2SubtitleHe ?? editingTheme.slide2SubtitleHe ?? "",
+                          slide2ButtonTextHe: storeSettings?.slide2ButtonTextHe ?? editingTheme.slide2ButtonTextHe ?? "",
+                          slide2TitleAr: storeSettings?.slide2TitleAr ?? editingTheme.slide2TitleAr ?? "",
+                          slide2SubtitleAr: storeSettings?.slide2SubtitleAr ?? editingTheme.slide2SubtitleAr ?? "",
+                          slide2ButtonTextAr: storeSettings?.slide2ButtonTextAr ?? editingTheme.slide2ButtonTextAr ?? "",
+                          
                           slide3Image: storeSettings?.slide3Image ?? editingTheme.slide3Image,
                           slide3Title: storeSettings?.slide3Title ?? editingTheme.slide3Title,
                           slide3Subtitle: storeSettings?.slide3Subtitle ?? editingTheme.slide3Subtitle,
                           slide3ButtonText: storeSettings?.slide3ButtonText ?? editingTheme.slide3ButtonText,
                           slide3ButtonLink: storeSettings?.slide3ButtonLink ?? editingTheme.slide3ButtonLink,
                           slide3TextPosition: storeSettings?.slide3TextPosition ?? editingTheme.slide3TextPosition,
+                          // Slide 3 translations
+                          slide3TitleEn: storeSettings?.slide3TitleEn ?? editingTheme.slide3TitleEn ?? "",
+                          slide3SubtitleEn: storeSettings?.slide3SubtitleEn ?? editingTheme.slide3SubtitleEn ?? "",
+                          slide3ButtonTextEn: storeSettings?.slide3ButtonTextEn ?? editingTheme.slide3ButtonTextEn ?? "",
+                          slide3TitleHe: storeSettings?.slide3TitleHe ?? editingTheme.slide3TitleHe ?? "",
+                          slide3SubtitleHe: storeSettings?.slide3SubtitleHe ?? editingTheme.slide3SubtitleHe ?? "",
+                          slide3ButtonTextHe: storeSettings?.slide3ButtonTextHe ?? editingTheme.slide3ButtonTextHe ?? "",
+                          slide3TitleAr: storeSettings?.slide3TitleAr ?? editingTheme.slide3TitleAr ?? "",
+                          slide3SubtitleAr: storeSettings?.slide3SubtitleAr ?? editingTheme.slide3SubtitleAr ?? "",
+                          slide3ButtonTextAr: storeSettings?.slide3ButtonTextAr ?? editingTheme.slide3ButtonTextAr ?? "",
+                          
                           slide4Image: storeSettings?.slide4Image ?? editingTheme.slide4Image,
                           slide4Title: storeSettings?.slide4Title ?? editingTheme.slide4Title,
                           slide4Subtitle: storeSettings?.slide4Subtitle ?? editingTheme.slide4Subtitle,
                           slide4ButtonText: storeSettings?.slide4ButtonText ?? editingTheme.slide4ButtonText,
                           slide4ButtonLink: storeSettings?.slide4ButtonLink ?? editingTheme.slide4ButtonLink,
                           slide4TextPosition: storeSettings?.slide4TextPosition ?? editingTheme.slide4TextPosition,
+                          // Slide 4 translations
+                          slide4TitleEn: storeSettings?.slide4TitleEn ?? editingTheme.slide4TitleEn ?? "",
+                          slide4SubtitleEn: storeSettings?.slide4SubtitleEn ?? editingTheme.slide4SubtitleEn ?? "",
+                          slide4ButtonTextEn: storeSettings?.slide4ButtonTextEn ?? editingTheme.slide4ButtonTextEn ?? "",
+                          slide4TitleHe: storeSettings?.slide4TitleHe ?? editingTheme.slide4TitleHe ?? "",
+                          slide4SubtitleHe: storeSettings?.slide4SubtitleHe ?? editingTheme.slide4SubtitleHe ?? "",
+                          slide4ButtonTextHe: storeSettings?.slide4ButtonTextHe ?? editingTheme.slide4ButtonTextHe ?? "",
+                          slide4TitleAr: storeSettings?.slide4TitleAr ?? editingTheme.slide4TitleAr ?? "",
+                          slide4SubtitleAr: storeSettings?.slide4SubtitleAr ?? editingTheme.slide4SubtitleAr ?? "",
+                          slide4ButtonTextAr: storeSettings?.slide4ButtonTextAr ?? editingTheme.slide4ButtonTextAr ?? "",
+                          
                           slide5Image: storeSettings?.slide5Image ?? editingTheme.slide5Image,
                           slide5Title: storeSettings?.slide5Title ?? editingTheme.slide5Title,
                           slide5Subtitle: storeSettings?.slide5Subtitle ?? editingTheme.slide5Subtitle,
                           slide5ButtonText: storeSettings?.slide5ButtonText ?? editingTheme.slide5ButtonText,
                           slide5ButtonLink: storeSettings?.slide5ButtonLink ?? editingTheme.slide5ButtonLink,
                           slide5TextPosition: storeSettings?.slide5TextPosition ?? editingTheme.slide5TextPosition,
+                          // Slide 5 translations
+                          slide5TitleEn: storeSettings?.slide5TitleEn ?? editingTheme.slide5TitleEn ?? "",
+                          slide5SubtitleEn: storeSettings?.slide5SubtitleEn ?? editingTheme.slide5SubtitleEn ?? "",
+                          slide5ButtonTextEn: storeSettings?.slide5ButtonTextEn ?? editingTheme.slide5ButtonTextEn ?? "",
+                          slide5TitleHe: storeSettings?.slide5TitleHe ?? editingTheme.slide5TitleHe ?? "",
+                          slide5SubtitleHe: storeSettings?.slide5SubtitleHe ?? editingTheme.slide5SubtitleHe ?? "",
+                          slide5ButtonTextHe: storeSettings?.slide5ButtonTextHe ?? editingTheme.slide5ButtonTextHe ?? "",
+                          slide5TitleAr: storeSettings?.slide5TitleAr ?? editingTheme.slide5TitleAr ?? "",
+                          slide5SubtitleAr: storeSettings?.slide5SubtitleAr ?? editingTheme.slide5SubtitleAr ?? "",
+                          slide5ButtonTextAr: storeSettings?.slide5ButtonTextAr ?? editingTheme.slide5ButtonTextAr ?? "",
                         }}
                       />
                     </div>
