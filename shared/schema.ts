@@ -518,6 +518,9 @@ export const themes = pgTable("themes", {
   // WhatsApp settings
   whatsappPhone: varchar("whatsapp_phone", { length: 20 }).default(""),
   whatsappMessage: text("whatsapp_message").default("Здравствуйте! У меня есть вопрос по заказу."),
+  whatsappMessageEn: text("whatsapp_message_en").default(""),
+  whatsappMessageHe: text("whatsapp_message_he").default(""),
+  whatsappMessageAr: text("whatsapp_message_ar").default(""),
   
   // Neutral colors
   whiteColor: varchar("white_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),

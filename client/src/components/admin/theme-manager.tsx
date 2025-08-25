@@ -302,14 +302,18 @@ export default function ThemeManager() {
     const result: Record<string, any> = {};
     const value = formData.get(baseField) as string || "";
     
+    console.log(`🔍 Saving ${baseField} for language ${currentLang}:`, value);
+    
     if (currentLang === 'ru') {
       // For Russian, save to base field
       result[baseField] = value;
+      console.log(`📝 Setting ${baseField} = "${value}"`);
     } else {
       // For other languages, save to language-specific field
       const capitalizedLang = currentLang.charAt(0).toUpperCase() + currentLang.slice(1);
       const langField = `${baseField}${capitalizedLang}`;
       result[langField] = value;
+      console.log(`📝 Setting ${langField} = "${value}"`);
     }
     
     return result;
