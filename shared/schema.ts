@@ -482,6 +482,9 @@ export const themes = pgTable("themes", {
   cartBannerImage_he: varchar("cart_banner_image_he", { length: 500 }).default(""),
   cartBannerImage_ar: varchar("cart_banner_image_ar", { length: 500 }).default(""),
   cartBannerText: text("cart_banner_text").default(""),
+  cartBannerTextEn: text("cart_banner_text_en").default(""),
+  cartBannerTextHe: text("cart_banner_text_he").default(""),
+  cartBannerTextAr: text("cart_banner_text_ar").default(""),
   cartBannerBgColor: varchar("cart_banner_bg_color", { length: 7 }).default("#f97316"),
   cartBannerTextColor: varchar("cart_banner_text_color", { length: 7 }).default("#ffffff"),
   
