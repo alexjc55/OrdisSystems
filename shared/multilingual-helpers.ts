@@ -312,12 +312,15 @@ export function getLocalizedFieldForAdmin(
     const baseValue = obj[fieldName];
     if (baseValue) return baseValue;
     
-    const suffixedValue = obj[`${fieldName}_${defaultLanguage}`];
-    if (suffixedValue) return suffixedValue;
+    // Try camelCase format: deliveryInfoRu
+    const capitalizedLang = defaultLanguage.charAt(0).toUpperCase() + defaultLanguage.slice(1);
+    const camelCaseValue = obj[`${fieldName}${capitalizedLang}`];
+    if (camelCaseValue) return camelCaseValue;
   } else {
-    // For non-default languages, only return suffixed field (no fallback)
-    const suffixedValue = obj[`${fieldName}_${language}`];
-    if (suffixedValue) return suffixedValue;
+    // For non-default languages, try camelCase format: deliveryInfoHe, deliveryInfoEn
+    const capitalizedLang = language.charAt(0).toUpperCase() + language.slice(1);
+    const camelCaseValue = obj[`${fieldName}${capitalizedLang}`];
+    if (camelCaseValue) return camelCaseValue;
   }
   
   // Return empty string (no fallback to default language)

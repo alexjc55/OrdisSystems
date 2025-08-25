@@ -121,7 +121,8 @@ function ClassicHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSett
   );
 }
 
-function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
+function ModernInfoBlocks({ storeSettings, currentLanguage }: { storeSettings: any, currentLanguage: string }) {
+  
   // Function to get icon component by name  
   const getIcon = (iconName: string) => {
     const iconProps = "h-5 w-5 sm:h-6 sm:w-6";
@@ -146,27 +147,30 @@ function ModernInfoBlocks({ storeSettings }: { storeSettings: any }) {
     }
   };
 
-  // Collect valid blocks (only show blocks with text)
+  // Collect valid blocks with localization (only show blocks with text)
   const blocks = [];
   
-  if (storeSettings?.modernBlock1Text?.trim()) {
+  const block1Text = getMultilingualValue(storeSettings, 'modernBlock1Text', currentLanguage as SupportedLanguage);
+  if (block1Text?.trim()) {
     blocks.push({
       icon: getIcon(storeSettings.modernBlock1Icon || 'star'),
-      text: storeSettings.modernBlock1Text
+      text: block1Text
     });
   }
   
-  if (storeSettings?.modernBlock2Text?.trim()) {
+  const block2Text = getMultilingualValue(storeSettings, 'modernBlock2Text', currentLanguage as SupportedLanguage);
+  if (block2Text?.trim()) {
     blocks.push({
       icon: getIcon(storeSettings.modernBlock2Icon || 'star'),
-      text: storeSettings.modernBlock2Text
+      text: block2Text
     });
   }
   
-  if (storeSettings?.modernBlock3Text?.trim()) {
+  const block3Text = getMultilingualValue(storeSettings, 'modernBlock3Text', currentLanguage as SupportedLanguage);
+  if (block3Text?.trim()) {
     blocks.push({
       icon: getIcon(storeSettings.modernBlock3Icon || 'star'),
-      text: storeSettings.modernBlock3Text
+      text: block3Text
     });
   }
 
@@ -285,7 +289,7 @@ function ModernHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSetti
               </div>
 
               {/* Modern Info Blocks */}
-              <ModernInfoBlocks storeSettings={storeSettings} />
+              <ModernInfoBlocks storeSettings={storeSettings} currentLanguage={currentLanguage} />
             </div>
           </div>
         )}
