@@ -296,6 +296,24 @@ export default function ThemeManager() {
     
     return result;
   }
+
+  // Helper function for language-specific field updates
+  function createLanguageSpecificUpdate(formData: FormData, baseField: string, currentLang: SupportedLanguage) {
+    const result: Record<string, any> = {};
+    const value = formData.get(baseField) as string || "";
+    
+    if (currentLang === 'ru') {
+      // For Russian, save to base field
+      result[baseField] = value;
+    } else {
+      // For other languages, save to language-specific field
+      const capitalizedLang = currentLang.charAt(0).toUpperCase() + currentLang.slice(1);
+      const langField = `${baseField}${capitalizedLang}`;
+      result[langField] = value;
+    }
+    
+    return result;
+  }
   
   // Helper function to get multilingual theme name with fallback
   const getThemeName = (theme: ThemeData) => {
@@ -875,7 +893,7 @@ export default function ThemeManager() {
       cartBannerImage_en: formData.get("cartBannerImage_en") as string || themeImages.cartBannerImage_en,
       cartBannerImage_he: formData.get("cartBannerImage_he") as string || themeImages.cartBannerImage_he,
       cartBannerImage_ar: formData.get("cartBannerImage_ar") as string || themeImages.cartBannerImage_ar,
-      ...createMultilingualFormDataUpdate(formData, "cartBannerText"),
+      ...createLanguageSpecificUpdate(formData, "cartBannerText", currentLanguage),
       cartBannerBgColor: formData.get("cartBannerBgColor") as string || "#f97316",
       cartBannerTextColor: formData.get("cartBannerTextColor") as string || "#ffffff",
       // Bottom banners settings
@@ -1016,7 +1034,7 @@ export default function ThemeManager() {
       cartBannerImage_en: formData.get("cartBannerImage_en") as string || "",
       cartBannerImage_he: formData.get("cartBannerImage_he") as string || "",
       cartBannerImage_ar: formData.get("cartBannerImage_ar") as string || "",
-      ...createMultilingualFormDataUpdate(formData, "cartBannerText"),
+      ...createLanguageSpecificUpdate(formData, "cartBannerText", currentLanguage),
       cartBannerBgColor: formData.get("cartBannerBgColor") as string || "#f97316",
       cartBannerTextColor: formData.get("cartBannerTextColor") as string || "#ffffff",
       // Bottom banners settings
@@ -1046,7 +1064,7 @@ export default function ThemeManager() {
       showCategoryMenu: editVisualSettings.showCategoryMenu,
       showWhatsAppChat: editVisualSettings.showWhatsAppChat,
       whatsappPhone: formData.get("whatsappPhone") as string || "",
-      ...createMultilingualFormDataUpdate(formData, "whatsappMessage"),
+      ...createLanguageSpecificUpdate(formData, "whatsappMessage", currentLanguage),
       whiteColor: convertColorToHsl(formData.get("whiteColor") as string),
       gray50Color: convertColorToHsl(formData.get("gray50Color") as string),
       gray100Color: convertColorToHsl(formData.get("gray100Color") as string),
