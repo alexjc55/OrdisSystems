@@ -1,13 +1,15 @@
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "wouter";
-import { useShopTranslation } from "@/hooks/use-language";
+import { useShopTranslation, useLanguage } from "@/hooks/use-language";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 
 export function WhatsAppChat() {
   const { storeSettings } = useStoreSettings();
   const { user } = useAuth();
   const [location] = useLocation();
   const { t } = useShopTranslation();
+  const { currentLanguage } = useLanguage();
 
   // Don't show if not enabled/configured or if on admin dashboard
   if (!storeSettings?.showWhatsAppChat || 
@@ -18,7 +20,8 @@ export function WhatsAppChat() {
 
   const handleWhatsAppClick = () => {
     const phoneNumber = storeSettings.whatsappPhoneNumber?.replace(/[^\d+]/g, ''); // Clean phone number
-    const defaultMessage = storeSettings.whatsappDefaultMessage || t('whatsapp.defaultMessage');
+    const localizedMessage = getLocalizedField(storeSettings, 'whatsappDefaultMessage', currentLanguage as SupportedLanguage, 'ru');
+    const defaultMessage = localizedMessage || storeSettings.whatsappDefaultMessage || t('whatsapp.defaultMessage');
     const message = encodeURIComponent(defaultMessage);
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
     window.open(whatsappUrl, '_blank');
