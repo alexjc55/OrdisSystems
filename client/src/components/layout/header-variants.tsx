@@ -27,8 +27,9 @@ function getMultilingualValue(
     return currentValue;
   }
   
-  // Fallback to default language (Russian)
-  return storeSettings?.[baseField] || '';
+  // Fallback to default language (Russian) - ALWAYS return fallback
+  const fallbackValue = storeSettings?.[baseField];
+  return fallbackValue || '';
 }
 
 // Helper function to get icon component
