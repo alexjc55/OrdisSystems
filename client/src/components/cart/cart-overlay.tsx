@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { formatCurrency, formatQuantity, formatWeight, type ProductUnit } from "@/lib/currency";
 import { useShopTranslation, useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
+import { getMultilingualValue } from "@/components/ui/multilingual-store-settings";
 import { X, Plus, Minus, Trash2, CreditCard, Clock, MapPin, Phone, User } from "lucide-react";
 
 // Calculate delivery fee based on order total and free delivery threshold
@@ -353,14 +354,14 @@ export default function CartOverlay() {
                   <h3 className="font-semibold text-gray-900">{t('checkout.deliveryInfo')}</h3>
                   <div className="grid grid-cols-1 gap-4">
                     {/* Delivery Info */}
-                    {storeSettings?.deliveryInfo && (
+                    {getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) && (
                       <Card className="bg-gray-50">
                         <CardContent className="p-3">
                           <div className="flex items-start gap-2">
                             <MapPin className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                             <div>
                               <p className="text-sm font-medium text-gray-900 mb-1">{t('cart.delivery')}</p>
-                              <p className="text-xs text-gray-600">{storeSettings.deliveryInfo}</p>
+                              <p className="text-xs text-gray-600">{getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage)}</p>
                             </div>
                           </div>
                         </CardContent>
@@ -409,14 +410,14 @@ export default function CartOverlay() {
                     )}
 
                     {/* Payment Info */}
-                    {storeSettings?.paymentInfo && (
+                    {getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage) && (
                       <Card className="bg-gray-50">
                         <CardContent className="p-3">
                           <div className="flex items-start gap-2">
                             <CreditCard className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                             <div>
-                              <p className="text-sm font-medium text-gray-900 mb-1">Способы оплаты</p>
-                              <p className="text-xs text-gray-600">{storeSettings.paymentInfo}</p>
+                              <p className="text-sm font-medium text-gray-900 mb-1">{t('paymentMethod')}</p>
+                              <p className="text-xs text-gray-600">{getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage)}</p>
                             </div>
                           </div>
                         </CardContent>

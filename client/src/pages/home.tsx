@@ -35,6 +35,7 @@ import SearchInput from "@/components/SearchInput";
 import { useCartStore } from "@/lib/cart";
 import { formatCurrency } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
+import { getMultilingualValue } from "@/components/ui/multilingual-store-settings";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 
@@ -189,7 +190,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
       </div>
 
       {/* Right Column: Delivery & Payment */}
-      {(storeSettings?.deliveryInfo || storeSettings?.paymentInfo) && (
+      {(getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) || getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage)) && (
         <div className="flex">
           <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden flex-1 flex flex-col">
             <div className="p-6 flex-1 flex flex-col">
@@ -200,16 +201,16 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                 <span className="font-semibold text-lg text-gray-800">{t('paymentMethod')} & {t('cart.delivery')}</span>
               </div>
               <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
-                {storeSettings.deliveryInfo && (
+                {getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) && (
                   <div>
                     <span className="text-gray-700 text-base font-bold block mb-2">{t('cart.delivery')}:</span>
-                    <span className="text-gray-800 text-base leading-relaxed">{storeSettings.deliveryInfo}</span>
+                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage)}</span>
                   </div>
                 )}
-                {storeSettings.paymentInfo && (
+                {getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage) && (
                   <div>
                     <span className="text-gray-700 text-base font-bold block mb-2">{t('paymentMethod')}:</span>
-                    <span className="text-gray-800 text-base leading-relaxed">{storeSettings.paymentInfo}</span>
+                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage)}</span>
                   </div>
                 )}
               </div>
