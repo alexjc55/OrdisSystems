@@ -206,9 +206,9 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           <h3 className="text-lg font-poppins font-semibold text-gray-900 mb-1 min-h-[28px] line-clamp-1">
             {localizedName}
           </h3>
-          <div className="min-h-[48px] mb-2">
+          <div className="mb-2">
             {localizedDescription ? (
-              <p className="text-base text-gray-600 line-clamp-2">
+              <p className="text-base text-gray-600">
                 {localizedDescription}
                 {localizedIngredients && (
                   <>
