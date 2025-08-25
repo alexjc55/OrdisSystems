@@ -56,7 +56,7 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
-  // Extract slides data from storeSettings with proper field mapping
+  // Extract slides data from storeSettings with proper field mapping and multilingual support
   const slides: SlideData[] = [];
   for (let i = 1; i <= 5; i++) {
     // Use correct field names from store_settings (with underscore)
@@ -64,9 +64,9 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
     if (slideImage) {
       slides.push({
         image: slideImage,
-        title: storeSettings?.[`slide${i}Title`] || storeSettings?.[`slide${i}_title`] || '',
-        subtitle: storeSettings?.[`slide${i}Subtitle`] || storeSettings?.[`slide${i}_subtitle`] || '',
-        buttonText: storeSettings?.[`slide${i}ButtonText`] || storeSettings?.[`slide${i}_button_text`] || '',
+        title: getMultilingualValue(storeSettings, `slide${i}Title`, currentLanguage),
+        subtitle: getMultilingualValue(storeSettings, `slide${i}Subtitle`, currentLanguage),
+        buttonText: getMultilingualValue(storeSettings, `slide${i}ButtonText`, currentLanguage),
         buttonLink: storeSettings?.[`slide${i}ButtonLink`] || storeSettings?.[`slide${i}_button_link`] || '',
         textPosition: storeSettings?.[`slide${i}TextPosition`] || storeSettings?.[`slide${i}_text_position`] || 'left-center'
       });
