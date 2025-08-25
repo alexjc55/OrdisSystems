@@ -6,6 +6,9 @@ import { ImageUpload } from "@/components/ui/image-upload";
 import { useTranslation } from 'react-i18next';
 import { Trash2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { getLocalizedFieldForAdmin } from "@shared/multilingual-helpers";
+import { createMultilingualUpdate } from "@/components/ui/multilingual-store-settings";
+import { type SupportedLanguage } from "@shared/localization";
 
 interface SliderSettingsProps {
   id: string;
@@ -19,35 +22,86 @@ interface SliderSettingsProps {
     slide1ButtonText?: string;
     slide1ButtonLink?: string;
     slide1TextPosition?: string;
+    // Multilingual fields for slide 1
+    slide1TitleEn?: string;
+    slide1SubtitleEn?: string;
+    slide1ButtonTextEn?: string;
+    slide1TitleHe?: string;
+    slide1SubtitleHe?: string;
+    slide1ButtonTextHe?: string;
+    slide1TitleAr?: string;
+    slide1SubtitleAr?: string;
+    slide1ButtonTextAr?: string;
     slide2Image?: string;
     slide2Title?: string;
     slide2Subtitle?: string;
     slide2ButtonText?: string;
     slide2ButtonLink?: string;
     slide2TextPosition?: string;
+    // Multilingual fields for slide 2
+    slide2TitleEn?: string;
+    slide2SubtitleEn?: string;
+    slide2ButtonTextEn?: string;
+    slide2TitleHe?: string;
+    slide2SubtitleHe?: string;
+    slide2ButtonTextHe?: string;
+    slide2TitleAr?: string;
+    slide2SubtitleAr?: string;
+    slide2ButtonTextAr?: string;
     slide3Image?: string;
     slide3Title?: string;
     slide3Subtitle?: string;
     slide3ButtonText?: string;
     slide3ButtonLink?: string;
     slide3TextPosition?: string;
+    // Multilingual fields for slide 3
+    slide3TitleEn?: string;
+    slide3SubtitleEn?: string;
+    slide3ButtonTextEn?: string;
+    slide3TitleHe?: string;
+    slide3SubtitleHe?: string;
+    slide3ButtonTextHe?: string;
+    slide3TitleAr?: string;
+    slide3SubtitleAr?: string;
+    slide3ButtonTextAr?: string;
     slide4Image?: string;
     slide4Title?: string;
     slide4Subtitle?: string;
     slide4ButtonText?: string;
     slide4ButtonLink?: string;
     slide4TextPosition?: string;
+    // Multilingual fields for slide 4
+    slide4TitleEn?: string;
+    slide4SubtitleEn?: string;
+    slide4ButtonTextEn?: string;
+    slide4TitleHe?: string;
+    slide4SubtitleHe?: string;
+    slide4ButtonTextHe?: string;
+    slide4TitleAr?: string;
+    slide4SubtitleAr?: string;
+    slide4ButtonTextAr?: string;
     slide5Image?: string;
     slide5Title?: string;
     slide5Subtitle?: string;
     slide5ButtonText?: string;
     slide5ButtonLink?: string;
     slide5TextPosition?: string;
+    // Multilingual fields for slide 5
+    slide5TitleEn?: string;
+    slide5SubtitleEn?: string;
+    slide5ButtonTextEn?: string;
+    slide5TitleHe?: string;
+    slide5SubtitleHe?: string;
+    slide5ButtonTextHe?: string;
+    slide5TitleAr?: string;
+    slide5SubtitleAr?: string;
+    slide5ButtonTextAr?: string;
   };
 }
 
 export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) {
-  const { t: adminT } = useTranslation('admin');
+  const { t: adminT, i18n } = useTranslation('admin');
+  const currentLanguage = i18n.language as SupportedLanguage;
 
   const slides = [1, 2, 3, 4, 5];
   
@@ -170,7 +224,7 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
                         type="text"
                         name={`slide${slideNumber}Title`}
                         id={`slide${slideNumber}Title${id}`}
-                        defaultValue={defaultValues[`slide${slideNumber}Title` as keyof typeof defaultValues] as string || ''}
+                        defaultValue={getLocalizedFieldForAdmin(defaultValues, `slide${slideNumber}Title`, currentLanguage) || ''}
                         placeholder={adminT("themes.slideTitlePlaceholder")}
                         className="text-sm"
                       />
@@ -202,7 +256,7 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
                     <Textarea
                       name={`slide${slideNumber}Subtitle`}
                       id={`slide${slideNumber}Subtitle${id}`}
-                      defaultValue={defaultValues[`slide${slideNumber}Subtitle` as keyof typeof defaultValues] as string || ''}
+                      defaultValue={getLocalizedFieldForAdmin(defaultValues, `slide${slideNumber}Subtitle`, currentLanguage) || ''}
                       placeholder={adminT("themes.slideSubtitlePlaceholder")}
                       rows={2}
                       className="text-sm"
@@ -216,7 +270,7 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
                         type="text"
                         name={`slide${slideNumber}ButtonText`}
                         id={`slide${slideNumber}ButtonText${id}`}
-                        defaultValue={defaultValues[`slide${slideNumber}ButtonText` as keyof typeof defaultValues] as string || ''}
+                        defaultValue={getLocalizedFieldForAdmin(defaultValues, `slide${slideNumber}ButtonText`, currentLanguage) || ''}
                         placeholder={adminT("themes.buttonTextPlaceholder")}
                         className="text-sm"
                       />

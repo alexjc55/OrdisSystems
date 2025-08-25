@@ -294,6 +294,23 @@ export const storeSettings = pgTable("store_settings", {
   contactEmailAr: varchar("contact_email_ar", { length: 255 }),
   addressAr: text("address_ar"),
   
+  // Slider multilingual fields - Arabic
+  slide1TitleAr: varchar("slide1_title_ar", { length: 255 }),
+  slide1SubtitleAr: text("slide1_subtitle_ar"),
+  slide1ButtonTextAr: varchar("slide1_button_text_ar", { length: 100 }),
+  slide2TitleAr: varchar("slide2_title_ar", { length: 255 }),
+  slide2SubtitleAr: text("slide2_subtitle_ar"),
+  slide2ButtonTextAr: varchar("slide2_button_text_ar", { length: 100 }),
+  slide3TitleAr: varchar("slide3_title_ar", { length: 255 }),
+  slide3SubtitleAr: text("slide3_subtitle_ar"),
+  slide3ButtonTextAr: varchar("slide3_button_text_ar", { length: 100 }),
+  slide4TitleAr: varchar("slide4_title_ar", { length: 255 }),
+  slide4SubtitleAr: text("slide4_subtitle_ar"),
+  slide4ButtonTextAr: varchar("slide4_button_text_ar", { length: 100 }),
+  slide5TitleAr: varchar("slide5_title_ar", { length: 255 }),
+  slide5SubtitleAr: text("slide5_subtitle_ar"),
+  slide5ButtonTextAr: varchar("slide5_button_text_ar", { length: 100 }),
+  
   // Hebrew fields (for completeness)
   storeNameHe: varchar("store_name_he", { length: 255 }),
   welcomeTitleHe: varchar("welcome_title_he", { length: 255 }),
@@ -309,6 +326,23 @@ export const storeSettings = pgTable("store_settings", {
   contactEmailHe: varchar("contact_email_he", { length: 255 }),
   addressHe: text("address_he"),
   
+  // Slider multilingual fields - Hebrew
+  slide1TitleHe: varchar("slide1_title_he", { length: 255 }),
+  slide1SubtitleHe: text("slide1_subtitle_he"),
+  slide1ButtonTextHe: varchar("slide1_button_text_he", { length: 100 }),
+  slide2TitleHe: varchar("slide2_title_he", { length: 255 }),
+  slide2SubtitleHe: text("slide2_subtitle_he"),
+  slide2ButtonTextHe: varchar("slide2_button_text_he", { length: 100 }),
+  slide3TitleHe: varchar("slide3_title_he", { length: 255 }),
+  slide3SubtitleHe: text("slide3_subtitle_he"),
+  slide3ButtonTextHe: varchar("slide3_button_text_he", { length: 100 }),
+  slide4TitleHe: varchar("slide4_title_he", { length: 255 }),
+  slide4SubtitleHe: text("slide4_subtitle_he"),
+  slide4ButtonTextHe: varchar("slide4_button_text_he", { length: 100 }),
+  slide5TitleHe: varchar("slide5_title_he", { length: 255 }),
+  slide5SubtitleHe: text("slide5_subtitle_he"),
+  slide5ButtonTextHe: varchar("slide5_button_text_he", { length: 100 }),
+  
   // English fields (for completeness)
   storeNameEn: varchar("store_name_en", { length: 255 }),
   welcomeTitleEn: varchar("welcome_title_en", { length: 255 }),
@@ -323,6 +357,23 @@ export const storeSettings = pgTable("store_settings", {
   contactPhoneEn: varchar("contact_phone_en", { length: 50 }),
   contactEmailEn: varchar("contact_email_en", { length: 255 }),
   addressEn: text("address_en"),
+  
+  // Slider multilingual fields - English
+  slide1TitleEn: varchar("slide1_title_en", { length: 255 }),
+  slide1SubtitleEn: text("slide1_subtitle_en"),
+  slide1ButtonTextEn: varchar("slide1_button_text_en", { length: 100 }),
+  slide2TitleEn: varchar("slide2_title_en", { length: 255 }),
+  slide2SubtitleEn: text("slide2_subtitle_en"),
+  slide2ButtonTextEn: varchar("slide2_button_text_en", { length: 100 }),
+  slide3TitleEn: varchar("slide3_title_en", { length: 255 }),
+  slide3SubtitleEn: text("slide3_subtitle_en"),
+  slide3ButtonTextEn: varchar("slide3_button_text_en", { length: 100 }),
+  slide4TitleEn: varchar("slide4_title_en", { length: 255 }),
+  slide4SubtitleEn: text("slide4_subtitle_en"),
+  slide4ButtonTextEn: varchar("slide4_button_text_en", { length: 100 }),
+  slide5TitleEn: varchar("slide5_title_en", { length: 255 }),
+  slide5SubtitleEn: text("slide5_subtitle_en"),
+  slide5ButtonTextEn: varchar("slide5_button_text_en", { length: 100 }),
   
   modernBlock1Icon: varchar("modern_block1_icon", { length: 50 }), // Icon name for first modern block
   modernBlock1Text: varchar("modern_block1_text", { length: 255 }), // Text for first modern block
