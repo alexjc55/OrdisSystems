@@ -2051,19 +2051,36 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         if (themeData.whatsappPhone !== undefined) updateFields.push(`whatsapp_phone_number = '${(themeData.whatsappPhone || '').replace(/'/g, "''")}'`);
         if (themeData.whatsappMessage !== undefined) updateFields.push(`whatsapp_default_message = '${(themeData.whatsappMessage || 'Здравствуйте! У меня есть вопрос по заказу.').replace(/'/g, "''")}'`);
         
-        // Sync slider settings to store_settings
-        if (themeData.sliderAutoplay !== undefined) updateFields.push(`slider_autoplay = ${themeData.sliderAutoplay}`);
-        if (themeData.sliderSpeed !== undefined) updateFields.push(`slider_speed = ${themeData.sliderSpeed}`);
-        if (themeData.sliderEffect !== undefined) updateFields.push(`slider_effect = '${themeData.sliderEffect || 'fade'}'`);
-        
-        // Sync all 5 slides
-        for (let i = 1; i <= 5; i++) {
-          if (themeData[`slide${i}Image`] !== undefined) updateFields.push(`slide${i}_image = '${(themeData[`slide${i}Image`] || '').replace(/'/g, "''")}'`);
-          if (themeData[`slide${i}Title`] !== undefined) updateFields.push(`slide${i}_title = '${(themeData[`slide${i}Title`] || '').replace(/'/g, "''")}'`);
-          if (themeData[`slide${i}Subtitle`] !== undefined) updateFields.push(`slide${i}_subtitle = '${(themeData[`slide${i}Subtitle`] || '').replace(/'/g, "''")}'`);
-          if (themeData[`slide${i}ButtonText`] !== undefined) updateFields.push(`slide${i}_button_text = '${(themeData[`slide${i}ButtonText`] || '').replace(/'/g, "''")}'`);
-          if (themeData[`slide${i}ButtonLink`] !== undefined) updateFields.push(`slide${i}_button_link = '${(themeData[`slide${i}ButtonLink`] || '').replace(/'/g, "''")}'`);
-          if (themeData[`slide${i}TextPosition`] !== undefined) updateFields.push(`slide${i}_text_position = '${themeData[`slide${i}TextPosition`] || 'left'}'`);
+        // Check if there are any meaningful slider updates (not just empty defaults)
+        const hasSliderContent = () => {
+          // Check if any slide has actual content (image, title, or subtitle)
+          for (let i = 1; i <= 5; i++) {
+            if (themeData[`slide${i}Image`] && themeData[`slide${i}Image`].trim() !== '') return true;
+            if (themeData[`slide${i}Title`] && themeData[`slide${i}Title`].trim() !== '') return true;
+            if (themeData[`slide${i}Subtitle`] && themeData[`slide${i}Subtitle`].trim() !== '') return true;
+          }
+          // Or if slider settings are explicitly being configured
+          if (themeData.sliderAutoplay !== undefined && themeData.sliderAutoplay !== false) return true;
+          if (themeData.sliderSpeed !== undefined && themeData.sliderSpeed !== 5000) return true;
+          if (themeData.sliderEffect !== undefined && themeData.sliderEffect !== 'fade') return true;
+          return false;
+        };
+
+        // Only sync slider settings to store_settings if there's actual slider content or explicit configuration
+        if (hasSliderContent()) {
+          if (themeData.sliderAutoplay !== undefined) updateFields.push(`slider_autoplay = ${themeData.sliderAutoplay}`);
+          if (themeData.sliderSpeed !== undefined) updateFields.push(`slider_speed = ${themeData.sliderSpeed}`);
+          if (themeData.sliderEffect !== undefined) updateFields.push(`slider_effect = '${themeData.sliderEffect || 'fade'}'`);
+          
+          // Sync all 5 slides
+          for (let i = 1; i <= 5; i++) {
+            if (themeData[`slide${i}Image`] !== undefined) updateFields.push(`slide${i}_image = '${(themeData[`slide${i}Image`] || '').replace(/'/g, "''")}'`);
+            if (themeData[`slide${i}Title`] !== undefined) updateFields.push(`slide${i}_title = '${(themeData[`slide${i}Title`] || '').replace(/'/g, "''")}'`);
+            if (themeData[`slide${i}Subtitle`] !== undefined) updateFields.push(`slide${i}_subtitle = '${(themeData[`slide${i}Subtitle`] || '').replace(/'/g, "''")}'`);
+            if (themeData[`slide${i}ButtonText`] !== undefined) updateFields.push(`slide${i}_button_text = '${(themeData[`slide${i}ButtonText`] || '').replace(/'/g, "''")}'`);
+            if (themeData[`slide${i}ButtonLink`] !== undefined) updateFields.push(`slide${i}_button_link = '${(themeData[`slide${i}ButtonLink`] || '').replace(/'/g, "''")}'`);
+            if (themeData[`slide${i}TextPosition`] !== undefined) updateFields.push(`slide${i}_text_position = '${themeData[`slide${i}TextPosition`] || 'left'}'`);
+          }
         }
         
         // Execute the update if there are fields to update
