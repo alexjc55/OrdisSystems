@@ -203,6 +203,27 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
       
       <CardContent className="p-4 flex-1 flex flex-col">
         <div className="flex-1 min-h-[200px] flex flex-col">
+          <div className="mb-2">
+            {product.categories && product.categories.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {product.categories.slice(0, 2).map((category) => (
+                  <Badge 
+                    key={category.id}
+                    variant="secondary" 
+                    className="cursor-pointer bg-gray-100 text-gray-700 hover:bg-primary hover:text-primary-foreground transition-colors text-xs"
+                    onClick={() => onCategoryClick?.(category.id)}
+                  >
+                    {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any)}
+                  </Badge>
+                ))}
+                {product.categories.length > 2 && (
+                  <Badge variant="secondary" className="bg-gray-100 text-gray-500 text-xs">
+                    +{product.categories.length - 2}
+                  </Badge>
+                )}
+              </div>
+            )}
+          </div>
           <h3 className="text-lg font-poppins font-semibold text-gray-900 mb-1 min-h-[28px] line-clamp-1">
             {localizedName}
           </h3>
@@ -267,27 +288,6 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                   </Dialog>
                 </p>
               )
-            )}
-          </div>
-          <div className="min-h-[32px] mb-2">
-            {product.categories && product.categories.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {product.categories.slice(0, 2).map((category) => (
-                  <Badge 
-                    key={category.id}
-                    variant="secondary" 
-                    className="cursor-pointer bg-gray-100 text-gray-700 hover:bg-primary hover:text-primary-foreground transition-colors text-xs"
-                    onClick={() => onCategoryClick?.(category.id)}
-                  >
-                    {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any)}
-                  </Badge>
-                ))}
-                {product.categories.length > 2 && (
-                  <Badge variant="secondary" className="bg-gray-100 text-gray-500 text-xs">
-                    +{product.categories.length - 2}
-                  </Badge>
-                )}
-              </div>
             )}
           </div>
           <div className="flex items-center justify-between mb-3 mt-auto">
