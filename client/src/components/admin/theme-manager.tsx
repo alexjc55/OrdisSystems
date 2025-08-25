@@ -18,6 +18,7 @@ import { ModernStyleSettings } from "./modern-style-settings";
 import { SliderSettings } from "./slider-settings";
 import { createMultilingualUpdate } from "@/components/ui/multilingual-store-settings";
 import { type SupportedLanguage } from "@shared/localization";
+import { getLocalizedFieldForAdmin } from "@shared/multilingual-helpers";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { useTranslation } from 'react-i18next';
 
@@ -276,6 +277,7 @@ interface ThemeData {
 
 export default function ThemeManager() {
   const { t: adminT, i18n } = useTranslation('admin');
+  const currentLanguage = i18n.language as SupportedLanguage;
   
   // Helper function for multilingual FormData updates
   function createMultilingualFormDataUpdate(formData: FormData, baseField: string) {
@@ -873,7 +875,7 @@ export default function ThemeManager() {
       cartBannerImage_en: formData.get("cartBannerImage_en") as string || themeImages.cartBannerImage_en,
       cartBannerImage_he: formData.get("cartBannerImage_he") as string || themeImages.cartBannerImage_he,
       cartBannerImage_ar: formData.get("cartBannerImage_ar") as string || themeImages.cartBannerImage_ar,
-      cartBannerText: formData.get("cartBannerText") as string || "",
+      ...createMultilingualFormDataUpdate(formData, "cartBannerText"),
       cartBannerBgColor: formData.get("cartBannerBgColor") as string || "#f97316",
       cartBannerTextColor: formData.get("cartBannerTextColor") as string || "#ffffff",
       // Bottom banners settings
@@ -1014,7 +1016,7 @@ export default function ThemeManager() {
       cartBannerImage_en: formData.get("cartBannerImage_en") as string || "",
       cartBannerImage_he: formData.get("cartBannerImage_he") as string || "",
       cartBannerImage_ar: formData.get("cartBannerImage_ar") as string || "",
-      cartBannerText: formData.get("cartBannerText") as string || "",
+      ...createMultilingualFormDataUpdate(formData, "cartBannerText"),
       cartBannerBgColor: formData.get("cartBannerBgColor") as string || "#f97316",
       cartBannerTextColor: formData.get("cartBannerTextColor") as string || "#ffffff",
       // Bottom banners settings
@@ -1044,7 +1046,7 @@ export default function ThemeManager() {
       showCategoryMenu: editVisualSettings.showCategoryMenu,
       showWhatsAppChat: editVisualSettings.showWhatsAppChat,
       whatsappPhone: formData.get("whatsappPhone") as string || "",
-      whatsappMessage: formData.get("whatsappMessage") as string || adminT('themes.whatsappMessageDefault'),
+      ...createMultilingualFormDataUpdate(formData, "whatsappMessage"),
       whiteColor: convertColorToHsl(formData.get("whiteColor") as string),
       gray50Color: convertColorToHsl(formData.get("gray50Color") as string),
       gray100Color: convertColorToHsl(formData.get("gray100Color") as string),
@@ -1665,7 +1667,7 @@ export default function ThemeManager() {
                                   name="cartBannerText"
                                   id="cartBannerTextCreate"
                                   defaultValue=""
-                                  placeholder={adminT("themes.bannerTextPlaceholder")}
+                                  placeholder={adminT('themes.cartBannerTextPlaceholder')}
                                   className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                                 />
                               </div>
@@ -2463,7 +2465,7 @@ export default function ThemeManager() {
                             <textarea
                               name="whatsappMessage"
                               id="whatsappMessage"
-                              defaultValue={editingTheme?.whatsappMessage || adminT('themes.whatsappMessageDefault')}
+                              defaultValue={getLocalizedFieldForAdmin(editingTheme, "whatsappMessage", currentLanguage) || adminT('themes.whatsappMessageDefault')}
                               placeholder={adminT('themes.whatsappMessageDefault')}
                               rows={2}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none"
@@ -2512,7 +2514,7 @@ export default function ThemeManager() {
                                   type="text"
                                   name="cartBannerText"
                                   id="cartBannerText"
-                                  defaultValue={editingTheme?.cartBannerText || ""}
+                                  defaultValue={getLocalizedFieldForAdmin(editingTheme, "cartBannerText", currentLanguage) || ""}
                                   placeholder={adminT('themes.cartBannerTextPlaceholder')}
                                   className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                                 />
