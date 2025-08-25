@@ -1442,6 +1442,16 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         return res.status(403).json({ message: "Admin access required" });
       }
 
+      // DEBUG: Log incoming data for multilingual fields
+      console.log('=== PUT /api/settings DEBUG ===');
+      console.log('Request body keys:', Object.keys(req.body));
+      console.log('Multilingual delivery/payment fields in request:');
+      Object.keys(req.body).filter(key => 
+        key.includes('deliveryInfo') || key.includes('paymentInfo')
+      ).forEach(key => {
+        console.log(`  ${key}: "${req.body[key]}"`);
+      });
+      
       // Get current settings first
       const currentSettings = await storage.getStoreSettings();
       if (!currentSettings) {
