@@ -309,7 +309,9 @@ export default function CartSidebar() {
                         color: storeSettings.cartBannerTextColor || "#ffffff"
                       }}
                     >
-                      <p className="text-sm leading-relaxed">{storeSettings.cartBannerText}</p>
+                      <p className="text-sm leading-relaxed">
+                        {getLocalizedField(storeSettings, 'cartBannerText', currentLanguage as SupportedLanguage, 'ru') || storeSettings.cartBannerText}
+                      </p>
                     </div>
                   )}
                   
