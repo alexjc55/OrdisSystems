@@ -8323,6 +8323,16 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         >
                           /api/feed/facebook
                         </button>
+                        {storeSettings?.defaultLanguage !== 'ru' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=ru`)}
+                            title="Russian"
+                          >
+                            RU
+                          </button>
+                        )}
                         {storeSettings?.defaultLanguage !== 'en' && (
                           <button 
                             type="button"
@@ -8389,6 +8399,16 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         >
                           /api/feed/google
                         </button>
+                        {storeSettings?.defaultLanguage !== 'ru' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=ru`)}
+                            title="Russian"
+                          >
+                            RU
+                          </button>
+                        )}
                         {storeSettings?.defaultLanguage !== 'en' && (
                           <button 
                             type="button"
@@ -8444,6 +8464,16 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         >
                           /api/feed/yandex
                         </button>
+                        {storeSettings?.defaultLanguage !== 'ru' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=ru`)}
+                            title="Russian"
+                          >
+                            RU
+                          </button>
+                        )}
                         {storeSettings?.defaultLanguage !== 'en' && (
                           <button 
                             type="button"
@@ -8499,6 +8529,16 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         >
                           /api/feed/json
                         </button>
+                        {storeSettings?.defaultLanguage !== 'ru' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=ru`)}
+                            title="Russian"
+                          >
+                            RU
+                          </button>
+                        )}
                         {storeSettings?.defaultLanguage !== 'en' && (
                           <button 
                             type="button"
