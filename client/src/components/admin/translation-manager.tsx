@@ -253,7 +253,7 @@ export function TranslationManager() {
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>{t("translationManagement.important")}:</strong> {t("translationManagement.russianFieldsRequired")}
+              <strong>{t("translationManagement.important")}:</strong> {t("translationManagement.primaryLanguageFieldsRequired")}
             </AlertDescription>
           </Alert>
         </CardContent>

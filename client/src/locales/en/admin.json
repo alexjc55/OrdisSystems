@@ -1156,7 +1156,7 @@
     "importTranslations": "Import Translations",
     "uploadTranslationsFile": "Upload translations file",
     "exportInfo": "The file will contain all text elements: products, categories, store settings and themes.",
-    "importWarning": "Important: base language (Russian) fields cannot be empty.",
+    "importWarning": "Important: primary language fields cannot be empty.",
     "selectFile": "Select File",
     "exportToExcel": "Export to Excel",
     "importFile": "Import File",
@@ -1184,6 +1184,6 @@
     "step3Import": "Step 3: Import Translations",
     "step3Description": "Upload the edited file back to the system",
     "important": "Important",
-    "russianFieldsRequired": "Base language (Russian) fields must be filled and cannot be empty"
+    "primaryLanguageFieldsRequired": "Primary language fields must be filled and cannot be empty"
   }
 }

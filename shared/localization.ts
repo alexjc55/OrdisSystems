@@ -14,6 +14,43 @@ export const LANGUAGE_NAMES = {
 } as const;
 
 /**
+ * Get the display name of a language in the current language
+ */
+export function getLanguageDisplayName(
+  targetLanguage: SupportedLanguage,
+  currentLanguage: SupportedLanguage
+): string {
+  const languageNames = {
+    ru: {
+      ru: 'русского',
+      en: 'английского', 
+      he: 'иврита',
+      ar: 'арабского'
+    },
+    en: {
+      ru: 'Russian',
+      en: 'English',
+      he: 'Hebrew', 
+      ar: 'Arabic'
+    },
+    he: {
+      ru: 'רוסית',
+      en: 'אנגלית',
+      he: 'עברית',
+      ar: 'ערבית'
+    },
+    ar: {
+      ru: 'الروسية',
+      en: 'الإنجليزية',
+      he: 'العبرية',
+      ar: 'العربية'
+    }
+  };
+  
+  return languageNames[currentLanguage]?.[targetLanguage] || LANGUAGE_NAMES[targetLanguage];
+}
+
+/**
  * Get localized field value with fallback to configurable default language
  * Enhanced to support both storeSettings object and direct defaultLanguage parameter
  */
