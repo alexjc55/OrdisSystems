@@ -435,7 +435,10 @@
     "searchProducts": "Поиск товаров...",
     "prevPage": "Пред.",
     "nextPage": "След.",
-    "lastPage": "Последняя"
+    "lastPage": "Последняя",
+    "copyLink": "Копировать ссылку",
+    "allLanguages": "все языки",
+    "note": "Примечание"
   },
   "themeFormLabels": {
     "name": "Название темы",
@@ -1079,7 +1082,10 @@
     "canEditOrdersDescription": "Разрешить редактирование заказов клиентов",
     "canViewSettingsDescription": "Разрешить просмотр настроек магазина",
     "canManageSettingsDescription": "Разрешить изменение настроек магазина",
-    "canEditOrders": "Редактирование заказов"
+    "canEditOrders": "Редактирование заказов",
+    "advertisingFeeds": "Фиды для рекламы",
+    "feedsDescription": "Ссылки на фиды товаров для интеграции с рекламными платформами Facebook, Google Ads и Яндекс.Директ. Фиды автоматически обновляются при изменении товаров.",
+    "feedsNote": "Ссылки ведут на категории товаров, так как отдельных страниц товаров нет. Фиды поддерживают все языки магазина."
   },
   "systemSettings": {
     "canManageProducts": "Управление товарами",

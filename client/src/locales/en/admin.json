@@ -181,7 +181,10 @@
     "searchProducts": "Search products...",
     "prevPage": "Prev",
     "nextPage": "Next",
-    "lastPage": "Last"
+    "lastPage": "Last",
+    "copyLink": "Copy link",
+    "allLanguages": "all languages",
+    "note": "Note"
   },
   "products": {
     "title": "Products",
@@ -649,7 +652,10 @@
     "canEditOrdersDescription": "Allow editing customer orders",
     "canViewSettingsDescription": "Allow viewing store settings",
     "canManageSettingsDescription": "Allow changing store settings",
-    "canEditOrders": "Edit Orders"
+    "canEditOrders": "Edit Orders",
+    "advertisingFeeds": "Advertising Feeds",
+    "feedsDescription": "Product feed links for integration with Facebook, Google Ads and Yandex Direct advertising platforms. Feeds automatically update when products change.",
+    "feedsNote": "Links point to product categories since there are no individual product pages. Feeds support all store languages."
   },
   "barcode": {
     "title": "Barcode System",

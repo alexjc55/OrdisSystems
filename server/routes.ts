@@ -2856,6 +2856,83 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
+  // Product feeds for advertising platforms
+  app.get("/api/feed/facebook", async (req, res) => {
+    try {
+      const language = req.query.lang as string || 'ru';
+      const format = req.query.format as string || 'xml'; // xml or csv
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      
+      const { getFeedProducts, generateFacebookXMLFeed, generateFacebookCSVFeed } = await import('./feed-generator');
+      const products = await getFeedProducts({ language, baseUrl });
+      
+      if (format === 'csv') {
+        const csvFeed = generateFacebookCSVFeed(products);
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename=facebook_feed_${language}.csv`);
+        res.send(csvFeed);
+      } else {
+        const xmlFeed = generateFacebookXMLFeed(products, { language, baseUrl });
+        res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+        res.send(xmlFeed);
+      }
+    } catch (error) {
+      console.error('Error generating Facebook feed:', error);
+      res.status(500).json({ message: 'Failed to generate feed' });
+    }
+  });
+
+  app.get("/api/feed/google", async (req, res) => {
+    try {
+      const language = req.query.lang as string || 'ru';
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      
+      const { getFeedProducts, generateGoogleXMLFeed } = await import('./feed-generator');
+      const products = await getFeedProducts({ language, baseUrl });
+      const xmlFeed = generateGoogleXMLFeed(products, { language, baseUrl });
+      
+      res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+      res.send(xmlFeed);
+    } catch (error) {
+      console.error('Error generating Google feed:', error);
+      res.status(500).json({ message: 'Failed to generate feed' });
+    }
+  });
+
+  app.get("/api/feed/yandex", async (req, res) => {
+    try {
+      const language = req.query.lang as string || 'ru';
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      
+      const { getFeedProducts, generateYandexXMLFeed } = await import('./feed-generator');
+      const products = await getFeedProducts({ language, baseUrl });
+      const xmlFeed = generateYandexXMLFeed(products, { language, baseUrl });
+      
+      res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+      res.send(xmlFeed);
+    } catch (error) {
+      console.error('Error generating Yandex feed:', error);
+      res.status(500).json({ message: 'Failed to generate feed' });
+    }
+  });
+
+  app.get("/api/feed/json", async (req, res) => {
+    try {
+      const language = req.query.lang as string || 'ru';
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      
+      const { getFeedProducts, generateJSONFeed } = await import('./feed-generator');
+      const products = await getFeedProducts({ language, baseUrl });
+      const jsonFeed = generateJSONFeed(products, { language, baseUrl });
+      
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.send(jsonFeed);
+    } catch (error) {
+      console.error('Error generating JSON feed:', error);
+      res.status(500).json({ message: 'Failed to generate feed' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

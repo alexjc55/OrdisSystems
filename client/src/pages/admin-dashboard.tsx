@@ -7159,6 +7159,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
 
   const [isTrackingCodeOpen, setIsTrackingCodeOpen] = useState(false);
+  const [isAdvertisingFeedsOpen, setIsAdvertisingFeedsOpen] = useState(false);
 
   
   const form = useForm({
@@ -8262,7 +8263,260 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           </CollapsibleContent>
         </Collapsible>
 
+        {/* Advertising Feeds Section */}
+        <Collapsible open={isAdvertisingFeedsOpen} onOpenChange={setIsAdvertisingFeedsOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {isRTL ? (
+                  <>
+                    {isAdvertisingFeedsOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.advertisingFeeds')}</h3>
+                    <Globe className="h-5 w-5 text-primary" />
+                  </>
+                ) : (
+                  <>
+                    <Globe className="h-5 w-5 text-primary" />
+                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.advertisingFeeds')}</h3>
+                    {isAdvertisingFeedsOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </>
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="space-y-6">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className={`text-sm text-blue-800 mb-4 ${isRTL ? 'text-right' : 'text-left'}`}>
+                {adminT('storeSettings.feedsDescription')}
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Facebook Catalog Feed */}
+                <div className="bg-white border rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">f</span>
+                    </div>
+                    <h4 className="font-medium">Facebook Catalog</h4>
+                  </div>
+                  <div className="space-y-2 text-xs">
+                    <div>
+                      <label className="text-gray-600">XML ({adminT('common.allLanguages')}):</label>
+                      <div className="mt-1 flex gap-1 flex-wrap">
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-mono select-all cursor-pointer"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook`)}
+                          title={adminT('common.copyLink')}
+                        >
+                          /api/feed/facebook
+                        </button>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=en`)}
+                          title="English"
+                        >
+                          EN
+                        </button>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=he`)}
+                          title="Hebrew"
+                        >
+                          HE
+                        </button>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=ar`)}
+                          title="Arabic"
+                        >
+                          AR
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-gray-600">CSV:</label>
+                      <button 
+                        type="button"
+                        className="ml-1 px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-mono select-all cursor-pointer"
+                        onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?format=csv`)}
+                        title={adminT('common.copyLink')}
+                      >
+                        /api/feed/facebook?format=csv
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
+                {/* Google Ads Feed */}
+                <div className="bg-white border rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-6 h-6 bg-red-500 rounded flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">G</span>
+                    </div>
+                    <h4 className="font-medium">Google Ads</h4>
+                  </div>
+                  <div className="space-y-2 text-xs">
+                    <div>
+                      <label className="text-gray-600">XML ({adminT('common.allLanguages')}):</label>
+                      <div className="mt-1 flex gap-1 flex-wrap">
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-mono select-all cursor-pointer"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google`)}
+                          title={adminT('common.copyLink')}
+                        >
+                          /api/feed/google
+                        </button>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=en`)}
+                          title="English"
+                        >
+                          EN
+                        </button>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=he`)}
+                          title="Hebrew"
+                        >
+                          HE
+                        </button>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=ar`)}
+                          title="Arabic"
+                        >
+                          AR
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Yandex Direct Feed */}
+                <div className="bg-white border rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-6 h-6 bg-red-600 rounded flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">Я</span>
+                    </div>
+                    <h4 className="font-medium">Yandex Direct</h4>
+                  </div>
+                  <div className="space-y-2 text-xs">
+                    <div>
+                      <label className="text-gray-600">YML ({adminT('common.allLanguages')}):</label>
+                      <div className="mt-1 flex gap-1 flex-wrap">
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-mono select-all cursor-pointer"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex`)}
+                          title={adminT('common.copyLink')}
+                        >
+                          /api/feed/yandex
+                        </button>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=en`)}
+                          title="English"
+                        >
+                          EN
+                        </button>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=he`)}
+                          title="Hebrew"
+                        >
+                          HE
+                        </button>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=ar`)}
+                          title="Arabic"
+                        >
+                          AR
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Universal JSON Feed */}
+                <div className="bg-white border rounded-lg p-4 md:col-span-2 lg:col-span-1">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-6 h-6 bg-green-600 rounded flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">{'{}'}</span>
+                    </div>
+                    <h4 className="font-medium">Universal JSON</h4>
+                  </div>
+                  <div className="space-y-2 text-xs">
+                    <div>
+                      <label className="text-gray-600">JSON ({adminT('common.allLanguages')}):</label>
+                      <div className="mt-1 flex gap-1 flex-wrap">
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-mono select-all cursor-pointer"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json`)}
+                          title={adminT('common.copyLink')}
+                        >
+                          /api/feed/json
+                        </button>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=en`)}
+                          title="English"
+                        >
+                          EN
+                        </button>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=he`)}
+                          title="Hebrew"
+                        >
+                          HE
+                        </button>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=ar`)}
+                          title="Arabic"
+                        >
+                          AR
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className={`mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800 ${isRTL ? 'text-right' : 'text-left'}`}>
+                <strong>{adminT('common.note')}:</strong> {adminT('storeSettings.feedsNote')}
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
 
         <div className="flex justify-center">
           <Button 
