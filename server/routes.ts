@@ -2841,15 +2841,6 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       const { parseExcelFile, importTranslations } = await import('./translation-manager');
       const translations = parseExcelFile(req.file.buffer);
       
-      // Validate that base language (Russian) fields are not empty
-      const invalidRows = translations.filter(row => !row.ru || row.ru.trim() === '');
-      if (invalidRows.length > 0) {
-        return res.status(400).json({ 
-          message: 'Base language (Russian) fields cannot be empty',
-          invalidRows: invalidRows.length
-        });
-      }
-
       await importTranslations(translations);
       
       // Clear cache to ensure updated translations are reflected
