@@ -38,9 +38,11 @@ export function getLocalizedField(
     return item[field] || '';
   }
   
-  // Try to get localized field
-  const localizedField = `${field}_${currentLanguage}`;
-  const localizedValue = item[localizedField];
+  // Try to get localized field - support both formats
+  const localizedFieldUnderscore = `${field}_${currentLanguage}`;
+  const localizedFieldCamelCase = `${field}${currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1)}`;
+  
+  let localizedValue = item[localizedFieldUnderscore] || item[localizedFieldCamelCase];
   
   // If localized value exists, use it
   if (localizedValue) {
