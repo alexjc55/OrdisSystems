@@ -8323,7 +8323,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         >
                           /api/feed/facebook
                         </button>
-                        {storeSettings?.defaultLanguage !== 'ru' && (
+                        {storeSettings?.defaultLanguage !== 'ru' && storeSettings?.enabledLanguages?.includes('ru') && storeSettings?.enabledLanguages?.includes('ru') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8333,7 +8333,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             RU
                           </button>
                         )}
-                        {storeSettings?.defaultLanguage !== 'en' && (
+                        {storeSettings?.defaultLanguage !== 'en' && storeSettings?.enabledLanguages?.includes('en') && storeSettings?.enabledLanguages?.includes('en') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8343,7 +8343,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             EN
                           </button>
                         )}
-                        {storeSettings?.defaultLanguage !== 'he' && (
+                        {storeSettings?.defaultLanguage !== 'he' && storeSettings?.enabledLanguages?.includes('he') && storeSettings?.enabledLanguages?.includes('he') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8353,7 +8353,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             HE
                           </button>
                         )}
-                        {storeSettings?.defaultLanguage !== 'ar' && (
+                        {storeSettings?.defaultLanguage !== 'ar' && storeSettings?.enabledLanguages?.includes('ar') && storeSettings?.enabledLanguages?.includes('ar') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8399,7 +8399,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         >
                           /api/feed/google
                         </button>
-                        {storeSettings?.defaultLanguage !== 'ru' && (
+                        {storeSettings?.defaultLanguage !== 'ru' && storeSettings?.enabledLanguages?.includes('ru') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8409,7 +8409,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             RU
                           </button>
                         )}
-                        {storeSettings?.defaultLanguage !== 'en' && (
+                        {storeSettings?.defaultLanguage !== 'en' && storeSettings?.enabledLanguages?.includes('en') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8419,7 +8419,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             EN
                           </button>
                         )}
-                        {storeSettings?.defaultLanguage !== 'he' && (
+                        {storeSettings?.defaultLanguage !== 'he' && storeSettings?.enabledLanguages?.includes('he') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8429,7 +8429,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             HE
                           </button>
                         )}
-                        {storeSettings?.defaultLanguage !== 'ar' && (
+                        {storeSettings?.defaultLanguage !== 'ar' && storeSettings?.enabledLanguages?.includes('ar') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8464,7 +8464,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         >
                           /api/feed/yandex
                         </button>
-                        {storeSettings?.defaultLanguage !== 'ru' && (
+                        {storeSettings?.defaultLanguage !== 'ru' && storeSettings?.enabledLanguages?.includes('ru') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8474,7 +8474,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             RU
                           </button>
                         )}
-                        {storeSettings?.defaultLanguage !== 'en' && (
+                        {storeSettings?.defaultLanguage !== 'en' && storeSettings?.enabledLanguages?.includes('en') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8484,7 +8484,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             EN
                           </button>
                         )}
-                        {storeSettings?.defaultLanguage !== 'he' && (
+                        {storeSettings?.defaultLanguage !== 'he' && storeSettings?.enabledLanguages?.includes('he') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8494,7 +8494,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             HE
                           </button>
                         )}
-                        {storeSettings?.defaultLanguage !== 'ar' && (
+                        {storeSettings?.defaultLanguage !== 'ar' && storeSettings?.enabledLanguages?.includes('ar') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8529,7 +8529,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         >
                           /api/feed/json
                         </button>
-                        {storeSettings?.defaultLanguage !== 'ru' && (
+                        {storeSettings?.defaultLanguage !== 'ru' && storeSettings?.enabledLanguages?.includes('ru') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8539,7 +8539,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             RU
                           </button>
                         )}
-                        {storeSettings?.defaultLanguage !== 'en' && (
+                        {storeSettings?.defaultLanguage !== 'en' && storeSettings?.enabledLanguages?.includes('en') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8549,7 +8549,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             EN
                           </button>
                         )}
-                        {storeSettings?.defaultLanguage !== 'he' && (
+                        {storeSettings?.defaultLanguage !== 'he' && storeSettings?.enabledLanguages?.includes('he') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8559,7 +8559,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             HE
                           </button>
                         )}
-                        {storeSettings?.defaultLanguage !== 'ar' && (
+                        {storeSettings?.defaultLanguage !== 'ar' && storeSettings?.enabledLanguages?.includes('ar') && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
