@@ -20,6 +20,26 @@ interface FeedOptions {
 }
 
 /**
+ * Normalize image URL by removing @ symbols and double slashes
+ */
+function normalizeImageUrl(imagePath: string, baseUrl: string): string {
+  if (!imagePath) return '';
+  
+  // Remove @ symbols and normalize path separators
+  let normalizedPath = imagePath.replace(/@/g, '').replace(/\/+/g, '/');
+  
+  // Ensure path starts with /
+  if (!normalizedPath.startsWith('/')) {
+    normalizedPath = '/' + normalizedPath;
+  }
+  
+  // Remove any double slashes in the final URL
+  const fullUrl = `${baseUrl}${normalizedPath}`.replace(/([^:])\/+/g, '$1/');
+  
+  return fullUrl;
+}
+
+/**
  * Get the default language from settings
  */
 async function getDefaultLanguage(): Promise<string> {
@@ -106,7 +126,7 @@ export async function getFeedProducts(options: FeedOptions): Promise<FeedProduct
       price: row.productPrice || 0,
       category: categoryName,
       categoryId: row.categoryId || 0,
-      image: row.productImage ? `${baseUrl}${row.productImage.startsWith('/') ? row.productImage : `/${row.productImage}`}` : undefined,
+      image: row.productImage ? normalizeImageUrl(row.productImage, baseUrl) : undefined,
       availability: row.productAvailable ? 'in stock' : 'out of stock',
       link: categoryLink,
       description: description || undefined
