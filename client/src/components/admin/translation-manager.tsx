@@ -249,13 +249,6 @@ export function TranslationManager() {
               {t("translationManagement.step3Description")}
             </p>
           </div>
-          
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              <strong>{t("translationManagement.important")}:</strong> {t("translationManagement.primaryLanguageFieldsRequired")}
-            </AlertDescription>
-          </Alert>
         </CardContent>
       </Card>
     </div>
