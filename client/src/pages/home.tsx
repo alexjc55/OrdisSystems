@@ -255,9 +255,7 @@ export default function Home() {
 
   // Calculate selected category first
   const selectedCategory = useMemo(() => {
-    const found = categories.find(cat => cat.id === selectedCategoryId);
-    console.log('🏷️ Selected category:', { selectedCategoryId, found: found?.name, categoriesCount: categories?.length });
-    return found;
+    return categories.find(cat => cat.id === selectedCategoryId);
   }, [categories, selectedCategoryId]);
 
   // Generate SEO data for home page
@@ -443,7 +441,7 @@ export default function Home() {
       if (!isNaN(categoryId) && categoryId !== selectedCategoryId) {
         setSelectedCategoryId(categoryId);
         setCategoryFilter(categoryId.toString());
-        console.log('🔗 Category URL detected:', { categoryId, selectedCategoryId, categories: categories?.length });
+
       }
     } else if (pathParts[1] === 'all-products' && selectedCategoryId !== 0) {
       setSelectedCategoryId(0);
