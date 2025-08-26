@@ -30,6 +30,9 @@ export function useUrlLanguage() {
     
     if (!langParam) return; // No language parameter in URL
     
+    console.log('URL language parameter detected:', langParam);
+    console.log('Store settings enabled languages:', storeSettings.enabledLanguages);
+    
     // Check if the language exists and is supported
     if (!Object.keys(LANGUAGES).includes(langParam)) {
       console.warn(`Language "${langParam}" is not supported`);
@@ -37,9 +40,15 @@ export function useUrlLanguage() {
     }
     
     // Check if the language is enabled in admin settings
-    const enabledLanguages = storeSettings.enabledLanguages || ['ru', 'en', 'he', 'ar'];
+    // If enabledLanguages is null, undefined, or empty array, don't allow switching
+    const enabledLanguages = storeSettings.enabledLanguages;
+    if (!enabledLanguages || !Array.isArray(enabledLanguages) || enabledLanguages.length === 0) {
+      console.warn('No enabled languages found in admin settings');
+      return;
+    }
+    
     if (!enabledLanguages.includes(langParam)) {
-      console.warn(`Language "${langParam}" is not enabled in admin settings`);
+      console.warn(`Language "${langParam}" is not enabled in admin settings. Enabled: [${enabledLanguages.join(', ')}]`);
       return;
     }
     
