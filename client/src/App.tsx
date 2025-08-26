@@ -10,6 +10,7 @@ import { CustomHtml } from "@/components/custom-html";
 import { WhatsAppChat } from "@/components/layout/whatsapp-chat";
 import { Footer } from "@/components/layout/footer";
 import { LanguageInitializer } from "@/components/language-initializer";
+import { useUrlLanguage } from "@/hooks/use-url-language";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import PWAStatusBar from "@/components/PWAStatusBar";
 import PushNotificationRequest from "@/components/PushNotificationRequest";
@@ -34,6 +35,9 @@ import { ProtectedRoute } from "@/lib/protected-route";
 function Router() {
   const { storeSettings } = useStoreSettings();
   const { i18n } = useTranslation();
+  
+  // Handle URL-based language switching
+  useUrlLanguage();
   
   // State for notification modal
   const [notificationModal, setNotificationModal] = useState<{
