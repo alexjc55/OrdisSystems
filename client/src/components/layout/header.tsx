@@ -36,10 +36,9 @@ function getMultilingualValue(
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { LanguageSwitcher } from "@/components/language-switcher";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download } from "lucide-react";
-import { useLocation } from "wouter";
-import { LanguageLink } from "@/hooks/use-language-link";
+import { Link, useLocation } from "wouter";
 import type { User as UserType } from "@shared/schema";
 
 interface HeaderProps {
@@ -51,7 +50,7 @@ export default function Header({ onResetView }: HeaderProps) {
   const { items, toggleCart } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useCommonTranslation();
-  const { currentLanguage } = useLanguage();
+  const { currentLanguage, changeLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const { isInstalled, installApp, isStandalone } = usePWA();
@@ -89,7 +88,7 @@ export default function Header({ onResetView }: HeaderProps) {
         <div className="flex justify-between items-center h-16">
           {/* Left side - Logo and Title */}
           <div className="flex items-center min-w-0 flex-1">
-            <LanguageLink href="/" onClick={() => onResetView?.()}>
+            <Link href="/" onClick={() => onResetView?.()}>
               <div className="flex items-center cursor-pointer">
                 {(() => {
                   const logoUrl = getLocalizedImageField(storeSettings, 'logoUrl', currentLanguage as SupportedLanguage);
@@ -116,17 +115,17 @@ export default function Header({ onResetView }: HeaderProps) {
                   {getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse"}
                 </h1>
               </div>
-            </LanguageLink>
+            </Link>
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex ml-8 rtl:ml-0 rtl:mr-8 space-x-8 rtl:space-x-reverse">
-              <LanguageLink href="/" onClick={() => onResetView?.()} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+              <Link href="/" onClick={() => onResetView?.()} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                 {t('menu')}
-              </LanguageLink>
+              </Link>
               {(user?.role === 'admin' || user?.role === 'worker') && (
-                <LanguageLink href="/admin" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/admin" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                   {t('admin')}
-                </LanguageLink>
+                </Link>
               )}
             </nav>
           </div>
@@ -136,7 +135,7 @@ export default function Header({ onResetView }: HeaderProps) {
             {/* Language Switcher - Desktop only, multiple languages only */}
             {storeSettings?.enabledLanguages && storeSettings.enabledLanguages.length > 1 && (
               <div className="hidden md:block">
-                <LanguageSwitcher />
+                <LanguageSwitcher variant="compact" />
               </div>
             )}
             
@@ -207,17 +206,17 @@ export default function Header({ onResetView }: HeaderProps) {
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <LanguageLink href="/profile">
+                      <Link href="/profile">
                         <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                         <span>{t('navigation.profile')}</span>
-                      </LanguageLink>
+                      </Link>
                     </DropdownMenuItem>
                     {user?.role === 'admin' && (
                       <DropdownMenuItem asChild>
-                        <LanguageLink href="/admin">
+                        <Link href="/admin">
                           <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
                           <span>{t('adminPanel')}</span>
-                        </LanguageLink>
+                        </Link>
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSeparator />

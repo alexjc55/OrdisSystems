@@ -1,3 +1,4 @@
+import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -15,16 +16,24 @@ import PushNotificationRequest from "@/components/PushNotificationRequest";
 import NotificationModal from "@/components/NotificationModal";
 import { CacheBuster } from "@/components/cache-buster";
 import { IOSCacheBuster } from "@/components/ios-cache-buster";
-import { LanguageRouter } from "@/components/language-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
-import { useLanguageRouting } from "@/hooks/use-language-routing";
+import Landing from "@/pages/landing";
+import Home from "@/pages/home";
+import AdminDashboard from "@/pages/admin-dashboard";
+import Profile from "@/pages/profile";
+import ChangePasswordPage from "@/pages/change-password";
+import ForgotPasswordPage from "@/pages/forgot-password";
+import ResetPasswordPage from "@/pages/reset-password";
+import Checkout from "@/pages/checkout";
+import AuthPage from "@/pages/auth-page";
+import NotFound from "@/pages/not-found";
+import { ProtectedRoute } from "@/lib/protected-route";
 
 function Router() {
   const { storeSettings } = useStoreSettings();
   const { i18n } = useTranslation();
-  const { currentLanguage } = useLanguageRouting();
   
   // State for notification modal
   const [notificationModal, setNotificationModal] = useState<{
@@ -39,28 +48,31 @@ function Router() {
     type: 'marketing'
   });
 
-  // Initialize language and direction based on URL routing
+  // Initialize language and direction on app start
   useEffect(() => {
-    // Language is now handled by useLanguageRouting hook
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage && Object.keys({ru: 1, en: 1, he: 1}).includes(savedLanguage)) {
+      if (savedLanguage !== i18n.language) {
+        i18n.changeLanguage(savedLanguage);
+      }
+      updateDocumentDirection(savedLanguage);
+    } else {
+      updateDocumentDirection(i18n.language);
+    }
+    
     // Listen for language changes
     const handleLanguageChange = (lng: string) => {
       updateDocumentDirection(lng);
       // Update HTML lang attribute for SEO
       document.documentElement.lang = lng;
-      // Save to localStorage for consistency
-      localStorage.setItem('language', lng);
     };
     
     i18n.on('languageChanged', handleLanguageChange);
     
-    // Set initial direction
-    updateDocumentDirection(currentLanguage);
-    document.documentElement.lang = currentLanguage;
-    
     return () => {
       i18n.off('languageChanged', handleLanguageChange);
     };
-  }, [i18n, currentLanguage]);
+  }, [i18n]);
 
   // Force disable scroll lock on any attempt by Radix UI
   useEffect(() => {
@@ -242,10 +254,20 @@ function Router() {
         <CustomHtml html={storeSettings.headerHtml} type="head" />
       )}
       
-      <LanguageRouter 
-        notificationModal={notificationModal}
-        setNotificationModal={setNotificationModal}
-      />
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/category/:categoryId" component={Home} />
+        <Route path="/all-products" component={Home} />
+        <Route path="/auth" component={AuthPage} />
+        <ProtectedRoute path="/admin" component={() => <AdminDashboard />} />
+        <ProtectedRoute path="/profile" component={() => <Profile />} />
+        <Route path="/checkout" component={Checkout} />
+        <Route path="/change-password" component={ChangePasswordPage} />
+        <Route path="/forgot-password" component={ForgotPasswordPage} />
+        <Route path="/reset-password" component={ResetPasswordPage} />
+        <Route path="/landing" component={Landing} />
+        <Route component={NotFound} />
+      </Switch>
       
       {/* PWA Status Bar */}
       <PWAStatusBar />
