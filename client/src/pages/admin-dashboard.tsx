@@ -3611,21 +3611,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                     )}
-                    {hasPermission("canManageSettings") && (
-                      <div 
-                        onClick={() => {
-                          setActiveTab("translations");
-                          document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}));
-                        }} 
-                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center w-full ${activeTab === 'translations' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
-                        style={{minWidth: '0', overflow: 'hidden'}}
-                      >
-                        <div className={`flex flex-col items-center gap-1 ${isRTL ? 'text-right' : 'text-center'} w-full`}>
-                          <Languages className="w-5 h-5 flex-shrink-0" />
-                          <span className="text-xs font-medium leading-tight text-center truncate w-full">{adminT('translationManagement.translationManagement')}</span>
-                        </div>
-                      </div>
-                    )}
+
                   </div>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -3643,12 +3629,7 @@ export default function AdminDashboard() {
                       <span className="admin-tab-text">{adminT('tabs.themes')}</span>
                     </TabsTrigger>
                   )}
-                  {hasPermission("canManageSettings") && (
-                    <TabsTrigger value="translations" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('translationManagement.translationManagement')}>
-                      <Languages className="w-4 h-4 ml-1" />
-                      <span className="admin-tab-text">{adminT('translationManagement.translationManagement')}</span>
-                    </TabsTrigger>
-                  )}
+
                   {hasPermission("canManageSettings") && (
                     <TabsTrigger value="settings" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.permissions')}>
                       <UserCheck className="w-4 h-4 ml-1" />
@@ -3743,12 +3724,7 @@ export default function AdminDashboard() {
                       <span className="admin-tab-text">{adminT('tabs.themes')}</span>
                     </TabsTrigger>
                   )}
-                  {hasPermission("canManageSettings") && (
-                    <TabsTrigger value="translations" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('translationManagement.translationManagement')}>
-                      <Languages className="w-4 h-4 mr-1" />
-                      <span className="admin-tab-text">{adminT('translationManagement.translationManagement')}</span>
-                    </TabsTrigger>
-                  )}
+
                 </>
               )}
               </TabsList>
@@ -5590,6 +5566,16 @@ export default function AdminDashboard() {
                     
                     <BarcodeConfigSection />
                   </div>
+
+                  {/* Translation Management Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">🌐 {adminT('translationManagement.translationManagement')}</h3>
+                    <p className="text-sm text-gray-600">
+                      {adminT('translationManagement.translationManagementDescription')}
+                    </p>
+                    
+                    <TranslationManager />
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -5839,12 +5825,7 @@ export default function AdminDashboard() {
             </TabsContent>
           )}
 
-          {/* Translation Management */}
-          {hasPermission("canManageSettings") && (
-            <TabsContent value="translations" className="space-y-4 sm:space-y-6">
-              <TranslationManager />
-            </TabsContent>
-          )}
+
         </Tabs>
       </div>
 
