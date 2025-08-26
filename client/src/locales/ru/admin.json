@@ -1154,6 +1154,7 @@
   },
   "translationManagement": {
     "translationManagement": "Управление переводами",
+    "translationManagementDescription": "Экспорт и импорт переводов через CSV/XLS файлы для массового управления контентом на всех языках",
     "manageAllTranslations": "Управление переводами всех элементов магазина",
     "exportTranslations": "Экспорт переводов",
     "downloadAllTranslations": "Скачать все переводы в Excel файле",

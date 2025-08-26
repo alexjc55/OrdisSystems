@@ -1244,6 +1244,7 @@
   },
   "translationManagement": {
     "translationManagement": "ניהול תרגומים",
+    "translationManagementDescription": "ייצוא וייבוא תרגומים באמצעות קבצי CSV/XLS לניהול תוכן המוני בכל השפות",
     "manageAllTranslations": "ניהול תרגומים לכל רכיבי החנות",
     "exportTranslations": "ייצוא תרגומים",
     "downloadAllTranslations": "הורדת כל התרגומים בקובץ אקסל",

@@ -1149,6 +1149,7 @@
   },
   "translationManagement": {
     "translationManagement": "Translation Management",
+    "translationManagementDescription": "Export and import translations via CSV/XLS files for mass content management across all languages",
     "manageAllTranslations": "Manage translations for all store elements",
     "exportTranslations": "Export Translations",
     "downloadAllTranslations": "Download all translations in Excel file",

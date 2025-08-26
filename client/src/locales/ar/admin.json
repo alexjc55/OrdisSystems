@@ -956,6 +956,7 @@
   },
   "translationManagement": {
     "translationManagement": "إدارة الترجمات",
+    "translationManagementDescription": "تصدير واستيراد الترجمات عبر ملفات CSV/XLS لإدارة المحتوى بكميات كبيرة عبر جميع اللغات",
     "manageAllTranslations": "إدارة ترجمات جميع عناصر المتجر",
     "exportTranslations": "تصدير الترجمات",
     "downloadAllTranslations": "تحميل جميع الترجمات في ملف اكسل",
