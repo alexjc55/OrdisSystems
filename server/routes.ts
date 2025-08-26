@@ -2380,7 +2380,8 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     try {
       const userId = req.user.id;
       const { endpoint } = req.body;
-
+      
+      const db = await getDB();
       await db
         .delete(pushSubscriptions)
         .where(sql`endpoint = ${endpoint} AND user_id = ${userId}`);
