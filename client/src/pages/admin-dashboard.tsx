@@ -8319,11 +8319,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                           type="button"
                           className="px-2 py-1 bg-primary text-white hover:bg-primary/80 rounded text-xs font-mono select-all cursor-pointer border-2 border-primary"
                           onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook`)}
-                          title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${settings?.defaultLanguage?.toUpperCase() || 'RU'})`}
+                          title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${storeSettings?.defaultLanguage?.toUpperCase() || 'RU'})`}
                         >
                           /api/feed/facebook
                         </button>
-                        {settings?.defaultLanguage !== 'en' && (
+                        {storeSettings?.defaultLanguage !== 'en' && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8333,7 +8333,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             EN
                           </button>
                         )}
-                        {settings?.defaultLanguage !== 'he' && (
+                        {storeSettings?.defaultLanguage !== 'he' && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8343,7 +8343,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             HE
                           </button>
                         )}
-                        {settings?.defaultLanguage !== 'ar' && (
+                        {storeSettings?.defaultLanguage !== 'ar' && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8385,11 +8385,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                           type="button"
                           className="px-2 py-1 bg-primary text-white hover:bg-primary/80 rounded text-xs font-mono select-all cursor-pointer border-2 border-primary"
                           onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google`)}
-                          title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${settings?.defaultLanguage?.toUpperCase() || 'RU'})`}
+                          title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${storeSettings?.defaultLanguage?.toUpperCase() || 'RU'})`}
                         >
                           /api/feed/google
                         </button>
-                        {settings?.defaultLanguage !== 'en' && (
+                        {storeSettings?.defaultLanguage !== 'en' && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8399,7 +8399,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             EN
                           </button>
                         )}
-                        {settings?.defaultLanguage !== 'he' && (
+                        {storeSettings?.defaultLanguage !== 'he' && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8409,7 +8409,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             HE
                           </button>
                         )}
-                        {settings?.defaultLanguage !== 'ar' && (
+                        {storeSettings?.defaultLanguage !== 'ar' && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8440,11 +8440,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                           type="button"
                           className="px-2 py-1 bg-primary text-white hover:bg-primary/80 rounded text-xs font-mono select-all cursor-pointer border-2 border-primary"
                           onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex`)}
-                          title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${settings?.defaultLanguage?.toUpperCase() || 'RU'})`}
+                          title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${storeSettings?.defaultLanguage?.toUpperCase() || 'RU'})`}
                         >
                           /api/feed/yandex
                         </button>
-                        {settings?.defaultLanguage !== 'en' && (
+                        {storeSettings?.defaultLanguage !== 'en' && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8454,7 +8454,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             EN
                           </button>
                         )}
-                        {settings?.defaultLanguage !== 'he' && (
+                        {storeSettings?.defaultLanguage !== 'he' && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8464,7 +8464,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             HE
                           </button>
                         )}
-                        {settings?.defaultLanguage !== 'ar' && (
+                        {storeSettings?.defaultLanguage !== 'ar' && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8495,11 +8495,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                           type="button"
                           className="px-2 py-1 bg-primary text-white hover:bg-primary/80 rounded text-xs font-mono select-all cursor-pointer border-2 border-primary"
                           onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json`)}
-                          title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${settings?.defaultLanguage?.toUpperCase() || 'RU'})`}
+                          title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${storeSettings?.defaultLanguage?.toUpperCase() || 'RU'})`}
                         >
                           /api/feed/json
                         </button>
-                        {settings?.defaultLanguage !== 'en' && (
+                        {storeSettings?.defaultLanguage !== 'en' && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8509,7 +8509,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             EN
                           </button>
                         )}
-                        {settings?.defaultLanguage !== 'he' && (
+                        {storeSettings?.defaultLanguage !== 'he' && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
@@ -8519,7 +8519,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                             HE
                           </button>
                         )}
-                        {settings?.defaultLanguage !== 'ar' && (
+                        {storeSettings?.defaultLanguage !== 'ar' && (
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
