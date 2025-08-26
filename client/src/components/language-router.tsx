@@ -1,6 +1,7 @@
 import { Switch, Route } from "wouter";
 import { useLanguageRouting } from "@/hooks/use-language-routing";
 import { LANGUAGES } from "@/lib/i18n";
+import { useQuery } from "@tanstack/react-query";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 import AdminDashboard from "@/pages/admin-dashboard";
@@ -24,6 +25,14 @@ interface LanguageRouterProps {
 }
 
 export function LanguageRouter({ notificationModal, setNotificationModal }: LanguageRouterProps) {
+  // Get store settings to determine primary language
+  const { data: storeSettings } = useQuery({
+    queryKey: ['/api/settings'],
+  });
+  
+  // Extract primary language from store settings
+  const primaryLanguage = (storeSettings?.primaryLanguage as keyof typeof LANGUAGES) || 'ru';
+  
   // Define route configurations
   const routes = [
     {
@@ -78,7 +87,7 @@ export function LanguageRouter({ notificationModal, setNotificationModal }: Lang
     const allRoutes: JSX.Element[] = [];
     
     routes.forEach(route => {
-      // Add route for default language (no prefix)
+      // Add route for primary language (no prefix)
       if (route.protected) {
         allRoutes.push(
           <Route key={route.path} path={route.path}>
@@ -93,9 +102,9 @@ export function LanguageRouter({ notificationModal, setNotificationModal }: Lang
         );
       }
       
-      // Add routes for each language (except Russian which is default)
+      // Add routes for each language (except primary language which has no prefix)
       Object.keys(LANGUAGES).forEach(lang => {
-        if (lang !== 'ru') {
+        if (lang !== primaryLanguage) {
           const langPath = `/${lang}${route.path === '/' ? '' : route.path}`;
           
           if (route.protected) {

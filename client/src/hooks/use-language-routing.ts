@@ -2,11 +2,12 @@ import { useLocation, useRouter } from "wouter";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { LANGUAGES } from "@/lib/i18n";
+import { useQuery } from "@tanstack/react-query";
 
 export type LanguageCode = keyof typeof LANGUAGES;
 
-// Extract language from URL path
-export function extractLanguageFromPath(path: string): { language: LanguageCode | null; cleanPath: string } {
+// Extract language from URL path based on primary language
+export function extractLanguageFromPath(path: string, primaryLanguage: LanguageCode = 'ru'): { language: LanguageCode | null; cleanPath: string } {
   const segments = path.split('/').filter(Boolean);
   const firstSegment = segments[0];
   
@@ -17,16 +18,17 @@ export function extractLanguageFromPath(path: string): { language: LanguageCode 
     };
   }
   
+  // If no language prefix, assume primary language
   return {
-    language: null,
+    language: primaryLanguage,
     cleanPath: path
   };
 }
 
-// Build URL with language prefix
-export function buildLanguageUrl(path: string, language: LanguageCode): string {
-  // Don't add prefix for Russian (default language)
-  if (language === 'ru') {
+// Build URL with language prefix based on primary language
+export function buildLanguageUrl(path: string, language: LanguageCode, primaryLanguage: LanguageCode = 'ru'): string {
+  // Don't add prefix for primary language
+  if (language === primaryLanguage) {
     return path;
   }
   
@@ -40,22 +42,30 @@ export function useLanguageRouting() {
   const { i18n } = useTranslation();
   const router = useRouter();
   
-  // Extract current language and clean path from URL
-  const { language: urlLanguage, cleanPath } = extractLanguageFromPath(location);
+  // Get store settings to determine primary language
+  const { data: storeSettings } = useQuery({
+    queryKey: ['/api/settings'],
+  });
   
-  // Determine current language (URL takes precedence, fallback to i18n)
-  const currentLanguage = urlLanguage || 'ru';
+  // Extract primary language from store settings
+  const primaryLanguage = (storeSettings?.primaryLanguage as LanguageCode) || 'ru';
+  
+  // Extract current language and clean path from URL
+  const { language: urlLanguage, cleanPath } = extractLanguageFromPath(location, primaryLanguage);
+  
+  // Determine current language (URL takes precedence, fallback to primary language)
+  const currentLanguage = urlLanguage || primaryLanguage;
   
   // Function to navigate with language prefix
   const navigateWithLanguage = (path: string, language?: LanguageCode) => {
     const targetLanguage = language || currentLanguage;
-    const newUrl = buildLanguageUrl(path, targetLanguage);
+    const newUrl = buildLanguageUrl(path, targetLanguage, primaryLanguage);
     navigate(newUrl);
   };
   
   // Function to change language and stay on same page
   const changeLanguage = (newLanguage: LanguageCode) => {
-    const newUrl = buildLanguageUrl(cleanPath, newLanguage);
+    const newUrl = buildLanguageUrl(cleanPath, newLanguage, primaryLanguage);
     
     // Update i18n language
     i18n.changeLanguage(newLanguage);
@@ -77,6 +87,7 @@ export function useLanguageRouting() {
     navigateWithLanguage,
     changeLanguage,
     urlLanguage,
-    isDefaultLanguage: currentLanguage === 'ru'
+    primaryLanguage,
+    isDefaultLanguage: currentLanguage === primaryLanguage
   };
 }

@@ -3,14 +3,14 @@ import { Link as WouterLink } from "wouter";
 import { ComponentProps } from "react";
 
 export function useLanguageLink() {
-  const { currentLanguage } = useLanguageRouting();
+  const { currentLanguage, primaryLanguage } = useLanguageRouting();
   
   // Helper function to build language-aware URLs
   const buildUrl = (path: string, language?: LanguageCode) => {
-    return buildLanguageUrl(path, language || currentLanguage);
+    return buildLanguageUrl(path, language || currentLanguage, primaryLanguage);
   };
   
-  return { buildUrl, currentLanguage };
+  return { buildUrl, currentLanguage, primaryLanguage };
 }
 
 // Language-aware Link component
