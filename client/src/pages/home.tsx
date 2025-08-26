@@ -255,7 +255,9 @@ export default function Home() {
 
   // Calculate selected category first
   const selectedCategory = useMemo(() => {
-    return categories.find(cat => cat.id === selectedCategoryId);
+    const found = categories.find(cat => cat.id === selectedCategoryId);
+    console.log('🏷️ Selected category:', { selectedCategoryId, found: found?.name, categoriesCount: categories?.length });
+    return found;
   }, [categories, selectedCategoryId]);
 
   // Generate SEO data for home page
@@ -441,6 +443,7 @@ export default function Home() {
       if (!isNaN(categoryId) && categoryId !== selectedCategoryId) {
         setSelectedCategoryId(categoryId);
         setCategoryFilter(categoryId.toString());
+        console.log('🔗 Category URL detected:', { categoryId, selectedCategoryId, categories: categories?.length });
       }
     } else if (pathParts[1] === 'all-products' && selectedCategoryId !== 0) {
       setSelectedCategoryId(0);
@@ -449,7 +452,7 @@ export default function Home() {
       setSelectedCategoryId(null);
       setCategoryFilter("all");
     }
-  }, [location, selectedCategoryId]);
+  }, [location, selectedCategoryId, categories]);
   
   // For Embla carousel, we don't need complex page calculation
   // Each slide is individual, navigation works slide by slide
