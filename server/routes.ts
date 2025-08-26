@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { getDB } from "./db";
 import { setupAuth, isAuthenticated } from "./auth";
 import bcrypt from "bcryptjs";
-import { insertCategorySchema, insertProductSchema, insertOrderSchema, insertStoreSettingsSchema, updateStoreSettingsSchema, insertThemeSchema, updateThemeSchema, pushSubscriptions, marketingNotifications } from "@shared/schema";
+import { insertCategorySchema, insertProductSchema, insertOrderSchema, insertStoreSettingsSchema, updateStoreSettingsSchema, insertThemeSchema, updateThemeSchema, pushSubscriptions, marketingNotifications, storeSettings } from "@shared/schema";
 import { PushNotificationService } from "./push-notifications";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
@@ -2856,10 +2856,23 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
+  // Helper function to get default language for feeds
+  const getDefaultLanguageFromDB = async (): Promise<string> => {
+    try {
+      const db = await getDB();
+      const storeData = await db.select().from(storeSettings).limit(1);
+      return storeData?.[0]?.defaultLanguage || 'ru';
+    } catch (error) {
+      console.error('Error fetching default language for feeds:', error);
+      return 'ru';
+    }
+  };
+
   // Product feeds for advertising platforms
   app.get("/api/feed/facebook", async (req, res) => {
     try {
-      const language = req.query.lang as string || 'ru';
+      const defaultLang = await getDefaultLanguageFromDB();
+      const language = req.query.lang as string || defaultLang;
       const format = req.query.format as string || 'xml'; // xml or csv
       const baseUrl = `${req.protocol}://${req.get('host')}`;
       
@@ -2884,7 +2897,8 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
 
   app.get("/api/feed/google", async (req, res) => {
     try {
-      const language = req.query.lang as string || 'ru';
+      const defaultLang = await getDefaultLanguageFromDB();
+      const language = req.query.lang as string || defaultLang;
       const baseUrl = `${req.protocol}://${req.get('host')}`;
       
       const { getFeedProducts, generateGoogleXMLFeed } = await import('./feed-generator');
@@ -2901,7 +2915,8 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
 
   app.get("/api/feed/yandex", async (req, res) => {
     try {
-      const language = req.query.lang as string || 'ru';
+      const defaultLang = await getDefaultLanguageFromDB();
+      const language = req.query.lang as string || defaultLang;
       const baseUrl = `${req.protocol}://${req.get('host')}`;
       
       const { getFeedProducts, generateYandexXMLFeed } = await import('./feed-generator');
@@ -2918,7 +2933,8 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
 
   app.get("/api/feed/json", async (req, res) => {
     try {
-      const language = req.query.lang as string || 'ru';
+      const defaultLang = await getDefaultLanguageFromDB();
+      const language = req.query.lang as string || defaultLang;
       const baseUrl = `${req.protocol}://${req.get('host')}`;
       
       const { getFeedProducts, generateJSONFeed } = await import('./feed-generator');

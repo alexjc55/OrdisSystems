@@ -8317,36 +8317,42 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <div className="mt-1 flex gap-1 flex-wrap">
                         <button 
                           type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-mono select-all cursor-pointer"
+                          className="px-2 py-1 bg-primary text-white hover:bg-primary/80 rounded text-xs font-mono select-all cursor-pointer border-2 border-primary"
                           onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook`)}
-                          title={adminT('common.copyLink')}
+                          title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${settings?.defaultLanguage?.toUpperCase() || 'RU'})`}
                         >
                           /api/feed/facebook
                         </button>
-                        <button 
-                          type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=en`)}
-                          title="English"
-                        >
-                          EN
-                        </button>
-                        <button 
-                          type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=he`)}
-                          title="Hebrew"
-                        >
-                          HE
-                        </button>
-                        <button 
-                          type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=ar`)}
-                          title="Arabic"
-                        >
-                          AR
-                        </button>
+                        {settings?.defaultLanguage !== 'en' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=en`)}
+                            title="English"
+                          >
+                            EN
+                          </button>
+                        )}
+                        {settings?.defaultLanguage !== 'he' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=he`)}
+                            title="Hebrew"
+                          >
+                            HE
+                          </button>
+                        )}
+                        {settings?.defaultLanguage !== 'ar' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=ar`)}
+                            title="Arabic"
+                          >
+                            AR
+                          </button>
+                        )}
                       </div>
                     </div>
                     <div>
@@ -8377,36 +8383,42 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <div className="mt-1 flex gap-1 flex-wrap">
                         <button 
                           type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-mono select-all cursor-pointer"
+                          className="px-2 py-1 bg-primary text-white hover:bg-primary/80 rounded text-xs font-mono select-all cursor-pointer border-2 border-primary"
                           onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google`)}
-                          title={adminT('common.copyLink')}
+                          title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${settings?.defaultLanguage?.toUpperCase() || 'RU'})`}
                         >
                           /api/feed/google
                         </button>
-                        <button 
-                          type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=en`)}
-                          title="English"
-                        >
-                          EN
-                        </button>
-                        <button 
-                          type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=he`)}
-                          title="Hebrew"
-                        >
-                          HE
-                        </button>
-                        <button 
-                          type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=ar`)}
-                          title="Arabic"
-                        >
-                          AR
-                        </button>
+                        {settings?.defaultLanguage !== 'en' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=en`)}
+                            title="English"
+                          >
+                            EN
+                          </button>
+                        )}
+                        {settings?.defaultLanguage !== 'he' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=he`)}
+                            title="Hebrew"
+                          >
+                            HE
+                          </button>
+                        )}
+                        {settings?.defaultLanguage !== 'ar' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=ar`)}
+                            title="Arabic"
+                          >
+                            AR
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -8426,36 +8438,42 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <div className="mt-1 flex gap-1 flex-wrap">
                         <button 
                           type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-mono select-all cursor-pointer"
+                          className="px-2 py-1 bg-primary text-white hover:bg-primary/80 rounded text-xs font-mono select-all cursor-pointer border-2 border-primary"
                           onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex`)}
-                          title={adminT('common.copyLink')}
+                          title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${settings?.defaultLanguage?.toUpperCase() || 'RU'})`}
                         >
                           /api/feed/yandex
                         </button>
-                        <button 
-                          type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=en`)}
-                          title="English"
-                        >
-                          EN
-                        </button>
-                        <button 
-                          type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=he`)}
-                          title="Hebrew"
-                        >
-                          HE
-                        </button>
-                        <button 
-                          type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=ar`)}
-                          title="Arabic"
-                        >
-                          AR
-                        </button>
+                        {settings?.defaultLanguage !== 'en' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=en`)}
+                            title="English"
+                          >
+                            EN
+                          </button>
+                        )}
+                        {settings?.defaultLanguage !== 'he' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=he`)}
+                            title="Hebrew"
+                          >
+                            HE
+                          </button>
+                        )}
+                        {settings?.defaultLanguage !== 'ar' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=ar`)}
+                            title="Arabic"
+                          >
+                            AR
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -8475,36 +8493,42 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       <div className="mt-1 flex gap-1 flex-wrap">
                         <button 
                           type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-mono select-all cursor-pointer"
+                          className="px-2 py-1 bg-primary text-white hover:bg-primary/80 rounded text-xs font-mono select-all cursor-pointer border-2 border-primary"
                           onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json`)}
-                          title={adminT('common.copyLink')}
+                          title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${settings?.defaultLanguage?.toUpperCase() || 'RU'})`}
                         >
                           /api/feed/json
                         </button>
-                        <button 
-                          type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=en`)}
-                          title="English"
-                        >
-                          EN
-                        </button>
-                        <button 
-                          type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=he`)}
-                          title="Hebrew"
-                        >
-                          HE
-                        </button>
-                        <button 
-                          type="button"
-                          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=ar`)}
-                          title="Arabic"
-                        >
-                          AR
-                        </button>
+                        {settings?.defaultLanguage !== 'en' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=en`)}
+                            title="English"
+                          >
+                            EN
+                          </button>
+                        )}
+                        {settings?.defaultLanguage !== 'he' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=he`)}
+                            title="Hebrew"
+                          >
+                            HE
+                          </button>
+                        )}
+                        {settings?.defaultLanguage !== 'ar' && (
+                          <button 
+                            type="button"
+                            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=ar`)}
+                            title="Arabic"
+                          >
+                            AR
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
