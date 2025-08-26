@@ -95,8 +95,10 @@ export async function getFeedProducts(options: FeedOptions): Promise<FeedProduct
     const categoryName = getLocalizedName(row.categoryName, row.categoryNameEn, row.categoryNameHe, row.categoryNameAr);
     const description = getLocalizedDescription(row.productDescription, row.productDescriptionEn, row.productDescriptionHe, row.productDescriptionAr);
 
-    // Generate category link - add language parameter if not default language
-    const categoryLink = `${baseUrl}${language === defaultLang ? '' : `?lang=${language}`}#category-${row.categoryId}`;
+    // Generate proper category link without hash fragments for external platforms
+    const categoryLink = row.categoryId 
+      ? `${baseUrl}/category/${row.categoryId}${language === defaultLang ? '' : `?lang=${language}`}`
+      : `${baseUrl}${language === defaultLang ? '' : `?lang=${language}`}`;
 
     return {
       id: row.productId,
@@ -104,7 +106,7 @@ export async function getFeedProducts(options: FeedOptions): Promise<FeedProduct
       price: row.productPrice || 0,
       category: categoryName,
       categoryId: row.categoryId || 0,
-      image: row.productImage ? `${baseUrl}/uploads/${row.productImage}` : undefined,
+      image: row.productImage ? `${baseUrl}${row.productImage.startsWith('/') ? row.productImage : `/${row.productImage}`}` : undefined,
       availability: row.productAvailable ? 'in stock' : 'out of stock',
       link: categoryLink,
       description: description || undefined
