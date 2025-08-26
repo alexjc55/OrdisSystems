@@ -2790,6 +2790,63 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
+  // Translation management routes
+  app.get("/api/translations/export", isAuthenticated, async (req: any, res) => {
+    try {
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      const { exportTranslations, generateExcelFile } = await import('./translation-manager');
+      const translations = await exportTranslations();
+      const excelBuffer = generateExcelFile(translations);
+
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename=translations.xlsx');
+      res.send(excelBuffer);
+    } catch (error) {
+      console.error('Error exporting translations:', error);
+      res.status(500).json({ message: 'Failed to export translations' });
+    }
+  });
+
+  app.post("/api/translations/import", isAuthenticated, upload.single('file'), async (req: any, res) => {
+    try {
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+
+      const { parseExcelFile, importTranslations } = await import('./translation-manager');
+      const translations = parseExcelFile(req.file.buffer);
+      
+      // Validate that base language (Russian) fields are not empty
+      const invalidRows = translations.filter(row => !row.ru || row.ru.trim() === '');
+      if (invalidRows.length > 0) {
+        return res.status(400).json({ 
+          message: 'Base language (Russian) fields cannot be empty',
+          invalidRows: invalidRows.length
+        });
+      }
+
+      await importTranslations(translations);
+      
+      // Clear cache to ensure updated translations are reflected
+      clearCachePattern('settings');
+      clearCachePattern('themes');
+      clearCachePattern('products');
+      clearCachePattern('categories');
+
+      res.json({ success: true, message: 'Translations imported successfully', importedRows: translations.length });
+    } catch (error) {
+      console.error('Error importing translations:', error);
+      res.status(500).json({ message: 'Failed to import translations' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
