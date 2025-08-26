@@ -49,6 +49,12 @@ export function useUrlLanguage() {
     
     if (!enabledLanguages.includes(langParam)) {
       console.warn(`Language "${langParam}" is not enabled in admin settings. Enabled: [${enabledLanguages.join(', ')}]`);
+      
+      // Remove the URL parameter if language is not enabled
+      const url = new URL(window.location.href);
+      url.searchParams.delete('lang');
+      window.history.replaceState({}, document.title, url.toString());
+      
       return;
     }
     

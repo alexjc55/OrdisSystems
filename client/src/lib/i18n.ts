@@ -111,19 +111,10 @@ export const updateDocumentDirection = (lng: string) => {
   }
 };
 
-// Get initial language from URL parameter, then localStorage
+// Get initial language from localStorage only (URL handling moved to hook)
 const getInitialLanguage = () => {
   if (typeof window !== 'undefined') {
-    // First check URL parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const langParam = urlParams.get('lang');
-    if (langParam && Object.keys(LANGUAGES).includes(langParam)) {
-      // Store URL language preference
-      localStorage.setItem('language', langParam);
-      return langParam;
-    }
-    
-    // Then check localStorage
+    // Check localStorage
     const saved = localStorage.getItem('language');
     if (saved && Object.keys(LANGUAGES).includes(saved)) {
       return saved;
