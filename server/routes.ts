@@ -2872,7 +2872,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         res.setHeader('Content-Disposition', `attachment; filename=facebook_feed_${language}.csv`);
         res.send(csvFeed);
       } else {
-        const xmlFeed = generateFacebookXMLFeed(products, { language, baseUrl });
+        const xmlFeed = await generateFacebookXMLFeed(products, { language, baseUrl });
         res.setHeader('Content-Type', 'application/xml; charset=utf-8');
         res.send(xmlFeed);
       }
@@ -2889,7 +2889,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       
       const { getFeedProducts, generateGoogleXMLFeed } = await import('./feed-generator');
       const products = await getFeedProducts({ language, baseUrl });
-      const xmlFeed = generateGoogleXMLFeed(products, { language, baseUrl });
+      const xmlFeed = await generateGoogleXMLFeed(products, { language, baseUrl });
       
       res.setHeader('Content-Type', 'application/xml; charset=utf-8');
       res.send(xmlFeed);
@@ -2906,7 +2906,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       
       const { getFeedProducts, generateYandexXMLFeed } = await import('./feed-generator');
       const products = await getFeedProducts({ language, baseUrl });
-      const xmlFeed = generateYandexXMLFeed(products, { language, baseUrl });
+      const xmlFeed = await generateYandexXMLFeed(products, { language, baseUrl });
       
       res.setHeader('Content-Type', 'application/xml; charset=utf-8');
       res.send(xmlFeed);
@@ -2923,7 +2923,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       
       const { getFeedProducts, generateJSONFeed } = await import('./feed-generator');
       const products = await getFeedProducts({ language, baseUrl });
-      const jsonFeed = generateJSONFeed(products, { language, baseUrl });
+      const jsonFeed = await generateJSONFeed(products, { language, baseUrl });
       
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
       res.send(jsonFeed);

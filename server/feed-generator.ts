@@ -1,5 +1,5 @@
 import { db } from './db';
-import { products, categories } from '@shared/schema';
+import { products, categories, productCategories, storeSettings } from '@shared/schema';
 import { eq, and, isNotNull, isNull, or } from 'drizzle-orm';
 
 interface FeedProduct {
@@ -20,12 +20,26 @@ interface FeedOptions {
 }
 
 /**
+ * Get the default language from settings
+ */
+async function getDefaultLanguage(): Promise<string> {
+  try {
+    const storeData = await db.select().from(storeSettings).limit(1);
+    return storeData?.[0]?.defaultLanguage || 'ru';
+  } catch (error) {
+    console.error('Error fetching default language:', error);
+    return 'ru';
+  }
+}
+
+/**
  * Get products for feed generation
  */
 export async function getFeedProducts(options: FeedOptions): Promise<FeedProduct[]> {
-  const { language = 'ru', baseUrl } = options;
+  const defaultLang = await getDefaultLanguage();
+  const { language = defaultLang, baseUrl } = options;
   
-  // Get products with their categories
+  // Get products with their categories via junction table
   const productsWithCategories = await db
     .select({
       productId: products.id,
@@ -34,12 +48,12 @@ export async function getFeedProducts(options: FeedOptions): Promise<FeedProduct
       productNameHe: products.name_he,
       productNameAr: products.name_ar,
       productPrice: products.price,
-      productImage: products.image,
+      productImage: products.imageUrl,
       productDescription: products.description,
       productDescriptionEn: products.description_en,
       productDescriptionHe: products.description_he,
       productDescriptionAr: products.description_ar,
-      productAvailable: products.available,
+      productAvailable: products.isAvailable,
       categoryId: categories.id,
       categoryName: categories.name,
       categoryNameEn: categories.name_en,
@@ -47,11 +61,17 @@ export async function getFeedProducts(options: FeedOptions): Promise<FeedProduct
       categoryNameAr: categories.name_ar,
     })
     .from(products)
-    .leftJoin(categories, eq(products.categoryId, categories.id))
-    .where(eq(products.available, true)); // Only available products
+    .leftJoin(productCategories, eq(products.id, productCategories.productId))
+    .leftJoin(categories, eq(productCategories.categoryId, categories.id))
+    .where(
+      and(
+        eq(products.isAvailable, true), // Only available products
+        eq(products.isActive, true)     // Only active products
+      )
+    );
 
   // Transform to feed format
-  const feedProducts: FeedProduct[] = productsWithCategories.map(row => {
+  const feedProducts: FeedProduct[] = productsWithCategories.map((row: any) => {
     // Get localized names
     const getLocalizedName = (base: string | null, en?: string | null, he?: string | null, ar?: string | null) => {
       switch (language) {
@@ -75,8 +95,8 @@ export async function getFeedProducts(options: FeedOptions): Promise<FeedProduct
     const categoryName = getLocalizedName(row.categoryName, row.categoryNameEn, row.categoryNameHe, row.categoryNameAr);
     const description = getLocalizedDescription(row.productDescription, row.productDescriptionEn, row.productDescriptionHe, row.productDescriptionAr);
 
-    // Generate category link
-    const categoryLink = `${baseUrl}${language === 'ru' ? '' : `?lang=${language}`}#category-${row.categoryId}`;
+    // Generate category link - add language parameter if not default language
+    const categoryLink = `${baseUrl}${language === defaultLang ? '' : `?lang=${language}`}#category-${row.categoryId}`;
 
     return {
       id: row.productId,
@@ -97,8 +117,9 @@ export async function getFeedProducts(options: FeedOptions): Promise<FeedProduct
 /**
  * Generate Facebook XML feed
  */
-export function generateFacebookXMLFeed(products: FeedProduct[], options: FeedOptions): string {
-  const { language = 'ru' } = options;
+export async function generateFacebookXMLFeed(products: FeedProduct[], options: FeedOptions): Promise<string> {
+  const defaultLang = await getDefaultLanguage();
+  const { language = defaultLang } = options;
   
   const xmlItems = products.map(product => `
     <item>
@@ -129,15 +150,16 @@ export function generateFacebookXMLFeed(products: FeedProduct[], options: FeedOp
 /**
  * Generate Google Merchant Center XML feed
  */
-export function generateGoogleXMLFeed(products: FeedProduct[], options: FeedOptions): string {
-  return generateFacebookXMLFeed(products, options); // Same format as Facebook
+export async function generateGoogleXMLFeed(products: FeedProduct[], options: FeedOptions): Promise<string> {
+  return await generateFacebookXMLFeed(products, options); // Same format as Facebook
 }
 
 /**
  * Generate Yandex Market XML feed
  */
-export function generateYandexXMLFeed(products: FeedProduct[], options: FeedOptions): string {
-  const { language = 'ru' } = options;
+export async function generateYandexXMLFeed(products: FeedProduct[], options: FeedOptions): Promise<string> {
+  const defaultLang = await getDefaultLanguage();
+  const { language = defaultLang } = options;
   
   // Get unique categories
   const categories = Array.from(new Set(products.map(p => ({ id: p.categoryId, name: p.category }))))
@@ -207,7 +229,7 @@ export function generateFacebookCSVFeed(products: FeedProduct[]): string {
 /**
  * Generate JSON feed (universal format)
  */
-export function generateJSONFeed(products: FeedProduct[], options: FeedOptions): string {
+export async function generateJSONFeed(products: FeedProduct[], options: FeedOptions): Promise<string> {
   const feed = {
     title: `eDAHouse Product Feed - ${options.language?.toUpperCase() || 'RU'}`,
     link: options.baseUrl,
