@@ -241,6 +241,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Separate multer configuration for Excel files (translations)
+  const excelUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+      fileSize: 5 * 1024 * 1024 // 5MB limit for Excel files
+    },
+    fileFilter: function (req, file, cb) {
+      if (file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+          file.mimetype === 'application/vnd.ms-excel' ||
+          file.originalname.endsWith('.xlsx') ||
+          file.originalname.endsWith('.xls')) {
+        cb(null, true);
+      } else {
+        cb(new Error('Only Excel files (.xlsx, .xls) are allowed!'));
+      }
+    }
+  });
+
   // Image optimization middleware
   async function processUploadedImage(req: any, res: any, next: any) {
     if (!req.file) {
@@ -2810,7 +2828,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
-  app.post("/api/translations/import", isAuthenticated, upload.single('file'), async (req: any, res) => {
+  app.post("/api/translations/import", isAuthenticated, excelUpload.single('file'), async (req: any, res) => {
     try {
       if (req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Admin access required' });
