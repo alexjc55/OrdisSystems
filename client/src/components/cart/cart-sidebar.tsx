@@ -55,8 +55,11 @@ export default function CartSidebar() {
         return 1;
       case "kg":
         return 0.1;
+      case "100g":
+      case "100ml":
+        return 50; // 50 gram increments for 100g/100ml units
       default:
-        return 0.1; // For 100g/100ml
+        return 50; // Default to 50 for 100g/100ml units
     }
   };
 

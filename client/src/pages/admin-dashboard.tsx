@@ -253,7 +253,8 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
 
 import { 
   Package,
-  Plus, 
+  Plus,
+  Minus,
   Edit2, 
   Edit,
   Trash2, 
@@ -1619,16 +1620,46 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                   </TableCell>
                   <TableCell className="text-sm">
                     <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                      <Input
-                        type="number"
-                        step="1"
-                        min="1"
-                        value={Math.round(parseFloat(item.quantity))}
-                        onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 1)}
-                        className={`w-20 h-7 text-xs ${isRTL ? 'text-right' : ''}`}
-                        dir="ltr"
-                      />
-                      <span className={`text-xs text-gray-500 ${isRTL ? 'text-right' : ''}`} dir="ltr">
+                      <div className="flex items-center">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-6 w-6 p-0"
+                          onClick={() => {
+                            const step = item.product?.unit === "piece" || item.product?.unit === "portion" ? 1 : 
+                                       item.product?.unit === "kg" ? 0.1 : 
+                                       item.product?.unit === "100g" || item.product?.unit === "100ml" ? 50 : 50;
+                            updateItemQuantity(index, Math.max(1, parseFloat(item.quantity) - step));
+                          }}
+                        >
+                          <Minus className="h-3 w-3" />
+                        </Button>
+                        <Input
+                          type="number"
+                          step={item.product?.unit === "piece" || item.product?.unit === "portion" ? "1" : 
+                               item.product?.unit === "kg" ? "0.1" : 
+                               item.product?.unit === "100g" || item.product?.unit === "100ml" ? "50" : "50"}
+                          min="1"
+                          value={Math.round(parseFloat(item.quantity))}
+                          onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 1)}
+                          className={`w-16 h-6 text-xs text-center mx-1 ${isRTL ? 'text-right' : ''}`}
+                          dir="ltr"
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-6 w-6 p-0"
+                          onClick={() => {
+                            const step = item.product?.unit === "piece" || item.product?.unit === "portion" ? 1 : 
+                                       item.product?.unit === "kg" ? 0.1 : 
+                                       item.product?.unit === "100g" || item.product?.unit === "100ml" ? 50 : 50;
+                            updateItemQuantity(index, parseFloat(item.quantity) + step);
+                          }}
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      <span className={`text-xs text-gray-500 ml-1 ${isRTL ? 'text-right' : ''}`} dir="ltr">
                         {getUnitDisplay(item.product?.unit, item.quantity)}
                       </span>
                     </div>
@@ -2144,13 +2175,49 @@ function AddItemDialog({ onClose, onAdd, currentOrderItems, searchPlaceholder, a
             <label className="block text-sm font-medium mb-2">
               {adminT('orders.quantity')} ({getUnitDisplay(selectedProduct.unit)})
             </label>
-            <Input
-              type="number"
-              step="0.1"
-              min="0.1"
-              value={quantity}
-              onChange={(e) => setQuantity(parseFloat(e.target.value) || 0.1)}
-            />
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => {
+                  const step = selectedProduct.unit === "piece" || selectedProduct.unit === "portion" ? 1 : 
+                             selectedProduct.unit === "kg" ? 0.1 : 
+                             selectedProduct.unit === "100g" || selectedProduct.unit === "100ml" ? 50 : 50;
+                  setQuantity(Math.max(step, quantity - step));
+                }}
+              >
+                <Minus className="h-3 w-3" />
+              </Button>
+              <Input
+                type="number"
+                step={selectedProduct.unit === "piece" || selectedProduct.unit === "portion" ? "1" : 
+                     selectedProduct.unit === "kg" ? "0.1" : 
+                     selectedProduct.unit === "100g" || selectedProduct.unit === "100ml" ? "50" : "50"}
+                min={selectedProduct.unit === "piece" || selectedProduct.unit === "portion" ? "1" : 
+                     selectedProduct.unit === "kg" ? "0.1" : "50"}
+                value={quantity}
+                onChange={(e) => {
+                  const minValue = selectedProduct.unit === "piece" || selectedProduct.unit === "portion" ? 1 : 
+                                 selectedProduct.unit === "kg" ? 0.1 : 50;
+                  setQuantity(parseFloat(e.target.value) || minValue);
+                }}
+                className="flex-1 text-center"
+              />
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => {
+                  const step = selectedProduct.unit === "piece" || selectedProduct.unit === "portion" ? 1 : 
+                             selectedProduct.unit === "kg" ? 0.1 : 
+                             selectedProduct.unit === "100g" || selectedProduct.unit === "100ml" ? 50 : 50;
+                  setQuantity(quantity + step);
+                }}
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+            </div>
           </div>
         )}
 
