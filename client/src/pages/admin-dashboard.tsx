@@ -1436,7 +1436,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                         className="text-sm h-8 justify-start text-left font-normal"
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "PPP", { locale: getCalendarLocale() }) : adminT('orders.selectDate')}
+                        {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "dd.MM.yyyy") : adminT('orders.selectDate')}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
@@ -1528,7 +1528,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       className="text-sm h-8 justify-start text-left font-normal"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "PPP", { locale: getCalendarLocale() }) : adminT('orders.selectDate')}
+                      {editedOrder.deliveryDate ? format(new Date(editedOrder.deliveryDate), "dd.MM.yyyy") : adminT('orders.selectDate')}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -1619,8 +1619,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                     </div>
                   </TableCell>
                   <TableCell className="text-sm">
-                    <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                      <div className="flex items-center">
+                    <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
+                      <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Button
                           size="sm"
                           variant="outline"
@@ -1642,7 +1642,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                           min="1"
                           value={Math.round(parseFloat(item.quantity))}
                           onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 1)}
-                          className={`w-16 h-6 text-xs text-center mx-1 ${isRTL ? 'text-right' : ''}`}
+                          className={`w-20 h-6 text-xs text-center mx-1 ${isRTL ? 'text-right' : ''}`}
                           dir="ltr"
                         />
                         <Button
@@ -1659,7 +1659,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                           <Plus className="h-3 w-3" />
                         </Button>
                       </div>
-                      <span className={`text-xs text-gray-500 ml-1 ${isRTL ? 'text-right' : ''}`} dir="ltr">
+                      <span className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`} dir="ltr">
                         {getUnitDisplay(item.product?.unit, item.quantity)}
                       </span>
                     </div>
@@ -1767,23 +1767,51 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                 </AlertDialog>
               </div>
               
-              {/* Compact Controls Row */}
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 flex-1">
-                  <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              {/* Quantity Controls Row */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex flex-col gap-1 flex-1">
+                  <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 w-7 p-0"
+                      onClick={() => {
+                        const step = item.product?.unit === "piece" || item.product?.unit === "portion" ? 1 : 
+                                   item.product?.unit === "kg" ? 0.1 : 
+                                   item.product?.unit === "100g" || item.product?.unit === "100ml" ? 50 : 50;
+                        updateItemQuantity(index, Math.max(1, parseFloat(item.quantity) - step));
+                      }}
+                    >
+                      <Minus className="h-3 w-3" />
+                    </Button>
                     <Input
                       type="number"
-                      step="1"
+                      step={item.product?.unit === "piece" || item.product?.unit === "portion" ? "1" : 
+                           item.product?.unit === "kg" ? "0.1" : 
+                           item.product?.unit === "100g" || item.product?.unit === "100ml" ? "50" : "50"}
                       min="1"
                       value={Math.round(parseFloat(item.quantity))}
                       onChange={(e) => updateItemQuantity(index, parseFloat(e.target.value) || 1)}
-                      className={`h-7 text-sm w-20 ${isRTL ? 'text-right' : 'text-center'}`}
+                      className={`h-7 text-sm w-16 text-center mx-1 ${isRTL ? 'text-right' : ''}`}
                       dir="ltr"
                     />
-                    <span className={`text-sm text-gray-600 min-w-[40px] flex-shrink-0 ${isRTL ? 'text-right' : ''}`} dir="ltr">
-                      {getUnitDisplay(item.product?.unit, item.quantity)}
-                    </span>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 w-7 p-0"
+                      onClick={() => {
+                        const step = item.product?.unit === "piece" || item.product?.unit === "portion" ? 1 : 
+                                   item.product?.unit === "kg" ? 0.1 : 
+                                   item.product?.unit === "100g" || item.product?.unit === "100ml" ? 50 : 50;
+                        updateItemQuantity(index, parseFloat(item.quantity) + step);
+                      }}
+                    >
+                      <Plus className="h-3 w-3" />
+                    </Button>
                   </div>
+                  <span className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`} dir="ltr">
+                    {getUnitDisplay(item.product?.unit, item.quantity)}
+                  </span>
                 </div>
                 <div className="text-right flex-shrink-0">
                   <div className="text-lg font-bold text-green-600">{formatCurrency(item.totalPrice)}</div>
