@@ -1133,6 +1133,20 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       }));
 
       const order = await storage.createOrder(orderData, orderItems);
+      
+      // Отправить push-уведомления админам и работникам о новом гостевом заказе
+      try {
+        await PushNotificationService.notifyNewOrder(
+          order.id,
+          orderData.guestName || 'Гость',
+          totalAmount.toString(),
+          true // isGuest = true
+        );
+      } catch (pushError) {
+        console.error('Error sending new order push notification:', pushError);
+        // Не прерывать создание заказа если уведомление не отправилось
+      }
+      
       res.status(201).json(order);
     } catch (error) {
       console.error("Error creating guest order:", error);
@@ -1197,6 +1211,20 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         processedOrderData,
         validatedData.items.map(item => ({ ...item, orderId: 0 }))
       );
+      
+      // Отправить push-уведомления админам и работникам о новом заказе
+      try {
+        const customerName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : 'Пользователь';
+        await PushNotificationService.notifyNewOrder(
+          order.id,
+          customerName,
+          validatedData.totalAmount?.toString() || '0',
+          false // isGuest = false
+        );
+      } catch (pushError) {
+        console.error('Error sending new order push notification:', pushError);
+        // Не прерывать создание заказа если уведомление не отправилось
+      }
       
       res.json(order);
     } catch (error) {

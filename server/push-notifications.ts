@@ -1,7 +1,7 @@
 import webpush from 'web-push';
 import { getDB } from './db';
-import { pushSubscriptions } from '@shared/schema';
-import { eq } from 'drizzle-orm';
+import { pushSubscriptions, users } from '@shared/schema';
+import { eq, sql } from 'drizzle-orm';
 
 // VAPID ключи для push уведомлений
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || 'BAAMfY2mqdW51T4mXUIz1ckbnYJK-OMO9HoSh3yFYKQSvc2vsecHfbFSaXALhHpHK1XPkfQOfsl5VmljhPndzGU';
@@ -74,6 +74,7 @@ export class PushNotificationService {
   // Отправить уведомление всем пользователям (маркетинговая рассылка)
   static async sendToAll(notification: PushNotification, userType?: 'customer' | 'admin' | 'worker') {
     try {
+      const db = await getDB();
       let query = db.select().from(pushSubscriptions);
       
       if (userType) {
@@ -200,6 +201,58 @@ export class PushNotificationService {
         }
       ]
     });
+  }
+
+  // Уведомить администраторов и работников о новом заказе
+  static async notifyNewOrder(orderId: number, customerName: string, totalAmount: string, isGuest: boolean = false) {
+    try {
+      const db = await getDB();
+      
+      // Получить всех пользователей с ролями admin и worker
+      const adminUsers = await db
+        .select()
+        .from(users)
+        .where(sql`role IN ('admin', 'worker')`);
+      
+      if (adminUsers.length === 0) {
+        console.log('No admin or worker users found for new order notification');
+        return;
+      }
+
+      const orderInfo = isGuest ? 'гостевой заказ' : 'заказ';
+      const notification = {
+        title: `🔔 Новый ${orderInfo} #${orderId}`,
+        body: `Клиент: ${customerName}, Сумма: ${totalAmount}₽`,
+        data: {
+          type: 'new-order',
+          orderId,
+          customerName,
+          totalAmount,
+          isGuest
+        },
+        actions: [
+          {
+            action: 'view-order',
+            title: 'Посмотреть заказ'
+          },
+          {
+            action: 'admin-dashboard',
+            title: 'Админ-панель'
+          }
+        ]
+      };
+
+      // Отправить уведомления всем админам и работникам
+      const promises = adminUsers.map(adminUser => 
+        this.sendToUser(adminUser.id, notification)
+      );
+
+      await Promise.all(promises);
+      console.log(`📱 New order notification sent to ${adminUsers.length} admin/worker users for order #${orderId}`);
+      
+    } catch (error) {
+      console.error('Error sending new order notification:', error);
+    }
   }
 
   // Напоминание о корзине
