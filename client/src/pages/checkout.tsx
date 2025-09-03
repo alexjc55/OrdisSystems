@@ -156,7 +156,7 @@ const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStar
 };
 
 export default function Checkout() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loginMutation: authLoginMutation } = useAuth();
   const { items, getTotalPrice, clearCart } = useCartStore();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -426,12 +426,16 @@ export default function Checkout() {
     },
   });
 
+  // Create a wrapper mutation that maps the form data to the auth hook's expected format
   const loginMutation = useMutation({
     mutationFn: async (credentials: AuthData) => {
-      return await apiRequest("POST", "/api/login", credentials);
+      // Map email to username for the auth hook
+      return await authLoginMutation.mutateAsync({
+        username: credentials.email,
+        password: credentials.password
+      });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
         title: tCommon('auth.loginSuccess'),
         description: tShop('checkout.canNowPlaceOrder'),
