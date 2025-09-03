@@ -1659,7 +1659,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                           <Plus className="h-3 w-3" />
                         </Button>
                       </div>
-                      <span className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`} dir="ltr">
+                      <span className="text-xs text-gray-500 text-center w-full" dir="ltr">
                         {getUnitDisplay(item.product?.unit, item.quantity)}
                       </span>
                     </div>
@@ -1809,7 +1809,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
-                  <span className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`} dir="ltr">
+                  <span className="text-xs text-gray-500 text-center w-full" dir="ltr">
                     {getUnitDisplay(item.product?.unit, item.quantity)}
                   </span>
                 </div>
