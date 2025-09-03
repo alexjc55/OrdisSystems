@@ -122,6 +122,8 @@
   "enterFirstName": "أدخل الاسم الأول",
   "enterLastName": "أدخل اسم العائلة",
   "email": "البريد الإلكتروني",
+  "usernameOrEmail": "اسم المستخدم أو البريد الإلكتروني",
+  "usernamePlaceholder": "أدخل اسم المستخدم أو البريد الإلكتروني",
   "password": "كلمة المرور",
   "passwordPlaceholder": "6 أحرف على الأقل",
   "confirmPassword": "تأكيد كلمة المرور",
@@ -547,5 +549,23 @@
   },
   "iosIssue": "إصدار جديد من التطبيق متاح",
   "iosUpdateMessage": "للحصول على أحدث التحديثات، اضغط \"تحديث التطبيق\"",
-  "forceClear": "تحديث التطبيق"
+  "forceClear": "تحديث التطبيق",
+  "validation": {
+    "firstNameMinLength": "الاسم الأول يجب أن يحتوي على حرفين على الأقل",
+    "lastNameMinLength": "اسم العائلة يجب أن يحتوي على حرفين على الأقل",
+    "emailInvalid": "أدخل عنوان بريد إلكتروني صالح",
+    "phoneMinLength": "أدخل رقم هاتف صالح",
+    "addressMinLength": "أدخل عنوان توصيل كامل",
+    "passwordMinLength": "كلمة المرور يجب أن تحتوي على 6 أحرف على الأقل",
+    "passwordMismatch": "كلمات المرور غير متطابقة",
+    "passwordRequired": "أدخل كلمة المرور",
+    "usernameRequired": "اسم المستخدم أو البريد الإلكتروني مطلوب",
+    "deliveryDateRequired": "اختر تاريخ التوصيل",
+    "deliveryTimeRequired": "اختر وقت التوصيل",
+    "paymentMethodRequired": "اختر طريقة الدفع",
+    "required": "هذا الحقل مطلوب",
+    "email": "يرجى إدخال بريد إلكتروني صالح",
+    "minLength": "يجب أن يحتوي على {{min}} أحرف على الأقل",
+    "maxLength": "يجب ألا يتجاوز {{max}} حرف"
+  }
 }

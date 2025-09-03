@@ -264,7 +264,7 @@ export default function Checkout() {
   });
 
   const authSchema = z.object({
-    email: z.string().email(tCommon('validation.emailInvalid')),
+    email: z.string().min(1, tCommon('validation.usernameRequired')),
     password: z.string().min(1, tCommon('validation.passwordRequired')),
   });
 
@@ -1080,12 +1080,12 @@ export default function Checkout() {
                   <form onSubmit={loginForm.handleSubmit((data) => loginMutation.mutate(data))}>
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="loginEmail">{tCommon('email')} / Логин</Label>
+                        <Label htmlFor="loginEmail">{tCommon('usernameOrEmail')}</Label>
                         <Input
                           id="loginEmail"
                           type="text"
                           {...loginForm.register("email")}
-                          placeholder="admin или your@email.com"
+                          placeholder={tCommon('usernamePlaceholder')}
                         />
                         {loginForm.formState.errors.email && (
                           <p className="text-sm text-red-600">{loginForm.formState.errors.email.message}</p>
