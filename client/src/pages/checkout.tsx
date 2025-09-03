@@ -156,7 +156,7 @@ const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStar
 };
 
 export default function Checkout() {
-  const { user, isAuthenticated, loginMutation: authLoginMutation } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { items, getTotalPrice, clearCart } = useCartStore();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -426,16 +426,16 @@ export default function Checkout() {
     },
   });
 
-  // Create a wrapper mutation that maps the form data to the auth hook's expected format
   const loginMutation = useMutation({
     mutationFn: async (credentials: AuthData) => {
-      // Map email to username for the auth hook
-      return await authLoginMutation.mutateAsync({
+      // Use username (which can be email) for login
+      return await apiRequest("POST", "/api/login", {
         username: credentials.email,
         password: credentials.password
       });
     },
-    onSuccess: () => {
+    onSuccess: (user) => {
+      queryClient.setQueryData(["/api/auth/user"], user);
       toast({
         title: tCommon('auth.loginSuccess'),
         description: tShop('checkout.canNowPlaceOrder'),
@@ -1080,12 +1080,12 @@ export default function Checkout() {
                   <form onSubmit={loginForm.handleSubmit((data) => loginMutation.mutate(data))}>
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="loginEmail">{tCommon('email')}</Label>
+                        <Label htmlFor="loginEmail">{tCommon('email')} / Логин</Label>
                         <Input
                           id="loginEmail"
-                          type="email"
+                          type="text"
                           {...loginForm.register("email")}
-                          placeholder="your@email.com"
+                          placeholder="admin или your@email.com"
                         />
                         {loginForm.formState.errors.email && (
                           <p className="text-sm text-red-600">{loginForm.formState.errors.email.message}</p>
