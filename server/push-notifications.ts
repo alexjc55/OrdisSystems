@@ -219,33 +219,69 @@ export class PushNotificationService {
         return;
       }
 
-      const orderInfo = isGuest ? 'гостевой заказ' : 'заказ';
-      const notification = {
-        title: `🔔 Новый ${orderInfo} #${orderId}`,
-        body: `Клиент: ${customerName}, Сумма: ${totalAmount}₽`,
-        data: {
-          type: 'new-order',
-          orderId,
-          customerName,
-          totalAmount,
-          isGuest
+      // Многоязычные сообщения для новых заказов
+      const messages = {
+        ru: {
+          orderType: isGuest ? 'гостевой заказ' : 'заказ',
+          title: `🔔 Новый ${isGuest ? 'гостевой заказ' : 'заказ'} #${orderId}`,
+          body: `Клиент: ${customerName}, Сумма: ${totalAmount}₽`,
+          viewOrder: 'Посмотреть заказ',
+          adminPanel: 'Админ-панель'
         },
-        actions: [
-          {
-            action: 'view-order',
-            title: 'Посмотреть заказ'
-          },
-          {
-            action: 'admin-dashboard',
-            title: 'Админ-панель'
-          }
-        ]
+        en: {
+          orderType: isGuest ? 'guest order' : 'order',
+          title: `🔔 New ${isGuest ? 'guest order' : 'order'} #${orderId}`,
+          body: `Customer: ${customerName}, Amount: ${totalAmount}₽`,
+          viewOrder: 'View order',
+          adminPanel: 'Admin panel'
+        },
+        he: {
+          orderType: isGuest ? 'הזמנת אורח' : 'הזמנה',
+          title: `🔔 ${isGuest ? 'הזמנת אורח חדשה' : 'הזמנה חדשה'} #${orderId}`,
+          body: `לקוח: ${customerName}, סכום: ${totalAmount}₽`,
+          viewOrder: 'צפה בהזמנה',
+          adminPanel: 'פאנל ניהול'
+        },
+        ar: {
+          orderType: isGuest ? 'طلب ضيف' : 'طلب',
+          title: `🔔 ${isGuest ? 'طلب ضيف جديد' : 'طلب جديد'} #${orderId}`,
+          body: `العميل: ${customerName}، المبلغ: ${totalAmount}₽`,
+          viewOrder: 'عرض الطلب',
+          adminPanel: 'لوحة الإدارة'
+        }
       };
 
-      // Отправить уведомления всем админам и работникам
-      const promises = adminUsers.map(adminUser => 
-        this.sendToUser(adminUser.id, notification)
-      );
+      // Отправить уведомления всем админам и работникам с поддержкой языков
+      const promises = adminUsers.map(async (adminUser: any) => {
+        // Определить язык пользователя (по умолчанию русский)
+        const userLanguage = adminUser.preferredLanguage || 'ru';
+        const msg = messages[userLanguage as keyof typeof messages] || messages.ru;
+
+        const notification = {
+          title: msg.title,
+          body: msg.body,
+          data: {
+            type: 'new-order',
+            orderId,
+            customerName,
+            totalAmount,
+            isGuest,
+            language: userLanguage
+          },
+          actions: [
+            {
+              action: 'view-order',
+              title: msg.viewOrder
+            },
+            {
+              action: 'admin-dashboard',
+              title: msg.adminPanel
+            }
+          ]
+        };
+
+        return this.sendToUser(adminUser.id, notification);
+      });
 
       await Promise.all(promises);
       console.log(`📱 New order notification sent to ${adminUsers.length} admin/worker users for order #${orderId}`);
