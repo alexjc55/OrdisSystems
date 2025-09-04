@@ -46,7 +46,7 @@ export class PushNotificationService {
         actions: notification.actions || []
       });
 
-      const promises = subscriptions.map(sub => {
+      const promises = subscriptions.map((sub: any) => {
         const pushConfig = {
           endpoint: sub.endpoint,
           keys: {
@@ -95,7 +95,7 @@ export class PushNotificationService {
         actions: notification.actions || []
       });
 
-      const promises = subscriptions.map(sub => {
+      const promises = subscriptions.map((sub: any) => {
         const pushConfig = {
           endpoint: sub.endpoint,
           keys: {
@@ -386,7 +386,7 @@ export class PushNotificationService {
 
       console.log(`📄 Marketing notification payload:`, JSON.stringify({ title, message }, null, 2));
 
-      const promises = subscriptions.map(sub => {
+      const promises = subscriptions.map((sub: any) => {
         const pushConfig = {
           endpoint: sub.endpoint,
           keys: {

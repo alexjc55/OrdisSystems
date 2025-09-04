@@ -78,7 +78,7 @@ self.addEventListener('activate', function(event) {
       //       timestamp: BUILD_TIMESTAMP
       //     });
       //   });
-      });
+      // });
       
       // Check for app updates - but don't notify clients automatically
       return checkForAppUpdates().then(() => {
