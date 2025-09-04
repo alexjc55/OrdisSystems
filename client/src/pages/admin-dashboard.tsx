@@ -8184,13 +8184,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     ) : (
                       <ChevronDown className="h-5 w-5 text-gray-500" />
                     )}
-                    <h3 className="text-lg font-semibold flex-1 text-right">Email Notifications</h3>
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.emailNotifications')}</h3>
                     <Mail className="h-5 w-5 text-primary" />
                   </>
                 ) : (
                   <>
                     <Mail className="h-5 w-5 text-primary" />
-                    <h3 className="text-lg font-semibold flex-1 text-left">Email Notifications</h3>
+                    <h3 className="text-lg font-semibold flex-1 text-left">{adminT('storeSettings.emailNotifications')}</h3>
                     {isEmailNotificationsOpen ? (
                       <ChevronUp className="h-5 w-5 text-gray-500" />
                     ) : (
@@ -8213,7 +8213,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <Mail className="h-4 w-4" />
-                      <FormLabel>Enable Email Notifications</FormLabel>
+                      <FormLabel>{adminT('storeSettings.enableEmailNotifications')}</FormLabel>
                     </div>
                     <FormControl>
                       <Switch
@@ -8237,11 +8237,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <FormItem>
                       <FormLabel className={`text-sm flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                         <Mail className="h-4 w-4" />
-                        Notification Recipient Email
+                        {adminT('storeSettings.emailNotificationRecipient')}
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="admin@yourstore.com"
+                          placeholder={adminT('storeSettings.emailRecipientPlaceholder')}
                           type="email"
                           className="text-sm"
                           {...field}
@@ -8259,11 +8259,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        Sender Name
+                        {adminT('storeSettings.senderName')}
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Your Store Name"
+                          placeholder={adminT('storeSettings.senderNamePlaceholder')}
                           className="text-sm"
                           {...field}
                         />
@@ -8280,11 +8280,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                        Sender Email Address
+                        {adminT('storeSettings.senderEmail')}
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="noreply@yourstore.com"
+                          placeholder={adminT('storeSettings.senderEmailPlaceholder')}
                           type="email"
                           className="text-sm"
                           {...field}
@@ -8303,8 +8303,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     <FormItem>
                       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <div className={`flex flex-col ${isRTL ? 'text-right' : 'text-left'}`}>
-                          <FormLabel>Use SendGrid for Enhanced Delivery</FormLabel>
-                          <p className="text-xs text-gray-500">Recommended for better email deliverability</p>
+                          <FormLabel>{adminT('storeSettings.useSendgrid')}</FormLabel>
+                          <p className="text-xs text-gray-500">{adminT('storeSettings.sendgridDescription')}</p>
                         </div>
                         <FormControl>
                           <Switch
@@ -8326,7 +8326,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                          SendGrid API Key
+                          {adminT('storeSettings.sendgridApiKey')}
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -8343,7 +8343,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                 ) : (
                   /* SMTP Configuration */
                   <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
-                    <h4 className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>SMTP Configuration</h4>
+                    <h4 className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.smtpConfiguration')}</h4>
                     
                     <FormField
                       control={form.control}
@@ -8351,11 +8351,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                            SMTP Host
+                            {adminT('storeSettings.smtpHost')}
                           </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="smtp.gmail.com"
+                              placeholder={adminT('storeSettings.smtpHostPlaceholder')}
                               className="text-sm"
                               {...field}
                             />
@@ -8372,7 +8372,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                              Port
+                              {adminT('storeSettings.smtpPort')}
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -8394,7 +8394,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                         render={({ field }) => (
                           <FormItem>
                             <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                              <FormLabel className="text-sm">Use SSL/TLS</FormLabel>
+                              <FormLabel className="text-sm">{adminT('storeSettings.useSslTls')}</FormLabel>
                               <FormControl>
                                 <Switch
                                   checked={field.value}
@@ -8414,11 +8414,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                            Username
+                            {adminT('storeSettings.smtpUsername')}
                           </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="your-email@gmail.com"
+                              placeholder={adminT('storeSettings.smtpUsernamePlaceholder')}
                               type="email"
                               className="text-sm"
                               {...field}
@@ -8435,7 +8435,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                            Password / App Password
+                            {adminT('storeSettings.smtpPassword')}
                           </FormLabel>
                           <FormControl>
                             <Input
