@@ -408,6 +408,21 @@ export const storeSettings = pgTable("store_settings", {
   pwaNameAr: varchar("pwa_name_ar", { length: 100 }), // PWA app name (Arabic)
   pwaDescriptionAr: text("pwa_description_ar"), // PWA app description (Arabic)
   
+  // Email notifications for new orders
+  emailNotificationsEnabled: boolean("email_notifications_enabled").default(false),
+  orderNotificationEmail: varchar("order_notification_email", { length: 255 }),
+  orderNotificationFromName: varchar("order_notification_from_name", { length: 255 }).default("eDAHouse Store"),
+  orderNotificationFromEmail: varchar("order_notification_from_email", { length: 255 }).default("noreply@edahouse.com"),
+  // SMTP Settings for nodemailer
+  smtpHost: varchar("smtp_host", { length: 255 }),
+  smtpPort: integer("smtp_port").default(587),
+  smtpSecure: boolean("smtp_secure").default(false),
+  smtpUser: varchar("smtp_user", { length: 255 }),
+  smtpPassword: varchar("smtp_password", { length: 255 }),
+  // SendGrid settings (optional for premium delivery)
+  sendgridApiKey: varchar("sendgrid_api_key", { length: 255 }),
+  useSendgrid: boolean("use_sendgrid").default(false),
+  
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

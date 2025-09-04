@@ -301,7 +301,8 @@ import {
   Loader2,
   QrCode,
   Camera,
-  Menu
+  Menu,
+  Mail
 } from "lucide-react";
 
 // Validation schemas
@@ -7248,6 +7249,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
   const [isContactsOpen, setIsContactsOpen] = useState(false);
+  const [isEmailNotificationsOpen, setIsEmailNotificationsOpen] = useState(false);
   const [isVisualsOpen, setIsVisualsOpen] = useState(false);
   const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
   const [isWorkingHoursOpen, setIsWorkingHoursOpen] = useState(false);
@@ -7321,6 +7323,18 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       pwaIcon: storeSettings?.pwaIcon || "",
       pwaName: getLocalizedFieldForAdmin(storeSettings, 'pwaName', currentLanguage, storeSettings) || "",
       pwaDescription: getLocalizedFieldForAdmin(storeSettings, 'pwaDescription', currentLanguage, storeSettings) || "",
+      // Email notification settings
+      emailNotificationsEnabled: storeSettings?.emailNotificationsEnabled || false,
+      orderNotificationEmail: storeSettings?.orderNotificationEmail || "",
+      orderNotificationFromName: storeSettings?.orderNotificationFromName || "eDAHouse Store",
+      orderNotificationFromEmail: storeSettings?.orderNotificationFromEmail || "noreply@edahouse.com",
+      smtpHost: storeSettings?.smtpHost || "",
+      smtpPort: storeSettings?.smtpPort || 587,
+      smtpSecure: storeSettings?.smtpSecure || false,
+      smtpUser: storeSettings?.smtpUser || "",
+      smtpPassword: storeSettings?.smtpPassword || "",
+      sendgridApiKey: storeSettings?.sendgridApiKey || "",
+      useSendgrid: storeSettings?.useSendgrid || false,
     } as any,
   });
 
@@ -7412,6 +7426,18 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
         modernBlock2Text: storeSettings?.modernBlock2Text || "",
         modernBlock3Icon: storeSettings?.modernBlock3Icon || "",
         modernBlock3Text: storeSettings?.modernBlock3Text || "",
+        // Email notification settings
+        emailNotificationsEnabled: storeSettings?.emailNotificationsEnabled || false,
+        orderNotificationEmail: storeSettings?.orderNotificationEmail || "",
+        orderNotificationFromName: storeSettings?.orderNotificationFromName || "eDAHouse Store",
+        orderNotificationFromEmail: storeSettings?.orderNotificationFromEmail || "noreply@edahouse.com",
+        smtpHost: storeSettings?.smtpHost || "",
+        smtpPort: storeSettings?.smtpPort || 587,
+        smtpSecure: storeSettings?.smtpSecure || false,
+        smtpUser: storeSettings?.smtpUser || "",
+        smtpPassword: storeSettings?.smtpPassword || "",
+        sendgridApiKey: storeSettings?.sendgridApiKey || "",
+        useSendgrid: storeSettings?.useSendgrid || false,
       } as any);
     }
   }, [storeSettings, currentLanguage, form]);
@@ -7520,7 +7546,19 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
           ...data, 
           ...preservedData, 
           ...multilingualUpdates,
-          paymentMethods: processedPaymentMethods
+          paymentMethods: processedPaymentMethods,
+          // Include email notification settings directly (they're not multilingual)
+          emailNotificationsEnabled: data.emailNotificationsEnabled,
+          orderNotificationEmail: data.orderNotificationEmail,
+          orderNotificationFromName: data.orderNotificationFromName,
+          orderNotificationFromEmail: data.orderNotificationFromEmail,
+          smtpHost: data.smtpHost,
+          smtpPort: data.smtpPort,
+          smtpSecure: data.smtpSecure,
+          smtpUser: data.smtpUser,
+          smtpPassword: data.smtpPassword,
+          sendgridApiKey: data.sendgridApiKey,
+          useSendgrid: data.useSendgrid,
         };
         
 
@@ -8128,6 +8166,294 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
               );
             })}
           </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Email Notifications Section */}
+        <Collapsible open={isEmailNotificationsOpen} onOpenChange={setIsEmailNotificationsOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {isRTL ? (
+                  <>
+                    {isEmailNotificationsOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                    <h3 className="text-lg font-semibold flex-1 text-right">Email Notifications</h3>
+                    <Mail className="h-5 w-5 text-primary" />
+                  </>
+                ) : (
+                  <>
+                    <Mail className="h-5 w-5 text-primary" />
+                    <h3 className="text-lg font-semibold flex-1 text-left">Email Notifications</h3>
+                    {isEmailNotificationsOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </>
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="space-y-6">
+            
+            {/* Email Notifications Toggle */}
+            <FormField
+              control={form.control}
+              name="emailNotificationsEnabled"
+              render={({ field }) => (
+                <FormItem>
+                  <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <Mail className="h-4 w-4" />
+                      <FormLabel>Enable Email Notifications</FormLabel>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {form.watch("emailNotificationsEnabled") && (
+              <>
+                {/* Order Notification Email */}
+                <FormField
+                  control={form.control}
+                  name="orderNotificationEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+                        <Mail className="h-4 w-4" />
+                        Notification Recipient Email
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="admin@yourstore.com"
+                          type="email"
+                          className="text-sm"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                {/* From Name */}
+                <FormField
+                  control={form.control}
+                  name="orderNotificationFromName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                        Sender Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Your Store Name"
+                          className="text-sm"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                {/* From Email */}
+                <FormField
+                  control={form.control}
+                  name="orderNotificationFromEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                        Sender Email Address
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="noreply@yourstore.com"
+                          type="email"
+                          className="text-sm"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                {/* SendGrid Toggle */}
+                <FormField
+                  control={form.control}
+                  name="useSendgrid"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={`flex flex-col ${isRTL ? 'text-right' : 'text-left'}`}>
+                          <FormLabel>Use SendGrid for Enhanced Delivery</FormLabel>
+                          <p className="text-xs text-gray-500">Recommended for better email deliverability</p>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {form.watch("useSendgrid") ? (
+                  /* SendGrid Configuration */
+                  <FormField
+                    control={form.control}
+                    name="sendgridApiKey"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                          SendGrid API Key
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="SG...."
+                            type="password"
+                            className="text-sm"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                ) : (
+                  /* SMTP Configuration */
+                  <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+                    <h4 className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>SMTP Configuration</h4>
+                    
+                    <FormField
+                      control={form.control}
+                      name="smtpHost"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                            SMTP Host
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="smtp.gmail.com"
+                              className="text-sm"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="smtpPort"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                              Port
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="587"
+                                type="number"
+                                className="text-sm"
+                                {...field}
+                                onChange={(e) => field.onChange(parseInt(e.target.value) || 587)}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="smtpSecure"
+                        render={({ field }) => (
+                          <FormItem>
+                            <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                              <FormLabel className="text-sm">Use SSL/TLS</FormLabel>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="smtpUser"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                            Username
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="your-email@gmail.com"
+                              type="email"
+                              className="text-sm"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="smtpPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                            Password / App Password
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="••••••••"
+                              type="password"
+                              className="text-sm"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
+              </>
+            )}
+
           </CollapsibleContent>
         </Collapsible>
 

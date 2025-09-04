@@ -6,6 +6,7 @@ import { setupAuth, isAuthenticated } from "./auth";
 import bcrypt from "bcryptjs";
 import { insertCategorySchema, insertProductSchema, insertOrderSchema, insertStoreSettingsSchema, updateStoreSettingsSchema, insertThemeSchema, updateThemeSchema, pushSubscriptions, marketingNotifications, storeSettings } from "@shared/schema";
 import { PushNotificationService } from "./push-notifications";
+import { emailService, sendNewOrderEmail } from "./email-service";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
 import multer from "multer";
@@ -1146,6 +1147,51 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         console.error('Error sending new order push notification:', pushError);
         // Не прерывать создание заказа если уведомление не отправилось
       }
+
+      // Отправить email уведомления о новом заказе
+      try {
+        const currentStoreSettings = await storage.getStoreSettings();
+        if (currentStoreSettings?.emailNotificationsEnabled && currentStoreSettings?.orderNotificationEmail) {
+          // Configure email service with current settings
+          emailService.updateSettings({
+            useSendgrid: currentStoreSettings.useSendgrid || false,
+            smtpHost: currentStoreSettings.smtpHost || undefined,
+            smtpPort: currentStoreSettings.smtpPort || undefined,
+            smtpSecure: currentStoreSettings.smtpSecure || undefined,
+            smtpUser: currentStoreSettings.smtpUser || undefined,
+            smtpPassword: currentStoreSettings.smtpPassword || undefined,
+            sendgridApiKey: currentStoreSettings.sendgridApiKey || undefined
+          });
+
+          await sendNewOrderEmail(
+            order.id,
+            orderData.guestName || 'Гость',
+            totalAmount.toString(),
+            {
+              customerPhone: guestInfo.phone,
+              deliveryAddress: guestInfo.address,
+              deliveryDate: guestInfo.deliveryDate,
+              deliveryTime: guestInfo.deliveryTime,
+              paymentMethod: guestInfo.paymentMethod,
+              customerNotes: guestInfo.customerNotes,
+              status: 'pending',
+              items: orderItems.map(item => ({
+                productId: item.productId,
+                quantity: parseInt(item.quantity),
+                pricePerKg: parseFloat(item.pricePerKg),
+                totalPrice: parseFloat(item.totalPrice)
+              }))
+            },
+            currentStoreSettings.orderNotificationEmail,
+            currentStoreSettings.orderNotificationFromEmail || 'noreply@edahouse.com',
+            currentStoreSettings.orderNotificationFromName || 'eDAHouse Store',
+            currentStoreSettings.defaultLanguage || 'ru'
+          );
+        }
+      } catch (emailError) {
+        console.error('Error sending new order email notification:', emailError);
+        // Не прерывать создание заказа если email уведомление не отправилось
+      }
       
       res.status(201).json(order);
     } catch (error) {
@@ -1224,6 +1270,52 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       } catch (pushError) {
         console.error('Error sending new order push notification:', pushError);
         // Не прерывать создание заказа если уведомление не отправилось
+      }
+
+      // Отправить email уведомления о новом заказе
+      try {
+        const currentStoreSettings = await storage.getStoreSettings();
+        if (currentStoreSettings?.emailNotificationsEnabled && currentStoreSettings?.orderNotificationEmail) {
+          // Configure email service with current settings
+          emailService.updateSettings({
+            useSendgrid: currentStoreSettings.useSendgrid || false,
+            smtpHost: currentStoreSettings.smtpHost || undefined,
+            smtpPort: currentStoreSettings.smtpPort || undefined,
+            smtpSecure: currentStoreSettings.smtpSecure || undefined,
+            smtpUser: currentStoreSettings.smtpUser || undefined,
+            smtpPassword: currentStoreSettings.smtpPassword || undefined,
+            sendgridApiKey: currentStoreSettings.sendgridApiKey || undefined
+          });
+
+          const customerName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : 'Пользователь';
+          await sendNewOrderEmail(
+            order.id,
+            customerName,
+            validatedData.totalAmount?.toString() || '0',
+            {
+              customerPhone: user?.phone || orderData.guestPhone,
+              deliveryAddress: orderData.deliveryAddress,
+              deliveryDate: orderData.deliveryDate,
+              deliveryTime: orderData.deliveryTime,
+              paymentMethod: orderData.paymentMethod,
+              customerNotes: orderData.customerNotes,
+              status: 'pending',
+              items: validatedData.items.map(item => ({
+                productId: item.productId,
+                quantity: parseInt(item.quantity),
+                pricePerKg: parseFloat(item.pricePerKg),
+                totalPrice: parseFloat(item.totalPrice)
+              }))
+            },
+            currentStoreSettings.orderNotificationEmail,
+            currentStoreSettings.orderNotificationFromEmail || 'noreply@edahouse.com',
+            currentStoreSettings.orderNotificationFromName || 'eDAHouse Store',
+            currentStoreSettings.defaultLanguage || 'ru'
+          );
+        }
+      } catch (emailError) {
+        console.error('Error sending new order email notification:', emailError);
+        // Не прерывать создание заказа если email уведомление не отправилось
       }
       
       res.json(order);
