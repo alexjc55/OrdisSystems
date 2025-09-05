@@ -45,7 +45,16 @@ class EmailService {
       const secure = customSettings?.smtpSecure || false;
       
       // Fix HELO_NO_DOMAIN - ensure proper FQDN format
-      const heloName = customSettings?.smtpHost ? customSettings.smtpHost : 'localhost';
+      // Try different HELO formats based on SMTP host
+      let heloName = 'localhost';
+      if (customSettings?.smtpHost) {
+        if (customSettings.smtpHost === 'ordis.co.il') {
+          // For ordis.co.il, try mail subdomain format that matches email servers
+          heloName = 'mail.ordis.co.il';
+        } else {
+          heloName = customSettings.smtpHost;
+        }
+      }
       
       const config = {
         host: customSettings?.smtpHost || 'localhost',
