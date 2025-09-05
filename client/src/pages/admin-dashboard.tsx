@@ -820,7 +820,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
   };
 
   const [editedOrder, setEditedOrder] = useState({
-    customerPhone: order.customerPhone || '',
+    customerPhone: order.customerPhone || order.guestPhone || '',
     deliveryAddress: order.deliveryAddress || '',
     deliveryDate: order.deliveryDate || '',
     deliveryTime: order.deliveryTime || '',
@@ -1384,6 +1384,28 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             {adminT('orders.delivery')}
           </h3>
           <div className="space-y-2">
+            {/* Customer Name and Email (Guest or User) */}
+            {(order.user || order.guestName || order.guestEmail) && (
+              <div className="bg-white rounded-md p-2 border border-blue-200">
+                <div className="text-xs font-medium text-gray-600 mb-1">
+                  <Users className="h-3 w-3 inline mr-1" />
+                  {adminT('orders.customer')}:
+                </div>
+                <div className="text-sm font-medium">
+                  {order.user ? (
+                    order.user.firstName && order.user.lastName 
+                      ? `${order.user.firstName} ${order.user.lastName}`
+                      : order.user.email || "—"
+                  ) : order.guestName ? (
+                    order.guestName
+                  ) : "Гость"}
+                </div>
+                {!order.user && order.guestEmail && (
+                  <div className="text-xs text-blue-600">{order.guestEmail}</div>
+                )}
+              </div>
+            )}
+            
             {/* Customer Information and Delivery Details */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.clientDeliveryInfo')}</label>
