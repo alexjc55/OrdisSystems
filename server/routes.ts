@@ -2458,7 +2458,9 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       }
 
       // Get current settings for email configuration
+      const db = await getDB();
       const [settingsData] = await db.select().from(storeSettings).limit(1);
+      
       
       if (!settingsData?.emailNotificationsEnabled) {
         return res.status(400).json({ 
@@ -2467,8 +2469,10 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         });
       }
 
+
       // Update email service with current settings
       await emailService.updateSettings({
+        useSendgrid: settingsData.useSendgrid || false,
         sendgridApiKey: process.env.SENDGRID_API_KEY,
         smtpHost: settingsData.smtpHost,
         smtpPort: settingsData.smtpPort,
@@ -2478,12 +2482,13 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       });
 
       // Send test email
-      const emailSent = await emailService.sendEmail(
-        toEmail,
-        settingsData.orderNotificationFromEmail || 'noreply@edahouse.ordis.co.il',
-        `🧪 Тест email - eDAHouse`,
-        `Тестовое письмо от системы eDAHouse`,
-        `
+      const emailSent = await emailService.sendEmail({
+        to: toEmail,
+        from: settingsData.orderNotificationFromEmail || 'noreply@edahouse.ordis.co.il',
+        fromName: settingsData.storeName || 'eDAHouse',
+        subject: '🧪 Тест email - eDAHouse',
+        text: 'Тестовое письмо от системы eDAHouse',
+        html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h2 style="color: #f97316;">🧪 Тест email уведомлений</h2>
             <p>Это тестовое письмо от системы <strong>eDAHouse</strong>.</p>
@@ -2493,7 +2498,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
             </p>
           </div>
         `
-      );
+      });
 
       if (emailSent) {
         res.json({ 
