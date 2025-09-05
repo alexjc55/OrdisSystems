@@ -7515,6 +7515,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
 
   // Handle test email
   const handleTestEmail = () => {
+    // Prevent double-clicks during loading
+    if (testEmailMutation.isPending) {
+      console.log("⚠️ Test email already in progress, ignoring duplicate click");
+      return;
+    }
+    
     const emailAddress = form.getValues("orderNotificationEmail");
     if (!emailAddress) {
       toast({
@@ -7525,6 +7531,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       return;
     }
 
+    console.log("🔄 Sending test email to:", emailAddress);
     testEmailMutation.mutate(emailAddress);
   };
 
