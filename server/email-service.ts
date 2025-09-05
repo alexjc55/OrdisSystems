@@ -40,17 +40,24 @@ class EmailService {
 
   private async initializeNodemailer(customSettings?: Partial<EmailSettings>) {
     try {
-      // Default configuration - works without authentication for development
+      // Use custom settings if provided, otherwise use safe defaults
+      const port = customSettings?.smtpPort || 1025;
+      const secure = customSettings?.smtpSecure || false;
+      
       const config = {
         host: customSettings?.smtpHost || 'localhost',
-        port: customSettings?.smtpPort || 1025,
-        secure: customSettings?.smtpSecure || false,
+        port: port,
+        // Port 587 with secure=true is incorrect - use STARTTLS instead
+        secure: port === 465 ? true : false, // Only use secure=true for port 465 (implicit SSL)
         auth: customSettings?.smtpUser && customSettings?.smtpPassword ? {
           user: customSettings.smtpUser,
           pass: customSettings.smtpPassword
         } : undefined,
+        requireTLS: port === 587, // Use STARTTLS for port 587
         tls: {
-          rejectUnauthorized: false
+          rejectUnauthorized: false,
+          ciphers: 'SSLv3',
+          secureProtocol: 'TLSv1_2_method'
         }
       };
 
