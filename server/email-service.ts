@@ -333,14 +333,39 @@ export async function sendNewOrderEmail(
   // Get translated status
   const statusText = template.statusTranslations[orderDetails.status as keyof typeof template.statusTranslations] || orderDetails.status || 'pending';
 
+  // Function to translate units
+  const translateUnit = (unit: string, language: string): string => {
+    const unitTranslations: { [key: string]: { [lang: string]: string } } = {
+      'piece': { ru: 'шт', en: 'piece', he: 'יחידה', ar: 'قطعة' },
+      'portion': { ru: 'порция', en: 'portion', he: 'מנה', ar: 'حصة' },
+      '100g': { ru: '100г', en: '100g', he: '100 גר׳', ar: '100غ' },
+      '200g': { ru: '200г', en: '200g', he: '200 גר׳', ar: '200غ' },
+      '250g': { ru: '250г', en: '250g', he: '250 גר׳', ar: '250غ' },
+      '300g': { ru: '300г', en: '300g', he: '300 גר׳', ar: '300غ' },
+      '400g': { ru: '400г', en: '400g', he: '400 גר׳', ar: '400غ' },
+      '500g': { ru: '500г', en: '500g', he: '500 גר׳', ar: '500غ' },
+      '1kg': { ru: '1кг', en: '1kg', he: '1 ק"ג', ar: '1كغ' },
+      'ml': { ru: 'мл', en: 'ml', he: 'מ״ל', ar: 'مل' },
+      'l': { ru: 'л', en: 'l', he: 'ליטר', ar: 'لتر' },
+      'kg': { ru: 'кг', en: 'kg', he: 'ק"ג', ar: 'كغ' },
+      'g': { ru: 'г', en: 'g', he: 'גר׳', ar: 'غ' }
+    };
+    
+    return unitTranslations[unit]?.[language] || unitTranslations[unit]?.en || unit;
+  };
+
   // Build items list for email
-  const itemsHtml = orderDetails.items?.map((item: any) => `
+  const itemsHtml = orderDetails.items?.map((item: any) => {
+    const originalUnit = item.product?.unit || template.defaultUnit;
+    const translatedUnit = translateUnit(originalUnit, language);
+    
+    return `
     <tr>
       <td style="padding: 8px; border-bottom: 1px solid #eee;">${item.product?.name || template.productLabel}</td>
-      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity} ${item.product?.unit || template.defaultUnit}</td>
+      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity} ${translatedUnit}</td>
       <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${item.totalPrice}₪</td>
-    </tr>
-  `).join('') || '';
+    </tr>`;
+  }).join('') || '';
 
   // HTML email template with anti-spam measures
   const html = `
