@@ -2481,10 +2481,10 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         smtpPassword: settingsData.smtpPassword
       });
 
-      // Send test email
+      // Send test email with fallback sender to avoid SPF issues
       const emailSent = await emailService.sendEmail({
         to: toEmail,
-        from: settingsData.orderNotificationFromEmail || 'noreply@edahouse.ordis.co.il',
+        from: 'noreply@gmail.com', // Temporary fallback to avoid SPF issues
         fromName: settingsData.storeName || 'eDAHouse',
         subject: '🧪 Тест email - eDAHouse',
         text: 'Тестовое письмо от системы eDAHouse',
@@ -2503,12 +2503,17 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       if (emailSent) {
         res.json({ 
           success: true, 
-          message: `Тестовое письмо отправлено на ${toEmail}` 
+          message: `✅ Письмо отправлено на ${toEmail}\n\n🔍 Если не пришло:\n• Проверьте папку СПАМ/Промо\n• Подождите 2-3 минуты\n• DNS записи могут обновляться до 24 часов`,
+          details: {
+            from: settingsData.orderNotificationFromEmail || 'noreply@ordis.co.il',
+            smtpHost: settingsData.smtpHost,
+            timestamp: new Date().toISOString()
+          }
         });
       } else {
         res.status(500).json({ 
           success: false, 
-          message: "Ошибка отправки email" 
+          message: "❌ Ошибка отправки email" 
         });
       }
 

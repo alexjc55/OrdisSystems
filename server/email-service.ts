@@ -162,6 +162,9 @@ class EmailService {
       const info = await this.nodemailerTransporter.sendMail(msg);
       console.log('✅ Email sent successfully via Nodemailer:', params.subject);
       console.log('📧 Message ID:', info.messageId);
+      console.log('📧 Response:', info.response);
+      console.log('📧 Accepted:', info.accepted);
+      console.log('📧 Rejected:', info.rejected);
       return true;
     } catch (error: any) {
       console.error('❌ Nodemailer email error:', error?.message);
