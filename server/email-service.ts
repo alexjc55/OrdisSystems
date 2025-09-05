@@ -269,7 +269,7 @@ export async function sendNewOrderEmail(
     <tr>
       <td style="padding: 8px; border-bottom: 1px solid #eee;">${item.product?.name || template.productLabel}</td>
       <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}${item.product?.unit || 'кг'}</td>
-      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${item.totalPrice}₽</td>
+      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${item.totalPrice}₪</td>
     </tr>
   `).join('') || '';
 
@@ -307,7 +307,7 @@ export async function sendNewOrderEmail(
             </tr>` : ''}
             <tr>
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.totalLabel}</td>
-              <td style="padding: 10px 0; color: #f97316; font-weight: bold; font-size: 18px;">${totalAmount}₽</td>
+              <td style="padding: 10px 0; color: #f97316; font-weight: bold; font-size: 18px;">${totalAmount}₪</td>
             </tr>
             ${orderDetails.paymentMethod ? `<tr>
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.paymentLabel}</td>
@@ -373,7 +373,7 @@ ${template.title}
 ${template.customerLabel} ${customerName}
 ${orderDetails.customerPhone ? `${template.phoneLabel} ${orderDetails.customerPhone}` : ''}
 ${orderDetails.deliveryAddress ? `${template.addressLabel} ${orderDetails.deliveryAddress}` : ''}
-${template.totalLabel} ${totalAmount}₽
+${template.totalLabel} ${totalAmount}₪
 ${orderDetails.paymentMethod ? `${template.paymentLabel} ${orderDetails.paymentMethod}` : ''}
 ${template.statusLabel} ${orderDetails.status || 'pending'}
 ${orderDetails.customerNotes ? `${template.notesLabel} ${orderDetails.customerNotes}` : ''}

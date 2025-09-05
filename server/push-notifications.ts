@@ -224,28 +224,28 @@ export class PushNotificationService {
         ru: {
           orderType: isGuest ? 'гостевой заказ' : 'заказ',
           title: `🔔 Новый ${isGuest ? 'гостевой заказ' : 'заказ'} #${orderId}`,
-          body: `Клиент: ${customerName}, Сумма: ${totalAmount}₽`,
+          body: `Клиент: ${customerName}, Сумма: ${totalAmount}₪`,
           viewOrder: 'Посмотреть заказ',
           adminPanel: 'Админ-панель'
         },
         en: {
           orderType: isGuest ? 'guest order' : 'order',
           title: `🔔 New ${isGuest ? 'guest order' : 'order'} #${orderId}`,
-          body: `Customer: ${customerName}, Amount: ${totalAmount}₽`,
+          body: `Customer: ${customerName}, Amount: ${totalAmount}₪`,
           viewOrder: 'View order',
           adminPanel: 'Admin panel'
         },
         he: {
           orderType: isGuest ? 'הזמנת אורח' : 'הזמנה',
           title: `🔔 ${isGuest ? 'הזמנת אורח חדשה' : 'הזמנה חדשה'} #${orderId}`,
-          body: `לקוח: ${customerName}, סכום: ${totalAmount}₽`,
+          body: `לקוח: ${customerName}, סכום: ${totalAmount}₪`,
           viewOrder: 'צפה בהזמנה',
           adminPanel: 'פאנל ניהול'
         },
         ar: {
           orderType: isGuest ? 'طلب ضيف' : 'طلب',
           title: `🔔 ${isGuest ? 'طلب ضيف جديد' : 'طلب جديد'} #${orderId}`,
-          body: `العميل: ${customerName}، المبلغ: ${totalAmount}₽`,
+          body: `العميل: ${customerName}، المبلغ: ${totalAmount}₪`,
           viewOrder: 'عرض الطلب',
           adminPanel: 'لوحة الإدارة'
         }
