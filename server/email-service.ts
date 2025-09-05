@@ -47,6 +47,8 @@ class EmailService {
       const config = {
         host: customSettings?.smtpHost || 'localhost',
         port: port,
+        // Fix HELO_NO_DOMAIN issue - properly identify ourselves
+        name: customSettings?.smtpHost || 'ordis.co.il',
         // Port 587 with secure=true is incorrect - use STARTTLS instead
         secure: port === 465 ? true : false, // Only use secure=true for port 465 (implicit SSL)
         auth: customSettings?.smtpUser && customSettings?.smtpPassword ? {
