@@ -333,36 +333,53 @@ export async function sendNewOrderEmail(
   // Get translated status
   const statusText = template.statusTranslations[orderDetails.status as keyof typeof template.statusTranslations] || orderDetails.status || 'pending';
 
-  // Function to translate units
-  const translateUnit = (unit: string, language: string): string => {
+  // Function to format quantity with units
+  const formatQuantityWithUnit = (quantity: number, unit: string, language: string): string => {
+    // Basic unit translations
+    const baseUnits: { [lang: string]: string } = {
+      ru: 'г', en: 'g', he: 'גר׳', ar: 'غ'
+    };
+    
     const unitTranslations: { [key: string]: { [lang: string]: string } } = {
       'piece': { ru: 'шт', en: 'piece', he: 'יחידה', ar: 'قطعة' },
       'portion': { ru: 'порция', en: 'portion', he: 'מנה', ar: 'حصة' },
-      '100g': { ru: '100г', en: '100g', he: '100 גר׳', ar: '100غ' },
-      '200g': { ru: '200г', en: '200g', he: '200 גר׳', ar: '200غ' },
-      '250g': { ru: '250г', en: '250g', he: '250 גר׳', ar: '250غ' },
-      '300g': { ru: '300г', en: '300g', he: '300 גר׳', ar: '300غ' },
-      '400g': { ru: '400г', en: '400g', he: '400 גר׳', ar: '400غ' },
-      '500g': { ru: '500г', en: '500g', he: '500 גר׳', ar: '500غ' },
-      '1kg': { ru: '1кг', en: '1kg', he: '1 ק"ג', ar: '1كغ' },
       'ml': { ru: 'мл', en: 'ml', he: 'מ״ל', ar: 'مل' },
       'l': { ru: 'л', en: 'l', he: 'ליטר', ar: 'لتر' },
       'kg': { ru: 'кг', en: 'kg', he: 'ק"ג', ar: 'كغ' },
       'g': { ru: 'г', en: 'g', he: 'גר׳', ar: 'غ' }
     };
     
-    return unitTranslations[unit]?.[language] || unitTranslations[unit]?.en || unit;
+    // Handle weight units (100g, 200g, etc.)
+    const weightMatch = unit.match(/^(\d+)g$/);
+    if (weightMatch) {
+      const unitWeight = parseInt(weightMatch[1]);
+      const totalWeight = quantity * unitWeight;
+      
+      // Convert to kg if >= 1000g
+      if (totalWeight >= 1000) {
+        const kg = totalWeight / 1000;
+        const kgUnit = unitTranslations['kg'][language] || unitTranslations['kg']['en'];
+        return `${kg}${kgUnit}`;
+      } else {
+        const gUnit = baseUnits[language] || baseUnits['en'];
+        return `${totalWeight}${gUnit}`;
+      }
+    }
+    
+    // Handle regular units (piece, portion, ml, etc.)
+    const translatedUnit = unitTranslations[unit]?.[language] || unitTranslations[unit]?.en || unit;
+    return `${quantity} ${translatedUnit}`;
   };
 
   // Build items list for email
   const itemsHtml = orderDetails.items?.map((item: any) => {
     const originalUnit = item.product?.unit || template.defaultUnit;
-    const translatedUnit = translateUnit(originalUnit, language);
+    const formattedQuantity = formatQuantityWithUnit(item.quantity, originalUnit, language);
     
     return `
     <tr>
       <td style="padding: 8px; border-bottom: 1px solid #eee;">${item.product?.name || template.productLabel}</td>
-      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity} ${translatedUnit}</td>
+      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${formattedQuantity}</td>
       <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${item.totalPrice}₪</td>
     </tr>`;
   }).join('') || '';
