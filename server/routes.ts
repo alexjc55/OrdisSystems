@@ -2484,7 +2484,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       // Send test email with fallback sender to avoid SPF issues
       const emailSent = await emailService.sendEmail({
         to: toEmail,
-        from: 'noreply@gmail.com', // Temporary fallback to avoid SPF issues
+        from: settingsData.orderNotificationFromEmail || 'noreply@ordis.co.il', // Use consistent domain
         fromName: settingsData.storeName || 'eDAHouse',
         subject: '🧪 Тест email - eDAHouse',
         text: 'Тестовое письмо от системы eDAHouse',
