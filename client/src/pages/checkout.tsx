@@ -329,8 +329,7 @@ export default function Checkout() {
         status: "pending"
       };
       
-      const res = await apiRequest("POST", "/api/orders/guest", orderData);
-      return await res.json();
+      return await apiRequest("POST", "/api/orders/guest", orderData);
     },
     onSuccess: (order) => {
       clearCart();
