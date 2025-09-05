@@ -1238,10 +1238,21 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               <div className="font-bold text-lg">#{order.id}</div>
             </div>
             <div className="bg-white rounded-lg px-3 py-2 shadow-sm flex-1 min-w-0">
-              <div className="text-xs text-gray-500">{adminT('orders.customer')}</div>
-              <div className="font-medium text-sm truncate">{order.user?.firstName && order.user?.lastName 
-                ? `${order.user.firstName} ${order.user.lastName}`
-                : order.user?.email || "—"}</div>
+              <div className="text-xs text-gray-500">
+                {order.user ? adminT('orders.customer') : 'Гость'}
+              </div>
+              <div className="font-medium text-sm truncate">
+                {order.user ? (
+                  order.user.firstName && order.user.lastName 
+                    ? `${order.user.firstName} ${order.user.lastName}`
+                    : order.user.email || "—"
+                ) : order.guestName ? (
+                  order.guestName
+                ) : "Гость"}
+                {!order.user && order.guestEmail && (
+                  <div className="text-xs text-blue-600">{order.guestEmail}</div>
+                )}
+              </div>
             </div>
           </div>
           {/* Second row: Total amount and Status */}
@@ -1312,10 +1323,21 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               <div className="font-bold text-lg text-green-600">{formatCurrency(order.totalAmount)}</div>
             </div>
             <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
-              <div className="text-xs text-gray-500">{adminT('orders.customer')}</div>
-              <div className="font-medium">{order.user?.firstName && order.user?.lastName 
-                ? `${order.user.firstName} ${order.user.lastName}`
-                : order.user?.email || "—"}</div>
+              <div className="text-xs text-gray-500">
+                {order.user ? adminT('orders.customer') : 'Гость'}
+              </div>
+              <div className="font-medium">
+                {order.user ? (
+                  order.user.firstName && order.user.lastName 
+                    ? `${order.user.firstName} ${order.user.lastName}`
+                    : order.user.email || "—"
+                ) : order.guestName ? (
+                  order.guestName
+                ) : "Гость"}
+                {!order.user && order.guestEmail && (
+                  <div className="text-xs text-blue-600">{order.guestEmail}</div>
+                )}
+              </div>
             </div>
             <div className="bg-white rounded-lg px-3 py-2 shadow-sm min-w-[160px]">
               <div className="text-xs text-gray-500">{adminT('orders.orderStatus')}</div>
@@ -1384,28 +1406,6 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
             {adminT('orders.delivery')}
           </h3>
           <div className="space-y-2">
-            {/* Customer Name and Email (Guest or User) */}
-            {(order.user || order.guestName || order.guestEmail) && (
-              <div className="bg-white rounded-md p-2 border border-blue-200">
-                <div className="text-xs font-medium text-gray-600 mb-1">
-                  <Users className="h-3 w-3 inline mr-1" />
-                  {adminT('orders.customer')}:
-                </div>
-                <div className="text-sm font-medium">
-                  {order.user ? (
-                    order.user.firstName && order.user.lastName 
-                      ? `${order.user.firstName} ${order.user.lastName}`
-                      : order.user.email || "—"
-                  ) : order.guestName ? (
-                    order.guestName
-                  ) : "Гость"}
-                </div>
-                {!order.user && order.guestEmail && (
-                  <div className="text-xs text-blue-600">{order.guestEmail}</div>
-                )}
-              </div>
-            )}
-            
             {/* Customer Information and Delivery Details */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">{adminT('orders.clientDeliveryInfo')}</label>
@@ -1642,12 +1642,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
               {editedOrderItems.map((item: any, index: number) => (
                 <TableRow key={index}>
                   <TableCell className="text-sm">
-                    <div>
-                      <div className="font-medium">{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}</div>
-                      {(getLocalizedField(item.product, 'description', i18n.language as SupportedLanguage) || item.product?.description) && (
-                        <div className="text-xs text-gray-500">{getLocalizedField(item.product, 'description', i18n.language as SupportedLanguage) || item.product.description}</div>
-                      )}
-                    </div>
+                    <div className="font-medium">{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}</div>
                   </TableCell>
                   <TableCell className="text-sm">
                     <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
