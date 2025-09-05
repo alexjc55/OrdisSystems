@@ -1163,6 +1163,25 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
             sendgridApiKey: currentStoreSettings.sendgridApiKey || undefined
           });
 
+          // Fetch product details for email (optimized)
+          const productIds = orderItems.map((item: any) => item.productId);
+          const productsMap = await storage.getProductsByIds(productIds)
+            .then(products => new Map(products.map(p => [p.id, p])));
+            
+          const itemsWithProducts = orderItems.map((item: any) => {
+            const product = productsMap.get(item.productId);
+            return {
+              productId: item.productId,
+              quantity: parseInt(item.quantity),
+              pricePerKg: parseFloat(item.pricePerKg),
+              totalPrice: parseFloat(item.totalPrice),
+              product: product ? {
+                name: product.name,
+                unit: product.unit || 'кг'
+              } : null
+            };
+          });
+
           await sendNewOrderEmail(
             order.id,
             orderData.guestName || 'Гость',
@@ -1175,17 +1194,14 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
               paymentMethod: guestInfo.paymentMethod,
               customerNotes: guestInfo.customerNotes,
               status: 'pending',
-              items: orderItems.map(item => ({
-                productId: item.productId,
-                quantity: parseInt(item.quantity),
-                pricePerKg: parseFloat(item.pricePerKg),
-                totalPrice: parseFloat(item.totalPrice)
-              }))
+              items: itemsWithProducts
             },
             currentStoreSettings.orderNotificationEmail,
             currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',
             currentStoreSettings.orderNotificationFromName || 'eDAHouse Store',
-            currentStoreSettings.defaultLanguage || 'ru'
+            currentStoreSettings.defaultLanguage || 'ru',
+            currentStoreSettings.storeName || 'eDAHouse',
+            req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined
           );
         }
       } catch (emailError) {
@@ -1287,6 +1303,25 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
             sendgridApiKey: currentStoreSettings.sendgridApiKey || undefined
           });
 
+          // Fetch product details for email (optimized)
+          const productIds = validatedData.items.map((item: any) => item.productId);
+          const productsMap = await storage.getProductsByIds(productIds)
+            .then(products => new Map(products.map(p => [p.id, p])));
+            
+          const itemsWithProducts = validatedData.items.map((item: any) => {
+            const product = productsMap.get(item.productId);
+            return {
+              productId: item.productId,
+              quantity: parseInt(item.quantity),
+              pricePerKg: parseFloat(item.pricePerKg),
+              totalPrice: parseFloat(item.totalPrice),
+              product: product ? {
+                name: product.name,
+                unit: product.unit || 'кг'
+              } : null
+            };
+          });
+
           const customerName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : 'Пользователь';
           await sendNewOrderEmail(
             order.id,
@@ -1300,17 +1335,14 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
               paymentMethod: orderData.paymentMethod,
               customerNotes: orderData.customerNotes,
               status: 'pending',
-              items: validatedData.items.map(item => ({
-                productId: item.productId,
-                quantity: parseInt(item.quantity),
-                pricePerKg: parseFloat(item.pricePerKg),
-                totalPrice: parseFloat(item.totalPrice)
-              }))
+              items: itemsWithProducts
             },
             currentStoreSettings.orderNotificationEmail,
             currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',
             currentStoreSettings.orderNotificationFromName || 'eDAHouse Store',
-            currentStoreSettings.defaultLanguage || 'ru'
+            currentStoreSettings.defaultLanguage || 'ru',
+            currentStoreSettings.storeName || 'eDAHouse',
+            req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined
           );
         }
       } catch (emailError) {

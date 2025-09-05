@@ -215,7 +215,9 @@ export async function sendNewOrderEmail(
   recipientEmail: string,
   fromEmail: string,
   fromName: string,
-  language: string = 'ru'
+  language: string = 'ru',
+  storeName?: string,
+  baseUrl?: string
 ): Promise<boolean> {
   
   // Multilingual email templates
@@ -235,7 +237,16 @@ export async function sendNewOrderEmail(
       viewOrderButton: 'Посмотреть заказ',
       quantityLabel: 'Кол-во',
       amountLabel: 'Сумма',
-      productLabel: 'Товар'
+      productLabel: 'Товар',
+      statusTranslations: {
+        pending: 'Ожидает',
+        confirmed: 'Подтвержден',
+        preparing: 'Готовится',
+        ready: 'Готов',
+        delivered: 'Доставлен',
+        cancelled: 'Отменен'
+      },
+      defaultUnit: 'кг'
     },
     en: {
       subject: `🔔 New order #${orderId} - ${customerName}`,
@@ -252,7 +263,16 @@ export async function sendNewOrderEmail(
       viewOrderButton: 'View order',
       quantityLabel: 'Quantity',
       amountLabel: 'Amount',
-      productLabel: 'Product'
+      productLabel: 'Product',
+      statusTranslations: {
+        pending: 'Pending',
+        confirmed: 'Confirmed',
+        preparing: 'Preparing',
+        ready: 'Ready',
+        delivered: 'Delivered',
+        cancelled: 'Cancelled'
+      },
+      defaultUnit: 'kg'
     },
     he: {
       subject: `🔔 הזמנה חדשה #${orderId} - ${customerName}`,
@@ -269,7 +289,16 @@ export async function sendNewOrderEmail(
       viewOrderButton: 'צפה בהזמנה',
       quantityLabel: 'כמות',
       amountLabel: 'סכום',
-      productLabel: 'מוצר'
+      productLabel: 'מוצר',
+      statusTranslations: {
+        pending: 'ממתין',
+        confirmed: 'מאושר',
+        preparing: 'בהכנה',
+        ready: 'מוכן',
+        delivered: 'נמסר',
+        cancelled: 'בוטל'
+      },
+      defaultUnit: 'ק"ג'
     },
     ar: {
       subject: `🔔 طلب جديد #${orderId} - ${customerName}`,
@@ -286,17 +315,29 @@ export async function sendNewOrderEmail(
       viewOrderButton: 'عرض الطلب',
       quantityLabel: 'الكمية',
       amountLabel: 'المبلغ',
-      productLabel: 'المنتج'
+      productLabel: 'المنتج',
+      statusTranslations: {
+        pending: 'قيد الانتظار',
+        confirmed: 'مؤكد',
+        preparing: 'يتم التحضير',
+        ready: 'جاهز',
+        delivered: 'تم التسليم',
+        cancelled: 'ملغي'
+      },
+      defaultUnit: 'كغ'
     }
   };
 
   const template = templates[language as keyof typeof templates] || templates.ru;
+  
+  // Get translated status
+  const statusText = template.statusTranslations[orderDetails.status as keyof typeof template.statusTranslations] || orderDetails.status || 'pending';
 
   // Build items list for email
   const itemsHtml = orderDetails.items?.map((item: any) => `
     <tr>
       <td style="padding: 8px; border-bottom: 1px solid #eee;">${item.product?.name || template.productLabel}</td>
-      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}${item.product?.unit || 'кг'}</td>
+      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity} ${item.product?.unit || template.defaultUnit}</td>
       <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${item.totalPrice}₪</td>
     </tr>
   `).join('') || '';
@@ -345,7 +386,7 @@ export async function sendNewOrderEmail(
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.statusLabel}</td>
               <td style="padding: 10px 0;">
                 <span style="background-color: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 12px;">
-                  ${orderDetails.status || 'pending'}
+                  ${statusText}
                 </span>
               </td>
             </tr>
@@ -377,7 +418,7 @@ export async function sendNewOrderEmail(
 
         <!-- Action Button -->
         <div style="text-align: center; margin-top: 30px;">
-          <a href="${process.env.REPLIT_APP_URL || 'http://localhost:5000'}/admin/orders" 
+          <a href="${baseUrl || process.env.REPLIT_APP_URL || 'http://localhost:5000'}/admin?tab=orders" 
              style="background-color: #f97316; color: white; padding: 15px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
             ${template.viewOrderButton}
           </a>
@@ -386,7 +427,7 @@ export async function sendNewOrderEmail(
         <!-- Footer -->
         <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #888; font-size: 14px;">
           <p>${template.footer}</p>
-          <p style="margin: 5px 0 0 0;">eDAHouse - ${language === 'ru' ? 'Система управления заказами' : language === 'en' ? 'Order Management System' : language === 'he' ? 'מערכת ניהול הזמנות' : 'نظام إدارة الطلبات'}</p>
+          <p style="margin: 5px 0 0 0;">${storeName || fromName || 'eDAHouse'} - ${language === 'ru' ? 'Система управления заказами' : language === 'en' ? 'Order Management System' : language === 'he' ? 'מערכת ניהול הזמנות' : 'نظام إدارة الطلبات'}</p>
         </div>
 
       </div>
@@ -403,7 +444,7 @@ ${orderDetails.customerPhone ? `${template.phoneLabel} ${orderDetails.customerPh
 ${orderDetails.deliveryAddress ? `${template.addressLabel} ${orderDetails.deliveryAddress}` : ''}
 ${template.totalLabel} ${totalAmount}₪
 ${orderDetails.paymentMethod ? `${template.paymentLabel} ${orderDetails.paymentMethod}` : ''}
-${template.statusLabel} ${orderDetails.status || 'pending'}
+${template.statusLabel} ${statusText}
 ${orderDetails.customerNotes ? `${template.notesLabel} ${orderDetails.customerNotes}` : ''}
 
 ${template.footer}

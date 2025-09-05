@@ -695,6 +695,12 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
+  async getProductsByIds(ids: number[]): Promise<Product[]> {
+    if (ids.length === 0) return [];
+    const productsList = await db.select().from(products).where(inArray(products.id, ids));
+    return productsList;
+  }
+
   async createProduct(product: InsertProduct): Promise<Product> {
     const { categoryIds, ...productData } = product;
     
