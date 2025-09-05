@@ -47,8 +47,8 @@ class EmailService {
       const config = {
         host: customSettings?.smtpHost || 'localhost',
         port: port,
-        // Fix HELO_NO_DOMAIN issue - use consistent domain
-        name: customSettings?.smtpHost || 'localhost',
+        // Fix HELO_NO_DOMAIN issue - use proper domain identification
+        name: customSettings?.smtpHost === 'ordis.co.il' ? 'ordis.co.il' : customSettings?.smtpHost || 'localhost',
         // Port 587 with secure=true is incorrect - use STARTTLS instead
         secure: port === 465 ? true : false, // Only use secure=true for port 465 (implicit SSL)
         auth: customSettings?.smtpUser && customSettings?.smtpPassword ? {
@@ -159,6 +159,10 @@ class EmailService {
           'X-Priority': '3',
           'X-Entity-Ref': `order-${Date.now()}`
         },
+        // Fix BASE64_LENGTH_79_INF - use quoted-printable encoding
+        encoding: 'utf8',
+        textEncoding: 'quoted-printable',
+        htmlEncoding: 'quoted-printable'
       };
 
       const info = await this.nodemailerTransporter.sendMail(msg);
