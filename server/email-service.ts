@@ -335,11 +335,6 @@ export async function sendNewOrderEmail(
 
   // Function to format quantity with units
   const formatQuantityWithUnit = (quantity: number, unit: string, language: string): string => {
-    // Basic unit translations
-    const baseUnits: { [lang: string]: string } = {
-      ru: 'г', en: 'g', he: 'גר׳', ar: 'غ'
-    };
-    
     const unitTranslations: { [key: string]: { [lang: string]: string } } = {
       'piece': { ru: 'шт', en: 'piece', he: 'יחידה', ar: 'قطعة' },
       'portion': { ru: 'порция', en: 'portion', he: 'מנה', ar: 'حصة' },
@@ -350,19 +345,20 @@ export async function sendNewOrderEmail(
     };
     
     // Handle weight units (100g, 200g, etc.)
+    // quantity is stored in kg in database
     const weightMatch = unit.match(/^(\d+)g$/);
     if (weightMatch) {
-      const unitWeight = parseInt(weightMatch[1]);
-      const totalWeight = quantity * unitWeight;
+      const unitWeight = parseInt(weightMatch[1]); // e.g., 100 for "100g"
+      const quantityInGrams = quantity * 1000; // Convert kg to grams
+      const numberOfUnits = Math.round(quantityInGrams / unitWeight); // How many 100g units
       
-      // Convert to kg if >= 1000g
-      if (totalWeight >= 1000) {
-        const kg = totalWeight / 1000;
-        const kgUnit = unitTranslations['kg'][language] || unitTranslations['kg']['en'];
-        return `${kg}${kgUnit}`;
+      // Show as individual units if it makes sense
+      if (numberOfUnits === 1) {
+        const translatedUnit = unitTranslations['g'][language] || unitTranslations['g']['en'];
+        return `${unitWeight}${translatedUnit}`;
       } else {
-        const gUnit = baseUnits[language] || baseUnits['en'];
-        return `${totalWeight}${gUnit}`;
+        const translatedUnit = unitTranslations['g'][language] || unitTranslations['g']['en'];
+        return `${Math.round(quantityInGrams)}${translatedUnit}`;
       }
     }
     
