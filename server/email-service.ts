@@ -156,7 +156,10 @@ class EmailService {
           'X-Mailer': 'eDAHouse-OrderSystem',
           'X-Priority': '3',
           'X-Entity-Ref': `order-${Date.now()}`
-        }
+        },
+        // Fix base64 line length issues for better spam score
+        textEncoding: 'quoted-printable',
+        encoding: 'utf8'
       };
 
       const info = await this.nodemailerTransporter.sendMail(msg);
