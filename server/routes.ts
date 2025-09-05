@@ -1183,7 +1183,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
               }))
             },
             currentStoreSettings.orderNotificationEmail,
-            currentStoreSettings.orderNotificationFromEmail || 'noreply@edahouse.com',
+            currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',
             currentStoreSettings.orderNotificationFromName || 'eDAHouse Store',
             currentStoreSettings.defaultLanguage || 'ru'
           );
@@ -1308,7 +1308,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
               }))
             },
             currentStoreSettings.orderNotificationEmail,
-            currentStoreSettings.orderNotificationFromEmail || 'noreply@edahouse.com',
+            currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',
             currentStoreSettings.orderNotificationFromName || 'eDAHouse Store',
             currentStoreSettings.defaultLanguage || 'ru'
           );
