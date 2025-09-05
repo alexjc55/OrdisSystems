@@ -347,10 +347,8 @@ export async function sendNewOrderEmail(
     // Handle weight units (100g, 200g, etc.)
     const weightMatch = unit.match(/^(\d+)g$/);
     if (weightMatch) {
-      const unitWeight = parseInt(weightMatch[1]); // e.g., 100 for "100g"
-      const totalWeight = quantity * unitWeight; // quantity already represents number of units
       const translatedUnit = unitTranslations['g'][language] || unitTranslations['g']['en'];
-      return `${totalWeight}${translatedUnit}`;
+      return `${quantity}${translatedUnit}`;
     }
     
     // Handle regular units (piece, portion, ml, etc.)
