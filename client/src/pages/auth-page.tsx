@@ -15,6 +15,7 @@ import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import { useSEO, generateKeywords } from "@/hooks/useSEO";
 import { getLocalizedField } from "@shared/localization";
+import { getReturnTo, clearReturnTo } from "@/lib/auth-redirect";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
@@ -23,6 +24,7 @@ export default function AuthPage() {
   const { t } = useCommonTranslation();
   const { currentLanguage, changeLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState("login");
+
 
   // SEO for auth page
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
@@ -250,10 +252,12 @@ export default function AuthPage() {
     resolver: zodResolver(registerSchema),
   });
 
-  // Redirect to home if already logged in
+  // Redirect to return URL if already logged in
   useEffect(() => {
     if (user) {
-      setLocation("/");
+      const returnUrl = getReturnTo();
+      clearReturnTo(); // Clean up
+      setLocation(returnUrl);
     }
   }, [user, setLocation]);
 
@@ -279,7 +283,7 @@ export default function AuthPage() {
   const onLogin = async (data: LoginFormData) => {
     try {
       await loginMutation.mutateAsync(data);
-      setLocation("/");
+      // Redirect will be handled by useEffect after user state updates
     } catch (error) {
       // Error is handled in the mutation
     }
@@ -292,7 +296,7 @@ export default function AuthPage() {
         ...registerData,
         email: registerData.email || undefined,
       });
-      setLocation("/");
+      // Redirect will be handled by useEffect after user state updates
     } catch (error) {
       // Error is handled in the mutation
     }

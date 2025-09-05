@@ -1,6 +1,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { Redirect, Route } from "wouter";
+import { setReturnTo } from "@/lib/auth-redirect";
 
 export function ProtectedRoute({
   path,
@@ -23,6 +24,9 @@ export function ProtectedRoute({
         }
 
         if (!user) {
+          // Save current path for redirect after login
+          const currentPath = window.location.pathname + window.location.search + window.location.hash;
+          setReturnTo(currentPath);
           return <Redirect to="/auth" />;
         }
 
