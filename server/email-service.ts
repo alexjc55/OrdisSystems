@@ -44,11 +44,14 @@ class EmailService {
       const port = customSettings?.smtpPort || 1025;
       const secure = customSettings?.smtpSecure || false;
       
+      // Fix HELO_NO_DOMAIN - ensure proper FQDN format
+      const heloName = customSettings?.smtpHost ? customSettings.smtpHost : 'localhost';
+      
       const config = {
         host: customSettings?.smtpHost || 'localhost',
         port: port,
-        // Fix HELO_NO_DOMAIN issue - use domain from database settings
-        name: customSettings?.smtpHost || 'localhost',
+        // HELO name must be proper FQDN to avoid HELO_NO_DOMAIN
+        name: heloName,
         // Port 587 with secure=true is incorrect - use STARTTLS instead
         secure: port === 465 ? true : false, // Only use secure=true for port 465 (implicit SSL)
         auth: customSettings?.smtpUser && customSettings?.smtpPassword ? {
