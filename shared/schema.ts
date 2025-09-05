@@ -128,6 +128,10 @@ export const orders = pgTable("orders", {
   customerNotes: text("customer_notes"),
   deliveryAddress: text("delivery_address"),
   customerPhone: varchar("customer_phone", { length: 20 }),
+  // Guest-specific information (for orders without userId)
+  guestName: varchar("guest_name", { length: 255 }),
+  guestEmail: varchar("guest_email", { length: 255 }),
+  guestPhone: varchar("guest_phone", { length: 20 }),
   deliveryDate: varchar("delivery_date", { length: 20 }), // Format: YYYY-MM-DD
   deliveryTime: varchar("delivery_time", { length: 50 }), // Format: HH:MM - HH:MM
   requestedDeliveryTime: timestamp("requested_delivery_time"),

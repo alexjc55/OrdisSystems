@@ -509,14 +509,22 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-sm">
               <Users className="h-3 w-3 text-gray-400" />
-              <span className="font-medium">
-                {order.user?.firstName && order.user?.lastName 
-                  ? `${order.user.firstName} ${order.user.lastName}`
-                  : order.user?.email || "—"
-                }
-              </span>
+              <div className="flex flex-col">
+                <span className="font-medium">
+                  {order.user ? (
+                    order.user.firstName && order.user.lastName 
+                      ? `${order.user.firstName} ${order.user.lastName}`
+                      : order.user.email || "—"
+                  ) : order.guestName ? (
+                    order.guestName
+                  ) : "Гость"}
+                </span>
+                {!order.user && order.guestEmail && (
+                  <span className="text-xs text-blue-600">{order.guestEmail}</span>
+                )}
+              </div>
             </div>
-            {order.customerPhone && (
+            {(order.customerPhone || order.guestPhone) && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button 
@@ -524,12 +532,12 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Phone className="h-3 w-3" />
-                    {order.customerPhone}
+                    {order.customerPhone || order.guestPhone}
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-40">
                   <DropdownMenuItem 
-                    onClick={() => window.location.href = `tel:${order.customerPhone}`}
+                    onClick={() => window.location.href = `tel:${order.customerPhone || order.guestPhone}`}
                     className="cursor-pointer hover:!text-primary hover:!bg-orange-50 focus:!text-primary focus:!bg-orange-50"
                   >
                     <Phone className="h-4 w-4 mr-2" />
@@ -537,7 +545,7 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={() => {
-                      const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
+                      const cleanPhone = (order.customerPhone || order.guestPhone).replace(/[^\d+]/g, '');
                       window.open(`https://wa.me/${cleanPhone}`, '_blank');
                     }}
                     className="cursor-pointer hover:!text-primary hover:!bg-orange-50 focus:!text-primary focus:!bg-orange-50"
@@ -4542,23 +4550,31 @@ export default function AdminDashboard() {
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'left'}}
                                   >
                                     <div className="space-y-1">
-                                      <div className="font-medium text-xs sm:text-sm truncate">
-                                        {order.user?.firstName && order.user?.lastName 
-                                          ? `${order.user.firstName} ${order.user.lastName}`
-                                          : order.user?.email || "—"
-                                        }
+                                      <div className="font-medium text-xs sm:text-sm">
+                                        <div className="truncate">
+                                          {order.user ? (
+                                            order.user.firstName && order.user.lastName 
+                                              ? `${order.user.firstName} ${order.user.lastName}`
+                                              : order.user.email || "—"
+                                          ) : order.guestName ? (
+                                            order.guestName
+                                          ) : "Гость"}
+                                        </div>
+                                        {!order.user && order.guestEmail && (
+                                          <div className="text-xs text-blue-600 truncate">{order.guestEmail}</div>
+                                        )}
                                       </div>
-                                      {order.customerPhone && (
+                                      {(order.customerPhone || order.guestPhone) && (
                                         <DropdownMenu>
                                           <DropdownMenuTrigger asChild>
                                             <button className="text-blue-600 text-xs sm:text-sm hover:text-blue-800 flex items-center gap-1 cursor-pointer truncate max-w-full">
                                               <Phone className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                                              <span className="truncate">{order.customerPhone}</span>
+                                              <span className="truncate">{order.customerPhone || order.guestPhone}</span>
                                             </button>
                                           </DropdownMenuTrigger>
                                           <DropdownMenuContent align="start" className="w-40 bg-white border border-gray-200 shadow-lg">
                                             <DropdownMenuItem 
-                                              onClick={() => window.location.href = `tel:${order.customerPhone}`}
+                                              onClick={() => window.location.href = `tel:${order.customerPhone || order.guestPhone}`}
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
                                             >
                                               <Phone className="h-4 w-4 mr-2" />
@@ -4566,7 +4582,7 @@ export default function AdminDashboard() {
                                             </DropdownMenuItem>
                                             <DropdownMenuItem 
                                               onClick={() => {
-                                                const cleanPhone = order.customerPhone.replace(/[^\d+]/g, '');
+                                                const cleanPhone = (order.customerPhone || order.guestPhone).replace(/[^\d+]/g, '');
                                                 window.open(`https://wa.me/${cleanPhone}`, '_blank');
                                               }}
                                               className="cursor-pointer text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
