@@ -3212,6 +3212,41 @@ export default function AdminDashboard() {
     }
   });
 
+  // Test email mutation
+  const testEmailMutation = useMutation({
+    mutationFn: async (toEmail: string) => {
+      console.log("Sending test email to:", toEmail);
+      
+      const response = await fetch("/api/test-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ toEmail })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Не удалось отправить тестовое письмо");
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "✅ Успешно!",
+        description: data.message || "Тестовое письмо отправлено",
+        variant: "default"
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "❌ Ошибка",
+        description: error.message || "Не удалось отправить тестовое письмо",
+        variant: "destructive"
+      });
+    }
+  });
+
   // Store settings mutation
   const updateStoreSettingsMutation = useMutation({
     mutationFn: async (settingsData: any) => {
@@ -5562,6 +5597,7 @@ export default function AdminDashboard() {
                     storeSettings={storeSettings} 
                     onSubmit={(data) => updateStoreSettingsMutation.mutate(data)}
                     isLoading={updateStoreSettingsMutation.isPending}
+                    testEmailMutation={testEmailMutation}
                   />
                 </CardContent>
               </Card>
@@ -7271,13 +7307,15 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
 }
 
 // Store Settings Form Component
-function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
+function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutation }: {
   storeSettings: any;
   onSubmit: (data: any) => void;
   isLoading: boolean;
+  testEmailMutation: any;
 }) {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
+  const { toast } = useToast();
   const currentLanguage = i18n.language as SupportedLanguage;
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
   const [isBasicInfoOpen, setIsBasicInfoOpen] = useState(true);
@@ -7474,6 +7512,21 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
       } as any);
     }
   }, [storeSettings, currentLanguage, form]);
+
+  // Handle test email
+  const handleTestEmail = () => {
+    const emailAddress = form.getValues("orderNotificationEmail");
+    if (!emailAddress) {
+      toast({
+        title: "❌ Ошибка",
+        description: "Укажите email адрес для уведомлений",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    testEmailMutation.mutate(emailAddress);
+  };
 
   return (
     <Form {...form}>
@@ -8284,6 +8337,28 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading }: {
                     </FormItem>
                   )}
                 />
+
+                {/* Test Email Button */}
+                <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-blue-800">
+                      📧 Проверить доставку email
+                    </p>
+                    <p className="text-xs text-blue-600">
+                      Отправить тестовое письмо для проверки работы настроек
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                    disabled={testEmailMutation.isPending || !form.watch("orderNotificationEmail")}
+                    onClick={() => handleTestEmail()}
+                  >
+                    {testEmailMutation.isPending ? "Отправка..." : "Тест"}
+                  </Button>
+                </div>
 
                 {/* From Name */}
                 <FormField

@@ -2438,6 +2438,84 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
+  // Test email endpoint
+  app.post("/api/test-email", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          message: "Admin access required" 
+        });
+      }
+
+      const { toEmail } = req.body;
+      
+      if (!toEmail) {
+        return res.status(400).json({ success: false, message: "Email address is required" });
+      }
+
+      // Get current settings for email configuration
+      const [settingsData] = await db.select().from(storeSettings).limit(1);
+      
+      if (!settingsData?.emailNotificationsEnabled) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Email notifications are disabled in settings" 
+        });
+      }
+
+      // Update email service with current settings
+      await emailService.updateSettings({
+        sendgridApiKey: process.env.SENDGRID_API_KEY,
+        smtpHost: settingsData.smtpHost,
+        smtpPort: settingsData.smtpPort,
+        smtpSecure: settingsData.smtpSecure,
+        smtpUser: settingsData.smtpUser,
+        smtpPassword: settingsData.smtpPassword
+      });
+
+      // Send test email
+      const emailSent = await emailService.sendEmail(
+        toEmail,
+        settingsData.orderNotificationFromEmail || 'noreply@edahouse.ordis.co.il',
+        `🧪 Тест email - eDAHouse`,
+        `Тестовое письмо от системы eDAHouse`,
+        `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h2 style="color: #f97316;">🧪 Тест email уведомлений</h2>
+            <p>Это тестовое письмо от системы <strong>eDAHouse</strong>.</p>
+            <p>Если вы получили это письмо, значит email уведомления настроены правильно!</p>
+            <p style="color: #666; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+              Отправлено: ${new Date().toLocaleString('ru-RU')}
+            </p>
+          </div>
+        `
+      );
+
+      if (emailSent) {
+        res.json({ 
+          success: true, 
+          message: `Тестовое письмо отправлено на ${toEmail}` 
+        });
+      } else {
+        res.status(500).json({ 
+          success: false, 
+          message: "Ошибка отправки email" 
+        });
+      }
+
+    } catch (error) {
+      console.error('Test email error:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Ошибка при отправке тестового письма" 
+      });
+    }
+  });
+
   // Push notification routes
   
   // Get VAPID public key for client
