@@ -630,6 +630,7 @@ export default function Profile() {
                       onClick={() => logoutMutation.mutate(undefined, {
                         onSuccess: () => {
                           setLocation("/");
+                          window.scrollTo(0, 0);
                         }
                       })}
                       disabled={logoutMutation.isPending}
