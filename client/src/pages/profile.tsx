@@ -922,7 +922,7 @@ export default function Profile() {
                               if (hasDiscounts) {
                                 // Calculate original total without discounts
                                 const originalSubtotal = order.items.reduce((sum, item) => sum + parseFloat(item.totalPrice), 0);
-                                const deliveryFee = parseFloat(order.deliveryFee);
+                                const deliveryFee = parseFloat(order.deliveryFee || '0');
                                 const originalTotal = originalSubtotal + deliveryFee;
                                 
                                 return (
@@ -1139,7 +1139,7 @@ export default function Profile() {
                           return sum + itemPrice;
                         }, 0);
                         
-                        const deliveryFee = parseFloat(selectedOrder.deliveryFee);
+                        const deliveryFee = parseFloat(selectedOrder.deliveryFee || '0');
                         const orderDiscount = discounts?.orderDiscount;
                         let finalSubtotal = subtotal;
                         
