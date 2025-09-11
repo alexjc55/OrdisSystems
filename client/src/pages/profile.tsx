@@ -23,11 +23,12 @@ import { formatCurrency, formatQuantity, getUnitShortLabel, formatDeliveryTimeRa
 import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin, Lock, Shield, Camera, Upload, ChevronDown } from "lucide-react";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import type { OrderWithItems, UserAddress } from "@shared/schema";
 
 export default function Profile() {
   const { user, isLoading, isAuthenticated, logoutMutation } = useAuth();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const { t } = useCommonTranslation();
   const { t: tShop } = useShopTranslation();
@@ -626,7 +627,11 @@ export default function Profile() {
                     </Button>
                     <Button 
                       variant="outline" 
-                      onClick={() => logoutMutation.mutate()}
+                      onClick={() => logoutMutation.mutate(undefined, {
+                        onSuccess: () => {
+                          setLocation("/");
+                        }
+                      })}
                       disabled={logoutMutation.isPending}
                     >
                       {logoutMutation.isPending ? t('common.saving') : t('auth.logout')}
