@@ -27,7 +27,7 @@ import { Link } from "wouter";
 import type { OrderWithItems, UserAddress } from "@shared/schema";
 
 export default function Profile() {
-  const { user, isLoading, isAuthenticated } = useAuth();
+  const { user, isLoading, isAuthenticated, logoutMutation } = useAuth();
   const { toast } = useToast();
   const { t } = useCommonTranslation();
   const { t: tShop } = useShopTranslation();
@@ -624,8 +624,12 @@ export default function Profile() {
                     >
                       {t('navigation.goToMenu')}
                     </Button>
-                    <Button variant="outline" onClick={() => window.location.href = '/api/logout'}>
-                      {t('auth.logout')}
+                    <Button 
+                      variant="outline" 
+                      onClick={() => logoutMutation.mutate()}
+                      disabled={logoutMutation.isPending}
+                    >
+                      {logoutMutation.isPending ? t('common.loading') : t('auth.logout')}
                     </Button>
                   </div>
                 </div>
