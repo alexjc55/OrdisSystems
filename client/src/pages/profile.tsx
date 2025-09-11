@@ -629,7 +629,7 @@ export default function Profile() {
                       onClick={() => logoutMutation.mutate()}
                       disabled={logoutMutation.isPending}
                     >
-                      {logoutMutation.isPending ? t('common.loading') : t('auth.logout')}
+                      {logoutMutation.isPending ? t('common.saving') : t('auth.logout')}
                     </Button>
                   </div>
                 </div>
