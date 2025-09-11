@@ -1328,7 +1328,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
             customerName,
             validatedData.totalAmount?.toString() || '0',
             {
-              customerPhone: user?.phone || orderData.guestPhone,
+              customerPhone: orderData.customerPhone || user?.phone,
               deliveryAddress: orderData.deliveryAddress,
               deliveryDate: orderData.deliveryDate,
               deliveryTime: orderData.deliveryTime,
