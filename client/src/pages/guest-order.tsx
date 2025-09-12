@@ -57,6 +57,14 @@ export default function GuestOrderPage() {
   });
 
   const isRTL = ['he', 'ar'].includes(currentLanguage);
+  
+  // Debug RTL
+  console.log('Guest Order Page Debug:', {
+    currentLanguage,
+    isRTL,
+    documentDir: document.documentElement.dir,
+    documentLang: document.documentElement.lang
+  });
 
   // Get status color and icon
   const getStatusInfo = (status: string) => {

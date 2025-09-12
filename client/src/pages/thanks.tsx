@@ -111,6 +111,14 @@ export default function ThanksPage() {
   };
 
   const isRTL = ['he', 'ar'].includes(currentLanguage);
+  
+  // Debug RTL
+  console.log('Thanks Page Debug:', {
+    currentLanguage,
+    isRTL,
+    documentDir: document.documentElement.dir,
+    documentLang: document.documentElement.lang
+  });
 
   return (
     <div className={cn("min-h-screen bg-gradient-to-br from-green-50 to-emerald-50", isRTL && "rtl")}>
