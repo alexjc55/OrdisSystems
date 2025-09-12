@@ -1214,35 +1214,37 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
             req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined
           );
 
-          // Send guest order confirmation email
-          const fromEmail = currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il';
-          const fromName = currentStoreSettings.orderNotificationFromName || 'eDAHouse Store';
-          const storeName = currentStoreSettings.storeName || 'eDAHouse';
-          const baseUrl = req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined;
-          
-          await sendGuestOrderEmail(
-            order.id,
-            orderData.guestName || 'Гость',
-            guestInfo.email,
-            totalAmount.toString(),
-            {
-              customerPhone: guestInfo.phone,
-              deliveryAddress: guestInfo.address,
-              deliveryDate: guestInfo.deliveryDate,
-              deliveryTime: guestInfo.deliveryTime,
-              paymentMethod: guestInfo.paymentMethod,
-              customerNotes: guestInfo.customerNotes,
-              status: 'pending',
-              items: itemsWithProducts
-            },
-            guestAccessToken,
-            guestClaimToken,
-            fromEmail,
-            fromName,
-            orderData.orderLanguage || 'ru',
-            storeName,
-            baseUrl
-          );
+          // Send guest order confirmation email only if email is provided
+          if (guestInfo.email && guestInfo.email.trim()) {
+            const fromEmail = currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il';
+            const fromName = currentStoreSettings.orderNotificationFromName || 'eDAHouse Store';
+            const storeName = currentStoreSettings.storeName || 'eDAHouse';
+            const baseUrl = req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined;
+            
+            await sendGuestOrderEmail(
+              order.id,
+              orderData.guestName || 'Гость',
+              guestInfo.email,
+              totalAmount.toString(),
+              {
+                customerPhone: guestInfo.phone,
+                deliveryAddress: guestInfo.address,
+                deliveryDate: guestInfo.deliveryDate,
+                deliveryTime: guestInfo.deliveryTime,
+                paymentMethod: guestInfo.paymentMethod,
+                customerNotes: guestInfo.customerNotes,
+                status: 'pending',
+                items: itemsWithProducts
+              },
+              guestAccessToken,
+              guestClaimToken,
+              fromEmail,
+              fromName,
+              orderData.orderLanguage || 'ru',
+              storeName,
+              baseUrl
+            );
+          }
         }
       } catch (emailError) {
         console.error('Error sending email notifications:', emailError);
