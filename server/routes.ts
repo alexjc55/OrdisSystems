@@ -1112,9 +1112,8 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       }
 
       // Generate unique tokens for guest order access and claiming
-      const crypto = require('crypto');
-      const guestAccessToken = crypto.randomBytes(32).toString('hex');
-      const guestClaimToken = crypto.randomBytes(32).toString('hex');
+      const guestAccessToken = randomBytes(32).toString('hex');
+      const guestClaimToken = randomBytes(32).toString('hex');
       const guestAccessTokenExpires = new Date();
       guestAccessTokenExpires.setDate(guestAccessTokenExpires.getDate() + 30); // 30 days
 
