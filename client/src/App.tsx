@@ -28,6 +28,7 @@ import ChangePasswordPage from "@/pages/change-password";
 import ForgotPasswordPage from "@/pages/forgot-password";
 import ResetPasswordPage from "@/pages/reset-password";
 import Checkout from "@/pages/checkout";
+import ThanksPage from "@/pages/thanks";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
 import { ProtectedRoute } from "@/lib/protected-route";
@@ -55,7 +56,7 @@ function Router() {
   // Initialize language and direction on app start
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language');
-    if (savedLanguage && Object.keys({ru: 1, en: 1, he: 1}).includes(savedLanguage)) {
+    if (savedLanguage && Object.keys({ru: 1, en: 1, he: 1, ar: 1}).includes(savedLanguage)) {
       if (savedLanguage !== i18n.language) {
         i18n.changeLanguage(savedLanguage);
       }
@@ -266,6 +267,7 @@ function Router() {
         <ProtectedRoute path="/admin" component={() => <AdminDashboard />} />
         <ProtectedRoute path="/profile" component={() => <Profile />} />
         <Route path="/checkout" component={Checkout} />
+        <Route path="/thanks" component={ThanksPage} />
         <Route path="/change-password" component={ChangePasswordPage} />
         <Route path="/forgot-password" component={ForgotPasswordPage} />
         <Route path="/reset-password" component={ResetPasswordPage} />
