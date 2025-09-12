@@ -29,6 +29,7 @@ import ForgotPasswordPage from "@/pages/forgot-password";
 import ResetPasswordPage from "@/pages/reset-password";
 import Checkout from "@/pages/checkout";
 import ThanksPage from "@/pages/thanks";
+import GuestOrderPage from "@/pages/guest-order";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
 import { ProtectedRoute } from "@/lib/protected-route";
@@ -268,6 +269,7 @@ function Router() {
         <ProtectedRoute path="/profile" component={() => <Profile />} />
         <Route path="/checkout" component={Checkout} />
         <Route path="/thanks" component={ThanksPage} />
+        <Route path="/guest-order/:token" component={GuestOrderPage} />
         <Route path="/change-password" component={ChangePasswordPage} />
         <Route path="/forgot-password" component={ForgotPasswordPage} />
         <Route path="/reset-password" component={ResetPasswordPage} />

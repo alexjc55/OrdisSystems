@@ -28,7 +28,7 @@ export default function ThanksPage() {
     const urlParams = new URLSearchParams(window.location.search);
     setOrderData({
       orderId: urlParams.get("orderId") ? parseInt(urlParams.get("orderId")!) : undefined,
-      guestAccessToken: urlParams.get("token") || undefined,
+      guestAccessToken: urlParams.get("guestAccessToken") || urlParams.get("token") || undefined,
       orderLanguage: urlParams.get("lang") || currentLanguage,
       isGuest: urlParams.get("guest") === "true"
     });
@@ -54,7 +54,7 @@ export default function ThanksPage() {
     <div className={cn("min-h-screen bg-gradient-to-br from-green-50 to-emerald-50", isRTL && "rtl")}>
       <Header />
       
-      <div className="container max-w-2xl mx-auto px-4 py-8 mt-4">
+      <div className="container max-w-2xl mx-auto px-4 py-8 pt-20">
         {/* Success Animation & Message */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
@@ -165,7 +165,7 @@ export default function ThanksPage() {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           {/* View Order (for guests with token or authenticated users) */}
-          {(orderData.guestAccessToken || !orderData.isGuest) && orderData.orderId && (
+          {orderData.orderId && (orderData.guestAccessToken || !orderData.isGuest) && (
             <Link 
               href={orderData.guestAccessToken 
                 ? `/guest-order/${orderData.guestAccessToken}` 

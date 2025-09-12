@@ -7,6 +7,9 @@
   "error": "Ошибка",
   "success": "Успех",
   "close": "Закрыть",
+  "backHome": "На главную",
+  "orderNotFound": "Заказ не найден",
+  "orderNotFoundDesc": "Заказ не найден или срок действия ссылки истек",
   "ingredients": "Состав",
   "viewIngredients": "Посмотреть состав",
   "viewComposition": "Смотреть состав",
@@ -117,7 +120,39 @@
     "subtotal": "Подытог",
     "orderDiscount": "Скидка на заказ",
     "orderComments": "Комментарии к заказу",
-    "email": "Email"
+    "email": "Email",
+    "viewOrder": "Просмотреть заказ",
+    "viewOrderDetails": "Просмотреть детали заказа",
+    "customerInfo": "Информация о клиенте",
+    "summary": "Итоги",
+    "notes": "Заметки",
+    "statusPending": "В ожидании",
+    "statusConfirmed": "Подтвержден",
+    "statusPreparing": "Готовится",
+    "statusReady": "Готов",
+    "statusDelivered": "Доставлен",
+    "statusCancelled": "Отменен"
+  },
+  "error": {
+    "orderNotFound": "Заказ не найден",
+    "orderNotFoundDesc": "Заказ не найден или срок действия ссылки истек"
+  },
+  "order": {
+    "order": "Заказ",
+    "viewOrder": "Просмотр заказа",
+    "orderDetails": "Детали заказа", 
+    "viewOrderDetails": "Просмотр деталей заказа",
+    "items": "Товары",
+    "customerInfo": "Информация о клиенте",
+    "notes": "Примечания",
+    "summary": "Итого",
+    "total": "Сумма",
+    "statusPending": "Ожидает",
+    "statusConfirmed": "Подтвержден",
+    "statusPreparing": "Готовится", 
+    "statusReady": "Готов",
+    "statusDelivered": "Доставлен",
+    "statusCancelled": "Отменен"
   },
   "language": "Языки",
   "chooseLanguage": "Выберите язык",
@@ -386,7 +421,9 @@
     "loading": "Загрузка...",
     "tryAgain": "Попробуйте снова",
     "somethingWentWrong": "Что-то пошло не так",
-    "pleaseWait": "Пожалуйста, подождите"
+    "pleaseWait": "Пожалуйста, подождите",
+    "orderNotFound": "Заказ не найден",
+    "orderNotFoundDesc": "Заказ не найден или срок действия ссылки истек"
   },
   "thanks": {
     "title": "Спасибо за заказ!",
