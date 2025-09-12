@@ -133,6 +133,11 @@ export const orders = pgTable("orders", {
   guestName: varchar("guest_name", { length: 255 }),
   guestEmail: varchar("guest_email", { length: 255 }),
   guestPhone: varchar("guest_phone", { length: 20 }),
+  // Guest access tokens for secure order viewing
+  guestAccessToken: varchar("guest_access_token", { length: 255 }).unique(), // Base64url token for guest order access
+  guestAccessTokenExpires: timestamp("guest_access_token_expires"), // Token expiration date
+  guestClaimToken: varchar("guest_claim_token", { length: 255 }).unique(), // Token to claim guest order after registration
+  orderLanguage: varchar("order_language", { length: 5 }).default("ru"), // Language used when placing order
   deliveryDate: varchar("delivery_date", { length: 20 }), // Format: YYYY-MM-DD
   deliveryTime: varchar("delivery_time", { length: 50 }), // Format: HH:MM - HH:MM
   requestedDeliveryTime: timestamp("requested_delivery_time"),
