@@ -631,10 +631,11 @@ export async function sendGuestOrderEmail(
   const isRTL = ['he', 'ar'].includes(language);
 
   // Create order view URL with guest access token
-  const orderViewUrl = baseUrl ? `${baseUrl}/guest-order/${guestAccessToken}` : `#order-${guestAccessToken}`;
+  const finalBaseUrl = baseUrl || process.env.REPLIT_APP_URL || 'https://eDAHouse.com';
+  const orderViewUrl = `${finalBaseUrl}/guest-order/${guestAccessToken}`;
   
   // Create registration URL with claim token
-  const registerUrl = baseUrl ? `${baseUrl}/register?claimToken=${claimToken}` : `#register-${claimToken}`;
+  const registerUrl = `${finalBaseUrl}/register?claimToken=${claimToken}`;
 
   // Function to format quantity with units (same as in admin emails)
   const formatQuantityWithUnit = (quantity: number, unit: string, language: string): string => {

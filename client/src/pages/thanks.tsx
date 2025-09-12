@@ -54,7 +54,7 @@ export default function ThanksPage() {
     <div className={cn("min-h-screen bg-gradient-to-br from-green-50 to-emerald-50", isRTL && "rtl")}>
       <Header />
       
-      <div className="container max-w-2xl mx-auto px-4 py-8">
+      <div className="container max-w-2xl mx-auto px-4 py-8 mt-4">
         {/* Success Animation & Message */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
@@ -99,6 +99,13 @@ export default function ThanksPage() {
                 <h3 className="font-semibold text-blue-800">
                   {t('thanks.nextSteps')}
                 </h3>
+              </div>
+              
+              {/* Phone confirmation message */}
+              <div className="mb-3 p-3 bg-green-50 border border-green-200 rounded-md">
+                <p className="text-sm text-green-800 font-medium">
+                  📞 {t('thanks.phoneConfirmation')}
+                </p>
               </div>
               
               <div className="space-y-2 text-sm text-blue-700">
@@ -157,14 +164,6 @@ export default function ThanksPage() {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          {/* Continue Shopping */}
-          <Link href="/">
-            <Button size="lg" className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white">
-              <ShoppingCart className="w-5 h-5 mr-2" />
-              {t('thanks.continueShopping')}
-            </Button>
-          </Link>
-
           {/* View Order (for guests with token or authenticated users) */}
           {(orderData.guestAccessToken || !orderData.isGuest) && orderData.orderId && (
             <Link 
@@ -173,16 +172,16 @@ export default function ThanksPage() {
                 : `/profile?tab=orders&highlight=${orderData.orderId}`
               }
             >
-              <Button size="lg" variant="outline" className="w-full sm:w-auto border-green-600 text-green-700 hover:bg-green-50">
+              <Button size="lg" className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white">
                 <Eye className="w-5 h-5 mr-2" />
                 {t('thanks.viewOrder')}
               </Button>
             </Link>
           )}
 
-          {/* Back to Home as fallback */}
+          {/* Continue Shopping / Back to Home */}
           <Link href="/">
-            <Button size="lg" variant="ghost" className="w-full sm:w-auto text-gray-600 hover:text-gray-800 hover:bg-gray-100">
+            <Button size="lg" variant="outline" className="w-full sm:w-auto border-green-600 text-green-700 hover:bg-green-50">
               <ArrowLeft className="w-5 h-5 mr-2" />
               {t('thanks.backHome')}
             </Button>
@@ -192,7 +191,7 @@ export default function ThanksPage() {
         {/* Footer Message */}
         <div className="text-center mt-12 text-gray-500">
           <p className="text-sm">
-            {t('thanks.footerMessage', { storeName: storeName || 'eDAHouse' })}
+            {t('thanks.footerMessage').replace('{{storeName}}', storeName || 'eDAHouse')}
           </p>
         </div>
       </div>
