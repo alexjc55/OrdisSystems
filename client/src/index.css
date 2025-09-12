@@ -1798,90 +1798,19 @@ html[lang="ar"] .whatsapp-button {
   }
 }
 
-/* FORCE RTL - Override all competing styles with maximum specificity */
-html[dir="rtl"][lang="he"], 
-html[dir="rtl"][lang="ar"] {
-  direction: rtl !important;
+/* Minimal RTL support - page-scoped only */
+:where([dir="rtl"] .guest-order-page) {
+  text-align: right;
 }
 
-html[dir="rtl"][lang="he"] body, 
-html[dir="rtl"][lang="ar"] body,
-html[dir="rtl"] * {
-  direction: rtl !important;
+:where([dir="rtl"] .thanks-page) {
+  text-align: right;
 }
 
-/* FORCE RTL Text Alignment - Maximum specificity */
-html[dir="rtl"][lang="he"] .text-left,
-html[dir="rtl"][lang="ar"] .text-left,
-html[dir="rtl"] .text-left {
-  text-align: right !important;
-}
-
-html[dir="rtl"][lang="he"] .text-right,
-html[dir="rtl"][lang="ar"] .text-right,
-html[dir="rtl"] .text-right {
-  text-align: left !important;
-}
-
-/* FORCE RTL for all containers and elements */
-html[dir="rtl"][lang="he"] div,
-html[dir="rtl"][lang="ar"] div,
-html[dir="rtl"] div,
-html[dir="rtl"][lang="he"] .container,
-html[dir="rtl"][lang="ar"] .container,
-html[dir="rtl"] .container,
-html[dir="rtl"][lang="he"] main,
-html[dir="rtl"][lang="ar"] main,
-html[dir="rtl"] main {
-  direction: rtl !important;
-}
-
-/* FORCE RTL Spacing with maximum specificity */
-html[dir="rtl"][lang="he"] .ml-2, html[dir="rtl"][lang="ar"] .ml-2, html[dir="rtl"] .ml-2 { 
-  margin-right: 0.5rem !important; margin-left: 0 !important; 
-}
-html[dir="rtl"][lang="he"] .mr-2, html[dir="rtl"][lang="ar"] .mr-2, html[dir="rtl"] .mr-2 { 
-  margin-left: 0.5rem !important; margin-right: 0 !important; 
-}
-
-/* FORCE RTL Flex Direction - This is the key fix! */
-html[dir="rtl"][lang="he"] .flex,
-html[dir="rtl"][lang="ar"] .flex,
-html[dir="rtl"] .flex {
-  flex-direction: row-reverse !important;
-}
-
-/* Fix justify-content for RTL */
-html[dir="rtl"][lang="he"] .justify-start,
-html[dir="rtl"][lang="ar"] .justify-start,
-html[dir="rtl"] .justify-start {
-  justify-content: flex-end !important;
-}
-
-html[dir="rtl"][lang="he"] .justify-end,
-html[dir="rtl"][lang="ar"] .justify-end,
-html[dir="rtl"] .justify-end {
-  justify-content: flex-start !important;
-}
-
-html[dir="rtl"][lang="he"] .justify-between,
-html[dir="rtl"][lang="ar"] .justify-between,
-html[dir="rtl"] .justify-between {
-  justify-content: space-between !important;
-  flex-direction: row-reverse !important;
-}
-
-/* Fix items alignment for RTL */  
-html[dir="rtl"][lang="he"] .items-start,
-html[dir="rtl"][lang="ar"] .items-start,
-html[dir="rtl"] .items-start {
-  align-items: flex-end !important;
-}
-
-html[dir="rtl"][lang="he"] .items-end,
-html[dir="rtl"][lang="ar"] .items-end,
-html[dir="rtl"] .items-end {
-  align-items: flex-start !important;
+/* Keep numbers and specific elements LTR when needed */
+.force-ltr {
+  direction: ltr !important;
+  unicode-bidi: isolate;
 }
 
 /* Cache bust: 1751412738 */
