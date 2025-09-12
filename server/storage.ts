@@ -33,7 +33,7 @@ import {
   type InsertTheme,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull } from "drizzle-orm";
+import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull, gt } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
 
 // Pagination types
@@ -109,6 +109,9 @@ export interface IStorage {
   updateOrder(id: number, orderData: Partial<InsertOrder>): Promise<Order>;
   updateOrderStatus(id: number, status: "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "cancelled"): Promise<Order>;
   updateOrderItems(orderId: number, items: any[]): Promise<void>;
+  // Guest order methods
+  getGuestOrderByToken(token: string): Promise<OrderWithItems | undefined>;
+  claimGuestOrder(claimToken: string, userId: string): Promise<Order | undefined>;
 
   // User operations with pagination
   getUsersPaginated(params: PaginationParams): Promise<PaginatedResult<User>>;
@@ -1188,6 +1191,103 @@ export class DatabaseStorage implements IStorage {
       })),
       user: userData || null,
     } as OrderWithItems;
+  }
+
+  // Get guest order by access token
+  async getGuestOrderByToken(token: string): Promise<OrderWithItems | undefined> {
+    // Check token expiry
+    const [order] = await db
+      .select()
+      .from(orders)
+      .where(
+        and(
+          eq(orders.guestAccessToken, token),
+          gt(orders.guestAccessTokenExpires, new Date())
+        )
+      );
+
+    if (!order) return undefined;
+
+    // Get order items with product details
+    const itemsData = await db
+      .select({
+        id: orderItems.id,
+        orderId: orderItems.orderId,
+        productId: orderItems.productId,
+        quantity: orderItems.quantity,
+        pricePerKg: orderItems.pricePerKg,
+        totalPrice: orderItems.totalPrice,
+        createdAt: orderItems.createdAt,
+        productName: products.name,
+        productName_en: products.name_en,
+        productName_he: products.name_he,
+        productName_ar: products.name_ar,
+        productUnit: products.unit,
+        productPrice: products.price,
+        productImageUrl: products.imageUrl,
+        productImageUrl_en: products.imageUrl_en,
+        productImageUrl_he: products.imageUrl_he,
+        productImageUrl_ar: products.imageUrl_ar,
+      })
+      .from(orderItems)
+      .leftJoin(products, eq(orderItems.productId, products.id))
+      .where(eq(orderItems.orderId, order.id));
+
+    const items = itemsData.map((item: any) => ({
+      id: item.id,
+      orderId: item.orderId,
+      productId: item.productId,
+      quantity: item.quantity,
+      pricePerKg: item.pricePerKg,
+      totalPrice: item.totalPrice,
+      createdAt: item.createdAt,
+      product: {
+        id: item.productId,
+        name: item.productName,
+        name_en: item.productName_en,
+        name_he: item.productName_he,
+        name_ar: item.productName_ar,
+        unit: item.productUnit,
+        price: item.productPrice,
+        imageUrl: item.productImageUrl,
+        imageUrl_en: item.productImageUrl_en,
+        imageUrl_he: item.productImageUrl_he,
+        imageUrl_ar: item.productImageUrl_ar,
+      }
+    }));
+
+    return { ...order, items, user: null };
+  }
+
+  // Claim guest order and attach to user account
+  async claimGuestOrder(claimToken: string, userId: string): Promise<Order | undefined> {
+    try {
+      // Find order by claim token
+      const [order] = await db
+        .select()
+        .from(orders)
+        .where(eq(orders.guestClaimToken, claimToken));
+
+      if (!order) return undefined;
+
+      // Update order: attach to user and clear tokens
+      const [updatedOrder] = await db
+        .update(orders)
+        .set({
+          userId: userId,
+          guestAccessToken: null,
+          guestAccessTokenExpires: null,
+          guestClaimToken: null,
+          updatedAt: new Date()
+        })
+        .where(eq(orders.id, order.id))
+        .returning();
+
+      return updatedOrder;
+    } catch (error) {
+      console.error('Error claiming guest order:', error);
+      throw error;
+    }
   }
 
   async createOrder(order: InsertOrder, items: InsertOrderItem[]): Promise<Order> {

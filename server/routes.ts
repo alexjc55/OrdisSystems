@@ -1449,6 +1449,54 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
+  // Guest order viewing by token
+  app.get('/api/orders/guest/:token', async (req, res) => {
+    try {
+      const { token } = req.params;
+      
+      // Validate token format
+      if (!token || token.length < 20) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      // Get order by guest access token
+      const orderWithItems = await storage.getGuestOrderByToken(token);
+      
+      if (!orderWithItems) {
+        return res.status(404).json({ message: "Order not found or token expired" });
+      }
+      
+      res.json(orderWithItems);
+    } catch (error) {
+      console.error("Error fetching guest order:", error);
+      res.status(500).json({ message: "Failed to fetch order" });
+    }
+  });
+
+  // Claim guest order after registration  
+  app.post('/api/orders/claim', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const { claimToken } = req.body;
+      
+      if (!claimToken || typeof claimToken !== 'string') {
+        return res.status(400).json({ message: "Claim token is required" });
+      }
+      
+      // Find order by claim token and attach to user
+      const claimedOrder = await storage.claimGuestOrder(claimToken, userId);
+      
+      if (!claimedOrder) {
+        return res.status(404).json({ message: "Invalid or expired claim token" });
+      }
+      
+      res.json({ message: "Order claimed successfully", orderId: claimedOrder.id });
+    } catch (error) {
+      console.error("Error claiming guest order:", error);
+      res.status(500).json({ message: "Failed to claim order" });
+    }
+  });
+
   // Store settings routes
   app.get('/api/settings', async (req, res) => {
     try {
