@@ -257,7 +257,10 @@ export default function Checkout() {
   const guestOrderSchema = z.object({
     firstName: z.string().min(2, tCommon('validation.firstNameMinLength')),
     lastName: z.string().min(2, tCommon('validation.lastNameMinLength')),
-    email: z.string().email(tCommon('validation.emailInvalid')),
+    email: z.union([
+      z.string().email(tCommon('validation.emailInvalid')),
+      z.literal('')
+    ]),
     phone: z.string().min(10, tCommon('validation.phoneMinLength')),
     address: z.string().min(10, tCommon('validation.addressMinLength')),
   });
