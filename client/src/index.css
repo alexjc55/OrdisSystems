@@ -1844,4 +1844,44 @@ html[dir="rtl"][lang="he"] .mr-2, html[dir="rtl"][lang="ar"] .mr-2, html[dir="rt
   margin-left: 0.5rem !important; margin-right: 0 !important; 
 }
 
+/* FORCE RTL Flex Direction - This is the key fix! */
+html[dir="rtl"][lang="he"] .flex,
+html[dir="rtl"][lang="ar"] .flex,
+html[dir="rtl"] .flex {
+  flex-direction: row-reverse !important;
+}
+
+/* Fix justify-content for RTL */
+html[dir="rtl"][lang="he"] .justify-start,
+html[dir="rtl"][lang="ar"] .justify-start,
+html[dir="rtl"] .justify-start {
+  justify-content: flex-end !important;
+}
+
+html[dir="rtl"][lang="he"] .justify-end,
+html[dir="rtl"][lang="ar"] .justify-end,
+html[dir="rtl"] .justify-end {
+  justify-content: flex-start !important;
+}
+
+html[dir="rtl"][lang="he"] .justify-between,
+html[dir="rtl"][lang="ar"] .justify-between,
+html[dir="rtl"] .justify-between {
+  justify-content: space-between !important;
+  flex-direction: row-reverse !important;
+}
+
+/* Fix items alignment for RTL */  
+html[dir="rtl"][lang="he"] .items-start,
+html[dir="rtl"][lang="ar"] .items-start,
+html[dir="rtl"] .items-start {
+  align-items: flex-end !important;
+}
+
+html[dir="rtl"][lang="he"] .items-end,
+html[dir="rtl"][lang="ar"] .items-end,
+html[dir="rtl"] .items-end {
+  align-items: flex-start !important;
+}
+
 /* Cache bust: 1751412738 */
