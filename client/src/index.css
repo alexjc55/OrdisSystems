@@ -1798,4 +1798,45 @@ html[lang="ar"] .whatsapp-button {
   }
 }
 
+/* Strengthen RTL for guest-order and thanks pages */
+html[dir="rtl"] .container,
+html[dir="rtl"] .max-w-4xl,
+html[dir="rtl"] .max-w-2xl,
+html[dir="rtl"] .px-4,
+html[dir="rtl"] .py-8,
+html[dir="rtl"] main,
+html[dir="rtl"] section,
+html[dir="rtl"] article,
+html[dir="rtl"] div:not(.footer):not(footer *) {
+  direction: rtl !important;
+}
+
+/* RTL text alignment for cards and content */
+html[dir="rtl"] .text-center:not(.keep-center) {
+  text-align: center !important;
+}
+
+html[dir="rtl"] .text-left:not(.keep-left) {
+  text-align: right !important;
+}
+
+html[dir="rtl"] .text-right:not(.keep-right) {
+  text-align: left !important;
+}
+
+/* RTL margins and padding */
+html[dir="rtl"] .ml-2 { margin-right: 0.5rem !important; margin-left: 0 !important; }
+html[dir="rtl"] .mr-2 { margin-left: 0.5rem !important; margin-right: 0 !important; }
+html[dir="rtl"] .pl-4 { padding-right: 1rem !important; padding-left: 0 !important; }
+html[dir="rtl"] .pr-4 { padding-left: 1rem !important; padding-right: 0 !important; }
+
+/* Force RTL for specific components */
+html[dir="rtl"] .card,
+html[dir="rtl"] .card-content,
+html[dir="rtl"] .card-header,
+html[dir="rtl"] .button,
+html[dir="rtl"] .badge {
+  direction: rtl !important;
+}
+
 /* Cache bust: 1751412738 */

@@ -1,0 +1,35 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+theme-system.ts:253 Applied --color-tomorrow: hsl(262, 83%, 58%)
+theme-system.ts:253 Applied --color-out-of-stock: hsl(0, 84%, 60%)
+guest-order.tsx:62 Guest Order Page Debug: {currentLanguage: 'he', isRTL: true, documentDir: 'rtl', documentLang: 'he'}
+useAuth.ts:9  GET https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/api/auth/user 401 (Unauthorized)
+queryFn @ useAuth.ts:9
+fetchFn @ @tanstack_react-query.js?v=b6f781fb:840
+run @ @tanstack_react-query.js?v=b6f781fb:494
+start @ @tanstack_react-query.js?v=b6f781fb:536
+fetch @ @tanstack_react-query.js?v=b6f781fb:926
+executeFetch_fn @ @tanstack_react-query.js?v=b6f781fb:2211
+onSubscribe @ @tanstack_react-query.js?v=b6f781fb:1898
+subscribe @ @tanstack_react-query.js?v=b6f781fb:24
+(anonymous) @ @tanstack_react-query.js?v=b6f781fb:3022
+subscribeToStore @ chunk-RPCDYKBN.js?v=b6f781fb:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=b6f781fb:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=b6f781fb:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=b6f781fb:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=b6f781fb:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=b6f781fb:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=b6f781fb:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=b6f781fb:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=b6f781fb:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=b6f781fb:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=b6f781fb:19432
+commitRoot @ chunk-RPCDYKBN.js?v=b6f781fb:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=b6f781fb:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=b6f781fb:18718
+workLoop @ chunk-RPCDYKBN.js?v=b6f781fb:197
+flushWork @ chunk-RPCDYKBN.js?v=b6f781fb:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=b6f781fb:384Understand this error
+guest-order.tsx:62 Guest Order Page Debug: {currentLanguage: 'he', isRTL: true, documentDir: 'rtl', documentLang: 'he'}
+guest-order.tsx:62 Guest Order Page Debug: {currentLanguage: 'he', isRTL: true, documentDir: 'rtl', documentLang: 'he'}
+general.js:205 [LaunchDarkly] LaunchDarkly client initialized
+c31fc779991df0467df43daf339d7a12de28fba597cd10b50a165b9b40690416:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
