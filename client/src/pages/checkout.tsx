@@ -335,9 +335,12 @@ export default function Checkout() {
       clearCart();
       toast({
         title: "Заказ оформлен!",
-        description: `Заказ №${order.id} принят в обработку. Мы свяжемся с вами для подтверждения.`,
+        description: `Заказ №${order.orderId} принят в обработку. Мы свяжемся с вами для подтверждения.`,
       });
-      setLocation("/");
+      // Redirect to thanks page with guest order parameters
+      const currentLang = localStorage.getItem('language') || 'ru';
+      const thanksUrl = `/thanks?orderId=${order.orderId}&guestAccessToken=${order.guestAccessToken}&guest=true&lang=${currentLang}`;
+      setLocation(thanksUrl);
     },
     onError: (error: Error) => {
       toast({
@@ -414,7 +417,10 @@ export default function Checkout() {
         title: tShop('checkout.registrationAndOrderCompleted'),
         description: `Заказ №${order.id} принят в обработку`,
       });
-      setLocation("/profile");
+      // Redirect to thanks page for registered user order
+      const currentLang = localStorage.getItem('language') || 'ru';
+      const thanksUrl = `/thanks?orderId=${order.id}&guest=false&lang=${currentLang}`;
+      setLocation(thanksUrl);
     },
     onError: (error: Error) => {
       toast({
@@ -491,7 +497,10 @@ export default function Checkout() {
         title: tShop('checkout.orderPlaced'),
         description: `Заказ №${order.id} принят в обработку`,
       });
-      setLocation("/profile");
+      // Redirect to thanks page for authenticated user order
+      const currentLang = localStorage.getItem('language') || 'ru';
+      const thanksUrl = `/thanks?orderId=${order.id}&guest=false&lang=${currentLang}`;
+      setLocation(thanksUrl);
     },
     onError: (error: Error) => {
       toast({
