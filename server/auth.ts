@@ -80,7 +80,7 @@ export function setupAuth(app: Express) {
 
   app.post("/api/register", async (req, res, next) => {
     try {
-      const { username, email, password, firstName, lastName, phone } = req.body;
+      const { username, email, password, firstName, lastName, phone, claimToken } = req.body;
       
       // Check if username or email already exists (case-insensitive)
       const existingUser = await storage.getUserByUsername(username.toLowerCase());
@@ -107,9 +107,27 @@ export function setupAuth(app: Express) {
         role: "customer",
       });
 
-      req.login(user, (err) => {
+      req.login(user, async (err) => {
         if (err) return next(err);
-        res.status(201).json(user);
+        
+        let claimedOrder = null;
+        // Try to claim guest order if claimToken is provided
+        if (claimToken && typeof claimToken === 'string') {
+          try {
+            claimedOrder = await storage.claimGuestOrder(claimToken, user.id);
+            if (claimedOrder) {
+              console.log(`Successfully claimed order ${claimedOrder.id} for new user ${user.id}`);
+            }
+          } catch (claimError) {
+            console.error("Error claiming guest order during registration:", claimError);
+            // Don't fail registration if claim fails, just log it
+          }
+        }
+        
+        res.status(201).json({ 
+          ...user, 
+          claimedOrderId: claimedOrder?.id || null 
+        });
       });
     } catch (error) {
       console.error("Registration error:", error);

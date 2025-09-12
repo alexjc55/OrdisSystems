@@ -635,7 +635,7 @@ export async function sendGuestOrderEmail(
   const orderViewUrl = `${finalBaseUrl}/guest-order/${guestAccessToken}`;
   
   // Create registration URL with claim token
-  const registerUrl = `${finalBaseUrl}/register?claimToken=${claimToken}`;
+  const registerUrl = `${finalBaseUrl}/auth?claimToken=${claimToken}`;
 
   // Function to format quantity with units (same as in admin emails)
   const formatQuantityWithUnit = (quantity: number, unit: string, language: string): string => {

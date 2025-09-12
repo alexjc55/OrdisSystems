@@ -105,6 +105,23 @@
     "orderComments": "تعليقات الطلب",
     "email": "البريد الإلكتروني"
   },
+  "order": {
+    "order": "الطلب",
+    "viewOrder": "عرض الطلب",
+    "orderDetails": "تفاصيل الطلب", 
+    "viewOrderDetails": "عرض تفاصيل الطلب",
+    "items": "العناصر",
+    "customerInfo": "معلومات العميل",
+    "notes": "ملاحظات",
+    "summary": "الملخص",
+    "total": "الإجمالي",
+    "statusPending": "في الانتظار",
+    "statusConfirmed": "مؤكد",
+    "statusPreparing": "قيد التحضير", 
+    "statusReady": "جاهز",
+    "statusDelivered": "تم التسليم",
+    "statusCancelled": "ملغي"
+  },
   "language": "اللغات",
   "chooseLanguage": "اختر اللغة",
   "adminPanel": "لوحة التحكم",

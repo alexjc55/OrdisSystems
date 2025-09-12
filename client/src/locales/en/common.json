@@ -119,6 +119,23 @@
     "orderComments": "Order Comments",
     "email": "Email"
   },
+  "order": {
+    "order": "Order",
+    "viewOrder": "View Order",
+    "orderDetails": "Order Details", 
+    "viewOrderDetails": "View Order Details",
+    "items": "Items",
+    "customerInfo": "Customer Info",
+    "notes": "Notes",
+    "summary": "Summary",
+    "total": "Total",
+    "statusPending": "Pending",
+    "statusConfirmed": "Confirmed",
+    "statusPreparing": "Preparing", 
+    "statusReady": "Ready",
+    "statusDelivered": "Delivered",
+    "statusCancelled": "Cancelled"
+  },
   "language": "Language",
   "chooseLanguage": "Choose Language",
   "adminPanel": "Admin Panel",

@@ -119,6 +119,23 @@
     "orderComments": "הערות להזמנה",
     "email": "אימייל"
   },
+  "order": {
+    "order": "הזמנה",
+    "viewOrder": "צפייה בהזמנה",
+    "orderDetails": "פרטי הזמנה", 
+    "viewOrderDetails": "צפייה בפרטי הזמנה",
+    "items": "פריטים",
+    "customerInfo": "פרטי לקוח",
+    "notes": "הערות",
+    "summary": "סיכום",
+    "total": "סה״כ",
+    "statusPending": "בהמתנה",
+    "statusConfirmed": "מאושר",
+    "statusPreparing": "בהכנה", 
+    "statusReady": "מוכן",
+    "statusDelivered": "נמסר",
+    "statusCancelled": "מבוטל"
+  },
   "language": "שפות",
   "chooseLanguage": "בחר שפה",
   "adminPanel": "לוח בקרה",

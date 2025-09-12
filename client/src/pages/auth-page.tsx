@@ -24,7 +24,17 @@ export default function AuthPage() {
   const { t } = useCommonTranslation();
   const { currentLanguage, changeLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState("login");
+  const [claimToken, setClaimToken] = useState<string | null>(null);
 
+  // Check for claimToken in URL and switch to register tab
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const claimTokenParam = urlParams.get("claimToken");
+    if (claimTokenParam) {
+      setClaimToken(claimTokenParam);
+      setActiveTab("register"); // Auto-switch to register tab
+    }
+  }, []);
 
   // SEO for auth page
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
@@ -295,6 +305,7 @@ export default function AuthPage() {
       await registerMutation.mutateAsync({
         ...registerData,
         email: registerData.email || undefined,
+        claimToken: claimToken || undefined, // Include claimToken to link guest order
       });
       // Redirect will be handled by useEffect after user state updates
     } catch (error) {
