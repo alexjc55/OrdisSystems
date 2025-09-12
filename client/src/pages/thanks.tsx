@@ -121,7 +121,7 @@ export default function ThanksPage() {
   });
 
   return (
-    <div className={cn("min-h-screen bg-gradient-to-br from-green-50 to-emerald-50", isRTL && "rtl")}>
+    <div className={cn("thanks-page min-h-screen bg-gradient-to-br from-green-50 to-emerald-50", isRTL && "rtl")} data-page="thanks">
       <Header />
       
       <div className="container max-w-2xl mx-auto px-4 py-8 pt-20">
