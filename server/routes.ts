@@ -1107,7 +1107,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         return res.status(400).json({ message: "Invalid order items" });
       }
 
-      if (!guestInfo || !guestInfo.firstName || !guestInfo.lastName || !guestInfo.email || !guestInfo.phone || !guestInfo.address) {
+      if (!guestInfo || !guestInfo.firstName || !guestInfo.lastName || !guestInfo.phone || !guestInfo.address) {
         return res.status(400).json({ message: "Guest information is required" });
       }
 
