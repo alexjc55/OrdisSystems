@@ -1101,7 +1101,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
   // Guest order creation
   app.post('/api/orders/guest', async (req, res) => {
     try {
-      const { items, totalAmount, guestInfo } = req.body;
+      const { items, totalAmount, guestInfo, language } = req.body;
       
       if (!items || !Array.isArray(items) || items.length === 0) {
         return res.status(400).json({ message: "Invalid order items" });
@@ -1111,7 +1111,14 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         return res.status(400).json({ message: "Guest information is required" });
       }
 
-      // Create order with guest information
+      // Generate unique tokens for guest order access and claiming
+      const crypto = require('crypto');
+      const guestAccessToken = crypto.randomBytes(32).toString('hex');
+      const guestClaimToken = crypto.randomBytes(32).toString('hex');
+      const guestAccessTokenExpires = new Date();
+      guestAccessTokenExpires.setDate(guestAccessTokenExpires.getDate() + 30); // 30 days
+
+      // Create order with guest information and tokens
       const orderData = {
         userId: null, // Guest order
         totalAmount,
@@ -1122,7 +1129,11 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         guestPhone: guestInfo.phone,
         deliveryDate: guestInfo.deliveryDate,
         deliveryTime: guestInfo.deliveryTime,
-        paymentMethod: guestInfo.paymentMethod
+        paymentMethod: guestInfo.paymentMethod,
+        guestAccessToken,
+        guestAccessTokenExpires,
+        guestClaimToken,
+        orderLanguage: language || 'ru' // Default to Russian if not specified
       };
 
       const orderItems = items.map((item: any) => ({
@@ -1209,7 +1220,13 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         // Не прерывать создание заказа если email уведомление не отправилось
       }
       
-      res.status(201).json(order);
+      // Return order with tokens for guest access
+      res.status(201).json({
+        success: true,
+        orderId: order.id,
+        guestAccessToken,
+        orderLanguage: orderData.orderLanguage
+      });
     } catch (error) {
       console.error("Error creating guest order:", error);
       res.status(500).json({ message: "Failed to create order" });
@@ -1235,7 +1252,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         console.log("Order creation: No user found, creating guest order");
       }
 
-      const { items, ...orderData } = req.body;
+      const { items, language, ...orderData } = req.body;
       
       const orderSchema = insertOrderSchema.extend({
         requestedDeliveryDate: z.string().optional(),
@@ -1258,6 +1275,9 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       if (userId) {
         processedOrderData.userId = userId;
       }
+      
+      // Save order language
+      processedOrderData.orderLanguage = language || 'ru'; // Default to Russian if not specified
       
       if (requestedDeliveryTime && requestedDeliveryDate) {
         // Store the date and time range separately
