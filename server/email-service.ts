@@ -636,32 +636,55 @@ export async function sendGuestOrderEmail(
   // Create registration URL with claim token
   const registerUrl = baseUrl ? `${baseUrl}/register?claimToken=${claimToken}` : `#register-${claimToken}`;
 
-  // Format items list
+  // Function to format quantity with units (same as in admin emails)
+  const formatQuantityWithUnit = (quantity: number, unit: string, language: string): string => {
+    const unitTranslations: { [key: string]: { [lang: string]: string } } = {
+      'piece': { ru: 'шт', en: 'piece', he: 'יחידה', ar: 'قطعة' },
+      'portion': { ru: 'порц.', en: 'portion', he: 'מנה', ar: 'حصة' },
+      'ml': { ru: 'мл', en: 'ml', he: 'מ״ל', ar: 'مل' },
+      'l': { ru: 'л', en: 'l', he: 'ליטר', ar: 'لتر' },
+      'kg': { ru: 'кг', en: 'kg', he: 'ק"ג', ar: 'كغ' },
+      'g': { ru: 'г', en: 'g', he: 'גר׳', ar: 'غ' }
+    };
+    
+    // Handle weight units (100g, 200g, etc.)
+    const weightMatch = unit.match(/^(\d+)g$/);
+    if (weightMatch) {
+      const translatedUnit = unitTranslations['g'][language] || unitTranslations['g']['en'];
+      return `${quantity}${translatedUnit}`;
+    }
+    
+    // Handle regular units (piece, portion, ml, etc.)
+    const translatedUnit = unitTranslations[unit]?.[language] || unitTranslations[unit]?.en || unit;
+    return `${quantity} ${translatedUnit}`;
+  };
+
+  // Format items list (same format as admin emails)
   let itemsHtml = '';
   if (orderDetails.items && Array.isArray(orderDetails.items)) {
+    const itemRows = orderDetails.items.map((item: any) => {
+      const originalUnit = item.product?.unit || template.defaultUnit;
+      const formattedQuantity = formatQuantityWithUnit(item.quantity, originalUnit, language);
+      
+      return `
+      <tr>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: ${isRTL ? 'right' : 'left'};">${item.product?.name || template.productLabel}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${formattedQuantity}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${item.totalPrice}₪</td>
+      </tr>`;
+    }).join('');
+    
     itemsHtml = `
-      <table style="width: 100%; border-collapse: collapse; margin: 15px 0; ${isRTL ? 'direction: rtl;' : ''}">
+      <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; ${isRTL ? 'direction: rtl;' : ''}">
         <thead>
-          <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-            <th style="padding: 8px; border: 1px solid #dee2e6; text-align: ${isRTL ? 'right' : 'left'};">${template.productLabel}</th>
-            <th style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">${template.quantityLabel}</th>
-            <th style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">${template.amountLabel}</th>
+          <tr style="background-color: #f8f9fa;">
+            <th style="padding: 12px; text-align: ${isRTL ? 'right' : 'left'}; font-weight: bold; border-bottom: 2px solid #ddd;">${template.productLabel}</th>
+            <th style="padding: 12px; text-align: center; font-weight: bold; border-bottom: 2px solid #ddd;">${template.quantityLabel}</th>
+            <th style="padding: 12px; text-align: right; font-weight: bold; border-bottom: 2px solid #ddd;">${template.amountLabel}</th>
           </tr>
         </thead>
         <tbody>
-          ${orderDetails.items.map((item: any) => `
-            <tr>
-              <td style="padding: 8px; border: 1px solid #dee2e6; text-align: ${isRTL ? 'right' : 'left'};">
-                ${item.product?.name || 'Product'} ${item.product?.unit ? `(${item.product.unit})` : ''}
-              </td>
-              <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">
-                ${item.quantity || 0} ${item.product?.unit || template.defaultUnit}
-              </td>
-              <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">
-                ₪${parseFloat(item.totalPrice || '0').toFixed(2)}
-              </td>
-            </tr>
-          `).join('')}
+          ${itemRows}
         </tbody>
       </table>
     `;
