@@ -486,3 +486,278 @@ ${template.footer}
     html
   });
 }
+
+// New function for sending guest order emails
+export async function sendGuestOrderEmail(
+  orderId: number,
+  guestName: string,
+  guestEmail: string,
+  totalAmount: string,
+  orderDetails: any,
+  guestAccessToken: string,
+  claimToken: string,
+  fromEmail: string,
+  fromName: string,
+  language: string = 'ru',
+  storeName?: string,
+  baseUrl?: string
+): Promise<boolean> {
+  
+  // Multilingual email templates for guest orders
+  const templates = {
+    ru: {
+      subject: `🛍️ Ваш заказ #${orderId} подтвержден!`,
+      title: `Спасибо за ваш заказ!`,
+      greeting: `Здравствуйте, ${guestName}!`,
+      confirmationText: `Ваш заказ #${orderId} успешно принят и обрабатывается.`,
+      totalLabel: 'Сумма заказа:',
+      statusLabel: 'Статус:',
+      addressLabel: 'Адрес доставки:',
+      phoneLabel: 'Телефон:',
+      paymentLabel: 'Способ оплаты:',
+      itemsLabel: 'Заказанные товары:',
+      viewOrderButton: 'Посмотреть детали заказа',
+      viewOrderText: 'Вы можете отслеживать статус заказа по ссылке:',
+      registrationTitle: 'Создайте аккаунт для удобства!',
+      registrationText: 'Зарегистрируйтесь, чтобы легко отслеживать все ваши заказы, сохранить адрес доставки и получать персональные предложения.',
+      registerButton: 'Зарегистрироваться и привязать заказ',
+      footer: `С уважением,<br>Команда ${storeName || 'eDAHouse'}`,
+      quantityLabel: 'Кол-во',
+      amountLabel: 'Сумма',
+      productLabel: 'Товар',
+      statusTranslations: {
+        pending: 'Ожидает',
+        confirmed: 'Подтвержден',
+        preparing: 'Готовится',
+        ready: 'Готов',
+        delivered: 'Доставлен',
+        cancelled: 'Отменен'
+      },
+      defaultUnit: 'кг'
+    },
+    en: {
+      subject: `🛍️ Your order #${orderId} is confirmed!`,
+      title: `Thank you for your order!`,
+      greeting: `Hello, ${guestName}!`,
+      confirmationText: `Your order #${orderId} has been successfully received and is being processed.`,
+      totalLabel: 'Order total:',
+      statusLabel: 'Status:',
+      addressLabel: 'Delivery address:',
+      phoneLabel: 'Phone:',
+      paymentLabel: 'Payment method:',
+      itemsLabel: 'Ordered items:',
+      viewOrderButton: 'View order details',
+      viewOrderText: 'You can track your order status using this link:',
+      registrationTitle: 'Create an account for convenience!',
+      registrationText: 'Register to easily track all your orders, save delivery address, and receive personalized offers.',
+      registerButton: 'Register and link order',
+      footer: `Best regards,<br>Team ${storeName || 'eDAHouse'}`,
+      quantityLabel: 'Quantity',
+      amountLabel: 'Amount',
+      productLabel: 'Product',
+      statusTranslations: {
+        pending: 'Pending',
+        confirmed: 'Confirmed',
+        preparing: 'Preparing',
+        ready: 'Ready',
+        delivered: 'Delivered',
+        cancelled: 'Cancelled'
+      },
+      defaultUnit: 'kg'
+    },
+    he: {
+      subject: `🛍️ ההזמנה שלך #${orderId} אושרה!`,
+      title: `תודה על ההזמנה שלך!`,
+      greeting: `שלום, ${guestName}!`,
+      confirmationText: `ההזמנה שלך #${orderId} התקבלה בהצלחה ונמצאת בטיפול.`,
+      totalLabel: 'סכום הזמנה:',
+      statusLabel: 'סטטוס:',
+      addressLabel: 'כתובת משלוח:',
+      phoneLabel: 'טלפון:',
+      paymentLabel: 'אמצעי תשלום:',
+      itemsLabel: 'פריטים שהוזמנו:',
+      viewOrderButton: 'צפה בפרטי ההזמנה',
+      viewOrderText: 'ניתן לעקוב אחר סטטוס ההזמנה בקישור:',
+      registrationTitle: 'צור חשבון לנוחות!',
+      registrationText: 'הירשם כדי לעקוב בקלות אחר כל ההזמנות שלך, לשמור כתובת משלוח ולקבל הצעות אישיות.',
+      registerButton: 'הירשם וקשר את ההזמנה',
+      footer: `בברכה,<br>צוות ${storeName || 'eDAHouse'}`,
+      quantityLabel: 'כמות',
+      amountLabel: 'סכום',
+      productLabel: 'מוצר',
+      statusTranslations: {
+        pending: 'ממתין',
+        confirmed: 'אושר',
+        preparing: 'בהכנה',
+        ready: 'מוכן',
+        delivered: 'נמסר',
+        cancelled: 'בוטל'
+      },
+      defaultUnit: 'ק״ג'
+    },
+    ar: {
+      subject: `🛍️ تم تأكيد طلبك #${orderId}!`,
+      title: `شكراً لك على طلبك!`,
+      greeting: `مرحباً، ${guestName}!`,
+      confirmationText: `تم استلام طلبك #${orderId} بنجاح وجاري معالجته.`,
+      totalLabel: 'إجمالي الطلب:',
+      statusLabel: 'الحالة:',
+      addressLabel: 'عنوان التسليم:',
+      phoneLabel: 'الهاتف:',
+      paymentLabel: 'طريقة الدفع:',
+      itemsLabel: 'العناصر المطلوبة:',
+      viewOrderButton: 'عرض تفاصيل الطلب',
+      viewOrderText: 'يمكنك تتبع حالة طلبك باستخدام هذا الرابط:',
+      registrationTitle: 'أنشئ حساباً للراحة!',
+      registrationText: 'سجل لتتبع جميع طلباتك بسهولة، واحفظ عنوان التسليم، واحصل على عروض شخصية.',
+      registerButton: 'سجل وربط الطلب',
+      footer: `مع أطيب التحيات،<br>فريق ${storeName || 'eDAHouse'}`,
+      quantityLabel: 'الكمية',
+      amountLabel: 'المبلغ',
+      productLabel: 'المنتج',
+      statusTranslations: {
+        pending: 'قيد الانتظار',
+        confirmed: 'مؤكد',
+        preparing: 'قيد التحضير',
+        ready: 'جاهز',
+        delivered: 'تم التسليم',
+        cancelled: 'ملغى'
+      },
+      defaultUnit: 'كجم'
+    }
+  };
+
+  const template = templates[language as keyof typeof templates] || templates.ru;
+  const isRTL = ['he', 'ar'].includes(language);
+
+  // Create order view URL with guest access token
+  const orderViewUrl = baseUrl ? `${baseUrl}/guest-order/${guestAccessToken}` : `#order-${guestAccessToken}`;
+  
+  // Create registration URL with claim token
+  const registerUrl = baseUrl ? `${baseUrl}/register?claimToken=${claimToken}` : `#register-${claimToken}`;
+
+  // Format items list
+  let itemsHtml = '';
+  if (orderDetails.items && Array.isArray(orderDetails.items)) {
+    itemsHtml = `
+      <table style="width: 100%; border-collapse: collapse; margin: 15px 0; ${isRTL ? 'direction: rtl;' : ''}">
+        <thead>
+          <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+            <th style="padding: 8px; border: 1px solid #dee2e6; text-align: ${isRTL ? 'right' : 'left'};">${template.productLabel}</th>
+            <th style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">${template.quantityLabel}</th>
+            <th style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">${template.amountLabel}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${orderDetails.items.map((item: any) => `
+            <tr>
+              <td style="padding: 8px; border: 1px solid #dee2e6; text-align: ${isRTL ? 'right' : 'left'};">
+                ${item.product?.name || 'Product'} ${item.product?.unit ? `(${item.product.unit})` : ''}
+              </td>
+              <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">
+                ${item.quantity || 0} ${item.product?.unit || template.defaultUnit}
+              </td>
+              <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">
+                ₪${parseFloat(item.totalPrice || '0').toFixed(2)}
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // Construct the HTML email
+  const html = `
+    <!DOCTYPE html>
+    <html lang="${language}" ${isRTL ? 'dir="rtl"' : ''}>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${template.title}</title>
+    </head>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; ${isRTL ? 'direction: rtl;' : ''}">
+      <header style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #2c3e50; margin-bottom: 10px;">${template.title}</h1>
+        <div style="width: 50px; height: 3px; background-color: #3498db; margin: 0 auto;"></div>
+      </header>
+      
+      <main>
+        <p style="font-size: 16px; margin-bottom: 15px;"><strong>${template.greeting}</strong></p>
+        
+        <p style="margin-bottom: 20px;">${template.confirmationText}</p>
+        
+        <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 20px; margin: 20px 0;">
+          <h3 style="color: #495057; margin-top: 0;">📋 ${template.title} #${orderId}</h3>
+          <p><strong>${template.totalLabel}</strong> ₪${totalAmount}</p>
+          <p><strong>${template.statusLabel}</strong> ${template.statusTranslations[orderDetails.status as keyof typeof template.statusTranslations] || orderDetails.status}</p>
+          ${orderDetails.customerPhone ? `<p><strong>${template.phoneLabel}</strong> ${orderDetails.customerPhone}</p>` : ''}
+          ${orderDetails.deliveryAddress ? `<p><strong>${template.addressLabel}</strong> ${orderDetails.deliveryAddress}</p>` : ''}
+          ${orderDetails.paymentMethod ? `<p><strong>${template.paymentLabel}</strong> ${orderDetails.paymentMethod}</p>` : ''}
+        </div>
+        
+        ${itemsHtml ? `
+        <div style="margin: 20px 0;">
+          <h3 style="color: #495057;">${template.itemsLabel}</h3>
+          ${itemsHtml}
+        </div>
+        ` : ''}
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <p>${template.viewOrderText}</p>
+          <a href="${orderViewUrl}" style="display: inline-block; background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 10px;">${template.viewOrderButton}</a>
+        </div>
+        
+        <div style="background-color: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 5px; padding: 20px; margin: 30px 0;">
+          <h3 style="color: #155724; margin-top: 0;">✨ ${template.registrationTitle}</h3>
+          <p style="color: #155724; margin-bottom: 15px;">${template.registrationText}</p>
+          <div style="text-align: center;">
+            <a href="${registerUrl}" style="display: inline-block; background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">${template.registerButton}</a>
+          </div>
+        </div>
+      </main>
+      
+      <footer style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #dee2e6; color: #6c757d;">
+        <p>${template.footer}</p>
+      </footer>
+    </body>
+    </html>
+  `;
+
+  // Text version for better compatibility
+  const text = `
+    ${template.greeting}
+    
+    ${template.confirmationText}
+    
+    ${template.title} #${orderId}
+    ${template.totalLabel} ₪${totalAmount}
+    ${template.statusLabel} ${template.statusTranslations[orderDetails.status as keyof typeof template.statusTranslations] || orderDetails.status}
+    ${orderDetails.customerPhone ? `${template.phoneLabel} ${orderDetails.customerPhone}` : ''}
+    ${orderDetails.deliveryAddress ? `${template.addressLabel} ${orderDetails.deliveryAddress}` : ''}
+    ${orderDetails.paymentMethod ? `${template.paymentLabel} ${orderDetails.paymentMethod}` : ''}
+    
+    ${template.viewOrderText}
+    ${orderViewUrl}
+    
+    ${template.registrationTitle}
+    ${template.registrationText}
+    ${registerUrl}
+    
+    ${template.footer.replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')}
+  `;
+
+  try {
+    return await emailService.sendEmail({
+      to: guestEmail,
+      from: fromEmail,
+      fromName: fromName,
+      subject: template.subject,
+      text: text,
+      html: html
+    });
+  } catch (error) {
+    console.error('Error sending guest order email:', error);
+    return false;
+  }
+}
