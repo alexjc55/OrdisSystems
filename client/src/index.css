@@ -1798,50 +1798,24 @@ html[lang="ar"] .whatsapp-button {
   }
 }
 
-/* RTL layout for guest-order and thanks pages specifically */
-[data-page="guest-order"][dir="rtl"] .container,
-[data-page="thanks"][dir="rtl"] .container,
-[data-page="guest-order"][dir="rtl"] main,
-[data-page="thanks"][dir="rtl"] main,
-html[dir="rtl"][lang="he"] body,
-html[dir="rtl"][lang="ar"] body {
+/* Enhanced RTL support - work with existing html[dir="rtl"] rules */
+html[dir="rtl"] {
   direction: rtl !important;
 }
 
-/* RTL text alignment for specific content */
-html[dir="rtl"][lang="he"] .text-left:not(.keep-left),
-html[dir="rtl"][lang="ar"] .text-left:not(.keep-left) {
+/* Force RTL text alignment for cards and content */
+html[dir="rtl"] .text-left:not(.keep-left) {
   text-align: right !important;
 }
 
-html[dir="rtl"][lang="he"] .text-right:not(.keep-right),
-html[dir="rtl"][lang="ar"] .text-right:not(.keep-right) {  
+html[dir="rtl"] .text-right:not(.keep-right) {
   text-align: left !important;
 }
 
-/* RTL spacing adjustments for guest/thanks pages */
-html[dir="rtl"][lang="he"] .guest-order-page .ml-2,
-html[dir="rtl"][lang="ar"] .guest-order-page .ml-2,
-html[dir="rtl"][lang="he"] .thanks-page .ml-2,
-html[dir="rtl"][lang="ar"] .thanks-page .ml-2 { 
-  margin-right: 0.5rem !important; 
-  margin-left: 0 !important; 
-}
-
-html[dir="rtl"][lang="he"] .guest-order-page .mr-2,
-html[dir="rtl"][lang="ar"] .guest-order-page .mr-2,
-html[dir="rtl"][lang="he"] .thanks-page .mr-2,
-html[dir="rtl"][lang="ar"] .thanks-page .mr-2 { 
-  margin-left: 0.5rem !important; 
-  margin-right: 0 !important; 
-}
-
-/* RTL for cards and content blocks in guest/thanks pages */
-html[dir="rtl"][lang="he"] .card,
-html[dir="rtl"][lang="ar"] .card,
-html[dir="rtl"][lang="he"] .border,
-html[dir="rtl"][lang="ar"] .border {
-  direction: rtl !important;
-}
+/* Enhanced RTL spacing - complement existing rules */
+html[dir="rtl"] .ml-2 { margin-right: 0.5rem !important; margin-left: 0 !important; }
+html[dir="rtl"] .mr-2 { margin-left: 0.5rem !important; margin-right: 0 !important; }
+html[dir="rtl"] .pl-4 { padding-right: 1rem !important; padding-left: 0 !important; }
+html[dir="rtl"] .pr-4 { padding-left: 1rem !important; padding-right: 0 !important; }
 
 /* Cache bust: 1751412738 */

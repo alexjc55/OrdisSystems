@@ -92,6 +92,15 @@ export const updateDocumentDirection = (lng: string) => {
   document.documentElement.dir = direction;
   document.documentElement.lang = lng;
   
+  // Debug RTL setup
+  console.log('RTL Debug - updateDocumentDirection called:', {
+    language: lng,
+    direction,
+    isRTLLang: isRTL(lng),
+    htmlDir: document.documentElement.dir,
+    htmlLang: document.documentElement.lang
+  });
+  
   // Update CSS custom properties for RTL
   const root = document.documentElement;
   if (isRTL(lng)) {
