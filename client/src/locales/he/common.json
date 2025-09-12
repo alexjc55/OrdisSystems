@@ -409,7 +409,22 @@
     "continueShopping": "המשך לקנות",
     "viewOrder": "צפה בהזמנה",
     "backHome": "חזור לבית",
-    "footerMessage": "תודה שבחרת ב{{storeName}}! אנו מעריכים את האמון שלך."
+    "footerMessage": "תודה שבחרת ב{{storeName}}! אנו מעריכים את האמון שלך.",
+    "noEmailTitle": "קבל פרטי הזמנה במייל",
+    "noEmailDescription": "ביצעת הזמנה ללא מתן כתובת מייל. הזן את כתובת המייל שלך כדי לקבל אישור ופרטי הזמנה.",
+    "emailLabel": "כתובת מייל",
+    "emailPlaceholder": "example@email.com",
+    "emailPrivacyNote": "המייל שלך ישמש רק לשליחת מידע על ההזמנה ולא יועבר לצדדים שלישיים.",
+    "emailSentTitle": "מייל נשלח",
+    "emailSentDescription": "פרטי ההזמנה נשלחו בהצלחה לכתובת המייל שצוינה.",
+    "emailErrorTitle": "שגיאת שליחה",
+    "emailErrorDescription": "לא הצלחנו לשלוח מייל. נסה שוב מאוחר יותר או פנה לתמיכה.",
+    "emailRequiredTitle": "מייל נדרש",
+    "emailRequiredDescription": "אנא הזן את כתובת המייל שלך.",
+    "emailInvalidTitle": "מייל לא תקין",
+    "emailInvalidDescription": "אנא הזן כתובת מייל תקינה.",
+    "emailSentSuccessTitle": "מייל נשלח בהצלחה!",
+    "emailSentSuccessDescription": "שלחנו את פרטי ההזמנה שלך לכתובת המייל שצוינה. בדוק את התיבה (כולל תיקיית 'ספאם')."
   },
   "validation": {
     "firstNameMinLength": "שם פרטי חייב להכיל לפחות 2 תווים",

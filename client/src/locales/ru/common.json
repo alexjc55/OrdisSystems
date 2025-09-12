@@ -447,7 +447,22 @@
     "continueShopping": "Продолжить покупки",
     "viewOrder": "Посмотреть заказ",
     "backHome": "На главную",
-    "footerMessage": "Спасибо что выбрали {{storeName}}! Мы ценим ваше доверие."
+    "footerMessage": "Спасибо что выбрали {{storeName}}! Мы ценим ваше доверие.",
+    "noEmailTitle": "Получить детали заказа на email",
+    "noEmailDescription": "Вы оформили заказ без указания email. Введите ваш email адрес, чтобы получить подтверждение и детали заказа.",
+    "emailLabel": "Email адрес",
+    "emailPlaceholder": "example@email.com",
+    "emailPrivacyNote": "Ваш email будет использован только для отправки информации о заказе и не будет передан третьим лицам.",
+    "emailSentTitle": "Email отправлен",
+    "emailSentDescription": "Детали заказа успешно отправлены на указанный email адрес.",
+    "emailErrorTitle": "Ошибка отправки",
+    "emailErrorDescription": "Не удалось отправить email. Попробуйте позже или свяжитесь с поддержкой.",
+    "emailRequiredTitle": "Email обязателен",
+    "emailRequiredDescription": "Пожалуйста, введите ваш email адрес.",
+    "emailInvalidTitle": "Неверный email",
+    "emailInvalidDescription": "Пожалуйста, введите корректный email адрес.",
+    "emailSentSuccessTitle": "Email успешно отправлен!",
+    "emailSentSuccessDescription": "Мы отправили детали вашего заказа на указанный email адрес. Проверьте почту (включая папку \"Спам\")."
   },
   "validation": {
     "firstNameMinLength": "Имя должно содержать минимум 2 символа",

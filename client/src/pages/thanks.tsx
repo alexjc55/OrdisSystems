@@ -3,13 +3,18 @@ import { useLocation, Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, ShoppingCart, Eye, ArrowLeft, Package, Clock } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { CheckCircle, ShoppingCart, Eye, ArrowLeft, Package, Clock, Mail, Send } from "lucide-react";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { getLocalizedField } from "@shared/localization";
 import { useSEO, generateKeywords } from "@/hooks/useSEO";
 import Header from "@/components/layout/header";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function ThanksPage() {
   const [location] = useLocation();
@@ -21,7 +26,12 @@ export default function ThanksPage() {
     guestAccessToken?: string;
     orderLanguage?: string;
     isGuest?: boolean;
+    hasEmail?: boolean;
   }>({});
+  
+  const [email, setEmail] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
+  const { toast } = useToast();
 
   // Extract order data from URL parameters
   useEffect(() => {
@@ -30,7 +40,8 @@ export default function ThanksPage() {
       orderId: urlParams.get("orderId") ? parseInt(urlParams.get("orderId")!) : undefined,
       guestAccessToken: urlParams.get("guestAccessToken") || urlParams.get("token") || undefined,
       orderLanguage: urlParams.get("lang") || currentLanguage,
-      isGuest: urlParams.get("guest") === "true"
+      isGuest: urlParams.get("guest") === "true",
+      hasEmail: urlParams.get("hasEmail") !== "false" // Default to true, false only if explicitly set
     });
   }, [location, currentLanguage]);
 
@@ -47,6 +58,57 @@ export default function ThanksPage() {
     ogDescription: description,
     canonical: '/thanks'
   });
+
+  // Mutation for sending email with order details
+  const sendEmailMutation = useMutation({
+    mutationFn: async (emailAddress: string) => {
+      if (!orderData.guestAccessToken) {
+        throw new Error("No guest access token available");
+      }
+      
+      return await apiRequest("POST", `/api/orders/guest/${orderData.guestAccessToken}/send-email`, {
+        email: emailAddress.trim()
+      });
+    },
+    onSuccess: () => {
+      setEmailSent(true);
+      toast({
+        title: t('thanks.emailSentTitle'),
+        description: t('thanks.emailSentDescription'),
+        variant: "default",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t('thanks.emailErrorTitle'),
+        description: error.message || t('thanks.emailErrorDescription'),
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSendEmail = () => {
+    if (!email || !email.trim()) {
+      toast({
+        title: t('thanks.emailRequiredTitle'),
+        description: t('thanks.emailRequiredDescription'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      toast({
+        title: t('thanks.emailInvalidTitle'),
+        description: t('thanks.emailInvalidDescription'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    sendEmailMutation.mutate(email);
+  };
 
   const isRTL = ['he', 'ar'].includes(currentLanguage);
 
@@ -130,17 +192,92 @@ export default function ThanksPage() {
 
             {/* Guest Order Info */}
             {orderData.isGuest && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <h3 className="font-semibold text-yellow-800 mb-2">
-                  {t('thanks.guestOrderTitle')}
-                </h3>
-                <p className="text-sm text-yellow-700 mb-3">
-                  {t('thanks.guestOrderDescription')}
-                </p>
-                <div className="text-xs text-yellow-600">
-                  {t('thanks.emailSent')}
-                </div>
-              </div>
+              <>
+                {/* Email was provided during checkout */}
+                {orderData.hasEmail && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <h3 className="font-semibold text-yellow-800 mb-2">
+                      {t('thanks.guestOrderTitle')}
+                    </h3>
+                    <p className="text-sm text-yellow-700 mb-3">
+                      {t('thanks.guestOrderDescription')}
+                    </p>
+                    <div className="text-xs text-yellow-600">
+                      {t('thanks.emailSent')}
+                    </div>
+                  </div>
+                )}
+
+                {/* Email was NOT provided during checkout */}
+                {!orderData.hasEmail && !emailSent && (
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3 mb-3">
+                      <Mail className="w-5 h-5 text-orange-600 mt-0.5" />
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-orange-800 mb-2">
+                          {t('thanks.noEmailTitle')}
+                        </h3>
+                        <p className="text-sm text-orange-700 mb-4">
+                          {t('thanks.noEmailDescription')}
+                        </p>
+                        
+                        {/* Email input form */}
+                        <div className="space-y-3">
+                          <div>
+                            <Label htmlFor="email" className="text-sm font-medium text-orange-800">
+                              {t('thanks.emailLabel')}
+                            </Label>
+                            <div className="flex gap-2 mt-1">
+                              <Input
+                                id="email"
+                                type="email"
+                                placeholder={t('thanks.emailPlaceholder')}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSendEmail()}
+                                className="flex-1"
+                                disabled={sendEmailMutation.isPending}
+                                data-testid="input-guest-email"
+                              />
+                              <Button 
+                                onClick={handleSendEmail}
+                                disabled={sendEmailMutation.isPending || !email.trim()}
+                                size="sm"
+                                className="bg-orange-600 hover:bg-orange-700"
+                                data-testid="button-send-email"
+                              >
+                                {sendEmailMutation.isPending ? (
+                                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                  <Send className="w-4 h-4" />
+                                )}
+                              </Button>
+                            </div>
+                          </div>
+                          <p className="text-xs text-orange-600">
+                            {t('thanks.emailPrivacyNote')}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Email successfully sent */}
+                {!orderData.hasEmail && emailSent && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-center gap-3 mb-2">
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                      <h3 className="font-semibold text-green-800">
+                        {t('thanks.emailSentSuccessTitle')}
+                      </h3>
+                    </div>
+                    <p className="text-sm text-green-700">
+                      {t('thanks.emailSentSuccessDescription')}
+                    </p>
+                  </div>
+                )}
+              </>
             )}
 
             {/* Registration Encouragement for Guests */}

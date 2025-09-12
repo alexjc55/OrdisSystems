@@ -409,7 +409,22 @@
     "continueShopping": "Continue Shopping",
     "viewOrder": "View Order",
     "backHome": "Back to Home",
-    "footerMessage": "Thank you for choosing {{storeName}}! We appreciate your trust."
+    "footerMessage": "Thank you for choosing {{storeName}}! We appreciate your trust.",
+    "noEmailTitle": "Get order details via email",
+    "noEmailDescription": "You placed an order without providing an email. Enter your email address to receive order confirmation and details.",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "example@email.com",
+    "emailPrivacyNote": "Your email will only be used for order information and will not be shared with third parties.",
+    "emailSentTitle": "Email sent",
+    "emailSentDescription": "Order details have been successfully sent to the specified email address.",
+    "emailErrorTitle": "Send error",
+    "emailErrorDescription": "Could not send email. Please try again later or contact support.",
+    "emailRequiredTitle": "Email required",
+    "emailRequiredDescription": "Please enter your email address.",
+    "emailInvalidTitle": "Invalid email",
+    "emailInvalidDescription": "Please enter a valid email address.",
+    "emailSentSuccessTitle": "Email successfully sent!",
+    "emailSentSuccessDescription": "We have sent your order details to the specified email address. Please check your mail (including the 'Spam' folder)."
   },
   "validation": {
     "firstNameMinLength": "First name must be at least 2 characters",

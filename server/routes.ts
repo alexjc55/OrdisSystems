@@ -1264,6 +1264,98 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
+  // API endpoint to send guest order email after order creation
+  app.post('/api/orders/guest/:token/send-email', async (req, res) => {
+    try {
+      const { token } = req.params;
+      
+      // Validate email using Zod schema
+      const emailSchema = z.object({
+        email: z.string().email("Invalid email format").min(1, "Email is required")
+      });
+      
+      const validationResult = emailSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ 
+          message: "Validation error", 
+          errors: validationResult.error.errors 
+        });
+      }
+      
+      const { email } = validationResult.data;
+
+      // Find order by guest access token
+      const order = await storage.getGuestOrderByToken(token);
+      if (!order) {
+        return res.status(404).json({ message: "Order not found or token expired" });
+      }
+
+      // Order already includes items with product details
+      const itemsWithProducts = order.items.map(item => ({
+        productId: item.productId,
+        quantity: parseInt(item.quantity),
+        pricePerKg: parseFloat(item.pricePerKg),
+        totalPrice: parseFloat(item.totalPrice),
+        product: item.product ? {
+          name: item.product.name,
+          unit: item.product.unit || 'кг'
+        } : null
+      }));
+
+      // Get store settings for email configuration
+      const currentStoreSettings = await storage.getStoreSettings();
+      if (!currentStoreSettings?.emailNotificationsEnabled) {
+        return res.status(503).json({ message: "Email service is not available" });
+      }
+
+      // Configure email service
+      emailService.updateSettings({
+        useSendgrid: currentStoreSettings.useSendgrid || false,
+        smtpHost: currentStoreSettings.smtpHost || undefined,
+        smtpPort: currentStoreSettings.smtpPort || undefined,
+        smtpSecure: currentStoreSettings.smtpSecure || undefined,
+        smtpUser: currentStoreSettings.smtpUser || undefined,
+        smtpPassword: currentStoreSettings.smtpPassword || undefined,
+        sendgridApiKey: currentStoreSettings.sendgridApiKey || undefined
+      });
+
+      // Send email
+      const fromEmail = currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il';
+      const fromName = currentStoreSettings.orderNotificationFromName || 'eDAHouse Store';
+      const storeName = currentStoreSettings.storeName || 'eDAHouse';
+      const baseUrl = req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined;
+      
+      await sendGuestOrderEmail(
+        order.id,
+        order.guestName || 'Гость',
+        email.trim(),
+        order.totalAmount.toString(),
+        {
+          customerPhone: order.guestPhone,
+          deliveryAddress: order.deliveryAddress,
+          deliveryDate: order.deliveryDate,
+          deliveryTime: order.deliveryTime,
+          paymentMethod: order.paymentMethod,
+          customerNotes: order.customerNotes,
+          status: order.status,
+          items: itemsWithProducts
+        },
+        order.guestAccessToken,
+        order.guestClaimToken,
+        fromEmail,
+        fromName,
+        order.orderLanguage || 'ru',
+        storeName,
+        baseUrl
+      );
+
+      res.json({ success: true, message: "Email sent successfully" });
+    } catch (error) {
+      console.error("Error sending guest order email:", error);
+      res.status(500).json({ message: "Failed to send email" });
+    }
+  });
+
   app.post('/api/orders', async (req: any, res) => {
     try {
       let userId = null;

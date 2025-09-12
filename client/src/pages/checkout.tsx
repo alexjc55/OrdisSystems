@@ -58,6 +58,13 @@ type GuestOrderData = {
   phone: string;
   address: string;
 };
+
+type GuestOrderResponse = {
+  orderId: number;
+  guestAccessToken: string;
+  orderLanguage: string;
+};
+
 type RegistrationData = GuestOrderData & {
   password: string;
   confirmPassword: string;
@@ -294,7 +301,7 @@ export default function Checkout() {
     enabled: isAuthenticated,
   });
 
-  const createGuestOrderMutation = useMutation({
+  const createGuestOrderMutation = useMutation<GuestOrderResponse, Error, GuestOrderData>({
     mutationFn: async (data: GuestOrderData) => {
       const deliveryDate = selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : "";
       
@@ -331,7 +338,7 @@ export default function Checkout() {
       
       return await apiRequest("POST", "/api/orders/guest", orderData);
     },
-    onSuccess: (order) => {
+    onSuccess: (order, variables) => {
       clearCart();
       toast({
         title: "Заказ оформлен!",
@@ -339,7 +346,8 @@ export default function Checkout() {
       });
       // Redirect to thanks page with guest order parameters
       const currentLang = localStorage.getItem('language') || 'ru';
-      const thanksUrl = `/thanks?orderId=${order.orderId}&guestAccessToken=${order.guestAccessToken}&guest=true&lang=${currentLang}`;
+      const hasEmail = !!(variables.email && variables.email.trim());
+      const thanksUrl = `/thanks?orderId=${order.orderId}&guestAccessToken=${order.guestAccessToken}&guest=true&hasEmail=${hasEmail}&lang=${currentLang}`;
       setLocation(thanksUrl);
     },
     onError: (error: Error) => {

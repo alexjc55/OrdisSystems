@@ -226,7 +226,22 @@
     "continueShopping": "مواصلة التسوق",
     "viewOrder": "عرض الطلب",
     "backHome": "العودة للرئيسية",
-    "footerMessage": "شكراً لاختيارك {{storeName}}! نحن نقدر ثقتك."
+    "footerMessage": "شكراً لاختيارك {{storeName}}! نحن نقدر ثقتك.",
+    "noEmailTitle": "احصل على تفاصيل الطلب عبر البريد الإلكتروني",
+    "noEmailDescription": "لقد قمت بطلب دون تقديم بريد إلكتروني. أدخل عنوان بريدك الإلكتروني لتلقي تأكيد وتفاصيل الطلب.",
+    "emailLabel": "عنوان البريد الإلكتروني",
+    "emailPlaceholder": "example@email.com",
+    "emailPrivacyNote": "سيتم استخدام بريدك الإلكتروني فقط لإرسال معلومات الطلب ولن يتم مشاركته مع أطراف ثالثة.",
+    "emailSentTitle": "تم إرسال البريد الإلكتروني",
+    "emailSentDescription": "تم إرسال تفاصيل الطلب بنجاح إلى عنوان البريد الإلكتروني المحدد.",
+    "emailErrorTitle": "خطأ في الإرسال",
+    "emailErrorDescription": "لم نتمكن من إرسال البريد الإلكتروني. يرجى المحاولة مرة أخرى لاحقاً أو التواصل مع الدعم.",
+    "emailRequiredTitle": "البريد الإلكتروني مطلوب",
+    "emailRequiredDescription": "يرجى إدخال عنوان بريدك الإلكتروني.",
+    "emailInvalidTitle": "بريد إلكتروني غير صحيح",
+    "emailInvalidDescription": "يرجى إدخال عنوان بريد إلكتروني صحيح.",
+    "emailSentSuccessTitle": "تم إرسال البريد الإلكتروني بنجاح!",
+    "emailSentSuccessDescription": "لقد أرسلنا تفاصيل طلبك إلى عنوان البريد الإلكتروني المحدد. يرجى التحقق من بريدك (بما في ذلك مجلد 'الرسائل غير المرغوب فيها')."
   },
   "validation": {
     "required": "هذا الحقل مطلوب",
