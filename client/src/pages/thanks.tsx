@@ -310,7 +310,7 @@ export default function ThanksPage() {
               }
             >
               <Button size="lg" className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white">
-                <Eye className="w-5 h-5 mr-2" />
+                <Eye className={cn("w-5 h-5", isRTL ? "ml-2" : "mr-2")} />
                 {t('thanks.viewOrder')}
               </Button>
             </Link>
@@ -319,7 +319,7 @@ export default function ThanksPage() {
           {/* Continue Shopping / Back to Home */}
           <Link href="/">
             <Button size="lg" variant="outline" className="w-full sm:w-auto border-green-600 text-green-700 hover:bg-green-50">
-              <ArrowLeft className="w-5 h-5 mr-2" />
+              <ArrowLeft className={cn("w-5 h-5", isRTL ? "ml-2 rotate-180" : "mr-2")} />
               {t('thanks.backHome')}
             </Button>
           </Link>

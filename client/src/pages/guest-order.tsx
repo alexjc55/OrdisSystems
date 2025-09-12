@@ -142,7 +142,7 @@ export default function GuestOrderPage() {
               </CardDescription>
               <Link href="/">
                 <Button size="lg">
-                  <ArrowLeft className="w-5 h-5 mr-2" />
+                  <ArrowLeft className={cn("w-5 h-5", isRTL ? "ml-2 rotate-180" : "mr-2")} />
                   {t('backHome')}
                 </Button>
               </Link>
@@ -164,7 +164,7 @@ export default function GuestOrderPage() {
         <div className="mb-6">
           <Link href="/">
             <Button variant="ghost" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className={cn("w-4 h-4", isRTL ? "ml-2 rotate-180" : "mr-2")} />
               {t('backHome')}
             </Button>
           </Link>
@@ -235,7 +235,7 @@ export default function GuestOrderPage() {
                           {formatQuantity(item.quantity, item.product.unit as ProductUnit)} × {formatCurrency(item.pricePerKg)}
                         </p>
                       </div>
-                      <div className="text-right">
+                      <div className={cn(isRTL ? "text-left" : "text-right")}>
                         <p className="font-semibold text-gray-900 dark:text-gray-100">
                           {formatCurrency(item.totalPrice)}
                         </p>
