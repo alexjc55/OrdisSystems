@@ -123,11 +123,11 @@ export default function ThanksPage() {
             <CheckCircle className="w-12 h-12 text-green-600" />
           </div>
           
-          <h1 className="text-3xl font-bold text-green-800 mb-2">
+          <h1 className="text-3xl font-bold text-green-800 mb-2 text-center">
             {t('thanks.title')}
           </h1>
           
-          <p className="text-lg text-green-700 mb-4">
+          <p className="text-lg text-green-700 mb-4 text-center">
             {t('thanks.orderConfirmed')}
           </p>
           
@@ -289,7 +289,10 @@ export default function ThanksPage() {
                 <p className="text-sm text-purple-700 mb-3">
                   {t('thanks.registerDescription')}
                 </p>
-                <Link href="/auth">
+                <Link href={orderData.guestAccessToken 
+                  ? `/auth?guestOrderToken=${orderData.guestAccessToken}&orderId=${orderData.orderId}` 
+                  : "/auth"
+                }>
                   <Button size="sm" variant="outline" className="border-purple-300 text-purple-700 hover:bg-purple-100">
                     {t('thanks.createAccount')}
                   </Button>
