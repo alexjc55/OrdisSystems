@@ -15,6 +15,17 @@ import { Package, Clock, MapPin, Phone, CreditCard, FileText, ArrowLeft, CheckCi
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 import type { OrderWithItems } from "@shared/schema";
+import { ru, enUS, he } from "date-fns/locale";
+
+const getDateLocale = (language: string) => {
+  switch (language) {
+    case 'en': return 'en-US';
+    case 'he': return 'he-IL';
+    case 'ar': return 'ar-SA';
+    case 'ru':
+    default: return 'ru-RU';
+  }
+};
 
 export default function GuestOrderPage() {
   const [match, params] = useRoute("/guest-order/:token");
@@ -180,7 +191,7 @@ export default function GuestOrderPage() {
                 </CardTitle>
                 <CardDescription className="text-base mt-1">
                   {order.createdAt && new Date(order.createdAt).toLocaleDateString(
-                    currentLanguage === 'en' ? 'en-US' : 'ru-RU', 
+                    getDateLocale(currentLanguage), 
                     {
                       year: 'numeric',
                       month: 'long',
@@ -293,7 +304,7 @@ export default function GuestOrderPage() {
                     <Clock className="w-4 h-4 text-gray-400" />
                     <span className="text-gray-700 dark:text-gray-300">
                       {order.deliveryDate && new Date(order.deliveryDate).toLocaleDateString(
-                        currentLanguage === 'en' ? 'en-US' : 'ru-RU', 
+                        getDateLocale(currentLanguage), 
                         {
                           weekday: 'long',
                           year: 'numeric',
