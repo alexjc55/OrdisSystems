@@ -1798,14 +1798,7 @@ html[lang="ar"] .whatsapp-button {
   }
 }
 
-/* Minimal RTL support - page-scoped only */
-:where([dir="rtl"] .guest-order-page) {
-  text-align: right;
-}
-
-:where([dir="rtl"] .thanks-page) {
-  text-align: right;
-}
+/* Remove page-scoped RTL CSS - not needed when following checkout pattern */
 
 /* Keep numbers and specific elements LTR when needed */
 .force-ltr {
