@@ -170,9 +170,9 @@ export default function GuestOrderPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900" data-page="guest-order">
       <Header />
       
-      <div className="container max-w-4xl mx-auto px-4 py-8 pt-20">
+      <div className="container max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-8 pt-20">
         {/* Back Button */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <Link href="/">
             <Button variant="ghost" size="sm">
               <ArrowLeft className={cn("w-4 h-4", isRTL ? "ml-2 rotate-180" : "mr-2")} />
@@ -182,14 +182,14 @@ export default function GuestOrderPage() {
         </div>
 
         {/* Order Header */}
-        <Card className="mb-6">
-          <CardHeader className="pb-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <CardTitle className="text-2xl">
+        <Card className="mb-4 sm:mb-6 overflow-hidden">
+          <CardHeader className="p-4 sm:p-6 pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+              <div className="min-w-0">
+                <CardTitle className="text-xl sm:text-2xl break-words">
                   {t('order.order')} #{order.id}
                 </CardTitle>
-                <CardDescription className="text-base mt-1">
+                <CardDescription className="text-sm sm:text-base mt-1 break-words">
                   {order.createdAt && new Date(order.createdAt).toLocaleDateString(
                     getDateLocale(currentLanguage), 
                     {
@@ -203,34 +203,34 @@ export default function GuestOrderPage() {
                 </CardDescription>
               </div>
               <div className="flex items-center gap-2">
-                <Badge className={cn("flex items-center gap-1 text-sm px-3 py-1", statusInfo.color)}>
+                <Badge className={cn("flex items-center gap-1 text-xs sm:text-sm px-2 sm:px-3 py-1", statusInfo.color)}>
                   {statusInfo.icon}
-                  {statusInfo.text}
+                  <span className="truncate max-w-[100px] sm:max-w-none">{statusInfo.text}</span>
                 </Badge>
               </div>
             </div>
           </CardHeader>
         </Card>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
           {/* Order Items */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5" />
+          <Card className="overflow-hidden">
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
                 {t('order.items')}
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+              <div className="space-y-3 sm:space-y-4">
                 {order.items?.map((item) => {
                   const productName = getLocalizedField(item.product, 'name', currentLanguage) || item.product.name;
                   const productImageUrl = getLocalizedField(item.product, 'imageUrl', currentLanguage) || item.product.imageUrl;
 
                   return (
-                    <div key={item.id} className="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div key={item.id} className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                       {productImageUrl && (
-                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0">
                           <img 
                             src={productImageUrl} 
                             alt={productName}
@@ -239,15 +239,15 @@ export default function GuestOrderPage() {
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                        <h4 className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100 break-words line-clamp-2">
                           {productName}
                         </h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
                           {formatQuantity(item.quantity, item.product.unit as ProductUnit)} × {formatCurrency(item.pricePerKg)}
                         </p>
                       </div>
-                      <div className={cn(isRTL ? "text-left" : "text-right")}>
-                        <p className="font-semibold text-gray-900 dark:text-gray-100">
+                      <div className={cn("flex-shrink-0", isRTL ? "text-left" : "text-right")}>
+                        <p className="font-semibold text-sm sm:text-base text-gray-900 dark:text-gray-100">
                           {formatCurrency(item.totalPrice)}
                         </p>
                       </div>
@@ -259,23 +259,23 @@ export default function GuestOrderPage() {
           </Card>
 
           {/* Order Details */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Customer Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Package className="w-5 h-5" />
+            <Card className="overflow-hidden">
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                  <Package className="w-4 h-4 sm:w-5 sm:h-5" />
                   {t('order.customerInfo')}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0 space-y-3 sm:space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-gray-100">
+                  <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100 break-words">
                       {order.guestName || `${order.user?.firstName} ${order.user?.lastName}`}
                     </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 break-words">
                       {order.guestEmail || order.user?.email}
                     </p>
                   </div>
@@ -283,8 +283,8 @@ export default function GuestOrderPage() {
                 
                 {(order.guestPhone || order.user?.phone) && (
                   <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-700 dark:text-gray-300">
+                    <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 break-words">
                       {order.guestPhone || order.user?.phone}
                     </span>
                   </div>
@@ -292,17 +292,17 @@ export default function GuestOrderPage() {
 
                 {order.deliveryAddress && (
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-4 h-4 text-gray-400 mt-1" />
-                    <span className="text-gray-700 dark:text-gray-300">
+                    <MapPin className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 break-words">
                       {order.deliveryAddress}
                     </span>
                   </div>
                 )}
 
                 {(order.deliveryDate || order.deliveryTime) && (
-                  <div className="flex items-center gap-3">
-                    <Clock className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-700 dark:text-gray-300">
+                  <div className="flex items-start gap-3">
+                    <Clock className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 break-words">
                       {order.deliveryDate && new Date(order.deliveryDate).toLocaleDateString(
                         getDateLocale(currentLanguage), 
                         {
@@ -319,8 +319,8 @@ export default function GuestOrderPage() {
 
                 {order.paymentMethod && (
                   <div className="flex items-center gap-3">
-                    <CreditCard className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-700 dark:text-gray-300">
+                    <CreditCard className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 break-words">
                       {order.paymentMethod}
                     </span>
                   </div>
@@ -328,12 +328,12 @@ export default function GuestOrderPage() {
 
                 {order.customerNotes && (
                   <div className="flex items-start gap-3">
-                    <FileText className="w-4 h-4 text-gray-400 mt-1" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
+                    <FileText className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
                         {t('order.notes')}:
                       </p>
-                      <p className="text-gray-700 dark:text-gray-300">
+                      <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 break-words">
                         {order.customerNotes}
                       </p>
                     </div>
@@ -343,18 +343,18 @@ export default function GuestOrderPage() {
             </Card>
 
             {/* Order Summary */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="w-5 h-5" />
+            <Card className="overflow-hidden">
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                  <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
                   {t('order.summary')}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
                 <div className="space-y-3">
-                  <div className="flex justify-between text-lg font-semibold">
-                    <span>{t('order.total')}</span>
-                    <span>{formatCurrency(order.totalAmount)}</span>
+                  <div className="flex justify-between items-center text-base sm:text-lg font-semibold">
+                    <span className="text-gray-900 dark:text-gray-100">{t('order.total')}</span>
+                    <span className="text-gray-900 dark:text-gray-100">{formatCurrency(order.totalAmount)}</span>
                   </div>
                 </div>
               </CardContent>
