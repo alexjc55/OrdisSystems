@@ -59,8 +59,8 @@ export async function getFeedProducts(options: FeedOptions): Promise<FeedProduct
   const defaultLang = await getDefaultLanguage();
   const { language = defaultLang, baseUrl } = options;
   
-  // Get products with their categories via junction table
-  const productsWithCategories = await db
+  // First get all products without duplicates
+  const allProducts = await db
     .select({
       productId: products.id,
       productName: products.name,
@@ -74,21 +74,44 @@ export async function getFeedProducts(options: FeedOptions): Promise<FeedProduct
       productDescriptionHe: products.description_he,
       productDescriptionAr: products.description_ar,
       productAvailable: products.isAvailable,
-      categoryId: categories.id,
-      categoryName: categories.name,
-      categoryNameEn: categories.name_en,
-      categoryNameHe: categories.name_he,
-      categoryNameAr: categories.name_ar,
     })
     .from(products)
-    .leftJoin(productCategories, eq(products.id, productCategories.productId))
-    .leftJoin(categories, eq(productCategories.categoryId, categories.id))
     .where(
       and(
         eq(products.isAvailable, true), // Only available products
         eq(products.isActive, true)     // Only active products
       )
     );
+
+  // Get products with their first category to avoid duplicates
+  const productsWithCategories = [];
+  
+  for (const product of allProducts) {
+    // Get the first category for this product
+    const categoryResult = await db
+      .select({
+        categoryId: categories.id,
+        categoryName: categories.name,
+        categoryNameEn: categories.name_en,
+        categoryNameHe: categories.name_he,
+        categoryNameAr: categories.name_ar,
+      })
+      .from(productCategories)
+      .leftJoin(categories, eq(productCategories.categoryId, categories.id))
+      .where(eq(productCategories.productId, product.productId))
+      .limit(1);
+    
+    const category = categoryResult[0];
+    
+    productsWithCategories.push({
+      ...product,
+      categoryId: category?.categoryId || null,
+      categoryName: category?.categoryName || null,
+      categoryNameEn: category?.categoryNameEn || null,
+      categoryNameHe: category?.categoryNameHe || null,
+      categoryNameAr: category?.categoryNameAr || null,
+    });
+  }
 
   // Transform to feed format
   const feedProducts: FeedProduct[] = productsWithCategories.map((row: any) => {
@@ -183,9 +206,15 @@ export async function generateYandexXMLFeed(products: FeedProduct[], options: Fe
   const defaultLang = await getDefaultLanguage();
   const { language = defaultLang } = options;
   
-  // Get unique categories
-  const categories = Array.from(new Set(products.map(p => ({ id: p.categoryId, name: p.category }))))
-    .filter(cat => cat.id > 0);
+  // Get unique categories properly
+  const categoryMap = new Map();
+  products.forEach(p => {
+    if (p.categoryId && p.categoryId > 0) {
+      categoryMap.set(p.categoryId, p.category);
+    }
+  });
+  
+  const categories = Array.from(categoryMap.entries()).map(([id, name]) => ({ id, name }));
 
   const categoriesXml = categories.map(cat => 
     `<category id="${cat.id}">${cat.name}</category>`
