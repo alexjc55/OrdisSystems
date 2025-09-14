@@ -1,0 +1,39 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict gH9pxgzgirMU4YkcHFlTBY0KEvcYnVLNKvUMXdQBUuhoUyzFw56CGhgfpcq3eES
+
+-- Dumped from database version 15.14 (Debian 15.14-0+deb12u1)
+-- Dumped by pg_dump version 15.14 (Debian 15.14-0+deb12u1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: edahouse_usr
+--
+
+COPY public.users (id, email, first_name, last_name, profile_image_url, role, created_at, updated_at, phone, default_address, password, password_reset_token, password_reset_expires, username) FROM stdin;
+worker	worker@restaurant.com	Работник	Кухни	https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face	worker	2025-06-17 18:18:43.509353	2025-06-19 08:54:05.95		\N	e87eeb2e2ac8324488ec38dc38bd5126aa573502c3122807877adac947d796722fc11ee276f82bd97ba26954220679b17123a2bbd289242bd2351e5f67575a17.34c7f64554171a937feee163e194bac9	\N	\N	worker
+admin	admin@restaurant.com	Администратор	Системы		admin	2025-06-17 18:18:43.509353	2025-06-19 11:56:27.918	0528496528	\N	57dc1906d8c538edb1bae5f69089c88a2b1ecb4f980fbbe0ef7727a425abca9ff0addbddd31302f386dc53c757c08e1eabee3de795583cdb6743c4215ca35370.6971e6939d9f818b2b502dbd5979bb11	\N	\N	admin
+43948959	alexjc55@gmail.com	Alexey	Suzdaltsev	\N	admin	2025-06-17 17:26:49.237417	2025-06-19 05:30:38.958	+972528496528	\N	\N	\N	\N	mainadmin
+manual_1756378458908_k2qhsku0d	frants721@gmail.com	Александр 	Обмачевский	\N	customer	2025-08-28 10:54:18.908	2025-08-28 10:54:18.908	+972538036289	\N	1d68b06a73da554ee717f63690fa99f09f07fec92998e1739d274dd78f83ecd188c09d0c1a057773f4da913eb4f67471a44e23a975e3c989c743664d7d3e8451.2317281fec597bf96b1baac42b2f9717	\N	\N	frants721@gmail.com
+manual_1757232990767_pa801e62j	zoogle2022@gmail.com	Anton	Khitruk	\N	admin	2025-09-07 08:16:30.767	2025-09-07 14:41:48.37	0543165365	\N	dd1afab933bf5a7537aa6245e4c9c17c77115f71787a862c2e4f6b9ad03ae3eb92099ba224f687b0ef9ed12ed416550baf69168a622cca165537d1df605b92ad.7e36c799400c26345bef492349e74a50	\N	\N	anton
+manual_1757484701467_tckppathx	Zoogle2022@gmail.com	Марина	Хитрук	\N	admin	2025-09-10 06:11:41.467	2025-09-10 06:12:21.973	0545470904	\N	c1e6861be7f226552d2da12baa5aeed68a3d4db575cdf3b4193ec2e0098ecb79013b292a88769e74914aafd76cf1afdfa9930de955e1d3ecb7be5508a3a77d22.2668c87d675ff6d0c4943dd2aa64a7a6	\N	\N	marina
+\.
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict gH9pxgzgirMU4YkcHFlTBY0KEvcYnVLNKvUMXdQBUuhoUyzFw56CGhgfpcq3eES
