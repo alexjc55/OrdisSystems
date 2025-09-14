@@ -634,8 +634,8 @@ export async function sendGuestOrderEmail(
   const finalBaseUrl = baseUrl || process.env.REPLIT_APP_URL || 'https://eDAHouse.com';
   const orderViewUrl = `${finalBaseUrl}/guest-order/${guestAccessToken}`;
   
-  // Create registration URL with claim token
-  const registerUrl = `${finalBaseUrl}/auth?claimToken=${claimToken}`;
+  // Create registration URL with claim token and return to profile orders
+  const registerUrl = `${finalBaseUrl}/auth?claimToken=${claimToken}&returnTo=${encodeURIComponent('/profile?tab=orders')}`;
 
   // Function to format quantity with units (same as in admin emails)
   const formatQuantityWithUnit = (quantity: number, unit: string, language: string): string => {

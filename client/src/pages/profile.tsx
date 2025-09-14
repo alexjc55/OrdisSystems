@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
@@ -71,7 +71,20 @@ export default function Profile() {
     lastName: user?.lastName || ""
   });
   const [isNameEditing, setIsNameEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTabState] = useState(() => {
+    // Initialize from URL on first load
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('tab') || 'profile';
+  });
+  
+  // Set active tab and update URL
+  const setActiveTab = useCallback((newTab: string) => {
+    setActiveTabState(newTab);
+    // Update URL without causing re-renders
+    const url = new URL(window.location.href);
+    url.searchParams.set('tab', newTab);
+    window.history.replaceState({}, '', url.toString());
+  }, []);
 
   // Update forms when user data changes
   useEffect(() => {
