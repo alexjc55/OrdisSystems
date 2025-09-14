@@ -984,10 +984,10 @@ export default function Profile() {
 
         {/* Order Details Modal */}
         <Dialog open={isOrderDetailsOpen} onOpenChange={setIsOrderDetailsOpen}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{t('profile.orderDetails')} #{selectedOrder?.id}</DialogTitle>
-              <DialogDescription>
+          <DialogContent className="sm:max-w-4xl w-[95vw] sm:w-full max-h-[90vh] sm:max-h-[80vh] overflow-y-auto p-4 sm:p-6">
+            <DialogHeader className="mb-4">
+              <DialogTitle className="text-lg sm:text-xl">{t('profile.orderDetails')} #{selectedOrder?.id}</DialogTitle>
+              <DialogDescription className="text-xs sm:text-sm mt-1">
                 {t('profile.orderFullInfo')} {selectedOrder?.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString('ru-RU', {
                   year: 'numeric',
                   month: 'long',
@@ -999,9 +999,9 @@ export default function Profile() {
             </DialogHeader>
 
             {selectedOrder && (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Order Status and Info */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                   <Card>
                     <CardHeader className="pb-3">
                       <CardTitle className="text-sm">{t('profile.orderInformation')}</CardTitle>
@@ -1059,47 +1059,46 @@ export default function Profile() {
 
                 {/* Order Items */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm">{t('profile.orderItems')}</CardTitle>
+                  <CardHeader className="p-3 sm:p-6 pb-2 sm:pb-3">
+                    <CardTitle className="text-sm sm:text-base">{t('profile.orderItems')}</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>{t('profile.product')}</TableHead>
-                          <TableHead>{t('profile.quantity')}</TableHead>
-                          <TableHead>{t('profile.unitPrice')}</TableHead>
-                          <TableHead>{t('profile.discount')}</TableHead>
-                          <TableHead className="text-right">{t('profile.total')}</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {selectedOrder.items.map((item, index) => {
-                          const discounts = parseOrderDiscounts(selectedOrder.customerNotes || '');
-                          const itemDiscount = discounts?.itemDiscounts?.[String(index + 1)];
-                          const originalPrice = parseFloat(item.totalPrice);
-                          let finalPrice = originalPrice;
-                          
-                          if (itemDiscount) {
-                            if (itemDiscount.type === 'percentage') {
-                              finalPrice = originalPrice * (1 - itemDiscount.value / 100);
-                            } else if (itemDiscount.type === 'amount') {
-                              finalPrice = Math.max(0, originalPrice - itemDiscount.value);
-                            }
+                  <CardContent className="p-3 sm:p-6 pt-0">
+                    {/* Mobile view - compact cards */}
+                    <div className="sm:hidden space-y-3">
+                      {selectedOrder.items.map((item, index) => {
+                        const discounts = parseOrderDiscounts(selectedOrder.customerNotes || '');
+                        const itemDiscount = discounts?.itemDiscounts?.[String(index + 1)];
+                        const originalPrice = parseFloat(item.totalPrice);
+                        let finalPrice = originalPrice;
+                        
+                        if (itemDiscount) {
+                          if (itemDiscount.type === 'percentage') {
+                            finalPrice = originalPrice * (1 - itemDiscount.value / 100);
+                          } else if (itemDiscount.type === 'amount') {
+                            finalPrice = Math.max(0, originalPrice - itemDiscount.value);
                           }
+                        }
 
-                          return (
-                            <TableRow key={item.id}>
-                              <TableCell>
-                                <div>
-                                  <div className="font-medium">{getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}</div>
-                                  <div className="text-sm text-gray-500">{getLocalizedField(item.product, 'description', currentLanguage as SupportedLanguage, 'ru')}</div>
-                                </div>
-                              </TableCell>
-                              <TableCell dir="ltr">
-                                {formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit, tShop)}
-                              </TableCell>
-                              <TableCell>
+                        return (
+                          <div key={item.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                            <div className="flex justify-between items-start mb-2">
+                              <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100 flex-1 mr-2">
+                                {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                              </h4>
+                              <div className="text-right">
+                                {itemDiscount && (
+                                  <span className="text-xs text-gray-500 line-through block">
+                                    {formatCurrency(originalPrice)}
+                                  </span>
+                                )}
+                                <span className={`text-sm font-semibold ${itemDiscount ? 'text-red-600' : 'text-gray-900 dark:text-gray-100'}`}>
+                                  {formatCurrency(finalPrice)}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+                              <div>{formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit, tShop)}</div>
+                              <div>
                                 {(() => {
                                   const unit = (item.product.unit || "100g") as ProductUnit;
                                   switch (unit) {
@@ -1110,31 +1109,90 @@ export default function Profile() {
                                     default: return formatCurrency(item.product.price);
                                   }
                                 })()}
-                              </TableCell>
-                              <TableCell>
-                                {itemDiscount ? (
-                                  <span className="text-red-600">
-                                    -{itemDiscount.type === 'percentage' ? `${itemDiscount.value}%` : formatCurrency(itemDiscount.value)}
-                                  </span>
-                                ) : '—'}
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <div className="flex flex-col items-end">
-                                  {itemDiscount && (
-                                    <span className="text-xs text-gray-500 line-through">
-                                      {formatCurrency(originalPrice)}
-                                    </span>
-                                  )}
-                                  <span className={itemDiscount ? 'text-red-600 font-medium' : ''}>
-                                    {formatCurrency(finalPrice)}
-                                  </span>
+                              </div>
+                              {itemDiscount && (
+                                <div className="text-red-600">
+                                  {t('profile.discount')}: -{itemDiscount.type === 'percentage' ? `${itemDiscount.value}%` : formatCurrency(itemDiscount.value)}
                                 </div>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Desktop/Tablet view - table */}
+                    <div className="hidden sm:block overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>{t('profile.product')}</TableHead>
+                            <TableHead>{t('profile.quantity')}</TableHead>
+                            <TableHead>{t('profile.unitPrice')}</TableHead>
+                            <TableHead>{t('profile.discount')}</TableHead>
+                            <TableHead className="text-right">{t('profile.total')}</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {selectedOrder.items.map((item, index) => {
+                            const discounts = parseOrderDiscounts(selectedOrder.customerNotes || '');
+                            const itemDiscount = discounts?.itemDiscounts?.[String(index + 1)];
+                            const originalPrice = parseFloat(item.totalPrice);
+                            let finalPrice = originalPrice;
+                            
+                            if (itemDiscount) {
+                              if (itemDiscount.type === 'percentage') {
+                                finalPrice = originalPrice * (1 - itemDiscount.value / 100);
+                              } else if (itemDiscount.type === 'amount') {
+                                finalPrice = Math.max(0, originalPrice - itemDiscount.value);
+                              }
+                            }
+
+                            return (
+                              <TableRow key={item.id}>
+                                <TableCell>
+                                  <div className="font-medium">{getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}</div>
+                                </TableCell>
+                                <TableCell dir="ltr">
+                                  {formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit, tShop)}
+                                </TableCell>
+                                <TableCell>
+                                  {(() => {
+                                    const unit = (item.product.unit || "100g") as ProductUnit;
+                                    switch (unit) {
+                                      case 'piece': return `${formatCurrency(item.product.price)} ${tShop('units.perPiece')}`;
+                                      case 'kg': return `${formatCurrency(item.product.price)} ${tShop('units.perKg')}`;
+                                      case '100g': return `${formatCurrency(item.product.price)} ${tShop('units.per100g')}`;
+                                      case '100ml': return `${formatCurrency(item.product.price)} ${tShop('units.per100ml')}`;
+                                      default: return formatCurrency(item.product.price);
+                                    }
+                                  })()}
+                                </TableCell>
+                                <TableCell>
+                                  {itemDiscount ? (
+                                    <span className="text-red-600">
+                                      -{itemDiscount.type === 'percentage' ? `${itemDiscount.value}%` : formatCurrency(itemDiscount.value)}
+                                    </span>
+                                  ) : '—'}
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <div className="flex flex-col items-end">
+                                    {itemDiscount && (
+                                      <span className="text-xs text-gray-500 line-through">
+                                        {formatCurrency(originalPrice)}
+                                      </span>
+                                    )}
+                                    <span className={itemDiscount ? 'text-red-600 font-medium' : ''}>
+                                      {formatCurrency(finalPrice)}
+                                    </span>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </div>
                   </CardContent>
                 </Card>
 
