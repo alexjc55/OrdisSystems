@@ -228,28 +228,46 @@ export default function GuestOrderPage() {
                   const productImageUrl = getLocalizedField(item.product, 'imageUrl', currentLanguage) || item.product.imageUrl;
 
                   return (
-                    <div key={item.id} className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                      {productImageUrl && (
-                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0">
-                          <img 
-                            src={productImageUrl} 
-                            alt={productName}
-                            className="w-full h-full object-cover"
-                          />
+                    <div key={item.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4">
+                      {/* Mobile layout - no image, stacked info */}
+                      <div className="sm:hidden">
+                        <div className="flex justify-between items-start mb-1">
+                          <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100 flex-1 mr-2">
+                            {productName}
+                          </h4>
+                          <p className="font-semibold text-sm text-gray-900 dark:text-gray-100 flex-shrink-0">
+                            {formatCurrency(item.totalPrice)}
+                          </p>
                         </div>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100 break-words line-clamp-2">
-                          {productName}
-                        </h4>
-                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
                           {formatQuantity(item.quantity, item.product.unit as ProductUnit)} × {formatCurrency(item.pricePerKg)}
                         </p>
                       </div>
-                      <div className={cn("flex-shrink-0", isRTL ? "text-left" : "text-right")}>
-                        <p className="font-semibold text-sm sm:text-base text-gray-900 dark:text-gray-100">
-                          {formatCurrency(item.totalPrice)}
-                        </p>
+                      
+                      {/* Desktop/tablet layout - with image */}
+                      <div className="hidden sm:flex items-center gap-4">
+                        {productImageUrl && (
+                          <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                            <img 
+                              src={productImageUrl} 
+                              alt={productName}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-base text-gray-900 dark:text-gray-100 break-words">
+                            {productName}
+                          </h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            {formatQuantity(item.quantity, item.product.unit as ProductUnit)} × {formatCurrency(item.pricePerKg)}
+                          </p>
+                        </div>
+                        <div className={cn("flex-shrink-0", isRTL ? "text-left" : "text-right")}>
+                          <p className="font-semibold text-base text-gray-900 dark:text-gray-100">
+                            {formatCurrency(item.totalPrice)}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   );
