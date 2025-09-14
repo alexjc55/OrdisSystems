@@ -2,6 +2,8 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
+    // Clone response to avoid "Body has already been consumed" error
+    const responseClone = res.clone();
     try {
       const errorData = await res.json();
       const error = new Error(errorData.message || res.statusText);
@@ -9,7 +11,8 @@ async function throwIfResNotOk(res: Response) {
       Object.assign(error, errorData);
       throw error;
     } catch (parseError) {
-      const text = (await res.text()) || res.statusText;
+      // Use cloned response to read as text if JSON parsing failed
+      const text = (await responseClone.text()) || res.statusText;
       throw new Error(`${res.status}: ${text}`);
     }
   }
@@ -28,6 +31,8 @@ export async function apiRequest(
   });
 
   if (!res.ok) {
+    // Clone response to avoid "Body has already been consumed" error
+    const responseClone = res.clone();
     try {
       const errorData = await res.json();
       const error = new Error(errorData.message || res.statusText);
@@ -35,7 +40,8 @@ export async function apiRequest(
       Object.assign(error, errorData);
       throw error;
     } catch (parseError) {
-      const text = (await res.text()) || res.statusText;
+      // Use cloned response to read as text if JSON parsing failed
+      const text = (await responseClone.text()) || res.statusText;
       throw new Error(`${res.status}: ${text}`);
     }
   }
