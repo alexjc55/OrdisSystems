@@ -290,7 +290,7 @@ export default function ThanksPage() {
                   {t('thanks.registerDescription')}
                 </p>
                 <Link href={orderData.guestAccessToken 
-                  ? `/auth?guestOrderToken=${orderData.guestAccessToken}&orderId=${orderData.orderId}` 
+                  ? `/auth?claimToken=${orderData.guestAccessToken}&returnTo=/profile?tab=orders` 
                   : "/auth"
                 }>
                   <Button size="sm" variant="outline" className="border-purple-300 text-purple-700 hover:bg-purple-100">

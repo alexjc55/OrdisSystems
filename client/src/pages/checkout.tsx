@@ -336,6 +336,7 @@ export default function Checkout() {
           deliveryTime: formatDeliveryTimeRange(selectedGuestTime),
           paymentMethod: selectedGuestPaymentMethod,
         },
+        language: currentLanguage, // Add language for email localization
         status: "pending"
       };
       
