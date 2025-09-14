@@ -1253,7 +1253,6 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       
       // Return order with tokens for guest access
       res.status(201).json({
-        success: true,
         orderId: order.id,
         guestAccessToken,
         guestClaimToken,
