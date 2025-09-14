@@ -1256,6 +1256,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         success: true,
         orderId: order.id,
         guestAccessToken,
+        guestClaimToken,
         orderLanguage: orderData.orderLanguage
       });
     } catch (error) {

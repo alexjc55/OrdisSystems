@@ -62,6 +62,7 @@ type GuestOrderData = {
 type GuestOrderResponse = {
   orderId: number;
   guestAccessToken: string;
+  guestClaimToken: string;
   orderLanguage: string;
 };
 
@@ -351,7 +352,7 @@ export default function Checkout() {
       // Redirect to thanks page with guest order parameters
       const currentLang = localStorage.getItem('language') || 'ru';
       const hasEmail = !!(variables.email && variables.email.trim());
-      const thanksUrl = `/thanks?orderId=${order.orderId}&guestAccessToken=${order.guestAccessToken}&guest=true&hasEmail=${hasEmail}&lang=${currentLang}`;
+      const thanksUrl = `/thanks?orderId=${order.orderId}&guestAccessToken=${order.guestAccessToken}&claimToken=${order.guestClaimToken}&guest=true&hasEmail=${hasEmail}&lang=${currentLang}`;
       setLocation(thanksUrl);
     },
     onError: (error: Error) => {

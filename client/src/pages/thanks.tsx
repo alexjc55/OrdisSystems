@@ -24,6 +24,7 @@ export default function ThanksPage() {
   const [orderData, setOrderData] = useState<{
     orderId?: number;
     guestAccessToken?: string;
+    claimToken?: string;
     orderLanguage?: string;
     isGuest?: boolean;
     hasEmail?: boolean;
@@ -39,6 +40,7 @@ export default function ThanksPage() {
     setOrderData({
       orderId: urlParams.get("orderId") ? parseInt(urlParams.get("orderId")!) : undefined,
       guestAccessToken: urlParams.get("guestAccessToken") || urlParams.get("token") || undefined,
+      claimToken: urlParams.get("claimToken") || undefined,
       orderLanguage: urlParams.get("lang") || currentLanguage,
       isGuest: urlParams.get("guest") === "true",
       hasEmail: urlParams.get("hasEmail") !== "false" // Default to true, false only if explicitly set
@@ -289,8 +291,8 @@ export default function ThanksPage() {
                 <p className="text-sm text-purple-700 mb-3">
                   {t('thanks.registerDescription')}
                 </p>
-                <Link href={orderData.guestAccessToken 
-                  ? `/auth?claimToken=${orderData.guestAccessToken}&returnTo=/profile?tab=orders` 
+                <Link href={orderData.claimToken 
+                  ? `/auth?claimToken=${orderData.claimToken}&returnTo=/profile?tab=orders` 
                   : "/auth"
                 }>
                   <Button size="sm" variant="outline" className="border-purple-300 text-purple-700 hover:bg-purple-100">
