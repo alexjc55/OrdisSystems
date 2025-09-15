@@ -744,25 +744,29 @@ export default function Home() {
               )}
 
               {/* Filter Controls - Sticky on mobile */}
-              {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
-                <div className="sticky top-16 z-30 bg-gray-50 pb-2 mb-6 lg:static lg:pb-0 lg:bg-transparent">
+              {(selectedCategoryId === 0 || selectedCategory || searchQuery.length <= 2) && (
+                <div className="sticky top-16 z-40 bg-gray-50 pb-2 mb-6 lg:static lg:pb-0 lg:bg-transparent">
                   <div className="flex gap-2 sm:gap-4">
-                    <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
-                      <SelectTrigger className="flex-1 min-w-0 text-sm">
-                        <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">{t('allCategories')}</SelectItem>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id.toString()}>
-                            {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    {/* Category filter - only show on "All Products" page */}
+                    {selectedCategoryId === 0 && (
+                      <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
+                        <SelectTrigger className="flex-1 min-w-0 text-sm">
+                          <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">{t('allCategories')}</SelectItem>
+                          {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id.toString()}>
+                              {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
 
+                    {/* Discount filter - always show when in product view */}
                     <Select value={discountFilter} onValueChange={setDiscountFilter}>
-                      <SelectTrigger className="flex-1 min-w-0 text-sm">
+                      <SelectTrigger className={`text-sm ${selectedCategoryId === 0 ? 'flex-1 min-w-0' : 'w-full'}`}>
                         <SelectValue placeholder={t('filterByDiscount')} />
                       </SelectTrigger>
                       <SelectContent>
