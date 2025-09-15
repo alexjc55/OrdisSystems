@@ -639,8 +639,8 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Special Offers Section */}
-              {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && (
+              {/* Special Offers Section - hide on all products page */}
+              {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && selectedCategoryId !== 0 && (
                 <div className="mt-12">
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center">
