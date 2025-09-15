@@ -745,23 +745,7 @@ export default function Home() {
 
               {/* Filter Controls - Sticky on mobile */}
               {(selectedCategoryId === 0 || selectedCategory || searchQuery.length <= 2) && (
-                <div 
-                  className="relative mb-6 lg:mb-6"
-                  style={{ 
-                    position: 'sticky',
-                    top: '64px',
-                    zIndex: 1000,
-                    backgroundColor: '#f9fafb',
-                    paddingTop: '12px',
-                    paddingBottom: '12px',
-                    borderBottom: '1px solid #e5e7eb',
-                    marginLeft: '-24px',
-                    marginRight: '-24px',
-                    paddingLeft: '24px',
-                    paddingRight: '24px'
-                  }}
-                  data-testid="filters-sticky-container"
-                >
+                <div className="sticky top-16 z-40 bg-white py-3 mb-6 border-b border-gray-200 lg:static lg:bg-transparent lg:border-b-0 lg:py-0" data-testid="filters-sticky-container">
                   <div className="flex gap-2 sm:gap-4">
                     {/* Category filter */}
                     <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
