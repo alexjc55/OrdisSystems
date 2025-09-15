@@ -365,12 +365,12 @@ export default function Home() {
     navigate('/');
   }, [navigate]);
 
-  // Handle search query changes
+  // Handle search query changes (but not on category routes)
   useEffect(() => {
-    if (searchQuery.length <= 2) {
+    if (searchQuery.length <= 2 && !location.startsWith('/category/')) {
       setSelectedCategoryId(null);
     }
-  }, [searchQuery]);
+  }, [searchQuery, location]);
 
   const handleSearch = useCallback((query: string) => {
     if (query.length <= 2) {
@@ -750,14 +750,24 @@ export default function Home() {
               <div className="mt-8"></div>
 
               {/* Category Header */}
-              {selectedCategory && (
+              {selectedCategoryId !== null && selectedCategoryId !== 0 && (
                 <div className="text-center mb-8">
                   <h1 className="text-4xl font-bold text-gray-900 mb-3">
-                    {getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                    {selectedCategory 
+                      ? getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru')
+                      : displayProducts[0]?.categories?.find(c => c.id === selectedCategoryId)
+                        ? getLocalizedField(displayProducts[0].categories.find(c => c.id === selectedCategoryId)!, 'name', currentLanguage as SupportedLanguage, 'ru')
+                        : t('loading', 'Загрузка...')
+                    }
                   </h1>
-                  {selectedCategory.description && (
+                  {(selectedCategory?.description || displayProducts[0]?.categories?.find(c => c.id === selectedCategoryId)?.description) && (
                     <p className="text-xl text-gray-600 font-light">
-                      {getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru')}
+                      {selectedCategory 
+                        ? getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru')
+                        : displayProducts[0]?.categories?.find(c => c.id === selectedCategoryId)
+                          ? getLocalizedField(displayProducts[0].categories.find(c => c.id === selectedCategoryId)!, 'description', currentLanguage as SupportedLanguage, 'ru')
+                          : ''
+                      }
                     </p>
                   )}
                   <div className="w-16 h-1 bg-primary mx-auto mt-4 rounded-full"></div>
