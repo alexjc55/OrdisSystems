@@ -546,7 +546,7 @@ export default function AdminSalesPage() {
               />
               <MetricCard
                 title={adminT('sales.metrics.cancellationRate') || 'Cancellation Rate'}
-                value={overview?.cancellationRate != null ? `${overview.cancellationRate.toFixed(1)}%` : '—'}
+                value={overview?.cancellationRate != null ? `${typeof overview.cancellationRate === 'number' ? overview.cancellationRate.toFixed(1) : overview.cancellationRate || 0}%` : '—'}
                 trend={overview?.cancellationTrend}
                 icon={<AlertTriangle className={overview && overview.cancellationRate > 5 ? "text-red-600" : "text-yellow-600"} />}
                 isLoading={overviewLoading}
