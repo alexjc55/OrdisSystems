@@ -119,7 +119,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return next();
     }
     
-    // Only apply no-cache to API and HTML routes
+    // CRITICAL: Never cache the thanks page - apply strongest no-cache headers
+    if (req.path === '/thanks' || req.path.startsWith('/thanks?')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      res.setHeader('Surrogate-Control', 'no-store');
+      res.setHeader('Vary', '*');
+      console.log('🚫 [Server] Thanks page detected - setting no-cache headers for:', req.path);
+      return next();
+    }
+    
+    // Apply no-cache to API and HTML routes
     if (req.path.startsWith('/api/') || req.path === '/' || req.path.endsWith('.html')) {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.setHeader('Pragma', 'no-cache');

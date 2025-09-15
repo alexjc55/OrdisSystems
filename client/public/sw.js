@@ -520,6 +520,26 @@ async function handleApiRequest(request) {
 // Handle static requests with cache-first strategy
 async function handleStaticRequest(request) {
   try {
+    const url = new URL(request.url);
+    const pathname = url.pathname;
+    
+    // NEVER cache the thanks page - always fetch from network
+    if (pathname === '/thanks' || pathname.startsWith('/thanks?')) {
+      console.log('🚫 [SW] Thanks page detected - bypassing cache, fetching from network');
+      const response = await fetch(request);
+      // Add no-cache headers to the response
+      const headers = new Headers(response.headers);
+      headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      headers.set('Pragma', 'no-cache');
+      headers.set('Expires', '0');
+      
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: headers
+      });
+    }
+    
     // Check static cache first
     const staticCache = await caches.open(STATIC_CACHE);
     const staticCachedResponse = await staticCache.match(request);
@@ -536,10 +556,10 @@ async function handleStaticRequest(request) {
       return dynamicCachedResponse;
     }
     
-    // Fetch from network and cache
+    // Fetch from network and cache (but not for thanks page)
     const response = await fetch(request);
     
-    if (response.ok) {
+    if (response.ok && pathname !== '/thanks' && !pathname.startsWith('/thanks?')) {
       await dynamicCache.put(request, response.clone());
     }
     

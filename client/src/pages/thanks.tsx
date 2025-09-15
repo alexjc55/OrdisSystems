@@ -61,6 +61,60 @@ export default function ThanksPage() {
     canonical: '/thanks'
   });
 
+  // Prevent caching of thanks page
+  useEffect(() => {
+    // Add no-cache meta tags
+    const metaTags = [
+      { name: 'Cache-Control', content: 'no-cache, no-store, must-revalidate' },
+      { name: 'Pragma', content: 'no-cache' },
+      { name: 'Expires', content: '0' },
+      { httpEquiv: 'Cache-Control', content: 'no-cache, no-store, must-revalidate' },
+      { httpEquiv: 'Pragma', content: 'no-cache' },
+      { httpEquiv: 'Expires', content: '0' }
+    ];
+
+    const addedTags: HTMLMetaElement[] = [];
+
+    metaTags.forEach(tagProps => {
+      const existingTag = document.querySelector(
+        tagProps.name 
+          ? `meta[name="${tagProps.name}"]` 
+          : `meta[http-equiv="${tagProps.httpEquiv}"]`
+      );
+      
+      if (!existingTag) {
+        const meta = document.createElement('meta');
+        if (tagProps.name) {
+          meta.setAttribute('name', tagProps.name);
+        } else if (tagProps.httpEquiv) {
+          meta.setAttribute('http-equiv', tagProps.httpEquiv);
+        }
+        meta.setAttribute('content', tagProps.content);
+        document.head.appendChild(meta);
+        addedTags.push(meta);
+      }
+    });
+
+    // Force page reload on back button (prevents cached view)
+    const handlePopState = () => {
+      window.location.reload();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    // Cleanup function
+    return () => {
+      // Remove added meta tags
+      addedTags.forEach(tag => {
+        if (tag.parentNode) {
+          tag.parentNode.removeChild(tag);
+        }
+      });
+      
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
   // Mutation for sending email with order details
   const sendEmailMutation = useMutation({
     mutationFn: async (emailAddress: string) => {
