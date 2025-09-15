@@ -491,7 +491,7 @@ export default function Home() {
         categories={categories || []}
         discountFilter={discountFilter}
         onDiscountFilterChange={setDiscountFilter}
-        showFilters={(selectedCategoryId === 0 || searchQuery.length <= 2)}
+        showFilters={!!(selectedCategory || searchQuery.length > 2)}
         showSearch={!!(selectedCategory || selectedCategoryId === 0)}
       />
       
