@@ -34,7 +34,10 @@ import {
   Loader2,
   ArrowLeft,
   Smartphone,
-  RefreshCw
+  RefreshCw,
+  Lightbulb,
+  Target,
+  Info
 } from "lucide-react";
 import { 
   ResponsiveContainer, 
@@ -120,6 +123,118 @@ export default function AdminSalesPage() {
   });
 
   const isRTL = i18n.language === 'ar' || i18n.language === 'he';
+
+  // Generate actionable insights based on data
+  const generateInsights = () => {
+    const insights = [];
+    
+    // Revenue trend insights (check overview data)
+    if (overview && overview.revenueTrend < 0) {
+      insights.push({
+        type: 'warning',
+        title: adminT('sales.insights.revenueDown.title') || 'Revenue Declining',
+        description: adminT('sales.insights.revenueDown.desc') || 'Consider marketing campaigns or promotional offers',
+        action: adminT('sales.insights.revenueDown.action') || 'Review pricing strategy',
+        icon: 'TrendingDown'
+      });
+    }
+
+    // High cancellation rate (check overview data)
+    if (overview && overview.cancellationRate > 15) {
+      insights.push({
+        type: 'critical',
+        title: adminT('sales.insights.highCancellation.title') || 'High Cancellation Rate',
+        description: adminT('sales.insights.highCancellation.desc') || `${overview.cancellationRate.toFixed(1)}% of orders are being cancelled`,
+        action: adminT('sales.insights.highCancellation.action') || 'Investigate checkout process issues',
+        icon: 'AlertTriangle'
+      });
+    }
+
+    // Language opportunity (check channels data with proper sorting)
+    if (channels && channels.languages && channels.languages.length > 0) {
+      const sortedLanguages = [...channels.languages].sort((a, b) => b.percentage - a.percentage);
+      const topLanguage = sortedLanguages[0];
+      if (topLanguage && topLanguage.percentage < 60) {
+        insights.push({
+          type: 'opportunity',
+          title: adminT('sales.insights.languageOpportunity.title') || 'Market Diversification Opportunity',
+          description: adminT('sales.insights.languageOpportunity.desc') || `No single language dominates. Consider expanding in ${topLanguage.languageName}`,
+          action: adminT('sales.insights.languageOpportunity.action') || 'Invest in localized marketing',
+          icon: 'Globe'
+        });
+      }
+    }
+
+    // Low performing products (check products data)
+    if (products && products.lowPerformers && products.lowPerformers.length > 0) {
+      insights.push({
+        type: 'warning',
+        title: adminT('sales.insights.lowPerformers.title') || 'Products Need Attention',
+        description: adminT('sales.insights.lowPerformers.desc') || `${products.lowPerformers.length} products have low sales`,
+        action: adminT('sales.insights.lowPerformers.action') || 'Review product descriptions and pricing',
+        icon: 'Package'
+      });
+    }
+
+    // Payment method diversity (check channels data)
+    if (channels && channels.paymentMethods) {
+      const paymentMethods = channels.paymentMethods.length;
+      if (paymentMethods < 3) {
+        insights.push({
+          type: 'opportunity',
+          title: adminT('sales.insights.paymentMethods.title') || 'Add More Payment Options',
+          description: adminT('sales.insights.paymentMethods.desc') || 'More payment methods can increase conversion rates',
+          action: adminT('sales.insights.paymentMethods.action') || 'Consider adding digital wallets',
+          icon: 'CreditCard'
+        });
+      }
+    }
+
+    // High cancellation issues (check issues data)
+    if (issues && issues.cancellationReasons && issues.cancellationReasons.length > 0) {
+      const totalCancellations = issues.cancellationReasons.reduce((sum: number, reason: any) => sum + reason.count, 0);
+      // Find the top reason by count (properly sorted)
+      const topReason = issues.cancellationReasons.reduce((prev: any, current: any) => 
+        (current.count > prev.count) ? current : prev
+      );
+      if (topReason && totalCancellations > 0 && (topReason.count / totalCancellations) > 0.3) {
+        insights.push({
+          type: 'critical',
+          title: adminT('sales.insights.cancellationPattern.title') || 'Cancellation Pattern Detected',
+          description: adminT('sales.insights.cancellationPattern.desc') || `${topReason.reason} accounts for ${((topReason.count / totalCancellations) * 100).toFixed(1)}% of cancellations`,
+          action: adminT('sales.insights.cancellationPattern.action') || `Address ${topReason.reason} issues immediately`,
+          icon: 'AlertTriangle'
+        });
+      }
+    }
+
+    // Conversion optimization (calculate from overview data with fallbacks)
+    if (overview) {
+      const orders = overview.totalOrders ?? overview.orders ?? 0;
+      const views = overview.totalViews ?? overview.views ?? 0;
+      let calculatedConversionRate = 0;
+      
+      if (orders > 0 && views > 0) {
+        calculatedConversionRate = (orders / views) * 100;
+      } else if (overview.conversionRate !== undefined) {
+        calculatedConversionRate = overview.conversionRate;
+      }
+      
+      if (calculatedConversionRate > 0 && calculatedConversionRate < 3) {
+        insights.push({
+          type: 'opportunity',
+          title: adminT('sales.insights.lowConversion.title') || 'Conversion Rate Optimization',
+          description: adminT('sales.insights.lowConversion.desc') || `${calculatedConversionRate.toFixed(1)}% conversion rate has room for improvement`,
+          action: adminT('sales.insights.lowConversion.action') || 'A/B test checkout flow and product pages',
+          icon: 'Target'
+        });
+      }
+    }
+
+    return insights.slice(0, 6); // Limit to 6 insights
+  };
+
+  const insights = generateInsights();
   const locale = dateLocales[i18n.language as keyof typeof dateLocales] || ru;
 
   // Helper functions
@@ -256,6 +371,63 @@ export default function AdminSalesPage() {
     </Card>
   );
 
+  // Insight Card component for actionable recommendations
+  const InsightCard = ({ insight }: { insight: any }) => {
+    const getInsightTypeColor = (type: string) => {
+      switch (type) {
+        case 'critical': return 'border-red-500 bg-red-50 dark:bg-red-950';
+        case 'warning': return 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950';
+        case 'opportunity': return 'border-green-500 bg-green-50 dark:bg-green-950';
+        default: return 'border-blue-500 bg-blue-50 dark:bg-blue-950';
+      }
+    };
+
+    const getInsightIcon = (iconName: string) => {
+      const iconMap = {
+        'TrendingDown': <TrendingDown className="h-5 w-5" />,
+        'AlertTriangle': <AlertTriangle className="h-5 w-5" />,
+        'Globe': <Globe className="h-5 w-5" />,
+        'Package': <Package className="h-5 w-5" />,
+        'CreditCard': <CreditCard className="h-5 w-5" />,
+        'Target': <Target className="h-5 w-5" />,
+        'Lightbulb': <Lightbulb className="h-5 w-5" />
+      };
+      return iconMap[iconName as keyof typeof iconMap] || <Info className="h-5 w-5" />;
+    };
+
+    const getInsightIconColor = (type: string) => {
+      switch (type) {
+        case 'critical': return 'text-red-600';
+        case 'warning': return 'text-yellow-600';
+        case 'opportunity': return 'text-green-600';
+        default: return 'text-blue-600';
+      }
+    };
+
+    return (
+      <Card className={`border-l-4 ${getInsightTypeColor(insight.type)} transition-all duration-200 hover:shadow-lg`}>
+        <CardContent className="p-4">
+          <div className={`flex ${isRTL ? 'flex-row-reverse' : ''} gap-3`}>
+            <div className={`mt-1 ${getInsightIconColor(insight.type)}`}>
+              {getInsightIcon(insight.icon)}
+            </div>
+            <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                {insight.title}
+              </h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                {insight.description}
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                💡 {insight.action}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
   if (overviewError) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -321,7 +493,7 @@ export default function AdminSalesPage() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:grid-cols-4 lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:grid-cols-5 lg:inline-grid">
             <TabsTrigger value="overview" className="text-xs sm:text-sm" data-testid="tab-overview">
               <BarChart3 className={`h-4 w-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
               {adminT('sales.tabs.overview') || 'Overview'}
@@ -337,6 +509,10 @@ export default function AdminSalesPage() {
             <TabsTrigger value="issues" className="text-xs sm:text-sm" data-testid="tab-issues">
               <AlertTriangle className={`h-4 w-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
               {adminT('sales.tabs.issues') || 'Issues'}
+            </TabsTrigger>
+            <TabsTrigger value="insights" className="text-xs sm:text-sm" data-testid="tab-insights">
+              <Lightbulb className={`h-4 w-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+              {adminT('sales.tabs.insights') || 'Insights'}
             </TabsTrigger>
           </TabsList>
 
@@ -852,6 +1028,100 @@ export default function AdminSalesPage() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Insights Tab */}
+          <TabsContent value="insights" className="space-y-6">
+            <div className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  {adminT('sales.insights.title') || 'Actionable Insights'}
+                </h2>
+                <p className="text-gray-600">
+                  {adminT('sales.insights.subtitle') || 'Data-driven recommendations to improve your sales performance'}
+                </p>
+              </div>
+
+              {(overviewLoading || channelsLoading || productsLoading || issuesLoading) ? (
+                <Card data-testid="insights-loading">
+                  <CardContent className="p-8 text-center">
+                    <div className="flex items-center justify-center mb-4">
+                      <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      {adminT('sales.insights.analyzing') || 'Analyzing Sales Data...'}
+                    </h3>
+                    <p className="text-gray-600">
+                      {adminT('sales.insights.generatingRecommendations') || 'Generating personalized recommendations for your business'}
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : insights.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {insights.map((insight, index) => (
+                    <InsightCard key={index} insight={insight} />
+                  ))}
+                </div>
+              ) : (
+                <Card data-testid="insights-empty">
+                  <CardContent className="p-8 text-center">
+                    <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      {adminT('sales.insights.allGood') || 'Everything Looks Great!'}
+                    </h3>
+                    <p className="text-gray-600">
+                      {adminT('sales.insights.noIssues') || 'No major issues detected. Your sales performance is on track.'}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Performance Tips */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className={`flex items-center ${isRTL ? 'gap-2 flex-row-reverse' : 'gap-2'}`}>
+                    <Target className="h-5 w-5" />
+                    {adminT('sales.insights.performanceTips') || 'Performance Tips'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                      <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                        {adminT('sales.insights.tip1.title') || 'Optimize Conversion Rate'}
+                      </h4>
+                      <p className="text-sm text-blue-800 dark:text-blue-200">
+                        {adminT('sales.insights.tip1.desc') || 'A/B test your checkout flow and product pages to increase conversions.'}
+                      </p>
+                    </div>
+                    <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg">
+                      <h4 className="font-semibold text-green-900 dark:text-green-100 mb-2">
+                        {adminT('sales.insights.tip2.title') || 'Expand Payment Options'}
+                      </h4>
+                      <p className="text-sm text-green-800 dark:text-green-200">
+                        {adminT('sales.insights.tip2.desc') || 'Adding more payment methods can reduce cart abandonment.'}
+                      </p>
+                    </div>
+                    <div className="p-4 bg-purple-50 dark:bg-purple-950 rounded-lg">
+                      <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">
+                        {adminT('sales.insights.tip3.title') || 'Localize Marketing'}
+                      </h4>
+                      <p className="text-sm text-purple-800 dark:text-purple-200">
+                        {adminT('sales.insights.tip3.desc') || 'Target campaigns in languages with high engagement rates.'}
+                      </p>
+                    </div>
+                    <div className="p-4 bg-orange-50 dark:bg-orange-950 rounded-lg">
+                      <h4 className="font-semibold text-orange-900 dark:text-orange-100 mb-2">
+                        {adminT('sales.insights.tip4.title') || 'Monitor Cancellations'}
+                      </h4>
+                      <p className="text-sm text-orange-800 dark:text-orange-200">
+                        {adminT('sales.insights.tip4.desc') || 'Investigate high cancellation rates to identify checkout issues.'}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
