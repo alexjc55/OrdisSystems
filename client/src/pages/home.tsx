@@ -190,7 +190,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
       </div>
 
       {/* Right Column: Delivery & Payment */}
-      {(getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) || getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage)) && (
+      {(getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as SupportedLanguage) || getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as SupportedLanguage)) && (
         <div className="flex">
           <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden flex-1 flex flex-col">
             <div className="p-6 flex-1 flex flex-col">
@@ -201,16 +201,16 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                 <span className="font-semibold text-lg text-gray-800">{t('paymentMethod')} & {t('cart.delivery')}</span>
               </div>
               <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
-                {getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) && (
+                {getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as SupportedLanguage) && (
                   <div>
                     <span className="text-gray-700 text-base font-bold block mb-2">{t('cart.delivery')}:</span>
-                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage)}</span>
+                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as SupportedLanguage)}</span>
                   </div>
                 )}
-                {getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage) && (
+                {getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as SupportedLanguage) && (
                   <div>
                     <span className="text-gray-700 text-base font-bold block mb-2">{t('paymentMethod')}:</span>
-                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage)}</span>
+                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as SupportedLanguage)}</span>
                   </div>
                 )}
               </div>
@@ -441,11 +441,14 @@ export default function Home() {
       if (!isNaN(categoryId) && categoryId !== selectedCategoryId) {
         setSelectedCategoryId(categoryId);
         setCategoryFilter(categoryId.toString());
-
+        // Scroll to top when category changes
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } else if (pathParts[1] === 'all-products' && selectedCategoryId !== 0) {
       setSelectedCategoryId(0);
       setCategoryFilter("all");
+      // Scroll to top when navigating to all products
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (pathParts[1] === '' && selectedCategoryId !== null) {
       setSelectedCategoryId(null);
       setCategoryFilter("all");
@@ -489,8 +492,8 @@ export default function Home() {
         )}
 
         <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
-          {/* Title and Description - only show when searching/filtering (classic style shows this in header) */}
-          {storeSettings?.showTitleDescription !== false && (searchQuery.length > 2 || selectedCategory) && (
+          {/* Title and Description - only show for search results (not for categories/all-products) */}
+          {storeSettings?.showTitleDescription !== false && (searchQuery.length > 2) && !(selectedCategory || selectedCategoryId === 0) && (
             <div className="text-center-force mb-12">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight text-center-force">
                 <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">
@@ -553,10 +556,36 @@ export default function Home() {
 
           {/* Modern Filter Bar - show on category/product pages */}
           {(selectedCategory || selectedCategoryId === 0) && (
-            <div className="sticky top-16 z-40 -mx-6 mb-8 bg-gray-900 shadow-lg">
-              <div className="px-6 py-6">
+            <div className="sticky top-16 z-40 -mx-6 mb-0 bg-gray-900 shadow-lg">
+              <div className="px-6 py-4">
+                {/* Back Button and Title Row */}
+                <div className="flex items-center justify-between mb-4">
+                  <Button
+                    onClick={handleResetView}
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center gap-2 text-white hover:text-gray-300 hover:bg-gray-800"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    <span>{t('buttons.back', 'Назад')}</span>
+                  </Button>
+                  
+                  <h1 className="text-white text-lg font-semibold">
+                    {searchQuery && searchQuery.length > 2 
+                      ? `${t('searchResults')}: "${searchQuery}"`
+                      : selectedCategory 
+                        ? getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru')
+                        : selectedCategoryId === 0 
+                          ? t('allProducts')
+                          : ''
+                    }
+                  </h1>
+                  
+                  <div className="w-16"></div> {/* Spacer for centering */}
+                </div>
+
                 {/* Search Bar */}
-                <div className="max-w-2xl mx-auto mb-4">
+                <div className="mb-4">
                   <SearchInput
                     value={searchQuery}
                     onChange={setSearchQuery}
@@ -566,13 +595,13 @@ export default function Home() {
 
                 {/* Filter Controls */}
                 {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
-                  <div className="flex gap-4 max-w-lg mx-auto">
+                  <div className="flex gap-4">
                     <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
                       <SelectTrigger className="flex-1 bg-white border-gray-300 text-gray-900">
-                        <SelectValue placeholder={t('filterByCategory', 'Все категории')} />
+                        <SelectValue placeholder={t('allCategories', 'Все категории')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">{t('allCategories')}</SelectItem>
+                        <SelectItem value="all">{t('allCategories', 'Все категории')}</SelectItem>
                         {categories.map((category) => (
                           <SelectItem key={category.id} value={category.id.toString()}>
                             {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
@@ -583,11 +612,11 @@ export default function Home() {
 
                     <Select value={discountFilter} onValueChange={setDiscountFilter}>
                       <SelectTrigger className="flex-1 bg-white border-gray-300 text-gray-900">
-                        <SelectValue placeholder={t('filterByDiscount', 'Все товары')} />
+                        <SelectValue placeholder={t('allProducts', 'Все товары')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">{t('allProducts')}</SelectItem>
-                        <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
+                        <SelectItem value="all">{t('allProducts', 'Все товары')}</SelectItem>
+                        <SelectItem value="discount">{t('onlyDiscounted', 'Со скидкой')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -762,48 +791,8 @@ export default function Home() {
           {/* Category/Product List View */}
           {(selectedCategory || selectedCategoryId === 0 || searchQuery.length > 2) && (
             <div>
-              {/* Back Button for Category View */}
-              {selectedCategory && (
-                <div className="mb-4">
-                  <Button
-                    onClick={handleResetView}
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center gap-1 text-gray-600 hover:text-gray-800"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span className="hidden sm:inline">{t('buttons.back', 'Назад')}</span>
-                  </Button>
-                </div>
-              )}
-
-              {/* Category Header */}
-              {selectedCategory && (
-                <div className="text-center mb-8">
-                  <h1 className="text-4xl font-bold text-gray-900 mb-3">
-                    {getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                  </h1>
-                  {selectedCategory.description && (
-                    <p className="text-xl text-gray-600 font-light">
-                      {getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru')}
-                    </p>
-                  )}
-                  <div className="w-16 h-1 bg-primary mx-auto mt-4 rounded-full"></div>
-                </div>
-              )}
-              
-              {/* All Products Header */}
-              {selectedCategoryId === 0 && !searchQuery && (
-                <div className="text-center mb-8">
-                  <h1 className="text-4xl font-bold text-gray-900 mb-3">
-                    {t('allProducts')}
-                  </h1>
-                  <p className="text-xl text-gray-600 font-light">
-                    {t('browseAllProducts', 'Просмотр всех доступных товаров')}
-                  </p>
-                  <div className="w-16 h-1 bg-primary mx-auto mt-4 rounded-full"></div>
-                </div>
-              )}
+              {/* Content starts with margin for sticky filter */}
+              <div className="mt-8"></div>
 
               {/* Products Grid */}
               {(productsLoading || searchLoading) ? (
