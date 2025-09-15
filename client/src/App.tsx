@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -34,10 +34,12 @@ import GuestOrderPage from "@/pages/guest-order";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
 import { ProtectedRoute } from "@/lib/protected-route";
+import analytics from "@/lib/analytics";
 
 function Router() {
   const { storeSettings } = useStoreSettings();
   const { i18n } = useTranslation();
+  const [location] = useLocation();
   
   // Handle URL-based language switching
   useUrlLanguage();
@@ -80,6 +82,11 @@ function Router() {
       i18n.off('languageChanged', handleLanguageChange);
     };
   }, [i18n]);
+
+  // Track page views on wouter location changes
+  useEffect(() => {
+    analytics.trackPageView(location);
+  }, [location]);
 
   // Force disable scroll lock on any attempt by Radix UI
   useEffect(() => {
