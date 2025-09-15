@@ -190,7 +190,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
       </div>
 
       {/* Right Column: Delivery & Payment */}
-      {(getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as SupportedLanguage) || getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as SupportedLanguage)) && (
+      {(getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) || getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage)) && (
         <div className="flex">
           <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden flex-1 flex flex-col">
             <div className="p-6 flex-1 flex flex-col">
@@ -201,16 +201,16 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                 <span className="font-semibold text-lg text-gray-800">{t('paymentMethod')} & {t('cart.delivery')}</span>
               </div>
               <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
-                {getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as SupportedLanguage) && (
+                {getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) && (
                   <div>
                     <span className="text-gray-700 text-base font-bold block mb-2">{t('cart.delivery')}:</span>
-                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as SupportedLanguage)}</span>
+                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage)}</span>
                   </div>
                 )}
-                {getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as SupportedLanguage) && (
+                {getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage) && (
                   <div>
                     <span className="text-gray-700 text-base font-bold block mb-2">{t('paymentMethod')}:</span>
-                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as SupportedLanguage)}</span>
+                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage)}</span>
                   </div>
                 )}
               </div>
@@ -365,12 +365,12 @@ export default function Home() {
     navigate('/');
   }, [navigate]);
 
-  // Handle search query changes (but not on category routes)
+  // Handle search query changes
   useEffect(() => {
-    if (searchQuery.length <= 2 && !location.startsWith('/category/')) {
+    if (searchQuery.length <= 2) {
       setSelectedCategoryId(null);
     }
-  }, [searchQuery, location]);
+  }, [searchQuery]);
 
   const handleSearch = useCallback((query: string) => {
     if (query.length <= 2) {
@@ -441,14 +441,11 @@ export default function Home() {
       if (!isNaN(categoryId) && categoryId !== selectedCategoryId) {
         setSelectedCategoryId(categoryId);
         setCategoryFilter(categoryId.toString());
-        // Scroll to top when category changes
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+
       }
     } else if (pathParts[1] === 'all-products' && selectedCategoryId !== 0) {
       setSelectedCategoryId(0);
       setCategoryFilter("all");
-      // Scroll to top when navigating to all products
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (pathParts[1] === '' && selectedCategoryId !== null) {
       setSelectedCategoryId(null);
       setCategoryFilter("all");
@@ -492,18 +489,50 @@ export default function Home() {
         )}
 
         <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
-          {/* Title and Description - only show for search results on main page */}
-          {storeSettings?.showTitleDescription !== false && searchQuery.length > 2 && !selectedCategory && selectedCategoryId !== 0 && (
+          {/* Title and Description - only show when searching/filtering (classic style shows this in header) */}
+          {storeSettings?.showTitleDescription !== false && (searchQuery.length > 2 || selectedCategory) && (
             <div className="text-center-force mb-12">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight text-center-force">
                 <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">
-                  {`${t('searchResults')}: "${searchQuery}"`}
+                  {(() => {
+                    try {
+                      if (searchQuery && searchQuery.length > 2) {
+                        return `${t('searchResults')}: "${searchQuery}"`;
+                      }
+                      if (selectedCategory?.name) {
+                        return getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru');
+                      }
+                      if (storeSettings?.welcomeTitle) {
+                        return getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage as SupportedLanguage, 'ru');
+                      }
+                      return t('defaultWelcomeTitle');
+                    } catch (error) {
+                      console.error('Error rendering title:', error);
+                      return t('defaultWelcomeTitle');
+                    }
+                  })()}
                 </span>
               </h1>
               
               <div className="max-w-3xl mx-auto text-center-force">
                 <p className="text-xl sm:text-2xl text-gray-600 font-light leading-relaxed mb-8 text-center-force">
-                  {t('foundItems').replace('{count}', displayProducts.length.toString())}
+                  {(() => {
+                    try {
+                      if (searchQuery && searchQuery.length > 2) {
+                        return t('foundItems').replace('{count}', displayProducts.length.toString());
+                      }
+                      if (selectedCategory?.description) {
+                        return getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru');
+                      }
+                      if (storeSettings?.storeDescription) {
+                        return getLocalizedField(storeSettings, 'storeDescription', currentLanguage as SupportedLanguage, 'ru');
+                      }
+                      return t('defaultStoreDescription');
+                    } catch (error) {
+                      console.error('Error rendering description:', error);
+                      return t('defaultStoreDescription');
+                    }
+                  })()}
                 </p>
                 <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
               </div>
@@ -522,61 +551,14 @@ export default function Home() {
             />
           )}
 
-          {/* Modern Filter Bar - show on category/product pages */}
+          {/* Search Bar - show on category/product pages */}
           {(selectedCategory || selectedCategoryId === 0) && (
-            <div className="sticky top-16 z-40 -mx-6 mb-0 bg-gray-900 shadow-lg">
-              <div className="px-6 py-4">
-                {/* Back Button Row */}
-                <div className="flex items-center mb-4">
-                  <Button
-                    onClick={handleResetView}
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center gap-2 text-white hover:text-gray-300 hover:bg-gray-800"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span>{t('buttons.back', 'Назад')}</span>
-                  </Button>
-                </div>
-
-                {/* Search Bar */}
-                <div className="mb-4">
-                  <SearchInput
-                    value={searchQuery}
-                    onChange={setSearchQuery}
-                    placeholder={t('searchPlaceholder')}
-                  />
-                </div>
-
-                {/* Filter Controls */}
-                {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
-                  <div className="flex gap-4">
-                    <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
-                      <SelectTrigger className="flex-1 bg-white border-gray-300 text-gray-900">
-                        <SelectValue placeholder={t('allCategories', 'Все категории')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">{t('allCategories', 'Все категории')}</SelectItem>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id.toString()}>
-                            {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-
-                    <Select value={discountFilter} onValueChange={setDiscountFilter}>
-                      <SelectTrigger className="flex-1 bg-white border-gray-300 text-gray-900">
-                        <SelectValue placeholder={t('allProducts', 'Все товары')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">{t('allProducts', 'Все товары')}</SelectItem>
-                        <SelectItem value="discount">{t('onlyDiscounted', 'Со скидкой')}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-              </div>
+            <div className="mb-8">
+              <SearchInput
+                value={searchQuery}
+                onChange={setSearchQuery}
+                placeholder={t('searchPlaceholder')}
+              />
             </div>
           )}
 
@@ -746,44 +728,47 @@ export default function Home() {
           {/* Category/Product List View */}
           {(selectedCategory || selectedCategoryId === 0 || searchQuery.length > 2) && (
             <div>
-              {/* Content starts with margin for sticky filter */}
-              <div className="mt-8"></div>
-
-              {/* Category Header */}
-              {selectedCategoryId !== null && selectedCategoryId !== 0 && (
-                <div className="text-center mb-8">
-                  <h1 className="text-4xl font-bold text-gray-900 mb-3">
-                    {selectedCategory 
-                      ? getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru')
-                      : displayProducts[0]?.categories?.find(c => c.id === selectedCategoryId)
-                        ? getLocalizedField(displayProducts[0].categories.find(c => c.id === selectedCategoryId)!, 'name', currentLanguage as SupportedLanguage, 'ru')
-                        : t('loading', 'Загрузка...')
-                    }
-                  </h1>
-                  {(selectedCategory?.description || displayProducts[0]?.categories?.find(c => c.id === selectedCategoryId)?.description) && (
-                    <p className="text-xl text-gray-600 font-light">
-                      {selectedCategory 
-                        ? getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru')
-                        : displayProducts[0]?.categories?.find(c => c.id === selectedCategoryId)
-                          ? getLocalizedField(displayProducts[0].categories.find(c => c.id === selectedCategoryId)!, 'description', currentLanguage as SupportedLanguage, 'ru')
-                          : ''
-                      }
-                    </p>
-                  )}
-                  <div className="w-16 h-1 bg-primary mx-auto mt-4 rounded-full"></div>
+              {/* Back Button for Category View */}
+              {selectedCategory && (
+                <div className="mb-4">
+                  <Button
+                    onClick={handleResetView}
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center gap-1 text-gray-600 hover:text-gray-800"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    <span className="hidden sm:inline">{t('buttons.back', 'Назад')}</span>
+                  </Button>
                 </div>
               )}
-              
-              {/* All Products Header */}
-              {selectedCategoryId === 0 && !searchQuery && (
-                <div className="text-center mb-8">
-                  <h1 className="text-4xl font-bold text-gray-900 mb-3">
-                    {t('allProducts')}
-                  </h1>
-                  <p className="text-xl text-gray-600 font-light">
-                    {t('browseAllProducts', 'Просмотр всех доступных товаров')}
-                  </p>
-                  <div className="w-16 h-1 bg-primary mx-auto mt-4 rounded-full"></div>
+
+              {/* Filter Controls */}
+              {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
+                <div className="flex gap-2 sm:gap-4 mb-6">
+                  <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
+                    <SelectTrigger className="flex-1 min-w-0 text-sm">
+                      <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('allCategories')}</SelectItem>
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.id.toString()}>
+                          {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={discountFilter} onValueChange={setDiscountFilter}>
+                    <SelectTrigger className="flex-1 min-w-0 text-sm">
+                      <SelectValue placeholder={t('filterByDiscount')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('allProducts')}</SelectItem>
+                      <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
 
