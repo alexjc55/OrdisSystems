@@ -140,11 +140,11 @@ export default function AdminSalesPage() {
     }
 
     // High cancellation rate (check overview data)
-    if (overview && overview.cancellationRate > 15) {
+    if (overview && typeof overview.cancellationRate === 'number' && overview.cancellationRate > 15) {
       insights.push({
         type: 'critical',
         title: adminT('sales.insights.highCancellation.title') || 'High Cancellation Rate',
-        description: adminT('sales.insights.highCancellation.desc') || `${overview.cancellationRate.toFixed(1)}% of orders are being cancelled`,
+        description: adminT('sales.insights.highCancellation.desc') || `${typeof overview.cancellationRate === 'number' ? overview.cancellationRate.toFixed(1) : overview.cancellationRate || 0}% of orders are being cancelled`,
         action: adminT('sales.insights.highCancellation.action') || 'Investigate checkout process issues',
         icon: 'AlertTriangle'
       });
