@@ -478,7 +478,7 @@ export default function Home() {
         />
       )}
       
-      <div className="flex overflow-x-hidden">
+      <div className="flex">
         {storeSettings?.showCategoryMenu !== false && (
           <Sidebar 
             categories={categories || []} 
@@ -488,7 +488,7 @@ export default function Home() {
           />
         )}
 
-        <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
+        <main className={`flex-1 p-6 lg:pb-6 ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
           {/* Title and Description - only show when searching/filtering (classic style shows this in header) */}
           {storeSettings?.showTitleDescription !== false && (searchQuery.length > 2 || selectedCategory) && (
             <div className="text-center-force mb-12">
