@@ -3,8 +3,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import SearchInput from "@/components/SearchInput";
 import { ChevronLeft } from "lucide-react";
 import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
-import { getLocalizedStoreField } from '@shared/multilingual-helpers';
-import type { SupportedLanguage } from '@shared/localization';
 
 interface StickyFiltersProps {
   // Back button
@@ -53,27 +51,27 @@ export default function StickyFilters({
   }
 
   return (
-    <div className="fixed top-16 left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-[1023px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex flex-col gap-3">
-          {/* Back Button Row */}
-          {showBackButton && (
-            <div className="flex">
-              <Button
-                onClick={onBack}
-                variant="ghost"
-                size="sm"
-                className="text-gray-600 hover:text-primary p-2 h-auto"
-                data-testid="button-back"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                <span className="hidden sm:inline ml-1">{t('buttons.back', 'Назад')}</span>
-              </Button>
-            </div>
-          )}
+    <div className="fixed top-16 left-0 right-0 z-40 bg-gray-100 border-b border-gray-300 shadow-sm">
+      <div className="max-w-[1023px] mx-auto px-4 sm:px-6 lg:px-8 py-2">
+        <div className="flex flex-col gap-2">
+          {/* Single Row Layout */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
+            {/* Back Button */}
+            {showBackButton && (
+              <div className="flex-shrink-0">
+                <Button
+                  onClick={onBack}
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 hover:text-primary p-2 h-9"
+                  data-testid="button-back"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-1">{t('buttons.back', 'Назад')}</span>
+                </Button>
+              </div>
+            )}
 
-          {/* Filters Row */}
-          <div className="flex flex-col sm:flex-row gap-3">
             {/* Search */}
             {showSearch && (
               <div className="flex-1 min-w-0">
@@ -88,26 +86,26 @@ export default function StickyFilters({
 
             {/* Filter Controls */}
             {showFilters && (
-              <div className="flex gap-2 sm:gap-3 sm:flex-shrink-0">
-                <div className="flex-1 sm:min-w-[180px]">
+              <div className="flex gap-2 sm:flex-shrink-0">
+                <div className="flex-1 sm:min-w-[160px]">
                   <Select value={categoryFilter} onValueChange={onCategoryFilterChange}>
-                    <SelectTrigger className="text-sm h-10" data-testid="select-category">
+                    <SelectTrigger className="text-sm h-9" data-testid="select-category">
                       <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t('allCategories')}</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
-                          {getLocalizedStoreField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                          {category.name || `Category ${category.id}`}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div className="flex-1 sm:min-w-[160px]">
+                <div className="flex-1 sm:min-w-[140px]">
                   <Select value={discountFilter} onValueChange={onDiscountFilterChange}>
-                    <SelectTrigger className="text-sm h-10" data-testid="select-discount">
+                    <SelectTrigger className="text-sm h-9" data-testid="select-discount">
                       <SelectValue placeholder={t('filterByDiscount')} />
                     </SelectTrigger>
                     <SelectContent>

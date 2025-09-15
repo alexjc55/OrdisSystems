@@ -505,7 +505,7 @@ export default function Home() {
           />
         )}
 
-        <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'} ${(selectedCategory || selectedCategoryId === 0 || searchQuery.length <= 2) ? 'pt-20' : ''}`}>
+        <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'} ${(selectedCategory || selectedCategoryId === 0 || searchQuery.length <= 2) ? 'pt-24' : ''}`}>
           {/* Title and Description - only show when searching/filtering (classic style shows this in header) */}
           {storeSettings?.showTitleDescription !== false && (searchQuery.length > 2 || selectedCategory) && (
             <div className="text-center-force mb-12">
