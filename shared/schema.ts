@@ -839,3 +839,154 @@ export type CategoryWithProducts = Category & {
 export type CategoryWithCount = Category & {
   productCount: number;
 };
+
+// Sales Analytics Schemas - for API responses only, not database tables
+export const salesOverviewSchema = z.object({
+  // Key metrics with trends and visual indicators
+  revenue: z.object({
+    current: z.number(),
+    previous: z.number(),
+    trend: z.enum(['up', 'down', 'stable']),
+    percentChange: z.number(),
+    color: z.enum(['green', 'red', 'yellow']),
+  }),
+  ordersCount: z.object({
+    current: z.number(),
+    previous: z.number(),
+    trend: z.enum(['up', 'down', 'stable']),
+    percentChange: z.number(),
+    color: z.enum(['green', 'red', 'yellow']),
+  }),
+  averageOrderValue: z.object({
+    current: z.number(),
+    previous: z.number(),
+    trend: z.enum(['up', 'down', 'stable']),
+    percentChange: z.number(),
+    color: z.enum(['green', 'red', 'yellow']),
+  }),
+  cancellationRate: z.object({
+    current: z.number(),
+    previous: z.number(),
+    trend: z.enum(['up', 'down', 'stable']),
+    percentChange: z.number(),
+    color: z.enum(['green', 'red', 'yellow']),
+  }),
+  uniqueBuyers: z.object({
+    current: z.number(),
+    previous: z.number(),
+    trend: z.enum(['up', 'down', 'stable']),
+    percentChange: z.number(),
+    color: z.enum(['green', 'red', 'yellow']),
+  }),
+  period: z.object({
+    current: z.string(),
+    previous: z.string(),
+  }),
+});
+
+export const channelAnalysisSchema = z.object({
+  languages: z.array(z.object({
+    language: z.string(),
+    languageName: z.string(),
+    revenue: z.number(),
+    orders: z.number(),
+    percentage: z.number(),
+    color: z.string(),
+  })),
+  paymentMethods: z.array(z.object({
+    method: z.string(),
+    methodName: z.string(),
+    revenue: z.number(),
+    orders: z.number(),
+    percentage: z.number(),
+    color: z.string(),
+  })),
+  userTypes: z.object({
+    registered: z.object({
+      revenue: z.number(),
+      orders: z.number(),
+      percentage: z.number(),
+      averageOrderValue: z.number(),
+    }),
+    guest: z.object({
+      revenue: z.number(),
+      orders: z.number(),
+      percentage: z.number(),
+      averageOrderValue: z.number(),
+    }),
+  }),
+});
+
+export const productAnalysisSchema = z.object({
+  topProducts: z.array(z.object({
+    id: z.number(),
+    name: z.string(),
+    revenue: z.number(),
+    quantity: z.number(),
+    orders: z.number(),
+    isSpecialOffer: z.boolean(),
+  })),
+  specialOffers: z.object({
+    revenue: z.number(),
+    orders: z.number(),
+    percentage: z.number(),
+    averageOrderValue: z.number(),
+  }),
+  regular: z.object({
+    revenue: z.number(),
+    orders: z.number(),
+    percentage: z.number(),
+    averageOrderValue: z.number(),
+  }),
+  lowPerformers: z.array(z.object({
+    id: z.number(),
+    name: z.string(),
+    revenue: z.number(),
+    quantity: z.number(),
+    lastOrderDate: z.string().nullable(),
+    stockStatus: z.string(),
+  })),
+});
+
+export const salesIssuesSchema = z.object({
+  cancellations: z.object({
+    total: z.number(),
+    rate: z.number(),
+    topReasons: z.array(z.object({
+      reason: z.string(),
+      count: z.number(),
+      percentage: z.number(),
+    })),
+  }),
+  inventory: z.object({
+    lowStock: z.array(z.object({
+      id: z.number(),
+      name: z.string(),
+      stockStatus: z.string(),
+      availabilityStatus: z.string(),
+      lastOrderDate: z.string().nullable(),
+    })),
+    outOfStock: z.array(z.object({
+      id: z.number(),
+      name: z.string(),
+      stockStatus: z.string(),
+      availabilityStatus: z.string(),
+      missedOrders: z.number(),
+    })),
+  }),
+  recentOrders: z.array(z.object({
+    id: z.number(),
+    status: z.string(),
+    totalAmount: z.number(),
+    orderLanguage: z.string(),
+    paymentMethod: z.string().nullable(),
+    isGuest: z.boolean(),
+    createdAt: z.string(),
+  })),
+});
+
+// Sales Analytics Types
+export type SalesOverview = z.infer<typeof salesOverviewSchema>;
+export type ChannelAnalysis = z.infer<typeof channelAnalysisSchema>;
+export type ProductAnalysis = z.infer<typeof productAnalysisSchema>;
+export type SalesIssues = z.infer<typeof salesIssuesSchema>;
