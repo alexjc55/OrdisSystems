@@ -15,6 +15,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "wouter";
 
 import { useAdminTranslation, useCommonTranslation } from "@/hooks/use-language";
 import { useTranslation } from "react-i18next";
@@ -302,7 +303,9 @@ import {
   QrCode,
   Camera,
   Menu,
-  Mail
+  Mail,
+  BarChart3,
+  TrendingUp
 } from "lucide-react";
 
 // Validation schemas
@@ -3603,6 +3606,20 @@ export default function AdminDashboard() {
               <p className={`text-gray-600 text-sm sm:text-base ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('dashboard.description')}</p>
             </div>
 
+          </div>
+          
+          {/* Sales Analytics Button */}
+          <div className="mt-4 sm:mt-6">
+            <Link href="/admin/sales">
+              <Button 
+                className={`w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-3 text-base font-medium ${isRTL ? 'flex-row-reverse' : ''}`}
+                data-testid="button-sales-analytics"
+              >
+                <BarChart3 className={`w-5 h-5 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                {adminT('sales.analytics.title') || 'Аналитика продаж'}
+                <TrendingUp className={`w-4 h-4 ${isRTL ? 'mr-2' : 'ml-2'} opacity-75`} />
+              </Button>
+            </Link>
           </div>
         </div>
 
