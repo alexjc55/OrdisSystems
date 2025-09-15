@@ -32,6 +32,7 @@ import ProductCard from "@/components/menu/product-card";
 import CartSidebar from "@/components/cart/cart-sidebar";
 import { HeaderVariant } from "@/components/layout/header-variants";
 import SearchInput from "@/components/SearchInput";
+import StickyFilters from "@/components/filters/sticky-filters";
 import { useCartStore } from "@/lib/cart";
 import { formatCurrency } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
@@ -477,6 +478,22 @@ export default function Home() {
           style={headerStyle as 'classic' | 'modern' | 'minimal'}
         />
       )}
+
+      {/* Sticky Filters */}
+      <StickyFilters
+        showBackButton={!!selectedCategory}
+        onBack={handleResetView}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder={t('searchPlaceholder')}
+        categoryFilter={categoryFilter}
+        onCategoryFilterChange={handleCategoryFilterChange}
+        categories={categories || []}
+        discountFilter={discountFilter}
+        onDiscountFilterChange={setDiscountFilter}
+        showFilters={(selectedCategoryId === 0 || searchQuery.length <= 2)}
+        showSearch={!!(selectedCategory || selectedCategoryId === 0)}
+      />
       
       <div className="flex overflow-x-hidden">
         {storeSettings?.showCategoryMenu !== false && (
@@ -488,7 +505,7 @@ export default function Home() {
           />
         )}
 
-        <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
+        <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'} ${(selectedCategory || selectedCategoryId === 0 || searchQuery.length <= 2) ? 'pt-20' : ''}`}>
           {/* Title and Description - only show when searching/filtering (classic style shows this in header) */}
           {storeSettings?.showTitleDescription !== false && (searchQuery.length > 2 || selectedCategory) && (
             <div className="text-center-force mb-12">
@@ -551,16 +568,6 @@ export default function Home() {
             />
           )}
 
-          {/* Search Bar - show on category/product pages */}
-          {(selectedCategory || selectedCategoryId === 0) && (
-            <div className="mb-8">
-              <SearchInput
-                value={searchQuery}
-                onChange={setSearchQuery}
-                placeholder={t('searchPlaceholder')}
-              />
-            </div>
-          )}
 
           {/* Special Offers or Category View */}
           {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && (
@@ -728,49 +735,6 @@ export default function Home() {
           {/* Category/Product List View */}
           {(selectedCategory || selectedCategoryId === 0 || searchQuery.length > 2) && (
             <div>
-              {/* Back Button for Category View */}
-              {selectedCategory && (
-                <div className="mb-4">
-                  <Button
-                    onClick={handleResetView}
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center gap-1 text-gray-600 hover:text-gray-800"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span className="hidden sm:inline">{t('buttons.back', 'Назад')}</span>
-                  </Button>
-                </div>
-              )}
-
-              {/* Filter Controls */}
-              {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
-                <div className="flex gap-2 sm:gap-4 mb-6">
-                  <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
-                    <SelectTrigger className="flex-1 min-w-0 text-sm">
-                      <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t('allCategories')}</SelectItem>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
-                          {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select value={discountFilter} onValueChange={setDiscountFilter}>
-                    <SelectTrigger className="flex-1 min-w-0 text-sm">
-                      <SelectValue placeholder={t('filterByDiscount')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t('allProducts')}</SelectItem>
-                      <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
 
               {/* Products Grid */}
               {(productsLoading || searchLoading) ? (
