@@ -743,10 +743,13 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Filter Controls - Sticky on mobile */}
+              {/* Filter Controls - Fixed on mobile, static on desktop */}
               {(selectedCategoryId === 0 || selectedCategory || searchQuery.length <= 2) && (
-                <div className="sticky top-16 z-40 bg-white py-3 mb-6 border-b border-gray-200 lg:static lg:bg-transparent lg:border-b-0 lg:py-0" data-testid="filters-sticky-container">
-                  <div className="flex gap-2 sm:gap-4">
+                <div 
+                  className="fixed top-16 left-0 right-0 z-40 bg-white py-3 px-6 border-b border-gray-200 lg:static lg:bg-transparent lg:border-b-0 lg:py-0 lg:px-0 lg:mb-6" 
+                  data-testid="filters-sticky-container"
+                >
+                  <div className="flex gap-2 sm:gap-4 max-w-6xl lg:max-w-none">
                     {/* Category filter */}
                     <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
                       <SelectTrigger className="flex-1 min-w-0 text-sm" data-testid="select-category-filter">
@@ -774,6 +777,11 @@ export default function Home() {
                     </Select>
                   </div>
                 </div>
+              )}
+              
+              {/* Spacer for fixed filters on mobile */}
+              {(selectedCategoryId === 0 || selectedCategory || searchQuery.length <= 2) && (
+                <div className="h-16 lg:h-0 mb-6 lg:mb-0"></div>
               )}
 
               {/* Products Grid */}
