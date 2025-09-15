@@ -36,6 +36,18 @@ import {
   Smartphone,
   RefreshCw
 } from "lucide-react";
+import { 
+  ResponsiveContainer, 
+  PieChart as RechartsPieChart, 
+  Pie,
+  Cell, 
+  BarChart as RechartsBarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  Tooltip, 
+  Legend 
+} from "recharts";
 import { format, subDays } from "date-fns";
 import { ru, enUS, he, ar } from "date-fns/locale";
 
@@ -131,6 +143,80 @@ export default function AdminSalesPage() {
       maximumFractionDigits: 0
     }).format(amount);
   };
+
+  // Custom tooltip for charts with multilingual support
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+          <p className="text-sm font-medium text-gray-900">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} className="text-sm" style={{ color: entry.color }}>
+              {entry.name}: {
+                entry.dataKey === 'revenue' || entry.dataKey === 'value' ? 
+                formatCurrency(entry.value) : 
+                entry.value.toLocaleString()
+              }
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Simple pie chart component
+  const SimpleLanguagePieChart = ({ data }: { data: any[] }) => (
+    <div className="h-64 w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <RechartsPieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            outerRadius={80}
+            dataKey="revenue"
+            nameKey="languageName"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip content={<CustomTooltip />} />
+          <Legend 
+            wrapperStyle={{ 
+              fontSize: '12px',
+              direction: isRTL ? 'rtl' : 'ltr' 
+            }}
+          />
+        </RechartsPieChart>
+      </ResponsiveContainer>
+    </div>
+  );
+
+  // Simple bar chart for top products
+  const SimpleProductsBarChart = ({ data }: { data: any[] }) => (
+    <div className="h-64 w-full" dir={isRTL ? 'rtl' : 'ltr'}>
+      <ResponsiveContainer width="100%" height="100%">
+        <RechartsBarChart data={data.slice(0, 8)}>
+          <XAxis 
+            dataKey="name" 
+            tick={{ fontSize: 10 }}
+            angle={isRTL ? 45 : -45}
+            textAnchor={isRTL ? 'start' : 'end'}
+            height={60}
+          />
+          <YAxis tick={{ fontSize: 10 }} />
+          <Tooltip content={<CustomTooltip />} />
+          <Bar 
+            dataKey="revenue" 
+            fill="#3B82F6"
+            name={adminT('sales.metrics.revenue') || 'Revenue'}
+          />
+        </RechartsBarChart>
+      </ResponsiveContainer>
+    </div>
+  );
 
   const MetricCard = ({ title, value, trend, icon, className = "", isLoading = false, testId }: {
     title: string;
@@ -357,6 +443,31 @@ export default function AdminSalesPage() {
                 </CardContent>
               </Card>
 
+              {/* Language Distribution Chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className={`flex items-center ${isRTL ? 'gap-2 flex-row-reverse' : 'gap-2'}`}>
+                    <PieChart className="h-5 w-5" />
+                    {adminT('sales.charts.languageDistribution') || 'Language Distribution'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {channelsLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    </div>
+                  ) : channels?.languages && channels.languages.length > 0 ? (
+                    <SimpleLanguagePieChart data={channels.languages} />
+                  ) : (
+                    <div className="flex justify-center py-8 text-gray-500">
+                      <p>{adminT('sales.charts.noData') || 'No data available'}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Payment Methods */}
               <Card>
                 <CardHeader>
@@ -490,6 +601,31 @@ export default function AdminSalesPage() {
                 </CardContent>
               </Card>
 
+              {/* Top Products Chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className={`flex items-center ${isRTL ? 'gap-2 flex-row-reverse' : 'gap-2'}`}>
+                    <BarChart3 className="h-5 w-5" />
+                    {adminT('sales.charts.topProductsChart') || 'Top Products Chart'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {productsLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    </div>
+                  ) : products?.topProducts && products.topProducts.length > 0 ? (
+                    <SimpleProductsBarChart data={products.topProducts} />
+                  ) : (
+                    <div className="flex justify-center py-8 text-gray-500">
+                      <p>{adminT('sales.charts.noData') || 'No data available'}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Low Performers */}
               <Card>
                 <CardHeader>
