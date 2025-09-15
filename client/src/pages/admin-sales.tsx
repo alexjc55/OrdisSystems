@@ -522,7 +522,7 @@ export default function AdminSalesPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <MetricCard
                 title={adminT('sales.metrics.totalRevenue') || 'Total Revenue'}
-                value={overview ? formatCurrency(overview.revenue) : '—'}
+                value={overview?.revenue != null ? formatCurrency(overview.revenue) : '—'}
                 trend={overview?.revenueTrend}
                 icon={<DollarSign className="text-green-600" />}
                 isLoading={overviewLoading}
@@ -530,7 +530,7 @@ export default function AdminSalesPage() {
               />
               <MetricCard
                 title={adminT('sales.metrics.totalOrders') || 'Total Orders'}
-                value={overview ? overview.orders.toLocaleString() : '—'}
+                value={overview?.orders?.toLocaleString() || '—'}
                 trend={overview?.ordersTrend}
                 icon={<ShoppingCart className="text-blue-600" />}
                 isLoading={overviewLoading}
@@ -538,7 +538,7 @@ export default function AdminSalesPage() {
               />
               <MetricCard
                 title={adminT('sales.metrics.uniqueBuyers') || 'Unique Buyers'}
-                value={overview ? overview.uniqueBuyers.toLocaleString() : '—'}
+                value={overview?.uniqueBuyers?.toLocaleString() || '—'}
                 trend={overview?.buyersTrend}
                 icon={<Users className="text-purple-600" />}
                 isLoading={overviewLoading}
@@ -546,7 +546,7 @@ export default function AdminSalesPage() {
               />
               <MetricCard
                 title={adminT('sales.metrics.cancellationRate') || 'Cancellation Rate'}
-                value={overview ? `${overview.cancellationRate.toFixed(1)}%` : '—'}
+                value={overview?.cancellationRate != null ? `${overview.cancellationRate.toFixed(1)}%` : '—'}
                 trend={overview?.cancellationTrend}
                 icon={<AlertTriangle className={overview && overview.cancellationRate > 5 ? "text-red-600" : "text-yellow-600"} />}
                 isLoading={overviewLoading}
@@ -558,7 +558,7 @@ export default function AdminSalesPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <MetricCard
                 title={adminT('sales.metrics.averageOrderValue') || 'Average Order Value'}
-                value={overview ? formatCurrency(overview.averageOrderValue) : '—'}
+                value={overview?.averageOrderValue != null ? formatCurrency(overview.averageOrderValue) : '—'}
                 trend={overview?.aovTrend}
                 icon={<CreditCard className="text-orange-600" />}
                 isLoading={overviewLoading}
@@ -566,14 +566,14 @@ export default function AdminSalesPage() {
               />
               <MetricCard
                 title={adminT('sales.metrics.ordersPerDay') || 'Orders per Day'}
-                value={overview ? overview.ordersPerDay.toFixed(1) : '—'}
+                value={overview?.ordersPerDay?.toFixed(1) || '—'}
                 icon={<Calendar className="text-indigo-600" />}
                 isLoading={overviewLoading}
                 testId="card-orders-per-day"
               />
               <MetricCard
                 title={adminT('sales.metrics.revenuePerDay') || 'Revenue per Day'}
-                value={overview ? formatCurrency(overview.revenuePerDay) : '—'}
+                value={overview?.revenuePerDay != null ? formatCurrency(overview.revenuePerDay) : '—'}
                 icon={<TrendingUp className="text-emerald-600" />}
                 isLoading={overviewLoading}
                 testId="card-revenue-per-day"
