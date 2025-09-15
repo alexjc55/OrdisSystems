@@ -29,7 +29,7 @@ export default function PushNotificationRequest() {
 
     // Show request after shorter delay if permission not granted
     const timer = setTimeout(() => {
-      if (Notification.permission === 'default') {
+      if ('Notification' in window && Notification.permission === 'default') {
         const lastRequested = localStorage.getItem('push-permission-requested');
         const daysSinceRequest = lastRequested ? 
           (Date.now() - parseInt(lastRequested)) / (1000 * 60 * 60 * 24) : 999;
@@ -44,7 +44,7 @@ export default function PushNotificationRequest() {
 
     // Listen for PWA installation event
     const handlePWAInstalled = () => {
-      if (Notification.permission === 'default') {
+      if ('Notification' in window && Notification.permission === 'default') {
         setShowRequest(true);
       }
     };
@@ -57,7 +57,7 @@ export default function PushNotificationRequest() {
                           (window.navigator as any).standalone ||
                           document.referrer.includes('android-app://');
       
-      if (isStandalone && Notification.permission === 'default') {
+      if (isStandalone && 'Notification' in window && Notification.permission === 'default') {
         // Delay showing the request in standalone mode
         setTimeout(() => setShowRequest(true), 3000);
       }
