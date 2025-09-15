@@ -55,10 +55,10 @@ export default function StickyFilters({
       <div className="max-w-[1023px] mx-auto px-4 sm:px-6 lg:px-8 py-2">
         <div className="flex flex-col gap-2">
           {/* Single Row Layout */}
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 sm:items-center">
+          <div className="flex flex-row gap-2 sm:gap-4 items-center flex-wrap">
             {/* Back Button - inline on mobile */}
             {showBackButton && (
-              <div className="flex-shrink-0 sm:flex-shrink-0">
+              <div className="flex-shrink-0">
                 <Button
                   onClick={onBack}
                   variant="ghost"
@@ -74,7 +74,7 @@ export default function StickyFilters({
 
             {/* Search */}
             {showSearch && (
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-[200px]">
                 <SearchInput
                   value={searchQuery}
                   onChange={onSearchChange}
@@ -86,8 +86,8 @@ export default function StickyFilters({
 
             {/* Filter Controls */}
             {showFilters && (
-              <div className="flex gap-2 sm:flex-shrink-0">
-                <div className="flex-1 sm:min-w-[160px]">
+              <div className="flex gap-2 flex-shrink-0">
+                <div className="min-w-[120px] sm:min-w-[160px]">
                   <Select value={categoryFilter} onValueChange={onCategoryFilterChange}>
                     <SelectTrigger className="text-sm h-9" data-testid="select-category">
                       <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
@@ -103,7 +103,7 @@ export default function StickyFilters({
                   </Select>
                 </div>
 
-                <div className="flex-1 sm:min-w-[140px]">
+                <div className="min-w-[110px] sm:min-w-[140px]">
                   <Select value={discountFilter} onValueChange={onDiscountFilterChange}>
                     <SelectTrigger className="text-sm h-9" data-testid="select-discount">
                       <SelectValue placeholder={t('filterByDiscount')} />
