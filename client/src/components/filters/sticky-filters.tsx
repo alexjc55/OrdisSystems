@@ -55,19 +55,19 @@ export default function StickyFilters({
       <div className="max-w-[1023px] mx-auto px-4 sm:px-6 lg:px-8 py-2">
         <div className="flex flex-col gap-2">
           {/* Single Row Layout */}
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
-            {/* Back Button */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 sm:items-center">
+            {/* Back Button - inline on mobile */}
             {showBackButton && (
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 sm:flex-shrink-0">
                 <Button
                   onClick={onBack}
                   variant="ghost"
                   size="sm"
-                  className="text-gray-600 hover:text-primary p-2 h-9"
+                  className="text-gray-600 hover:text-primary p-2 h-9 inline-flex items-center"
                   data-testid="button-back"
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  <span className="hidden sm:inline ml-1">{t('buttons.back', 'Назад')}</span>
+                  <span className="ml-1 sm:inline">{t('buttons.back', 'Назад')}</span>
                 </Button>
               </div>
             )}
@@ -93,7 +93,7 @@ export default function StickyFilters({
                       <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t('allCategories')}</SelectItem>
+                      <SelectItem value="all">{t('allCategories', 'Все категории')}</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
                           {category.name || `Category ${category.id}`}
@@ -109,8 +109,8 @@ export default function StickyFilters({
                       <SelectValue placeholder={t('filterByDiscount')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t('allProducts')}</SelectItem>
-                      <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
+                      <SelectItem value="all">{t('allProducts', 'Все товары')}</SelectItem>
+                      <SelectItem value="discount">{t('onlyDiscounted', 'Товары со скидкой')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
