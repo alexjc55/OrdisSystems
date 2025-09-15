@@ -526,8 +526,8 @@ export default function Home() {
           {(selectedCategory || selectedCategoryId === 0) && (
             <div className="sticky top-16 z-40 -mx-6 mb-0 bg-gray-900 shadow-lg">
               <div className="px-6 py-4">
-                {/* Back Button and Title Row */}
-                <div className="flex items-center justify-between mb-4">
+                {/* Back Button Row */}
+                <div className="flex items-center mb-4">
                   <Button
                     onClick={handleResetView}
                     variant="ghost"
@@ -537,19 +537,6 @@ export default function Home() {
                     <ChevronLeft className="h-4 w-4" />
                     <span>{t('buttons.back', 'Назад')}</span>
                   </Button>
-                  
-                  <h1 className="text-white text-lg font-semibold">
-                    {searchQuery && searchQuery.length > 2 
-                      ? `${t('searchResults')}: "${searchQuery}"`
-                      : selectedCategory 
-                        ? getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru')
-                        : selectedCategoryId === 0 
-                          ? t('allProducts')
-                          : ''
-                    }
-                  </h1>
-                  
-                  <div className="w-16"></div> {/* Spacer for centering */}
                 </div>
 
                 {/* Search Bar */}
@@ -761,6 +748,34 @@ export default function Home() {
             <div>
               {/* Content starts with margin for sticky filter */}
               <div className="mt-8"></div>
+
+              {/* Category Header */}
+              {selectedCategory && (
+                <div className="text-center mb-8">
+                  <h1 className="text-4xl font-bold text-gray-900 mb-3">
+                    {getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                  </h1>
+                  {selectedCategory.description && (
+                    <p className="text-xl text-gray-600 font-light">
+                      {getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru')}
+                    </p>
+                  )}
+                  <div className="w-16 h-1 bg-primary mx-auto mt-4 rounded-full"></div>
+                </div>
+              )}
+              
+              {/* All Products Header */}
+              {selectedCategoryId === 0 && !searchQuery && (
+                <div className="text-center mb-8">
+                  <h1 className="text-4xl font-bold text-gray-900 mb-3">
+                    {t('allProducts')}
+                  </h1>
+                  <p className="text-xl text-gray-600 font-light">
+                    {t('browseAllProducts', 'Просмотр всех доступных товаров')}
+                  </p>
+                  <div className="w-16 h-1 bg-primary mx-auto mt-4 rounded-full"></div>
+                </div>
+              )}
 
               {/* Products Grid */}
               {(productsLoading || searchLoading) ? (
