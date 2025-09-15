@@ -492,50 +492,18 @@ export default function Home() {
         )}
 
         <main className={`flex-1 p-6 lg:pb-6 overflow-x-hidden ${storeSettings?.showCategoryMenu !== false ? 'pb-24' : 'pb-6'}`}>
-          {/* Title and Description - only show for search results (not for categories/all-products) */}
-          {storeSettings?.showTitleDescription !== false && (searchQuery.length > 2) && !(selectedCategory || selectedCategoryId === 0) && (
+          {/* Title and Description - only show for search results on main page */}
+          {storeSettings?.showTitleDescription !== false && searchQuery.length > 2 && !selectedCategory && selectedCategoryId !== 0 && (
             <div className="text-center-force mb-12">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight text-center-force">
                 <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">
-                  {(() => {
-                    try {
-                      if (searchQuery && searchQuery.length > 2) {
-                        return `${t('searchResults')}: "${searchQuery}"`;
-                      }
-                      if (selectedCategory?.name) {
-                        return getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru');
-                      }
-                      if (storeSettings?.welcomeTitle) {
-                        return getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage as SupportedLanguage, 'ru');
-                      }
-                      return t('defaultWelcomeTitle');
-                    } catch (error) {
-                      console.error('Error rendering title:', error);
-                      return t('defaultWelcomeTitle');
-                    }
-                  })()}
+                  {`${t('searchResults')}: "${searchQuery}"`}
                 </span>
               </h1>
               
               <div className="max-w-3xl mx-auto text-center-force">
                 <p className="text-xl sm:text-2xl text-gray-600 font-light leading-relaxed mb-8 text-center-force">
-                  {(() => {
-                    try {
-                      if (searchQuery && searchQuery.length > 2) {
-                        return t('foundItems').replace('{count}', displayProducts.length.toString());
-                      }
-                      if (selectedCategory?.description) {
-                        return getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru');
-                      }
-                      if (storeSettings?.storeDescription) {
-                        return getLocalizedField(storeSettings, 'storeDescription', currentLanguage as SupportedLanguage, 'ru');
-                      }
-                      return t('defaultStoreDescription');
-                    } catch (error) {
-                      console.error('Error rendering description:', error);
-                      return t('defaultStoreDescription');
-                    }
-                  })()}
+                  {t('foundItems').replace('{count}', displayProducts.length.toString())}
                 </p>
                 <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
               </div>
