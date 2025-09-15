@@ -1351,8 +1351,8 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
           status: order.status,
           items: itemsWithProducts
         },
-        order.guestAccessToken,
-        order.guestClaimToken,
+        order.guestAccessToken || '',
+        order.guestClaimToken || '',
         fromEmail,
         fromName,
         order.orderLanguage || 'ru',
@@ -1386,7 +1386,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         console.log("Order creation: No user found, creating guest order");
       }
 
-      const { items, language, ...orderData } = req.body;
+      const { items, language = 'ru', ...orderData } = req.body;
       
       const orderSchema = insertOrderSchema.extend({
         requestedDeliveryDate: z.string().optional(),
@@ -1580,9 +1580,9 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       // Send push notification to customer about status change
       if (order && order.userId && order.userId !== 'guest') {
         try {
-          // Get user's preferred language (you may need to implement this)
+          // Get user's preferred language from order or default to 'ru'
           const customerUser = await storage.getUser(order.userId);
-          const language = customerUser?.preferredLanguage || 'ru';
+          const language = (order as any)?.orderLanguage || 'ru';
           
           await PushNotificationService.notifyOrderStatus(
             order.userId,
@@ -1902,7 +1902,9 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       let deliveryFee = 0;
       if (settings?.deliveryFee && settings?.freeDeliveryFrom) {
         const totalAfterDiscount = subtotal - orderDiscountAmount;
-        deliveryFee = totalAfterDiscount >= settings.freeDeliveryFrom ? 0 : settings.deliveryFee;
+        const freeDeliveryThreshold = Number(settings.freeDeliveryFrom) || 0;
+        const deliveryFeeAmount = Number(settings.deliveryFee) || 0;
+        deliveryFee = totalAfterDiscount >= freeDeliveryThreshold ? 0 : deliveryFeeAmount;
       }
 
       const totalAmount = subtotal - orderDiscountAmount + deliveryFee;
@@ -1912,8 +1914,8 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         userId: finalUserId,
         guestName: clientType === 'guest' ? `${guestData.firstName} ${guestData.lastName}` : null,
         guestPhone: clientType === 'guest' ? guestData.phone : null,
-        status: 'pending',
-        totalAmount,
+        status: 'pending' as const,
+        totalAmount: totalAmount.toString(),
         deliveryAddress,
         deliveryDate,
         deliveryTime,
@@ -1925,11 +1927,11 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         createdAt: new Date()
       };
 
-      const order = await storage.createOrder(orderData);
+      const order = await storage.createOrder(orderData, language);
 
       // Create order items - convert strings to numbers
       for (const item of items) {
-        await storage.createOrderItem({
+        await storage.createOrderItem(order.id, {
           orderId: order.id,
           productId: typeof item.productId === 'string' ? parseInt(item.productId) : item.productId,
           quantity: typeof item.quantity === 'string' ? parseFloat(item.quantity) : item.quantity,
@@ -3197,7 +3199,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
           displayWeight = calculatedWeight;
           displayUnit = product.unit;
         }
-        totalPrice = Math.round(pricePerKg * calculatedWeight * 100) / 100;
+        totalPrice = Math.round((Number(pricePerKg) || 0) * (Number(calculatedWeight) || 0) * 100) / 100;
       } else if (unitLower === 'г' || unitLower === 'g') {
         // Product is priced per gram
         const pricePerGram = product.price;
@@ -3205,7 +3207,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
           // Weight is already in grams
           calculatedWeight = weight;
         }
-        totalPrice = Math.round(pricePerGram * calculatedWeight * 100) / 100;
+        totalPrice = Math.round((Number(pricePerGram) || 0) * (Number(calculatedWeight) || 0) * 100) / 100;
       } else if (unitLower === '100г' || unitLower === '100g' || unitLower === '100 г' || unitLower === '100 g') {
         // Product is priced per 100g
         const pricePer100g = product.price;
@@ -3215,16 +3217,16 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
           displayWeight = weight; // Show original weight in grams
           displayUnit = 'г'; // Show in grams
         }
-        totalPrice = Math.round(pricePer100g * calculatedWeight * 100) / 100;
+        totalPrice = Math.round((Number(pricePer100g) || 0) * (Number(calculatedWeight) || 0) * 100) / 100;
       } else if (unitLower.includes('порция') || unitLower.includes('portion') || unitLower.includes('pc') || unitLower.includes('шт')) {
         // Product is priced per piece/portion - use price as is
-        totalPrice = Math.round(product.price * 100) / 100;
+        totalPrice = Math.round((Number(product.price) || 0) * 100) / 100;
         calculatedWeight = 1;
         displayWeight = weight;
         displayUnit = config.weightUnit;
       } else {
         // Default case - assume per unit pricing
-        totalPrice = Math.round(product.price * calculatedWeight * 100) / 100;
+        totalPrice = Math.round((Number(product.price) || 0) * (Number(calculatedWeight) || 0) * 100) / 100;
       }
 
       res.json({
@@ -3296,6 +3298,547 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     } catch (error) {
       console.error('Error importing translations:', error);
       res.status(500).json({ message: 'Failed to import translations' });
+    }
+  });
+
+  // Sales Analytics API endpoints
+  app.get("/api/admin/sales/overview", isAuthenticated, async (req: any, res) => {
+    try {
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      const { from, to } = req.query;
+      const db = await getDB();
+      
+      // Calculate date ranges for comparison (non-overlapping periods)
+      const fromDate = from ? new Date(from as string) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const toDate = to ? new Date(to as string) : new Date();
+      const periodDays = Math.ceil((toDate.getTime() - fromDate.getTime()) / (24 * 60 * 60 * 1000));
+      const previousFromDate = new Date(fromDate.getTime() - periodDays * 24 * 60 * 60 * 1000);
+      // Fix date range overlap: use half-open interval [prevFrom, prevTo)
+      const previousToDate = new Date(fromDate.getTime() - 1);
+
+      // Current period metrics using CTE to get both cancelled and non-cancelled data
+      const currentQuery = await db.execute(sql`
+        WITH all_orders AS (
+          SELECT 
+            o.id,
+            o.total_amount,
+            o.status,
+            o.user_id,
+            o.guest_phone,
+            o.guest_email
+          FROM orders o
+          WHERE o.created_at >= ${fromDate.toISOString()} 
+            AND o.created_at <= ${toDate.toISOString()}
+        )
+        SELECT 
+          COUNT(CASE WHEN status != 'cancelled' THEN id END) as order_count,
+          COALESCE(SUM(CASE WHEN status != 'cancelled' THEN total_amount END), 0) as total_revenue,
+          COALESCE(AVG(CASE WHEN status != 'cancelled' THEN total_amount END), 0) as avg_order_value,
+          COUNT(DISTINCT CASE 
+            WHEN status != 'cancelled' THEN 
+              CASE WHEN user_id IS NOT NULL THEN user_id::text 
+                   ELSE COALESCE(guest_phone, guest_email, 'unknown') 
+              END
+          END) as unique_buyers,
+          COUNT(CASE WHEN status = 'cancelled' THEN 1 END) as cancelled_orders,
+          COUNT(*) as total_orders_including_cancelled
+        FROM all_orders
+      `);
+
+      // Previous period metrics using CTE to get both cancelled and non-cancelled data
+      const previousQuery = await db.execute(sql`
+        WITH all_orders AS (
+          SELECT 
+            o.id,
+            o.total_amount,
+            o.status,
+            o.user_id,
+            o.guest_phone,
+            o.guest_email
+          FROM orders o
+          WHERE o.created_at >= ${previousFromDate.toISOString()} 
+            AND o.created_at < ${previousToDate.toISOString()}
+        )
+        SELECT 
+          COUNT(CASE WHEN status != 'cancelled' THEN id END) as order_count,
+          COALESCE(SUM(CASE WHEN status != 'cancelled' THEN total_amount END), 0) as total_revenue,
+          COALESCE(AVG(CASE WHEN status != 'cancelled' THEN total_amount END), 0) as avg_order_value,
+          COUNT(DISTINCT CASE 
+            WHEN status != 'cancelled' THEN 
+              CASE WHEN user_id IS NOT NULL THEN user_id::text 
+                   ELSE COALESCE(guest_phone, guest_email, 'unknown') 
+              END
+          END) as unique_buyers,
+          COUNT(CASE WHEN status = 'cancelled' THEN 1 END) as cancelled_orders,
+          COUNT(*) as total_orders_including_cancelled
+        FROM all_orders
+      `);
+
+      const current = currentQuery.rows[0];
+      const previous = previousQuery.rows[0];
+
+      // Helper function to calculate trend and color
+      const calculateTrend = (currentValue: number, previousValue: number, isReverse = false) => {
+        if (previousValue === 0) return { trend: 'stable', percentChange: 0, color: 'yellow' };
+        const percentChange = ((currentValue - previousValue) / previousValue) * 100;
+        const trend = percentChange > 5 ? 'up' : percentChange < -5 ? 'down' : 'stable';
+        
+        let color: 'green' | 'red' | 'yellow';
+        if (isReverse) {
+          color = trend === 'up' ? 'red' : trend === 'down' ? 'green' : 'yellow';
+        } else {
+          color = trend === 'up' ? 'green' : trend === 'down' ? 'red' : 'yellow';
+        }
+        
+        return { trend, percentChange: Math.round(percentChange * 100) / 100, color };
+      };
+
+      const response: any = {
+        revenue: {
+          current: Number(current.total_revenue),
+          previous: Number(previous.total_revenue),
+          ...calculateTrend(Number(current.total_revenue), Number(previous.total_revenue))
+        },
+        ordersCount: {
+          current: Number(current.order_count),
+          previous: Number(previous.order_count),
+          ...calculateTrend(Number(current.order_count), Number(previous.order_count))
+        },
+        averageOrderValue: {
+          current: Number(current.avg_order_value),
+          previous: Number(previous.avg_order_value),
+          ...calculateTrend(Number(current.avg_order_value), Number(previous.avg_order_value))
+        },
+        uniqueBuyers: {
+          current: Number(current.unique_buyers),
+          previous: Number(previous.unique_buyers),
+          ...calculateTrend(Number(current.unique_buyers), Number(previous.unique_buyers))
+        },
+        cancellationRate: {
+          current: Number(current.total_orders_including_cancelled) > 0 
+            ? Number(current.cancelled_orders) / Number(current.total_orders_including_cancelled) * 100 
+            : 0,
+          previous: Number(previous.total_orders_including_cancelled) > 0 
+            ? Number(previous.cancelled_orders) / Number(previous.total_orders_including_cancelled) * 100 
+            : 0,
+          ...calculateTrend(
+            Number(current.total_orders_including_cancelled) > 0 
+              ? Number(current.cancelled_orders) / Number(current.total_orders_including_cancelled) * 100 
+              : 0,
+            Number(previous.total_orders_including_cancelled) > 0 
+              ? Number(previous.cancelled_orders) / Number(previous.total_orders_including_cancelled) * 100 
+              : 0,
+            true // Reverse because lower cancellation is better
+          )
+        },
+        period: {
+          current: `${fromDate.toISOString().split('T')[0]} - ${toDate.toISOString().split('T')[0]}`,
+          previous: `${previousFromDate.toISOString().split('T')[0]} - ${previousToDate.toISOString().split('T')[0]}`
+        }
+      };
+
+      res.json(response);
+    } catch (error) {
+      console.error('Error fetching sales overview:', error);
+      res.status(500).json({ message: 'Failed to fetch sales overview' });
+    }
+  });
+
+  app.get("/api/admin/sales/channels", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user || (user.role !== 'admin' && user.role !== 'worker')) {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      const { from, to } = req.query as { from?: string; to?: string };
+      const db = await getDB();
+      
+      const fromDate = from ? new Date(from) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const toDate = to ? new Date(to) : new Date();
+
+      // Language analysis
+      const languagesQuery = await db.execute(sql`
+        SELECT 
+          o.order_language,
+          COUNT(o.id) as orders,
+          COALESCE(SUM(o.total_amount), 0) as revenue
+        FROM orders o
+        WHERE o.created_at >= ${fromDate.toISOString()} 
+          AND o.created_at <= ${toDate.toISOString()}
+          AND o.status != 'cancelled'
+        GROUP BY o.order_language
+        ORDER BY revenue DESC
+      `);
+
+      // Payment methods analysis
+      const paymentMethodsQuery = await db.execute(sql`
+        SELECT 
+          COALESCE(o.payment_method, 'Not specified') as payment_method,
+          COUNT(o.id) as orders,
+          COALESCE(SUM(o.total_amount), 0) as revenue
+        FROM orders o
+        WHERE o.created_at >= ${fromDate.toISOString()} 
+          AND o.created_at <= ${toDate.toISOString()}
+          AND o.status != 'cancelled'
+        GROUP BY o.payment_method
+        ORDER BY revenue DESC
+      `);
+
+      // User types analysis
+      const userTypesQuery = await db.execute(sql`
+        SELECT 
+          CASE WHEN o.user_id IS NOT NULL THEN 'registered' ELSE 'guest' END as user_type,
+          COUNT(o.id) as orders,
+          COALESCE(SUM(o.total_amount), 0) as revenue,
+          COALESCE(AVG(o.total_amount), 0) as avg_order_value
+        FROM orders o
+        WHERE o.created_at >= ${fromDate.toISOString()} 
+          AND o.created_at <= ${toDate.toISOString()}
+          AND o.status != 'cancelled'
+        GROUP BY CASE WHEN o.user_id IS NOT NULL THEN 'registered' ELSE 'guest' END
+      `);
+
+      const totalRevenue = languagesQuery.rows.reduce((sum: number, row: any) => sum + Number(row.revenue || 0), 0);
+      const totalOrders = languagesQuery.rows.reduce((sum: number, row: any) => sum + Number(row.orders || 0), 0);
+
+      // Generate colors for visualization
+      const colors = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#06B6D4'];
+
+      const languageNames: { [key: string]: string } = {
+        'ru': 'Русский',
+        'en': 'English', 
+        'he': 'עברית',
+        'ar': 'العربية'
+      };
+
+      const paymentMethodNames: { [key: string]: string } = {
+        'cash': 'Наличные',
+        'card': 'Карта',
+        'transfer': 'Перевод',
+        'Not specified': 'Не указан'
+      };
+
+      const response: any = {
+        languages: languagesQuery.rows.map((row: any, index: number) => ({
+          language: row.order_language,
+          languageName: languageNames[row.order_language] || row.order_language,
+          revenue: Number(row.revenue),
+          orders: Number(row.orders),
+          percentage: totalRevenue > 0 ? Math.round((Number(row.revenue) / totalRevenue) * 10000) / 100 : 0,
+          color: colors[index % colors.length]
+        })),
+        paymentMethods: paymentMethodsQuery.rows.map((row: any, index: number) => ({
+          method: row.payment_method,
+          methodName: paymentMethodNames[row.payment_method] || row.payment_method,
+          revenue: Number(row.revenue),
+          orders: Number(row.orders),
+          percentage: totalRevenue > 0 ? Math.round((Number(row.revenue) / totalRevenue) * 10000) / 100 : 0,
+          color: colors[index % colors.length]
+        })),
+        userTypes: {
+          registered: userTypesQuery.rows.find((row: any) => row.user_type === 'registered') ? {
+            revenue: Number(userTypesQuery.rows.find((row: any) => row.user_type === 'registered')!.revenue),
+            orders: Number(userTypesQuery.rows.find((row: any) => row.user_type === 'registered')!.orders),
+            percentage: totalRevenue > 0 ? Math.round((Number(userTypesQuery.rows.find((row: any) => row.user_type === 'registered')!.revenue) / totalRevenue) * 10000) / 100 : 0,
+            averageOrderValue: Number(userTypesQuery.rows.find((row: any) => row.user_type === 'registered')!.avg_order_value)
+          } : { revenue: 0, orders: 0, percentage: 0, averageOrderValue: 0 },
+          guest: userTypesQuery.rows.find((row: any) => row.user_type === 'guest') ? {
+            revenue: Number(userTypesQuery.rows.find((row: any) => row.user_type === 'guest')!.revenue),
+            orders: Number(userTypesQuery.rows.find((row: any) => row.user_type === 'guest')!.orders),
+            percentage: totalRevenue > 0 ? Math.round((Number(userTypesQuery.rows.find((row: any) => row.user_type === 'guest')!.revenue) / totalRevenue) * 10000) / 100 : 0,
+            averageOrderValue: Number(userTypesQuery.rows.find((row: any) => row.user_type === 'guest')!.avg_order_value)
+          } : { revenue: 0, orders: 0, percentage: 0, averageOrderValue: 0 }
+        }
+      };
+
+      res.json(response);
+    } catch (error) {
+      console.error('Error fetching channel analysis:', error);
+      res.status(500).json({ message: 'Failed to fetch channel analysis' });
+    }
+  });
+
+  app.get("/api/admin/sales/products", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user || (user.role !== 'admin' && user.role !== 'worker')) {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      const { from, to, limit = '10' } = req.query as { from?: string; to?: string; limit?: string };
+      const parsedLimit = parseInt(limit, 10) || 10;
+      const db = await getDB();
+      
+      const fromDate = from ? new Date(from) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const toDate = to ? new Date(to) : new Date();
+
+      // Top products by revenue
+      const topProductsQuery = await db.execute(sql`
+        SELECT 
+          p.id,
+          p.name,
+          p.is_special_offer,
+          COALESCE(SUM(oi.total_price), 0) as revenue,
+          COALESCE(SUM(oi.quantity), 0) as quantity,
+          COUNT(DISTINCT o.id) as orders
+        FROM products p
+        LEFT JOIN order_items oi ON p.id = oi.product_id
+        LEFT JOIN orders o ON oi.order_id = o.id
+        WHERE (o.created_at IS NULL OR (o.created_at >= ${fromDate.toISOString()} 
+          AND o.created_at <= ${toDate.toISOString()}
+          AND o.status != 'cancelled'))
+        GROUP BY p.id, p.name, p.is_special_offer
+        ORDER BY revenue DESC
+        LIMIT ${parsedLimit}
+      `);
+
+      // Special offers vs regular products
+      const specialOffersQuery = await db.execute(sql`
+        SELECT 
+          p.is_special_offer,
+          COUNT(DISTINCT o.id) as orders,
+          COALESCE(SUM(oi.total_price), 0) as revenue,
+          COALESCE(AVG(o.total_amount), 0) as avg_order_value
+        FROM orders o
+        JOIN order_items oi ON o.id = oi.order_id
+        JOIN products p ON oi.product_id = p.id
+        WHERE o.created_at >= ${fromDate.toISOString()} 
+          AND o.created_at <= ${toDate.toISOString()}
+          AND o.status != 'cancelled'
+        GROUP BY p.is_special_offer
+      `);
+
+      // Low performing products (no sales in period)
+      const lowPerformersQuery = await db.execute(sql`
+        SELECT DISTINCT
+          p.id,
+          p.name,
+          p.stock_status,
+          COALESCE(recent_orders.revenue, 0) as revenue,
+          COALESCE(recent_orders.quantity, 0) as quantity,
+          last_order.last_order_date
+        FROM products p
+        LEFT JOIN (
+          SELECT 
+            oi.product_id,
+            SUM(oi.total_price) as revenue,
+            SUM(oi.quantity) as quantity
+          FROM order_items oi
+          JOIN orders o ON oi.order_id = o.id
+          WHERE o.created_at >= ${fromDate.toISOString()} 
+            AND o.created_at <= ${toDate.toISOString()}
+            AND o.status != 'cancelled'
+          GROUP BY oi.product_id
+        ) recent_orders ON p.id = recent_orders.product_id
+        LEFT JOIN (
+          SELECT 
+            oi.product_id,
+            MAX(o.created_at) as last_order_date
+          FROM order_items oi
+          JOIN orders o ON oi.order_id = o.id
+          WHERE o.status != 'cancelled'
+          GROUP BY oi.product_id
+        ) last_order ON p.id = last_order.product_id
+        WHERE recent_orders.revenue IS NULL OR recent_orders.revenue = 0
+        ORDER BY last_order.last_order_date DESC NULLS LAST
+        LIMIT 20
+      `);
+
+      const specialOffersData = specialOffersQuery.rows.find((row: any) => row.is_special_offer === true);
+      const regularData = specialOffersQuery.rows.find((row: any) => row.is_special_offer === false);
+
+      const totalRevenue = specialOffersQuery.rows.reduce((sum: number, row: any) => sum + Number(row.revenue || 0), 0);
+
+      const response: any = {
+        topProducts: topProductsQuery.rows.map((row: any) => ({
+          id: Number(row.id),
+          name: row.name,
+          revenue: Number(row.revenue),
+          quantity: Number(row.quantity),
+          orders: Number(row.orders),
+          isSpecialOffer: row.is_special_offer
+        })),
+        specialOffers: specialOffersData ? {
+          revenue: Number(specialOffersData.revenue),
+          orders: Number(specialOffersData.orders),
+          percentage: totalRevenue > 0 ? Math.round((Number(specialOffersData.revenue) / totalRevenue) * 10000) / 100 : 0,
+          averageOrderValue: Number(specialOffersData.avg_order_value)
+        } : { revenue: 0, orders: 0, percentage: 0, averageOrderValue: 0 },
+        regular: regularData ? {
+          revenue: Number(regularData.revenue),
+          orders: Number(regularData.orders),
+          percentage: totalRevenue > 0 ? Math.round((Number(regularData.revenue) / totalRevenue) * 10000) / 100 : 0,
+          averageOrderValue: Number(regularData.avg_order_value)
+        } : { revenue: 0, orders: 0, percentage: 0, averageOrderValue: 0 },
+        lowPerformers: lowPerformersQuery.rows.map((row: any) => ({
+          id: Number(row.id),
+          name: row.name,
+          revenue: Number(row.revenue),
+          quantity: Number(row.quantity),
+          lastOrderDate: row.last_order_date,
+          stockStatus: row.stock_status
+        }))
+      };
+
+      res.json(response);
+    } catch (error) {
+      console.error('Error fetching product analysis:', error);
+      res.status(500).json({ message: 'Failed to fetch product analysis' });
+    }
+  });
+
+  app.get("/api/admin/sales/issues", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user || (user.role !== 'admin' && user.role !== 'worker')) {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      const { from, to } = req.query as { from?: string; to?: string };
+      const db = await getDB();
+      
+      const fromDate = from ? new Date(from) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const toDate = to ? new Date(to) : new Date();
+
+      // Cancellation analysis
+      const cancellationsQuery = await db.execute(sql`
+        SELECT 
+          COALESCE(o.cancellation_reason, 'Причина не указана') as reason,
+          COUNT(*) as count
+        FROM orders o
+        WHERE o.created_at >= ${fromDate.toISOString()} 
+          AND o.created_at <= ${toDate.toISOString()}
+          AND o.status = 'cancelled'
+        GROUP BY o.cancellation_reason
+        ORDER BY count DESC
+        LIMIT 10
+      `);
+
+      const totalCancelledQuery = await db.execute(sql`
+        SELECT 
+          COUNT(*) as total_cancelled,
+          (SELECT COUNT(*) FROM orders WHERE created_at >= ${fromDate.toISOString()} 
+           AND created_at <= ${toDate.toISOString()}) as total_orders
+        FROM orders o
+        WHERE o.created_at >= ${fromDate.toISOString()} 
+          AND o.created_at <= ${toDate.toISOString()}
+          AND o.status = 'cancelled'
+      `);
+
+      // Inventory issues
+      const inventoryQuery = await db.execute(sql`
+        SELECT 
+          p.id,
+          p.name,
+          p.stock_status,
+          p.availability_status,
+          last_order.last_order_date,
+          CASE 
+            WHEN p.availability_status = 'out_of_stock_today' THEN 1
+            ELSE 0
+          END as missed_orders_estimate
+        FROM products p
+        LEFT JOIN (
+          SELECT 
+            oi.product_id,
+            MAX(o.created_at) as last_order_date
+          FROM order_items oi
+          JOIN orders o ON oi.order_id = o.id
+          WHERE o.status != 'cancelled'
+          GROUP BY oi.product_id
+        ) last_order ON p.id = last_order.product_id
+        WHERE p.stock_status IN ('low_stock', 'out_of_stock') 
+           OR p.availability_status IN ('out_of_stock_today', 'completely_unavailable')
+        ORDER BY 
+          CASE 
+            WHEN p.stock_status = 'out_of_stock' THEN 1
+            WHEN p.availability_status = 'completely_unavailable' THEN 2
+            WHEN p.availability_status = 'out_of_stock_today' THEN 3
+            WHEN p.stock_status = 'low_stock' THEN 4
+            ELSE 5
+          END,
+          last_order.last_order_date DESC NULLS LAST
+        LIMIT 20
+      `);
+
+      // Recent orders for monitoring
+      const recentOrdersQuery = await db.execute(sql`
+        SELECT 
+          o.id,
+          o.status,
+          o.total_amount,
+          o.order_language,
+          o.payment_method,
+          CASE WHEN o.user_id IS NOT NULL THEN false ELSE true END as is_guest,
+          o.created_at
+        FROM orders o
+        ORDER BY o.created_at DESC
+        LIMIT 20
+      `);
+
+      const totalCancelled = Number(totalCancelledQuery.rows[0]?.total_cancelled || 0);
+      const totalOrders = Number(totalCancelledQuery.rows[0]?.total_orders || 0);
+      const cancellationRate = totalOrders > 0 ? (totalCancelled / totalOrders) * 100 : 0;
+
+      const totalCancellationReasons = cancellationsQuery.rows.reduce((sum: number, row: any) => sum + Number(row.count), 0);
+
+      const response: any = {
+        cancellations: {
+          total: totalCancelled,
+          rate: Math.round(cancellationRate * 100) / 100,
+          topReasons: cancellationsQuery.rows.map((row: any) => ({
+            reason: row.reason,
+            count: Number(row.count),
+            percentage: totalCancellationReasons > 0 ? Math.round((Number(row.count) / totalCancellationReasons) * 10000) / 100 : 0
+          }))
+        },
+        inventory: {
+          lowStock: inventoryQuery.rows
+            .filter((row: any) => row.stock_status === 'low_stock')
+            .map((row: any) => ({
+              id: Number(row.id),
+              name: row.name,
+              stockStatus: row.stock_status,
+              availabilityStatus: row.availability_status,
+              lastOrderDate: row.last_order_date
+            })),
+          outOfStock: inventoryQuery.rows
+            .filter((row: any) => row.stock_status === 'out_of_stock' || 
+                    row.availability_status === 'out_of_stock_today' || 
+                    row.availability_status === 'completely_unavailable')
+            .map((row: any) => ({
+              id: Number(row.id),
+              name: row.name,
+              stockStatus: row.stock_status,
+              availabilityStatus: row.availability_status,
+              missedOrders: Number(row.missed_orders_estimate)
+            }))
+        },
+        recentOrders: recentOrdersQuery.rows.map((row: any) => ({
+          id: Number(row.id),
+          status: row.status,
+          totalAmount: Number(row.total_amount),
+          orderLanguage: row.order_language,
+          paymentMethod: row.payment_method,
+          isGuest: row.is_guest,
+          createdAt: row.created_at
+        }))
+      };
+
+      res.json(response);
+    } catch (error) {
+      console.error('Error fetching sales issues:', error);
+      res.status(500).json({ message: 'Failed to fetch sales issues' });
     }
   });
 
