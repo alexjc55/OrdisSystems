@@ -745,11 +745,27 @@ export default function Home() {
 
               {/* Filter Controls - Sticky on mobile */}
               {(selectedCategoryId === 0 || selectedCategory || searchQuery.length <= 2) && (
-                <div className="sticky top-16 z-50 bg-gray-50 py-3 mb-6 lg:static lg:py-0 lg:mb-6 lg:bg-transparent border-b lg:border-0 border-gray-200">
+                <div 
+                  className="relative mb-6 lg:mb-6"
+                  style={{ 
+                    position: 'sticky',
+                    top: '64px',
+                    zIndex: 1000,
+                    backgroundColor: '#f9fafb',
+                    paddingTop: '12px',
+                    paddingBottom: '12px',
+                    borderBottom: '1px solid #e5e7eb',
+                    marginLeft: '-24px',
+                    marginRight: '-24px',
+                    paddingLeft: '24px',
+                    paddingRight: '24px'
+                  }}
+                  data-testid="filters-sticky-container"
+                >
                   <div className="flex gap-2 sm:gap-4">
                     {/* Category filter */}
                     <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
-                      <SelectTrigger className="flex-1 min-w-0 text-sm">
+                      <SelectTrigger className="flex-1 min-w-0 text-sm" data-testid="select-category-filter">
                         <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
                       </SelectTrigger>
                       <SelectContent>
@@ -764,7 +780,7 @@ export default function Home() {
 
                     {/* Discount filter */}
                     <Select value={discountFilter} onValueChange={setDiscountFilter}>
-                      <SelectTrigger className="flex-1 min-w-0 text-sm">
+                      <SelectTrigger className="flex-1 min-w-0 text-sm" data-testid="select-discount-filter">
                         <SelectValue placeholder={t('filterByDiscount')} />
                       </SelectTrigger>
                       <SelectContent>
