@@ -472,7 +472,7 @@ export default function Home() {
       <Header onResetView={handleResetView} />
       
       {/* Header Variant - Full width banners - only show on main page */}
-      {!selectedCategory && !searchQuery && (
+      {!selectedCategory && !searchQuery && selectedCategoryId !== 0 && (
         <HeaderVariant 
           storeSettings={storeSettings} 
           style={headerStyle as 'classic' | 'modern' | 'minimal'}

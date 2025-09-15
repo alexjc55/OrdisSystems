@@ -86,8 +86,8 @@ export default function StickyFilters({
 
             {/* Filter Controls */}
             {showFilters && (
-              <div className="flex gap-2 flex-shrink-0">
-                <div className="min-w-[120px] sm:min-w-[160px]">
+              <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto">
+                <div className="flex-1 sm:min-w-[160px]">
                   <Select value={categoryFilter} onValueChange={onCategoryFilterChange}>
                     <SelectTrigger className="text-sm h-9" data-testid="select-category">
                       <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
@@ -103,7 +103,7 @@ export default function StickyFilters({
                   </Select>
                 </div>
 
-                <div className="min-w-[110px] sm:min-w-[140px]">
+                <div className="flex-1 sm:min-w-[140px]">
                   <Select value={discountFilter} onValueChange={onDiscountFilterChange}>
                     <SelectTrigger className="text-sm h-9" data-testid="select-discount">
                       <SelectValue placeholder={t('filterByDiscount')} />
