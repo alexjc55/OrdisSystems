@@ -1011,5 +1011,96 @@
     "step3Description": "ارفع الملف المحرر مرة أخرى إلى النظام",
     "important": "مهم",
     "primaryLanguageFieldsRequired": "حقول اللغة الأساسية يجب أن تكون مملوءة ولا يمكن أن تكون فارغة"
+  },
+  "sales": {
+    "title": "تحليلات المبيعات",
+    "description": "تحليل المبيعات ومقاييس الأعمال",
+    "errorLoading": "خطأ في تحميل التحليلات",
+    "refreshPrompt": "يرجى تحديث الصفحة",
+    "accessRequired": "تحتاج إلى صلاحية المدير لعرض تحليلات المبيعات",
+    "metrics": {
+      "totalRevenue": "إجمالي الإيرادات",
+      "totalOrders": "إجمالي الطلبات",
+      "uniqueBuyers": "المشترون الفريدون",
+      "cancellationRate": "معدل الإلغاء",
+      "averageOrderValue": "متوسط قيمة الطلب",
+      "ordersPerDay": "الطلبات في اليوم",
+      "revenuePerDay": "الإيرادات في اليوم",
+      "revenue": "الإيرادات"
+    },
+    "tabs": {
+      "overview": "نظرة عامة",
+      "channels": "القنوات",
+      "products": "المنتجات",
+      "issues": "المشاكل",
+      "insights": "الرؤى"
+    },
+    "channels": {
+      "salesByLanguage": "المبيعات حسب اللغة",
+      "orders": "طلبات",
+      "registeredVsGuest": "مسجلون مقابل ضيوف",
+      "registeredUsers": "مستخدمون مسجلون",
+      "guestUsers": "مستخدمون ضيوف",
+      "average": "متوسط"
+    },
+    "products": {
+      "topProducts": "أهم المنتجات",
+      "specialOffer": "عرض خاص",
+      "sold": "مباع"
+    },
+    "charts": {
+      "topProductsChart": "رسم بياني لأهم المنتجات"
+    },
+    "issues": {
+      "orderCancellations": "إلغاء الطلبات",
+      "cancelledOrders": "الطلبات الملغاة",
+      "topCancellationReasons": "أهم أسباب الإلغاء",
+      "inventoryIssues": "مشاكل المخزون",
+      "status": "الحالة",
+      "lastOrder": "آخر طلب",
+      "noOutOfStock": "لا توجد منتجات غير متوفرة",
+      "lowStock": "مخزون منخفض",
+      "noLowStock": "لا توجد منتجات بمخزون منخفض",
+      "recentOrdersMonitor": "مراقب الطلبات الحديثة",
+      "guest": "ضيف",
+      "registered": "مسجل"
+    },
+    "insights": {
+      "revenueDown": {
+        "title": "انخفاض الإيرادات",
+        "desc": "فكر في حملات تسويقية أو عروض ترويجية",
+        "action": "راجع استراتيجية التسعير"
+      },
+      "highCancellation": {
+        "title": "معدل إلغاء مرتفع",
+        "desc": "% من الطلبات يتم إلغاؤها",
+        "action": "تحقق من مشاكل عملية الطلب"
+      },
+      "languageOpportunity": {
+        "title": "فرصة تنويع السوق",
+        "desc": "لا توجد لغة واحدة مهيمنة. فكر في التوسع في ",
+        "action": "استثمر في التسويق المحلي"
+      },
+      "lowPerformers": {
+        "title": "المنتجات تحتاج إلى اهتمام",
+        "desc": " منتجات لديها مبيعات منخفضة",
+        "action": "راجع أوصاف المنتجات والتسعير"
+      },
+      "paymentMethods": {
+        "title": "أضف خيارات دفع أكثر",
+        "desc": "المزيد من طرق الدفع يمكن أن تزيد معدل التحويل",
+        "action": "فكر في إضافة محافظ رقمية"
+      },
+      "cancellationPattern": {
+        "title": "تم اكتشاف نمط الإلغاء",
+        "desc": " يمثل % من الإلغاءات",
+        "action": "عالج المشاكل فوراً"
+      },
+      "lowConversion": {
+        "title": "تحسين معدل التحويل",
+        "desc": "% معدل التحويل قابل للتحسين",
+        "action": "اختبر A/B لتدفق الطلب وصفحات المنتجات"
+      }
+    }
   }
 }
