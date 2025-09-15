@@ -551,14 +551,48 @@ export default function Home() {
             />
           )}
 
-          {/* Search Bar - show on category/product pages */}
+          {/* Modern Filter Bar - show on category/product pages */}
           {(selectedCategory || selectedCategoryId === 0) && (
-            <div className="mb-8">
-              <SearchInput
-                value={searchQuery}
-                onChange={setSearchQuery}
-                placeholder={t('searchPlaceholder')}
-              />
+            <div className="sticky top-16 z-40 -mx-6 mb-8 bg-gray-900 shadow-lg">
+              <div className="px-6 py-6">
+                {/* Search Bar */}
+                <div className="max-w-2xl mx-auto mb-4">
+                  <SearchInput
+                    value={searchQuery}
+                    onChange={setSearchQuery}
+                    placeholder={t('searchPlaceholder')}
+                  />
+                </div>
+
+                {/* Filter Controls */}
+                {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
+                  <div className="flex gap-4 max-w-lg mx-auto">
+                    <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
+                      <SelectTrigger className="flex-1 bg-white border-gray-300 text-gray-900">
+                        <SelectValue placeholder={t('filterByCategory', 'Все категории')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{t('allCategories')}</SelectItem>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id.toString()}>
+                            {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Select value={discountFilter} onValueChange={setDiscountFilter}>
+                      <SelectTrigger className="flex-1 bg-white border-gray-300 text-gray-900">
+                        <SelectValue placeholder={t('filterByDiscount', 'Все товары')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{t('allProducts')}</SelectItem>
+                        <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -743,32 +777,31 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Filter Controls */}
-              {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
-                <div className="flex gap-2 sm:gap-4 mb-6">
-                  <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
-                    <SelectTrigger className="flex-1 min-w-0 text-sm">
-                      <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t('allCategories')}</SelectItem>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
-                          {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select value={discountFilter} onValueChange={setDiscountFilter}>
-                    <SelectTrigger className="flex-1 min-w-0 text-sm">
-                      <SelectValue placeholder={t('filterByDiscount')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t('allProducts')}</SelectItem>
-                      <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
-                    </SelectContent>
-                  </Select>
+              {/* Category Header */}
+              {selectedCategory && (
+                <div className="text-center mb-8">
+                  <h1 className="text-4xl font-bold text-gray-900 mb-3">
+                    {getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                  </h1>
+                  {selectedCategory.description && (
+                    <p className="text-xl text-gray-600 font-light">
+                      {getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru')}
+                    </p>
+                  )}
+                  <div className="w-16 h-1 bg-primary mx-auto mt-4 rounded-full"></div>
+                </div>
+              )}
+              
+              {/* All Products Header */}
+              {selectedCategoryId === 0 && !searchQuery && (
+                <div className="text-center mb-8">
+                  <h1 className="text-4xl font-bold text-gray-900 mb-3">
+                    {t('allProducts')}
+                  </h1>
+                  <p className="text-xl text-gray-600 font-light">
+                    {t('browseAllProducts', 'Просмотр всех доступных товаров')}
+                  </p>
+                  <div className="w-16 h-1 bg-primary mx-auto mt-4 rounded-full"></div>
                 </div>
               )}
 
