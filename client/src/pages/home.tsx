@@ -743,32 +743,34 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Filter Controls */}
+              {/* Filter Controls - Sticky on mobile */}
               {(selectedCategoryId === 0 || searchQuery.length <= 2) && (
-                <div className="flex gap-2 sm:gap-4 mb-6">
-                  <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
-                    <SelectTrigger className="flex-1 min-w-0 text-sm">
-                      <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t('allCategories')}</SelectItem>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
-                          {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="sticky top-16 z-30 bg-gray-50 pb-2 mb-6 lg:static lg:pb-0 lg:bg-transparent">
+                  <div className="flex gap-2 sm:gap-4">
+                    <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
+                      <SelectTrigger className="flex-1 min-w-0 text-sm">
+                        <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{t('allCategories')}</SelectItem>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id.toString()}>
+                            {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
 
-                  <Select value={discountFilter} onValueChange={setDiscountFilter}>
-                    <SelectTrigger className="flex-1 min-w-0 text-sm">
-                      <SelectValue placeholder={t('filterByDiscount')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t('allProducts')}</SelectItem>
-                      <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    <Select value={discountFilter} onValueChange={setDiscountFilter}>
+                      <SelectTrigger className="flex-1 min-w-0 text-sm">
+                        <SelectValue placeholder={t('filterByDiscount')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{t('allProducts')}</SelectItem>
+                        <SelectItem value="discount">{t('onlyDiscounted')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               )}
 
