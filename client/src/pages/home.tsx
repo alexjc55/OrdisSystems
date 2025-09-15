@@ -191,7 +191,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
       </div>
 
       {/* Right Column: Delivery & Payment */}
-      {(getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) || getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage)) && (
+      {(getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as any) || getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as any)) && (
         <div className="flex">
           <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden flex-1 flex flex-col">
             <div className="p-6 flex-1 flex flex-col">
@@ -202,16 +202,16 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                 <span className="font-semibold text-lg text-gray-800">{t('paymentMethod')} & {t('cart.delivery')}</span>
               </div>
               <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
-                {getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage) && (
+                {getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as any) && (
                   <div>
                     <span className="text-gray-700 text-base font-bold block mb-2">{t('cart.delivery')}:</span>
-                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage)}</span>
+                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as any)}</span>
                   </div>
                 )}
-                {getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage) && (
+                {getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as any) && (
                   <div>
                     <span className="text-gray-700 text-base font-bold block mb-2">{t('paymentMethod')}:</span>
-                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage)}</span>
+                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as any)}</span>
                   </div>
                 )}
               </div>

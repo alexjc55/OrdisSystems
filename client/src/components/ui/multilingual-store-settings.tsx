@@ -1,4 +1,4 @@
-import { type SupportedLanguage } from '@shared/localization';
+import { type Language } from '@/lib/i18n';
 
 // Simple multilingual field helpers for store settings
 // Automatically uses current language or falls back to default
@@ -6,8 +6,8 @@ import { type SupportedLanguage } from '@shared/localization';
 export function getMultilingualValue(
   storeSettings: any,
   baseField: string,
-  currentLanguage: SupportedLanguage,
-  defaultLanguage: SupportedLanguage = 'ru'
+  currentLanguage: Language,
+  defaultLanguage: Language = 'ru'
 ): string {
   // Convert field name to proper database field format
   // Database uses camelCase: storeNameEn, welcomeTitleEn, etc.
@@ -39,7 +39,7 @@ export function getMultilingualValue(
 export function createMultilingualUpdate(
   baseField: string,
   value: string,
-  currentLanguage: SupportedLanguage
+  currentLanguage: Language
 ): Record<string, any> {
   // Convert field name to proper database field format
   let fieldName: string;
