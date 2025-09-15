@@ -119,10 +119,49 @@ export const productCategories = pgTable("product_categories", {
   uniq: unique().on(table.productId, table.categoryId),
 }));
 
+// Analytics sessions for UTM tracking
+export const analyticsSessions = pgTable("analytics_sessions", {
+  id: varchar("id").primaryKey().notNull(), // UUID session ID
+  firstSeenAt: timestamp("first_seen_at").defaultNow().notNull(),
+  lastSeenAt: timestamp("last_seen_at").defaultNow().notNull(),
+  // UTM parameters
+  utmSource: varchar("utm_source", { length: 100 }), // facebook, yandex, google, organic, direct
+  utmMedium: varchar("utm_medium", { length: 100 }), // cpc, organic, referral, direct
+  utmCampaign: varchar("utm_campaign", { length: 100 }),
+  utmTerm: varchar("utm_term", { length: 100 }),
+  utmContent: varchar("utm_content", { length: 100 }),
+  // Additional tracking data
+  referrer: text("referrer"), // Full referrer URL
+  landingPath: text("landing_path"), // First page visited
+  device: varchar("device", { length: 50 }), // mobile, desktop, tablet
+  language: varchar("language", { length: 5 }).default("ru"), // User's language
+  userAgent: text("user_agent"),
+  ipAddress: varchar("ip_address", { length: 45 }), // IPv4/IPv6
+  city: varchar("city", { length: 100 }),
+  country: varchar("country", { length: 2 }),
+});
+
+// Analytics events for conversion tracking
+export const analyticsEvents = pgTable("analytics_events", {
+  id: serial("id").primaryKey(),
+  sessionId: varchar("session_id").references(() => analyticsSessions.id, { onDelete: "cascade" }).notNull(),
+  type: varchar("type", { 
+    enum: ["page_view", "add_to_cart", "remove_from_cart", "checkout_start", "order_placed", "payment_failed", "product_view", "category_view", "search"] 
+  }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  // Event-specific data stored as JSON
+  eventData: jsonb("event_data"), // { productId, quantity, value, etc. }
+  value: decimal("value", { precision: 10, scale: 2 }), // For revenue tracking
+  productId: integer("product_id").references(() => products.id),
+  categoryId: integer("category_id").references(() => categories.id),
+  orderId: integer("order_id").references(() => orders.id),
+});
+
 // Orders table
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").references(() => users.id),
+  sessionId: varchar("session_id").references(() => analyticsSessions.id), // Link to analytics session
   status: varchar("status", { enum: ["pending", "confirmed", "preparing", "ready", "delivered", "cancelled"] }).default("pending").notNull(),
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
   deliveryFee: decimal("delivery_fee", { precision: 10, scale: 2 }).default("0.00"),
@@ -143,6 +182,14 @@ export const orders = pgTable("orders", {
   requestedDeliveryTime: timestamp("requested_delivery_time"),
   paymentMethod: varchar("payment_method", { length: 50 }),
   cancellationReason: text("cancellation_reason"),
+  // UTM attribution snapshot (captured at order time)
+  utmSource: varchar("utm_source", { length: 100 }),
+  utmMedium: varchar("utm_medium", { length: 100 }),
+  utmCampaign: varchar("utm_campaign", { length: 100 }),
+  utmTerm: varchar("utm_term", { length: 100 }),
+  utmContent: varchar("utm_content", { length: 100 }),
+  trafficSource: varchar("traffic_source", { length: 50 }), // facebook_ads, yandex_ads, google_ads, organic, direct
+  referrer: text("referrer"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -710,6 +757,23 @@ export const insertUserAddressSchema = createInsertSchema(userAddresses).omit({
   updatedAt: true,
 });
 
+// Analytics schemas
+export const insertAnalyticsSessionSchema = createInsertSchema(analyticsSessions).omit({
+  lastSeenAt: true, // This will be updated automatically
+}).extend({
+  utmSource: z.enum(["facebook", "yandex", "google", "organic", "direct"]).optional(),
+  utmMedium: z.enum(["cpc", "organic", "referral", "direct", "social", "email"]).optional(),
+  device: z.enum(["mobile", "desktop", "tablet"]).optional(),
+});
+
+export const insertAnalyticsEventSchema = createInsertSchema(analyticsEvents).omit({
+  id: true,
+  createdAt: true,
+}).extend({
+  type: z.enum(["page_view", "add_to_cart", "remove_from_cart", "checkout_start", "order_placed", "payment_failed", "product_view", "category_view", "search"]),
+  value: z.string().optional().transform(val => val ? parseFloat(val) : undefined),
+});
+
 // Base schema without transform for updateThemeSchema
 const baseThemeSchema = createInsertSchema(themes).omit({
   createdAt: true,
@@ -816,6 +880,10 @@ export type InsertUserAddress = z.infer<typeof insertUserAddressSchema>;
 export type UserAddress = typeof userAddresses.$inferSelect;
 export type InsertTheme = z.infer<typeof insertThemeSchema>;
 export type Theme = typeof themes.$inferSelect;
+export type InsertAnalyticsSession = z.infer<typeof insertAnalyticsSessionSchema>;
+export type AnalyticsSession = typeof analyticsSessions.$inferSelect;
+export type InsertAnalyticsEvent = z.infer<typeof insertAnalyticsEventSchema>;
+export type AnalyticsEvent = typeof analyticsEvents.$inferSelect;
 
 // Extended types with relations
 export type InsertProductCategory = z.infer<typeof insertProductCategorySchema>;
