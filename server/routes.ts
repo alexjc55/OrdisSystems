@@ -4,11 +4,11 @@ import { storage } from "./storage";
 import { getDB } from "./db";
 import { setupAuth, isAuthenticated } from "./auth";
 import bcrypt from "bcryptjs";
-import { insertCategorySchema, insertProductSchema, insertOrderSchema, insertStoreSettingsSchema, updateStoreSettingsSchema, insertThemeSchema, updateThemeSchema, pushSubscriptions, marketingNotifications, storeSettings } from "@shared/schema";
+import { insertCategorySchema, insertProductSchema, insertOrderSchema, insertStoreSettingsSchema, updateStoreSettingsSchema, insertThemeSchema, updateThemeSchema, pushSubscriptions, marketingNotifications, storeSettings, analyticsSessions, analyticsEvents } from "@shared/schema";
 import { PushNotificationService } from "./push-notifications";
 import { emailService, sendNewOrderEmail, sendGuestOrderEmail } from "./email-service";
 import { z } from "zod";
-import { sql } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -3462,17 +3462,24 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       const fromDate = from ? new Date(from) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       const toDate = to ? new Date(to) : new Date();
 
-      // Language analysis
-      const languagesQuery = await db.execute(sql`
+      // Traffic source analysis from UTM data - join sessions with orders for proper conversion rates
+      const trafficSourcesQuery = await db.execute(sql`
         SELECT 
-          o.order_language,
+          COALESCE(s.utm_source, 'direct') as source,
+          COALESCE(s.utm_medium, 'none') as medium,
+          COUNT(DISTINCT s.id) as sessions,
           COUNT(o.id) as orders,
-          COALESCE(SUM(o.total_amount), 0) as revenue
-        FROM orders o
-        WHERE o.created_at >= ${fromDate.toISOString()} 
+          COALESCE(SUM(o.total_amount), 0) as revenue,
+          CASE WHEN COUNT(o.id) > 0 THEN COALESCE(AVG(o.total_amount), 0) ELSE 0 END as avg_order_value,
+          CASE WHEN COUNT(DISTINCT s.id) > 0 THEN ROUND((COUNT(o.id)::float / COUNT(DISTINCT s.id)) * 100, 2) ELSE 0 END as conversion_rate
+        FROM analytics_sessions s
+        LEFT JOIN orders o ON s.id = o.session_id 
+          AND o.created_at >= ${fromDate.toISOString()} 
           AND o.created_at <= ${toDate.toISOString()}
           AND o.status != 'cancelled'
-        GROUP BY o.order_language
+        WHERE s.first_seen_at >= ${fromDate.toISOString()} 
+          AND s.first_seen_at <= ${toDate.toISOString()}
+        GROUP BY s.utm_source, s.utm_medium
         ORDER BY revenue DESC
       `);
 
@@ -3504,17 +3511,21 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         GROUP BY CASE WHEN o.user_id IS NOT NULL THEN 'registered' ELSE 'guest' END
       `);
 
-      const totalRevenue = languagesQuery.rows.reduce((sum: number, row: any) => sum + Number(row.revenue || 0), 0);
-      const totalOrders = languagesQuery.rows.reduce((sum: number, row: any) => sum + Number(row.orders || 0), 0);
+      const totalRevenue = trafficSourcesQuery.rows.reduce((sum: number, row: any) => sum + Number(row.revenue || 0), 0);
+      const totalOrders = trafficSourcesQuery.rows.reduce((sum: number, row: any) => sum + Number(row.orders || 0), 0);
 
       // Generate colors for visualization
       const colors = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#06B6D4'];
 
-      const languageNames: { [key: string]: string } = {
-        'ru': 'Русский',
-        'en': 'English', 
-        'he': 'עברית',
-        'ar': 'العربية'
+      const trafficSourceNames: { [key: string]: string } = {
+        'facebook': 'Facebook реклама',
+        'yandex': 'Яндекс реклама', 
+        'google': 'Google реклама',
+        'organic': 'Органический трафик',
+        'direct': 'Прямые переходы',
+        'referral': 'Переходы с сайтов',
+        'social': 'Социальные сети',
+        'email': 'Email рассылки'
       };
 
       const paymentMethodNames: { [key: string]: string } = {
@@ -3525,12 +3536,16 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       };
 
       const response: any = {
-        languages: languagesQuery.rows.map((row: any, index: number) => ({
-          language: row.order_language,
-          languageName: languageNames[row.order_language] || row.order_language,
+        trafficSources: trafficSourcesQuery.rows.map((row: any, index: number) => ({
+          source: row.source,
+          medium: row.medium,
+          sourceName: trafficSourceNames[row.source] || row.source,
           revenue: Number(row.revenue),
           orders: Number(row.orders),
-          percentage: totalRevenue > 0 ? Math.round((Number(row.revenue) / totalRevenue) * 10000) / 100 : 0,
+          sessions: Number(row.sessions),
+          conversionRate: Number(row.conversion_rate),
+          averageOrderValue: Number(row.avg_order_value),
+          revenuePercentage: totalRevenue > 0 ? Math.round((Number(row.revenue) / totalRevenue) * 10000) / 100 : 0,
           color: colors[index % colors.length]
         })),
         paymentMethods: paymentMethodsQuery.rows.map((row: any, index: number) => ({
@@ -3932,6 +3947,97 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     } catch (error) {
       console.error('Error generating JSON feed:', error);
       res.status(500).json({ message: 'Failed to generate feed' });
+    }
+  });
+
+  // Analytics tracking endpoint with Zod validation
+  const sessionDataSchema = z.object({
+    id: z.string().min(1).max(200),
+    firstSeenAt: z.string().datetime(),
+    lastSeenAt: z.string().datetime(),
+    utm_source: z.string().max(100).optional(),
+    utm_medium: z.string().max(100).optional(),
+    utm_campaign: z.string().max(200).optional(),
+    utm_term: z.string().max(200).optional(),
+    utm_content: z.string().max(500).optional(),
+    referrer: z.string().max(500).optional(),
+    landingPath: z.string().max(500).optional(),
+    device: z.string().max(100).optional(),
+    language: z.string().max(10).optional(),
+  });
+
+  const analyticsEventSchema = z.object({
+    sessionId: z.string().min(1).max(200),
+    type: z.enum(['page_view', 'add_to_cart', 'remove_from_cart', 'checkout_start', 'order_placed', 'payment_failed', 'product_view', 'category_view', 'search']),
+    timestamp: z.string().datetime().optional(),
+    eventData: z.record(z.unknown()).optional(),
+    value: z.union([z.string(), z.number()]).optional(),
+    productId: z.string().max(50).optional(),
+    categoryId: z.string().max(50).optional(), 
+    orderId: z.string().max(50).optional(),
+  });
+
+  const analyticsRequestSchema = z.union([
+    z.object({
+      type: z.literal('session_start'),
+      sessionData: sessionDataSchema,
+    }),
+    analyticsEventSchema
+  ]);
+
+  app.post("/api/analytics/track", async (req, res) => {
+    try {
+      // Validate request body
+      const validatedData = analyticsRequestSchema.parse(req.body);
+      const db = await getDB();
+
+      if (validatedData.type === 'session_start' && 'sessionData' in validatedData) {
+        // Create or update analytics session
+        const sessionData = validatedData.sessionData;
+        await db.insert(analyticsSessions).values({
+          id: sessionData.id,
+          firstSeenAt: new Date(sessionData.firstSeenAt),
+          lastSeenAt: new Date(sessionData.lastSeenAt),
+          utmSource: sessionData.utm_source || null,
+          utmMedium: sessionData.utm_medium || null,
+          utmCampaign: sessionData.utm_campaign || null,
+          utmTerm: sessionData.utm_term || null,
+          utmContent: sessionData.utm_content || null,
+          referrer: sessionData.referrer || null,
+          landingPath: sessionData.landingPath || null,
+          device: sessionData.device || null,
+          language: sessionData.language || null,
+          userAgent: req.headers['user-agent'] as string || null,
+          ipAddress: req.ip || req.connection.remoteAddress || null,
+        }).onConflictDoUpdate({
+          target: analyticsSessions.id,
+          set: {
+            lastSeenAt: new Date(sessionData.lastSeenAt),
+          },
+        });
+      } else if ('sessionId' in validatedData) {
+        // Create analytics event
+        await db.insert(analyticsEvents).values({
+          sessionId: validatedData.sessionId,
+          type: validatedData.type,
+          createdAt: validatedData.timestamp ? new Date(validatedData.timestamp) : new Date(),
+          eventData: validatedData.eventData || null,
+          value: validatedData.value ? String(validatedData.value) : null,
+          productId: validatedData.productId || null,
+          categoryId: validatedData.categoryId || null,
+          orderId: validatedData.orderId || null,
+        });
+
+        // Update session last seen time
+        await db.update(analyticsSessions)
+          .set({ lastSeenAt: new Date() })
+          .where(eq(analyticsSessions.id, validatedData.sessionId));
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error tracking analytics:', error);
+      res.status(500).json({ message: 'Failed to track analytics' });
     }
   });
 
