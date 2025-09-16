@@ -3471,7 +3471,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
           COUNT(o.id) as orders,
           COALESCE(SUM(o.total_amount), 0) as revenue,
           CASE WHEN COUNT(o.id) > 0 THEN COALESCE(AVG(o.total_amount), 0) ELSE 0 END as avg_order_value,
-          CASE WHEN COUNT(DISTINCT s.id) > 0 THEN ROUND((COUNT(o.id)::float / COUNT(DISTINCT s.id)) * 100, 2) ELSE 0 END as conversion_rate
+          CASE WHEN COUNT(DISTINCT s.id) > 0 THEN ROUND((COUNT(o.id)::numeric / COUNT(DISTINCT s.id)) * 100, 2) ELSE 0 END as conversion_rate
         FROM analytics_sessions s
         LEFT JOIN orders o ON s.id = o.session_id 
           AND o.created_at >= ${fromDate.toISOString()} 
