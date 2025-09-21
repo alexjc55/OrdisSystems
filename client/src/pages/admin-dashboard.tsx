@@ -3605,20 +3605,6 @@ export default function AdminDashboard() {
               <p className={`text-gray-600 text-sm sm:text-base ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('dashboard.description')}</p>
             </div>
             
-            {/* Analytics Button */}
-            <div className="flex-shrink-0">
-              <Link href="/admin/analytics">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="flex items-center gap-2 sm:px-3 px-2.5 sm:w-auto w-10 sm:h-auto h-10"
-                  data-testid="button-analytics-navigate"
-                >
-                  <BarChart3 className="h-4 w-4" />
-                  <span className="hidden sm:inline">{adminT('analytics.title')}</span>
-                </Button>
-              </Link>
-            </div>
 
           </div>
         </div>
