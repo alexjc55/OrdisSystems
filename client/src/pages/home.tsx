@@ -162,7 +162,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
         )}
 
         {/* Contact Information */}
-        {(storeSettings?.contactPhone || storeSettings?.contactEmail) && (
+        {(storeSettings?.contactPhone || storeSettings?.contactEmail || getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage)) && (
           <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
             <div className="p-6">
               <div className="flex items-center gap-3 mb-4">
@@ -182,6 +182,17 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                   <div className="text-base sm:text-lg flex justify-between">
                     <span className="text-gray-700 font-bold">{t('email')}:</span>
                     <span className="text-gray-700 break-all">{storeSettings.contactEmail}</span>
+                  </div>
+                )}
+                {getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage) && (
+                  <div className="text-base sm:text-lg flex justify-between">
+                    <span className="text-gray-700 font-bold flex items-center gap-1">
+                      <MapPin className="h-4 w-4" />
+                      {t('address')}:
+                    </span>
+                    <span className="text-gray-700 text-right break-words max-w-[60%]">
+                      {getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage)}
+                    </span>
                   </div>
                 )}
               </div>
