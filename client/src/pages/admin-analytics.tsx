@@ -43,7 +43,7 @@ const PERIOD_PRESETS = [
 
 export default function AdminAnalytics() {
   const { t } = useCommonTranslation();
-  const adminT = useAdminTranslation();
+  const { t: adminT } = useAdminTranslation();
   
   const [selectedPeriod, setSelectedPeriod] = useState<string>('today');
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
