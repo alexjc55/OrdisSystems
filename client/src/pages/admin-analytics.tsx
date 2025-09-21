@@ -174,7 +174,7 @@ export default function AdminAnalytics() {
   // Format chart data for display
   const chartData = timeseriesData?.map(item => ({
     date: format(parseISO(item.bucketStart), 'dd/MM'),
-    orders: item.orders,
+    totalOrders: item.orders,
     completedOrders: item.completedOrders,
     revenue: item.revenue
   })) || [];
@@ -427,13 +427,13 @@ export default function AdminAnalytics() {
                         if (name === 'revenue') {
                           return [formatCurrency(value as number), adminT('analytics.chart.revenue')];
                         }
-                        return [value, name === 'orders' ? adminT('analytics.chart.totalOrders') : adminT('analytics.chart.completedOrders')];
+                        return [value, name === 'totalOrders' ? adminT('analytics.chart.totalOrders') : adminT('analytics.chart.completedOrders')];
                       }}
                     />
                     <Legend />
                     <Bar 
                       yAxisId="orders"
-                      dataKey="orders" 
+                      dataKey="totalOrders" 
                       fill="#3b82f6" 
                       name={adminT('analytics.chart.totalOrders')}
                       opacity={0.8}
