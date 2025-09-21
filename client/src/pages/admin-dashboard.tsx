@@ -302,7 +302,8 @@ import {
   QrCode,
   Camera,
   Menu,
-  Mail
+  Mail,
+  BarChart3
 } from "lucide-react";
 
 // Validation schemas
@@ -8749,6 +8750,61 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           </CollapsibleTrigger>
           
           <CollapsibleContent className="space-y-6">
+            {/* Analytics Events Info */}
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <BarChart3 className="h-5 w-5 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium text-blue-900 mb-2">{adminT('analytics.eventsInfo')}</h4>
+                  <p className="text-sm text-blue-800 mb-3">
+                    {adminT('analytics.eventsDescription')}
+                  </p>
+                  
+                  <div className="space-y-2">
+                    <div className="text-xs bg-white/70 rounded p-3 border border-blue-200/50">
+                      <div className="font-semibold text-blue-900 mb-2">{adminT('analytics.automaticEvents')}</div>
+                      <ul className="space-y-1 text-blue-700">
+                        <li className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <code className="text-xs bg-white px-1.5 py-0.5 rounded font-mono">purchase</code>
+                          <span>- {adminT('analytics.purchaseEvent')}</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                          <code className="text-xs bg-white px-1.5 py-0.5 rounded font-mono">order_completed</code>
+                          <span>- {adminT('analytics.orderCompletedEvent')}</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                          <code className="text-xs bg-white px-1.5 py-0.5 rounded font-mono">thank_you_page_visited</code>
+                          <span>- {adminT('analytics.thankYouPageEvent')}</span>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <div className="text-xs bg-white/70 rounded p-3 border border-blue-200/50">
+                      <div className="font-semibold text-blue-900 mb-2">{adminT('analytics.eventParameters')}</div>
+                      <ul className="space-y-1 text-blue-700 font-mono text-xs">
+                        <li><code>order_id</code> - {adminT('analytics.orderIdParam')}</li>
+                        <li><code>order_price</code> - {adminT('analytics.orderPriceParam')}</li>
+                        <li><code>currency</code> - {adminT('analytics.currencyParam')} (ILS)</li>
+                        <li><code>is_guest</code> - {adminT('analytics.isGuestParam')}</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="text-xs bg-amber-50 rounded p-3 border border-amber-200">
+                      <div className="font-semibold text-amber-900 mb-1">{adminT('analytics.setupNote')}</div>
+                      <p className="text-amber-800">
+                        {adminT('analytics.setupInstructions')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <FormField
               control={form.control}
               name="headerHtml"

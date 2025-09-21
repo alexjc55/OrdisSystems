@@ -1210,5 +1210,20 @@
     "step3Description": "Upload the edited file back to the system",
     "important": "Important",
     "primaryLanguageFieldsRequired": "Primary language fields must be filled and cannot be empty"
+  },
+  "analytics": {
+    "eventsInfo": "Analytics Tracking System",
+    "eventsDescription": "The store automatically sends analytics events to Yandex Metrika, Facebook Pixel and Google Analytics when purchases are completed.",
+    "automaticEvents": "Automatic Events",
+    "purchaseEvent": "Purchase event (main conversion)",
+    "orderCompletedEvent": "Order completed",
+    "thankYouPageEvent": "Thank you page visit",
+    "eventParameters": "Event Parameters",
+    "orderIdParam": "Order ID",
+    "orderPriceParam": "Order amount",
+    "currencyParam": "Currency",
+    "isGuestParam": "Guest order (true/false)",
+    "setupNote": "💡 Goal Setup",
+    "setupInstructions": "In Yandex Metrika create goals of type 'JavaScript-event' with identifiers: purchase, order_completed, thank_you_page_visited"
   }
 }

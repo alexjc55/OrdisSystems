@@ -1299,5 +1299,20 @@
     "step3Description": "העלה את הקובץ הערוך חזרה למערכת",
     "important": "חשוב",
     "primaryLanguageFieldsRequired": "שדות השפה הראשית חייבים להיות מלאים ולא יכולים להיות ריקים"
+  },
+  "analytics": {
+    "eventsInfo": "מערכת מעקב אנליטיקה",
+    "eventsDescription": "החנות שולחת אוטומטית אירועי אנליטיקה לYandex Metrika, Facebook Pixel ו-Google Analytics כאשר רכישות מושלמות.",
+    "automaticEvents": "אירועים אוטומטיים",
+    "purchaseEvent": "אירוע רכישה (המרה עיקרית)",
+    "orderCompletedEvent": "הזמנה הושלמה",
+    "thankYouPageEvent": "ביקור בעמוד תודה",
+    "eventParameters": "פרמטרי אירוע",
+    "orderIdParam": "מזהה הזמנה",
+    "orderPriceParam": "סכום הזמנה",
+    "currencyParam": "מטבע",
+    "isGuestParam": "הזמנת אורח (true/false)",
+    "setupNote": "💡 הגדרת מטרות",
+    "setupInstructions": "ב-Yandex Metrika צרו מטרות מסוג 'אירוע JavaScript' עם המזהים: purchase, order_completed, thank_you_page_visited"
   }
 }

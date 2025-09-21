@@ -1011,5 +1011,20 @@
     "step3Description": "ارفع الملف المحرر مرة أخرى إلى النظام",
     "important": "مهم",
     "primaryLanguageFieldsRequired": "حقول اللغة الأساسية يجب أن تكون مملوءة ولا يمكن أن تكون فارغة"
+  },
+  "analytics": {
+    "eventsInfo": "نظام تتبع التحليلات",
+    "eventsDescription": "يرسل المتجر تلقائياً أحداث التحليلات إلى Yandex Metrika و Facebook Pixel و Google Analytics عند إتمام المشتريات.",
+    "automaticEvents": "الأحداث التلقائية",
+    "purchaseEvent": "حدث الشراء (التحويل الرئيسي)",
+    "orderCompletedEvent": "تم إكمال الطلب",
+    "thankYouPageEvent": "زيارة صفحة الشكر",
+    "eventParameters": "معاملات الحدث",
+    "orderIdParam": "معرف الطلب",
+    "orderPriceParam": "مبلغ الطلب",
+    "currencyParam": "العملة",
+    "isGuestParam": "طلب ضيف (true/false)",
+    "setupNote": "💡 إعداد الأهداف",
+    "setupInstructions": "في Yandex Metrika أنشئ أهدافاً من نوع 'حدث JavaScript' بالمعرفات: purchase, order_completed, thank_you_page_visited"
   }
 }
