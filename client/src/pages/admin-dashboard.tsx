@@ -27,6 +27,7 @@ import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { getMultilingualValue, createMultilingualUpdate } from "@/components/ui/multilingual-store-settings";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
+import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -3602,6 +3603,21 @@ export default function AdminDashboard() {
             <div className={`${isRTL ? 'text-right ml-auto' : 'text-left mr-auto'} w-full sm:w-auto`}>
               <h1 className={`text-2xl sm:text-3xl font-bold text-gray-900 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('dashboard.title')}</h1>
               <p className={`text-gray-600 text-sm sm:text-base ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('dashboard.description')}</p>
+            </div>
+            
+            {/* Analytics Button */}
+            <div className="flex-shrink-0">
+              <Link href="/admin/analytics">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center gap-2"
+                  data-testid="button-analytics-navigate"
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  {adminT('analytics.title')}
+                </Button>
+              </Link>
             </div>
 
           </div>
@@ -8757,57 +8773,57 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   <BarChart3 className="h-5 w-5 text-blue-600" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-medium text-blue-900 mb-2">{adminT('analytics.eventsInfo')}</h4>
+                  <h4 className="font-medium text-blue-900 mb-2">{adminT('analyticsTracking.eventsInfo')}</h4>
                   <p className="text-sm text-blue-800 mb-3">
-                    {adminT('analytics.eventsDescription')}
+                    {adminT('analyticsTracking.eventsDescription')}
                   </p>
                   
                   <div className="space-y-2">
                     <div className="text-xs bg-white/70 rounded p-3 border border-blue-200/50">
-                      <div className="font-semibold text-blue-900 mb-2">{adminT('analytics.automaticEvents')}</div>
+                      <div className="font-semibold text-blue-900 mb-2">{adminT('analyticsTracking.automaticEvents')}</div>
                       <ul className="space-y-1 text-blue-700">
                         <li className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                           <code className="text-xs bg-white px-1.5 py-0.5 rounded font-mono">purchase</code>
-                          <span>- {adminT('analytics.purchaseEvent')}</span>
+                          <span>- {adminT('analyticsTracking.purchaseEvent')}</span>
                         </li>
                         <li className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                           <code className="text-xs bg-white px-1.5 py-0.5 rounded font-mono">order_completed</code>
-                          <span>- {adminT('analytics.orderCompletedEvent')}</span>
+                          <span>- {adminT('analyticsTracking.orderCompletedEvent')}</span>
                         </li>
                         <li className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                           <code className="text-xs bg-white px-1.5 py-0.5 rounded font-mono">thank_you_page_visited</code>
-                          <span>- {adminT('analytics.thankYouPageEvent')}</span>
+                          <span>- {adminT('analyticsTracking.thankYouPageEvent')}</span>
                         </li>
                       </ul>
                     </div>
                     
                     <div className="text-xs bg-white/70 rounded p-3 border border-blue-200/50">
-                      <div className="font-semibold text-blue-900 mb-2">{adminT('analytics.eventParameters')}</div>
+                      <div className="font-semibold text-blue-900 mb-2">{adminT('analyticsTracking.eventParameters')}</div>
                       <ul className="space-y-1 text-blue-700 font-mono text-xs">
-                        <li><code>order_id</code> - {adminT('analytics.orderIdParam')}</li>
-                        <li><code>order_price</code> - {adminT('analytics.orderPriceParam')}</li>
-                        <li><code>currency</code> - {adminT('analytics.currencyParam')} (ILS)</li>
-                        <li><code>is_guest</code> - {adminT('analytics.isGuestParam')}</li>
+                        <li><code>order_id</code> - {adminT('analyticsTracking.orderIdParam')}</li>
+                        <li><code>order_price</code> - {adminT('analyticsTracking.orderPriceParam')}</li>
+                        <li><code>currency</code> - {adminT('analyticsTracking.currencyParam')} (ILS)</li>
+                        <li><code>is_guest</code> - {adminT('analyticsTracking.isGuestParam')}</li>
                       </ul>
                     </div>
                     
                     <div className="text-xs bg-amber-50 rounded p-3 border border-amber-200">
-                      <div className="font-semibold text-amber-900 mb-2">{adminT('analytics.setupNote')}</div>
+                      <div className="font-semibold text-amber-900 mb-2">{adminT('analyticsTracking.setupNote')}</div>
                       <div className="space-y-3">
                         <div>
-                          <div className="font-medium text-amber-900 mb-1">🟡 {adminT('analytics.yandexSetup')}</div>
-                          <p className="text-amber-800">{adminT('analytics.yandexInstructions')}</p>
+                          <div className="font-medium text-amber-900 mb-1">🟡 {adminT('analyticsTracking.yandexSetup')}</div>
+                          <p className="text-amber-800">{adminT('analyticsTracking.yandexInstructions')}</p>
                         </div>
                         <div>
-                          <div className="font-medium text-amber-900 mb-1">🔵 {adminT('analytics.facebookSetup')}</div>
-                          <p className="text-amber-800">{adminT('analytics.facebookInstructions')}</p>
+                          <div className="font-medium text-amber-900 mb-1">🔵 {adminT('analyticsTracking.facebookSetup')}</div>
+                          <p className="text-amber-800">{adminT('analyticsTracking.facebookInstructions')}</p>
                         </div>
                         <div>
-                          <div className="font-medium text-amber-900 mb-1">🟢 {adminT('analytics.googleSetup')}</div>
-                          <p className="text-amber-800">{adminT('analytics.googleInstructions')}</p>
+                          <div className="font-medium text-amber-900 mb-1">🟢 {adminT('analyticsTracking.googleSetup')}</div>
+                          <p className="text-amber-800">{adminT('analyticsTracking.googleInstructions')}</p>
                         </div>
                       </div>
                     </div>

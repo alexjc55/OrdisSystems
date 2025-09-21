@@ -1319,5 +1319,46 @@
     "facebookInstructions": "אירועי Purchase, PageView ו-Custom נשלחים אוטומטית. הגדירו המרות במנהל האירועים של Facebook",
     "googleSetup": "Google Analytics 4",
     "googleInstructions": "אירועי purchase, page_view ואירועים מותאמים יופיעו אוטומטית בדוחות. הגדירו המרות בקטע 'אירועים'"
+  },
+  "analytics": {
+    "title": "אנליטיקה",
+    "description": "סטטיסטיקות הזמנות והכנסות לתקופות שונות",
+    "filters": {
+      "title": "מסנני תקופה",
+      "selectFromDate": "בחרו תאריך התחלה",
+      "selectToDate": "בחרו תאריך סיום",
+      "selectedPeriod": "תקופה נבחרת"
+    },
+    "periods": {
+      "today": "היום",
+      "yesterday": "אתמול",
+      "last7Days": "7 ימים",
+      "thisMonth": "החודש הזה",
+      "thisYear": "השנה הזאת",
+      "allTime": "כל הזמן",
+      "custom": "מותאם"
+    },
+    "kpis": {
+      "totalOrders": "סך הכל הזמנות",
+      "revenue": "הכנסות",
+      "revenueDescription": "הזמנות שהושלמו בלבד",
+      "conversionRate": "שיעור המרה",
+      "of": "מתוך",
+      "ordersCompleted": "הושלמו",
+      "averageOrderValue": "ערך הזמנה ממוצע",
+      "averageOrderDescription": "ערך ממוצע של הזמנה שהושלמה"
+    },
+    "chart": {
+      "title": "גרף מכירות",
+      "description": "דינמיקת הזמנות והכנסות לתקופה הנבחרת",
+      "date": "תאריך",
+      "totalOrders": "סך הכל הזמנות",
+      "completedOrders": "הזמנות שהושלמו",
+      "revenue": "הכנסות",
+      "noData": "אין נתונים להצגה"
+    },
+    "error": {
+      "failedToLoad": "נכשל בטעינת נתוני אנליטיקה"
+    }
   }
 }

@@ -1216,7 +1216,7 @@
     "important": "Важно",
     "primaryLanguageFieldsRequired": "Поля основного языка должны быть заполнены и не могут быть пустыми"
   },
-  "analytics": {
+  "analyticsTracking": {
     "eventsInfo": "Система отслеживания аналитики",
     "eventsDescription": "Магазин автоматически отправляет события аналитики в Яндекс Метрику, Facebook Pixel и Google Analytics при совершении покупок.",
     "automaticEvents": "Автоматические события",
@@ -1235,5 +1235,46 @@
     "facebookInstructions": "События Purchase, PageView и Custom автоматически отправляются. Настройте конверсии в Менеджере событий Facebook",
     "googleSetup": "Google Analytics 4",
     "googleInstructions": "События purchase, page_view и custom events автоматически появятся в отчетах. Настройте конверсии в разделе 'События'"
+  },
+  "analytics": {
+    "title": "Аналитика",
+    "description": "Статистика заказов и выручки за различные периоды",
+    "filters": {
+      "title": "Фильтры периода",
+      "selectFromDate": "Выберите начальную дату",
+      "selectToDate": "Выберите конечную дату",
+      "selectedPeriod": "Выбранный период"
+    },
+    "periods": {
+      "today": "Сегодня",
+      "yesterday": "Вчера",
+      "last7Days": "7 дней",
+      "thisMonth": "Этот месяц",
+      "thisYear": "Этот год",
+      "allTime": "Максимум",
+      "custom": "Период"
+    },
+    "kpis": {
+      "totalOrders": "Всего заказов",
+      "revenue": "Выручка",
+      "revenueDescription": "Только завершенные заказы",
+      "conversionRate": "Конверсия",
+      "of": "из",
+      "ordersCompleted": "завершены",
+      "averageOrderValue": "Средний чек",
+      "averageOrderDescription": "Средняя стоимость завершенного заказа"
+    },
+    "chart": {
+      "title": "График продаж",
+      "description": "Динамика заказов и выручки за выбранный период",
+      "date": "Дата",
+      "totalOrders": "Всего заказов",
+      "completedOrders": "Завершенные заказы",
+      "revenue": "Выручка",
+      "noData": "Нет данных для отображения"
+    },
+    "error": {
+      "failedToLoad": "Не удалось загрузить данные аналитики"
+    }
   }
 }

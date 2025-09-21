@@ -23,6 +23,7 @@ import { updateDocumentDirection } from "@/lib/i18n";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 import AdminDashboard from "@/pages/admin-dashboard";
+import AdminAnalytics from "@/pages/admin-analytics";
 import Profile from "@/pages/profile";
 import ChangePasswordPage from "@/pages/change-password";
 import ForgotPasswordPage from "@/pages/forgot-password";
@@ -266,6 +267,7 @@ function Router() {
         <Route path="/category/:categoryId" component={Home} />
         <Route path="/all-products" component={Home} />
         <Route path="/auth" component={AuthPage} />
+        <ProtectedRoute path="/admin/analytics" component={() => <AdminAnalytics />} />
         <ProtectedRoute path="/admin" component={() => <AdminDashboard />} />
         <ProtectedRoute path="/profile" component={() => <Profile />} />
         <Route path="/checkout" component={Checkout} />

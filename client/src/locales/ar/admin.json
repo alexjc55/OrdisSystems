@@ -1031,5 +1031,46 @@
     "facebookInstructions": "يتم إرسال أحداث Purchase و PageView و Custom تلقائياً. قم بإعداد التحويلات في مدير الأحداث في Facebook",
     "googleSetup": "Google Analytics 4",
     "googleInstructions": "ستظهر أحداث purchase و page_view والأحداث المخصصة تلقائياً في التقارير. قم بإعداد التحويلات في قسم 'الأحداث'"
+  },
+  "analytics": {
+    "title": "التحليلات",
+    "description": "إحصائيات الطلبات والإيرادات لفترات مختلفة",
+    "filters": {
+      "title": "مرشحات الفترة",
+      "selectFromDate": "اختر تاريخ البداية",
+      "selectToDate": "اختر تاريخ النهاية",
+      "selectedPeriod": "الفترة المحددة"
+    },
+    "periods": {
+      "today": "اليوم",
+      "yesterday": "أمس",
+      "last7Days": "7 أيام",
+      "thisMonth": "هذا الشهر",
+      "thisYear": "هذا العام",
+      "allTime": "جميع الأوقات",
+      "custom": "مخصص"
+    },
+    "kpis": {
+      "totalOrders": "إجمالي الطلبات",
+      "revenue": "الإيرادات",
+      "revenueDescription": "الطلبات المكتملة فقط",
+      "conversionRate": "معدل التحويل",
+      "of": "من",
+      "ordersCompleted": "مكتمل",
+      "averageOrderValue": "متوسط قيمة الطلب",
+      "averageOrderDescription": "القيمة المتوسطة للطلب المكتمل"
+    },
+    "chart": {
+      "title": "مخطط المبيعات",
+      "description": "ديناميكية الطلبات والإيرادات للفترة المحددة",
+      "date": "التاريخ",
+      "totalOrders": "إجمالي الطلبات",
+      "completedOrders": "الطلبات المكتملة",
+      "revenue": "الإيرادات",
+      "noData": "لا توجد بيانات للعرض"
+    },
+    "error": {
+      "failedToLoad": "فشل في تحميل بيانات التحليلات"
+    }
   }
 }

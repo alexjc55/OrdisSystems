@@ -1211,7 +1211,7 @@
     "important": "Important",
     "primaryLanguageFieldsRequired": "Primary language fields must be filled and cannot be empty"
   },
-  "analytics": {
+  "analyticsTracking": {
     "eventsInfo": "Analytics Tracking System",
     "eventsDescription": "The store automatically sends analytics events to Yandex Metrika, Facebook Pixel and Google Analytics when purchases are completed.",
     "automaticEvents": "Automatic Events",
@@ -1230,5 +1230,46 @@
     "facebookInstructions": "Purchase, PageView and Custom events are sent automatically. Set up conversions in Facebook Events Manager",
     "googleSetup": "Google Analytics 4",
     "googleInstructions": "Events purchase, page_view and custom events will appear automatically in reports. Set up conversions in 'Events' section"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "description": "Order statistics and revenue for various periods",
+    "filters": {
+      "title": "Period Filters",
+      "selectFromDate": "Select start date",
+      "selectToDate": "Select end date",
+      "selectedPeriod": "Selected period"
+    },
+    "periods": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "last7Days": "7 days",
+      "thisMonth": "This month",
+      "thisYear": "This year",
+      "allTime": "All time",
+      "custom": "Custom"
+    },
+    "kpis": {
+      "totalOrders": "Total Orders",
+      "revenue": "Revenue",
+      "revenueDescription": "Completed orders only",
+      "conversionRate": "Conversion Rate",
+      "of": "of",
+      "ordersCompleted": "completed",
+      "averageOrderValue": "Average Order Value",
+      "averageOrderDescription": "Average value of completed order"
+    },
+    "chart": {
+      "title": "Sales Chart",
+      "description": "Order and revenue dynamics for selected period",
+      "date": "Date",
+      "totalOrders": "Total Orders",
+      "completedOrders": "Completed Orders",
+      "revenue": "Revenue",
+      "noData": "No data to display"
+    },
+    "error": {
+      "failedToLoad": "Failed to load analytics data"
+    }
   }
 }
