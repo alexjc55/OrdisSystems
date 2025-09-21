@@ -8795,10 +8795,21 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                     </div>
                     
                     <div className="text-xs bg-amber-50 rounded p-3 border border-amber-200">
-                      <div className="font-semibold text-amber-900 mb-1">{adminT('analytics.setupNote')}</div>
-                      <p className="text-amber-800">
-                        {adminT('analytics.setupInstructions')}
-                      </p>
+                      <div className="font-semibold text-amber-900 mb-2">{adminT('analytics.setupNote')}</div>
+                      <div className="space-y-3">
+                        <div>
+                          <div className="font-medium text-amber-900 mb-1">🟡 {adminT('analytics.yandexSetup')}</div>
+                          <p className="text-amber-800">{adminT('analytics.yandexInstructions')}</p>
+                        </div>
+                        <div>
+                          <div className="font-medium text-amber-900 mb-1">🔵 {adminT('analytics.facebookSetup')}</div>
+                          <p className="text-amber-800">{adminT('analytics.facebookInstructions')}</p>
+                        </div>
+                        <div>
+                          <div className="font-medium text-amber-900 mb-1">🟢 {adminT('analytics.googleSetup')}</div>
+                          <p className="text-amber-800">{adminT('analytics.googleInstructions')}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

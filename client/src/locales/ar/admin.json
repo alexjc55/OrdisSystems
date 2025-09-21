@@ -1024,7 +1024,12 @@
     "orderPriceParam": "مبلغ الطلب",
     "currencyParam": "العملة",
     "isGuestParam": "طلب ضيف (true/false)",
-    "setupNote": "💡 إعداد الأهداف",
-    "setupInstructions": "في Yandex Metrika أنشئ أهدافاً من نوع 'حدث JavaScript' بالمعرفات: purchase, order_completed, thank_you_page_visited"
+    "setupNote": "💡 إعداد الأهداف في جميع المنصات",
+    "yandexSetup": "Yandex Metrika",
+    "yandexInstructions": "أنشئ أهدافاً من نوع 'حدث JavaScript' بالمعرفات: purchase, order_completed, thank_you_page_visited",
+    "facebookSetup": "Facebook Pixel",
+    "facebookInstructions": "يتم إرسال أحداث Purchase و PageView و Custom تلقائياً. قم بإعداد التحويلات في مدير الأحداث في Facebook",
+    "googleSetup": "Google Analytics 4",
+    "googleInstructions": "ستظهر أحداث purchase و page_view والأحداث المخصصة تلقائياً في التقارير. قم بإعداد التحويلات في قسم 'الأحداث'"
   }
 }

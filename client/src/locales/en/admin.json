@@ -1223,7 +1223,12 @@
     "orderPriceParam": "Order amount",
     "currencyParam": "Currency",
     "isGuestParam": "Guest order (true/false)",
-    "setupNote": "💡 Goal Setup",
-    "setupInstructions": "In Yandex Metrika create goals of type 'JavaScript-event' with identifiers: purchase, order_completed, thank_you_page_visited"
+    "setupNote": "💡 Setup Goals in All Platforms",
+    "yandexSetup": "Yandex Metrika",
+    "yandexInstructions": "Create goals of type 'JavaScript-event' with identifiers: purchase, order_completed, thank_you_page_visited",
+    "facebookSetup": "Facebook Pixel",
+    "facebookInstructions": "Purchase, PageView and Custom events are sent automatically. Set up conversions in Facebook Events Manager",
+    "googleSetup": "Google Analytics 4",
+    "googleInstructions": "Events purchase, page_view and custom events will appear automatically in reports. Set up conversions in 'Events' section"
   }
 }

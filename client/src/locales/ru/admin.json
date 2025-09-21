@@ -1228,7 +1228,12 @@
     "orderPriceParam": "Сумма заказа",
     "currencyParam": "Валюта",
     "isGuestParam": "Гостевой заказ (true/false)",
-    "setupNote": "💡 Настройка целей",
-    "setupInstructions": "В Яндекс Метрике создайте цели типа 'JavaScript-событие' с идентификаторами: purchase, order_completed, thank_you_page_visited"
+    "setupNote": "💡 Настройка целей во всех платформах",
+    "yandexSetup": "Яндекс Метрика",
+    "yandexInstructions": "Создайте цели типа 'JavaScript-событие' с идентификаторами: purchase, order_completed, thank_you_page_visited",
+    "facebookSetup": "Facebook Pixel",
+    "facebookInstructions": "События Purchase, PageView и Custom автоматически отправляются. Настройте конверсии в Менеджере событий Facebook",
+    "googleSetup": "Google Analytics 4",
+    "googleInstructions": "События purchase, page_view и custom events автоматически появятся в отчетах. Настройте конверсии в разделе 'События'"
   }
 }
