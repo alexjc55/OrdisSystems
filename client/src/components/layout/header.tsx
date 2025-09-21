@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCartStore } from "@/lib/cart";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
+import { useCommonTranslation, useLanguage, useAdminTranslation } from "@/hooks/use-language";
 import type { SupportedLanguage } from '@shared/localization';
 import { getLocalizedImageField } from '@shared/multilingual-helpers';
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download } from "lucide-react";
+import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download, BarChart3 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import type { User as UserType } from "@shared/schema";
 
@@ -50,6 +50,7 @@ export default function Header({ onResetView }: HeaderProps) {
   const { items, toggleCart } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useCommonTranslation();
+  const { t: adminT } = useAdminTranslation();
   const { currentLanguage, changeLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -125,6 +126,11 @@ export default function Header({ onResetView }: HeaderProps) {
               {(user?.role === 'admin' || user?.role === 'worker') && (
                 <Link href="/admin" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                   {t('admin')}
+                </Link>
+              )}
+              {user?.role === 'admin' && (
+                <Link href="/admin/analytics" className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+                  {adminT('analytics.title')}
                 </Link>
               )}
             </nav>
@@ -212,12 +218,20 @@ export default function Header({ onResetView }: HeaderProps) {
                       </Link>
                     </DropdownMenuItem>
                     {user?.role === 'admin' && (
-                      <DropdownMenuItem asChild>
-                        <Link href="/admin">
-                          <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                          <span>{t('adminPanel')}</span>
-                        </Link>
-                      </DropdownMenuItem>
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin">
+                            <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                            <span>{t('adminPanel')}</span>
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin/analytics">
+                            <BarChart3 className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                            <span>{adminT('analytics.title')}</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
                     )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
@@ -294,14 +308,24 @@ export default function Header({ onResetView }: HeaderProps) {
                     </Link>
                   </div>
                   
-                  {/* Second row - Admin button only for admin/worker */}
+                  {/* Second row - Admin button for admin/worker + Analytics for admin only */}
                   {(user?.role === 'admin' || user?.role === 'worker') && (
-                    <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
-                      <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-orange-600 hover:bg-orange-700 text-white transition-colors cursor-pointer">
-                        <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                        <span className="font-semibold text-sm">{t('admin')}</span>
-                      </div>
-                    </Link>
+                    <div className="flex space-x-4 rtl:space-x-reverse">
+                      <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
+                        <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-orange-600 hover:bg-orange-700 text-white transition-colors cursor-pointer">
+                          <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                          <span className="font-semibold text-sm">{t('admin')}</span>
+                        </div>
+                      </Link>
+                      {user?.role === 'admin' && (
+                        <Link href="/admin/analytics" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
+                          <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors cursor-pointer">
+                            <BarChart3 className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                            <span className="font-semibold text-sm">{adminT('analytics.title')}</span>
+                          </div>
+                        </Link>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
