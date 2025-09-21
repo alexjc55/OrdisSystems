@@ -3611,11 +3611,11 @@ export default function AdminDashboard() {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 sm:px-3 px-2.5 sm:w-auto w-10 sm:h-auto h-10"
                   data-testid="button-analytics-navigate"
                 >
                   <BarChart3 className="h-4 w-4" />
-                  {adminT('analytics.title')}
+                  <span className="hidden sm:inline">{adminT('analytics.title')}</span>
                 </Button>
               </Link>
             </div>
