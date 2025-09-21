@@ -186,7 +186,12 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                 )}
                 {getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage) && (
                   <div className="text-base sm:text-lg flex justify-between">
-                    <span className="text-gray-700 font-bold">{t('address')}:</span>
+                    <span className="text-gray-700 font-bold">
+                      {currentLanguage === 'en' ? 'Address' : 
+                       currentLanguage === 'he' ? 'כתובת' : 
+                       currentLanguage === 'ar' ? 'العنوان' : 
+                       'Адрес'}:
+                    </span>
                     <span className="text-gray-700 text-right break-words max-w-[60%]">
                       {getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage)}
                     </span>
@@ -253,7 +258,7 @@ export default function Home() {
   // Combined translation function that uses correct namespace for each key
   const tCombined = (key: string) => {
     // Keys that should use common translations
-    const commonKeys = ['address', 'phone', 'email', 'contacts', 'workingHours', 'notSpecified', 'loadingError'];
+    const commonKeys = ['deliveryAddress', 'phone', 'email', 'contacts', 'workingHours', 'notSpecified', 'loadingError'];
     
     if (commonKeys.includes(key)) {
       return tCommon(key);
