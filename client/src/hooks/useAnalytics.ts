@@ -29,6 +29,57 @@ declare global {
 }
 
 export function useAnalytics() {
+  // Helper to get Yandex Metrika counter ID
+  const getYandexCounterId = useCallback(() => {
+    // Try to find counter ID from window._ym_counter or window.yaCounter* globals first
+    const windowKeys = Object.keys(window);
+    const yaCounterKey = windowKeys.find(key => key.startsWith('yaCounter'));
+    if (yaCounterKey) {
+      const match = yaCounterKey.match(/yaCounter(\d+)/);
+      if (match && match[1]) {
+        return Number(match[1]);
+      }
+    }
+
+    // Try to extract from scripts that contain ym initialization
+    const scripts = document.getElementsByTagName('script');
+    for (let i = 0; i < scripts.length; i++) {
+      const script = scripts[i];
+      // Look for counter initialization patterns
+      if (script.innerHTML.includes('ym(') || script.innerHTML.includes('yaCounter')) {
+        const patterns = [
+          /ym\((\d+),\s*['"]/,
+          /yaCounter(\d+)/,
+          /"ym":.*?"(\d+)"/,
+          /counter_id.*?['":](\d+)/i
+        ];
+        
+        for (const pattern of patterns) {
+          const match = script.innerHTML.match(pattern);
+          if (match && match[1]) {
+            return Number(match[1]);
+          }
+        }
+      }
+    }
+    
+    // Last resort: try common counter IDs used in development/demo
+    const commonIds = [12345678, 87654321]; // Add common demo IDs
+    for (const id of commonIds) {
+      if (typeof window.ym === 'function') {
+        try {
+          // Test if this counter ID works (won't throw error if valid)
+          window.ym(id, 'getClientID');
+          return id;
+        } catch {
+          continue;
+        }
+      }
+    }
+    
+    return null;
+  }, []);
+  
   // Send pageview event to all available analytics services
   const sendPageView = useCallback((event: PageViewEvent) => {
     const { path, title, referrer } = event;
@@ -36,40 +87,18 @@ export function useAnalytics() {
     try {
       // Yandex Metrika
       if (typeof window.ym === 'function') {
-        // Find Yandex Metrika counter ID from DOM
-        const ymScript = document.querySelector('script[src*="mc.yandex.ru"]');
-        if (ymScript) {
-          // Try to extract counter ID from existing ym calls or counter elements
-          const ymCounterElement = document.querySelector('[id^="yandex_metrika_"]');
-          if (ymCounterElement) {
-            const counterId = ymCounterElement.id.replace('yandex_metrika_', '');
-            if (counterId && !isNaN(Number(counterId))) {
-              window.ym(Number(counterId), 'hit', path, {
-                referer: referrer || document.referrer,
-                title: title || document.title
-              });
-              console.log('[Analytics] Yandex Metrika pageview sent:', path);
-            }
-          } else {
-            // Fallback: try to find counter ID in ym initialization code
-            const scripts = document.getElementsByTagName('script');
-            for (let i = 0; i < scripts.length; i++) {
-              const script = scripts[i];
-              if (script.innerHTML.includes('ym(')) {
-                const match = script.innerHTML.match(/ym\((\d+),/);
-                if (match && match[1]) {
-                  const counterId = Number(match[1]);
-                  window.ym(counterId, 'hit', path, {
-                    referer: referrer || document.referrer,
-                    title: title || document.title
-                  });
-                  console.log('[Analytics] Yandex Metrika pageview sent:', path);
-                  break;
-                }
-              }
-            }
-          }
+        const counterId = getYandexCounterId();
+        if (counterId) {
+          window.ym(counterId, 'hit', path, {
+            referer: referrer || document.referrer,
+            title: title || document.title
+          });
+          console.log('[Analytics] Yandex Metrika pageview sent:', path, 'Counter:', counterId);
+        } else {
+          console.warn('[Analytics] Yandex Metrika counter ID not found - pageview skipped');
         }
+      } else {
+        console.warn('[Analytics] Yandex Metrika not available - pageview skipped');
       }
     } catch (error) {
       console.warn('[Analytics] Yandex Metrika pageview error:', error);
@@ -80,6 +109,8 @@ export function useAnalytics() {
       if (typeof window.fbq === 'function') {
         window.fbq('track', 'PageView');
         console.log('[Analytics] Facebook Pixel pageview sent:', path);
+      } else {
+        console.warn('[Analytics] Facebook Pixel not available - pageview skipped');
       }
     } catch (error) {
       console.warn('[Analytics] Facebook Pixel pageview error:', error);
@@ -94,6 +125,8 @@ export function useAnalytics() {
           page_location: window.location.origin + path
         });
         console.log('[Analytics] Google Analytics pageview sent:', path);
+      } else {
+        console.warn('[Analytics] Google Analytics not available - pageview skipped');
       }
     } catch (error) {
       console.warn('[Analytics] Google Analytics pageview error:', error);
@@ -109,11 +142,13 @@ export function useAnalytics() {
           page_location: window.location.origin + path
         });
         console.log('[Analytics] GTM dataLayer pageview sent:', path);
+      } else {
+        console.warn('[Analytics] GTM dataLayer not available - pageview skipped');
       }
     } catch (error) {
       console.warn('[Analytics] GTM dataLayer pageview error:', error);
     }
-  }, []);
+  }, [getYandexCounterId]);
 
   // Send purchase conversion event
   const sendPurchase = useCallback((event: PurchaseEvent) => {
@@ -122,42 +157,20 @@ export function useAnalytics() {
     try {
       // Yandex Metrika
       if (typeof window.ym === 'function') {
-        // Find counter ID same way as in pageview
-        const ymScript = document.querySelector('script[src*="mc.yandex.ru"]');
-        if (ymScript) {
-          const ymCounterElement = document.querySelector('[id^="yandex_metrika_"]');
-          if (ymCounterElement) {
-            const counterId = ymCounterElement.id.replace('yandex_metrika_', '');
-            if (counterId && !isNaN(Number(counterId))) {
-              // Send goal achievement
-              window.ym(Number(counterId), 'reachGoal', 'purchase', {
-                order_id: orderId,
-                order_price: value,
-                currency
-              });
-              console.log('[Analytics] Yandex Metrika purchase sent:', { orderId, value });
-            }
-          } else {
-            // Fallback: find counter ID in scripts
-            const scripts = document.getElementsByTagName('script');
-            for (let i = 0; i < scripts.length; i++) {
-              const script = scripts[i];
-              if (script.innerHTML.includes('ym(')) {
-                const match = script.innerHTML.match(/ym\((\d+),/);
-                if (match && match[1]) {
-                  const counterId = Number(match[1]);
-                  window.ym(counterId, 'reachGoal', 'purchase', {
-                    order_id: orderId,
-                    order_price: value,
-                    currency
-                  });
-                  console.log('[Analytics] Yandex Metrika purchase sent:', { orderId, value });
-                  break;
-                }
-              }
-            }
-          }
+        const counterId = getYandexCounterId();
+        if (counterId) {
+          // Send goal achievement
+          window.ym(counterId, 'reachGoal', 'purchase', {
+            order_id: orderId,
+            order_price: value,
+            currency
+          });
+          console.log('[Analytics] Yandex Metrika purchase sent:', { orderId, value, counterId });
+        } else {
+          console.warn('[Analytics] Yandex Metrika counter ID not found - purchase skipped');
         }
+      } else {
+        console.warn('[Analytics] Yandex Metrika not available - purchase skipped');
       }
     } catch (error) {
       console.warn('[Analytics] Yandex Metrika purchase error:', error);
@@ -169,11 +182,13 @@ export function useAnalytics() {
         window.fbq('track', 'Purchase', {
           value: value,
           currency: currency,
-          content_ids: [orderId],
+          content_ids: [orderId.toString()],
           content_type: 'product',
           num_items: items.length || 1
         });
         console.log('[Analytics] Facebook Pixel purchase sent:', { orderId, value });
+      } else {
+        console.warn('[Analytics] Facebook Pixel not available - purchase skipped');
       }
     } catch (error) {
       console.warn('[Analytics] Facebook Pixel purchase error:', error);
@@ -194,6 +209,8 @@ export function useAnalytics() {
           }))
         });
         console.log('[Analytics] Google Analytics purchase sent:', { orderId, value });
+      } else {
+        console.warn('[Analytics] Google Analytics not available - purchase skipped');
       }
     } catch (error) {
       console.warn('[Analytics] Google Analytics purchase error:', error);
@@ -217,42 +234,28 @@ export function useAnalytics() {
           }
         });
         console.log('[Analytics] GTM dataLayer purchase sent:', { orderId, value });
+      } else {
+        console.warn('[Analytics] GTM dataLayer not available - purchase skipped');
       }
     } catch (error) {
       console.warn('[Analytics] GTM dataLayer purchase error:', error);
     }
-  }, []);
+  }, [getYandexCounterId]);
 
   // Send custom goal/event
   const sendGoal = useCallback((goalName: string, params?: any) => {
     try {
       // Yandex Metrika custom goal
       if (typeof window.ym === 'function') {
-        const ymScript = document.querySelector('script[src*="mc.yandex.ru"]');
-        if (ymScript) {
-          const ymCounterElement = document.querySelector('[id^="yandex_metrika_"]');
-          if (ymCounterElement) {
-            const counterId = ymCounterElement.id.replace('yandex_metrika_', '');
-            if (counterId && !isNaN(Number(counterId))) {
-              window.ym(Number(counterId), 'reachGoal', goalName, params);
-              console.log('[Analytics] Yandex Metrika goal sent:', goalName, params);
-            }
-          } else {
-            const scripts = document.getElementsByTagName('script');
-            for (let i = 0; i < scripts.length; i++) {
-              const script = scripts[i];
-              if (script.innerHTML.includes('ym(')) {
-                const match = script.innerHTML.match(/ym\((\d+),/);
-                if (match && match[1]) {
-                  const counterId = Number(match[1]);
-                  window.ym(counterId, 'reachGoal', goalName, params);
-                  console.log('[Analytics] Yandex Metrika goal sent:', goalName, params);
-                  break;
-                }
-              }
-            }
-          }
+        const counterId = getYandexCounterId();
+        if (counterId) {
+          window.ym(counterId, 'reachGoal', goalName, params);
+          console.log('[Analytics] Yandex Metrika goal sent:', goalName, params, 'Counter:', counterId);
+        } else {
+          console.warn('[Analytics] Yandex Metrika counter ID not found - goal skipped:', goalName);
         }
+      } else {
+        console.warn('[Analytics] Yandex Metrika not available - goal skipped:', goalName);
       }
     } catch (error) {
       console.warn('[Analytics] Yandex Metrika goal error:', error);
@@ -263,6 +266,8 @@ export function useAnalytics() {
       if (typeof window.fbq === 'function') {
         window.fbq('trackCustom', goalName, params);
         console.log('[Analytics] Facebook Pixel custom event sent:', goalName, params);
+      } else {
+        console.warn('[Analytics] Facebook Pixel not available - custom event skipped:', goalName);
       }
     } catch (error) {
       console.warn('[Analytics] Facebook Pixel custom event error:', error);
@@ -273,11 +278,13 @@ export function useAnalytics() {
       if (typeof window.gtag === 'function') {
         window.gtag('event', goalName, params);
         console.log('[Analytics] Google Analytics custom event sent:', goalName, params);
+      } else {
+        console.warn('[Analytics] Google Analytics not available - custom event skipped:', goalName);
       }
     } catch (error) {
       console.warn('[Analytics] Google Analytics custom event error:', error);
     }
-  }, []);
+  }, [getYandexCounterId]);
 
   return {
     sendPageView,

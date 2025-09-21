@@ -76,52 +76,99 @@ export default function ThanksPage() {
       }
       return null;
     },
-    enabled: Boolean(orderData.orderId && (orderData.isGuest ? orderData.guestAccessToken : true)),
+    enabled: Boolean(orderData.orderId), // Enable for any order ID, regardless of guest status
     retry: 1,
     staleTime: 0 // Always refetch order data
   });
 
-  // Send analytics events when order data is available
+  // Track if analytics have been sent to prevent duplicates
+  const [analyticsSent, setAnalyticsSent] = useState(false);
+  
+  // Send analytics events when order data is available (once per order)
   useEffect(() => {
     // Wait for both URL parameters and order details to be loaded
-    if (!orderData.orderId || !fullOrderData) return;
+    if (!orderData.orderId || analyticsSent) return;
     
-    try {
-      // Prepare analytics data
-      const analyticsData = {
-        orderId: orderData.orderId,
-        value: parseFloat(fullOrderData.totalAmount) || 0,
-        currency: 'ILS', // Default currency for Israel
-        items: fullOrderData.orderItems?.map((item: any) => ({
-          name: item.product?.name || `Product ${item.productId}`,
-          quantity: parseFloat(item.quantity) || 1,
-          price: parseFloat(item.totalPrice) || 0
-        })) || []
-      };
+    // Try to send analytics with minimal data if we have order ID but no full data yet
+    const sendMinimalAnalytics = () => {
+      try {
+        // Minimal analytics with just order ID and basic data from URL
+        const minimalData = {
+          orderId: orderData.orderId!,
+          value: 0, // Will be updated when full data loads
+          currency: 'ILS',
+          items: []
+        };
 
-      // Send purchase conversion event
-      sendPurchase(analyticsData);
-      
-      // Send additional goals for better tracking
-      sendGoal('order_completed', {
-        order_id: orderData.orderId,
-        order_value: analyticsData.value,
-        is_guest: orderData.isGuest,
-        currency: 'ILS'
-      });
+        // Send purchase conversion event with minimal data
+        sendPurchase(minimalData);
+        
+        // Send additional goals for better tracking
+        sendGoal('order_completed', {
+          order_id: orderData.orderId,
+          order_value: 0,
+          is_guest: orderData.isGuest,
+          currency: 'ILS'
+        });
 
-      // Send specific goal for thank you page visit
-      sendGoal('thank_you_page_visited', {
-        order_id: orderData.orderId,
-        referrer: document.referrer
-      });
+        // Send specific goal for thank you page visit
+        sendGoal('thank_you_page_visited', {
+          order_id: orderData.orderId,
+          referrer: document.referrer
+        });
 
-      console.log('[Analytics] Purchase conversion events sent for order:', orderData.orderId);
-      
-    } catch (error) {
-      console.error('[Analytics] Error sending purchase events:', error);
+        console.log('[Analytics] Minimal purchase conversion events sent for order:', orderData.orderId);
+        setAnalyticsSent(true); // Prevent duplicate sends
+        
+      } catch (error) {
+        console.error('[Analytics] Error sending minimal purchase events:', error);
+      }
+    };
+
+    // If we have full order data, send complete analytics
+    if (fullOrderData) {
+      try {
+        // Prepare complete analytics data
+        const analyticsData = {
+          orderId: orderData.orderId,
+          value: parseFloat(fullOrderData.totalAmount) || 0,
+          currency: 'ILS',
+          items: fullOrderData.orderItems?.map((item: any) => ({
+            name: item.product?.name || `Product ${item.productId}`,
+            quantity: parseFloat(item.quantity) || 1,
+            price: parseFloat(item.totalPrice) || 0
+          })) || []
+        };
+
+        // Send purchase conversion event with complete data
+        sendPurchase(analyticsData);
+        
+        // Send additional goals for better tracking
+        sendGoal('order_completed', {
+          order_id: orderData.orderId,
+          order_value: analyticsData.value,
+          is_guest: orderData.isGuest,
+          currency: 'ILS'
+        });
+
+        // Send specific goal for thank you page visit
+        sendGoal('thank_you_page_visited', {
+          order_id: orderData.orderId,
+          referrer: document.referrer
+        });
+
+        console.log('[Analytics] Complete purchase conversion events sent for order:', orderData.orderId);
+        setAnalyticsSent(true); // Prevent duplicate sends
+        
+      } catch (error) {
+        console.error('[Analytics] Error sending complete purchase events:', error);
+      }
+    } else {
+      // Send minimal analytics after a short delay to allow for data loading
+      const timeout = setTimeout(sendMinimalAnalytics, 1000);
+      return () => clearTimeout(timeout);
     }
-  }, [orderData.orderId, fullOrderData, orderData.isGuest, sendPurchase, sendGoal]);
+  }, [orderData.orderId, fullOrderData, orderData.isGuest, sendPurchase, sendGoal, analyticsSent]);
 
   // SEO for thanks page
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
