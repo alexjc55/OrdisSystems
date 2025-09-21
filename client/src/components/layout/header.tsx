@@ -54,6 +54,7 @@ export default function Header({ onResetView }: HeaderProps) {
   const { currentLanguage, changeLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const toggleBtnRef = useRef<HTMLButtonElement>(null);
   const { isInstalled, installApp, isStandalone } = usePWA();
   
   // Detect device types for PWA install button visibility
@@ -63,22 +64,19 @@ export default function Header({ onResetView }: HeaderProps) {
 
   const cartItemsCount = items.length; // Count unique products, not total quantity
 
-  // Close mobile menu when clicking outside
+  // Close mobile menu when clicking outside (but not on toggle button)
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        isMobileMenuOpen &&
-        mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(event.target as Node)
-      ) {
-        setIsMobileMenuOpen(false);
-      }
+    const handleClickOutside = (event: PointerEvent) => {
+      if (!isMobileMenuOpen) return;
+      if (mobileMenuRef.current?.contains(event.target as Node)) return;
+      if (toggleBtnRef.current?.contains(event.target as Node)) return; // ignore toggle button
+      setIsMobileMenuOpen(false);
     };
 
     if (isMobileMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('pointerdown', handleClickOutside);
       return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('pointerdown', handleClickOutside);
       };
     }
   }, [isMobileMenuOpen]);
@@ -261,10 +259,11 @@ export default function Header({ onResetView }: HeaderProps) {
             {/* Mobile Menu Button */}
             <div className="block md:hidden">
               <Button
+                ref={toggleBtnRef}
                 variant="ghost"
                 size="sm"
                 className="p-2 text-gray-600 hover:text-primary"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={() => setIsMobileMenuOpen(prev => !prev)}
               >
                 <Menu className="h-5 w-5" />
               </Button>
